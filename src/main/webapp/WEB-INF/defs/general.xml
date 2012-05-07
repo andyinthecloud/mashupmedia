@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+
+	<definition name="home" template="/WEB-INF/jsp/layouts/default.jsp">
+		<put-attribute name="title" value="Tweeter | Home" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/home.jsp" />
+	</definition>
+
+	<definition name="configuration" extends="home">
+		<put-attribute name="title" value="Tweeter | Configuration" />
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration.jsp" />
+	</definition>
+
+	<definition name="configuration/network" extends="home">
+		<put-attribute name="title" value="Tweeter | Configuration - Network" />
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/network.jsp" />
+	</definition>
+
+	<definition name="configuration/music-configuration"
+		extends="home">
+		<put-attribute name="title" value="Tweeter | Music Configuration" />
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/music_configuration.jsp" />
+	</definition>
+
+
+	<definition name="configuration/music-library" extends="home">
+		<put-attribute name="title" value="Tweeter | Music Library" />
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/music_library.jsp" />
+	</definition>
+
+	<definition name="music.panel" template="/WEB-INF/jsp/layouts/music_panel.jsp">
+		<put-attribute name="body" value="" />
+	</definition>
+
+	<definition name="music" extends="home">
+		<put-attribute name="title" value="Tweeter | Music" />
+		<put-attribute name="body">
+			<definition extends="music.panel">
+				<put-attribute name="body"
+					value="/WEB-INF/jsp/tiles/music/music.jsp" />
+			</definition>
+		</put-attribute>
+	</definition>
+
+	<definition name="music/artists" extends="home">
+		<put-attribute name="title" value="Tweeter | Music | Artists" />
+		<put-attribute name="body">
+			<definition extends="music.panel">
+				<put-attribute name="body"
+					value="/WEB-INF/jsp/tiles/music/artists.jsp" />
+			</definition>
+		</put-attribute>
+	</definition>
+
+	<definition name="music/albums" extends="home">
+		<put-attribute name="title" value="Tweeter | Music | Albums" />
+		<put-attribute name="body">
+			<definition extends="music.panel">
+				<put-attribute name="body"
+					value="/WEB-INF/jsp/tiles/music/albums.jsp" />
+			</definition>
+		</put-attribute>
+
+	</definition>
+
+
+	<definition name="music/album" extends="home">
+		<put-attribute name="title" value="Tweeter | Music | Albums" />
+		<put-attribute name="body">
+			<definition extends="music.panel">
+				<put-attribute name="body"
+					value="/WEB-INF/jsp/tiles/music/album.jsp" />
+			</definition>
+		</put-attribute>
+
+	</definition>
+
+</tiles-definitions>

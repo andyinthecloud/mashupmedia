@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-3.0.xsd
+		http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<context:component-scan base-package="org.mashupmedia.task" />
+
+	<task:executor id="libraryUpdateThreadPoolTaskExecutor"
+		pool-size="3" />
+
+<!-- 
+	<task:scheduler id="taskScheduler" pool-size="3" />
+	<task:scheduled-tasks scheduler="taskScheduler">
+		<task:scheduled ref="taskManager" method="runScheduledIncomingFeeds"
+			cron="0 * * * * *" />
+		<task:scheduled ref="taskManager" method="deleteOldUnpublishedEvents"
+			cron="0 0 2 * * 1" />
+
+	</task:scheduled-tasks>
+ -->
+</beans>

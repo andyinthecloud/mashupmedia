@@ -1,0 +1,47 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+
+
+
+	<beans:bean id="daoAuthenticationProvider"
+		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<beans:property name="userDetailsService" ref="customUserDetailsService" />
+	</beans:bean>
+
+
+	<beans:bean id="authenticationManager"
+		class="org.springframework.security.authentication.ProviderManager">
+		<beans:property name="providers">
+			<beans:list>
+				<beans:ref local="daoAuthenticationProvider" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+	<authentication-manager >
+		<authentication-provider user-service-ref="customUserDetailsService" >
+			<password-encoder ref="customPasswordEncoder" />
+		</authentication-provider>
+	</authentication-manager>
+
+
+
+	<http pattern="/stylesheets/**" security="none" />
+	<http pattern="/jquery/**" security="none" />
+	<http pattern="/jquery-plugins/**" security="none" />
+	<http pattern="/images/**" security="none" />
+	<http pattern="/login.jsp*" security="none" />
+
+	<http auto-config='true'>
+		<intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/**" access="ROLE_USER" />
+		<form-login login-page='/login.jsp' />
+	</http>
+
+
+</beans:beans>
