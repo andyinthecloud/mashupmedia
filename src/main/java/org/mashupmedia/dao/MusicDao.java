@@ -37,6 +37,10 @@ public interface MusicDao {
 	public Year getYear(int year);
 
 	public List<Song> getSongs(Long albumId);
+
+	public void deleteArtist(Artist artist);
+
+	public void deleteAlbum(Album album);
 	
 
 }

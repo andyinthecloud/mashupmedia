@@ -92,7 +92,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	@Override
 	public void saveSongs(List<Song> songs) {
 		for (Song song : songs) {
-			saveOrUpdate(song.getArtist());
+			Artist artist = song.getArtist();
+			saveOrUpdate(artist);
 			Album album = song.getAlbum();
 			saveOrUpdate(album.getAlbumArtImage());
 			saveOrUpdate(album);
@@ -103,12 +104,12 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public void saveAlbum(Album album) {
-		sessionFactory.getCurrentSession().saveOrUpdate(album);
+		saveOrUpdate(album);
 	}
 
 	@Override
 	public void saveArtist(Artist artist) {
-		sessionFactory.getCurrentSession().saveOrUpdate(artist);
+		saveOrUpdate(artist);
 	}
 
 	@Override
@@ -137,6 +138,16 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		@SuppressWarnings("unchecked")
 		List<Song> songs = query.list();
 		return songs;
+	}
+	
+	@Override
+	public void deleteAlbum(Album album) {
+		sessionFactory.getCurrentSession().delete(album);		
+	}
+	
+	@Override
+	public void deleteArtist(Artist artist) {
+		sessionFactory.getCurrentSession().delete(artist);		
 	}
 
 }

@@ -54,14 +54,16 @@ public class MusicManagerImpl implements MusicManager {
 		List<Song> songs = new ArrayList<Song>();
 
 		for (Artist artist : artists) {
-			processArtist(artist);
+			artist = prepareArtist(artist);
 
 			List<Album> albums = artist.getAlbums();
 			for (Album album : albums) {
-				processAlbum(album);
+				album = prepareAlbum(album);
+				album.setArtist(artist);
 				AlbumArtImage albumArtImage = album.getAlbumArtImage();
 				if (albumArtImage != null) {
 					albumArtImage.setLibrary(library);					
+					albumArtImage.setAlbum(album);
 				}
 				
 				List<Song> albumSongs = album.getSongs();
@@ -79,8 +81,8 @@ public class MusicManagerImpl implements MusicManager {
 
 		}
 
-		logger.info(songs.size() + " songs have been saved");
 		musicDao.saveSongs(songs);
+		logger.info(songs.size() + " songs have been saved");
 
 		List<Song> songsToDelete = musicDao.getSongsToDelete(library.getId(), date);
 		musicDao.deleteSongs(songsToDelete);
@@ -94,11 +96,14 @@ public class MusicManagerImpl implements MusicManager {
 		return false;
 	}
 
-	protected Album processAlbum(Album album) {
+	protected Album prepareAlbum(Album album) {
 		Album savedAlbum = musicDao.getAlbum(album.getName());
 		if (savedAlbum == null) {
 			return album;
 		}
+		
+		List<Song> songs = album.getSongs();		
+		album.setSongs(songs);		
 		return savedAlbum;
 
 	}
@@ -107,12 +112,14 @@ public class MusicManagerImpl implements MusicManager {
 		musicDao.saveAlbum(album);
 	}
 
-	protected Artist processArtist(Artist artist) {
+	protected Artist prepareArtist(Artist artist) {
 		Artist savedArtist = musicDao.getArtist(artist.getName());
 		if (savedArtist == null) {
 			return artist;
 		}
 
+		List<Album> albums = artist.getAlbums();		
+		savedArtist.setAlbums(albums);		
 		return savedArtist;
 	}
 
@@ -165,11 +172,11 @@ public class MusicManagerImpl implements MusicManager {
 
 		for (Song song : songs) {
 			Artist artist = song.getArtist();
-			artist = processArtist(artist);
+			artist = prepareArtist(artist);
 			song.setArtist(artist);
 
 			Album album = song.getAlbum();
-			album = processAlbum(album);
+			album = prepareAlbum(album);
 			song.setAlbum(album);
 
 			Year year = song.getYear();
@@ -202,5 +209,38 @@ public class MusicManagerImpl implements MusicManager {
 		return songs;
 	}
 	
+	
+	@Override
+	public void deleteEmpty() {
+		List<Artist> artists = getArtists();
+		for (Artist artist : artists) {
+			List<Album> albums = artist.getAlbums();			
+			if (albums == null || albums.isEmpty()) {
+				musicDao.deleteArtist(artist);
+				continue;
+			}
+			
+			
+			int totalAlbums = albums.size();
+			int numberOfAlbumsDeleted = 0;
+			
+			
+			for (Album album : albums) {
+				List<Song> songs = album.getSongs();
+				if (songs == null || songs.isEmpty()) {
+					musicDao.deleteAlbum(album);
+					numberOfAlbumsDeleted++;
+				}
+			}
+
+			
+			if (totalAlbums == numberOfAlbumsDeleted) {
+				musicDao.deleteArtist(artist);
+			}
+			
+			
+		}
+		
+	}
 	
 }

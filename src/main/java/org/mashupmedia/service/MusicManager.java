@@ -29,4 +29,7 @@ public interface MusicManager {
 
 	public void saveAlbum(Album album);
 
+	public void deleteEmpty();
+	
+
 }

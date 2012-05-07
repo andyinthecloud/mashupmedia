@@ -41,11 +41,10 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	
 	@Override
 	public void deleteLibrary(Library library) {
-		sessionFactory.getCurrentSession().flush();
-//		sessionFactory.getCurrentSession().delete(library);
-		
-//		sessionFactory.getCurrentSession().flush();
-
+		long libraryId = library.getId();
+		sessionFactory.getCurrentSession().evict(library);
+		library = getMusicLibrary(libraryId);
+		sessionFactory.getCurrentSession().delete(library);
 	}
 	
 	@Override

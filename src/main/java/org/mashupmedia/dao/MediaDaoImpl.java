@@ -34,8 +34,13 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		
 		for (AlbumArtImage albumArtImage : albumArtImages) {
 			Album album = albumArtImage.getAlbum();
+			if (album == null) {
+				logger.debug(albumArtImage.getName() + " has no album.");
+				continue;
+			}
+				
 			album.setAlbumArtImage(null);
-			sessionFactory.getCurrentSession().saveOrUpdate(album);
+//			sessionFactory.getCurrentSession().saveOrUpdate(album);
 			sessionFactory.getCurrentSession().delete(albumArtImage);
 		}
 	}

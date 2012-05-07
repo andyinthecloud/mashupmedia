@@ -47,11 +47,6 @@
 	</logger>
 
  	
-	<logger name="org.apache.fop" additivity="false">
-		<level value="${log4j.focus.level}" />
-		<appender-ref ref="FileAppender" />
-	</logger>
-
 	<logger name="org.springframework.context.support.ResourceBundleMessageSource" additivity="false">
 		<level value="error" />
 		<appender-ref ref="FileAppender" />
