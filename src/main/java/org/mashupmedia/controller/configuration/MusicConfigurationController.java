@@ -42,7 +42,6 @@ public class MusicConfigurationController extends BaseController {
 		List<MusicLibrary> musicLibraries = libraryManager.getMusicLibraries();
 		musicConfigurationPage.setMusicLibraries(musicLibraries);
 		
-		
 		return PAGE_PATH;
 	}
 

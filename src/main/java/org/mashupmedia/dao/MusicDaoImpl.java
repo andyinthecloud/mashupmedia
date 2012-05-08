@@ -66,10 +66,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public Song getSong(long id, String path, long sizeInBytes) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Song where id = :id and path = :path and sizeInBytes = :sizeInBytes");
+	public Song getSong(long libraryId, String path, long sizeInBytes) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from Song where library.id = :libraryId and path = :path and sizeInBytes = :sizeInBytes");
 		query.setCacheable(true);
-		query.setLong("id", id);
+		query.setLong("libraryId", libraryId);
 		query.setString("path", path);
 		query.setLong("sizeInBytes", sizeInBytes);
 
@@ -142,12 +142,28 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	
 	@Override
 	public void deleteAlbum(Album album) {
-		sessionFactory.getCurrentSession().delete(album);		
+		Artist artist = album.getArtist();
+		sessionFactory.getCurrentSession().delete(album);
+		List<Album> albums = artist.getAlbums();
+		if (albums == null || albums.isEmpty()) {
+			sessionFactory.getCurrentSession().delete(artist);
+		}
 	}
 	
 	@Override
 	public void deleteArtist(Artist artist) {
 		sessionFactory.getCurrentSession().delete(artist);		
 	}
+
+	@Override
+	public List<Album> getAlbumsByArtist(long artistId) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from Album where artist.id = :artistId order by name");
+		query.setCacheable(true);
+		query.setLong("artistId", artistId);
+		@SuppressWarnings("unchecked")
+		List<Album> albums = query.list();
+		return albums;
+	}
+	
 
 }

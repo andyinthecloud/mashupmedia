@@ -41,6 +41,8 @@ public interface MusicDao {
 	public void deleteArtist(Artist artist);
 
 	public void deleteAlbum(Album album);
+
+	public List<Album> getAlbumsByArtist(long artistId);
 	
 
 }

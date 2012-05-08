@@ -29,7 +29,6 @@ import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,7 +144,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 				String name = ftpArtistFile.getName();
 				artist.setName(name);
 				List<Album> albums = new ArrayList<Album>();
-				processFtpAlbums(artist, albums, ftpArtistFile, ftpClient);
+				processFtpAlbums(artist, albums, ftpArtistFile, ftpClient, null);
 				artist.setAlbums(albums);
 				artists.add(artist);
 
@@ -156,7 +155,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 	}
 
-	private void processFtpAlbums(Artist artist, List<Album> albums, FTPFile ftpArtistFile, FTPClient ftpClient) throws IllegalStateException,
+	private void processFtpAlbums(Artist artist, List<Album> albums, FTPFile ftpArtistFile, FTPClient ftpClient, String prefix) throws IllegalStateException,
 			IOException, FTPIllegalReplyException, FTPException {
 
 		if (ftpArtistFile.getType() != FTPFile.TYPE_DIRECTORY) {
@@ -172,15 +171,21 @@ public class ConnectionManagerImpl implements ConnectionManager {
 			FTPFile[] ftpAlbumFiles = ftpClient.list();
 			for (FTPFile ftpAlbumFile : ftpAlbumFiles) {
 				String albumName = ftpAlbumFile.getName();
+				if (StringUtils.isNotBlank(prefix)) {
+					albumName = prefix + " - " + albumName;
+				}					
+
 				if (FileHelper.isAlbum(ftpAlbumFile, ftpClient)) {
 					Album album = new Album();
 					album.setArtist(artist);
 					album.setName(albumName);
 					processFtpAlbum(album, ftpAlbumFile, ftpClient);
 					albums.add(album);
-
-				} else {
-					processFtpAlbums(artist, albums, ftpAlbumFile, ftpClient);
+					continue;
+				} 
+				
+				if (FileHelper.hasFolders(ftpAlbumFile, ftpClient)) {
+					processFtpAlbums(artist, albums, ftpAlbumFile, ftpClient, albumName);
 				}
 			}
 

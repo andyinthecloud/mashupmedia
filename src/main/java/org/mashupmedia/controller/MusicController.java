@@ -61,7 +61,6 @@ public class MusicController extends BaseController {
 		List<Album> albums = musicManager.getAlbums();
 		albumsPage.setAlbums(albums);
 		model.addAttribute(albumsPage);		
-		
 		return "music/albums";
 	}
 	
@@ -89,7 +88,8 @@ public class MusicController extends BaseController {
 	
 	@RequestMapping(value = "/album/{albumId}", method = RequestMethod.GET)
 	public String getAlbum(@PathVariable("albumId") Long albumId, Model model) throws Exception {
-		List<Song> songs = musicManager.getSongs(albumId);
+		Album album = musicManager.getAlbum(albumId);
+		List<Song> songs = album.getSongs();
 		AlbumPage albumPage = new AlbumPage();
 		albumPage.setSongs(songs);
 		model.addAttribute(albumPage);

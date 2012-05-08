@@ -93,4 +93,28 @@ public class FileHelper {
 		}
 	}
 
+	public static boolean hasFolders(FTPFile ftpFile, FTPClient ftpClient) throws IllegalStateException, IOException, FTPIllegalReplyException,
+			FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
+		if (ftpFile.getType() != FTPFile.TYPE_DIRECTORY) {
+			return false;
+		}
+
+		String name = ftpFile.getName();
+		String path = ftpClient.currentDirectory();
+		String albumPath = path + "/" + name;
+
+		try {
+			ftpClient.changeDirectory(albumPath);
+			FTPFile[] childFtpFiles = ftpClient.list();
+			for (FTPFile childFtpFile : childFtpFiles) {
+				if (childFtpFile.getType() == FTPFile.TYPE_DIRECTORY) {
+					return true;
+				}
+			}
+			return false;
+		} finally {
+			ftpClient.changeDirectory(path);
+		}
+	}
+
 }

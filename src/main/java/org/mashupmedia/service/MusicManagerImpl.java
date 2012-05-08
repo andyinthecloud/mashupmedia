@@ -11,8 +11,8 @@ import org.hibernate.Hibernate;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.Album;
-import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.AlbumArtImage;
+import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,10 +62,10 @@ public class MusicManagerImpl implements MusicManager {
 				album.setArtist(artist);
 				AlbumArtImage albumArtImage = album.getAlbumArtImage();
 				if (albumArtImage != null) {
-					albumArtImage.setLibrary(library);					
+					albumArtImage.setLibrary(library);
 					albumArtImage.setAlbum(album);
 				}
-				
+
 				List<Song> albumSongs = album.getSongs();
 				for (Song albumSong : albumSongs) {
 					if (isNewSong(library, albumSong)) {
@@ -86,6 +86,7 @@ public class MusicManagerImpl implements MusicManager {
 
 		List<Song> songsToDelete = musicDao.getSongsToDelete(library.getId(), date);
 		musicDao.deleteSongs(songsToDelete);
+		deleteEmpty();
 	}
 
 	protected boolean isNewSong(Library library, Song song) {
@@ -101,9 +102,9 @@ public class MusicManagerImpl implements MusicManager {
 		if (savedAlbum == null) {
 			return album;
 		}
-		
-		List<Song> songs = album.getSongs();		
-		album.setSongs(songs);		
+
+		List<Song> songs = album.getSongs();
+		savedAlbum.setSongs(songs);
 		return savedAlbum;
 
 	}
@@ -118,8 +119,8 @@ public class MusicManagerImpl implements MusicManager {
 			return artist;
 		}
 
-		List<Album> albums = artist.getAlbums();		
-		savedArtist.setAlbums(albums);		
+		List<Album> albums = artist.getAlbums();
+		savedArtist.setAlbums(albums);
 		return savedArtist;
 	}
 
@@ -155,6 +156,7 @@ public class MusicManagerImpl implements MusicManager {
 	@Override
 	public Album getAlbum(long albumId) {
 		Album album = musicDao.getAlbum(albumId);
+		Hibernate.initialize(album.getSongs());
 		return album;
 	}
 
@@ -196,51 +198,37 @@ public class MusicManagerImpl implements MusicManager {
 
 		return savedYear;
 	}
-	
+
 	@Override
 	public Album getAlbum(String name) {
 		Album album = musicDao.getAlbum(name);
 		return album;
 	}
-	
+
 	@Override
 	public List<Song> getSongs(Long albumId) {
 		List<Song> songs = musicDao.getSongs(albumId);
 		return songs;
 	}
-	
-	
+
 	@Override
 	public void deleteEmpty() {
 		List<Artist> artists = getArtists();
 		for (Artist artist : artists) {
-			List<Album> albums = artist.getAlbums();			
+			List<Album> albums = musicDao.getAlbumsByArtist(artist.getId());
 			if (albums == null || albums.isEmpty()) {
 				musicDao.deleteArtist(artist);
 				continue;
 			}
-			
-			
-			int totalAlbums = albums.size();
-			int numberOfAlbumsDeleted = 0;
-			
-			
-			for (Album album : albums) {
-				List<Song> songs = album.getSongs();
+
+			for (Album album : albums) {				
+				List<Song> songs = musicDao.getSongs(album.getId());
 				if (songs == null || songs.isEmpty()) {
 					musicDao.deleteAlbum(album);
-					numberOfAlbumsDeleted++;
 				}
 			}
-
-			
-			if (totalAlbums == numberOfAlbumsDeleted) {
-				musicDao.deleteArtist(artist);
-			}
-			
-			
 		}
-		
+
 	}
-	
+
 }
