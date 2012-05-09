@@ -3,7 +3,7 @@ package org.mashupmedia.controller.configuration;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.constants.TweeterConstants;
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.util.MessageHelper;
@@ -44,19 +44,19 @@ public class NetworkConfigurationController extends BaseController {
 
 		NetworkPage networkPage = new NetworkPage();
 
-		String proxyEnabled = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(TweeterConstants.PROXY_ENABLED));
+		String proxyEnabled = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
 		networkPage.setProxyEnabled(proxyEnabled);
 		if (StringUtils.isEmpty(proxyEnabled)) {
 			networkPage.setProxyEnabled("false");
 		}
 
-		String proxyUrl = configurationManager.getConfigurationValue(TweeterConstants.PROXY_URL);
+		String proxyUrl = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_URL);
 		networkPage.setProxyUrl(proxyUrl);
 		
-		String proxyPort = configurationManager.getConfigurationValue(TweeterConstants.PROXY_PORT);
+		String proxyPort = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_PORT);
 		networkPage.setProxyPort(proxyPort);
 		
-		String proxyUsername = configurationManager.getConfigurationValue(TweeterConstants.PROXY_USERNAME);
+		String proxyUsername = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_USERNAME);
 		networkPage.setProxyUsername(proxyUsername);
 		
 
@@ -73,19 +73,19 @@ public class NetworkConfigurationController extends BaseController {
 		}
 		
 		String proxyEnabled = networkPage.getProxyEnabled();
-		configurationManager.saveConfiguration(TweeterConstants.PROXY_ENABLED, proxyEnabled);		
+		configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_ENABLED, proxyEnabled);		
 		
 		String proxyUrl = networkPage.getProxyUrl();
-		configurationManager.saveConfiguration(TweeterConstants.PROXY_URL, proxyUrl);
+		configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_URL, proxyUrl);
 		
 		String proxyPort = networkPage.getProxyPort();
-		configurationManager.saveConfiguration(TweeterConstants.PROXY_PORT, String.valueOf(proxyPort));
+		configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_PORT, String.valueOf(proxyPort));
 
 		String proxyUsername = networkPage.getProxyUsername();
-		configurationManager.saveConfiguration(TweeterConstants.PROXY_USERNAME, proxyUsername);
+		configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_USERNAME, proxyUsername);
 		
 		String proxyPassword = networkPage.getProxyPassword();
-		configurationManager.saveEncryptedConfiguration(TweeterConstants.PROXY_PASSWORD, proxyPassword);
+		configurationManager.saveEncryptedConfiguration(MashUpMediaConstants.PROXY_PASSWORD, proxyPassword);
 		
 		return "redirect:/app/configuration";
 	}

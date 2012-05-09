@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.comparator.FtpFileComparator;
-import org.mashupmedia.constants.TweeterConstants;
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
@@ -42,7 +42,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	private ConfigurationManager configurationManager;
 	
 	protected boolean isProxyEnabled() {
-		boolean isProxyEnabled = BooleanUtils.toBoolean(configurationManager.getConfigurationValue(TweeterConstants.PROXY_ENABLED));
+		boolean isProxyEnabled = BooleanUtils.toBoolean(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
 		return isProxyEnabled;
 
 	}
@@ -54,10 +54,10 @@ public class ConnectionManagerImpl implements ConnectionManager {
 			return ftpClient;
 		}
 
-		String proxyUrl = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(TweeterConstants.PROXY_URL));
-		String proxyPortValue = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(TweeterConstants.PROXY_PORT));
-		String proxyUsername = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(TweeterConstants.PROXY_USERNAME));
-		String proxyPassword = StringUtils.trimToEmpty(configurationManager.getConfigurationDecryptedValue(TweeterConstants.PROXY_PASSWORD));
+		String proxyUrl = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_URL));
+		String proxyPortValue = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_PORT));
+		String proxyUsername = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_USERNAME));
+		String proxyPassword = StringUtils.trimToEmpty(configurationManager.getConfigurationDecryptedValue(MashUpMediaConstants.PROXY_PASSWORD));
 		// String proxyPassword = "l3ST3R";
 
 		int proxyPort = NumberUtils.toInt(proxyPortValue);

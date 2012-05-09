@@ -3,7 +3,7 @@ package org.mashupmedia.controller.configuration;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.constants.TweeterConstants;
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.editor.GroupEditor;
 import org.mashupmedia.model.Group;
@@ -121,7 +121,7 @@ public class MusicLibraryController extends BaseController {
 		}
 
 		String action = StringUtils.trimToEmpty(musicLibraryPage.getAction());
-		if (action.equalsIgnoreCase(TweeterConstants.ACTION_DELETE)) {
+		if (action.equalsIgnoreCase(MashUpMediaConstants.ACTION_DELETE)) {
 			processDeleteAction(musicLibraryPage);
 		} else {
 			processSaveAction(musicLibraryPage);

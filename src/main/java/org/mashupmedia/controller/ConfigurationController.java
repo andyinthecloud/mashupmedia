@@ -2,7 +2,7 @@ package org.mashupmedia.controller;
 
 import java.util.List;
 
-import org.mashupmedia.constants.TweeterConstants;
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
@@ -35,7 +35,7 @@ public class ConfigurationController extends BaseController{
 
 		NetworkPage configurationPage = new NetworkPage();
 
-		String proxyUrl = configurationManager.getConfigurationValue(TweeterConstants.PROXY_URL);
+		String proxyUrl = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_URL);
 		configurationPage.setProxyUrl(proxyUrl);
 
 		model.addAttribute(configurationPage);
@@ -45,7 +45,7 @@ public class ConfigurationController extends BaseController{
 	@RequestMapping(value = PAGE_PATH, method = RequestMethod.POST)
 	public String processConfiguration(@ModelAttribute("configurationPage") NetworkPage configurationPage, Model model, BindingResult result) {
 		String proxyUrl = configurationPage.getProxyUrl();
-		configurationManager.saveConfiguration(TweeterConstants.PROXY_URL, proxyUrl);
+		configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_URL, proxyUrl);
 		return "redirect:" + REDIRECT_PATH;
 	}
 

@@ -10,16 +10,32 @@ import javax.persistence.ManyToOne;
 public class Song extends Media {
 	private int trackNumber;
 	private String title;
-	@ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
 	@ManyToOne
 	private Genre genre;
 	@ManyToOne
 	private Year year;
-	@ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Artist artist;
-	
-	
+	private long trackLength;
+	private long bitRate;
+
+	public long getTrackLength() {
+		return trackLength;
+	}
+
+	public void setTrackLength(long trackLength) {
+		this.trackLength = trackLength;
+	}
+
+	public long getBitRate() {
+		return bitRate;
+	}
+
+	public void setBitRate(long bitRate) {
+		this.bitRate = bitRate;
+	}
 
 	public Artist getArtist() {
 		return artist;
@@ -115,6 +131,10 @@ public class Song extends Media {
 		builder.append(year);
 		builder.append(", artist=");
 		builder.append(artist);
+		builder.append(", trackLength=");
+		builder.append(trackLength);
+		builder.append(", bitRate=");
+		builder.append(bitRate);
 		builder.append("]");
 		return builder.toString();
 	}

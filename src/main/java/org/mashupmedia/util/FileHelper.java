@@ -1,7 +1,5 @@
 package org.mashupmedia.util;
 
-import java.io.IOException;
-
 import it.sauronsoftware.ftp4j.FTPAbortedException;
 import it.sauronsoftware.ftp4j.FTPClient;
 import it.sauronsoftware.ftp4j.FTPDataTransferException;
@@ -10,7 +8,14 @@ import it.sauronsoftware.ftp4j.FTPFile;
 import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
 import it.sauronsoftware.ftp4j.FTPListParseException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.constants.MashUpMediaConstants;
 
 public class FileHelper {
 
@@ -115,6 +120,26 @@ public class FileHelper {
 		} finally {
 			ftpClient.changeDirectory(path);
 		}
+	}
+
+	public static String writeAlbumArt(long libraryId, String mimeType, byte[] bytes) throws FileNotFoundException, IOException {
+		mimeType = StringUtils.trimToEmpty(mimeType);
+		String extension = "jpg";
+		if (StringUtils.isNotEmpty(mimeType)) {
+			extension = StringHelper.find(mimeType, "/.*").toLowerCase();
+			extension.replaceFirst("/", "");
+		}
+		
+		File albumArtFile = new File(getLibraryFolder(libraryId), MashUpMediaConstants.COVER_ART_DEFAULT_NAME + "." + extension);
+		albumArtFile.mkdirs();		
+		IOUtils.write(bytes, new FileOutputStream(albumArtFile));
+		return albumArtFile.getAbsolutePath();
+	}
+
+	private static File getLibraryFolder(long libraryId) {
+		File libraryFolder = new File(MessageHelper.getMessage(MashUpMediaConstants.APPLICATION_FOLDER), "libraries/" + libraryId);
+		libraryFolder.mkdirs();
+		return libraryFolder;
 	}
 
 }

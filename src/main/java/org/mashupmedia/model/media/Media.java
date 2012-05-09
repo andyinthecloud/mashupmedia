@@ -27,6 +27,17 @@ public class Media {
 	private Library library;
 	private long sizeInBytes;
 	private Date updatedOn;
+	private String format;
+	
+	
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
 
 	public Date getUpdatedOn() {
 		return updatedOn;
@@ -123,8 +134,10 @@ public class Media {
 		builder.append(library);
 		builder.append(", sizeInBytes=");
 		builder.append(sizeInBytes);
-		builder.append(", lastModified=");
+		builder.append(", updatedOn=");
 		builder.append(updatedOn);
+		builder.append(", format=");
+		builder.append(format);
 		builder.append("]");
 		return builder.toString();
 	}
