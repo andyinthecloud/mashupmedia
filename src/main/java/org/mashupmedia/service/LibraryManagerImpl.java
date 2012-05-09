@@ -14,6 +14,7 @@ import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Media;
+import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -108,6 +109,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		mediaManager.deleteAlbumArtImages(albumArtImages);
 		musicManager.deleteEmpty();
 		libraryDao.deleteLibrary(library);
+		FileHelper.deleteLibrary(id);
 	}
 
 	@Override

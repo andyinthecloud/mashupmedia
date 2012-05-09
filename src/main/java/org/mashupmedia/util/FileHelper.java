@@ -13,9 +13,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.exception.MashupMediaException;
 
 public class FileHelper {
 
@@ -140,6 +142,16 @@ public class FileHelper {
 		File libraryFolder = new File(MessageHelper.getMessage(MashUpMediaConstants.APPLICATION_FOLDER), "libraries/" + libraryId);
 		libraryFolder.mkdirs();
 		return libraryFolder;
+	}
+
+	public static void deleteLibrary(long libraryId) {
+		File libraryFolder = getLibraryFolder(libraryId);
+		try {
+			FileUtils.deleteDirectory(libraryFolder);
+		} catch (IOException e) {
+			throw new MashupMediaException("Unable to delete library folder", e);
+		}
+		
 	}
 
 }

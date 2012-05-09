@@ -1,9 +1,12 @@
 package org.mashupmedia.service;
 
+import it.sauronsoftware.ftp4j.FTPAbortedException;
 import it.sauronsoftware.ftp4j.FTPClient;
+import it.sauronsoftware.ftp4j.FTPDataTransferException;
 import it.sauronsoftware.ftp4j.FTPException;
 import it.sauronsoftware.ftp4j.FTPFile;
 import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
+import it.sauronsoftware.ftp4j.FTPListParseException;
 import it.sauronsoftware.ftp4j.connectors.HTTPTunnelConnector;
 
 import java.io.File;
@@ -13,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.plaf.metal.MetalIconFactory.FolderIcon16;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.comparator.FtpFileComparator;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
@@ -112,7 +118,131 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		return ftpClient;
 	}
+	
+	
 
+	public List<Song> getFtpSongs(FtpLocation location) {
+
+		List<Song> songs = new ArrayList<Song>();
+		FTPClient ftpClient = null;
+		try {
+			ftpClient = connectToFtp(location);
+			processFtpSongs(ftpClient, songs);
+
+		} catch (Exception e) {
+			logger.error("Unable to connect to ftp server.", e);
+		} finally {
+			try {
+				ftpClient.disconnect(true);
+			} catch (Exception e) {
+				logger.error("Unable to disconnect from ftp client", e);
+			}
+		}
+
+		return songs;
+	}
+
+	
+	
+	protected void processFtpSongs(FTPClient ftpClient, List<Song> songs, MusicLibrary musicLibrary, String artistName, String albumName, int trackNumber) {
+		try {
+			FTPFile[] ftpFiles = ftpClient.list();
+			Arrays.sort(ftpFiles, new FtpFileComparator());
+			for (FTPFile ftpFile : ftpFiles) {
+				String fileName = ftpFile.getName();
+				if (ftpFile.getType() == FTPFile.TYPE_DIRECTORY) {
+					ftpClient.changeDirectory(fileName);
+					artistName = StringUtils.trimToEmpty(artistName);
+					if (StringUtils.isEmpty(artistName)) {
+						artistName = fileName;
+					} else {
+						albumName = StringUtils.trimToEmpty(albumName);
+						if (StringUtils.isEmpty(artistName)) {
+							albumName = fileName;							
+						} else {
+							albumName += " - " + fileName;
+						}
+					}
+					
+					processFtpSongs(ftpClient, songs, musicLibrary, artistName, albumName, 0);
+					ftpClient.changeDirectoryUp();
+					continue;
+					
+				}
+				
+				
+				if (FileHelper.isSupportedSong(fileName)) {
+					trackNumber++;
+					Artist artist = new Artist();
+					artist.setName(artistName);
+					
+					Album album = new Album();
+					album.setName(albumName);
+					album.setArtist(artist);
+					
+					if (trackNumber == 1) {
+						AlbumArtImage albumArtImage = getAlbumArtImage(ftpClient, musicLibrary, album);
+					}
+					
+					Song song = new Song();
+					song.setAlbum(album);
+					song.setFileName(fileName);
+					song.setPath(ftpFile.getLink());
+					song.setSizeInBytes(ftpFile.getSize());
+					song.setTitle(fileName);
+					song.setTrackNumber(trackNumber);
+					songs.add(song);
+					continue;
+				} 
+				
+				
+				if (FileHelper.isSupportedImage(fileName)) {
+					AlbumArtImage image = new AlbumArtImage();
+					image.setName(fileName);
+					image.setUrl(mediaPath);
+					album.setAlbumArtImage(image);
+
+				}
+	
+
+			}
+		} catch (Exception e) {
+			logger.error("Unable to list ftp files", e);
+		}
+	}
+	
+	
+	protected AlbumArtImage getAlbumArtImage(FTPClient ftpClient,
+			MusicLibrary musicLibrary, Album album) throws IllegalStateException, IOException, FTPIllegalReplyException, FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
+		
+		FTPFile[] ftpFiles = ftpClient.list();
+		Arrays.sort(ftpFiles, new FtpFileComparator());
+		for (FTPFile ftpFile : ftpFiles) {
+			String fileName = ftpFile.getName();
+			if (FileHelper.isSupportedImage(fileName)) {
+				
+			}
+		}
+		
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@Override
 	public List<Artist> getFtpArtists(FtpLocation location) {
 
@@ -135,6 +265,11 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		return artists;
 	}
 
+	
+
+	
+	
+	
 	private void processFtpArtists(FTPClient ftpClient, List<Artist> artists) {
 
 		try {

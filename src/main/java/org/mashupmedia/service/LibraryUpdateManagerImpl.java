@@ -208,8 +208,11 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 					albumName = albumNameValue;
 				}
 				album.setName(albumName);
-				AlbumArtImage albumArtImage = getAlbumArtImage(musicLibrary, file, album);
-				album.setAlbumArtImage(albumArtImage);				
+				if (musicFileCount == 1) {
+					AlbumArtImage albumArtImage = getAlbumArtImage(musicLibrary, file, album);
+					album.setAlbumArtImage(albumArtImage);									
+				}
+				
 				song.setAlbum(album);
 
 				Artist artist = new Artist();
