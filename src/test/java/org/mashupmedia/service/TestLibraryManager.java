@@ -86,7 +86,7 @@ public class TestLibraryManager extends TestBaseService {
 		Song song = TestHelper.prepareSong(musicLibrary, "title");
 		List<Song> songs = new ArrayList<Song>();
 		songs.add(song);
-		musicManager.saveSongs(songs);
+		musicManager.saveSongs(musicLibrary, songs);
 		
 		
 		libraryManager.deleteLibrary(musicLibrary);

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
+import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 
@@ -20,7 +21,7 @@ public interface MusicDao {
 
 	public Album getAlbum(String name);
 
-	public void saveSongs(List<Song> songs);
+	public void saveSong(Song song);
 
 	public void deleteSongs(List<Song> songsToDelete);
 
@@ -43,6 +44,8 @@ public interface MusicDao {
 	public void deleteAlbum(Album album);
 
 	public List<Album> getAlbumsByArtist(long artistId);
+
+	public Genre getGenre(String name);
 	
 
 }

@@ -20,6 +20,8 @@
 	<context:component-scan base-package="org.mashupmedia.dao" />
 	<context:component-scan base-package="org.mashupmedia.security" />
 	<context:component-scan base-package="org.mashupmedia.editor" />
+	<context:component-scan base-package="org.mashupmedia.interceptor" />
+	
 
 
 
@@ -78,6 +80,7 @@
 		<property name="basenames">
 			<list>
 				<value>/WEB-INF/classes/messages</value>
+				<value>/WEB-INF/classes/settings</value>
 			</list>
 		</property>
 		<property name="cacheSeconds" value="${message.cache.seconds}" />

@@ -2,17 +2,17 @@ package org.mashupmedia.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Artist;
+import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class MusicManagerImpl implements MusicManager {
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private MusicDao musicDao;
@@ -42,52 +41,52 @@ public class MusicManagerImpl implements MusicManager {
 		return artists;
 	}
 
-	@Override
-	public void saveArtists(Library library, List<Artist> artists) {
-		if (artists == null || artists.isEmpty()) {
-			logger.info("There are no artists to save");
-			return;
-		}
-
-		Date date = new Date();
-
-		List<Song> songs = new ArrayList<Song>();
-
-		for (Artist artist : artists) {
-			artist = prepareArtist(artist);
-
-			List<Album> albums = artist.getAlbums();
-			for (Album album : albums) {
-				album = prepareAlbum(album);
-				album.setArtist(artist);
-				AlbumArtImage albumArtImage = album.getAlbumArtImage();
-				if (albumArtImage != null) {
-					albumArtImage.setLibrary(library);
-					albumArtImage.setAlbum(album);
-				}
-
-				List<Song> albumSongs = album.getSongs();
-				for (Song albumSong : albumSongs) {
-					if (isNewSong(library, albumSong)) {
-						albumSong.setAlbum(album);
-						// albumSong.setGenre(genre)
-						albumSong.setUpdatedOn(date);
-						albumSong.setLibrary(library);
-						albumSong.setArtist(artist);
-						songs.add(albumSong);
-					}
-				}
-			}
-
-		}
-
-		musicDao.saveSongs(songs);
-		logger.info(songs.size() + " songs have been saved");
-
-		List<Song> songsToDelete = musicDao.getSongsToDelete(library.getId(), date);
-		musicDao.deleteSongs(songsToDelete);
-		deleteEmpty();
-	}
+//	@Override
+//	public void saveArtists(Library library, List<Artist> artists) {
+//		if (artists == null || artists.isEmpty()) {
+//			logger.info("There are no artists to save");
+//			return;
+//		}
+//
+//		Date date = new Date();
+//
+//		List<Song> songs = new ArrayList<Song>();
+//
+//		for (Artist artist : artists) {
+//			artist = prepareArtist(artist);
+//
+//			List<Album> albums = artist.getAlbums();
+//			for (Album album : albums) {
+//				album = prepareAlbum(album);
+//				album.setArtist(artist);
+//				AlbumArtImage albumArtImage = album.getAlbumArtImage();
+//				if (albumArtImage != null) {
+//					albumArtImage.setLibrary(library);
+//					albumArtImage.setAlbum(album);
+//				}
+//
+//				List<Song> albumSongs = album.getSongs();
+//				for (Song albumSong : albumSongs) {
+//					if (isNewSong(library, albumSong)) {
+//						albumSong.setAlbum(album);
+//						// albumSong.setGenre(genre)
+//						albumSong.setUpdatedOn(date);
+//						albumSong.setLibrary(library);
+//						albumSong.setArtist(artist);
+//						songs.add(albumSong);
+//					}
+//				}
+//			}
+//
+//		}
+//
+//		musicDao.saveSongs(songs);
+//		logger.info(songs.size() + " songs have been saved");
+//
+//		List<Song> songsToDelete = musicDao.getSongsToDelete(library.getId(), date);
+//		musicDao.deleteSongs(songsToDelete);
+//		deleteEmpty();
+//	}
 
 	protected boolean isNewSong(Library library, Song song) {
 		Song savedSong = musicDao.getSong(library.getId(), song.getPath(), song.getSizeInBytes());
@@ -97,7 +96,7 @@ public class MusicManagerImpl implements MusicManager {
 		return false;
 	}
 
-	protected Album prepareAlbum(Album album) {
+	protected Album prepareAlbum(Album album) {		
 		Album savedAlbum = musicDao.getAlbum(album.getName());
 		if (savedAlbum == null) {
 			return album;
@@ -167,7 +166,7 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public void saveSongs(List<Song> songs) {
+	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs) {
 		if (songs == null || songs.isEmpty()) {
 			return;
 		}
@@ -176,21 +175,71 @@ public class MusicManagerImpl implements MusicManager {
 			Artist artist = song.getArtist();
 			artist = prepareArtist(artist);
 			song.setArtist(artist);
-
+			
 			Album album = song.getAlbum();
+			AlbumArtImage albumArtImage = album.getAlbumArtImage();
 			album = prepareAlbum(album);
+			if (albumArtImage != null) {
+				album.setAlbumArtImage(albumArtImage);
+			}
 			song.setAlbum(album);
 
 			Year year = song.getYear();
-			year = processYear(year);
+			year = prepareYear(year);
 			song.setYear(year);
+			
+			Genre genre = song.getGenre();
+			genre = prepareGenre(genre);
+			song.setGenre(genre);
+			
+			musicDao.saveSong(song);
+		}
+		
+	}
+	
+//	@Override
+//	public void saveSongs(List<Song> songs) {
+//		if (songs == null || songs.isEmpty()) {
+//			return;
+//		}
+//
+//		for (Song song : songs) {
+//			Artist artist = song.getArtist();
+//			artist = prepareArtist(artist);
+//			song.setArtist(artist);
+//
+//			Album album = song.getAlbum();
+//			album = prepareAlbum(album);
+//			song.setAlbum(album);
+//
+//			Year year = song.getYear();
+//			year = processYear(year);
+//			song.setYear(year);
+//
+//		}
+//
+//		musicDao.saveSongs(songs);
+//	}
 
+	private Genre prepareGenre(Genre genre) {
+		if (genre == null || StringUtils.isBlank(genre.getName())) {
+			return null;
+		}
+		
+		Genre savedGenre = musicDao.getGenre(genre.getName());
+		if (savedGenre == null) {
+			return genre;
 		}
 
-		musicDao.saveSongs(songs);
+		return savedGenre;
 	}
 
-	private Year processYear(Year year) {
+	private Year prepareYear(Year year) {
+		if (year == null || year.getYear() == 0) {
+			return null;
+		}
+		
+		
 		Year savedYear = musicDao.getYear(year.getYear());
 		if (savedYear == null) {
 			return year;

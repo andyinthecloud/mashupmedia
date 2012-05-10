@@ -13,6 +13,12 @@
 	<!-- JSR-303 support will be detected on classpath and enabled automatically -->
 
 	<mvc:annotation-driven />
+
+	<mvc:interceptors>
+		<bean class="org.mashupmedia.interceptor.InitialisationInterceptor" />
+	</mvc:interceptors>
+
+
 	<context:component-scan base-package="org.mashupmedia.controller" />
 
 

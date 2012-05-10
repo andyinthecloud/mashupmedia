@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
+import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 import org.springframework.stereotype.Repository;
@@ -67,7 +68,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public Song getSong(long libraryId, String path, long sizeInBytes) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Song where library.id = :libraryId and path = :path and sizeInBytes = :sizeInBytes");
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from Song where library.id = :libraryId and path = :path and sizeInBytes = :sizeInBytes");
 		query.setCacheable(true);
 		query.setLong("libraryId", libraryId);
 		query.setString("path", path);
@@ -90,16 +92,15 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public void saveSongs(List<Song> songs) {
-		for (Song song : songs) {
-			Artist artist = song.getArtist();
-			saveOrUpdate(artist);
-			Album album = song.getAlbum();
-			saveOrUpdate(album.getAlbumArtImage());
-			saveOrUpdate(album);
-			saveOrUpdate(song.getYear());
-			saveOrUpdate(song);
-		}
+	public void saveSong(Song song) {
+		Artist artist = song.getArtist();
+		saveOrUpdate(artist);
+		Album album = song.getAlbum();
+		saveOrUpdate(album.getAlbumArtImage());
+		saveOrUpdate(album);
+		saveOrUpdate(song.getYear());
+		saveOrUpdate(song.getGenre());
+		saveOrUpdate(song);
 	}
 
 	@Override
@@ -130,6 +131,15 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
+	public Genre getGenre(String name) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from Genre where name = :name");
+		query.setCacheable(true);
+		query.setString("name", name);
+		Genre genre = (Genre) query.uniqueResult();
+		return genre;
+	}
+	
+	@Override
 	public List<Song> getSongs(Long albumId) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Song where album.id = :albumId order by trackNumber");
 		query.setCacheable(true);
@@ -139,7 +149,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		List<Song> songs = query.list();
 		return songs;
 	}
-	
+
 	@Override
 	public void deleteAlbum(Album album) {
 		Artist artist = album.getArtist();
@@ -149,10 +159,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 			sessionFactory.getCurrentSession().delete(artist);
 		}
 	}
-	
+
 	@Override
 	public void deleteArtist(Artist artist) {
-		sessionFactory.getCurrentSession().delete(artist);		
+		sessionFactory.getCurrentSession().delete(artist);
 	}
 
 	@Override
@@ -164,6 +174,5 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		List<Album> albums = query.list();
 		return albums;
 	}
-	
 
 }

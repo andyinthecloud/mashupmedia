@@ -55,8 +55,8 @@ public class Album {
 		return albumArtImage;
 	}
 
-	public void setAlbumArtImage(AlbumArtImage image) {
-		this.albumArtImage = image;
+	public void setAlbumArtImage(AlbumArtImage albumArtImage) {
+		this.albumArtImage = albumArtImage;
 	}
 
 	public List<Song> getSongs() {

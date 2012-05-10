@@ -72,9 +72,9 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		try {
 			Location location = musicLibrary.getLocation();
 			if (location instanceof FtpLocation) {
-				prepareFtpLibrary(musicLibrary, (FtpLocation) location);
+				prepareFtpMusicLibrary(musicLibrary, (FtpLocation) location);
 			} else {
-				prepareFileLibrary(musicLibrary);
+				prepareFileMusicLibrary(musicLibrary);
 			}
 		} catch (Exception e) {
 			throw new MashupMediaException("Error updating the music library.",
@@ -83,7 +83,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	}
 
-	private void prepareFtpLibrary(Library library, FtpLocation ftpLocation) {
+	private void prepareFtpMusicLibrary(MusicLibrary musicLibrary, FtpLocation ftpLocation) {
 		FTPClient ftpClient = null;
 		try {
 			String decryptedPassword = EncryptionHelper.decryptText(ftpLocation
@@ -98,13 +98,17 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			logger.error("Unable to prepare music library, ftp client is null.");
 			return;
 		}
+		
+		
+		List<Song> songs = connectionManager.getFtpSongs(musicLibrary);
+		musicManager.saveSongs(musicLibrary, songs);
 
-		List<Artist> artists = connectionManager.getFtpArtists(ftpLocation);
-		musicManager.saveArtists(library, artists);
+//		List<Artist> artists = connectionManager.getFtpArtists(ftpLocation);
+//		musicManager.saveArtists(library, artists);
 
 	}
 
-	private void prepareFileLibrary(MusicLibrary musicLibrary)
+	private void prepareFileMusicLibrary(MusicLibrary musicLibrary)
 			throws CannotReadException, IOException, TagException,
 			ReadOnlyFileException, InvalidAudioFrameException {
 		Location location = musicLibrary.getLocation();
@@ -116,6 +120,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 		List<Song> songs = new ArrayList<Song>();
 		prepareSongs(songs, musicFolder, musicLibrary, null, null);
+		musicManager.saveSongs(musicLibrary, songs);
 
 	}
 
@@ -239,6 +244,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		AudioFile audioFile = AudioFileIO.read(musicFile);
 		Tag tag = audioFile.getTag();
 		Artwork artwork = tag.getFirstArtwork();
+		final String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
 		if (artwork != null) {
 			String mimeType = artwork.getMimeType();
 			byte[] bytes = artwork.getBinaryData();
@@ -253,7 +259,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 				@Override
 				public boolean accept(File file, String fileName) {
-					if (FileHelper.isSupportedImage(fileName)) {
+					if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
 						return true;
 					}
 					return false;

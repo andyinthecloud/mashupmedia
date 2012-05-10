@@ -1,13 +1,5 @@
 package org.mashupmedia.util;
 
-import it.sauronsoftware.ftp4j.FTPAbortedException;
-import it.sauronsoftware.ftp4j.FTPClient;
-import it.sauronsoftware.ftp4j.FTPDataTransferException;
-import it.sauronsoftware.ftp4j.FTPException;
-import it.sauronsoftware.ftp4j.FTPFile;
-import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
-import it.sauronsoftware.ftp4j.FTPListParseException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -63,66 +55,66 @@ public class FileHelper {
 
 	}
 
-	/**
-	 * Returns true if the ftpFile is a folder and contains songs
-	 * 
-	 * @param ftpFile
-	 * @return
-	 * @throws FTPException
-	 * @throws FTPIllegalReplyException
-	 * @throws IOException
-	 * @throws IllegalStateException
-	 * @throws FTPListParseException
-	 * @throws FTPAbortedException
-	 * @throws FTPDataTransferException
-	 */
-	public static boolean isAlbum(FTPFile ftpFile, FTPClient ftpClient) throws IllegalStateException, IOException, FTPIllegalReplyException,
-			FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
-		if (ftpFile.getType() != FTPFile.TYPE_DIRECTORY) {
-			return false;
-		}
-
-		String name = ftpFile.getName();
-		String path = ftpClient.currentDirectory();
-		String albumPath = path + "/" + name;
-
-		try {
-			ftpClient.changeDirectory(albumPath);
-			String[] fileNames = ftpClient.listNames();
-			for (String fileName : fileNames) {
-				if (isSupportedSong(fileName)) {
-					return true;
-				}
-			}
-			return false;
-		} finally {
-			ftpClient.changeDirectory(path);
-		}
-	}
-
-	public static boolean hasFolders(FTPFile ftpFile, FTPClient ftpClient) throws IllegalStateException, IOException, FTPIllegalReplyException,
-			FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
-		if (ftpFile.getType() != FTPFile.TYPE_DIRECTORY) {
-			return false;
-		}
-
-		String name = ftpFile.getName();
-		String path = ftpClient.currentDirectory();
-		String albumPath = path + "/" + name;
-
-		try {
-			ftpClient.changeDirectory(albumPath);
-			FTPFile[] childFtpFiles = ftpClient.list();
-			for (FTPFile childFtpFile : childFtpFiles) {
-				if (childFtpFile.getType() == FTPFile.TYPE_DIRECTORY) {
-					return true;
-				}
-			}
-			return false;
-		} finally {
-			ftpClient.changeDirectory(path);
-		}
-	}
+//	/**
+//	 * Returns true if the ftpFile is a folder and contains songs
+//	 * 
+//	 * @param ftpFile
+//	 * @return
+//	 * @throws FTPException
+//	 * @throws FTPIllegalReplyException
+//	 * @throws IOException
+//	 * @throws IllegalStateException
+//	 * @throws FTPListParseException
+//	 * @throws FTPAbortedException
+//	 * @throws FTPDataTransferException
+//	 */
+//	public static boolean isAlbum(FTPFile ftpFile, FTPClient ftpClient) throws IllegalStateException, IOException, FTPIllegalReplyException,
+//			FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
+//		if (ftpFile.getType() != FTPFile.TYPE_DIRECTORY) {
+//			return false;
+//		}
+//
+//		String name = ftpFile.getName();
+//		String path = ftpClient.currentDirectory();
+//		String albumPath = path + "/" + name;
+//
+//		try {
+//			ftpClient.changeDirectory(albumPath);
+//			String[] fileNames = ftpClient.listNames();
+//			for (String fileName : fileNames) {
+//				if (isSupportedSong(fileName)) {
+//					return true;
+//				}
+//			}
+//			return false;
+//		} finally {
+//			ftpClient.changeDirectory(path);
+//		}
+//	}
+//
+//	public static boolean hasFolders(FTPFile ftpFile, FTPClient ftpClient) throws IllegalStateException, IOException, FTPIllegalReplyException,
+//			FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
+//		if (ftpFile.getType() != FTPFile.TYPE_DIRECTORY) {
+//			return false;
+//		}
+//
+//		String name = ftpFile.getName();
+//		String path = ftpClient.currentDirectory();
+//		String albumPath = path + "/" + name;
+//
+//		try {
+//			ftpClient.changeDirectory(albumPath);
+//			FTPFile[] childFtpFiles = ftpClient.list();
+//			for (FTPFile childFtpFile : childFtpFiles) {
+//				if (childFtpFile.getType() == FTPFile.TYPE_DIRECTORY) {
+//					return true;
+//				}
+//			}
+//			return false;
+//		} finally {
+//			ftpClient.changeDirectory(path);
+//		}
+//	}
 
 	public static String writeAlbumArt(long libraryId, String mimeType, byte[] bytes) throws FileNotFoundException, IOException {
 		mimeType = StringUtils.trimToEmpty(mimeType);
@@ -152,6 +144,31 @@ public class FileHelper {
 			throw new MashupMediaException("Unable to delete library folder", e);
 		}
 		
+	}
+
+	public static boolean isMatchingFileNamePattern(String fileName, String fileNamePattern) {
+		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
+		if (StringUtils.isEmpty(fileName)) {
+			return false;
+		}
+		
+		fileNamePattern = StringUtils.trimToEmpty(fileNamePattern);
+		if (StringUtils.isEmpty(fileNamePattern)) {
+			fileNamePattern = MashUpMediaConstants.COVER_ART_DEFAULT_NAME + "*";
+		}
+		
+		String[] patterns = fileNamePattern.split(",|;");
+		for (String pattern : patterns) {
+			pattern = StringUtils.trimToEmpty(pattern).toLowerCase();
+			if (StringUtils.isEmpty(pattern)) {
+				continue;
+			}
+			pattern = pattern.replaceAll("\\*", ".*.");
+			if (fileName.matches(pattern)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

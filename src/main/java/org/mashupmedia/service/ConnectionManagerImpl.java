@@ -120,14 +120,16 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	}
 	
 	
-
-	public List<Song> getFtpSongs(FtpLocation location) {
-
+	@Override
+	public List<Song> getFtpSongs(MusicLibrary musicLibrary) {
+		
+		FtpLocation ftpLocation = (FtpLocation) musicLibrary.getLocation(); 
+		
 		List<Song> songs = new ArrayList<Song>();
 		FTPClient ftpClient = null;
 		try {
-			ftpClient = connectToFtp(location);
-			processFtpSongs(ftpClient, songs);
+			ftpClient = connectToFtp(ftpLocation);
+			processFtpSongs(ftpClient, songs, musicLibrary, null, null, 0);
 
 		} catch (Exception e) {
 			logger.error("Unable to connect to ftp server.", e);
@@ -157,7 +159,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 						artistName = fileName;
 					} else {
 						albumName = StringUtils.trimToEmpty(albumName);
-						if (StringUtils.isEmpty(artistName)) {
+						if (StringUtils.isEmpty(albumName)) {
 							albumName = fileName;							
 						} else {
 							albumName += " - " + fileName;
@@ -182,9 +184,11 @@ public class ConnectionManagerImpl implements ConnectionManager {
 					
 					if (trackNumber == 1) {
 						AlbumArtImage albumArtImage = getAlbumArtImage(ftpClient, musicLibrary, album);
+						album.setAlbumArtImage(albumArtImage);
 					}
 					
 					Song song = new Song();
+					song.setArtist(artist);
 					song.setAlbum(album);
 					song.setFileName(fileName);
 					song.setPath(ftpFile.getLink());
@@ -196,15 +200,6 @@ public class ConnectionManagerImpl implements ConnectionManager {
 				} 
 				
 				
-				if (FileHelper.isSupportedImage(fileName)) {
-					AlbumArtImage image = new AlbumArtImage();
-					image.setName(fileName);
-					image.setUrl(mediaPath);
-					album.setAlbumArtImage(image);
-
-				}
-	
-
 			}
 		} catch (Exception e) {
 			logger.error("Unable to list ftp files", e);
@@ -215,17 +210,21 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	protected AlbumArtImage getAlbumArtImage(FTPClient ftpClient,
 			MusicLibrary musicLibrary, Album album) throws IllegalStateException, IOException, FTPIllegalReplyException, FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
 		
+		String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
 		FTPFile[] ftpFiles = ftpClient.list();
-		Arrays.sort(ftpFiles, new FtpFileComparator());
 		for (FTPFile ftpFile : ftpFiles) {
 			String fileName = ftpFile.getName();
-			if (FileHelper.isSupportedImage(fileName)) {
-				
+			if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
+				AlbumArtImage albumArtImage = new AlbumArtImage();
+				albumArtImage.setAlbum(album);
+				albumArtImage.setLibrary(musicLibrary);
+				albumArtImage.setName(ftpFile.getName());
+				albumArtImage.setUrl(ftpFile.getLink());
+				return albumArtImage;
+
 			}
 		}
 		
-
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -243,142 +242,143 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	
 	
 	
-	@Override
-	public List<Artist> getFtpArtists(FtpLocation location) {
-
-		List<Artist> artists = new ArrayList<Artist>();
-		FTPClient ftpClient = null;
-		try {
-			ftpClient = connectToFtp(location);
-			processFtpArtists(ftpClient, artists);
-
-		} catch (Exception e) {
-			logger.error("Unable to connect to ftp server.", e);
-		} finally {
-			try {
-				ftpClient.disconnect(true);
-			} catch (Exception e) {
-				logger.error("Unable to disconnect from ftp client", e);
-			}
-		}
-
-		return artists;
-	}
-
+//	@Override
+//	public List<Artist> getFtpArtists(FtpLocation location) {
+//
+//		List<Artist> artists = new ArrayList<Artist>();
+//		FTPClient ftpClient = null;
+//		try {
+//			ftpClient = connectToFtp(location);
+//			processFtpArtists(ftpClient, artists);
+//
+//		} catch (Exception e) {
+//			logger.error("Unable to connect to ftp server.", e);
+//		} finally {
+//			try {
+//				ftpClient.disconnect(true);
+//			} catch (Exception e) {
+//				logger.error("Unable to disconnect from ftp client", e);
+//			}
+//		}
+//
+//		return artists;
+//	}
+//
+//	
+//
+//	
+//	
+//	
+//	private void processFtpArtists(FTPClient ftpClient, List<Artist> artists) {
+//
+//		try {
+//			FTPFile[] ftpArtistFiles = ftpClient.list();
+//			for (FTPFile ftpArtistFile : ftpArtistFiles) {
+//				Artist artist = new Artist();
+//				String name = ftpArtistFile.getName();
+//				artist.setName(name);
+//				List<Album> albums = new ArrayList<Album>();
+//				processFtpAlbums(artist, albums, ftpArtistFile, ftpClient, null);
+//				artist.setAlbums(albums);
+//				artists.add(artist);
+//
+//			}
+//		} catch (Exception e) {
+//			logger.error("Unable to list ftp files", e);
+//		}
+//
+//	}
+//
+//	private void processFtpAlbums(Artist artist, List<Album> albums, FTPFile ftpArtistFile, FTPClient ftpClient, String prefix) throws IllegalStateException,
+//			IOException, FTPIllegalReplyException, FTPException {
+//
+//		if (ftpArtistFile.getType() != FTPFile.TYPE_DIRECTORY) {
+//			return;
+//		}
+//
+//		String name = ftpArtistFile.getName();
+//		String path = ftpClient.currentDirectory();
+//		String artistPath = path + "/" + name;
+//
+//		try {
+//			ftpClient.changeDirectory(artistPath);
+//			FTPFile[] ftpAlbumFiles = ftpClient.list();
+//			for (FTPFile ftpAlbumFile : ftpAlbumFiles) {
+//				String albumName = ftpAlbumFile.getName();
+//				if (StringUtils.isNotBlank(prefix)) {
+//					albumName = prefix + " - " + albumName;
+//				}					
+//
+//				if (FileHelper.isAlbum(ftpAlbumFile, ftpClient)) {
+//					Album album = new Album();
+//					album.setArtist(artist);
+//					album.setName(albumName);
+//					processFtpAlbum(album, ftpAlbumFile, ftpClient);
+//					albums.add(album);
+//					continue;
+//				} 
+//				
+//				if (FileHelper.hasFolders(ftpAlbumFile, ftpClient)) {
+//					processFtpAlbums(artist, albums, ftpAlbumFile, ftpClient, albumName);
+//				}
+//			}
+//
+//		} catch (Exception e) {
+//			logger.error("Unable to list ftp files", e);
+//		} finally {
+//			ftpClient.changeDirectory(path);
+//		}
+//
+//	}
+//
+//	private void processFtpAlbum(Album album, FTPFile ftpAlbumFile, FTPClient ftpClient) throws IllegalStateException, IOException,
+//			FTPIllegalReplyException, FTPException {
+//		if (ftpAlbumFile.getType() != FTPFile.TYPE_DIRECTORY) {
+//			return;
+//		}
+//
+//		List<Song> songs = new ArrayList<Song>();
+//
+//		String name = ftpAlbumFile.getName();
+//		String path = ftpClient.currentDirectory();
+//		String albumPath = path + "/" + name;
+//		try {
+//			ftpClient.changeDirectory(albumPath);
+//			FTPFile[] ftpMediaFiles = ftpClient.list();
+//			Arrays.sort(ftpMediaFiles, new FtpFileComparator());
+//
+//			for (int i = 0; i < ftpMediaFiles.length; i++) {
+//				FTPFile ftpMediaFile = ftpMediaFiles[i];
+//				String fileName = ftpMediaFile.getName();
+//				String mediaPath = albumPath + "/" + fileName;
+//				if (FileHelper.isSupportedSong(fileName)) {
+//					Song song = new Song();
+//					song.setAlbum(album);
+//					song.setFileName(fileName);
+//					song.setPath(mediaPath);
+//					song.setSizeInBytes(ftpMediaFile.getSize());
+//					song.setTitle(fileName);
+//					song.setTrackNumber(i + 1);
+//					songs.add(song);
+//				} else if (FileHelper.isSupportedImage(fileName)) {
+//					AlbumArtImage image = new AlbumArtImage();
+//					image.setName(fileName);
+//					image.setUrl(mediaPath);
+//					album.setAlbumArtImage(image);
+//
+//				}
+//			}
+//
+//			album.setSongs(songs);
+//
+//		} catch (Exception e) {
+//			logger.error("Unable to list ftp files", e);
+//		} finally {
+//			ftpClient.changeDirectory(path);
+//		}
+//
+//	}
 	
-
-	
-	
-	
-	private void processFtpArtists(FTPClient ftpClient, List<Artist> artists) {
-
-		try {
-			FTPFile[] ftpArtistFiles = ftpClient.list();
-			for (FTPFile ftpArtistFile : ftpArtistFiles) {
-				Artist artist = new Artist();
-				String name = ftpArtistFile.getName();
-				artist.setName(name);
-				List<Album> albums = new ArrayList<Album>();
-				processFtpAlbums(artist, albums, ftpArtistFile, ftpClient, null);
-				artist.setAlbums(albums);
-				artists.add(artist);
-
-			}
-		} catch (Exception e) {
-			logger.error("Unable to list ftp files", e);
-		}
-
-	}
-
-	private void processFtpAlbums(Artist artist, List<Album> albums, FTPFile ftpArtistFile, FTPClient ftpClient, String prefix) throws IllegalStateException,
-			IOException, FTPIllegalReplyException, FTPException {
-
-		if (ftpArtistFile.getType() != FTPFile.TYPE_DIRECTORY) {
-			return;
-		}
-
-		String name = ftpArtistFile.getName();
-		String path = ftpClient.currentDirectory();
-		String artistPath = path + "/" + name;
-
-		try {
-			ftpClient.changeDirectory(artistPath);
-			FTPFile[] ftpAlbumFiles = ftpClient.list();
-			for (FTPFile ftpAlbumFile : ftpAlbumFiles) {
-				String albumName = ftpAlbumFile.getName();
-				if (StringUtils.isNotBlank(prefix)) {
-					albumName = prefix + " - " + albumName;
-				}					
-
-				if (FileHelper.isAlbum(ftpAlbumFile, ftpClient)) {
-					Album album = new Album();
-					album.setArtist(artist);
-					album.setName(albumName);
-					processFtpAlbum(album, ftpAlbumFile, ftpClient);
-					albums.add(album);
-					continue;
-				} 
-				
-				if (FileHelper.hasFolders(ftpAlbumFile, ftpClient)) {
-					processFtpAlbums(artist, albums, ftpAlbumFile, ftpClient, albumName);
-				}
-			}
-
-		} catch (Exception e) {
-			logger.error("Unable to list ftp files", e);
-		} finally {
-			ftpClient.changeDirectory(path);
-		}
-
-	}
-
-	private void processFtpAlbum(Album album, FTPFile ftpAlbumFile, FTPClient ftpClient) throws IllegalStateException, IOException,
-			FTPIllegalReplyException, FTPException {
-		if (ftpAlbumFile.getType() != FTPFile.TYPE_DIRECTORY) {
-			return;
-		}
-
-		List<Song> songs = new ArrayList<Song>();
-
-		String name = ftpAlbumFile.getName();
-		String path = ftpClient.currentDirectory();
-		String albumPath = path + "/" + name;
-		try {
-			ftpClient.changeDirectory(albumPath);
-			FTPFile[] ftpMediaFiles = ftpClient.list();
-			Arrays.sort(ftpMediaFiles, new FtpFileComparator());
-
-			for (int i = 0; i < ftpMediaFiles.length; i++) {
-				FTPFile ftpMediaFile = ftpMediaFiles[i];
-				String fileName = ftpMediaFile.getName();
-				String mediaPath = albumPath + "/" + fileName;
-				if (FileHelper.isSupportedSong(fileName)) {
-					Song song = new Song();
-					song.setAlbum(album);
-					song.setFileName(fileName);
-					song.setPath(mediaPath);
-					song.setSizeInBytes(ftpMediaFile.getSize());
-					song.setTitle(fileName);
-					song.setTrackNumber(i + 1);
-					songs.add(song);
-				} else if (FileHelper.isSupportedImage(fileName)) {
-					AlbumArtImage image = new AlbumArtImage();
-					image.setName(fileName);
-					image.setUrl(mediaPath);
-					album.setAlbumArtImage(image);
-
-				}
-			}
-
-			album.setSongs(songs);
-
-		} catch (Exception e) {
-			logger.error("Unable to list ftp files", e);
-		} finally {
-			ftpClient.changeDirectory(path);
-		}
-
-	}
 
 	@Override
 	public byte[] getAlbumArtImageBytes(AlbumArtImage image) throws Exception {
@@ -433,4 +433,5 @@ public class ConnectionManagerImpl implements ConnectionManager {
 			ftpClient.disconnect(true);
 		}
 	}
+	
 }

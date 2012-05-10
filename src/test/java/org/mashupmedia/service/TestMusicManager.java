@@ -33,13 +33,13 @@ public class TestMusicManager extends TestBaseService {
 		List<Song> songs = new ArrayList<Song>();
 		Song song1 = TestHelper.prepareSong(musicLibrary, "song1");
 		songs.add(song1);
-		musicManager.saveSongs(songs);
+		musicManager.saveSongs(musicLibrary, songs);
 		
 
 		songs = new ArrayList<Song>();
 		Song song2 = TestHelper.prepareSong(musicLibrary, "song2");
 		songs.add(song2);
-		musicManager.saveSongs(songs);
+		musicManager.saveSongs(musicLibrary, songs);
 		
 		String albumName = song2.getAlbum().getName();
 		
