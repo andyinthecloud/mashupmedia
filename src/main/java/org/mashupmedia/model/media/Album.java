@@ -21,7 +21,7 @@ public class Album {
 	private String name;
 	@ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private Artist artist;
-	@ManyToOne (cascade = {CascadeType.REMOVE})
+	@ManyToOne (cascade = {CascadeType.ALL})
 	private AlbumArtImage albumArtImage;
 	@OneToMany(mappedBy = "album")
 	@OrderBy("trackNumber")

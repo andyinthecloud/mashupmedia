@@ -96,6 +96,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		Artist artist = song.getArtist();
 		saveOrUpdate(artist);
 		Album album = song.getAlbum();
+		album.setArtist(artist);
 		saveOrUpdate(album.getAlbumArtImage());
 		saveOrUpdate(album);
 		saveOrUpdate(song.getYear());

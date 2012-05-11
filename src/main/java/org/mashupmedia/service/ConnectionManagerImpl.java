@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.plaf.metal.MetalIconFactory.FolderIcon16;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +33,7 @@ import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -129,7 +128,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		FTPClient ftpClient = null;
 		try {
 			ftpClient = connectToFtp(ftpLocation);
-			processFtpSongs(ftpClient, songs, musicLibrary, null, null, 0);
+			processFtpSongs(ftpClient, songs, musicLibrary, null, new ArrayList<String>(), 0);
 
 		} catch (Exception e) {
 			logger.error("Unable to connect to ftp server.", e);
@@ -146,7 +145,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 	
 	
-	protected void processFtpSongs(FTPClient ftpClient, List<Song> songs, MusicLibrary musicLibrary, String artistName, String albumName, int trackNumber) {
+	protected void processFtpSongs(FTPClient ftpClient, List<Song> songs, MusicLibrary musicLibrary, String artistName, List<String> albumNameParts, int trackNumber) {
 		try {
 			FTPFile[] ftpFiles = ftpClient.list();
 			Arrays.sort(ftpFiles, new FtpFileComparator());
@@ -158,15 +157,15 @@ public class ConnectionManagerImpl implements ConnectionManager {
 					if (StringUtils.isEmpty(artistName)) {
 						artistName = fileName;
 					} else {
-						albumName = StringUtils.trimToEmpty(albumName);
-						if (StringUtils.isEmpty(albumName)) {
-							albumName = fileName;							
-						} else {
-							albumName += " - " + fileName;
-						}
+						albumNameParts.add(fileName);
 					}
 					
-					processFtpSongs(ftpClient, songs, musicLibrary, artistName, albumName, 0);
+					processFtpSongs(ftpClient, songs, musicLibrary, artistName, albumNameParts, 0);
+					if (albumNameParts.isEmpty()) {
+						artistName = null;
+					} else {
+						albumNameParts.remove(albumNameParts.size() - 1);
+					}
 					ftpClient.changeDirectoryUp();
 					continue;
 					
@@ -174,11 +173,14 @@ public class ConnectionManagerImpl implements ConnectionManager {
 				
 				
 				if (FileHelper.isSupportedSong(fileName)) {
+					String filePath = ftpClient.currentDirectory() + "/" + fileName;
+					
 					trackNumber++;
 					Artist artist = new Artist();
 					artist.setName(artistName);
 					
 					Album album = new Album();
+					String albumName = StringHelper.getAlbumName(albumNameParts);
 					album.setName(albumName);
 					album.setArtist(artist);
 					
@@ -190,8 +192,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
 					Song song = new Song();
 					song.setArtist(artist);
 					song.setAlbum(album);
-					song.setFileName(fileName);
-					song.setPath(ftpFile.getLink());
+					song.setFileName(fileName);					
+					song.setPath(filePath);
 					song.setSizeInBytes(ftpFile.getSize());
 					song.setTitle(fileName);
 					song.setTrackNumber(trackNumber);
@@ -215,11 +217,12 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		for (FTPFile ftpFile : ftpFiles) {
 			String fileName = ftpFile.getName();
 			if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
+				String filePath = ftpClient.currentDirectory() + "/" + fileName;
 				AlbumArtImage albumArtImage = new AlbumArtImage();
 				albumArtImage.setAlbum(album);
 				albumArtImage.setLibrary(musicLibrary);
 				albumArtImage.setName(ftpFile.getName());
-				albumArtImage.setUrl(ftpFile.getLink());
+				albumArtImage.setUrl(filePath);
 				return albumArtImage;
 
 			}

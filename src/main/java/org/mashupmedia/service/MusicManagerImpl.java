@@ -112,13 +112,18 @@ public class MusicManagerImpl implements MusicManager {
 		musicDao.saveAlbum(album);
 	}
 
-	protected Artist prepareArtist(Artist artist) {
+	protected Artist prepareArtist(Artist artist, Album album) {
 		Artist savedArtist = musicDao.getArtist(artist.getName());
 		if (savedArtist == null) {
 			return artist;
 		}
 
 		List<Album> albums = artist.getAlbums();
+		if (albums == null) {
+			albums = new ArrayList<Album>();
+		}
+		
+		albums.add(album);
 		savedArtist.setAlbums(albums);
 		return savedArtist;
 	}
@@ -172,9 +177,7 @@ public class MusicManagerImpl implements MusicManager {
 		}
 
 		for (Song song : songs) {
-			Artist artist = song.getArtist();
-			artist = prepareArtist(artist);
-			song.setArtist(artist);
+			song.setLibrary(musicLibrary);
 			
 			Album album = song.getAlbum();
 			AlbumArtImage albumArtImage = album.getAlbumArtImage();
@@ -184,6 +187,10 @@ public class MusicManagerImpl implements MusicManager {
 			}
 			song.setAlbum(album);
 
+			Artist artist = song.getArtist();
+			artist = prepareArtist(artist, album);
+			song.setArtist(artist);
+			
 			Year year = song.getYear();
 			year = prepareYear(year);
 			song.setYear(year);
@@ -191,6 +198,7 @@ public class MusicManagerImpl implements MusicManager {
 			Genre genre = song.getGenre();
 			genre = prepareGenre(genre);
 			song.setGenre(genre);
+			
 			
 			musicDao.saveSong(song);
 		}
