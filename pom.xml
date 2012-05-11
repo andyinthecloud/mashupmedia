@@ -335,6 +335,26 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>mashupmedia-test</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>mashupmedia-local</value>
+				</property>
+			</activation>
+			<properties>
+				<exploded.war.path>${env.CATALINA_HOME}/webapps/mashupmedia/</exploded.war.path>
+				<application.folder>C:/andy/development/data/mashupmedia/</application.folder>
+				<message.cache.seconds>1</message.cache.seconds>
+				<log4j.mashupmedia.level>debug</log4j.mashupmedia.level>
+				<log4j.focus.level>debug</log4j.focus.level>
+				<log4j.root.level>info</log4j.root.level>
+				<log.path>${env.CATALINA_HOME}/logs</log.path>
+			</properties>
+		</profile>
+	</profiles>
 
 
 </project>
