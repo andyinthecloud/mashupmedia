@@ -17,7 +17,7 @@ public interface MusicDao {
 
 	public Artist getArtist(String name);
 
-	public Song getSong(long id, String path, long sizeInBytes);
+	public Song getSong(long libraryId, String songPath, long songSizeInBytes);
 
 	public Album getAlbum(String name);
 

@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.mashupmedia.model.library.Library;
 
@@ -26,6 +28,7 @@ public class Media {
 	@ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private Library library;
 	private long sizeInBytes;
+	@Temporal (TemporalType.TIMESTAMP)
 	private Date updatedOn;
 	private String format;
 	

@@ -67,13 +67,13 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public Song getSong(long libraryId, String path, long sizeInBytes) {
+	public Song getSong(long libraryId, String songPath, long songSizeInBytes) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
 				"from Song where library.id = :libraryId and path = :path and sizeInBytes = :sizeInBytes");
 		query.setCacheable(true);
 		query.setLong("libraryId", libraryId);
-		query.setString("path", path);
-		query.setLong("sizeInBytes", sizeInBytes);
+		query.setString("path", songPath);
+		query.setLong("sizeInBytes", songSizeInBytes);
 
 		Song song = (Song) query.uniqueResult();
 		return song;
@@ -82,6 +82,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	@Override
 	public List<Song> getSongsToDelete(long libraryId, Date date) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Song where library.id = :libraryId and updatedOn < :updatedOn");
+//		Query query = sessionFactory.getCurrentSession().createQuery("from Song where library.id = :libraryId");
 		query.setCacheable(true);
 		query.setLong("libraryId", libraryId);
 		query.setDate("updatedOn", date);
@@ -95,13 +96,33 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	public void saveSong(Song song) {
 		Artist artist = song.getArtist();
 		saveOrUpdate(artist);
+
 		Album album = song.getAlbum();
-		album.setArtist(artist);
-		saveOrUpdate(album.getAlbumArtImage());
+		album = prepareAlbum(album);
 		saveOrUpdate(album);
+		song.setAlbum(album);
+		
 		saveOrUpdate(song.getYear());
 		saveOrUpdate(song.getGenre());
 		saveOrUpdate(song);
+	}
+
+	private Album prepareAlbum(Album album) {
+		Artist artist = album.getArtist();
+		String artistName = artist.getName();
+		String albumName = album.getName();
+		Query query = sessionFactory.getCurrentSession().createQuery("from Album where name = :albumName and artist.name = :artistName");
+		query.setCacheable(true);
+		query.setString("albumName", albumName);
+		query.setString("artistName", artistName);
+
+		Album savedAlbum = (Album) query.uniqueResult();
+		
+		if (savedAlbum != null) {
+			return savedAlbum;
+		}
+		
+		return album;
 	}
 
 	@Override
@@ -155,7 +176,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	public void deleteAlbum(Album album) {
 		Artist artist = album.getArtist();
 		sessionFactory.getCurrentSession().delete(album);
-		List<Album> albums = artist.getAlbums();
+		List<Album> albums = getAlbumsByArtist(artist.getId());
 		if (albums == null || albums.isEmpty()) {
 			sessionFactory.getCurrentSession().delete(artist);
 		}

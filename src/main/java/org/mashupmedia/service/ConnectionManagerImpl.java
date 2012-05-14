@@ -45,7 +45,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 	@Autowired
 	private ConfigurationManager configurationManager;
-	
+
 	protected boolean isProxyEnabled() {
 		boolean isProxyEnabled = BooleanUtils.toBoolean(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
 		return isProxyEnabled;
@@ -117,13 +117,12 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		return ftpClient;
 	}
-	
-	
+
 	@Override
 	public List<Song> getFtpSongs(MusicLibrary musicLibrary) {
-		
-		FtpLocation ftpLocation = (FtpLocation) musicLibrary.getLocation(); 
-		
+
+		FtpLocation ftpLocation = (FtpLocation) musicLibrary.getLocation();
+
 		List<Song> songs = new ArrayList<Song>();
 		FTPClient ftpClient = null;
 		try {
@@ -143,9 +142,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		return songs;
 	}
 
-	
-	
-	protected void processFtpSongs(FTPClient ftpClient, List<Song> songs, MusicLibrary musicLibrary, String artistName, List<String> albumNameParts, int trackNumber) {
+	protected void processFtpSongs(FTPClient ftpClient, List<Song> songs, MusicLibrary musicLibrary, String artistName, List<String> albumNameParts,
+			int trackNumber) {
 		try {
 			FTPFile[] ftpFiles = ftpClient.list();
 			Arrays.sort(ftpFiles, new FtpFileComparator());
@@ -159,7 +157,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 					} else {
 						albumNameParts.add(fileName);
 					}
-					
+
 					processFtpSongs(ftpClient, songs, musicLibrary, artistName, albumNameParts, 0);
 					if (albumNameParts.isEmpty()) {
 						artistName = null;
@@ -168,50 +166,47 @@ public class ConnectionManagerImpl implements ConnectionManager {
 					}
 					ftpClient.changeDirectoryUp();
 					continue;
-					
+
 				}
-				
-				
+
 				if (FileHelper.isSupportedSong(fileName)) {
 					String filePath = ftpClient.currentDirectory() + "/" + fileName;
-					
+
 					trackNumber++;
 					Artist artist = new Artist();
 					artist.setName(artistName);
-					
+
 					Album album = new Album();
 					String albumName = StringHelper.getAlbumName(albumNameParts);
 					album.setName(albumName);
 					album.setArtist(artist);
-					
+
 					if (trackNumber == 1) {
 						AlbumArtImage albumArtImage = getAlbumArtImage(ftpClient, musicLibrary, album);
 						album.setAlbumArtImage(albumArtImage);
 					}
-					
+
 					Song song = new Song();
 					song.setArtist(artist);
 					song.setAlbum(album);
-					song.setFileName(fileName);					
+					song.setFileName(fileName);
 					song.setPath(filePath);
 					song.setSizeInBytes(ftpFile.getSize());
 					song.setTitle(fileName);
 					song.setTrackNumber(trackNumber);
 					songs.add(song);
 					continue;
-				} 
-				
-				
+				}
+
 			}
 		} catch (Exception e) {
 			logger.error("Unable to list ftp files", e);
 		}
 	}
-	
-	
-	protected AlbumArtImage getAlbumArtImage(FTPClient ftpClient,
-			MusicLibrary musicLibrary, Album album) throws IllegalStateException, IOException, FTPIllegalReplyException, FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
-		
+
+	protected AlbumArtImage getAlbumArtImage(FTPClient ftpClient, MusicLibrary musicLibrary, Album album) throws IllegalStateException, IOException,
+			FTPIllegalReplyException, FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
+
 		String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
 		FTPFile[] ftpFiles = ftpClient.list();
 		for (FTPFile ftpFile : ftpFiles) {
@@ -227,161 +222,9 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 			}
 		}
-		
+
 		return null;
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	@Override
-//	public List<Artist> getFtpArtists(FtpLocation location) {
-//
-//		List<Artist> artists = new ArrayList<Artist>();
-//		FTPClient ftpClient = null;
-//		try {
-//			ftpClient = connectToFtp(location);
-//			processFtpArtists(ftpClient, artists);
-//
-//		} catch (Exception e) {
-//			logger.error("Unable to connect to ftp server.", e);
-//		} finally {
-//			try {
-//				ftpClient.disconnect(true);
-//			} catch (Exception e) {
-//				logger.error("Unable to disconnect from ftp client", e);
-//			}
-//		}
-//
-//		return artists;
-//	}
-//
-//	
-//
-//	
-//	
-//	
-//	private void processFtpArtists(FTPClient ftpClient, List<Artist> artists) {
-//
-//		try {
-//			FTPFile[] ftpArtistFiles = ftpClient.list();
-//			for (FTPFile ftpArtistFile : ftpArtistFiles) {
-//				Artist artist = new Artist();
-//				String name = ftpArtistFile.getName();
-//				artist.setName(name);
-//				List<Album> albums = new ArrayList<Album>();
-//				processFtpAlbums(artist, albums, ftpArtistFile, ftpClient, null);
-//				artist.setAlbums(albums);
-//				artists.add(artist);
-//
-//			}
-//		} catch (Exception e) {
-//			logger.error("Unable to list ftp files", e);
-//		}
-//
-//	}
-//
-//	private void processFtpAlbums(Artist artist, List<Album> albums, FTPFile ftpArtistFile, FTPClient ftpClient, String prefix) throws IllegalStateException,
-//			IOException, FTPIllegalReplyException, FTPException {
-//
-//		if (ftpArtistFile.getType() != FTPFile.TYPE_DIRECTORY) {
-//			return;
-//		}
-//
-//		String name = ftpArtistFile.getName();
-//		String path = ftpClient.currentDirectory();
-//		String artistPath = path + "/" + name;
-//
-//		try {
-//			ftpClient.changeDirectory(artistPath);
-//			FTPFile[] ftpAlbumFiles = ftpClient.list();
-//			for (FTPFile ftpAlbumFile : ftpAlbumFiles) {
-//				String albumName = ftpAlbumFile.getName();
-//				if (StringUtils.isNotBlank(prefix)) {
-//					albumName = prefix + " - " + albumName;
-//				}					
-//
-//				if (FileHelper.isAlbum(ftpAlbumFile, ftpClient)) {
-//					Album album = new Album();
-//					album.setArtist(artist);
-//					album.setName(albumName);
-//					processFtpAlbum(album, ftpAlbumFile, ftpClient);
-//					albums.add(album);
-//					continue;
-//				} 
-//				
-//				if (FileHelper.hasFolders(ftpAlbumFile, ftpClient)) {
-//					processFtpAlbums(artist, albums, ftpAlbumFile, ftpClient, albumName);
-//				}
-//			}
-//
-//		} catch (Exception e) {
-//			logger.error("Unable to list ftp files", e);
-//		} finally {
-//			ftpClient.changeDirectory(path);
-//		}
-//
-//	}
-//
-//	private void processFtpAlbum(Album album, FTPFile ftpAlbumFile, FTPClient ftpClient) throws IllegalStateException, IOException,
-//			FTPIllegalReplyException, FTPException {
-//		if (ftpAlbumFile.getType() != FTPFile.TYPE_DIRECTORY) {
-//			return;
-//		}
-//
-//		List<Song> songs = new ArrayList<Song>();
-//
-//		String name = ftpAlbumFile.getName();
-//		String path = ftpClient.currentDirectory();
-//		String albumPath = path + "/" + name;
-//		try {
-//			ftpClient.changeDirectory(albumPath);
-//			FTPFile[] ftpMediaFiles = ftpClient.list();
-//			Arrays.sort(ftpMediaFiles, new FtpFileComparator());
-//
-//			for (int i = 0; i < ftpMediaFiles.length; i++) {
-//				FTPFile ftpMediaFile = ftpMediaFiles[i];
-//				String fileName = ftpMediaFile.getName();
-//				String mediaPath = albumPath + "/" + fileName;
-//				if (FileHelper.isSupportedSong(fileName)) {
-//					Song song = new Song();
-//					song.setAlbum(album);
-//					song.setFileName(fileName);
-//					song.setPath(mediaPath);
-//					song.setSizeInBytes(ftpMediaFile.getSize());
-//					song.setTitle(fileName);
-//					song.setTrackNumber(i + 1);
-//					songs.add(song);
-//				} else if (FileHelper.isSupportedImage(fileName)) {
-//					AlbumArtImage image = new AlbumArtImage();
-//					image.setName(fileName);
-//					image.setUrl(mediaPath);
-//					album.setAlbumArtImage(image);
-//
-//				}
-//			}
-//
-//			album.setSongs(songs);
-//
-//		} catch (Exception e) {
-//			logger.error("Unable to list ftp files", e);
-//		} finally {
-//			ftpClient.changeDirectory(path);
-//		}
-//
-//	}
-	
 
 	@Override
 	public byte[] getAlbumArtImageBytes(AlbumArtImage image) throws Exception {
@@ -409,13 +252,13 @@ public class ConnectionManagerImpl implements ConnectionManager {
 			FtpLocation ftpLocation = (FtpLocation) location;
 			String password = ftpLocation.getPassword();
 			password = EncryptionHelper.decryptText(password);
-			ftpLocation.setPassword(password);			
+			ftpLocation.setPassword(password);
 			bytes = getFtpImageBytes(ftpLocation, imagePath);
 		} else {
 			File imageFile = new File(imagePath);
 			FileInputStream fileInputStream = new FileInputStream(imageFile);
 			bytes = IOUtils.toByteArray(fileInputStream);
-			fileInputStream.close();			
+			fileInputStream.close();
 		}
 
 		return bytes;
@@ -436,5 +279,5 @@ public class ConnectionManagerImpl implements ConnectionManager {
 			ftpClient.disconnect(true);
 		}
 	}
-	
+
 }

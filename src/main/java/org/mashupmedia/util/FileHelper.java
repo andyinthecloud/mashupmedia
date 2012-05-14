@@ -1,17 +1,18 @@
 package org.mashupmedia.util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.exception.MashupMediaException;
 
 public class FileHelper {
+private static Logger logger = Logger.getLogger(FileHelper.class);
+	
+	public final static String ALBUM_ART_FOLDER = "cover-art";
 
 	public static boolean isSupportedSong(String fileName) {
 		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
@@ -55,78 +56,28 @@ public class FileHelper {
 
 	}
 
-//	/**
-//	 * Returns true if the ftpFile is a folder and contains songs
-//	 * 
-//	 * @param ftpFile
-//	 * @return
-//	 * @throws FTPException
-//	 * @throws FTPIllegalReplyException
-//	 * @throws IOException
-//	 * @throws IllegalStateException
-//	 * @throws FTPListParseException
-//	 * @throws FTPAbortedException
-//	 * @throws FTPDataTransferException
-//	 */
-//	public static boolean isAlbum(FTPFile ftpFile, FTPClient ftpClient) throws IllegalStateException, IOException, FTPIllegalReplyException,
-//			FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
-//		if (ftpFile.getType() != FTPFile.TYPE_DIRECTORY) {
-//			return false;
-//		}
-//
-//		String name = ftpFile.getName();
-//		String path = ftpClient.currentDirectory();
-//		String albumPath = path + "/" + name;
-//
-//		try {
-//			ftpClient.changeDirectory(albumPath);
-//			String[] fileNames = ftpClient.listNames();
-//			for (String fileName : fileNames) {
-//				if (isSupportedSong(fileName)) {
-//					return true;
-//				}
-//			}
-//			return false;
-//		} finally {
-//			ftpClient.changeDirectory(path);
-//		}
-//	}
-//
-//	public static boolean hasFolders(FTPFile ftpFile, FTPClient ftpClient) throws IllegalStateException, IOException, FTPIllegalReplyException,
-//			FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
-//		if (ftpFile.getType() != FTPFile.TYPE_DIRECTORY) {
-//			return false;
-//		}
-//
-//		String name = ftpFile.getName();
-//		String path = ftpClient.currentDirectory();
-//		String albumPath = path + "/" + name;
-//
-//		try {
-//			ftpClient.changeDirectory(albumPath);
-//			FTPFile[] childFtpFiles = ftpClient.list();
-//			for (FTPFile childFtpFile : childFtpFiles) {
-//				if (childFtpFile.getType() == FTPFile.TYPE_DIRECTORY) {
-//					return true;
-//				}
-//			}
-//			return false;
-//		} finally {
-//			ftpClient.changeDirectory(path);
-//		}
-//	}
 
-	public static String writeAlbumArt(long libraryId, String mimeType, byte[] bytes) throws FileNotFoundException, IOException {
+	public static String writeAlbumArt(long libraryId, String artistName, String albumName, String mimeType, byte[] bytes) throws IOException {
 		mimeType = StringUtils.trimToEmpty(mimeType);
 		String extension = "jpg";
 		if (StringUtils.isNotEmpty(mimeType)) {
 			extension = StringHelper.find(mimeType, "/.*").toLowerCase();
-			extension.replaceFirst("/", "");
+			extension = extension.replaceFirst("/", "");
+		}
+
+		File libraryAlbumArtFolder = new File(getLibraryFolder(libraryId),  ALBUM_ART_FOLDER);
+		libraryAlbumArtFolder.mkdirs();
+		String albumArtFileName = StringUtils.trimToEmpty(artistName + "-" + albumName + "." + extension).toLowerCase();
+		albumArtFileName = albumArtFileName.replaceAll("\\s", "");
+		
+		File albumArtFile = new File(libraryAlbumArtFolder,albumArtFileName);
+		if(albumArtFile.exists()) {
+			logger.info("Album art file already exists for libraryId:" + libraryId + ", artistName:" + artistName + ", albumName: " + albumName + ". Exiting...");
+			return albumArtFile.getAbsolutePath();
+			
 		}
 		
-		File albumArtFile = new File(getLibraryFolder(libraryId), MashUpMediaConstants.COVER_ART_DEFAULT_NAME + "." + extension);
-		albumArtFile.mkdirs();		
-		IOUtils.write(bytes, new FileOutputStream(albumArtFile));
+		FileUtils.writeByteArrayToFile(albumArtFile, bytes);
 		return albumArtFile.getAbsolutePath();
 	}
 
@@ -143,7 +94,7 @@ public class FileHelper {
 		} catch (IOException e) {
 			throw new MashupMediaException("Unable to delete library folder", e);
 		}
-		
+
 	}
 
 	public static boolean isMatchingFileNamePattern(String fileName, String fileNamePattern) {
@@ -151,12 +102,12 @@ public class FileHelper {
 		if (StringUtils.isEmpty(fileName)) {
 			return false;
 		}
-		
+
 		fileNamePattern = StringUtils.trimToEmpty(fileNamePattern);
 		if (StringUtils.isEmpty(fileNamePattern)) {
 			fileNamePattern = MashUpMediaConstants.COVER_ART_DEFAULT_NAME + "*";
 		}
-		
+
 		String[] patterns = fileNamePattern.split(",|;");
 		for (String pattern : patterns) {
 			pattern = StringUtils.trimToEmpty(pattern).toLowerCase();

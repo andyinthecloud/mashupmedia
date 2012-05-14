@@ -280,6 +280,7 @@
 							<filtering>true</filtering>
 							<includes>
 								<include> **/*.xml </include>
+								<include> **/*.properties </include>
 							</includes>
 						</resource>
 					</webResources>
@@ -307,6 +308,7 @@
 							<outputDirectory>${exploded.war.path}</outputDirectory>
 							<resources>
 								<resource>
+									<filtering>true</filtering>
 									<directory>${basedir}/src/main/webapp/</directory>
 									<excludes>
 										<exclude>**/*.xml</exclude>

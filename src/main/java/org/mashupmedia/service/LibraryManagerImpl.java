@@ -46,6 +46,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		User user = SecurityHelper.getLoggedInUser();
 		if (user == null) {
 			logger.error("No user found in session, exiting...");
+			return;
 		}
 
 		Date date = new Date();

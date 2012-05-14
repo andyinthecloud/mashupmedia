@@ -58,14 +58,12 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			MusicLibrary musicLibrary = (MusicLibrary) library;
 			updateMusicLibrary(musicLibrary);
 		}
-
 	}
 
 	@Override
 	public void updateMusicLibrary(MusicLibrary musicLibrary) {
 		if (!musicLibrary.isEnabled()) {
-			logger.info("Library is disabled, will not update:"
-					+ musicLibrary.toString());
+			logger.info("Library is disabled, will not update:" + musicLibrary.toString());
 			return;
 		}
 
@@ -77,8 +75,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				prepareFileMusicLibrary(musicLibrary);
 			}
 		} catch (Exception e) {
-			throw new MashupMediaException("Error updating the music library.",
-					e);
+			throw new MashupMediaException("Error updating the music library.", e);
 		}
 
 	}
@@ -86,8 +83,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	private void prepareFtpMusicLibrary(MusicLibrary musicLibrary, FtpLocation ftpLocation) {
 		FTPClient ftpClient = null;
 		try {
-			String decryptedPassword = EncryptionHelper.decryptText(ftpLocation
-					.getPassword());
+			String decryptedPassword = EncryptionHelper.decryptText(ftpLocation.getPassword());
 			ftpLocation.setPassword(decryptedPassword);
 			ftpClient = connectionManager.connectToFtp(ftpLocation);
 		} catch (Exception e) {
@@ -98,19 +94,17 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			logger.error("Unable to prepare music library, ftp client is null.");
 			return;
 		}
-		
-		
+
 		List<Song> songs = connectionManager.getFtpSongs(musicLibrary);
 		musicManager.saveSongs(musicLibrary, songs);
 
-//		List<Artist> artists = connectionManager.getFtpArtists(ftpLocation);
-//		musicManager.saveArtists(library, artists);
+		// List<Artist> artists = connectionManager.getFtpArtists(ftpLocation);
+		// musicManager.saveArtists(library, artists);
 
 	}
 
-	private void prepareFileMusicLibrary(MusicLibrary musicLibrary)
-			throws CannotReadException, IOException, TagException,
-			ReadOnlyFileException, InvalidAudioFrameException {
+	private void prepareFileMusicLibrary(MusicLibrary musicLibrary) throws CannotReadException, IOException, TagException, ReadOnlyFileException,
+			InvalidAudioFrameException {
 		Location location = musicLibrary.getLocation();
 		File musicFolder = new File(location.getPath());
 		if (!musicFolder.isDirectory()) {
@@ -124,10 +118,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	}
 
-	protected void prepareSongs(List<Song> songs, File folder,
-			MusicLibrary musicLibrary, String artistName, String albumName)
-			throws CannotReadException, IOException, TagException,
-			ReadOnlyFileException, InvalidAudioFrameException {
+	protected void prepareSongs(List<Song> songs, File folder, MusicLibrary musicLibrary, String artistName, String albumName)
+			throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
 		if (folder.isFile()) {
 			return;
 		}
@@ -165,16 +157,11 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				int trackLength = audioHeader.getTrackLength();
 
 				Tag tag = audioFile.getTag();
-				String songTitle = StringUtils.trimToEmpty(tag
-						.getFirst(FieldKey.TITLE));
-				int trackNumber = NumberUtils.toInt(tag
-						.getFirst(FieldKey.TRACK));
-				String artistNameValue = StringUtils.trimToEmpty(tag
-						.getFirst(FieldKey.ALBUM_ARTIST));
-				String albumNameValue = StringUtils.trimToEmpty(tag
-						.getFirst(FieldKey.ALBUM));
-				String genreValue = StringUtils.trimToEmpty(tag
-						.getFirst(FieldKey.GENRE));
+				String songTitle = StringUtils.trimToEmpty(tag.getFirst(FieldKey.TITLE));
+				int trackNumber = NumberUtils.toInt(tag.getFirst(FieldKey.TRACK));
+				String artistNameValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM_ARTIST));
+				String albumNameValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM));
+				String genreValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.GENRE));
 				int yearValue = NumberUtils.toInt(tag.getFirst(FieldKey.YEAR));
 
 				Song song = new Song();
@@ -213,19 +200,21 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 					albumName = albumNameValue;
 				}
 				album.setName(albumName);
-				if (musicFileCount == 1) {
-					AlbumArtImage albumArtImage = getAlbumArtImage(musicLibrary, file, album);
-					album.setAlbumArtImage(albumArtImage);									
-				}
-				
 				song.setAlbum(album);
 
 				Artist artist = new Artist();
-				if (StringUtils.isEmpty(artistNameValue)) {
-					artistName = file.getParentFile().getParentFile().getName();
+				if (StringUtils.isNotEmpty(artistNameValue)) {
+					artistName = artistNameValue;
 				}
 				artist.setName(artistName);
+
+				if (musicFileCount == 1) {
+					AlbumArtImage albumArtImage = processAlbumArtImage(musicLibrary, file, artistName, albumName);
+					album.setAlbumArtImage(albumArtImage);
+				}
+
 				album.setArtist(artist);
+				song.setArtist(artist);
 
 				songs.add(song);
 
@@ -235,10 +224,9 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	}
 
-	protected AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary,
-			File musicFile, Album album) throws CannotReadException,
-			IOException, TagException, ReadOnlyFileException,
-			InvalidAudioFrameException {
+	protected AlbumArtImage processAlbumArtImage(MusicLibrary musicLibrary, File musicFile, String artistName, String albumName)
+			throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
+
 		String imagePath = null;
 		String albumArtName = MashUpMediaConstants.COVER_ART_DEFAULT_NAME;
 		AudioFile audioFile = AudioFileIO.read(musicFile);
@@ -251,8 +239,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			if (bytes == null || bytes.length == 0) {
 				return null;
 			}
-			imagePath = FileHelper.writeAlbumArt(musicLibrary.getId(),
-					mimeType, bytes);
+			imagePath = FileHelper.writeAlbumArt(musicLibrary.getId(), artistName, albumArtName, mimeType, bytes);
 		} else {
 			File albumFolder = musicFile.getParentFile();
 			File[] imageFiles = albumFolder.listFiles(new FilenameFilter() {
@@ -277,7 +264,6 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		}
 
 		AlbumArtImage albumArtImage = new AlbumArtImage();
-		albumArtImage.setAlbum(album);
 		albumArtImage.setLibrary(musicLibrary);
 		albumArtImage.setName(albumArtName);
 		albumArtImage.setUrl(imagePath);

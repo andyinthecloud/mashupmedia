@@ -2,12 +2,13 @@ package org.mashupmedia.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.mashupmedia.dao.MusicDao;
-import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class MusicManagerImpl implements MusicManager {
+	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private MusicDao musicDao;
@@ -41,91 +43,35 @@ public class MusicManagerImpl implements MusicManager {
 		return artists;
 	}
 
-//	@Override
-//	public void saveArtists(Library library, List<Artist> artists) {
-//		if (artists == null || artists.isEmpty()) {
-//			logger.info("There are no artists to save");
-//			return;
-//		}
-//
-//		Date date = new Date();
-//
-//		List<Song> songs = new ArrayList<Song>();
-//
-//		for (Artist artist : artists) {
-//			artist = prepareArtist(artist);
-//
-//			List<Album> albums = artist.getAlbums();
-//			for (Album album : albums) {
-//				album = prepareAlbum(album);
-//				album.setArtist(artist);
-//				AlbumArtImage albumArtImage = album.getAlbumArtImage();
-//				if (albumArtImage != null) {
-//					albumArtImage.setLibrary(library);
-//					albumArtImage.setAlbum(album);
-//				}
-//
-//				List<Song> albumSongs = album.getSongs();
-//				for (Song albumSong : albumSongs) {
-//					if (isNewSong(library, albumSong)) {
-//						albumSong.setAlbum(album);
-//						// albumSong.setGenre(genre)
-//						albumSong.setUpdatedOn(date);
-//						albumSong.setLibrary(library);
-//						albumSong.setArtist(artist);
-//						songs.add(albumSong);
-//					}
-//				}
-//			}
-//
-//		}
-//
-//		musicDao.saveSongs(songs);
-//		logger.info(songs.size() + " songs have been saved");
-//
-//		List<Song> songsToDelete = musicDao.getSongsToDelete(library.getId(), date);
-//		musicDao.deleteSongs(songsToDelete);
-//		deleteEmpty();
-//	}
 
-	protected boolean isNewSong(Library library, Song song) {
-		Song savedSong = musicDao.getSong(library.getId(), song.getPath(), song.getSizeInBytes());
-		if (savedSong == null) {
-			return true;
-		}
-		return false;
-	}
-
-	protected Album prepareAlbum(Album album) {		
-		Album savedAlbum = musicDao.getAlbum(album.getName());
-		if (savedAlbum == null) {
-			return album;
-		}
-
-		List<Song> songs = album.getSongs();
-		savedAlbum.setSongs(songs);
-		return savedAlbum;
-
-	}
 
 	public void saveAlbum(Album album) {
 		musicDao.saveAlbum(album);
 	}
 
-	protected Artist prepareArtist(Artist artist, Album album) {
+	protected Album prepareAlbum(Artist artist, Album album) {
+		album.setArtist(artist);
+		
 		Artist savedArtist = musicDao.getArtist(artist.getName());
 		if (savedArtist == null) {
-			return artist;
+			return album;
 		}
 
 		List<Album> albums = artist.getAlbums();
 		if (albums == null) {
-			albums = new ArrayList<Album>();
+			album.setArtist(savedArtist);
+			return album;			
 		}
 		
-		albums.add(album);
-		savedArtist.setAlbums(albums);
-		return savedArtist;
+		String albumName = StringUtils.trimToEmpty(album.getName());
+		
+		for (Album savedAlbum : albums) {
+			if (albumName.equalsIgnoreCase(savedAlbum.getName())) {
+				return savedAlbum;
+			}			
+		}
+		
+		return album;
 	}
 
 	protected void saveArtist(Artist artist) {
@@ -175,20 +121,41 @@ public class MusicManagerImpl implements MusicManager {
 		if (songs == null || songs.isEmpty()) {
 			return;
 		}
+		
+		long libraryId = musicLibrary.getId();
+		long totalSongsSaved = 0;
+		
+		Date date = new Date();
 
+		
 		for (Song song : songs) {
 			song.setLibrary(musicLibrary);
+			song.setUpdatedOn(date);
 			
+			String songPath = song.getPath();
+			long songSizeInBytes = song.getSizeInBytes();
+			Song savedSong = musicDao.getSong(libraryId, songPath, songSizeInBytes);
+			
+			if (savedSong != null) {
+				savedSong.setUpdatedOn(date);
+				musicDao.saveSong(savedSong);
+				logger.info("Song is already in database, updated song date.");				
+				continue;
+			}
+
 			Album album = song.getAlbum();
+
+			Artist artist = song.getArtist();
+			album = prepareAlbum(artist, album);
+			artist = album.getArtist();
+						
+			
 			AlbumArtImage albumArtImage = album.getAlbumArtImage();
-			album = prepareAlbum(album);
 			if (albumArtImage != null) {
 				album.setAlbumArtImage(albumArtImage);
 			}
 			song.setAlbum(album);
 
-			Artist artist = song.getArtist();
-			artist = prepareArtist(artist, album);
 			song.setArtist(artist);
 			
 			Year year = song.getYear();
@@ -201,34 +168,21 @@ public class MusicManagerImpl implements MusicManager {
 			
 			
 			musicDao.saveSong(song);
+			totalSongsSaved++;
 		}
+		
+		logger.info("Saved " + totalSongsSaved + " songs.");
+		
+		
+		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
+		musicDao.deleteSongs(songsToDelete);
+		logger.info("Deleted " + songsToDelete.size() + " out of date songs.");
+		
+		deleteEmpty();
+		logger.info("Cleaned library.");
 		
 	}
 	
-//	@Override
-//	public void saveSongs(List<Song> songs) {
-//		if (songs == null || songs.isEmpty()) {
-//			return;
-//		}
-//
-//		for (Song song : songs) {
-//			Artist artist = song.getArtist();
-//			artist = prepareArtist(artist);
-//			song.setArtist(artist);
-//
-//			Album album = song.getAlbum();
-//			album = prepareAlbum(album);
-//			song.setAlbum(album);
-//
-//			Year year = song.getYear();
-//			year = processYear(year);
-//			song.setYear(year);
-//
-//		}
-//
-//		musicDao.saveSongs(songs);
-//	}
-
 	private Genre prepareGenre(Genre genre) {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
 			return null;
@@ -287,5 +241,7 @@ public class MusicManagerImpl implements MusicManager {
 		}
 
 	}
+	
+
 
 }
