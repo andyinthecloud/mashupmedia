@@ -17,6 +17,11 @@ public abstract class BaseController {
 		return breadcrumb;
 	}
 	
+	@ModelAttribute("themePath")
+	public String getThemePath() {
+		return "/themes/default";
+	}
+	
 	@ModelAttribute("breadcrumbs")
 	public List<Breadcrumb> populateBreadcrumbs() {
 		List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();

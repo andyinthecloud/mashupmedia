@@ -35,7 +35,7 @@
 			value="/WEB-INF/jsp/tiles/configuration/music_library.jsp" />
 	</definition>
 
-	<definition name="music.panel" template="/WEB-INF/jsp/layouts/music_panel.jsp">
+	<definition name="music.panel" template="/WEB-INF/jsp/layouts/music-panel.jsp">
 		<put-attribute name="body" value="" />
 	</definition>
 
@@ -49,6 +49,7 @@
 		</put-attribute>
 	</definition>
 
+<!-- 
 	<definition name="music/artists" extends="home">
 		<put-attribute name="title" value="Tweeter | Music | Artists" />
 		<put-attribute name="body">
@@ -81,5 +82,6 @@
 		</put-attribute>
 
 	</definition>
+ -->	
 
 </tiles-definitions>
