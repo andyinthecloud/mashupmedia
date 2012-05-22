@@ -1,5 +1,8 @@
-body {
+http: //css-tricks.com /perfect-full-page-background-image/
+
+html,body {
 	font-size: 100%;
+	background-color: black;
 }
 
 #background-image {
@@ -7,14 +10,64 @@ body {
 	top: 0;
 	left: 0;
 	z-index: -1;
+	filter: alpha(opacity =   70); /* for IE */
+	-khtml-opacity: 0.7; /* khtml, old safari */
+	-moz-opacity: 0.7; /* old mozilla, netscape */
+	opacity: 0.7; /* good browsers: FF, safari, opera */
+
 }
 
-.full-width#background-image{
+#background-image.full-width {
 	width: 100%;
 }
 
-.full-height#background-image{
+#background-image.full-height {
 	height: 100%;
+}
+
+#background-image-container {
+	position: fixed;
+	top: -50%;
+	left: -50%;
+	width: 200%;
+	height: 200%;
+	z-index: -1;
+	filter: alpha(opacity =   70); /* for IE */
+	-khtml-opacity: 0.7; /* khtml, old safari */
+	-moz-opacity: 0.7; /* old mozilla, netscape */
+	opacity: 0.7; /* good browsers: FF, safari, opera */
+}
+
+#background-image-container img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	/*
+	min-width:50%;
+	min-height:50%;
+	*/
+}
+
+#body-content {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+.full-width#background-image {
+	width: 100%;
+	height: auto;
+	overflow: hidden;
+}
+
+.full-height#background-image {
+	height: 100%;
+	width: auto;
+	overflow: hidden;
 }
 
 div.panel {

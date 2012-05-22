@@ -11,24 +11,41 @@
 <script type="text/javascript" src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 
 <script type="text/javascript">
+	$(window)
+			.load(
+					function() {
+						var theWindow = $(window), 
+						$backgroundImage = $("#background-image"), 
+						aspectRatio = $backgroundImage.width() / $backgroundImage.height();
 
-$(window).load(function() {
-	var aspectRatio = $("#background-image").width() / $("#background-image").height();
-	$(this).resize(function() {
-		resizeBackgroundImage(aspectRatio);
-	}).trigger("resize");
-});
+						function resizeBackgroundImage() {
 
+							if ((theWindow.width() / theWindow.height()) < aspectRatio) {
+								$backgroundImage.removeClass().addClass(
+										'full-height');
+							} else {
+								$backgroundImage.removeClass().addClass(
+										'full-width');
+							}
 
-function resizeBackgroundImage(aspectRatio) {
-	
-	if (($(window).width() / $(window).height()) < aspectRatio) {
-		$("#background-image").removeClass().addClass("full-height");
-	} else {
-		$("#background-image").removeClass().addClass('full-width');
-	}
-}
-	
+						}
+
+						theWindow.resize(function() {
+							resizeBackgroundImage();
+						}).trigger("resize");
+
+					});
+
+	$(document)
+			.ready(
+					function() {
+						var backgroundImagePath = getBackgroundImage("<tiles:getAsString name="backgroundImageType"/>");
+						$("#background-image").attr(
+								"src",
+								"<c:url value="${themePath}/"/>"
+										+ backgroundImagePath);
+
+					});
 </script>
 
 <title><tiles:getAsString name="title" /></title>
@@ -37,7 +54,8 @@ function resizeBackgroundImage(aspectRatio) {
 
 <body>
 
-	<img id="background-image" src="<c:url value="${themePath}/images/default/background-01.jpg"/>" />
+
+	<img id="background-image" src="<c:url value="/images/default-background.png" />" />
 
 
 	<div class="panel breadcrumbs">
@@ -58,7 +76,6 @@ function resizeBackgroundImage(aspectRatio) {
 	</div>
 
 	<tiles:insertAttribute name="body" />
-
 </body>
 
 </html>

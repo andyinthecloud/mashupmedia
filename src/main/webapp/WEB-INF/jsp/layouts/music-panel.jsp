@@ -1,8 +1,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
-	var musicBackgroundImages = getMusicBackgroundImages();
-	var randomBackgroundIndex = Math.floor((Math.random()*musicBackgroundImages.length));
 		
 
 </script>

@@ -1,3 +1,22 @@
+
+
+function getBackgroundImage(type) {
+	
+	var images = new Array(); 
+	
+	if (type == "default") {
+		images = getDefaultBackgroundImages();
+	} else if (type == "music") {
+		images = getMusicBackgroundImages();		
+	} else {
+		images = getDefaultBackgroundImages();		
+	}
+
+	var randomImageIndex = Math.floor((Math.random() * images.length));
+	return images[randomImageIndex];
+	
+}
+
 function getDefaultBackgroundImages() {
 	var backgroundImages = new Array();
 	backgroundImages[0] = "/images/default/background-01.jpg";
