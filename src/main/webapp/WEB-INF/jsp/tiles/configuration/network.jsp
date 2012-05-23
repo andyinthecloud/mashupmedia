@@ -1,5 +1,14 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+<script type="text/javascript">
+	$(document).ready(
+			function() {
+				$("input[type='radio'][name='proxyEnabled']").change(function() {
+					  alert('Handler for .change() called.');
+				});
+				
+			});
+</script>
 
 <div class="panel">
 	<form:form commandName="networkPage">
@@ -14,14 +23,14 @@
 			<form:radiobutton path="proxyEnabled" value="true" />
 			<label for="proxyEnabled1"><spring:message code="network.proxy.enabled" /></label>
 			<form:radiobutton path="proxyEnabled" value="false" />
-			<label for="proxyEnabled2"><spring:message code="network.proxy.disabled" /></label><br /> <label><spring:message
+			<label for="proxyEnabled2"><spring:message code="network.proxy.disabled" /></label><br /> <label class="fixed-width"><spring:message
 					code="network.proxy.url" /></label>
 			<form:input path="proxyUrl" />
-			<br /> <label><spring:message code="network.proxy.port" /></label>
+			<br /> <label class="fixed-width"><spring:message code="network.proxy.port" /></label>
 			<form:input path="proxyPort" />
-			<br /> <label><spring:message code="network.proxy.username" /></label>
+			<br /> <label class="fixed-width"><spring:message code="network.proxy.username" /></label>
 			<form:input path="proxyUsername" />
-			<br /> <label><spring:message code="network.proxy.password" /></label>
+			<br /> <label class="fixed-width"><spring:message code="network.proxy.password" /></label>
 			<form:password path="proxyPassword" />
 			<br />
 		</fieldset>

@@ -3,6 +3,8 @@ http: //css-tricks.com /perfect-full-page-background-image/
 html,body {
 	font-size: 100%;
 	background-color: black;
+	margin: 0;
+	padding: 0;
 }
 
 #background-image {
@@ -10,17 +12,15 @@ html,body {
 	top: 0;
 	left: 0;
 	z-index: -1;
-	filter: alpha(opacity =   70); /* for IE */
+	filter: alpha(opacity =                   70); /* for IE */
 	-khtml-opacity: 0.7; /* khtml, old safari */
 	-moz-opacity: 0.7; /* old mozilla, netscape */
 	opacity: 0.7; /* good browsers: FF, safari, opera */
-
 }
 
 #background-image.full-width {
 	width: 100%;
 	height: auto;
-	
 }
 
 #background-image.full-height {
@@ -28,54 +28,107 @@ html,body {
 	height: 100%;
 }
 
-#background-image-container {
-	position: fixed;
-	top: -50%;
-	left: -50%;
-	width: 200%;
-	height: 200%;
-	z-index: -1;
-	filter: alpha(opacity =   70); /* for IE */
-	-khtml-opacity: 0.7; /* khtml, old safari */
-	-moz-opacity: 0.7; /* old mozilla, netscape */
-	opacity: 0.7; /* good browsers: FF, safari, opera */
+#top-bar {
+	background: #999; /* for non-css3 browsers */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cccccc',
+		endColorstr='#000000' ); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#ccc),
+		to(#000) ); /* for webkit browsers */
+	background: -moz-linear-gradient(top, #ccc, #000);
+	/* for firefox 3.6+ */
+	font-family: Gill Sans, Verdana;
+	margin: 0;
+	padding: 5px;
 }
 
-#background-image-container img {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	margin: auto;
-	/*
-	min-width:50%;
-	min-height:50%;
-	*/
+#top-bar a,#top-bar a:VISITED {
+	color: #F8F8FF;
+	text-decoration: none;
 }
 
-#body-content {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
+#top-bar ul {
+	padding: 0;
+	margin: 0;
+	float: right;
 }
 
-.full-width#background-image {
-	width: 100%;
-	height: auto;
-	overflow: hidden;
-}
-
-.full-height#background-image {
-	height: 100%;
-	width: auto;
-	overflow: hidden;
+#top-bar ul li {
+	list-style: none;
+	display: inline;
+	padding-left: 10px;
 }
 
 div.panel {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
 	font-size: 0.875em;
+	color: #F8F8FF;
+	background-color: black;
+	filter: alpha(opacity =                   70); /* for IE */
+	-khtml-opacity: 0.7; /* khtml, old safari */
+	-moz-opacity: 0.7; /* old mozilla, netscape */
+	opacity: 0.7; /* good browsers: FF, safari, opera */
+	-moz-border-radius: 20px;
+	-webkit-border-radius: 20px;
+	-khtml-border-radius: 20px;
+	border-radius: 20px;
+	padding: 10px;
+	margin-top: 10px;
+}
+
+div.panel a, div.panel a:VISITED {
+	color: #F8F8FF;	
+}
+
+div.panel fieldset {
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-khtml-border-radius: 10px;
+	border-radius: 10px;
+	border: 1px solid #F8F8FF;
+	padding: 10px;
+	margin-top: 10px;
+	font-size: 1em;
+	padding: 10px;
+	line-height: 2em;
+}
+
+div.panel fieldset label {
+	clear: both;
+	padding-top: 5px;
+}
+
+div.panel fieldset label.fixed-width {
+	float: left;
+	width: 150px;
+}
+
+
+
+div.panel div.breadcrumbs {
+	margin-bottom: 10px;
+}
+
+div.panel a,div.panel a:VISITED {
+	text-decoration: none;
+}
+
+div.panel ul {
+	padding: 0;
+	margin: 0;
+}
+
+div.panel ul li {
+	list-style: none;
+}
+
+div.panel ul li a {
+	display: block;
+	padding: 3px;
+	font-size: 1.2em;
+}
+
+div.panel ul a:HOVER {
+	background-color: #CD6600;
 }
 
 div.random-album-art div.album {
