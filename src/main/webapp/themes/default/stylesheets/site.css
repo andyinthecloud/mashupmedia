@@ -19,9 +19,12 @@ html,body {
 
 #background-image.full-width {
 	width: 100%;
+	height: auto;
+	
 }
 
 #background-image.full-height {
+	width: auto;
 	height: 100%;
 }
 

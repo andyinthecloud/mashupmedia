@@ -11,41 +11,11 @@
 <script type="text/javascript" src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 
 <script type="text/javascript">
-	$(window)
-			.load(
-					function() {
-						var theWindow = $(window), 
-						$backgroundImage = $("#background-image"), 
-						aspectRatio = $backgroundImage.width() / $backgroundImage.height();
-
-						function resizeBackgroundImage() {
-
-							if ((theWindow.width() / theWindow.height()) < aspectRatio) {
-								$backgroundImage.removeClass().addClass(
-										'full-height');
-							} else {
-								$backgroundImage.removeClass().addClass(
-										'full-width');
-							}
-
-						}
-
-						theWindow.resize(function() {
-							resizeBackgroundImage();
-						}).trigger("resize");
-
-					});
-
-	$(document)
-			.ready(
-					function() {
-						var backgroundImagePath = getBackgroundImage("<tiles:getAsString name="backgroundImageType"/>");
-						$("#background-image").attr(
-								"src",
-								"<c:url value="${themePath}/"/>"
-										+ backgroundImagePath);
-
-					});
+	$(document).ready(
+			function() {
+				processBackground("<c:url value="${themePath}/"/>",
+						"<tiles:getAsString name="backgroundImageType"/>");
+			});
 </script>
 
 <title><tiles:getAsString name="title" /></title>
@@ -54,9 +24,7 @@
 
 <body>
 
-
-	<img id="background-image" src="<c:url value="/images/default-background.png" />" />
-
+	<img id="background-image" style="display: none;" />
 
 	<div class="panel breadcrumbs">
 		<c:forEach items="${breadcrumbs}" var="breadcrumb" varStatus="status">

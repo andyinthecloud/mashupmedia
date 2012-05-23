@@ -1,20 +1,55 @@
+$(window)
+		.load(
+				function() {
+					var theWindow = $(window), $backgroundImage = $("#background-image"), aspectRatio = $backgroundImage
+							.width()
+							/ $backgroundImage.height();
 
+					function resizeBackgroundImage() {
+
+						if ((theWindow.width() / theWindow.height()) < aspectRatio) {
+							$backgroundImage.removeClass().addClass(
+									'full-height');
+						} else {
+							$backgroundImage.removeClass().addClass(
+									'full-width');
+						}
+
+					}
+
+					theWindow.resize(function() {
+						resizeBackgroundImage();
+					}).trigger("resize");
+
+				});
+
+$(document).ready(function() {
+
+});
+
+function processBackground(themePath, pageType) {
+
+	var backgroundImagePath = getBackgroundImage(pageType);
+	$("#background-image").attr("src", themePath + backgroundImagePath);
+	$("#background-image").load();
+	$("#background-image").show();
+}
 
 function getBackgroundImage(type) {
-	
-	var images = new Array(); 
-	
+
+	var images = new Array();
+
 	if (type == "default") {
 		images = getDefaultBackgroundImages();
 	} else if (type == "music") {
-		images = getMusicBackgroundImages();		
+		images = getMusicBackgroundImages();
 	} else {
-		images = getDefaultBackgroundImages();		
+		images = getDefaultBackgroundImages();
 	}
 
 	var randomImageIndex = Math.floor((Math.random() * images.length));
 	return images[randomImageIndex];
-	
+
 }
 
 function getDefaultBackgroundImages() {
@@ -32,6 +67,3 @@ function getMusicBackgroundImages() {
 	backgroundImages[3] = "/images/music/background-04.jpg";
 	return backgroundImages;
 }
-
-
-
