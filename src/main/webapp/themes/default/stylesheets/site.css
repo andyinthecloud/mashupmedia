@@ -92,17 +92,15 @@ div.panel fieldset {
 	line-height: 2em;
 }
 
-div.panel fieldset label {
-	clear: both;
+div.panel fieldset label.new-line {
+	display: block;
 	padding-top: 5px;
 }
 
-div.panel fieldset label.fixed-width {
-	float: left;
-	width: 150px;
+div.panel fieldset input[type='text'], div.panel fieldset input[type='password'] {
+	width: 80%;
+	min-width: 200px;
 }
-
-
 
 div.panel div.breadcrumbs {
 	margin-bottom: 10px;
