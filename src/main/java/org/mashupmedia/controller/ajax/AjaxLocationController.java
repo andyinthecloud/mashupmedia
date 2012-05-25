@@ -60,7 +60,7 @@ public class AjaxLocationController {
 
 		model.addAttribute("isValid", isValid);
 		model.addAttribute("messageCode", messageCode);
-		return "ajax/check_folder_location";
+		return "ajax/check-folder-location";
 	}
 
 }

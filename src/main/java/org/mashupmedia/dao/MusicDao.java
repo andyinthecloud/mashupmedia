@@ -33,7 +33,7 @@ public interface MusicDao {
 
 	public Album getAlbum(long albumId);
 
-	public List<Album> getRandomAlbums();
+	public List<Album> getRandomAlbums(int numberOfAlbums);
 
 	public Year getYear(int year);
 

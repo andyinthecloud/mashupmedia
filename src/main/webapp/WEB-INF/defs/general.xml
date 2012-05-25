@@ -26,14 +26,14 @@
 		extends="home">
 		<put-attribute name="title" value="Tweeter | Music Configuration" />
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/configuration/music_configuration.jsp" />
+			value="/WEB-INF/jsp/tiles/configuration/music-configuration.jsp" />
 	</definition>
 
 
 	<definition name="configuration/music-library" extends="home">
 		<put-attribute name="title" value="Tweeter | Music Library" />
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/configuration/music_library.jsp" />
+			value="/WEB-INF/jsp/tiles/configuration/music-library.jsp" />
 	</definition>
 
 	<definition name="music.panel" template="/WEB-INF/jsp/layouts/music-panel.jsp">

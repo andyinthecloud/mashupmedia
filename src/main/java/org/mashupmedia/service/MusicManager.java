@@ -19,7 +19,7 @@ public interface MusicManager {
 
 	public Album getAlbum(long albumId);
 
-	public List<Album> getRandomAlbums();
+	public List<Album> getRandomAlbums(int numberOfAlbums);
 
 //	public void saveSongs(List<Song> songs);
 

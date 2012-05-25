@@ -6,7 +6,8 @@
 			.ready(
 					function() {
 						var locationType = $(
-								"#location input:radio[name=locationType]:checked").val();
+								"#location input:radio[name=locationType]:checked")
+								.val();
 						showLocation(locationType);
 
 						$("#location input[name='locationType']").click(
@@ -28,12 +29,11 @@
 											}
 
 										});
-						
-						$("#musicLibraryPage input:submit").click(
-								function() {
-									var action = $(this).attr("name");
-									$("#action").val(action);
-								});						
+
+						$("#musicLibraryPage input:submit").click(function() {
+							var action = $(this).attr("name");
+							$("#action").val(action);
+						});
 					});
 
 	function checkFolderLocationPath() {
@@ -114,17 +114,19 @@
 		<form:errors path="*" cssClass="error-box" />
 		<form:hidden path="action" />
 		<form:hidden path="musicLibrary.id" />
-		<form:checkbox path="musicLibrary.enabled" id="musicLibrary-enabled" />
+
+		<label for="musicLibrary-name"><spring:message code="musiclibrary.name" /></label>
+		<form:input path="musicLibrary.name" id="musicLibrary-name" cssStyle="margin-bottom: 10px;" />
+		<br />
+
+		<form:checkbox path="musicLibrary.enabled" id="musicLibrary-enabled"
+			cssStyle="vertical-align: middle;" />
 		<label for="musicLibrary-enabled"><spring:message code="musiclibrary.enabled" /></label>
 		<br />
 
-		<label for="musicLibrary-name"><spring:message code="musiclibrary.name" /></label>
-		<form:input path="musicLibrary.name" id="musicLibrary-name" />
-		<br />
 
 
-
-		<fieldset id="location">
+		<fieldset id="location" style="">
 			<legend>
 				<spring:message code="musiclibrary.location" />
 			</legend>
@@ -135,45 +137,55 @@
 			<label for="locationType2"><spring:message code="musiclibrary.location.type.ftp" /></label> <br />
 
 			<div class="folder">
-				<label for="folderLocation-path"><spring:message code="musiclibrary.location.path" /></label>
+				<label class="new-line" for="folderLocation-path"><spring:message
+						code="musiclibrary.location.path" /></label>
 				<form:input path="folderLocation.path" id="folderLocation-path" />
 			</div>
 
 			<div class="ftp">
-				<label for="ftpLocation-host"><spring:message code="musiclibrary.location.host" /></label>
+				<label class="new-line" for="ftpLocation-host"><spring:message
+						code="musiclibrary.location.host" /></label>
 				<form:input path="ftpLocation.host" id="ftpLocation-host" />
-				<br /> <label for="ftpLocation-port"><spring:message code="musiclibrary.location.port" /></label>
+				<br /> <label class="new-line" for="ftpLocation-port"><spring:message
+						code="musiclibrary.location.port" /></label>
 				<form:input path="ftpLocation.port" id="ftpLocation-port" />
-				<br /> <label for="ftpLocation-path"><spring:message code="musiclibrary.location.path" /></label>
+				<br /> <label class="new-line" for="ftpLocation-path"><spring:message
+						code="musiclibrary.location.path" /></label>
 				<form:input path="ftpLocation.path" id="ftpLocation-path" />
-				<br /> <label for="ftpLocation-username"><spring:message
+				<br /> <label class="new-line" for="ftpLocation-username"><spring:message
 						code="musiclibrary.location.username" /></label>
 				<form:input path="ftpLocation.username" id="ftpLocation-username" />
-				<br /> <label for="ftpLocation-password"><spring:message
+				<br /> <label class="new-line" for="ftpLocation-password"><spring:message
 						code="musiclibrary.location.password" /></label>
 				<form:password path="ftpLocation.password" id="ftpLocation-password" />
 			</div>
+
+			<br />
+
 			<div class="check-location">
-				<span class="message"></span> <a href="javascript:void(0);"><spring:message
-						code="musiclibrary.location.path.check" /></a>
+				<a class="button" href="javascript:void(0);"><spring:message
+						code="musiclibrary.location.path.check" /></a> <span class="message horizontal-gap"></span>
 			</div>
 		</fieldset>
 
-		<label for="musicLibrary-groups"><spring:message code="musiclibrary.groups" /></label>
+
+
+		<label class="new-line" for="musicLibrary-groups"><spring:message
+				code="musiclibrary.groups" /></label>
 		<form:select path="musicLibrary.groups" id="musicLibrary-groups" multiple="true">
 			<form:options items="${groups}" itemLabel="translatedName" itemValue="idName" />
 		</form:select>
 		<br />
 
 
-		<label for="musicLibrary-scanMinutesInterval"><spring:message
+		<label class="new-line" for="musicLibrary-scanMinutesInterval"><spring:message
 				code="musiclibrary.scanminutesinterval" /></label>
 		<form:input path="musicLibrary.scanMinutesInterval" />
 		<br />
 
 		<div class="buttons">
-		<input name="save" type="submit" value="<spring:message code="action.save" />" />
-		<input name="delete" type="submit" value="<spring:message code="action.delete" />" />
+			<input class="button" name="save" type="submit" value="<spring:message code="action.save" />" />
+			<input class="button" name="delete" type="submit" value="<spring:message code="action.delete" />" />
 		</div>
 	</form:form>
 

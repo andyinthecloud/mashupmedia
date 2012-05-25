@@ -12,7 +12,7 @@ html,body {
 	top: 0;
 	left: 0;
 	z-index: -1;
-	filter: alpha(opacity =                   70); /* for IE */
+	filter: alpha(opacity =                         70); /* for IE */
 	-khtml-opacity: 0.7; /* khtml, old safari */
 	-moz-opacity: 0.7; /* old mozilla, netscape */
 	opacity: 0.7; /* good browsers: FF, safari, opera */
@@ -63,10 +63,10 @@ div.panel {
 	font-size: 0.875em;
 	color: #F8F8FF;
 	background-color: black;
-	filter: alpha(opacity =                   70); /* for IE */
-	-khtml-opacity: 0.7; /* khtml, old safari */
-	-moz-opacity: 0.7; /* old mozilla, netscape */
-	opacity: 0.7; /* good browsers: FF, safari, opera */
+	filter: alpha(opacity =     75); /* for IE */
+	-khtml-opacity: 0.75; /* khtml, old safari */
+	-moz-opacity: 0.75; /* old mozilla, netscape */
+	opacity: 0.75; /* good browsers: FF, safari, opera */
 	-moz-border-radius: 20px;
 	-webkit-border-radius: 20px;
 	-khtml-border-radius: 20px;
@@ -75,8 +75,16 @@ div.panel {
 	margin-top: 10px;
 }
 
-div.panel a, div.panel a:VISITED {
-	color: #F8F8FF;	
+div.panel buttons {
+	margin-top: 10px;
+}
+
+div.panel .horizontal-gap {
+	margin-left: 10px;
+}
+
+div.panel a,div.panel a:VISITED {
+	color: #F8F8FF;
 }
 
 div.panel fieldset {
@@ -92,14 +100,35 @@ div.panel fieldset {
 	line-height: 2em;
 }
 
-div.panel fieldset label.new-line {
+div.panel label.new-line {
 	display: block;
-	padding-top: 5px;
+	padding-top: 10px;
 }
 
-div.panel fieldset input[type='text'], div.panel fieldset input[type='password'] {
-	width: 80%;
+div.panel input[type='text'],div.panel input[type='password'] {
+	width: 100%;
 	min-width: 200px;
+}
+
+div.panel .button {
+	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+	border: 1px solid #F8F8FF;
+	color: #F8F8FF;
+	background-color: black;
+	padding: 3px 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-khtml-border-radius: 10px;
+	border-radius: 10px;
+	margin-top: 10px;
+	margin-bottom: 5px;
+	font-weight: bold;
+	font-size: 1.1em;
+	cursor: default;
+}
+
+div.panel .hover {
+	background-color: #CD6600;	
 }
 
 div.panel div.breadcrumbs {
@@ -110,41 +139,47 @@ div.panel a,div.panel a:VISITED {
 	text-decoration: none;
 }
 
-div.panel ul {
+div.panel ul.main-menu {
 	padding: 0;
 	margin: 0;
 }
 
-div.panel ul li {
+div.panel ul.main-menu li {
 	list-style: none;
 }
 
-div.panel ul li a {
+div.panel ul.main-menu li a {
 	display: block;
 	padding: 3px;
 	font-size: 1.2em;
 }
 
-div.panel ul a:HOVER {
+div.panel ul.main-menu a:HOVER {
 	background-color: #CD6600;
 }
 
+	
 div.random-album-art div.album {
 	float: left;
 	padding: 5px;
-	width: 200px;
+	width: 150px;
+	height: 150px;
 }
 
-div.random-album-art div.labels {
-	height: 60px;
-}
-
-div.random-album-art div.image {
-	width: 200px;
-	height: 200px;
-}
-
-div.random-album-art div.image img {
+div.random-album-art div.album img {
 	width: 100%;
 	height: 100%;
+}
+
+ul.category-menu {
+	margin: 0;
+	padding: 0;
+	text-align: right;
+}
+
+ul.category-menu li{
+	display: inline;
+	list-style: none;
+	font-size: 1.2em;
+	padding-left: 10px;
 }

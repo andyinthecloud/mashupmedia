@@ -136,10 +136,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public List<Album> getRandomAlbums() {
+	public List<Album> getRandomAlbums(int numberOfAlbums) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Album order by rand()");
 		@SuppressWarnings("unchecked")
-		List<Album> albums = query.setMaxResults(20).list();
+		List<Album> albums = query.setMaxResults(numberOfAlbums).list();
 		return albums;
 	}
 

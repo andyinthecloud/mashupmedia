@@ -33,6 +33,8 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 @RequestMapping("/music")
 public class MusicController extends BaseController {
+	
+	private final int NUMBER_OF_RANDOM_ALBUMS = 50;
 
 	@Autowired
 	private MusicManager musicManager;
@@ -48,7 +50,7 @@ public class MusicController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String getMusic(Model model) {
 		MusicPage musicPage = new MusicPage();
-		List<Album> albums = musicManager.getRandomAlbums();		
+		List<Album> albums = musicManager.getRandomAlbums(NUMBER_OF_RANDOM_ALBUMS);		
 		musicPage.setAlbums(albums);
 		model.addAttribute(musicPage);
 		return "music";

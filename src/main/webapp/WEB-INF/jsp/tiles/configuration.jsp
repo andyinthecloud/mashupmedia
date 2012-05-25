@@ -2,7 +2,7 @@
 
 
 
-<ul>
+<ul class="main-menu">
 	<li><a href="<c:url value="/app/configuration/network" />">Network</a></li>
 	<li><a href="<c:url value="/app/configuration/music-configuration" />">Music</a></li>
 	<li><a href="<c:url value="/app/configuration/users" />">Users</a></li>

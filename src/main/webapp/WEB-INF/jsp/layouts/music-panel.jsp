@@ -4,17 +4,19 @@
 	
 </script>
 
+<div class="panel">
 
-<ul>
-	<li><a href="<c:url value="/app/music/albums" />">Albums</a></li>
-	<li><a href="<c:url value="/app/music/artists" />">Artists</a></li>
-</ul>
+	<ul class="category-menu">
+		<li><a href="<c:url value="/app/music/albums" />">Albums</a></li>
+		<li><a href="<c:url value="/app/music/artists" />">Artists</a></li>
+	</ul>
 
-<div class="items">
-	<tiles:insertAttribute name="body" />
+	<div class="items">
+		<tiles:insertAttribute name="body" />
+	</div>
+
+	<div style="clear: both;">&nbsp;</div>
+
+
 </div>
-
-
-
-
 
