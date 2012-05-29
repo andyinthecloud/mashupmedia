@@ -3,7 +3,6 @@ package org.mashupmedia.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -115,6 +114,11 @@ public class MusicManagerImpl implements MusicManager {
 	public List<Album> getRandomAlbums(int numberOfAlbums) {
 		List<Album> albums = new ArrayList<Album>();
 		List<Album> randomAlbums = musicDao.getRandomAlbums(numberOfAlbums);
+		if (randomAlbums.isEmpty()) {
+			return albums;
+		}
+		
+		
 		albums.addAll(randomAlbums);
 		
 		
@@ -122,9 +126,6 @@ public class MusicManagerImpl implements MusicManager {
 			int appendItemsTotal = albums.size();
 			if (albums.size() + appendItemsTotal > numberOfAlbums) {
 				appendItemsTotal = (albums.size() + appendItemsTotal) - numberOfAlbums;
-				
-				
-				
 			}
 			
 			albums.addAll(randomAlbums);

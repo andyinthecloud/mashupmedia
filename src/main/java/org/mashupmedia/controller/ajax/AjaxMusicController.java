@@ -19,7 +19,7 @@ public class AjaxMusicController {
 	
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
 	public String getMusic(Model model) {
-		List<Album> albums = musicManager.getRandomAlbums();
+		List<Album> albums = musicManager.getRandomAlbums(30);
 		model.addAttribute("albums", albums);
 		return "ajax/music/random-albums";
 		

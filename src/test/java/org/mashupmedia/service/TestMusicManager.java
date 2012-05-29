@@ -47,4 +47,37 @@ public class TestMusicManager extends TestBaseService {
 		Assert.assertTrue(album.getId() > 0);
 
 	}
+	
+	@Test
+	public void testGetRandomAlbums() {
+		Location location = new Location();
+		location.setPath("path");
+		MusicLibrary musicLibrary = new MusicLibrary();
+		musicLibrary.setLocation(location);
+		musicLibrary.setName("test");
+		libraryManager.saveMusicLibrary(musicLibrary);
+		
+		List<Song> songs = new ArrayList<Song>();
+		Song song1 = TestHelper.prepareSong(musicLibrary, "song1");
+		songs.add(song1);
+		musicManager.saveSongs(musicLibrary, songs);
+
+		songs = new ArrayList<Song>();
+		Song song2 = TestHelper.prepareSong(musicLibrary, "song2");
+		song2.getAlbum().setName("album2");
+		songs.add(song2);
+		musicManager.saveSongs(musicLibrary, songs);
+
+		songs = new ArrayList<Song>();
+		Song song3 = TestHelper.prepareSong(musicLibrary, "song2");
+		song3.getAlbum().setName("album3");
+		songs.add(song3);
+		musicManager.saveSongs(musicLibrary, songs);
+		
+		
+		int totalAlbums = 30;
+		List<Album> albums = musicManager.getRandomAlbums(totalAlbums);
+		Assert.assertEquals(totalAlbums, albums.size());
+	}
+	
 }

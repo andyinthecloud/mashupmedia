@@ -6,6 +6,9 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mashupmedia.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -29,7 +32,11 @@ public abstract class TestBaseService {
 		user.setEnabled(true);
 		user.setUpdatedOn(date);
 		user.setPassword("test");
-		adminManager.saveUser(user);				
+		adminManager.saveUser(user);	
+		
+		SecurityContext securityContext =  SecurityContextHolder.createEmptyContext();
+		securityContext.setAuthentication(new TestingAuthenticationToken(user, "test"));
+		SecurityContextHolder.setContext(securityContext);
 	}
 
 }
