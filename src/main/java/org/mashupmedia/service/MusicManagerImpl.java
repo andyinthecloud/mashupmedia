@@ -116,20 +116,19 @@ public class MusicManagerImpl implements MusicManager {
 		List<Album> randomAlbums = musicDao.getRandomAlbums(numberOfAlbums);
 		if (randomAlbums.isEmpty()) {
 			return albums;
-		}
-		
+		}		
 		
 		albums.addAll(randomAlbums);
-		
-		
+				
 		while (numberOfAlbums > albums.size()) {
 			int appendItemsTotal = albums.size();
-			if (albums.size() + appendItemsTotal > numberOfAlbums) {
-				appendItemsTotal = (albums.size() + appendItemsTotal) - numberOfAlbums;
+			int numberOfAlbumsAfterAppend = albums.size() + appendItemsTotal;
+			if (numberOfAlbumsAfterAppend > numberOfAlbums) {
+				appendItemsTotal = numberOfAlbums - albums.size();
+				randomAlbums = randomAlbums.subList(0, appendItemsTotal);				
 			}
 			
-			albums.addAll(randomAlbums);
-			
+			albums.addAll(randomAlbums);			
 		}
 		
 		return albums;

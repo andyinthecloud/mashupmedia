@@ -7,9 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.media.Album;
-import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.AlbumArtImage;
+import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 @RequestMapping("/music")
@@ -104,10 +104,6 @@ public class MusicController extends BaseController {
 	public ModelAndView getAlbumArt(@PathVariable("albumId") Long albumId, Model model) throws Exception {
 		Album album = musicManager.getAlbum(albumId);
 		AlbumArtImage image = album.getAlbumArtImage();
-		if (image == null) {
-			return new ModelAndView(new RedirectView("/app/music/empty-album-art"));
-		}
-		
 
 		final byte[] imageBytes = connectionManager.getAlbumArtImageBytes(image);
 		final String contentType = WebHelper.getImageContentType(image.getUrl());
@@ -115,12 +111,20 @@ public class MusicController extends BaseController {
 
 			@Override
 			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+				if (imageBytes == null || imageBytes.length == 0) {
+					response.sendRedirect(request.getContextPath() +  "/images/no-album-art.png");	
+					return;
+				}				
+				
 				IOUtils.write(imageBytes, response.getOutputStream());
-
 			}
 
 			@Override
 			public String getContentType() {
+				if (StringUtils.isBlank(contentType)) {
+					return "image/png";
+				}				
+				
 				return contentType;
 			}
 		});
