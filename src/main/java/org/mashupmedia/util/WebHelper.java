@@ -1,6 +1,7 @@
 package org.mashupmedia.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.model.media.AlbumArtImage;
 
 public class WebHelper {
 
@@ -9,8 +10,17 @@ public class WebHelper {
 		return parameter;
 	}
 
-	public static String getImageContentType(String imageUrl) {
+	public static String getImageContentType(AlbumArtImage albumArtImage) {
+		if (albumArtImage == null) {
+			return null;
+		}
+		
+		String imageUrl = albumArtImage.getUrl();
 		imageUrl = StringUtils.trimToEmpty(imageUrl).toLowerCase();
+		if (StringUtils.isEmpty(imageUrl)) {
+			return null;
+		}
+		
 
 		String imageExtension = StringUtils.trimToEmpty(StringHelper.find(imageUrl, "\\..*"));
 		if (imageExtension.startsWith(".")) {

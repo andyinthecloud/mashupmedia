@@ -3,6 +3,7 @@ package org.mashupmedia.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -106,7 +107,7 @@ public class MusicController extends BaseController {
 		AlbumArtImage image = album.getAlbumArtImage();
 
 		final byte[] imageBytes = connectionManager.getAlbumArtImageBytes(image);
-		final String contentType = WebHelper.getImageContentType(image.getUrl());
+		final String contentType = WebHelper.getImageContentType(image);
 		ModelAndView modelAndView = new ModelAndView(new View() {
 
 			@Override
@@ -116,7 +117,10 @@ public class MusicController extends BaseController {
 					return;
 				}				
 				
-				IOUtils.write(imageBytes, response.getOutputStream());
+				ServletOutputStream outputStream = response.getOutputStream();				
+				IOUtils.write(imageBytes, outputStream);
+				outputStream.flush();
+				outputStream.close();
 			}
 
 			@Override

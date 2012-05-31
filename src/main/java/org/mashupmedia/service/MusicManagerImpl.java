@@ -121,7 +121,7 @@ public class MusicManagerImpl implements MusicManager {
 		albums.addAll(randomAlbums);
 				
 		while (numberOfAlbums > albums.size()) {
-			int appendItemsTotal = albums.size();
+			int appendItemsTotal = randomAlbums.size();
 			int numberOfAlbumsAfterAppend = albums.size() + appendItemsTotal;
 			if (numberOfAlbumsAfterAppend > numberOfAlbums) {
 				appendItemsTotal = numberOfAlbums - albums.size();

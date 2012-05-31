@@ -1,7 +1,14 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
-	
+	$(document).ready(function() {
+		$("div.random-album-art div.album").hover(function() {			
+			$(this).addClass("highlight");
+		}, function() {
+			$(this).removeClass("highlight");
+		});
+
+	});
 </script>
 
 <div class="panel">

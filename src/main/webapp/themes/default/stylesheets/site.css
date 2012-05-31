@@ -169,7 +169,15 @@ div.random-album-art div.album {
 div.random-album-art div.album img {
 	width: 100%;
 	height: 100%;
+	overflow: hidden;
+	position: relative;
 }
+
+div.random-album-art div.highlight {
+	background-color: gray;
+}
+
+
 
 ul.category-menu {
 	margin: 0;
