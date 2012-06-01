@@ -13,15 +13,11 @@
 
 	<task:executor id="libraryUpdateThreadPoolTaskExecutor"
 		pool-size="3" />
-
-<!-- 
+ 
 	<task:scheduler id="taskScheduler" pool-size="3" />
 	<task:scheduled-tasks scheduler="taskScheduler">
-		<task:scheduled ref="taskManager" method="runScheduledIncomingFeeds"
-			cron="0 * * * * *" />
-		<task:scheduled ref="taskManager" method="deleteOldUnpublishedEvents"
-			cron="0 0 2 * * 1" />
-
+		<task:scheduled ref="mashupMediaTaskScheduler" method="updateLibraries"
+			cron="0 * */15 * * *" />
 	</task:scheduled-tasks>
- -->
+
 </beans>

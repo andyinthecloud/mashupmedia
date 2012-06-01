@@ -5,6 +5,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.util.DateHelper;
+import org.mashupmedia.util.FileHelper;
+
 @Entity
 @Cacheable
 public class Song extends Media {
@@ -137,6 +141,43 @@ public class Song extends Media {
 		builder.append(bitRate);
 		builder.append("]");
 		return builder.toString();
+	}
+	
+	public String getMeta() {
+		StringBuilder metaBuilder = new StringBuilder();
+		if (getBitRate() > 0) {
+			metaBuilder.append(getBitRate() + " KBPS");
+		}
+		
+		if (getTrackLength() > 0) {
+			if (metaBuilder.length() > 0) {
+				metaBuilder.append(" | ");
+			}
+			
+			String trackLengthDisplay = DateHelper.getDisplayTrackLength(getTrackLength());
+			metaBuilder.append(trackLengthDisplay);			
+		}
+		
+		if (getSizeInBytes() > 0) {
+			if (metaBuilder.length() > 0) {
+				metaBuilder.append(" | ");
+			}
+			long sizeInBytes = getSizeInBytes();
+			String displayBytes =  FileHelper.getDisplayBytes(sizeInBytes, true);
+			metaBuilder.append(displayBytes);						
+		}
+		
+		if (StringUtils.isNotBlank(getFormat())) {
+			if (metaBuilder.length() > 0) {
+				metaBuilder.append(" | ");
+			}
+			metaBuilder.append(getFormat());			
+		}
+		
+		
+		
+		return metaBuilder.toString();
+		
 	}
 
 }

@@ -2,7 +2,6 @@
 
 
 
-<div class="panel">
 
 Albums
 
@@ -12,6 +11,5 @@ Albums
 <li><a href="<c:url value="/app/music/album/" /><c:out value="${album.id}"/>"><c:out value="${album.name}"/></a></li>
 </c:forEach>
 </ul>
-</div>
 
 

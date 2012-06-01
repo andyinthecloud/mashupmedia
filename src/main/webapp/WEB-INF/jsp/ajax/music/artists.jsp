@@ -2,7 +2,6 @@
 
 
 
-<div class="panel">
 
 Artists
 
@@ -11,10 +10,8 @@ Artists
 <li><c:out value="${artist.name}"/> </li>
 </c:forEach>
 </ul>
-</div>
 
 
 
-</div>
 
 

@@ -1,24 +1,77 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
-	$(document).ready(function() {
-		$("div.random-album-art div.album").hover(function() {			
-			$(this).addClass("highlight");
-		}, function() {
-			$(this).removeClass("highlight");
-		});
+	$(document)
+			.ready(
+					function() {
 
-	});
+						$
+								.get(
+										"<c:url value="/app/ajax/music/random-albums" />",
+										function(data) {
+											$("div.panel div.content").html(
+													data);
+										});
+
+
+
+						$("#category-menu-home")
+								.click(
+										function() {
+											$
+													.get(
+															"<c:url value="/app/ajax/music/random-albums" />",
+															function(data) {
+																$(
+																		"div.panel div.content")
+																		.html(
+																				data);
+															});
+										});
+
+						$("#category-menu-albums")
+								.click(
+										function() {
+											$
+													.get(
+															"<c:url value="/app/ajax/music/albums" />",
+															function(data) {
+																$(
+																		"div.panel div.content")
+																		.html(
+																				data);
+															});
+										});
+
+						$("#category-menu-artists")
+								.click(
+										function() {
+											$
+													.get(
+															"<c:url value="/app/ajax/music/artists" />",
+															function(data) {
+																$(
+																		"div.panel div.content")
+																		.html(
+																				data);
+															});
+										});
+
+					});
 </script>
 
-<div class="panel">
+<div class="sub-panel">
 
 	<ul class="category-menu">
-		<li><a href="<c:url value="/app/music/albums" />">Albums</a></li>
-		<li><a href="<c:url value="/app/music/artists" />">Artists</a></li>
+		<li><a id="category-menu-home" href="javascript:void(0);"><spring:message
+					code="music.menu.random-albums" /></a></li>
+		<li><a id="category-menu-albums" href="javascript:void(0);"><spring:message
+					code="music.menu.albums" /></a></li>
+		<li><a id="category-menu-artists" href="javascript:void(0);"><spring:message
+					code="music.menu.artists" /></a></li>
 	</ul>
 
-	<div class="items">
+	<div class="content">
 		<tiles:insertAttribute name="body" />
 	</div>
 
