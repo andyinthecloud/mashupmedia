@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping("/ajax/music")
-public class AjaxMusicController {
+public class AjaxMusicController extends BaseAjaxController{
 
 	@Autowired
 	private MusicManager musicManager;

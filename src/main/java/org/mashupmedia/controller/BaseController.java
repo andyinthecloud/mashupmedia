@@ -3,6 +3,7 @@ package org.mashupmedia.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -17,7 +18,7 @@ public abstract class BaseController {
 		return breadcrumb;
 	}
 	
-	@ModelAttribute("themePath")
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_THEME_PATH)
 	public String getThemePath() {
 		return "/themes/default";
 	}

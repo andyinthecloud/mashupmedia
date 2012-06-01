@@ -16,5 +16,7 @@ public interface MashUpMediaConstants {
 	public static final String APPLICATION_FOLDER = "application.folder";
 	
 	public static final String UNKNOWN_NAME = "unknown";
+	
+	public static final String MODEL_KEY_THEME_PATH = "themePath";
 
 }
