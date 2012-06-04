@@ -4,8 +4,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<jsp:include page="/WEB-INF/jsp/inc/jquery.jsp" />
-
+<script type="text/javascript" src="<c:url value="/jquery/1.7.1/jquery-1.7.1.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/scripts/mashupmedia.js" />"></script>
+<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.address/1.5/jquery.address-1.5.min.js" />"></script>
 
 <link href="<c:url value="${themePath}/stylesheets/site.css"/>" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<c:url value="${themePath}/scripts/theme.js"/>"></script>

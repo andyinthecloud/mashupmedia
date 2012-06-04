@@ -17,6 +17,7 @@
 									+ albumId, function(data) {
 								$("div.panel div.content").html(data);
 							});
+							
 						});
 
 			});

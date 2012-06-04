@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 
+
 <div class="sub-panel">
 
 	<h1>
@@ -26,9 +27,9 @@
 			<li id="songId-<c:out value="${song.id}"/>">
 				<div class="controls">
 					<a class="play" href="javascript:void(0);"><img
-						src="<c:url value="$themePath/images/controls/play.png" />"
+						src="<c:url value="${themePath}/images/controls/play.png" />"
 						title="<spring:message code="control.play" />" /></a> <a class="add" href="javascript:void(0);"><img
-						src="<c:url value="$themePath/images/controls/add.png" />"
+						src="<c:url value="${themePath}/images/controls/add.png" />"
 						title="<spring:message code="control.add" />" /></a>
 				</div>
 				<div class="meta">
@@ -39,5 +40,4 @@
 	</ul>
 
 </div>
-
 
