@@ -101,7 +101,7 @@ div.panel buttons {
 
 
 div.panel h1 {
-	font-size: 1.3em;
+	font-size: 1.5em;
 }
 
 div.panel .horizontal-gap {
@@ -206,16 +206,74 @@ div.random-album-art div.highlight img {
 	opacity: 1; /* good browsers: FF, safari, opera */
 }
 
-ul.category-menu {
+ul.control-menu {
 	margin: 0;
 	padding: 0;
 	padding-bottom: 5px;
-	text-align: right;
 }
 
-ul.category-menu li {
+ul.control-menu li {
 	display: inline;
 	list-style: none;
 	font-size: 1.2em;
-	padding-left: 10px;
+	padding: 0 10px;
+	border-left: 1px solid white;
 }
+
+ul.control-menu li.first {
+	border-left: none;
+	padding-left: 0;
+}
+
+ul.main-control-menu {
+	text-align: right;
+}
+
+
+
+
+
+div.sub-panel .album-menu {
+}
+
+div.sub-panel .album-menu li {
+	list-style: none;
+	padding: 5px 0;
+	margin: 0;
+	margin-left: 260px;
+}
+
+div.sub-panel .album-menu li div.controls{
+	display: inline;
+}
+
+div.sub-panel .album-menu li div.controls img{
+	background-color: white;
+	padding: 2px;
+	margin-right: 5px;
+	filter: alpha(opacity =         60); /* for IE */
+	-khtml-opacity: 0.60; /* khtml, old safari */
+	-moz-opacity: 0.60; /* old mozilla, netscape */
+	opacity: 0.60; /* good browsers: FF, safari, opera */
+	vertical-align: middle;
+}
+
+div.sub-panel .album-menu li div.meta{	
+	display: inline;
+	text-align: right;
+	margin-left: 20px;
+	font-size: 0.8em;
+}
+
+
+div.sub-panel div.album-art {
+	float: left;
+	width: 250px;	
+	margin-top: 20px;
+}
+
+div.sub-panel div.album-art img{
+	width: 100%;
+	height: auto;	
+}
+

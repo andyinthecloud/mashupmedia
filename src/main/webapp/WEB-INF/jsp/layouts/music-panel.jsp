@@ -62,8 +62,8 @@
 
 <div class="sub-panel">
 
-	<ul class="category-menu">
-		<li><a id="category-menu-home" href="javascript:void(0);"><spring:message
+	<ul class="control-menu main-control-menu">
+		<li class="first"><a id="category-menu-home" href="javascript:void(0);"><spring:message
 					code="music.menu.random-albums" /></a></li>
 		<li><a id="category-menu-albums" href="javascript:void(0);"><spring:message
 					code="music.menu.albums" /></a></li>
