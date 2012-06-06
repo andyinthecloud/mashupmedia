@@ -182,7 +182,7 @@
 	<form:input path="musicLibrary.scanMinutesInterval" />
 	<br />
 
-	<div class="buttons">
+	<div class="button-panel">
 		<input class="button" name="save" type="submit" value="<spring:message code="action.save" />" />
 		<input class="button" name="delete" type="submit" value="<spring:message code="action.delete" />" />
 	</div>

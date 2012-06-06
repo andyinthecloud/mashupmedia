@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 
 @Entity
@@ -25,14 +26,41 @@ public class Media {
 	private long id;
 	private String fileName;
 	private String path;
-	@ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Library library;
 	private long sizeInBytes;
-	@Temporal (TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedOn;
 	private String format;
-	
-	
+	private int votes;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastAccessed;
+	@ManyToOne
+	private User lastAccessedBy;
+
+	public User getLastAccessedBy() {
+		return lastAccessedBy;
+	}
+
+	public void setLastAccessedBy(User lastAccessedBy) {
+		this.lastAccessedBy = lastAccessedBy;
+	}
+
+	public Date getLastAccessed() {
+		return lastAccessed;
+	}
+
+	public void setLastAccessed(Date lastAccessed) {
+		this.lastAccessed = lastAccessed;
+	}
+
+	public int getVotes() {
+		return votes;
+	}
+
+	public void setVotes(int votes) {
+		this.votes = votes;
+	}
 
 	public String getFormat() {
 		return format;

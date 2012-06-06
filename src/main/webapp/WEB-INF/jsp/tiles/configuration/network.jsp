@@ -41,9 +41,10 @@
 	<br />
 	<label class="new-line"><spring:message code="network.proxy.password" /></label>
 	<form:password path="proxyPassword" />
-	<br />
-	<input class="button" type="submit" value="<spring:message code="action.save"/>" />
 
+	<div class="button-panel">
+		<input class="button" type="submit" value="<spring:message code="action.save"/>" />
+	</div>
 
 
 </form:form>

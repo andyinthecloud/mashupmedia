@@ -93,13 +93,6 @@ div.panel iframe {
 }
 
 
-
-
-div.panel buttons {
-	margin-top: 10px;
-}
-
-
 div.panel h1 {
 	font-size: 1.5em;
 }
@@ -135,6 +128,12 @@ div.panel input[type='text'],div.panel input[type='password'] {
 	min-width: 200px;
 }
 
+
+div.button-panel {
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
 div.panel .button {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
 	border: 1px solid #F8F8FF;
@@ -144,11 +143,9 @@ div.panel .button {
 	-webkit-border-radius: 10px;
 	-khtml-border-radius: 10px;
 	border-radius: 10px;
-	margin-top: 10px;
-	margin-bottom: 5px;
-	font-weight: bold;
-	font-size: 1.1em;
+	font-size: 1.0em;
 	cursor: default;
+	background-color: transparent;
 }
 
 div.panel .hover {
@@ -249,13 +246,15 @@ div.sub-panel .album-menu li div.controls{
 
 div.sub-panel .album-menu li div.controls img{
 	background-color: white;
-	padding: 2px;
+	padding: 3px;
 	margin-right: 5px;
 	filter: alpha(opacity =         60); /* for IE */
 	-khtml-opacity: 0.60; /* khtml, old safari */
 	-moz-opacity: 0.60; /* old mozilla, netscape */
 	opacity: 0.60; /* good browsers: FF, safari, opera */
 	vertical-align: middle;
+	width: 10px;
+	height: auto;
 }
 
 div.sub-panel .album-menu li div.meta{	
