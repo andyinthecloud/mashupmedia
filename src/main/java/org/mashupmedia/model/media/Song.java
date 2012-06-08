@@ -11,7 +11,7 @@ import org.mashupmedia.util.FileHelper;
 
 @Entity
 @Cacheable
-public class Song extends Media {
+public class Song extends MediaItem {
 	private int trackNumber;
 	private String title;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

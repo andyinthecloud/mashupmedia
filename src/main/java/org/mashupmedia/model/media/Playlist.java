@@ -1,15 +1,16 @@
 package org.mashupmedia.model.media;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -26,8 +27,9 @@ public class Playlist {
 
 	private String name;
 
-	@ManyToMany
-	private Set<Media> mediaSet;
+	@OneToMany(mappedBy = "playLIst")
+	@OrderBy("ranking")
+	private List<PlaylistMediaItem> playlistMediaItems;
 
 	@ManyToOne
 	private User owner;
@@ -45,7 +47,7 @@ public class Playlist {
 	private Group group;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastAccessed;
+	private Date lastAccessedOn;
 
 	@ManyToOne
 	private User lastAccessedBy;
@@ -68,12 +70,14 @@ public class Playlist {
 		this.id = id;
 	}
 
-	public Set<Media> getMediaSet() {
-		return mediaSet;
+
+	
+	public List<PlaylistMediaItem> getPlaylistMediaItems() {
+		return playlistMediaItems;
 	}
 
-	public void setMediaSet(Set<Media> mediaSet) {
-		this.mediaSet = mediaSet;
+	public void setPlaylistMediaItems(List<PlaylistMediaItem> playlistMediaItems) {
+		this.playlistMediaItems = playlistMediaItems;
 	}
 
 	public User getOwner() {
@@ -116,12 +120,12 @@ public class Playlist {
 		this.group = group;
 	}
 
-	public Date getLastAccessed() {
-		return lastAccessed;
+	public Date getLastAccessedOn() {
+		return lastAccessedOn;
 	}
 
-	public void setLastAccessed(Date lastAccessed) {
-		this.lastAccessed = lastAccessed;
+	public void setLastAccessedOn(Date lastAccessed) {
+		this.lastAccessedOn = lastAccessed;
 	}
 
 	public User getLastAccessedBy() {
@@ -187,8 +191,8 @@ public class Playlist {
 		builder.append(id);
 		builder.append(", name=");
 		builder.append(name);
-		builder.append(", mediaSet=");
-		builder.append(mediaSet);
+		builder.append(", playlistMediaItems=");
+		builder.append(playlistMediaItems);
 		builder.append(", owner=");
 		builder.append(owner);
 		builder.append(", createdOn=");
@@ -199,10 +203,12 @@ public class Playlist {
 		builder.append(updatedBy);
 		builder.append(", group=");
 		builder.append(group);
-		builder.append(", lastAccessed=");
-		builder.append(lastAccessed);
+		builder.append(", lastAccessedOn=");
+		builder.append(lastAccessedOn);
 		builder.append(", lastAccessedBy=");
 		builder.append(lastAccessedBy);
+		builder.append(", isDefault=");
+		builder.append(isDefault);
 		builder.append("]");
 		return builder.toString();
 	}

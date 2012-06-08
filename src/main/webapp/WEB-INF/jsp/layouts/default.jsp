@@ -8,6 +8,9 @@
 <script type="text/javascript" src="<c:url value="/scripts/mashupmedia.js" />"></script>
 <script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.address/1.5/jquery.address-1.5.min.js" />"></script>
 
+<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/2.1.0/jquery.jplayer.min.js" />"></script>
+<link type="text/css" href="<c:url value="/jquery-plugins/jquery.jplayer/2.1.0/skins/pink.flag/jplayer.pink.flag.css" />" rel="stylesheet" />
+ 
 <link href="<c:url value="${themePath}/stylesheets/site.css"/>" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 

@@ -28,8 +28,19 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	}
 
 	@Override
+	public Playlist getLastAccessedPlaylist(long userId) {
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from Playlist as p where p.owner.id = :userId and p.lastAccessedOn = (select max(sp.lastAccessedOn) from Playlist as sp)");
+		query.setCacheable(true);
+		query.setLong("userId", userId);
+		Playlist playlist = (Playlist) query.uniqueResult();
+		return playlist;
+	}
+	
+	@Override
 	public Playlist getDefaultPlaylist(long userId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Playlist where owner.id = :userId and isDefault = true");
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from Playlist where owner.id = :userId and isDefault = true");
 		query.setCacheable(true);
 		query.setLong("userId", userId);
 		Playlist playlist = (Playlist) query.uniqueResult();

@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
-import org.mashupmedia.model.media.Media;
+import org.mashupmedia.model.media.MediaItem;
 
 public interface MediaDao {
 
-	List<Media> getMedia(long libraryId);
+	List<MediaItem> getMedia(long libraryId);
 
-	void deleteMediaList(List<Media> mediaList);
+	void deleteMediaList(List<MediaItem> mediaList);
 
 	void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages);
 

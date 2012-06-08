@@ -13,7 +13,7 @@ import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.AlbumArtImage;
-import org.mashupmedia.model.media.Media;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +104,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	@Override
 	public void deleteLibrary(Library library) {
 		long id = library.getId();
-		List<Media> mediaList = mediaManager.getMedia(id);
+		List<MediaItem> mediaList = mediaManager.getMedia(id);
 		mediaManager.deleteMediaList(mediaList);
 		List<AlbumArtImage> albumArtImages = mediaManager.getAlbumArtImages(id);
 		mediaManager.deleteAlbumArtImages(albumArtImages);

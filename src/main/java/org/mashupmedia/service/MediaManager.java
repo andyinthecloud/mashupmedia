@@ -3,13 +3,13 @@ package org.mashupmedia.service;
 import java.util.List;
 
 import org.mashupmedia.model.media.AlbumArtImage;
-import org.mashupmedia.model.media.Media;
+import org.mashupmedia.model.media.MediaItem;
 
 public interface MediaManager {
 
-	public List<Media> getMedia(long libraryId);
+	public List<MediaItem> getMedia(long libraryId);
 
-	public void deleteMediaList(List<Media> mediaList);
+	public void deleteMediaList(List<MediaItem> mediaList);
 
 
 	public void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages);

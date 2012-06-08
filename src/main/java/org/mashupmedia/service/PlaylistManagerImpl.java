@@ -31,12 +31,20 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
+	public Playlist getLastAccessedPlaylistForCurrentUser() {
+		User user = SecurityHelper.getLoggedInUser();
+		Playlist playlist = playlistDao.getLastAccessedPlaylist(user.getId());
+		return playlist;
+	}
+
+	@Override
 	public Playlist getDefaultPlaylistForCurrentUser() {
 		User user = SecurityHelper.getLoggedInUser();
 		Playlist playlist = playlistDao.getDefaultPlaylist(user.getId());
 		return playlist;
 	}
-
+	
+	
 	@Override
 	public void savePlaylist(Playlist playlist) {
 		User user = SecurityHelper.getLoggedInUser();
@@ -48,13 +56,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		}
 		
 		playlist.setUpdatedBy(user);
-		playlist.setUpdatedOn(date);
-		
-		
-		List<Playlist> userPlaylists = getPlaylistsForCurrentUser();
-		if (userPlaylists == null || userPlaylists.isEmpty()) {
-			playlist.setDefault(true);
-		}
+		playlist.setUpdatedOn(date);		
 		
 		playlistDao.savePlaylist(playlist);
 	}

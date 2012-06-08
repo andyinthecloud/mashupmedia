@@ -10,6 +10,8 @@ public interface PlaylistManager {
 
 	public Playlist getPlaylist(long id);
 
+	public Playlist getLastAccessedPlaylistForCurrentUser();
+	
 	public Playlist getDefaultPlaylistForCurrentUser();
 	
 	public void savePlaylist(Playlist playlist);

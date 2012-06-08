@@ -7,6 +7,13 @@ html,body {
 	padding: 0;
 }
 
+.error-box {
+	display: block;
+	margin-bottom: 10px;
+	color: #F6CECE;
+	font-weight: bold;
+}
+
 #background-image {
 	position: fixed;
 	top: 0;
@@ -75,7 +82,7 @@ div.panel {
 }
 
 div.panel form {
-	padding: 10px;
+	padding: 0;
 }
 
 div.sub-panel {
@@ -124,7 +131,7 @@ div.panel label.new-line {
 }
 
 div.panel input[type='text'],div.panel input[type='password'] {
-	width: 100%;
+	width: 99%;
 	min-width: 200px;
 }
 
@@ -139,13 +146,21 @@ div.panel .button {
 	border: 1px solid #F8F8FF;
 	color: #F8F8FF;	
 	padding: 3px 10px;
+	font-size: 1.0em;
+	cursor: default;
+	background-color: transparent;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-khtml-border-radius: 10px;
 	border-radius: 10px;
-	font-size: 1.0em;
-	cursor: default;
-	background-color: transparent;
+}
+
+
+.sub-rounded-corners {
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-khtml-border-radius: 10px;
+	border-radius: 10px;	
 }
 
 div.panel .hover {
@@ -153,7 +168,6 @@ div.panel .hover {
 }
 
 div.panel div.breadcrumbs {
-	margin-bottom: 10px;
 }
 
 div.panel a,div.panel a:VISITED {
@@ -178,6 +192,8 @@ div.panel ul.main-menu li a {
 div.panel ul.main-menu a:HOVER {
 	background-color: #CD6600;
 }
+
+
 
 div.random-album-art div.album {
 	float: left;
@@ -276,3 +292,13 @@ div.sub-panel div.album-art img{
 	height: auto;	
 }
 
+#playlist {
+	background-color: #3A2A45;
+	padding: 10px 0;
+	margin-bottom: 10px;
+	
+}
+
+#playlist div.songs {
+	
+}

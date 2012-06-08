@@ -20,7 +20,7 @@ import org.mashupmedia.model.library.Library;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public class Media {
+public class MediaItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
@@ -136,7 +136,7 @@ public class Media {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Media other = (Media) obj;
+		MediaItem other = (MediaItem) obj;
 		if (library == null) {
 			if (other.library != null)
 				return false;

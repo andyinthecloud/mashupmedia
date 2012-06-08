@@ -10,12 +10,14 @@ public interface PlaylistDao {
 
 	public Playlist getPlaylist(long id);
 
-	public Playlist getDefaultPlaylist(long userId);
+	public Playlist getLastAccessedPlaylist(long userId);
 
 	public void savePlaylist(Playlist playlist);
 
 	public List<Playlist> getPlaylists(long userId);
 
 	public void deletePlaylist(Playlist playlist);
+
+	public Playlist getDefaultPlaylist(long userId);
 
 }

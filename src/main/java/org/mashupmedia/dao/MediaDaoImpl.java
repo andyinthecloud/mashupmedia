@@ -5,25 +5,25 @@ import java.util.List;
 import org.hibernate.Query;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
-import org.mashupmedia.model.media.Media;
+import org.mashupmedia.model.media.MediaItem;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 
 	@Override
-	public List<Media> getMedia(long libraryId) {
+	public List<MediaItem> getMedia(long libraryId) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Media where library.id = :libraryId order by title");
 		query.setLong("libraryId", libraryId);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
-		List<Media> mediaList = (List<Media>) query.list();
+		List<MediaItem> mediaList = (List<MediaItem>) query.list();
 		return mediaList;
 	}
 
 	@Override
-	public void deleteMediaList(List<Media> mediaList) {
-		for (Media media : mediaList) {
+	public void deleteMediaList(List<MediaItem> mediaList) {
+		for (MediaItem media : mediaList) {
 			sessionFactory.getCurrentSession().delete(media);
 		}
 

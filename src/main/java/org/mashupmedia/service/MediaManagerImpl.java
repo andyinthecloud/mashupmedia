@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.model.media.AlbumArtImage;
-import org.mashupmedia.model.media.Media;
+import org.mashupmedia.model.media.MediaItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +17,13 @@ public class MediaManagerImpl implements MediaManager{
 	private MediaDao mediaDao;
 
 	@Override
-	public List<Media> getMedia(long libraryId) {
-		List<Media> mediaList = mediaDao.getMedia(libraryId);
+	public List<MediaItem> getMedia(long libraryId) {
+		List<MediaItem> mediaList = mediaDao.getMedia(libraryId);
 		return mediaList;
 	}
 
 	@Override
-	public void deleteMediaList(List<Media> mediaList) {
+	public void deleteMediaList(List<MediaItem> mediaList) {
 		mediaDao.deleteMediaList(mediaList);		
 	}
 

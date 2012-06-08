@@ -11,8 +11,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
+import org.mashupmedia.model.media.Playlist;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
+import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.web.Breadcrumb;
@@ -36,6 +38,8 @@ public class MusicController extends BaseController {
 	private MusicManager musicManager;
 	@Autowired
 	private ConnectionManager connectionManager;
+	@Autowired
+	private PlaylistManager playlistManager;
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
@@ -48,6 +52,14 @@ public class MusicController extends BaseController {
 		MusicPage musicPage = new MusicPage();
 		List<Album> albums = musicManager.getRandomAlbums(NUMBER_OF_RANDOM_ALBUMS);
 		musicPage.setAlbums(albums);
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser();
+		// If the user has no playlist create a default one
+		if (playlist == null) {
+			playlist = new Playlist();
+			playlist.setDefault(true);
+		}
+		musicPage.setPlaylist(playlist);
+		
 		model.addAttribute(musicPage);
 		return "music";
 	}
