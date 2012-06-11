@@ -11,7 +11,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
-import org.mashupmedia.model.playlist.MusicPlaylist;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
@@ -53,10 +52,10 @@ public class MusicController extends BaseController {
 		MusicPage musicPage = new MusicPage();
 		List<Album> albums = musicManager.getRandomAlbums(NUMBER_OF_RANDOM_ALBUMS);
 		musicPage.setAlbums(albums);
-		MusicPlaylist playlist = playlistManager.getLastAccessedMusicPlaylistForCurrentUser();
+		Playlist playlist = playlistManager.getLastAccessedMusicPlaylistForCurrentUser();
 		// If the user has no playlist create a default one
 		if (playlist == null) {
-			playlist = new MusicPlaylist();
+			playlist = new Playlist();
 			playlist.setDefault(true);
 		}
 		musicPage.setPlaylist(playlist);

@@ -12,9 +12,9 @@ import org.mashupmedia.util.FileHelper;
 @Entity
 @Cacheable
 public class Song extends MediaItem {
-	
-	public final static String TITLE_SEPERATOR = " - "; 
-	
+
+	public final static String TITLE_SEPERATOR = " - ";
+
 	private int trackNumber;
 	private String title;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -157,19 +157,29 @@ public class Song extends MediaItem {
 		return builder.toString();
 	}
 
+	public String getDisplayTrackLength() {
+		if (getTrackLength() == 0) {
+			return "";
+		}
+
+		String trackLengthDisplay = DateHelper.getDisplayTrackLength(getTrackLength());
+		return trackLengthDisplay;
+
+	}
+
 	public String getMeta() {
 		StringBuilder metaBuilder = new StringBuilder();
 		if (getBitRate() > 0) {
 			metaBuilder.append(getBitRate() + " KBPS");
 		}
 
-		if (getTrackLength() > 0) {
+		String displayTrackLength = getDisplayTrackLength();
+		if (StringUtils.isNotBlank(displayTrackLength)) {
 			if (metaBuilder.length() > 0) {
 				metaBuilder.append(" | ");
 			}
+			metaBuilder.append(displayTrackLength);
 
-			String trackLengthDisplay = DateHelper.getDisplayTrackLength(getTrackLength());
-			metaBuilder.append(trackLengthDisplay);
 		}
 
 		if (getSizeInBytes() > 0) {
@@ -191,7 +201,7 @@ public class Song extends MediaItem {
 		return metaBuilder.toString();
 
 	}
-	
+
 	public String getDisplayTitle() {
 		StringBuilder titleBuilder = new StringBuilder();
 		if (isReadableTag()) {
@@ -200,13 +210,13 @@ public class Song extends MediaItem {
 			titleBuilder.append(getTitle());
 			return titleBuilder.toString();
 		}
-		
+
 		String title = StringUtils.trimToEmpty(getTitle());
 		int dotIndex = title.lastIndexOf(".");
 		if (dotIndex < 0) {
 			return title;
 		}
-		
+
 		title = title.substring(0, dotIndex);
 		return title;
 	}

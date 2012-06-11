@@ -14,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
-import org.mashupmedia.model.playlist.MusicPlaylist;
+import org.mashupmedia.model.playlist.Playlist;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -33,15 +33,13 @@ public class User implements UserDetails {
 	private Date createdOn;
 	private Date updatedOn;
 	@ManyToOne
-	private MusicPlaylist currentMusicPlaylist;
-	
-	
+	private Playlist currentMusicPlaylist;
 
-	public MusicPlaylist getCurrentMusicPlaylist() {
+	public Playlist getCurrentMusicPlaylist() {
 		return currentMusicPlaylist;
 	}
 
-	public void setCurrentMusicPlaylist(MusicPlaylist currentPlaylist) {
+	public void setCurrentMusicPlaylist(Playlist currentPlaylist) {
 		this.currentMusicPlaylist = currentPlaylist;
 	}
 
@@ -125,7 +123,8 @@ public class User implements UserDetails {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		result = prime * result
+				+ ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
 

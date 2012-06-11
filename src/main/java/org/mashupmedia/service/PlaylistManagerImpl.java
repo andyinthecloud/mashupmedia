@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.model.User;
-import org.mashupmedia.model.playlist.MusicPlaylist;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class PlaylistManagerImpl implements PlaylistManager {
+	
 
 	@Autowired
 	private PlaylistDao playlistDao;
@@ -32,9 +32,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
-	public MusicPlaylist getLastAccessedMusicPlaylistForCurrentUser() {
+	public Playlist getLastAccessedMusicPlaylistForCurrentUser() {
 		User user = SecurityHelper.getLoggedInUser();
-		MusicPlaylist playlist = user.getCurrentMusicPlaylist();
+		Playlist playlist = user.getCurrentMusicPlaylist();
 		if (playlist != null) {
 			return playlist;
 		}
@@ -44,9 +44,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
-	public MusicPlaylist getDefaultMusicPlaylistForCurrentUser() {
+	public Playlist getDefaultMusicPlaylistForCurrentUser() {
 		User user = SecurityHelper.getLoggedInUser();
-		MusicPlaylist musicPlaylist = playlistDao.getDefaultMusicPlaylist(user.getId());
+		Playlist musicPlaylist = playlistDao.getDefaultMusicPlaylist(user.getId());
 		return musicPlaylist;
 	}
 	

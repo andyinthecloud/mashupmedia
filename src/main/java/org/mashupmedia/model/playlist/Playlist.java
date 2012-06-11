@@ -8,9 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -18,9 +18,8 @@ import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public abstract class Playlist {
+public class Playlist {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,6 +27,9 @@ public abstract class Playlist {
 
 	private String name;
 
+	@OneToMany(mappedBy = "playlist")
+	@OrderBy("ranking")
+	private List<PlaylistMediaItem> playlistMediaItems;
 
 	@ManyToOne
 	private User owner;
@@ -52,6 +54,16 @@ public abstract class Playlist {
 
 	private boolean isDefault;
 
+	private String playlistType;
+
+	public String getPlaylistType() {
+		return playlistType;
+	}
+
+	public void setPlaylistType(String playlistType) {
+		this.playlistType = playlistType;
+	}
+
 	public boolean isDefault() {
 		return isDefault;
 	}
@@ -68,16 +80,13 @@ public abstract class Playlist {
 		this.id = id;
 	}
 
-	
-	public abstract List<? extends PlaylistMediaItem> getPlaylistMediaItems();
-	
-//	public List<PlaylistMediaItem> getPlaylistMediaItems() {
-//		return playlistMediaItems;
-//	}
-//
-//	public void setPlaylistMediaItems(List<PlaylistMediaItem> playlistMediaItems) {
-//		this.playlistMediaItems = playlistMediaItems;
-//	}
+	public List<PlaylistMediaItem> getPlaylistMediaItems() {
+		return playlistMediaItems;
+	}
+
+	public void setPlaylistMediaItems(List<PlaylistMediaItem> playlistMediaItems) {
+		this.playlistMediaItems = playlistMediaItems;
+	}
 
 	public User getOwner() {
 		return owner;
@@ -147,10 +156,13 @@ public abstract class Playlist {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((createdOn == null) ? 0 : createdOn.hashCode());
+		result = prime * result
+				+ ((createdOn == null) ? 0 : createdOn.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result
+				+ ((playlistType == null) ? 0 : playlistType.hashCode());
 		return result;
 	}
 
@@ -180,6 +192,11 @@ public abstract class Playlist {
 				return false;
 		} else if (!owner.equals(other.owner))
 			return false;
+		if (playlistType == null) {
+			if (other.playlistType != null)
+				return false;
+		} else if (!playlistType.equals(other.playlistType))
+			return false;
 		return true;
 	}
 
@@ -190,6 +207,8 @@ public abstract class Playlist {
 		builder.append(id);
 		builder.append(", name=");
 		builder.append(name);
+		builder.append(", playlistMediaItems=");
+		builder.append(playlistMediaItems);
 		builder.append(", owner=");
 		builder.append(owner);
 		builder.append(", createdOn=");
@@ -206,6 +225,8 @@ public abstract class Playlist {
 		builder.append(lastAccessedBy);
 		builder.append(", isDefault=");
 		builder.append(isDefault);
+		builder.append(", playlistType=");
+		builder.append(playlistType);
 		builder.append("]");
 		return builder.toString();
 	}

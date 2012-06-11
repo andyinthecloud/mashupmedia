@@ -3,32 +3,32 @@ package org.mashupmedia.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mashupmedia.model.media.Song;
-import org.mashupmedia.model.playlist.MusicPlaylist;
-import org.mashupmedia.model.playlist.PlaylistSong;
+import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public class PlaylistHelper {
 
-	public static void replaceMusicPlaylistSongs(MusicPlaylist playlist, List<Song> songs) {
+	public static void replacePlaylist(Playlist playlist, List<? extends MediaItem> songs) {
 		if (songs == null || songs.isEmpty()) {
 			return;
 		}
 
-		List<PlaylistSong> playlistSongs = playlist.getPlaylistSongs();
-		if (playlistSongs != null) {
-			playlistSongs.clear();
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		if (playlistMediaItems != null) {
+			playlistMediaItems.clear();
 		} else {
-			playlistSongs = new ArrayList<PlaylistSong>();
+			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 		}
 
-		for (Song song : songs) {
-			PlaylistSong playlistSong = new PlaylistSong();
-			playlistSong.setSong(song);
+		for (MediaItem song : songs) {
+			PlaylistMediaItem playlistSong = new PlaylistMediaItem();
+			playlistSong.setMediaItem(song);
 			playlistSong.setPlaylist(playlist);
-			playlistSongs.add(playlistSong);
+			playlistMediaItems.add(playlistSong);
 		}
 
-		playlist.setPlaylistSongs(playlistSongs);
+		playlist.setPlaylistMediaItems(playlistMediaItems);
 	}
 
 }

@@ -5,16 +5,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 
 import org.mashupmedia.model.media.MediaItem;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public abstract class PlaylistMediaItem {
+public class PlaylistMediaItem {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,6 +20,19 @@ public abstract class PlaylistMediaItem {
 	
 	@ManyToOne
 	private Playlist playlist;
+	
+	@ManyToOne
+	private MediaItem mediaItem;
+	
+	
+
+	public MediaItem getMediaItem() {
+		return mediaItem;
+	}
+
+	public void setMediaItem(MediaItem mediaItem) {
+		this.mediaItem = mediaItem;
+	}
 
 	public Playlist getPlaylist() {
 		return playlist;
@@ -48,15 +58,16 @@ public abstract class PlaylistMediaItem {
 		this.ranking = ranking;
 	}
 
-	public abstract MediaItem getMediaItem();
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + ((playlist == null) ? 0 : playlist.hashCode());
-		result = prime * result + ranking;
+		result = prime * result
+				+ ((mediaItem == null) ? 0 : mediaItem.hashCode());
+		result = prime * result
+				+ ((playlist == null) ? 0 : playlist.hashCode());
 		return result;
 	}
 
@@ -71,12 +82,15 @@ public abstract class PlaylistMediaItem {
 		PlaylistMediaItem other = (PlaylistMediaItem) obj;
 		if (id != other.id)
 			return false;
+		if (mediaItem == null) {
+			if (other.mediaItem != null)
+				return false;
+		} else if (!mediaItem.equals(other.mediaItem))
+			return false;
 		if (playlist == null) {
 			if (other.playlist != null)
 				return false;
 		} else if (!playlist.equals(other.playlist))
-			return false;
-		if (ranking != other.ranking)
 			return false;
 		return true;
 	}
@@ -90,6 +104,8 @@ public abstract class PlaylistMediaItem {
 		builder.append(ranking);
 		builder.append(", playlist=");
 		builder.append(playlist);
+		builder.append(", mediaItem=");
+		builder.append(mediaItem);
 		builder.append("]");
 		return builder.toString();
 	}

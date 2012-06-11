@@ -5,7 +5,7 @@ import java.util.List;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Song;
-import org.mashupmedia.model.playlist.MusicPlaylist;
+import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
@@ -33,23 +33,23 @@ public class AjaxPlaylistController extends BaseAjaxController{
 	
 	@RequestMapping(value = "/play-album", method = RequestMethod.POST)
 	public String playAlbum(@RequestParam("albumId") Long albumId,  Model model) {
-		MusicPlaylist musicPlaylist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
+		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
 		User user = SecurityHelper.getLoggedInUser();
-		if (musicPlaylist == null) {
-			musicPlaylist = new MusicPlaylist();
-			musicPlaylist.setDefault(true);
-			musicPlaylist.setOwner(user);
+		if (playlist == null) {
+			playlist = new Playlist();
+			playlist.setDefault(true);
+			playlist.setOwner(user);
 		}
 		
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs =  album.getSongs();
 		
-		PlaylistHelper.replaceMusicPlaylistSongs(musicPlaylist, songs);
-		playlistManager.savePlaylist(musicPlaylist);
-		user.setCurrentMusicPlaylist(musicPlaylist);
+		PlaylistHelper.replacePlaylist(playlist, songs);
+		playlistManager.savePlaylist(playlist);
+		user.setCurrentMusicPlaylist(playlist);
 		adminManager.saveUser(user);
 		
-		model.addAttribute("musicPlaylist", musicPlaylist);		
+		model.addAttribute("playlist", playlist);		
 		return "ajax/playlist/music-playlist";
 
 	}

@@ -4,19 +4,21 @@
 
 
 <table>
-<tbody>
-<c:forEach items="playlist.playlistMediaItems" var="playlistMediaItem">
-	<c:set var="song" value="" />
-<tr id="playlist-mediaId-<c:out value="${ }"/>">
+	<tbody>
+		<c:forEach items="${playlist.playlistMediaItems}"
+			var="playlistMediaItem">
+			<c:set var="song" value="${playlistMediaItem.mediaItem}" />
+			<tr id="playlist-mediaId-<c:out value="${song.id}"/>">
+				<td><c:out value="${song.displayTitle}" /></td>
+				<td><c:out value="${song.album.name}" /></td>
+				<td><c:out value="${song.artist.name}" /></td>
+				<td><c:out value="${song.displayTrackLength}" /></td>
+			</tr>
 
-<td></td>
-
-</tr>
-
-</c:forEach>
+		</c:forEach>
 
 
-</tbody>
+	</tbody>
 
 </table>
 
