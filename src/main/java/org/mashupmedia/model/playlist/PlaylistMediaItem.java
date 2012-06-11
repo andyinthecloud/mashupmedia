@@ -1,22 +1,36 @@
-package org.mashupmedia.model.media;
+package org.mashupmedia.model.playlist;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 
+import org.mashupmedia.model.media.MediaItem;
+
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public class PlaylistMediaItem {
+public abstract class PlaylistMediaItem {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private int ranking;
+	
 	@ManyToOne
-	private MediaItem mediaItem;
+	private Playlist playlist;
+
+	public Playlist getPlaylist() {
+		return playlist;
+	}
+
+	public void setPlaylist(Playlist playlist) {
+		this.playlist = playlist;
+	}
 
 	public long getId() {
 		return id;
@@ -34,20 +48,14 @@ public class PlaylistMediaItem {
 		this.ranking = ranking;
 	}
 
-	public MediaItem getMediaItem() {
-		return mediaItem;
-	}
-
-	public void setMediaItem(MediaItem media) {
-		this.mediaItem = media;
-	}
+	public abstract MediaItem getMediaItem();
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + ((mediaItem == null) ? 0 : mediaItem.hashCode());
+		result = prime * result + ((playlist == null) ? 0 : playlist.hashCode());
 		result = prime * result + ranking;
 		return result;
 	}
@@ -63,10 +71,10 @@ public class PlaylistMediaItem {
 		PlaylistMediaItem other = (PlaylistMediaItem) obj;
 		if (id != other.id)
 			return false;
-		if (mediaItem == null) {
-			if (other.mediaItem != null)
+		if (playlist == null) {
+			if (other.playlist != null)
 				return false;
-		} else if (!mediaItem.equals(other.mediaItem))
+		} else if (!playlist.equals(other.playlist))
 			return false;
 		if (ranking != other.ranking)
 			return false;
@@ -80,8 +88,8 @@ public class PlaylistMediaItem {
 		builder.append(id);
 		builder.append(", ranking=");
 		builder.append(ranking);
-		builder.append(", media=");
-		builder.append(mediaItem);
+		builder.append(", playlist=");
+		builder.append(playlist);
 		builder.append("]");
 		return builder.toString();
 	}

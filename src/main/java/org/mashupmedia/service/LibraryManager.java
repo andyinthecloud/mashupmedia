@@ -15,6 +15,4 @@ public interface LibraryManager {
 	
 	public void deleteLibrary(Library library);
 
-	public MusicLibrary getMusicLibrary(String name);
-
 }

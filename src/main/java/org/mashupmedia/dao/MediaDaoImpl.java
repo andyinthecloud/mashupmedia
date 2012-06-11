@@ -13,7 +13,7 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 
 	@Override
 	public List<MediaItem> getMedia(long libraryId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Media where library.id = :libraryId order by title");
+		Query query = sessionFactory.getCurrentSession().createQuery("from MediaItem where library.id = :libraryId order by title");
 		query.setLong("libraryId", libraryId);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -22,9 +22,9 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 	}
 
 	@Override
-	public void deleteMediaList(List<MediaItem> mediaList) {
-		for (MediaItem media : mediaList) {
-			sessionFactory.getCurrentSession().delete(media);
+	public void deleteMediaList(List<MediaItem> mediaItems) {
+		for (MediaItem mediaItem : mediaItems) {
+			sessionFactory.getCurrentSession().delete(mediaItem);
 		}
 
 	}

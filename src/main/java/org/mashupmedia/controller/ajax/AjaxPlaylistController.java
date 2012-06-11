@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.Album;
-import org.mashupmedia.model.media.Playlist;
 import org.mashupmedia.model.media.Song;
+import org.mashupmedia.model.playlist.MusicPlaylist;
+import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,23 +28,29 @@ public class AjaxPlaylistController extends BaseAjaxController{
 	@Autowired
 	private MusicManager musicManager;
 	
+	@Autowired
+	private AdminManager adminManager;
+	
 	@RequestMapping(value = "/play-album", method = RequestMethod.POST)
-	public String addToPlaylist(@RequestParam("albumId") Long albumId,  Model model) {
-		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser();
+	public String playAlbum(@RequestParam("albumId") Long albumId,  Model model) {
+		MusicPlaylist musicPlaylist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
 		User user = SecurityHelper.getLoggedInUser();
-		if (playlist == null) {
-			playlist = new Playlist();
-			playlist.setDefault(true);
-			playlist.setOwner(user);
+		if (musicPlaylist == null) {
+			musicPlaylist = new MusicPlaylist();
+			musicPlaylist.setDefault(true);
+			musicPlaylist.setOwner(user);
 		}
 		
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs =  album.getSongs();
 		
+		PlaylistHelper.replaceMusicPlaylistSongs(musicPlaylist, songs);
+		playlistManager.savePlaylist(musicPlaylist);
+		user.setCurrentMusicPlaylist(musicPlaylist);
+		adminManager.saveUser(user);
 		
-		List<Album> albums = musicManager.getRandomAlbums(30);
-		model.addAttribute("albums", albums);
-		return "ajax/music/random-albums";
+		model.addAttribute("musicPlaylist", musicPlaylist);		
+		return "ajax/playlist/music-playlist";
 
 	}
 

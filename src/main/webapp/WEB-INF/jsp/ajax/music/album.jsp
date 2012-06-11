@@ -4,7 +4,8 @@
 	$(document).ready(function() {
 		$("#play-all").click(function() {
 			 var albumId = $(this).closest("ul").attr("id");
-			 alert(albumId);
+			 albumId = albumId.replace("albumId-", "");
+			 playAlbum(albumId);
 		});
 		
 	});
@@ -48,7 +49,7 @@
 						title="<spring:message code="control.play" />" /></a> <a class="add" href="javascript:void(0);"><img
 						src="<c:url value="${themePath}/images/controls/add.png" />"
 						title="<spring:message code="control.add" />" /></a>
-				</div> <c:out value="${song.trackNumber}" /> - <c:out value="${song.title}" />
+				</div><c:out value="${song.displayTitle}" />
 
 				<div class="meta">
 					<c:out value="${song.meta}" />

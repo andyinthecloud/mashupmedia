@@ -1,4 +1,4 @@
-package org.mashupmedia.model.media;
+package org.mashupmedia.model.playlist;
 
 import java.util.Date;
 import java.util.List;
@@ -8,9 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -18,8 +18,9 @@ import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public class Playlist {
+public abstract class Playlist {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,9 +28,6 @@ public class Playlist {
 
 	private String name;
 
-	@OneToMany(mappedBy = "playLIst")
-	@OrderBy("ranking")
-	private List<PlaylistMediaItem> playlistMediaItems;
 
 	@ManyToOne
 	private User owner;
@@ -70,15 +68,16 @@ public class Playlist {
 		this.id = id;
 	}
 
-
 	
-	public List<PlaylistMediaItem> getPlaylistMediaItems() {
-		return playlistMediaItems;
-	}
-
-	public void setPlaylistMediaItems(List<PlaylistMediaItem> playlistMediaItems) {
-		this.playlistMediaItems = playlistMediaItems;
-	}
+	public abstract List<? extends PlaylistMediaItem> getPlaylistMediaItems();
+	
+//	public List<PlaylistMediaItem> getPlaylistMediaItems() {
+//		return playlistMediaItems;
+//	}
+//
+//	public void setPlaylistMediaItems(List<PlaylistMediaItem> playlistMediaItems) {
+//		this.playlistMediaItems = playlistMediaItems;
+//	}
 
 	public User getOwner() {
 		return owner;
@@ -191,8 +190,6 @@ public class Playlist {
 		builder.append(id);
 		builder.append(", name=");
 		builder.append(name);
-		builder.append(", playlistMediaItems=");
-		builder.append(playlistMediaItems);
 		builder.append(", owner=");
 		builder.append(owner);
 		builder.append(", createdOn=");

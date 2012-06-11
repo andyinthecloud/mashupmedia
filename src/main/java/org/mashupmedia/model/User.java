@@ -12,7 +12,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
+import org.mashupmedia.model.playlist.MusicPlaylist;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -30,6 +32,18 @@ public class User implements UserDetails {
 	private Set<Role> roles;
 	private Date createdOn;
 	private Date updatedOn;
+	@ManyToOne
+	private MusicPlaylist currentMusicPlaylist;
+	
+	
+
+	public MusicPlaylist getCurrentMusicPlaylist() {
+		return currentMusicPlaylist;
+	}
+
+	public void setCurrentMusicPlaylist(MusicPlaylist currentPlaylist) {
+		this.currentMusicPlaylist = currentPlaylist;
+	}
 
 	public Date getCreatedOn() {
 		return createdOn;
@@ -149,6 +163,8 @@ public class User implements UserDetails {
 		builder.append(createdOn);
 		builder.append(", updatedOn=");
 		builder.append(updatedOn);
+		builder.append(", currentPlaylist=");
+		builder.append(currentMusicPlaylist);
 		builder.append("]");
 		return builder.toString();
 	}

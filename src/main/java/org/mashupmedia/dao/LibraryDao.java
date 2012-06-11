@@ -15,7 +15,4 @@ public interface LibraryDao {
 
 	public void deleteLibrary(Library library);
 
-	public MusicLibrary getMusicLibrary(String name);
-	
-	
 }

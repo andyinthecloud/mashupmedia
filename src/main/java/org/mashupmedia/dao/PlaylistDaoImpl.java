@@ -3,7 +3,8 @@ package org.mashupmedia.dao;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.mashupmedia.model.media.Playlist;
+import org.mashupmedia.model.playlist.MusicPlaylist;
+import org.mashupmedia.model.playlist.Playlist;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -28,23 +29,23 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	}
 
 	@Override
-	public Playlist getLastAccessedPlaylist(long userId) {
+	public MusicPlaylist getLastAccessedMusicPlaylist(long userId) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from Playlist as p where p.owner.id = :userId and p.lastAccessedOn = (select max(sp.lastAccessedOn) from Playlist as sp)");
+				"from MusicPlaylist as mp where mp.owner.id = :userId and mp.lastAccessedOn = (select max(tmp.lastAccessedOn) from Playlist as tmp)");
 		query.setCacheable(true);
 		query.setLong("userId", userId);
-		Playlist playlist = (Playlist) query.uniqueResult();
-		return playlist;
+		MusicPlaylist musicPlaylist = (MusicPlaylist) query.uniqueResult();
+		return musicPlaylist;
 	}
 	
 	@Override
-	public Playlist getDefaultPlaylist(long userId) {
+	public MusicPlaylist getDefaultMusicPlaylist(long userId) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from Playlist where owner.id = :userId and isDefault = true");
+				"from MusicPlaylist where owner.id = :userId and isDefault = true");
 		query.setCacheable(true);
 		query.setLong("userId", userId);
-		Playlist playlist = (Playlist) query.uniqueResult();
-		return playlist;
+		MusicPlaylist musicPlaylist = (MusicPlaylist) query.uniqueResult();
+		return musicPlaylist;
 	}
 
 	@Override

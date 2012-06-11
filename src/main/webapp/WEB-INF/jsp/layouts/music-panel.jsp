@@ -79,6 +79,15 @@
 			$("div.panel div.content").html(data);
 		});
 	}
+
+	function playAlbum(albumId) {
+		$.post("<c:url value="/app/ajax/playlist/play-album" />", {
+			albumId : albumId
+		}, function(data) {
+			$("#playlist .songs").html(data);
+		});
+
+	}
 </script>
 
 <form:form commandName="musicPage">

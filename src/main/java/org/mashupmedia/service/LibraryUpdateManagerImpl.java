@@ -157,12 +157,24 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				int trackLength = audioHeader.getTrackLength();
 
 				Tag tag = audioFile.getTag();
-				String songTitle = StringUtils.trimToEmpty(tag.getFirst(FieldKey.TITLE));
-				int trackNumber = NumberUtils.toInt(tag.getFirst(FieldKey.TRACK));
-				String artistNameValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM_ARTIST));
-				String albumNameValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM));
-				String genreValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.GENRE));
-				int yearValue = NumberUtils.toInt(tag.getFirst(FieldKey.YEAR));
+				String songTitle = null;
+				int trackNumber = 0;
+				String artistNameValue = null;
+				String albumNameValue = null;
+				String genreValue = null;
+				int yearValue = 0;					
+
+				if (tag != null) {
+					songTitle = StringUtils.trimToEmpty(tag.getFirst(FieldKey.TITLE));
+					trackNumber = NumberUtils.toInt(tag.getFirst(FieldKey.TRACK));
+					artistNameValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM_ARTIST));
+					albumNameValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM));
+					genreValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.GENRE));
+					yearValue = NumberUtils.toInt(tag.getFirst(FieldKey.YEAR));					
+				} else {
+					logger.info("Unable to read tag info for music file: " + file.getAbsolutePath());
+				}
+				
 
 				Song song = new Song();
 
@@ -173,7 +185,11 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 				if (StringUtils.isEmpty(songTitle)) {
 					songTitle = file.getName();
+				} else {
+					logger.debug("Found song title for music file: " + file.getAbsolutePath());
+					song.setReadableTag(true);
 				}
+				
 				song.setTitle(songTitle);
 				song.setFormat(format);
 				song.setTrackLength(trackLength);

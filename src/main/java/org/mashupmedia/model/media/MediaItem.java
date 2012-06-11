@@ -32,11 +32,11 @@ public class MediaItem {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedOn;
 	private String format;
-	private int votes;
+	private int vote;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastAccessed;
 	@ManyToOne
-	private User lastAccessedBy;
+	private User lastAccessedBy;	
 
 	public User getLastAccessedBy() {
 		return lastAccessedBy;
@@ -54,12 +54,12 @@ public class MediaItem {
 		this.lastAccessed = lastAccessed;
 	}
 
-	public int getVotes() {
-		return votes;
+	public int getVote() {
+		return vote;
 	}
 
-	public void setVotes(int votes) {
-		this.votes = votes;
+	public void setVote(int votes) {
+		this.vote = votes;
 	}
 
 	public String getFormat() {

@@ -22,7 +22,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	@Override
 	public void saveMusicLibrary(MusicLibrary musicLibrary) {
 		long id = musicLibrary.getId();
-		
+
 		if (id > 0) {
 			sessionFactory.getCurrentSession().merge(musicLibrary);
 		} else {
@@ -38,22 +38,13 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		MusicLibrary musicLibrary = (MusicLibrary) query.uniqueResult();
 		return musicLibrary;
 	}
-	
+
 	@Override
 	public void deleteLibrary(Library library) {
 		long libraryId = library.getId();
 		sessionFactory.getCurrentSession().evict(library);
 		library = getMusicLibrary(libraryId);
 		sessionFactory.getCurrentSession().delete(library);
-	}
-	
-	@Override
-	public MusicLibrary getMusicLibrary(String name) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from MusicLibrary where name = :name");
-		query.setString("name", name);
-		query.setCacheable(true);
-		MusicLibrary musicLibrary = (MusicLibrary) query.uniqueResult();
-		return musicLibrary;
 	}
 
 }

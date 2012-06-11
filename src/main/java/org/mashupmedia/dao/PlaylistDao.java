@@ -2,7 +2,8 @@ package org.mashupmedia.dao;
 
 import java.util.List;
 
-import org.mashupmedia.model.media.Playlist;
+import org.mashupmedia.model.playlist.MusicPlaylist;
+import org.mashupmedia.model.playlist.Playlist;
 
 public interface PlaylistDao {
 
@@ -10,7 +11,7 @@ public interface PlaylistDao {
 
 	public Playlist getPlaylist(long id);
 
-	public Playlist getLastAccessedPlaylist(long userId);
+	public MusicPlaylist getLastAccessedMusicPlaylist(long userId);
 
 	public void savePlaylist(Playlist playlist);
 
@@ -18,6 +19,6 @@ public interface PlaylistDao {
 
 	public void deletePlaylist(Playlist playlist);
 
-	public Playlist getDefaultPlaylist(long userId);
+	public MusicPlaylist getDefaultMusicPlaylist(long userId);
 
 }

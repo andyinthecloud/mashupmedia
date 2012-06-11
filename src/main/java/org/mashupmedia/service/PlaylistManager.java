@@ -2,7 +2,8 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
-import org.mashupmedia.model.media.Playlist;
+import org.mashupmedia.model.playlist.MusicPlaylist;
+import org.mashupmedia.model.playlist.Playlist;
 
 public interface PlaylistManager {
 
@@ -10,9 +11,9 @@ public interface PlaylistManager {
 
 	public Playlist getPlaylist(long id);
 
-	public Playlist getLastAccessedPlaylistForCurrentUser();
+	public MusicPlaylist getLastAccessedMusicPlaylistForCurrentUser();
 	
-	public Playlist getDefaultPlaylistForCurrentUser();
+	public MusicPlaylist getDefaultMusicPlaylistForCurrentUser();
 	
 	public void savePlaylist(Playlist playlist);
 	

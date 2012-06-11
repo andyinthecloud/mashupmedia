@@ -82,7 +82,7 @@ div.panel {
 }
 
 div.panel form {
-	padding: 0;
+	padding-top: 10px;
 }
 
 div.sub-panel {

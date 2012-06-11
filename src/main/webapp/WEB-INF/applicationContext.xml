@@ -63,6 +63,7 @@
 				<value>org.mashupmedia.model.library</value>
 				<value>org.mashupmedia.model.location</value>
 				<value>org.mashupmedia.model.media</value>
+				<value>org.mashupmedia.model.playlist</value>
 			</list>
 		</property>
 	</bean>

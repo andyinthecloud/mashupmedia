@@ -30,7 +30,6 @@ public class LibraryManagerImpl implements LibraryManager {
 	private LibraryDao libraryDao;
 	@Autowired
 	private MusicManager musicManager;
-	
 
 	@Override
 	public List<MusicLibrary> getMusicLibraries() {
@@ -42,7 +41,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	public void saveMusicLibrary(MusicLibrary musicLibrary) {
 
 		prepareLocation(musicLibrary);
-		
+
 		User user = SecurityHelper.getLoggedInUser();
 		if (user == null) {
 			logger.error("No user found in session, exiting...");
@@ -53,7 +52,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		if (musicLibrary.getId() == 0) {
 			musicLibrary.setCreatedBy(user);
 			musicLibrary.setCreatedOn(date);
-		} 
+		}
 
 		musicLibrary.setUpdatedBy(user);
 		musicLibrary.setUpdatedOn(date);
@@ -65,29 +64,29 @@ public class LibraryManagerImpl implements LibraryManager {
 		if (musicLibrary.getId() == 0) {
 			return;
 		}
-		
+
 		Location location = musicLibrary.getLocation();
 		if (location == null) {
 			return;
 		}
-		
+
 		if (!(location instanceof FtpLocation)) {
 			return;
 		}
-		
-		FtpLocation ftpLocation = (FtpLocation) location;		
+
+		FtpLocation ftpLocation = (FtpLocation) location;
 		String password = ftpLocation.getPassword();
 		if (StringUtils.isNotBlank(password)) {
 			return;
 		}
-		
-		String name = musicLibrary.getName();
-		MusicLibrary savedMusicLibrary = getMusicLibrary(name);
+
+		long id = musicLibrary.getId();
+		MusicLibrary savedMusicLibrary = getMusicLibrary(id);
 		Location savedLocation = savedMusicLibrary.getLocation();
 		if (!(savedLocation instanceof FtpLocation)) {
 			return;
 		}
-		
+
 		FtpLocation savedFtpLocation = (FtpLocation) savedLocation;
 		password = savedFtpLocation.getPassword();
 		ftpLocation.setPassword(password);
@@ -113,14 +112,4 @@ public class LibraryManagerImpl implements LibraryManager {
 		FileHelper.deleteLibrary(id);
 	}
 
-	@Override
-	public MusicLibrary getMusicLibrary(String name) {
-		if (StringUtils.isBlank(name)) {
-			return null;
-		}
-		
-		MusicLibrary musicLibrary = libraryDao.getMusicLibrary(name);
-		Hibernate.initialize(musicLibrary.getGroups());
-		return musicLibrary;
-	}
 }

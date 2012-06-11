@@ -12,6 +12,9 @@ import org.mashupmedia.util.FileHelper;
 @Entity
 @Cacheable
 public class Song extends MediaItem {
+	
+	public final static String TITLE_SEPERATOR = " - "; 
+	
 	private int trackNumber;
 	private String title;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -24,6 +27,15 @@ public class Song extends MediaItem {
 	private Artist artist;
 	private long trackLength;
 	private long bitRate;
+	private boolean readableTag;
+
+	public boolean isReadableTag() {
+		return readableTag;
+	}
+
+	public void setReadableTag(boolean readableTag) {
+		this.readableTag = readableTag;
+	}
 
 	public long getTrackLength() {
 		return trackLength;
@@ -139,45 +151,64 @@ public class Song extends MediaItem {
 		builder.append(trackLength);
 		builder.append(", bitRate=");
 		builder.append(bitRate);
+		builder.append(", readableTag=");
+		builder.append(readableTag);
 		builder.append("]");
 		return builder.toString();
 	}
-	
+
 	public String getMeta() {
 		StringBuilder metaBuilder = new StringBuilder();
 		if (getBitRate() > 0) {
 			metaBuilder.append(getBitRate() + " KBPS");
 		}
-		
+
 		if (getTrackLength() > 0) {
 			if (metaBuilder.length() > 0) {
 				metaBuilder.append(" | ");
 			}
-			
+
 			String trackLengthDisplay = DateHelper.getDisplayTrackLength(getTrackLength());
-			metaBuilder.append(trackLengthDisplay);			
+			metaBuilder.append(trackLengthDisplay);
 		}
-		
+
 		if (getSizeInBytes() > 0) {
 			if (metaBuilder.length() > 0) {
 				metaBuilder.append(" | ");
 			}
 			long sizeInBytes = getSizeInBytes();
-			String displayBytes =  FileHelper.getDisplayBytes(sizeInBytes, true);
-			metaBuilder.append(displayBytes);						
+			String displayBytes = FileHelper.getDisplayBytes(sizeInBytes, true);
+			metaBuilder.append(displayBytes);
 		}
-		
+
 		if (StringUtils.isNotBlank(getFormat())) {
 			if (metaBuilder.length() > 0) {
 				metaBuilder.append(" | ");
 			}
-			metaBuilder.append(getFormat());			
+			metaBuilder.append(getFormat());
+		}
+
+		return metaBuilder.toString();
+
+	}
+	
+	public String getDisplayTitle() {
+		StringBuilder titleBuilder = new StringBuilder();
+		if (isReadableTag()) {
+			titleBuilder.append(getTrackNumber());
+			titleBuilder.append(TITLE_SEPERATOR);
+			titleBuilder.append(getTitle());
+			return titleBuilder.toString();
 		}
 		
+		String title = StringUtils.trimToEmpty(getTitle());
+		int dotIndex = title.lastIndexOf(".");
+		if (dotIndex < 0) {
+			return title;
+		}
 		
-		
-		return metaBuilder.toString();
-		
+		title = title.substring(0, dotIndex);
+		return title;
 	}
 
 }
