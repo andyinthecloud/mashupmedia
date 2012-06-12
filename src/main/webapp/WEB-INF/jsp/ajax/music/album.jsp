@@ -3,11 +3,11 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		$("#play-all").click(function() {
-			 var albumId = $(this).closest("ul").attr("id");
-			 albumId = albumId.replace("albumId-", "");
-			 playAlbum(albumId);
+			var albumId = $(this).closest("ul").attr("id");
+			albumId = albumId.replace("albumId-", "");
+			playAlbum(albumId);
 		});
-		
+
 	});
 </script>
 
@@ -24,7 +24,8 @@
 
 
 	<ul class="control-menu" id="albumId-<c:out value="${albumPage.album.id}" />">
-		<li class="first"><a href="javascript:void(0);" id="play-all" > <spring:message code="action.play-all" />
+		<li class="first"><a href="javascript:void(0);" id="play-all"> <spring:message
+					code="action.play-all" />
 		</a></li>
 
 		<li><a href="javascript:void(0);" id="add-all"> <spring:message code="action.add-all" />
@@ -44,12 +45,10 @@
 		<c:forEach items="${albumPage.songs}" var="song">
 			<li id="songId-<c:out value="${song.id}"/>">
 				<div class="controls">
-					<a class="play" href="javascript:void(0);"><img
-						src="<c:url value="${themePath}/images/controls/play.png" />"
-						title="<spring:message code="control.play" />" /></a> <a class="add" href="javascript:void(0);"><img
-						src="<c:url value="${themePath}/images/controls/add.png" />"
-						title="<spring:message code="control.add" />" /></a>
-				</div><c:out value="${song.displayTitle}" />
+					<a class="play" href="javascript:void(0);" title="<spring:message code="control.play" />"><span
+						class="ui-icon ui-icon-play"></span></a> <a class="add" href="javascript:void(0);"
+						title="<spring:message code="control.add" />"><span class="ui-icon ui-icon-plus"></span></a></div>
+				<c:out value="${song.displayTitle}" />
 
 				<div class="meta">
 					<c:out value="${song.meta}" />

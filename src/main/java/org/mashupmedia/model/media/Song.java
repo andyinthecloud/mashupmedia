@@ -202,10 +202,24 @@ public class Song extends MediaItem {
 
 	}
 
+	public String getDisplayTrackNumber() {
+
+		if (getTrackNumber() == 0) {
+			return "";
+		}
+
+		StringBuilder trackNumberBuilder = new StringBuilder();
+		if (getTrackNumber() < 10) {
+			trackNumberBuilder.append("0");
+		}
+		trackNumberBuilder.append(getTrackNumber());
+		return trackNumberBuilder.toString();
+	}
+
 	public String getDisplayTitle() {
 		StringBuilder titleBuilder = new StringBuilder();
 		if (isReadableTag()) {
-			titleBuilder.append(getTrackNumber());
+			titleBuilder.append(getDisplayTrackNumber());
 			titleBuilder.append(TITLE_SEPERATOR);
 			titleBuilder.append(getTitle());
 			return titleBuilder.toString();

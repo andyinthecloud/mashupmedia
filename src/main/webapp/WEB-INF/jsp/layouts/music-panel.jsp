@@ -95,6 +95,9 @@
 	<div class="sub-panel">
 
 		<div id="playlist" class="sub-rounded-corners">
+
+
+
 			<form:hidden path="playlist.id" />
 			<form:hidden path="playlist.default" />
 			<div id="jquery_jplayer_1" class="jp-jplayer"></div>
@@ -140,7 +143,10 @@
 					</div>
 				</div>
 			</div>
+
+
 			<div class="songs"></div>
+
 		</div>
 
 

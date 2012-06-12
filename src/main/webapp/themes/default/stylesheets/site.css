@@ -67,7 +67,7 @@ html,body {
 
 div.panel {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
-	font-size: 0.875em;
+	font-size: 0.8em;
 	color: #F8F8FF;
 	background-image: url("../images/transparent-background.png");
 	background-repeat: repeat;
@@ -223,6 +223,7 @@ ul.control-menu {
 	margin: 0;
 	padding: 0;
 	padding-bottom: 5px;
+	clear: both;
 }
 
 ul.control-menu li {
@@ -260,18 +261,6 @@ div.sub-panel .album-menu li div.controls{
 	display: inline;
 }
 
-div.sub-panel .album-menu li div.controls img{
-	background-color: white;
-	padding: 3px;
-	margin-right: 5px;
-	filter: alpha(opacity =         60); /* for IE */
-	-khtml-opacity: 0.60; /* khtml, old safari */
-	-moz-opacity: 0.60; /* old mozilla, netscape */
-	opacity: 0.60; /* good browsers: FF, safari, opera */
-	vertical-align: middle;
-	width: 10px;
-	height: auto;
-}
 
 div.sub-panel .album-menu li div.meta{	
 	display: inline;
@@ -293,12 +282,60 @@ div.sub-panel div.album-art img{
 }
 
 #playlist {
+/*
 	background-color: #3A2A45;
+*/	
 	padding: 10px 0;
 	margin-bottom: 10px;
 	
 }
 
+#playlist .jp-audio {
+	float: left;
+}
+
 #playlist div.songs {
-	
+	padding-left: 10px;
+	height: 170px;
+	overflow: auto;
+}
+
+#playlist div.songs table th .ui-icon{
+	float: right;
+}
+
+#playlist div.songs table th{
+	text-align: left;
+	min-width: 80px; 
+}
+
+#playlist div.songs table td, #playlist div.songs table th{
+	padding-left: 5px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+}
+
+#playlist div.songs table td{
+	cursor: move;
+}
+
+#playlist div.songs table tbody td.text{
+	overflow: hidden;
+}
+
+
+
+#playlist div.songs table td.controls{
+	width: 75px;
+}
+
+
+.controls .ui-icon {
+	background-color: white;
+	filter: alpha(opacity =         60); /* for IE */
+	-khtml-opacity: 0.60; /* khtml, old safari */
+	-moz-opacity: 0.60; /* old mozilla, netscape */
+	opacity: 0.60; /* good browsers: FF, safari, opera */
+	float: left;
+	margin-right: 5px;
 }
