@@ -6,6 +6,7 @@ import java.util.List;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,8 +35,10 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	@Override
 	public Playlist getLastAccessedMusicPlaylistForCurrentUser() {
 		User user = SecurityHelper.getLoggedInUser();
-		Playlist playlist = user.getCurrentMusicPlaylist();
-		if (playlist != null) {
+		PlaylistMediaItem playlistSong = user.getCurrentPlaylistSong();
+		Playlist playlist = null;
+		if (playlistSong != null) {
+			playlist = playlistSong.getPlaylist();
 			return playlist;
 		}
 				

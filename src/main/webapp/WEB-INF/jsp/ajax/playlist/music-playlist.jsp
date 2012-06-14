@@ -6,6 +6,7 @@
 		$("table.song-playlist tbody").sortable();
 		$("table.song-playlist").dataTable({
 			"bFilter" : false,
+			"oLanguage": { "sEmptyTable": "No items in your playlist" },
 			"aoColumnDefs" : [ {
 				"bSortable" : false,
 				"aTargets" : [ 0 ]

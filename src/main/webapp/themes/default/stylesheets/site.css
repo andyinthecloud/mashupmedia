@@ -282,6 +282,7 @@ div.sub-panel div.album-art img{
 }
 
 #playlist {
+	display: none;	
 /*
 	background-color: #3A2A45;
 */	

@@ -14,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
-import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -33,14 +33,14 @@ public class User implements UserDetails {
 	private Date createdOn;
 	private Date updatedOn;
 	@ManyToOne
-	private Playlist currentMusicPlaylist;
+	private PlaylistMediaItem currentPlaylistSong;
 
-	public Playlist getCurrentMusicPlaylist() {
-		return currentMusicPlaylist;
+	public PlaylistMediaItem getCurrentPlaylistSong() {
+		return currentPlaylistSong;
 	}
 
-	public void setCurrentMusicPlaylist(Playlist currentPlaylist) {
-		this.currentMusicPlaylist = currentPlaylist;
+	public void setCurrentPlaylistSong(PlaylistMediaItem currentPlaylistSong) {
+		this.currentPlaylistSong = currentPlaylistSong;
 	}
 
 	public Date getCreatedOn() {
@@ -123,8 +123,7 @@ public class User implements UserDetails {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((username == null) ? 0 : username.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
 
@@ -162,8 +161,8 @@ public class User implements UserDetails {
 		builder.append(createdOn);
 		builder.append(", updatedOn=");
 		builder.append(updatedOn);
-		builder.append(", currentPlaylist=");
-		builder.append(currentMusicPlaylist);
+		builder.append(", currentPlaylistSong=");
+		builder.append(currentPlaylistSong);
 		builder.append("]");
 		return builder.toString();
 	}

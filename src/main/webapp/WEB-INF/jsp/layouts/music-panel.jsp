@@ -25,7 +25,7 @@
 							}
 						});
 
-						loadRandomAlbums();
+						loadPlaylist();
 
 						$("#category-menu-home").click(function() {
 							$.address.value($(this).attr("id"));
@@ -60,6 +60,25 @@
 										});
 
 					});
+
+	function loadPlaylist() {
+		$.post("<c:url value="/app/ajax/playlist/current-user-playlist" />",
+				function(data) {
+					$("#playlist .songs").html(data);
+					var totalPlaylistRows = $("#playlist .songs table tbody tr").length;
+					if (totalPlaylistRows != 1) {
+						return;
+					}
+					
+					var tdSelector = "#playlist .songs table tbody tr:eq(0) td"; 
+					if (!$(tdSelector).attr("colspan")) {
+						$("#playlist").show();						
+					}					
+					
+					
+				});
+
+	}
 
 	function loadRandomAlbums() {
 		$.get("<c:url value="/app/ajax/music/random-albums" />",
