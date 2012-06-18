@@ -17,14 +17,12 @@ public class PlaylistMediaItem {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private int ranking;
-	
+
 	@ManyToOne
 	private Playlist playlist;
-	
+
 	@ManyToOne
 	private MediaItem mediaItem;
-	
-	
 
 	public MediaItem getMediaItem() {
 		return mediaItem;
@@ -58,16 +56,13 @@ public class PlaylistMediaItem {
 		this.ranking = ranking;
 	}
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result
-				+ ((mediaItem == null) ? 0 : mediaItem.hashCode());
-		result = prime * result
-				+ ((playlist == null) ? 0 : playlist.hashCode());
+		result = prime * result + ((mediaItem == null) ? 0 : mediaItem.hashCode());
+		result = prime * result + ((playlist == null) ? 0 : playlist.hashCode());
 		return result;
 	}
 

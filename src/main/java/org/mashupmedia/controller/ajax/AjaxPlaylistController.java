@@ -7,6 +7,7 @@ import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.PlaylistHelper;
@@ -27,6 +28,9 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 	@Autowired
 	private MusicManager musicManager;
+	
+	@Autowired
+	private AdminManager adminManager;
 
 	@RequestMapping(value = "/current-user-playlist", method = RequestMethod.POST)
 	public String getCurrentUserMusicPlaylist(Model model) {
@@ -54,10 +58,18 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		}
 
 		Album album = musicManager.getAlbum(albumId);
-		List<Song> songs = album.getSongs();
+		List<Song> songs = album.getSongs();		
 
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		playlistManager.savePlaylist(playlist);
+		
+		PlaylistMediaItem playlistSong = new PlaylistMediaItem();
+		if (songs != null && !songs.isEmpty()) {
+			playlistSong = playlist.getPlaylistMediaItems().get(0);
+		}
+		
+		user.setCurrentPlaylistSong(playlistSong);
+		adminManager.saveUser(user);		
 
 		model.addAttribute("playlist", playlist);
 		return "ajax/playlist/music-playlist";

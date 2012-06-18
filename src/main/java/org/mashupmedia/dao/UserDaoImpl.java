@@ -5,18 +5,21 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.mashupmedia.model.User;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl extends BaseDaoImpl implements UserDao{
 
 	@Autowired
 	private SessionFactory sessionFactory;
 
 	@Override
 	public void saveUser(User user) {
-		sessionFactory.getCurrentSession().saveOrUpdate(user);
+		PlaylistMediaItem playlistSong = user.getCurrentPlaylistSong();
+		saveOrUpdate(playlistSong);
+		saveOrUpdate(user);
 	}
 
 	@Override

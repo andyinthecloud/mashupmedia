@@ -65,18 +65,26 @@
 		$.post("<c:url value="/app/ajax/playlist/current-user-playlist" />",
 				function(data) {
 					$("#playlist .songs").html(data);
-					var totalPlaylistRows = $("#playlist .songs table tbody tr").length;
-					if (totalPlaylistRows != 1) {
-						return;
-					}
-					
-					var tdSelector = "#playlist .songs table tbody tr:eq(0) td"; 
-					if (!$(tdSelector).attr("colspan")) {
-						$("#playlist").show();						
-					}					
-					
-					
+					showHidePlaylist();
 				});
+
+	}
+
+	function showHidePlaylist() {
+		var totalPlaylistRows = $("#playlist .songs table tbody tr").length;
+
+		if (totalPlaylistRows < 1) {
+			$("#playlist").hide();
+			return;
+		}
+
+		var tdSelector = "#playlist .songs table tbody tr:eq(0) td";
+
+		if ($(tdSelector).text() == "empty-playlist") {
+			$("#playlist").hide();
+		} else {
+			$("#playlist").show();
+		}
 
 	}
 
@@ -104,6 +112,7 @@
 			albumId : albumId
 		}, function(data) {
 			$("#playlist .songs").html(data);
+			showHidePlaylist();
 		});
 
 	}
@@ -151,9 +160,25 @@
 						</div>
 					</div>
 					<div class="jp-title">
-						<ul>
-							<li>Bubble</li>
-						</ul>
+
+						<spring:message code="music.label.playlist" />
+						<select>
+							<option value="">&nbsp;</option>
+							<option id="playlist-action-new">
+								<spring:message code="action.new" />
+							</option>
+							<option id="playlist-action-save">
+								<spring:message code="action.save" />
+							</option>
+							<option id="playlist-action-save-as">
+								<spring:message code="action.saveas" />
+							</option>
+							<option id="playlist-action-delete">
+								<spring:message code="action.delete" />
+							</option>
+						</select>
+
+
 					</div>
 					<div class="jp-no-solution">
 						<span>Update Required</span> To play the media you will need to either update your browser to
@@ -164,7 +189,7 @@
 			</div>
 
 
-			<div class="songs"></div>
+			<div class="songs">&nbsp;</div>
 
 		</div>
 
@@ -176,6 +201,8 @@
 						code="music.menu.albums" /></a></li>
 			<li><a id="category-menu-artists" href="javascript:void(0);"><spring:message
 						code="music.menu.artists" /></a></li>
+			<li><a id="category-menu-playlists" href="javascript:void(0);"><spring:message
+						code="music.menu.playlists" /></a></li>
 		</ul>
 
 

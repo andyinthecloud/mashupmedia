@@ -295,6 +295,11 @@ div.sub-panel div.album-art img{
 	float: left;
 }
 
+#playlist .jp-title {
+	padding-top: 5px;
+	font-size: 80%;
+}
+
 #playlist div.songs {
 	padding-left: 10px;
 	height: 170px;
