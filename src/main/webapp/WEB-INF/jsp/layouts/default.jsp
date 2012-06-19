@@ -7,19 +7,27 @@
 <script type="text/javascript" src="<c:url value="/jquery/1.7.1/jquery-1.7.1.min.js" />"></script>
 
 
-<link type="text/css" href="<c:url value="/jquery-ui/1.8.21/css/smoothness/jquery-ui-1.8.21.custom.css" />" rel="Stylesheet" />	
+<link type="text/css"
+	href="<c:url value="/jquery-ui/1.8.21/css/smoothness/jquery-ui-1.8.21.custom.css" />"
+	rel="Stylesheet" />
 <script type="text/javascript" src="<c:url value="/jquery-ui/1.8.21/js/jquery-1.7.1.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/jquery-ui/1.8.21/js/jquery-ui-1.8.21.custom.min.js" />"></script>
+<script type="text/javascript"
+	src="<c:url value="/jquery-ui/1.8.21/js/jquery-ui-1.8.21.custom.min.js" />"></script>
 
 <script type="text/javascript" src="<c:url value="/scripts/mashupmedia.js" />"></script>
-<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.address/1.5/jquery.address-1.5.min.js" />"></script>
+<script type="text/javascript"
+	src="<c:url value="/jquery-plugins/jquery.address/1.5/jquery.address-1.5.min.js" />"></script>
 
-<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/2.1.0/jquery.jplayer.min.js" />"></script>
-<link type="text/css" href="<c:url value="/jquery-plugins/jquery.jplayer/2.1.0/skins/pink.flag/jplayer.pink.flag.css" />" rel="stylesheet" />
+<script type="text/javascript"
+	src="<c:url value="/jquery-plugins/jquery.jplayer/2.1.0/jquery.jplayer.min.js" />"></script>
+<link type="text/css"
+	href="<c:url value="/jquery-plugins/jquery.jplayer/2.1.0/skins/pink.flag/jplayer.pink.flag.css" />"
+	rel="stylesheet" />
 
-<script type="text/javascript" src="<c:url value="/jquery-plugins/datatables/1.9.1/jquery.dataTables.min.js" />"></script>
+<script type="text/javascript"
+	src="<c:url value="/jquery-plugins/datatables/1.9.1/jquery.dataTables.min.js" />"></script>
 
- 
+
 <link href="<c:url value="${themePath}/stylesheets/site.css"/>" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 
@@ -28,6 +36,7 @@
 			function() {
 				processBackground("<c:url value="${themePath}/"/>",
 						"<tiles:getAsString name="backgroundImageType"/>");
+
 			});
 </script>
 
@@ -37,15 +46,7 @@
 
 <body>
 	<div id="top-bar">
-
-		<a class="home" href="<c:url value="/" />"><spring:message code="top-bar.home" /></a>
-
-		<ul>
-			<li><a href="#">User</a></li>
-			<li><a href="#"><spring:message code="top-bar.now-playing" /></a></li>
-			<li><a href="#">Sunny</a></li>
-			<li><a href="#"><spring:message code="top-bar.log-out" /></a></li>
-		</ul>
+		<tiles:insertAttribute name="topBar" />
 	</div>
 
 	<img id="background-image" style="display: none;" />

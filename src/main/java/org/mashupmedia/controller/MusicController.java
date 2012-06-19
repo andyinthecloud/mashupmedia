@@ -49,18 +49,18 @@ public class MusicController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String getMusic(Model model) {
-		MusicPage musicPage = new MusicPage();
-		List<Album> albums = musicManager.getRandomAlbums(NUMBER_OF_RANDOM_ALBUMS);
-		musicPage.setAlbums(albums);
-		Playlist playlist = playlistManager.getLastAccessedMusicPlaylistForCurrentUser();
-		// If the user has no playlist create a default one
-		if (playlist == null) {
-			playlist = new Playlist();
-			playlist.setDefault(true);
-		}
-		musicPage.setPlaylist(playlist);
-		
-		model.addAttribute(musicPage);
+//		MusicPage musicPage = new MusicPage();
+//		List<Album> albums = musicManager.getRandomAlbums(NUMBER_OF_RANDOM_ALBUMS);
+//		musicPage.setAlbums(albums);
+//		Playlist playlist = playlistManager.getLastAccessedMusicPlaylistForCurrentUser();
+//		// If the user has no playlist create a default one
+//		if (playlist == null) {
+//			playlist = new Playlist();
+//			playlist.setDefault(true);
+//		}
+//		musicPage.setPlaylist(playlist);
+//		
+//		model.addAttribute(musicPage);
 		return "music";
 	}
 

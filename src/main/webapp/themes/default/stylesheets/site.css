@@ -36,6 +36,9 @@ html,body {
 }
 
 #top-bar {
+	margin: 0;
+	wi
+	
 	background: #999; /* for non-css3 browsers */
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cccccc',
 		endColorstr='#000000' ); /* for IE */
@@ -44,8 +47,8 @@ html,body {
 	background: -moz-linear-gradient(top, #ccc, #000);
 	/* for firefox 3.6+ */
 	font-family: Gill Sans, Verdana;
-	margin: 0;
 	padding: 5px;
+	z-index: 999;
 }
 
 #top-bar a,#top-bar a:VISITED {
@@ -53,9 +56,10 @@ html,body {
 	text-decoration: none;
 }
 
-#top-bar ul {
+#top-bar ul.main-menu {
 	padding: 0;
 	margin: 0;
+	margin-right: 10px;
 	float: right;
 }
 
@@ -282,12 +286,20 @@ div.sub-panel div.album-art img{
 }
 
 #playlist {
-	display: none;	
+	display: none;
+	
+	position: fixed;
+	width: 100%;
+	top: 0;
+	left: 0;
+	
+		
 /*
 	background-color: #3A2A45;
 */	
 	padding: 10px 0;
 	margin-bottom: 10px;
+	z-index: 999;
 	
 }
 

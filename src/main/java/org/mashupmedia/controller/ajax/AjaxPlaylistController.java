@@ -31,14 +31,16 @@ public class AjaxPlaylistController extends BaseAjaxController {
 	
 	@Autowired
 	private AdminManager adminManager;
-
+	
 	@RequestMapping(value = "/current-user-playlist", method = RequestMethod.POST)
 	public String getCurrentUserMusicPlaylist(Model model) {
 		User user = SecurityHelper.getLoggedInUser();
 		PlaylistMediaItem playlistSong = user.getCurrentPlaylistSong();
 		Playlist playlist = null;
 		if (playlistSong != null) {
-			playlist = playlistSong.getPlaylist();
+			long playlistId = playlistSong.getPlaylist().getId();
+			playlist = playlistManager.getPlaylist(playlistId);
+
 		} else {
 			playlist = new Playlist();
 		}

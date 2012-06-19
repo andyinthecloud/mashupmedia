@@ -27,7 +27,7 @@ public class Playlist {
 
 	private String name;
 
-	@OneToMany(mappedBy = "playlist")
+	@OneToMany(mappedBy = "playlist", targetEntity = PlaylistMediaItem.class)
 	@OrderBy("ranking")
 	private List<PlaylistMediaItem> playlistMediaItems;
 

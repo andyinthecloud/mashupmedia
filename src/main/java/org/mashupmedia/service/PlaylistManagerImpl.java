@@ -3,6 +3,7 @@ package org.mashupmedia.service;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.playlist.Playlist;
@@ -29,6 +30,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	@Override
 	public Playlist getPlaylist(long id) {
 		Playlist playlist = playlistDao.getPlaylist(id);
+		Hibernate.initialize(playlist.getPlaylistMediaItems());
 		return playlist;
 	}
 
