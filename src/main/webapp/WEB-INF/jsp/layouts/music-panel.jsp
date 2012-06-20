@@ -64,27 +64,25 @@
 	function loadPlaylist() {
 		$.post("<c:url value="/app/ajax/playlist/current-user-playlist" />",
 				function(data) {
-					$("#playlist .songs").html(data);
-					showHidePlaylist();
+					$("#top-bar-music-player .songs").html(data);
+					loadCurrentSong();
 				});
 
 	}
 
-	function showHidePlaylist() {
-		var totalPlaylistRows = $("#playlist .songs table tbody tr").length;
-
-		if (totalPlaylistRows < 1) {
-			$("#playlist").hide();
+	function loadCurrentSong() {
+		var playingRow = $("#top-bar-music-player .songs table tbody tr.playing");
+		
+		if ($(playingRow).length == 0) {
 			return;
 		}
-
-		var tdSelector = "#playlist .songs table tbody tr:eq(0) td";
-
-		if ($(tdSelector).text() == "empty-playlist") {
-			$("#playlist").hide();
-		} else {
-			$("#playlist").show();
-		}
+		
+		var songTitle = $(playingRow).find("td.song-title").text();
+		
+		var currentTrackDisplay = songTitle;
+		$("#current-song .song-title").text(currentTrackDisplay);	
+		$("#current-song .vote").show();
+		
 
 	}
 
@@ -111,8 +109,8 @@
 		$.post("<c:url value="/app/ajax/playlist/play-album" />", {
 			albumId : albumId
 		}, function(data) {
-			$("#playlist .songs").html(data);
-			showHidePlaylist();
+			$("#top-bar-music-player .songs").html(data);
+			loadCurrentSong();
 		});
 
 	}
@@ -121,12 +119,7 @@
 <form:form commandName="musicPage">
 
 
-	
-
-
 	<div class="sub-panel">
-
-
 
 
 		<ul class="control-menu main-control-menu">

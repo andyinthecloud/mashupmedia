@@ -17,12 +17,25 @@ public class PlaylistMediaItem {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private int ranking;
+	private boolean playing;
 
 	@ManyToOne
 	private Playlist playlist;
 
 	@ManyToOne
 	private MediaItem mediaItem;
+
+	public boolean isPlaying() {
+		return playing;
+	}
+
+	public boolean getPlaying() {
+		return isPlaying();
+	}
+
+	public void setPlaying(boolean playing) {
+		this.playing = playing;
+	}
 
 	public MediaItem getMediaItem() {
 		return mediaItem;
@@ -97,8 +110,10 @@ public class PlaylistMediaItem {
 		builder.append(id);
 		builder.append(", ranking=");
 		builder.append(ranking);
+		builder.append(", playing=");
+		builder.append(playing);
 		builder.append(", playlist=");
-		builder.append(playlist);
+		builder.append(playlist.getId());
 		builder.append(", mediaItem=");
 		builder.append(mediaItem);
 		builder.append("]");

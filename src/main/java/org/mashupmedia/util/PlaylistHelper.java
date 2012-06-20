@@ -27,7 +27,8 @@ public class PlaylistHelper {
 			playlistSong.setPlaylist(playlist);
 			playlistMediaItems.add(playlistSong);
 		}
-
+		
+		playlistMediaItems.get(0).setPlaying(true);
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 	}
 

@@ -7,6 +7,10 @@ html,body {
 	padding: 0;
 }
 
+.clear {
+	clear: both;
+}
+
 .error-box {
 	display: block;
 	margin-bottom: 10px;
@@ -19,7 +23,7 @@ html,body {
 	top: 0;
 	left: 0;
 	z-index: -1;
-	filter: alpha(opacity =                             70); /* for IE */
+	filter: alpha(opacity =                               70); /* for IE */
 	-khtml-opacity: 0.7; /* khtml, old safari */
 	-moz-opacity: 0.7; /* old mozilla, netscape */
 	opacity: 0.7; /* good browsers: FF, safari, opera */
@@ -35,35 +39,32 @@ html,body {
 	height: 100%;
 }
 
-#top-bar {
-	margin: 0;
-	wi
-	
-	background: #999; /* for non-css3 browsers */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cccccc',
-		endColorstr='#000000' ); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, from(#ccc),
-		to(#000) ); /* for webkit browsers */
-	background: -moz-linear-gradient(top, #ccc, #000);
-	/* for firefox 3.6+ */
+.top-bar {
 	font-family: Gill Sans, Verdana;
-	padding: 5px;
-	z-index: 999;
+	background-color: #3A2A45;
+	padding: 5px 0;
 }
 
-#top-bar a,#top-bar a:VISITED {
-	color: #F8F8FF;
+.top-bar a,.top-bar a:VISITED {
+	color: #e579e9;
 	text-decoration: none;
 }
 
-#top-bar ul.main-menu {
+#top-bar {
+	margin: 0;
+	padding: 5px;
+}
+
+
+
+.top-bar ul.main-menu {
 	padding: 0;
 	margin: 0;
 	margin-right: 10px;
 	float: right;
 }
 
-#top-bar ul li {
+.top-bar ul li {
 	list-style: none;
 	display: inline;
 	padding-left: 10px;
@@ -100,9 +101,8 @@ div.panel iframe {
 	border-width: 0;
 	padding: 0;
 	margin: 0;
-	overflow: hidden;	
+	overflow: hidden;
 }
-
 
 div.panel h1 {
 	font-size: 1.5em;
@@ -139,7 +139,6 @@ div.panel input[type='text'],div.panel input[type='password'] {
 	min-width: 200px;
 }
 
-
 div.button-panel {
 	margin-top: 20px;
 	margin-bottom: 10px;
@@ -148,7 +147,7 @@ div.button-panel {
 div.panel .button {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
 	border: 1px solid #F8F8FF;
-	color: #F8F8FF;	
+	color: #F8F8FF;
 	padding: 3px 10px;
 	font-size: 1.0em;
 	cursor: default;
@@ -159,12 +158,11 @@ div.panel .button {
 	border-radius: 10px;
 }
 
-
 .sub-rounded-corners {
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-khtml-border-radius: 10px;
-	border-radius: 10px;	
+	border-radius: 10px;
 }
 
 div.panel .hover {
@@ -172,6 +170,7 @@ div.panel .hover {
 }
 
 div.panel div.breadcrumbs {
+	
 }
 
 div.panel a,div.panel a:VISITED {
@@ -197,8 +196,6 @@ div.panel ul.main-menu a:HOVER {
 	background-color: #CD6600;
 }
 
-
-
 div.random-album-art div.album {
 	float: left;
 	padding: 5px;
@@ -209,7 +206,7 @@ div.random-album-art div.album {
 div.random-album-art div.album img {
 	width: 100%;
 	height: 100%;
-	filter: alpha(opacity =         60); /* for IE */
+	filter: alpha(opacity =           60); /* for IE */
 	-khtml-opacity: 0.60; /* khtml, old safari */
 	-moz-opacity: 0.60; /* old mozilla, netscape */
 	opacity: 0.60; /* good browsers: FF, safari, opera */
@@ -217,7 +214,7 @@ div.random-album-art div.album img {
 
 div.random-album-art div.highlight img {
 	background-color: gray;
-	filter: alpha(opacity =   100); /* for IE */
+	filter: alpha(opacity =     100); /* for IE */
 	-khtml-opacity: 1; /* khtml, old safari */
 	-moz-opacity: 1; /* old mozilla, netscape */
 	opacity: 1; /* good browsers: FF, safari, opera */
@@ -247,11 +244,8 @@ ul.main-control-menu {
 	text-align: right;
 }
 
-
-
-
-
 div.sub-panel .album-menu {
+	
 }
 
 div.sub-panel .album-menu li {
@@ -261,96 +255,122 @@ div.sub-panel .album-menu li {
 	margin-left: 260px;
 }
 
-div.sub-panel .album-menu li div.controls{
+div.sub-panel .album-menu li div.controls {
 	display: inline;
 }
 
-
-div.sub-panel .album-menu li div.meta{	
+div.sub-panel .album-menu li div.meta {
 	display: inline;
 	text-align: right;
 	margin-left: 20px;
 	font-size: 0.8em;
 }
 
-
 div.sub-panel div.album-art {
 	float: left;
-	width: 250px;	
+	width: 250px;
 	margin-top: 20px;
 }
 
-div.sub-panel div.album-art img{
+div.sub-panel div.album-art img {
 	width: 100%;
-	height: auto;	
+	height: auto;
 }
 
-#playlist {
-	display: none;
-	
+#top-bar-music-player {
 	position: fixed;
 	width: 100%;
 	top: 0;
 	left: 0;
-	
-		
-/*
-	background-color: #3A2A45;
-*/	
-	padding: 10px 0;
-	margin-bottom: 10px;
 	z-index: 999;
-	
+	color: #C8C0CE;
 }
 
-#playlist .jp-audio {
+#current-song img {
+	vertical-align: middle;
+}
+
+#current-song {
+	padding-left: 20px;
+}
+
+#current-song .vote {
+	display: none;
+}
+
+#current-song .vote img {
+	background-color: #C8C0CE;
+	padding: 2px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
+	width: 16px;
+	height: auto;
+}
+
+#current-song .toggle-playlist {
+	padding-left: 20px;
+}
+
+#current-song .album-art {
+	width: 100px;
+	height: auto;
+}
+
+#current-song .song-title {
+	padding: 0 20px;
+}
+
+#top-bar-music-player .jp-audio {
 	float: left;
+	padding: 0 20px;
 }
 
-#playlist .jp-title {
+#top-bar-music-player .jp-title {
 	padding-top: 5px;
 	font-size: 80%;
 }
 
-#playlist div.songs {
+#top-bar-music-player div.songs {
+	clear: both;
+	display: none;
 	padding-left: 10px;
 	height: 170px;
 	overflow: auto;
+	font-size: 80%;
 }
 
-#playlist div.songs table th .ui-icon{
+#top-bar-music-player div.songs table th .ui-icon {
 	float: right;
 }
 
-#playlist div.songs table th{
+#top-bar-music-player div.songs table th {
 	text-align: left;
-	min-width: 80px; 
+	min-width: 80px;
 }
 
-#playlist div.songs table td, #playlist div.songs table th{
+#top-bar-music-player div.songs table td,#playlist div.songs table th {
 	padding-left: 5px;
 	padding-top: 1px;
 	padding-bottom: 1px;
 }
 
-#playlist div.songs table td{
+#top-bar-music-player div.songs table td {
 	cursor: move;
 }
 
-#playlist div.songs table tbody td.text{
+#top-bar-music-player div.songs table tbody td.text {
 	overflow: hidden;
 }
 
-
-
-#playlist div.songs table td.controls{
+#top-bar-music-player div.songs table td.controls {
 	width: 75px;
 }
 
-
 .controls .ui-icon {
 	background-color: white;
-	filter: alpha(opacity =         60); /* for IE */
+	filter: alpha(opacity =           60); /* for IE */
 	-khtml-opacity: 0.60; /* khtml, old safari */
 	-moz-opacity: 0.60; /* old mozilla, netscape */
 	opacity: 0.60; /* good browsers: FF, safari, opera */

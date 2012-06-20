@@ -45,9 +45,7 @@
 </head>
 
 <body>
-	<div id="top-bar">
-		<tiles:insertAttribute name="topBar" />
-	</div>
+	<tiles:insertAttribute name="topBar" />
 
 	<img id="background-image" style="display: none;" />
 
