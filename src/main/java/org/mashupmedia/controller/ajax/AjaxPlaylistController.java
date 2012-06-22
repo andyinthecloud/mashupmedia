@@ -38,8 +38,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		PlaylistMediaItem playlistSong = user.getCurrentPlaylistSong();
 		Playlist playlist = null;
 		if (playlistSong != null) {
-			long playlistId = playlistSong.getPlaylist().getId();
-			playlist = playlistManager.getPlaylist(playlistId);
+			playlist = playlistSong.getPlaylist();
 
 		} else {
 			playlist = new Playlist();

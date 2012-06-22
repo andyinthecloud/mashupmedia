@@ -19,5 +19,6 @@ public interface PlaylistDao {
 	public void deletePlaylist(Playlist playlist);
 
 	public Playlist getDefaultMusicPlaylist(long userId);
+	
 
 }

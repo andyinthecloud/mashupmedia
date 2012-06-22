@@ -25,7 +25,7 @@
 <table class="song-playlist">
 	<thead>
 		<tr>
-			<th></th>
+			<th class="first"></th>
 			<th class="song controls"><a href="javascript:void(0);"><span
 					class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.song" /></a></th>
 			<th class="album controls"><a href="javascript:void(0);"><span

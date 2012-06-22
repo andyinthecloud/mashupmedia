@@ -47,6 +47,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		playlist = playlistDao.getLastAccessedMusicPlaylist(user.getId());
 		return playlist;
 	}
+	
 
 	@Override
 	public Playlist getDefaultMusicPlaylistForCurrentUser() {

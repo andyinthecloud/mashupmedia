@@ -341,6 +341,10 @@ div.sub-panel div.album-art img {
 	font-size: 80%;
 }
 
+#top-bar-music-player div.songs table{
+}
+
+
 #top-bar-music-player div.songs table th .ui-icon {
 	float: right;
 }
@@ -350,10 +354,16 @@ div.sub-panel div.album-art img {
 	min-width: 80px;
 }
 
-#top-bar-music-player div.songs table td,#playlist div.songs table th {
-	padding-left: 5px;
+#top-bar-music-player div.songs table td, #playlist div.songs table th.first {
+	padding-left: 0px;
+	
+}
+
+#top-bar-music-player div.songs table td, #playlist div.songs table th {
+	padding-left: 10px;
 	padding-top: 1px;
 	padding-bottom: 1px;
+	
 }
 
 #top-bar-music-player div.songs table td {

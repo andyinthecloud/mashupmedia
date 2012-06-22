@@ -34,4 +34,5 @@ public interface PlaylistManager {
 
 	public List<Playlist> getPlaylistsForCurrentUser();
 
+
 }
