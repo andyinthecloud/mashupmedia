@@ -1,5 +1,7 @@
 package org.mashupmedia.model.location;
 
+import java.io.Serializable;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +13,8 @@ import javax.persistence.InheritanceType;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public class Location {
+public class Location implements Serializable {
+	private static final long serialVersionUID = -6003017428642508314L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

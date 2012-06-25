@@ -1,5 +1,6 @@
 package org.mashupmedia.model.playlist;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +20,9 @@ import org.mashupmedia.model.User;
 
 @Entity
 @Cacheable
-public class Playlist {
+public class Playlist implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,7 +30,7 @@ public class Playlist {
 
 	private String name;
 
-	@OneToMany(mappedBy="playlist")
+	@OneToMany(mappedBy = "playlist")
 	@OrderBy("ranking")
 	private List<PlaylistMediaItem> playlistMediaItems;
 
@@ -66,6 +69,10 @@ public class Playlist {
 
 	public boolean isDefault() {
 		return isDefault;
+	}
+
+	public boolean getIsDefault() {
+		return isDefault();
 	}
 
 	public void setDefault(boolean isDefault) {
@@ -156,13 +163,11 @@ public class Playlist {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((createdOn == null) ? 0 : createdOn.hashCode());
+		result = prime * result + ((createdOn == null) ? 0 : createdOn.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-		result = prime * result
-				+ ((playlistType == null) ? 0 : playlistType.hashCode());
+		result = prime * result + ((playlistType == null) ? 0 : playlistType.hashCode());
 		return result;
 	}
 

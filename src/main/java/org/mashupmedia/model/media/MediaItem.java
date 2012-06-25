@@ -1,5 +1,6 @@
 package org.mashupmedia.model.media;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Cacheable;
@@ -20,7 +21,9 @@ import org.mashupmedia.model.library.Library;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public class MediaItem {
+public class MediaItem implements Serializable{
+	private static final long serialVersionUID = -6694717782091959485L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

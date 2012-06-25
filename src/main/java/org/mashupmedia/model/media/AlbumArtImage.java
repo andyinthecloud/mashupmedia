@@ -1,5 +1,7 @@
 package org.mashupmedia.model.media;
 
+import java.io.Serializable;
+
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -12,15 +14,16 @@ import org.mashupmedia.model.library.Library;
 
 @Entity
 @Cacheable
-public class AlbumArtImage {
+public class AlbumArtImage implements Serializable {
+	private static final long serialVersionUID = -1853946902325001789L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String name;
 	private String url;
-	@ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Library library;
-	@ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
 
 	public Album getAlbum() {

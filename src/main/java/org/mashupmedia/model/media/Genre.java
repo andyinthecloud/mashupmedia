@@ -1,5 +1,7 @@
 package org.mashupmedia.model.media;
 
+import java.io.Serializable;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +10,8 @@ import javax.persistence.Id;
 
 @Entity
 @Cacheable
-public class Genre {
+public class Genre implements Serializable {
+	private static final long serialVersionUID = 6276317371160122830L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

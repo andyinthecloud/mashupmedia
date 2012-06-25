@@ -1,5 +1,6 @@
 package org.mashupmedia.model.library;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
@@ -21,8 +22,10 @@ import org.mashupmedia.model.location.Location;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public class Library {
+public class Library implements Serializable{
 
+	private static final long serialVersionUID = 4337414530802373218L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

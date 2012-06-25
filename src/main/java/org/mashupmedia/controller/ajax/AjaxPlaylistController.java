@@ -37,8 +37,10 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		User user = SecurityHelper.getLoggedInUser();
 		PlaylistMediaItem playlistSong = user.getCurrentPlaylistSong();
 		Playlist playlist = null;
-		if (playlistSong != null) {
+		if (playlistSong != null) {			
 			playlist = playlistSong.getPlaylist();
+			// reinitialise playlist from database
+			playlist = playlistManager.getPlaylist(playlist.getId());
 
 		} else {
 			playlist = new Playlist();

@@ -1,5 +1,6 @@
 package org.mashupmedia.model.media;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Cacheable;
@@ -12,7 +13,8 @@ import javax.persistence.OrderBy;
 
 @Entity
 @Cacheable
-public class Artist {
+public class Artist implements Serializable {
+	private static final long serialVersionUID = -5361832134097788033L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

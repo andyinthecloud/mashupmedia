@@ -1,5 +1,6 @@
 package org.mashupmedia.model;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
@@ -20,7 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Cacheable
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
 	private static final long serialVersionUID = 8897344406027907607L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

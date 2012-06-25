@@ -1,5 +1,6 @@
 package org.mashupmedia.model.media;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Cacheable;
@@ -14,14 +15,15 @@ import javax.persistence.OrderBy;
 
 @Entity
 @Cacheable
-public class Album {
+public class Album implements Serializable {
+	private static final long serialVersionUID = -6293786232429408277L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String name;
-	@ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Artist artist;
-	@ManyToOne (cascade = {CascadeType.ALL})
+	@ManyToOne(cascade = { CascadeType.ALL })
 	private AlbumArtImage albumArtImage;
 	@OneToMany(mappedBy = "album")
 	@OrderBy("trackNumber")

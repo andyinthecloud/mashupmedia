@@ -1,26 +1,57 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
-	$(document).ready(function() {
+	$(document)
+			.ready(
+					function() {
 
-		$("table.song-playlist tbody").sortable();
-		$("table.song-playlist").dataTable({
-			"bFilter" : false,
-			"oLanguage" : {
-				"sEmptyTable" : "<spring:message code="music.playlist.empty" />"
-			},
-			"aoColumnDefs" : [ {
-				"bSortable" : false,
-				"aTargets" : [ 0 ]
-			} ],
-			"bPaginate" : false,
-			"bAutoWidth" : false,
-			"bInfo" : false
-		});
+						$("table.song-playlist tbody").sortable();
+						$("table.song-playlist")
+								.dataTable(
+										{
+											"bFilter" : false,
+											"oLanguage" : {
+												"sEmptyTable" : "<spring:message code="music.playlist.empty" />"
+											},
+											"aoColumnDefs" : [ {
+												"bSortable" : false,
+												"aTargets" : [ 0 ]
+											} ],
+											"bPaginate" : false,
+											"bAutoWidth" : false,
+											"bInfo" : false
+										});
 
-	});
+					});
 </script>
 
+<div class="playlist-title">
+
+
+	<c:set var="playlistName" value="${playlist.name}" />
+	<c:if test="${playlist.isDefault}">
+		<c:set var="playlistName" value="${playlist.name}" />
+		<spring:message var="playlistName" code="music.playlist.default.name" />
+	</c:if>
+	<c:out value="${playlistName}" />
+
+		<select>
+			<option value="">&nbsp;</option>
+			<option id="playlist-action-new">
+				<spring:message code="action.new" />
+			</option>
+			<option id="playlist-action-save">
+				<spring:message code="action.save" />
+			</option>
+			<option id="playlist-action-save-as">
+				<spring:message code="action.saveas" />
+			</option>
+			<option id="playlist-action-delete">
+				<spring:message code="action.delete" />
+			</option>
+		</select>
+		<input type="button" class="button" value="<spring:message code="action.ok" />" />
+</div>
 
 <table class="song-playlist">
 	<thead>

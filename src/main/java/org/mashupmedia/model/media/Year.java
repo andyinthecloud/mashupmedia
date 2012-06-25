@@ -1,5 +1,7 @@
 package org.mashupmedia.model.media;
 
+import java.io.Serializable;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +10,8 @@ import javax.persistence.Id;
 
 @Entity
 @Cacheable
-public class Year {
+public class Year implements Serializable {
+	private static final long serialVersionUID = -6346257354674712995L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

@@ -1,5 +1,7 @@
 package org.mashupmedia.model.playlist;
 
+import java.io.Serializable;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +13,9 @@ import org.mashupmedia.model.media.MediaItem;
 
 @Entity
 @Cacheable
-public class PlaylistMediaItem {
+public class PlaylistMediaItem implements Serializable {
+
+	private static final long serialVersionUID = 7640930812327773777L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

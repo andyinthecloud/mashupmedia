@@ -1,5 +1,6 @@
 package org.mashupmedia.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Cacheable;
@@ -12,8 +13,9 @@ import javax.persistence.Table;
 @Entity
 @Cacheable
 @Table(name = "GROUPS")
-public class Group extends Translation {
+public class Group extends Translation implements Serializable {
 
+	private static final long serialVersionUID = 6142620896348154603L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

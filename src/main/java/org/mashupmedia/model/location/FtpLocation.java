@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 @Entity
 @Cacheable
 public class FtpLocation extends Location {
+	private static final long serialVersionUID = -5188481102676468927L;
 	private String host;
 	private Integer port;
 	private String username;

@@ -13,6 +13,8 @@ import org.mashupmedia.util.FileHelper;
 @Cacheable
 public class Song extends MediaItem {
 
+	private static final long serialVersionUID = -8767965461920368852L;
+
 	public final static String TITLE_SEPERATOR = " - ";
 
 	private int trackNumber;

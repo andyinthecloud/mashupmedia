@@ -57,24 +57,7 @@
 			</div>
 			<div class="jp-title">
 
-				<!-- 
-				<spring:message code="music.label.playlist" />
-				<select>
-					<option value="">&nbsp;</option>
-					<option id="playlist-action-new">
-						<spring:message code="action.new" />
-					</option>
-					<option id="playlist-action-save">
-						<spring:message code="action.save" />
-					</option>
-					<option id="playlist-action-save-as">
-						<spring:message code="action.saveas" />
-					</option>
-					<option id="playlist-action-delete">
-						<spring:message code="action.delete" />
-					</option>
-				</select>
- -->
+
 
 			</div>
 			<div class="jp-no-solution">

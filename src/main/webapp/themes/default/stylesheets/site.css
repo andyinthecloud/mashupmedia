@@ -144,10 +144,10 @@ div.button-panel {
 	margin-bottom: 10px;
 }
 
-div.panel .button {
+.button {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
-	border: 1px solid #F8F8FF;
-	color: #F8F8FF;
+	border: 1px solid #E579E9;
+	color: #E579E9;
 	padding: 3px 10px;
 	font-size: 1.0em;
 	cursor: default;
@@ -158,6 +158,10 @@ div.panel .button {
 	border-radius: 10px;
 }
 
+.button:HOVER, .hover {
+	background-color: #C8C0CE;
+}
+
 .sub-rounded-corners {
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
@@ -165,9 +169,6 @@ div.panel .button {
 	border-radius: 10px;
 }
 
-div.panel .hover {
-	background-color: #CD6600;
-}
 
 div.panel div.breadcrumbs {
 	
@@ -336,12 +337,9 @@ div.sub-panel div.album-art img {
 	clear: both;
 	display: none;
 	padding-left: 10px;
-	height: 170px;
+	height: 200px;
 	overflow: auto;
 	font-size: 80%;
-}
-
-#top-bar-music-player div.songs table{
 }
 
 
@@ -349,26 +347,32 @@ div.sub-panel div.album-art img {
 	float: right;
 }
 
-#top-bar-music-player div.songs table th {
+
+#top-bar-music-player div.songs table {
+	border-collapse: collapse;
+	
+}
+
+#top-bar-music-player div.songs table th.first {
+	padding-left: 0px;	
+}
+
+#top-bar-music-player div.songs table td, #top-bar-music-player div.songs table th {
+	padding-left: 10px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 	text-align: left;
 	min-width: 80px;
-}
-
-#top-bar-music-player div.songs table td, #playlist div.songs table th.first {
-	padding-left: 0px;
 	
 }
 
-#top-bar-music-player div.songs table td, #playlist div.songs table th {
-	padding-left: 10px;
-	padding-top: 1px;
-	padding-bottom: 1px;
-	
-}
-
-#top-bar-music-player div.songs table td {
+#top-bar-music-player div.songs table tbody tr.odd td {
 	cursor: move;
+	background-color: #2E2534;
 }
+
+
+
 
 #top-bar-music-player div.songs table tbody td.text {
 	overflow: hidden;
@@ -387,3 +391,12 @@ div.sub-panel div.album-art img {
 	float: left;
 	margin-right: 5px;
 }
+
+#top-bar-music-player .playlist-title {
+	font-size: 110%;	
+}
+
+#top-bar-music-player .playlist-title select{
+	margin-left: 10px;	
+}
+
