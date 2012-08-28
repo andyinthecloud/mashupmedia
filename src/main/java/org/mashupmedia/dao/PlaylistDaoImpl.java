@@ -3,7 +3,9 @@ package org.mashupmedia.dao;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.PlaylistManager.PlaylistType;
 import org.springframework.stereotype.Repository;
 
@@ -75,6 +77,20 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	@Override
 	public void deletePlaylist(Playlist playlist) {
 		sessionFactory.getCurrentSession().delete(playlist);
+	}
+
+	@Override
+	public void deletePlaylistMediaItems(List<Song> songsToDelete) {				
+		for (Song song : songsToDelete) {
+			Query query = sessionFactory.getCurrentSession().createQuery("from PlaylistMediaItem where mediaItem.id = :songId");
+			query.setLong("songId", song.getId());
+			
+			@SuppressWarnings("unchecked")
+			List<PlaylistMediaItem> playlistMediaItems = query.list();
+			for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+				sessionFactory.getCurrentSession().delete(playlistMediaItem);
+			}
+		}
 	}
 	
 //	@Override

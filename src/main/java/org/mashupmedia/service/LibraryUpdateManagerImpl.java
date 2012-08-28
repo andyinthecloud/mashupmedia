@@ -131,21 +131,24 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 		for (File file : files) {
 			String fileName = StringUtils.trimToEmpty(file.getName());
-
+			
 			if (file.isDirectory()) {
 				artistName = StringUtils.trimToEmpty(artistName);
 
 				if (StringUtils.isEmpty(artistName)) {
 					artistName = fileName;
+					prepareSongs(songs, file, musicLibrary, artistName, albumName);
+					artistName = "";
 				} else {
 					if (StringUtils.isBlank(albumName)) {
 						albumName = fileName;
 					} else {
 						albumName += " - " + fileName;
 					}
+					prepareSongs(songs, file, musicLibrary, artistName, albumName);
+					albumName = "";
 				}
-
-				prepareSongs(songs, file, musicLibrary, artistName, albumName);
+				
 			}
 
 			if (FileHelper.isSupportedSong(fileName)) {
@@ -215,6 +218,9 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				if (StringUtils.isNotEmpty(albumNameValue)) {
 					albumName = albumNameValue;
 				}
+				if (StringUtils.isBlank(albumName)) {
+					logger.info("Unable to add song to the library. No album found for artist = " + artistName + ", song title = " + songTitle);
+				}
 				album.setName(albumName);
 				song.setAlbum(album);
 
@@ -236,7 +242,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 			}
 
-		}
+		}			
+		
 
 	}
 

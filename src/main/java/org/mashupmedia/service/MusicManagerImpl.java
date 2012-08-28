@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.mashupmedia.dao.MusicDao;
+import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
@@ -27,7 +28,10 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Autowired
 	private MusicDao musicDao;
-
+	
+	@Autowired
+	private PlaylistDao playlistDao;
+	
 	@Override
 	public List<Album> getAlbums() {
 		List<Album> albums = musicDao.getAlbums();
@@ -193,8 +197,13 @@ public class MusicManagerImpl implements MusicManager {
 		
 		
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
+				
+		playlistDao.deletePlaylistMediaItems(songsToDelete);
+				
 		musicDao.deleteSongs(songsToDelete);
 		logger.info("Deleted " + songsToDelete.size() + " out of date songs.");
+		
+		
 		
 		deleteEmpty();
 		logger.info("Cleaned library.");

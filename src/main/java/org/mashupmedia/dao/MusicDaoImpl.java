@@ -99,6 +99,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		Album album = song.getAlbum();
 		album = prepareAlbum(album);
+		logger.debug("Saving album: " + album.getName());
 		saveOrUpdate(album);
 		song.setAlbum(album);
 		
