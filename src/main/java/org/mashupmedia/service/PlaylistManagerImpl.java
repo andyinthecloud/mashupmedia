@@ -1,11 +1,14 @@
 package org.mashupmedia.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Hibernate;
+import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.model.User;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.util.SecurityHelper;
@@ -21,6 +24,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	@Autowired
 	private PlaylistDao playlistDao;
 	
+	@Autowired
+	private MediaDao mediaDao;
+	
 	@Override
 	public List<Playlist> getPlaylists() {
 		List<Playlist> playlists = playlistDao.getPlaylists();
@@ -30,7 +36,25 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	@Override
 	public Playlist getPlaylist(long id) {
 		Playlist playlist = playlistDao.getPlaylist(id);
+		if (playlist == null) {
+			return playlist;
+		}
 		Hibernate.initialize(playlist.getPlaylistMediaItems());
+		
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		List<PlaylistMediaItem> playlistMediaItemsToDelete = new ArrayList<PlaylistMediaItem>();
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			MediaItem mediaItem =  playlistMediaItem.getMediaItem();
+			mediaItem = mediaDao.getMediaItem(mediaItem.getId());
+			if (mediaItem == null) {
+				playlistMediaItemsToDelete.add(playlistMediaItem);
+			}			
+		}
+		
+		playlistMediaItems.removeAll(playlistMediaItemsToDelete);
+		
+//		playlist.setPlaylistMediaItems(playlistMediaItems);
+		
 		return playlist;
 	}
 

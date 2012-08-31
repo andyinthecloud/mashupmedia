@@ -54,4 +54,18 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		List<AlbumArtImage> albumArtImages = (List<AlbumArtImage>) query.list();
 		return albumArtImages;
 	}
+	
+	@Override
+	public MediaItem getMediaItem(long mediaItemId) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from MediaItem where id = :mediaItemId");
+		query.setLong("mediaItemId", mediaItemId);
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<MediaItem> mediaItems = (List<MediaItem>) query.list();
+		if (mediaItems == null || mediaItems.isEmpty()) {
+			return null;
+		}
+		
+		return mediaItems.get(0);
+	}
 }

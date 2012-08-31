@@ -28,10 +28,10 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Autowired
 	private MusicDao musicDao;
-	
+
 	@Autowired
 	private PlaylistDao playlistDao;
-	
+
 	@Override
 	public List<Album> getAlbums() {
 		List<Album> albums = musicDao.getAlbums();
@@ -47,15 +47,13 @@ public class MusicManagerImpl implements MusicManager {
 		return artists;
 	}
 
-
-
 	public void saveAlbum(Album album) {
 		musicDao.saveAlbum(album);
 	}
 
 	protected Album prepareAlbum(Artist artist, Album album) {
 		album.setArtist(artist);
-		
+
 		Artist savedArtist = musicDao.getArtist(artist.getName());
 		if (savedArtist == null) {
 			return album;
@@ -64,17 +62,17 @@ public class MusicManagerImpl implements MusicManager {
 		List<Album> albums = artist.getAlbums();
 		if (albums == null) {
 			album.setArtist(savedArtist);
-			return album;			
+			return album;
 		}
-		
+
 		String albumName = StringUtils.trimToEmpty(album.getName());
-		
+
 		for (Album savedAlbum : albums) {
 			if (albumName.equalsIgnoreCase(savedAlbum.getName())) {
 				return savedAlbum;
-			}			
+			}
 		}
-		
+
 		return album;
 	}
 
@@ -120,21 +118,21 @@ public class MusicManagerImpl implements MusicManager {
 		List<Album> randomAlbums = musicDao.getRandomAlbums(numberOfAlbums);
 		if (randomAlbums.isEmpty()) {
 			return albums;
-		}		
-		
+		}
+
 		albums.addAll(randomAlbums);
-				
+
 		while (numberOfAlbums > albums.size()) {
 			int appendItemsTotal = randomAlbums.size();
 			int numberOfAlbumsAfterAppend = albums.size() + appendItemsTotal;
 			if (numberOfAlbumsAfterAppend > numberOfAlbums) {
 				appendItemsTotal = numberOfAlbums - albums.size();
-				randomAlbums = randomAlbums.subList(0, appendItemsTotal);				
+				randomAlbums = randomAlbums.subList(0, appendItemsTotal);
 			}
-			
-			albums.addAll(randomAlbums);			
+
+			albums.addAll(randomAlbums);
 		}
-		
+
 		return albums;
 	}
 
@@ -143,25 +141,26 @@ public class MusicManagerImpl implements MusicManager {
 		if (songs == null || songs.isEmpty()) {
 			return;
 		}
-		
+
 		long libraryId = musicLibrary.getId();
 		long totalSongsSaved = 0;
-		
+
 		Date date = new Date();
 
-		
 		for (Song song : songs) {
 			song.setLibrary(musicLibrary);
 			song.setUpdatedOn(date);
-			
+
 			String songPath = song.getPath();
 			long songSizeInBytes = song.getSizeInBytes();
 			Song savedSong = musicDao.getSong(libraryId, songPath, songSizeInBytes);
-			
+
 			if (savedSong != null) {
+				long savedSongId = savedSong.getId();
+				song.setId(savedSongId);
 				savedSong.setUpdatedOn(date);
 				musicDao.saveSong(savedSong);
-				logger.info("Song is already in database, updated song date.");				
+				logger.info("Song is already in database, updated song date.");
 				continue;
 			}
 
@@ -170,8 +169,7 @@ public class MusicManagerImpl implements MusicManager {
 			Artist artist = song.getArtist();
 			album = prepareAlbum(artist, album);
 			artist = album.getArtist();
-						
-			
+
 			AlbumArtImage albumArtImage = album.getAlbumArtImage();
 			if (albumArtImage != null) {
 				album.setAlbumArtImage(albumArtImage);
@@ -179,42 +177,38 @@ public class MusicManagerImpl implements MusicManager {
 			song.setAlbum(album);
 
 			song.setArtist(artist);
-			
+
 			Year year = song.getYear();
 			year = prepareYear(year);
 			song.setYear(year);
-			
+
 			Genre genre = song.getGenre();
 			genre = prepareGenre(genre);
 			song.setGenre(genre);
-			
-			
+
 			musicDao.saveSong(song);
 			totalSongsSaved++;
 		}
-		
+
 		logger.info("Saved " + totalSongsSaved + " songs.");
-		
-		
+
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
-				
+
 		playlistDao.deletePlaylistMediaItems(songsToDelete);
-				
+
 		musicDao.deleteSongs(songsToDelete);
 		logger.info("Deleted " + songsToDelete.size() + " out of date songs.");
-		
-		
-		
+
 		deleteEmpty();
 		logger.info("Cleaned library.");
-		
+
 	}
-	
+
 	private Genre prepareGenre(Genre genre) {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
 			return null;
 		}
-		
+
 		Genre savedGenre = musicDao.getGenre(genre.getName());
 		if (savedGenre == null) {
 			return genre;
@@ -227,8 +221,7 @@ public class MusicManagerImpl implements MusicManager {
 		if (year == null || year.getYear() == 0) {
 			return null;
 		}
-		
-		
+
 		Year savedYear = musicDao.getYear(year.getYear());
 		if (savedYear == null) {
 			return year;
@@ -259,7 +252,7 @@ public class MusicManagerImpl implements MusicManager {
 				continue;
 			}
 
-			for (Album album : albums) {				
+			for (Album album : albums) {
 				List<Song> songs = musicDao.getSongs(album.getId());
 				if (songs == null || songs.isEmpty()) {
 					musicDao.deleteAlbum(album);
@@ -268,7 +261,5 @@ public class MusicManagerImpl implements MusicManager {
 		}
 
 	}
-	
-
 
 }

@@ -15,4 +15,6 @@ public interface MediaDao {
 
 	List<AlbumArtImage> getAlbumArtImages(long libraryId);
 
+	MediaItem getMediaItem(long mediaItemId);
+
 }

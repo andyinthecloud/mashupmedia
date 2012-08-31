@@ -131,7 +131,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 		for (File file : files) {
 			String fileName = StringUtils.trimToEmpty(file.getName());
-			
+
 			if (file.isDirectory()) {
 				artistName = StringUtils.trimToEmpty(artistName);
 
@@ -148,24 +148,34 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 					prepareSongs(songs, file, musicLibrary, artistName, albumName);
 					albumName = "";
 				}
-				
+
 			}
 
 			if (FileHelper.isSupportedSong(fileName)) {
 				musicFileCount++;
-				AudioFile audioFile = AudioFileIO.read(file);
-				AudioHeader audioHeader = audioFile.getAudioHeader();
-				long bitRate = audioHeader.getBitRateAsNumber();
-				String format = audioHeader.getFormat();
-				int trackLength = audioHeader.getTrackLength();
 
-				Tag tag = audioFile.getTag();
+				Tag tag = null;
+				long bitRate = 0;
+				String format = null;
+				int trackLength = 0;
 				String songTitle = null;
 				int trackNumber = 0;
 				String artistNameValue = null;
 				String albumNameValue = null;
 				String genreValue = null;
-				int yearValue = 0;					
+				int yearValue = 0;
+
+				try {
+					AudioFile audioFile = AudioFileIO.read(file);
+					AudioHeader audioHeader = audioFile.getAudioHeader();
+					bitRate = audioHeader.getBitRateAsNumber();
+					format = audioHeader.getFormat();
+					trackLength = audioHeader.getTrackLength();
+					tag = audioFile.getTag();
+
+				} catch (InvalidAudioFrameException e) {
+					logger.info(e);
+				}
 
 				if (tag != null) {
 					songTitle = StringUtils.trimToEmpty(tag.getFirst(FieldKey.TITLE));
@@ -173,11 +183,10 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 					artistNameValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM_ARTIST));
 					albumNameValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM));
 					genreValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.GENRE));
-					yearValue = NumberUtils.toInt(tag.getFirst(FieldKey.YEAR));					
+					yearValue = NumberUtils.toInt(tag.getFirst(FieldKey.YEAR));
 				} else {
 					logger.info("Unable to read tag info for music file: " + file.getAbsolutePath());
 				}
-				
 
 				Song song = new Song();
 
@@ -192,7 +201,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 					logger.debug("Found song title for music file: " + file.getAbsolutePath());
 					song.setReadableTag(true);
 				}
-				
+
 				song.setTitle(songTitle);
 				song.setFormat(format);
 				song.setTrackLength(trackLength);
@@ -231,8 +240,12 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				artist.setName(artistName);
 
 				if (musicFileCount == 1) {
-					AlbumArtImage albumArtImage = processAlbumArtImage(musicLibrary, file, artistName, albumName);
-					album.setAlbumArtImage(albumArtImage);
+					try {
+						AlbumArtImage albumArtImage = processAlbumArtImage(musicLibrary, file, artistName, albumName);
+						album.setAlbumArtImage(albumArtImage);
+					} catch (Exception e) {
+						logger.info("Unable to read the album art...", e);
+					}
 				}
 
 				album.setArtist(artist);
@@ -242,8 +255,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 			}
 
-		}			
-		
+		}
 
 	}
 

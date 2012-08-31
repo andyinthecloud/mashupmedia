@@ -21,7 +21,7 @@ import org.mashupmedia.model.library.Library;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public class MediaItem implements Serializable{
+public class MediaItem implements Serializable {
 	private static final long serialVersionUID = -6694717782091959485L;
 
 	@Id
@@ -39,7 +39,7 @@ public class MediaItem implements Serializable{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastAccessed;
 	@ManyToOne
-	private User lastAccessedBy;	
+	private User lastAccessedBy;
 
 	public User getLastAccessedBy() {
 		return lastAccessedBy;
