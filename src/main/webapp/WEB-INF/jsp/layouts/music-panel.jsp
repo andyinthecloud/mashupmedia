@@ -83,7 +83,19 @@
 		$("#current-song .song-title").text(currentTrackDisplay);	
 		$("#current-song .vote").show();
 		
+		var mediaId = $(playingRow).attr("id").replace("playlist-media-id-", "");
+		playSong(mediaId);
 
+	}
+	
+	function playSong(mediaId) {
+		
+		/*
+		$("#jquery_jplayer_1").jPlayer( "setMedia", {
+			 mp3: "m4a/elvis.m4a"
+		});
+		*/
+	
 	}
 
 	function loadRandomAlbums() {
@@ -119,7 +131,7 @@
 <form:form commandName="musicPage">
 
 
-	<div class="sub-panel">
+	<div class="sub-panel music-sub-panel">
 
 
 		<ul class="control-menu main-control-menu">

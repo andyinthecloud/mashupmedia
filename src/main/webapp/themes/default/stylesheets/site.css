@@ -95,6 +95,12 @@ div.sub-panel {
 	padding: 10px;
 }
 
+div.music-sub-panel {
+	margin-top: 100px;
+	padding: 10px;
+}
+
+
 div.panel iframe {
 	width: 100%;
 	border: none;

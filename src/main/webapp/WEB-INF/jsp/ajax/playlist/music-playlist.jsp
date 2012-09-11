@@ -77,7 +77,7 @@
 				<c:set var="playingClass" value="playing" />
 			</c:if>
 
-			<tr id="playlist-mediaId-<c:out value="${song.id}"/>" class="<c:out value="${playingClass}"/>">
+			<tr id="playlist-media-id-<c:out value="${song.id}"/>" class="<c:out value="${playingClass}"/>">
 				<td class="controls"><span class="ui-icon ui-icon-carat-2-n-s"></span> <a class="delete"
 					href="javascript:void(0);" title="<spring:message code="control.delete" />"><span
 						class="ui-icon ui-icon-minus"></span></a> <a class="play" href="javascript:void(0);"

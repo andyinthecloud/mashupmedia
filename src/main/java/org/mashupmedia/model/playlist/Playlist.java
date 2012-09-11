@@ -29,7 +29,8 @@ public class Playlist implements Serializable {
 	private long id;
 
 	private String name;
-
+	
+	
 	@OneToMany(mappedBy = "playlist")
 	@OrderBy("ranking")
 	private List<PlaylistMediaItem> playlistMediaItems;
