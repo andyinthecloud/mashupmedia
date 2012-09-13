@@ -21,6 +21,12 @@ public class MediaManagerImpl implements MediaManager{
 		List<MediaItem> mediaList = mediaDao.getMedia(libraryId);
 		return mediaList;
 	}
+	
+	@Override
+	public MediaItem getMediaItem(long mediaItemId) {
+		MediaItem mediaItem = mediaDao.getMediaItem(mediaItemId);
+		return mediaItem;
+	}
 
 	@Override
 	public void deleteMediaList(List<MediaItem> mediaList) {

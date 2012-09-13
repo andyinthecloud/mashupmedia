@@ -84,17 +84,17 @@
 		$("#current-song .vote").show();
 		
 		var mediaId = $(playingRow).attr("id").replace("playlist-media-id-", "");
-		playSong(mediaId);
+		var songUrl = $(playingRow).find("input[name=song-url]").val();
+		playSong(songUrl);
 
 	}
 	
-	function playSong(mediaId) {
-		
-		/*
+	function playSong(songUrl) {
+		alert(songUrl);
 		$("#jquery_jplayer_1").jPlayer( "setMedia", {
-			 mp3: "m4a/elvis.m4a"
+			 mp3: songUrl
 		});
-		*/
+		
 	
 	}
 

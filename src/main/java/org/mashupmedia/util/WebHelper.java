@@ -4,6 +4,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.media.AlbumArtImage;
 
 public class WebHelper {
+	
+	public enum ContentType {
+		MP3("mp3");
+		
+		private String value;
+		ContentType(String value) {
+			this.value = value;
+		}
+		
+		public String getValue() {
+			return value;
+		}
+		
+	}
+	
 
 	public static String prepareParameter(String parameter) {
 		parameter = StringUtils.trimToEmpty(parameter);
@@ -28,6 +43,16 @@ public class WebHelper {
 		}
 
 		return "image/" + imageExtension;
+	}
+
+	public static String getMediaStreamingContentType(String format) {
+		format = StringUtils.trimToEmpty(format);
+		if (format.equalsIgnoreCase("MPEG-1 Layer 3")) {
+			return ContentType.MP3.getValue();
+		}
+		
+		
+		return ContentType.MP3.getValue();
 	}
 
 }

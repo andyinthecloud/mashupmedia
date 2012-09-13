@@ -2,6 +2,7 @@ package org.mashupmedia.service;
 
 import it.sauronsoftware.ftp4j.FTPClient;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.mashupmedia.model.library.MusicLibrary;
@@ -18,5 +19,7 @@ public interface ConnectionManager {
 	public FTPClient connectToFtp(FtpLocation ftpLocation) throws Exception;
 
 	public byte[] getAlbumArtImageBytes(AlbumArtImage albumArtImage) throws Exception;
+
+	public InputStream getMediaItemInputStream(Long mediaItemId) throws Exception;
 
 }

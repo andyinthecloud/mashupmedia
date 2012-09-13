@@ -11,7 +11,9 @@ import it.sauronsoftware.ftp4j.connectors.HTTPTunnelConnector;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +32,7 @@ import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Artist;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
@@ -45,6 +48,9 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 	@Autowired
 	private ConfigurationManager configurationManager;
+	
+	@Autowired
+	private MediaManager mediaManager;
 
 	protected boolean isProxyEnabled() {
 		boolean isProxyEnabled = BooleanUtils.toBoolean(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
@@ -279,5 +285,62 @@ public class ConnectionManagerImpl implements ConnectionManager {
 			ftpClient.disconnect(true);
 		}
 	}
+	
+	@Override
+	public InputStream getMediaItemInputStream(Long mediaItemId) throws Exception {
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		if (mediaItem == null) {
+			return null;
+		}
+
+
+		Library library= mediaItem.getLibrary();
+		Location location = library.getLocation();
+//		location.getPath();
+		String path = mediaItem.getPath();
+		
+//		String path = "";
+		if (location instanceof FtpLocation) {
+			FtpLocation ftpLocation = (FtpLocation) location;
+			FTPClient ftpClient =  connectToFtp(ftpLocation);
+//			ftpLocation.setPath(path);
+			ftpClient.setType(FTPClient.TYPE_BINARY);
+//			
+//			ftpClient.download(path, imageFile);
+//			ftpClient.
+//			ftpLocation.
+			
+		} else {
+			FileInputStream fileInputStream = new FileInputStream(path);
+			return fileInputStream;
+		}
+
+		return null;
+	}
+	
+//	@Override
+//	public String getStreamingMediaItemFilePath(Long mediaItemId) {
+//		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+//		if (mediaItem == null) {
+//			return null;
+//		}
+//		
+//		Library library= mediaItem.getLibrary();
+//		Location location = library.getLocation();
+////		location.getPath();
+//		String path = mediaItem.getPath();
+//		
+////		String path = "";
+//		if (location instanceof FtpLocation) {
+//			
+//		} else {
+//			
+//		}
+//		
+//		
+//		String path = mediaItem.getPath();
+//	
+//		return null;
+//	}
 
 }

@@ -9,6 +9,8 @@ public interface MediaManager {
 
 	public List<MediaItem> getMedia(long libraryId);
 
+	public MediaItem getMediaItem(long mediaItemId);
+
 	public void deleteMediaList(List<MediaItem> mediaList);
 
 
