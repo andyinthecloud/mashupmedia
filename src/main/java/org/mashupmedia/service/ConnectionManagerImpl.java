@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.spi.LoadState;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +50,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 	@Autowired
 	private ConfigurationManager configurationManager;
-	
+
 	@Autowired
 	private MediaManager mediaManager;
 
@@ -285,7 +287,33 @@ public class ConnectionManagerImpl implements ConnectionManager {
 			ftpClient.disconnect(true);
 		}
 	}
-	
+
+	@Override
+	public File getMediaItemStreamFile(long mediaItemId) {
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		Library library = mediaItem.getLibrary();
+		Location location = library.getLocation();
+		LocationType locationType = getLocationType(location);
+
+		File file = null;
+		if (locationType == LocationType.FTP) {
+			
+		} else {
+			String path = mediaItem.getPath();
+			file = new File(path);
+		}
+
+		return file;
+	}
+
+	private LocationType getLocationType(Location location) {
+		if (location instanceof FtpLocation) {
+			return LocationType.FTP;
+		}
+
+		return LocationType.LOCAL;
+	}
+
 	@Override
 	public InputStream getMediaItemInputStream(Long mediaItemId) throws Exception {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
@@ -293,23 +321,22 @@ public class ConnectionManagerImpl implements ConnectionManager {
 			return null;
 		}
 
-
-		Library library= mediaItem.getLibrary();
+		Library library = mediaItem.getLibrary();
 		Location location = library.getLocation();
-//		location.getPath();
+		// location.getPath();
 		String path = mediaItem.getPath();
-		
-//		String path = "";
+
+		// String path = "";
 		if (location instanceof FtpLocation) {
 			FtpLocation ftpLocation = (FtpLocation) location;
-			FTPClient ftpClient =  connectToFtp(ftpLocation);
-//			ftpLocation.setPath(path);
+			FTPClient ftpClient = connectToFtp(ftpLocation);
+			// ftpLocation.setPath(path);
 			ftpClient.setType(FTPClient.TYPE_BINARY);
-//			
-//			ftpClient.download(path, imageFile);
-//			ftpClient.
-//			ftpLocation.
-			
+			//
+			// ftpClient.download(path, imageFile);
+			// ftpClient.
+			// ftpLocation.
+
 		} else {
 			FileInputStream fileInputStream = new FileInputStream(path);
 			return fileInputStream;
@@ -317,30 +344,30 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		return null;
 	}
-	
-//	@Override
-//	public String getStreamingMediaItemFilePath(Long mediaItemId) {
-//		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-//		if (mediaItem == null) {
-//			return null;
-//		}
-//		
-//		Library library= mediaItem.getLibrary();
-//		Location location = library.getLocation();
-////		location.getPath();
-//		String path = mediaItem.getPath();
-//		
-////		String path = "";
-//		if (location instanceof FtpLocation) {
-//			
-//		} else {
-//			
-//		}
-//		
-//		
-//		String path = mediaItem.getPath();
-//	
-//		return null;
-//	}
+
+	// @Override
+	// public String getStreamingMediaItemFilePath(Long mediaItemId) {
+	// MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+	// if (mediaItem == null) {
+	// return null;
+	// }
+	//
+	// Library library= mediaItem.getLibrary();
+	// Location location = library.getLocation();
+	// // location.getPath();
+	// String path = mediaItem.getPath();
+	//
+	// // String path = "";
+	// if (location instanceof FtpLocation) {
+	//
+	// } else {
+	//
+	// }
+	//
+	//
+	// String path = mediaItem.getPath();
+	//
+	// return null;
+	// }
 
 }

@@ -1,20 +1,16 @@
 package org.mashupmedia.controller.streaming;
 
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.model.media.Album;
-import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MediaManager;
-import org.mashupmedia.service.MusicManager;
+import org.mashupmedia.task.StreamingTaskManager;
 import org.mashupmedia.util.WebHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,12 +24,14 @@ import org.springframework.web.servlet.View;
 @Controller
 @RequestMapping("/streaming")
 public class StreamingController {
+	
+	public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+	
 	@Autowired
 	private MediaManager mediaManager;
 	
 	@Autowired
-	private ConnectionManager connectionManager;
-
+	private StreamingTaskManager streamingTaskManager;
 	
 	@RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.GET)
 	public ModelAndView getMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model) throws Exception {
@@ -67,9 +65,13 @@ public class StreamingController {
 //				}
 
 				ServletOutputStream outputStream = response.getOutputStream();
-				InputStream inputStream = connectionManager.getMediaItemInputStream(mediaItemId);
 				
-				byte[] bytes = new byte[8192];
+				File file = streamingTaskManager.startMediaItemDownload(mediaItemId);
+				FileInputStream inputStream = new FileInputStream(file);
+				
+//				InputStream inputStream = connectionManager.getMediaItemInputStream(mediaItemId);
+				
+				byte[] bytes = new byte[DEFAULT_BUFFER_SIZE];
 				int bytesRead;
 
 //				response.setContentType(mimeType);

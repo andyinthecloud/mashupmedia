@@ -2,6 +2,7 @@ package org.mashupmedia.service;
 
 import it.sauronsoftware.ftp4j.FTPClient;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -11,7 +12,11 @@ import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Song;
 
 public interface ConnectionManager {
-
+	
+	public enum LocationType {
+		FTP, LOCAL
+	}
+	
 	public boolean isFtpLocationValid(FtpLocation ftpLocation);
 
 	public List<Song> getFtpSongs(MusicLibrary musicLibrary);
@@ -20,6 +25,9 @@ public interface ConnectionManager {
 
 	public byte[] getAlbumArtImageBytes(AlbumArtImage albumArtImage) throws Exception;
 
-	public InputStream getMediaItemInputStream(Long mediaItemId) throws Exception;
+	public void startMediaItemStream(long mediaItemId, File file);
+
+	public File getMediaItemStreamFile(long mediaItemId);
+
 
 }
