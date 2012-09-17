@@ -10,10 +10,40 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.exception.MashupMediaException;
 
 public class FileHelper {
-private static Logger logger = Logger.getLogger(FileHelper.class);
-	
+	private static Logger logger = Logger.getLogger(FileHelper.class);
+
 	public final static String ALBUM_ART_FOLDER = "cover-art";
 
+	public enum FileType {
+		ALBUM_ART("album-art"), MEDIA_ITEM_STREAM("media-item-streams");
+
+		private String folderName;
+
+		private FileType(String folderName) {
+			this.folderName = folderName;
+		}
+
+		public String getFolderName() {
+			return folderName;
+		}
+
+	}
+
+	public static File createMediaFile(long libraryId, long mediaItemId, FileType fileType) {
+		File libraryFolder = getLibraryFolder(libraryId);
+		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
+		File mediaFile = new File(mediaFolder, String.valueOf(mediaItemId));
+		return mediaFile;
+	}
+
+	public static File createAlbumArtFile(long libraryId) {
+		File libraryFolder = getLibraryFolder(libraryId);
+		File mediaFolder = new File(libraryFolder, FileType.ALBUM_ART.getFolderName());
+		File mediaFile = new File(mediaFolder, Long.toString(System.nanoTime()));
+		return mediaFile;
+	}
+
+	
 	public static boolean isSupportedSong(String fileName) {
 		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
 		if (StringUtils.isEmpty(fileName)) {
@@ -56,7 +86,6 @@ private static Logger logger = Logger.getLogger(FileHelper.class);
 
 	}
 
-
 	public static String writeAlbumArt(long libraryId, String artistName, String albumName, String mimeType, byte[] bytes) throws IOException {
 		mimeType = StringUtils.trimToEmpty(mimeType);
 		String extension = "jpg";
@@ -65,18 +94,19 @@ private static Logger logger = Logger.getLogger(FileHelper.class);
 			extension = extension.replaceFirst("/", "");
 		}
 
-		File libraryAlbumArtFolder = new File(getLibraryFolder(libraryId),  ALBUM_ART_FOLDER);
+		File libraryAlbumArtFolder = new File(getLibraryFolder(libraryId), ALBUM_ART_FOLDER);
 		libraryAlbumArtFolder.mkdirs();
 		String albumArtFileName = StringUtils.trimToEmpty(artistName + "-" + albumName + "." + extension).toLowerCase();
 		albumArtFileName = albumArtFileName.replaceAll("\\s", "");
-		
-		File albumArtFile = new File(libraryAlbumArtFolder,albumArtFileName);
-		if(albumArtFile.exists()) {
-			logger.info("Album art file already exists for libraryId:" + libraryId + ", artistName:" + artistName + ", albumName: " + albumName + ". Exiting...");
+
+		File albumArtFile = new File(libraryAlbumArtFolder, albumArtFileName);
+		if (albumArtFile.exists()) {
+			logger.info("Album art file already exists for libraryId:" + libraryId + ", artistName:" + artistName + ", albumName: " + albumName
+					+ ". Exiting...");
 			return albumArtFile.getAbsolutePath();
-			
+
 		}
-		
+
 		FileUtils.writeByteArrayToFile(albumArtFile, bytes);
 		return albumArtFile.getAbsolutePath();
 	}
@@ -121,14 +151,14 @@ private static Logger logger = Logger.getLogger(FileHelper.class);
 		}
 		return false;
 	}
-	
-	public static String getDisplayBytes(long bytes, boolean si) {
-	    int unit = si ? 1000 : 1024;
-	    if (bytes < unit) return bytes + " B";
-	    int exp = (int) (Math.log(bytes) / Math.log(unit));
-	    String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-	}
 
+	public static String getDisplayBytes(long bytes, boolean si) {
+		int unit = si ? 1000 : 1024;
+		if (bytes < unit)
+			return bytes + " B";
+		int exp = (int) (Math.log(bytes) / Math.log(unit));
+		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+	}
 
 }

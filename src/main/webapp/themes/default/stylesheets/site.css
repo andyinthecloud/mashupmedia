@@ -329,6 +329,11 @@ div.sub-panel div.album-art img {
 	padding: 0 20px;
 }
 
+
+#top-bar-music-player .jp-controls li{
+	padding-left: 0 !important;
+}
+
 #top-bar-music-player .jp-audio {
 	float: left;
 	padding: 0 20px;

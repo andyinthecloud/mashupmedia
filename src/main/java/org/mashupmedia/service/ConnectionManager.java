@@ -3,7 +3,6 @@ package org.mashupmedia.service;
 import it.sauronsoftware.ftp4j.FTPClient;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.List;
 
 import org.mashupmedia.model.library.MusicLibrary;

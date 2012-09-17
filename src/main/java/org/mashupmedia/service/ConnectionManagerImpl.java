@@ -11,14 +11,10 @@ import it.sauronsoftware.ftp4j.connectors.HTTPTunnelConnector;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.persistence.spi.LoadState;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -256,12 +252,15 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		}
 
 		byte[] bytes = null;
-		if (location instanceof FtpLocation) {
+
+		LocationType locationType = getLocationType(location);
+
+		if (locationType == LocationType.FTP) {
 			FtpLocation ftpLocation = (FtpLocation) location;
 			String password = ftpLocation.getPassword();
 			password = EncryptionHelper.decryptText(password);
 			ftpLocation.setPassword(password);
-			bytes = getFtpImageBytes(ftpLocation, imagePath);
+			bytes = getFtpImageBytes(library, imagePath);
 		} else {
 			File imageFile = new File(imagePath);
 			FileInputStream fileInputStream = new FileInputStream(imageFile);
@@ -273,11 +272,13 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 	}
 
-	private byte[] getFtpImageBytes(FtpLocation ftpLocation, String path) throws Exception {
+	private byte[] getFtpImageBytes(Library library, String path) throws Exception {
+		FtpLocation ftpLocation = (FtpLocation) library.getLocation();
+
 		FTPClient ftpClient = connectToFtp(ftpLocation);
 		try {
 			ftpClient.setType(FTPClient.TYPE_BINARY);
-			File imageFile = File.createTempFile("mashupmedia_image", Long.toString(System.nanoTime()));
+			File imageFile = FileHelper.createAlbumArtFile(library.getId());
 			ftpClient.download(path, imageFile);
 			FileInputStream fileInputStream = new FileInputStream(imageFile);
 			byte[] imageBytes = IOUtils.toByteArray(fileInputStream);
@@ -297,7 +298,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		File file = null;
 		if (locationType == LocationType.FTP) {
-			
+
 		} else {
 			String path = mediaItem.getPath();
 			file = new File(path);
@@ -315,59 +316,40 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	}
 
 	@Override
-	public InputStream getMediaItemInputStream(Long mediaItemId) throws Exception {
+	public void startMediaItemStream(long mediaItemId, File file) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		if (mediaItem == null) {
-			return null;
+			logger.error("Unable to start media stream, no media type found");
+			return;
 		}
 
 		Library library = mediaItem.getLibrary();
 		Location location = library.getLocation();
-		// location.getPath();
-		String path = mediaItem.getPath();
-
-		// String path = "";
-		if (location instanceof FtpLocation) {
+		LocationType locationType = getLocationType(location);
+		if (locationType == LocationType.FTP) {
 			FtpLocation ftpLocation = (FtpLocation) location;
-			FTPClient ftpClient = connectToFtp(ftpLocation);
-			// ftpLocation.setPath(path);
-			ftpClient.setType(FTPClient.TYPE_BINARY);
-			//
-			// ftpClient.download(path, imageFile);
-			// ftpClient.
-			// ftpLocation.
-
+			try {
+				startFtpMediaStream(mediaItem, ftpLocation, file);
+			} catch (Exception e) {
+				logger.error("Error starting media stream.", e);
+			}
 		} else {
-			FileInputStream fileInputStream = new FileInputStream(path);
-			return fileInputStream;
+			return;
 		}
 
-		return null;
 	}
 
-	// @Override
-	// public String getStreamingMediaItemFilePath(Long mediaItemId) {
-	// MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-	// if (mediaItem == null) {
-	// return null;
-	// }
-	//
-	// Library library= mediaItem.getLibrary();
-	// Location location = library.getLocation();
-	// // location.getPath();
-	// String path = mediaItem.getPath();
-	//
-	// // String path = "";
-	// if (location instanceof FtpLocation) {
-	//
-	// } else {
-	//
-	// }
-	//
-	//
-	// String path = mediaItem.getPath();
-	//
-	// return null;
-	// }
+	private void startFtpMediaStream(MediaItem mediaItem, FtpLocation ftpLocation, File file) throws Exception {
+
+		FTPClient ftpClient = null;
+		try {
+			ftpClient = connectToFtp(ftpLocation);
+			ftpClient.setType(FTPClient.TYPE_BINARY);
+			String mediaPath = mediaItem.getPath();
+			ftpClient.download(mediaPath, file);
+		} finally {
+			ftpClient.disconnect(true);
+		}
+	}
 
 }

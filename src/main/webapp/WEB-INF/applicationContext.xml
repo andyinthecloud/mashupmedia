@@ -21,18 +21,29 @@
 	<context:component-scan base-package="org.mashupmedia.security" />
 	<context:component-scan base-package="org.mashupmedia.editor" />
 	<context:component-scan base-package="org.mashupmedia.interceptor" />
-	
+
+	<bean id="ftpDownloadTaskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="5" />
+		<property name="maxPoolSize" value="10" />
+		<property name="queueCapacity" value="25" />
+	</bean>
 
 
+	<bean id="localDownloadTaskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="10" />
+		<property name="maxPoolSize" value="20" />
+		<property name="queueCapacity" value="50" />
+	</bean>
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-		<!-- 
-		<property name="url" value="jdbc:hsqldb:file:${java.io.tmpdir}/mashupmedia/db" />
-		 -->
+		<!-- <property name="url" value="jdbc:hsqldb:file:${java.io.tmpdir}/mashupmedia/db" 
+			/> -->
 		<property name="url" value="jdbc:hsqldb:file:${application.folder}/db" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
@@ -87,6 +98,6 @@
 		<property name="cacheSeconds" value="${message.cache.seconds}" />
 	</bean>
 
-	
+
 
 </beans>

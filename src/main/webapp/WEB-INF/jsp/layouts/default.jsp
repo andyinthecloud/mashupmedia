@@ -10,7 +10,7 @@
 <link type="text/css"
 	href="<c:url value="/jquery-ui/1.8.21/css/smoothness/jquery-ui-1.8.21.custom.css" />"
 	rel="Stylesheet" />
-<script type="text/javascript" src="<c:url value="/jquery-ui/1.8.21/js/jquery-1.7.1.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/jquery-ui/1.8.21/js/jquery-1.7.2.min.js" />"></script>
 <script type="text/javascript"
 	src="<c:url value="/jquery-ui/1.8.21/js/jquery-ui-1.8.21.custom.min.js" />"></script>
 
@@ -19,9 +19,9 @@
 	src="<c:url value="/jquery-plugins/jquery.address/1.5/jquery.address-1.5.min.js" />"></script>
 
 <script type="text/javascript"
-	src="<c:url value="/jquery-plugins/jquery.jplayer/2.1.0/jquery.jplayer.min.js" />"></script>
+	src="<c:url value="/jquery-plugins/jquery.jplayer/2.2.0/jquery.jplayer.min.js" />"></script>
 <link type="text/css"
-	href="<c:url value="/jquery-plugins/jquery.jplayer/2.1.0/skins/pink.flag/jplayer.pink.flag.css" />"
+	href="<c:url value="/jquery-plugins/jquery.jplayer/2.2.0/skins/pink.flag/jplayer.pink.flag.css" />"
 	rel="stylesheet" />
 
 <script type="text/javascript"
