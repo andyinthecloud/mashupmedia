@@ -22,7 +22,6 @@ public class MessageHelper {
 	}
 
 	public static String getMessage(String key) {
-
 		String message = getMessage(key, MESSAGE_NOT_FOUND, null);
 		return message;
 	}

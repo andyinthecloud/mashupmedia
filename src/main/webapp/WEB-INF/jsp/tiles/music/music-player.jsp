@@ -7,16 +7,12 @@
 			$("#top-bar-music-player .songs").toggle("slow");
 		});
 		
-		
+		/*
 		$("#jquery_jplayer_1").jPlayer({
 			ready: function (event) {
 				$(this).jPlayer("setMedia", {
 //					mp3: "http://localhost:8080/mashupmedia/app/streaming/media/44/song.mp3",
 					mp3: "/mashupmedia/app/streaming/media/44"
-					/*
-					m4a:"http://www.jplayer.org/audio/m4a/TSP-01-Cro_magnon_man.m4a",
-					oga:"http://www.jplayer.org/audio/ogg/TSP-01-Cro_magnon_man.ogg"
-					*/
 				});
 			},
 			swfPath: "http://www.jplayer.org/latest/js/Jplayer.swf",
@@ -25,7 +21,7 @@
 			wmode: "window",
 			errorAlerts: true
 		});
-		
+		*/
 		
 
 	});

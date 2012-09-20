@@ -76,19 +76,10 @@
 	
 	function playSong(mediaId) {
 		var songUrl = "<c:url value="/app/streaming/media/" />" + mediaId;
-//		alert(songUrl);
-//		$("#jquery_jplayer_1").jPlayer("destroy");
-		
-		/*
-		$("#jquery_jplayer_1").jPlayer( "setMedia", {
-			mp3: "/mashupmedia/app/streaming/media/44"
-		});
-		*/
 		
 		$("#jquery_jplayer_1").jPlayer({
 			ready: function (event) {
 				$(this).jPlayer("setMedia", {
-//					mp3: "http://localhost:8080/mashupmedia/app/streaming/media/44/song.mp3",
 					mp3: songUrl
 					/*
 					m4a:"http://www.jplayer.org/audio/m4a/TSP-01-Cro_magnon_man.m4a",

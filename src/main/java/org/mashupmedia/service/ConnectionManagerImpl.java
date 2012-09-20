@@ -12,6 +12,7 @@ import it.sauronsoftware.ftp4j.connectors.HTTPTunnelConnector;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +21,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 import org.mashupmedia.comparator.FtpFileComparator;
 import org.mashupmedia.constants.MashUpMediaConstants;
@@ -34,6 +43,7 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.FileHelper.FileType;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +66,65 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 	}
 
+	private String getProxyUrl() {
+		String proxyUrl = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_URL));
+		return proxyUrl;
+	}
+
+	private int getProxyPort() {
+		String proxyPortValue = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_PORT));
+		int proxyPort = NumberUtils.toInt(proxyPortValue);
+		return proxyPort;
+	}
+
+	private String getProxyUsername() {
+		String proxyUsername = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_USERNAME));
+		return proxyUsername;
+	}
+
+	private String getProxyPassword() {
+		String proxyPassword = StringUtils.trimToEmpty(configurationManager.getConfigurationDecryptedValue(MashUpMediaConstants.PROXY_PASSWORD));
+		return proxyPassword;
+	}
+
+	public InputStream connect(String link) {
+
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet(link);
+		try {
+			HttpResponse httpResponse = httpClient.execute(httpGet);
+			HttpEntity httpEntity = httpResponse.getEntity();
+			if (httpEntity != null) {
+				InputStream inputStream = httpEntity.getContent();
+				return inputStream;
+			}
+		} catch (Exception e) {
+			logger.error("Unable to connect to host: " + link + ". Trying proxy...");
+		}
+
+		httpClient.getCredentialsProvider().setCredentials(new AuthScope(getProxyUrl(), getProxyPort()),
+				new UsernamePasswordCredentials(getProxyUsername(), getProxyPassword()));
+
+		HttpHost proxy = new HttpHost(getProxyUrl(), getProxyPort());
+		httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+		httpGet = new HttpGet(link);
+
+		try {
+			HttpResponse httpResponse = httpClient.execute(httpGet);
+			HttpEntity httpEntity = httpResponse.getEntity();
+			if (httpEntity != null) {
+				InputStream inputStream = httpEntity.getContent();
+				return inputStream;
+			}
+
+		} catch (Exception e) {
+			logger.error("Unable to connect to host: " + link + " through proxy.", e);
+		}
+
+		return null;
+
+	}
+
 	private FTPClient prepareFtpClient() {
 		FTPClient ftpClient = new FTPClient();
 
@@ -63,14 +132,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 			return ftpClient;
 		}
 
-		String proxyUrl = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_URL));
-		String proxyPortValue = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_PORT));
-		String proxyUsername = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_USERNAME));
-		String proxyPassword = StringUtils.trimToEmpty(configurationManager.getConfigurationDecryptedValue(MashUpMediaConstants.PROXY_PASSWORD));
-		// String proxyPassword = "l3ST3R";
-
-		int proxyPort = NumberUtils.toInt(proxyPortValue);
-		HTTPTunnelConnector connector = new HTTPTunnelConnector(proxyUrl, proxyPort, proxyUsername, proxyPassword);
+		HTTPTunnelConnector connector = new HTTPTunnelConnector(getProxyUrl(), getProxyPort(), getProxyUsername(), getProxyPassword());
 		ftpClient.setConnector(connector);
 		return ftpClient;
 
@@ -298,7 +360,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		File file = null;
 		if (locationType == LocationType.FTP) {
-
+			long libraryId = library.getId();
+			file = FileHelper.createMediaFile(libraryId, mediaItemId, FileType.MEDIA_ITEM_STREAM);
 		} else {
 			String path = mediaItem.getPath();
 			file = new File(path);

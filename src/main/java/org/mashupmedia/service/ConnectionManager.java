@@ -3,6 +3,7 @@ package org.mashupmedia.service;
 import it.sauronsoftware.ftp4j.FTPClient;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.mashupmedia.model.library.MusicLibrary;
@@ -27,6 +28,7 @@ public interface ConnectionManager {
 	public void startMediaItemStream(long mediaItemId, File file);
 
 	public File getMediaItemStreamFile(long mediaItemId);
-
+	
+	public InputStream connect(String link);
 
 }

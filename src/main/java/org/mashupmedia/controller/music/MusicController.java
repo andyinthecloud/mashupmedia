@@ -12,14 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
-import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.web.Breadcrumb;
-import org.mashupmedia.web.page.MusicPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +31,7 @@ import org.springframework.web.servlet.View;
 @RequestMapping("/music")
 public class MusicController extends BaseController {
 
-	private final int NUMBER_OF_RANDOM_ALBUMS = 50;
+//	private final int NUMBER_OF_RANDOM_ALBUMS = 50;
 
 	@Autowired
 	private MusicManager musicManager;

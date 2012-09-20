@@ -18,5 +18,7 @@ public interface MashUpMediaConstants {
 	public static final String UNKNOWN_NAME = "unknown";
 	
 	public static final String MODEL_KEY_THEME_PATH = "themePath";
+	public static final String PROXY_CACHE_SECONDS = "proxy.cache.seconds";
+	
 
 }

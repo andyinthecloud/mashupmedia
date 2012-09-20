@@ -55,5 +55,17 @@ public class EncryptionHelper {
 		String text = getTextEncryptor().decrypt(encryptedText);
 		return text;
 	}
+	
+	public static String decrypt(String encryptedValue) {
+		encryptedValue = StringUtils.trimToEmpty(encryptedValue);
+		if (StringUtils.isEmpty(encryptedValue)) {
+			return encryptedValue;
+		}
+		
+		BasicTextEncryptor basicTextEncryptor = new BasicTextEncryptor();
+		basicTextEncryptor.setPassword(EncryptionHelper.class.getCanonicalName());
+		String value = basicTextEncryptor.decrypt(encryptedValue);
+		return value;
+	}
 
 }

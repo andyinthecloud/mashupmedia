@@ -2,7 +2,7 @@ package org.mashupmedia.dao;
 
 import java.util.List;
 
-import org.mashupmedia.model.media.Song;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 
 public interface PlaylistDao {
@@ -21,7 +21,7 @@ public interface PlaylistDao {
 
 	public Playlist getDefaultMusicPlaylist(long userId);
 
-	public void deletePlaylistMediaItems(List<Song> songsToDelete);
+	public void deletePlaylistMediaItems(List<? extends MediaItem> mediaItems);
 	
 
 }

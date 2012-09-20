@@ -1,11 +1,9 @@
 package org.mashupmedia.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.PlaylistManager.PlaylistType;
@@ -58,7 +56,23 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 	@Override
 	public void savePlaylist(Playlist playlist) {
+		deletePlaylistMediaItems(playlist.getId());
 		saveOrUpdate(playlist);
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			sessionFactory.getCurrentSession().saveOrUpdate(playlistMediaItem);
+		}
+	}
+
+	protected void deletePlaylistMediaItems(long playlistId) {
+		if (playlistId < 1) {
+			return;
+		}
+		
+		Query query = sessionFactory.getCurrentSession().createQuery("delete PlaylistMediaItem pmi where pmi.playlist.id = :playlistId");
+		query.setLong("playlistId", playlistId);
+		int deletedItems = query.executeUpdate();
+		logger.info("Deleted " + deletedItems + " playlistMediaItems for playlist id: " + playlistId);
 	}
 
 	@Override
@@ -77,51 +91,40 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	}
 
 	@Override
-	public void deletePlaylistMediaItems(List<Song> songsToDelete) {
-
-		for (Song song : songsToDelete) {
-			long songId = song.getId();
-//			 Query query =
-//			 sessionFactory.getCurrentSession().createQuery("from PlaylistMediaItem where mediaItem.id = :songId");
-			Query query = sessionFactory.getCurrentSession().createQuery(
-					"select p from Playlist as p inner join p.playlistMediaItems pmi where pmi.mediaItem.id = :songId");
-			query.setLong("songId", songId);
-//
-			@SuppressWarnings("unchecked")
-//			List<PlaylistMediaItem> playlistMediaItems = query.list();
-			List<Playlist> playlists = query.list();
-			for (Playlist playlist : playlists) {
-				removeMediaItem(playlist, songId);
-			}
-
-//			 for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-//			 sessionFactory.getCurrentSession().delete(playlistMediaItem);
-//			 }
+	public void deletePlaylistMediaItems(List<? extends MediaItem> mediaItems) {
+		for (MediaItem mediaItem : mediaItems) {
+			long mediaItemId = mediaItem.getId();
+			Query query = sessionFactory.getCurrentSession().createQuery("delete PlaylistMediaItem pmi where pmi.mediaItem.id = :mediaItemId");
+			query.setLong("mediaItemId", mediaItemId);
+			int deletedItems = query.executeUpdate();
+			logger.info("Deleted " + deletedItems + " playlistMediaItems");
 		}
 	}
 
-	protected void removeMediaItem(Playlist playlist, long songId) {
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-			return;
-		}
-		
-		List<PlaylistMediaItem> playlistMediaItemsToDelete = new ArrayList<PlaylistMediaItem>();
-		
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			MediaItem mediaItem = playlistMediaItem.getMediaItem();
-			if (mediaItem.getId() == songId) {
-				playlistMediaItemsToDelete.add(playlistMediaItem);
-			}
-		}
-		
-		if (playlistMediaItems.isEmpty()) {
-			return;
-		}
-		
-		playlistMediaItems.removeAll(playlistMediaItemsToDelete);
-		sessionFactory.getCurrentSession().merge(playlist);
-	}
+	// protected void deleteMediaItem(Playlist playlist, long mediaItemId) {
+	// List<PlaylistMediaItem> playlistMediaItems =
+	// playlist.getPlaylistMediaItems();
+	// if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+	// return;
+	// }
+	//
+	// List<PlaylistMediaItem> playlistMediaItemsToDelete = new
+	// ArrayList<PlaylistMediaItem>();
+	//
+	// for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+	// MediaItem mediaItem = playlistMediaItem.getMediaItem();
+	// if (mediaItem.getId() == mediaItemId) {
+	// playlistMediaItemsToDelete.add(playlistMediaItem);
+	// }
+	// }
+	//
+	// if (playlistMediaItems.isEmpty()) {
+	// return;
+	// }
+	//
+	// playlistMediaItems.removeAll(playlistMediaItemsToDelete);
+	// sessionFactory.getCurrentSession().merge(playlist);
+	// }
 
 	// @Override
 	// public Playlist getPlaylistFromPlaylistMediaItemId(long

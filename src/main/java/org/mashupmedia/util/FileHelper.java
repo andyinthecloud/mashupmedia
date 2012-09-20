@@ -32,6 +32,7 @@ public class FileHelper {
 	public static File createMediaFile(long libraryId, long mediaItemId, FileType fileType) {
 		File libraryFolder = getLibraryFolder(libraryId);
 		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
+		mediaFolder.mkdirs();
 		File mediaFile = new File(mediaFolder, String.valueOf(mediaItemId));
 		return mediaFile;
 	}
@@ -39,6 +40,7 @@ public class FileHelper {
 	public static File createAlbumArtFile(long libraryId) {
 		File libraryFolder = getLibraryFolder(libraryId);
 		File mediaFolder = new File(libraryFolder, FileType.ALBUM_ART.getFolderName());
+		mediaFolder.mkdirs();
 		File mediaFile = new File(mediaFolder, Long.toString(System.nanoTime()));
 		return mediaFile;
 	}
