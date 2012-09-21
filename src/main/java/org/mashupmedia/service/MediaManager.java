@@ -7,11 +7,11 @@ import org.mashupmedia.model.media.MediaItem;
 
 public interface MediaManager {
 
-	public List<MediaItem> getMedia(long libraryId);
+	public List<MediaItem> getMediaItemsForLibrary(long libraryId);
 
 	public MediaItem getMediaItem(long mediaItemId);
 
-	public void deleteMediaList(List<MediaItem> mediaList);
+	public void deleteMediaItems(List<MediaItem> mediaList);
 
 
 	public void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages);

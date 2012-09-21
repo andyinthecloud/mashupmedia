@@ -110,5 +110,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		Playlist playlist = getPlaylist(id);
 		playlistDao.deletePlaylist(playlist);
 	}
+	
+	@Override
+	public void deleteLibrary(long libraryId) {
+		playlistDao.deleteLibrary(libraryId);
+		
+	}
 
 }

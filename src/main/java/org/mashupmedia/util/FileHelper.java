@@ -10,6 +10,7 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.exception.MashupMediaException;
 
 public class FileHelper {
+	
 	private static Logger logger = Logger.getLogger(FileHelper.class);
 
 	public final static String ALBUM_ART_FOLDER = "cover-art";
@@ -41,11 +42,10 @@ public class FileHelper {
 		File libraryFolder = getLibraryFolder(libraryId);
 		File mediaFolder = new File(libraryFolder, FileType.ALBUM_ART.getFolderName());
 		mediaFolder.mkdirs();
-		File mediaFile = new File(mediaFolder, Long.toString(System.nanoTime()));
+		File mediaFile = new File(mediaFolder, String.valueOf(System.nanoTime()));
 		return mediaFile;
 	}
 
-	
 	public static boolean isSupportedSong(String fileName) {
 		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
 		if (StringUtils.isEmpty(fileName)) {
@@ -88,29 +88,45 @@ public class FileHelper {
 
 	}
 
-	public static String writeAlbumArt(long libraryId, String artistName, String albumName, String mimeType, byte[] bytes) throws IOException {
-		mimeType = StringUtils.trimToEmpty(mimeType);
+//	public static String writeAlbumArt(long libraryId, byte[] bytes) throws IOException {
+//		// mimeType = StringUtils.trimToEmpty(mimeType);
+//		// String extension = "jpg";
+//		// if (StringUtils.isNotEmpty(mimeType)) {
+//		// extension = StringHelper.find(mimeType, "/.*").toLowerCase();
+//		// extension = extension.replaceFirst("/", "");
+//		// }
+//
+//		// File libraryAlbumArtFolder = new File(getLibraryFolder(libraryId),
+//		// ALBUM_ART_FOLDER);
+//		// libraryAlbumArtFolder.mkdirs();
+//		// String albumArtFileName = StringUtils.trimToEmpty(artistName + "-" +
+//		// albumArtName + "." + extension).toLowerCase();
+//		// albumArtFileName = albumArtFileName.replaceAll("\\s", "");
+//
+//		// File albumArtFile = new File(libraryAlbumArtFolder,
+//		// albumArtFileName);
+//
+//		File albumArtFile = FileHelper.createAlbumArtFile(libraryId);
+//
+//		if (albumArtFile.exists()) {
+//			logger.info("Album art file already exists for libraryId:" + libraryId + ", albumId:" + albumId + ". Exiting...");
+//			return albumArtFile.getAbsolutePath();
+//
+//		}
+//
+//		FileUtils.writeByteArrayToFile(albumArtFile, bytes);
+//		return albumArtFile.getAbsolutePath();
+//	}
+
+	public static String getFileExtension(String fileName) {
+		fileName = StringUtils.trimToEmpty(fileName);
 		String extension = "jpg";
-		if (StringUtils.isNotEmpty(mimeType)) {
-			extension = StringHelper.find(mimeType, "/.*").toLowerCase();
-			extension = extension.replaceFirst("/", "");
+		if (StringUtils.isNotEmpty(fileName)) {
+			extension = extension.replaceAll(".*\\.", "").toLowerCase();
 		}
 
-		File libraryAlbumArtFolder = new File(getLibraryFolder(libraryId), ALBUM_ART_FOLDER);
-		libraryAlbumArtFolder.mkdirs();
-		String albumArtFileName = StringUtils.trimToEmpty(artistName + "-" + albumName + "." + extension).toLowerCase();
-		albumArtFileName = albumArtFileName.replaceAll("\\s", "");
+		return extension;
 
-		File albumArtFile = new File(libraryAlbumArtFolder, albumArtFileName);
-		if (albumArtFile.exists()) {
-			logger.info("Album art file already exists for libraryId:" + libraryId + ", artistName:" + artistName + ", albumName: " + albumName
-					+ ". Exiting...");
-			return albumArtFile.getAbsolutePath();
-
-		}
-
-		FileUtils.writeByteArrayToFile(albumArtFile, bytes);
-		return albumArtFile.getAbsolutePath();
 	}
 
 	private static File getLibraryFolder(long libraryId) {
@@ -124,7 +140,7 @@ public class FileHelper {
 		try {
 			FileUtils.deleteDirectory(libraryFolder);
 		} catch (IOException e) {
-			throw new MashupMediaException("Unable to delete library folder", e);
+			logger.error("Unable to delete library", e);
 		}
 
 	}

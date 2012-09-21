@@ -22,6 +22,8 @@ public interface PlaylistDao {
 	public Playlist getDefaultMusicPlaylist(long userId);
 
 	public void deletePlaylistMediaItems(List<? extends MediaItem> mediaItems);
+
+	public void deleteLibrary(long libraryId);
 	
 
 }

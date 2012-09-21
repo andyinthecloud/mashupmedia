@@ -30,6 +30,8 @@ public class LibraryManagerImpl implements LibraryManager {
 	private LibraryDao libraryDao;
 	@Autowired
 	private MusicManager musicManager;
+	@Autowired
+	private PlaylistManager playlistManager;
 
 	@Override
 	public List<MusicLibrary> getMusicLibraries() {
@@ -103,8 +105,9 @@ public class LibraryManagerImpl implements LibraryManager {
 	@Override
 	public void deleteLibrary(Library library) {
 		long id = library.getId();
-		List<MediaItem> mediaList = mediaManager.getMedia(id);
-		mediaManager.deleteMediaList(mediaList);
+		List<MediaItem> mediaItems = mediaManager.getMediaItemsForLibrary(id);
+		playlistManager.deleteLibrary(library.getId());
+		mediaManager.deleteMediaItems(mediaItems);
 		List<AlbumArtImage> albumArtImages = mediaManager.getAlbumArtImages(id);
 		mediaManager.deleteAlbumArtImages(albumArtImages);
 		musicManager.deleteEmpty();

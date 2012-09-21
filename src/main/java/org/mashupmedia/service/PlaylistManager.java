@@ -34,5 +34,6 @@ public interface PlaylistManager {
 
 	public List<Playlist> getPlaylistsForCurrentUser();
 
+	public void deleteLibrary(long libraryId);
 
 }

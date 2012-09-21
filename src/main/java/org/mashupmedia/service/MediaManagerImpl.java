@@ -17,7 +17,7 @@ public class MediaManagerImpl implements MediaManager{
 	private MediaDao mediaDao;
 
 	@Override
-	public List<MediaItem> getMedia(long libraryId) {
+	public List<MediaItem> getMediaItemsForLibrary(long libraryId) {
 		List<MediaItem> mediaList = mediaDao.getMedia(libraryId);
 		return mediaList;
 	}
@@ -29,7 +29,7 @@ public class MediaManagerImpl implements MediaManager{
 	}
 
 	@Override
-	public void deleteMediaList(List<MediaItem> mediaList) {
+	public void deleteMediaItems(List<MediaItem> mediaList) {
 		mediaDao.deleteMediaList(mediaList);		
 	}
 

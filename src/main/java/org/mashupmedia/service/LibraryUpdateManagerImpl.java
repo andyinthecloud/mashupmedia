@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -37,6 +38,7 @@ import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +47,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	private Logger logger = Logger.getLogger(getClass());
+	
+	public static final String DEFAULT_MIME_TYPE = "jpg";
 
 	@Autowired
 	private ConnectionManager connectionManager;
@@ -241,7 +245,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 				if (musicFileCount == 1) {
 					try {
-						AlbumArtImage albumArtImage = processAlbumArtImage(musicLibrary, file, artistName, albumName);
+						AlbumArtImage albumArtImage = processAlbumArtImage(musicLibrary, file, albumName);
 						album.setAlbumArtImage(albumArtImage);
 					} catch (Exception e) {
 						logger.info("Unable to read the album art...", e);
@@ -259,22 +263,38 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	}
 
-	protected AlbumArtImage processAlbumArtImage(MusicLibrary musicLibrary, File musicFile, String artistName, String albumName)
-			throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
+	private String prepareMimeType(String mimeType) {
+		mimeType = StringUtils.trimToEmpty(mimeType);
+		String extension = DEFAULT_MIME_TYPE;
+		if (StringUtils.isNotEmpty(mimeType)) {
+			extension = StringHelper.find(mimeType, "/.*").toLowerCase();
+			extension = extension.replaceFirst("/", "");
+		}
+		return mimeType;
+	}
+
+	protected AlbumArtImage processAlbumArtImage(MusicLibrary musicLibrary, File musicFile, String albumName) throws CannotReadException,
+			IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
 
 		String imagePath = null;
-		String albumArtName = MashUpMediaConstants.COVER_ART_DEFAULT_NAME;
+		String albumArtFileName = MashUpMediaConstants.COVER_ART_DEFAULT_NAME;
 		AudioFile audioFile = AudioFileIO.read(musicFile);
 		Tag tag = audioFile.getTag();
 		Artwork artwork = tag.getFirstArtwork();
 		final String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
+		String contentType = null;
 		if (artwork != null) {
-			String mimeType = artwork.getMimeType();
+			contentType = prepareMimeType(artwork.getMimeType());
 			byte[] bytes = artwork.getBinaryData();
 			if (bytes == null || bytes.length == 0) {
 				return null;
 			}
-			imagePath = FileHelper.writeAlbumArt(musicLibrary.getId(), artistName, albumArtName, mimeType, bytes);
+//			imagePath = FileHelper.writeAlbumArt(musicLibrary.getId(), bytes);
+			File albumArtFile = FileHelper.createAlbumArtFile(musicLibrary.getId());
+			FileUtils.writeByteArrayToFile(albumArtFile, bytes);
+			imagePath = albumArtFile.getAbsolutePath();
+			
+			
 		} else {
 			File albumFolder = musicFile.getParentFile();
 			File[] imageFiles = albumFolder.listFiles(new FilenameFilter() {
@@ -294,14 +314,15 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 			File albumArtFile = imageFiles[0];
 			imagePath = albumArtFile.getAbsolutePath();
-			albumArtName = albumArtFile.getName();
-
+			albumArtFileName = albumArtFile.getName();
+			contentType = FileHelper.getFileExtension(albumArtFileName);
 		}
 
 		AlbumArtImage albumArtImage = new AlbumArtImage();
 		albumArtImage.setLibrary(musicLibrary);
-		albumArtImage.setName(albumArtName);
+		albumArtImage.setName(albumArtFileName);
 		albumArtImage.setUrl(imagePath);
+		albumArtImage.setContentType(contentType);
 		return albumArtImage;
 	}
 

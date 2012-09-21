@@ -101,6 +101,25 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		}
 	}
 
+	@Override
+	public void deleteLibrary(long libraryId) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from PlaylistMediaItem pmi where pmi.mediaItem.library.id = :libraryId");
+		query.setLong("libraryId", libraryId);		
+		@SuppressWarnings("unchecked")
+		List<PlaylistMediaItem> playlistMediaItems = query.list();
+		int deletedItems = playlistMediaItems.size();
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			sessionFactory.getCurrentSession().delete(playlistMediaItem);
+		}
+		logger.info("Deleted " + deletedItems + " playlistMediaItems");
+		
+//		Query query = sessionFactory.getCurrentSession().createQuery("delete PlaylistMediaItem pmi where pmi.mediaItem.library.id = :libraryId");
+//		query.setLong("libraryId", libraryId);
+//		int deletedItems = query.executeUpdate();
+//		logger.info("Deleted " + deletedItems + " playlistMediaItems");
+		
+	}
+	
 	// protected void deleteMediaItem(Playlist playlist, long mediaItemId) {
 	// List<PlaylistMediaItem> playlistMediaItems =
 	// playlist.getPlaylistMediaItems();

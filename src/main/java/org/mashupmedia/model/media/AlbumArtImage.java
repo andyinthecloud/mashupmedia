@@ -25,6 +25,15 @@ public class AlbumArtImage implements Serializable {
 	private Library library;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
+	private String contentType;
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
 
 	public Album getAlbum() {
 		return album;

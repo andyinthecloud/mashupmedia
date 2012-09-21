@@ -1,22 +1,17 @@
 package org.mashupmedia.service;
 
-import it.sauronsoftware.ftp4j.FTPAbortedException;
 import it.sauronsoftware.ftp4j.FTPClient;
-import it.sauronsoftware.ftp4j.FTPDataTransferException;
-import it.sauronsoftware.ftp4j.FTPException;
 import it.sauronsoftware.ftp4j.FTPFile;
-import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
-import it.sauronsoftware.ftp4j.FTPListParseException;
 import it.sauronsoftware.ftp4j.connectors.HTTPTunnelConnector;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -270,22 +265,36 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		}
 	}
 
-	protected AlbumArtImage getAlbumArtImage(FTPClient ftpClient, MusicLibrary musicLibrary, Album album) throws IllegalStateException, IOException,
-			FTPIllegalReplyException, FTPException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
+	protected AlbumArtImage getAlbumArtImage(FTPClient ftpClient, MusicLibrary musicLibrary, Album album) throws Exception {
 
 		String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
 		FTPFile[] ftpFiles = ftpClient.list();
 		for (FTPFile ftpFile : ftpFiles) {
 			String fileName = ftpFile.getName();
 			if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
+				
 				String filePath = ftpClient.currentDirectory() + "/" + fileName;
+//				FtpLocation ftpLocation = (FtpLocation) musicLibrary.getLocation();
+//				String password = ftpLocation.getPassword();
+//				password = EncryptionHelper.decryptText(password);
+//				ftpLocation.setPassword(password);
+				String localFilePath = processFtpImageBytes(ftpClient, musicLibrary.getId(), filePath);
+				
 				AlbumArtImage albumArtImage = new AlbumArtImage();
 				albumArtImage.setAlbum(album);
 				albumArtImage.setLibrary(musicLibrary);
 				albumArtImage.setName(ftpFile.getName());
-				albumArtImage.setUrl(filePath);
+				albumArtImage.setUrl(localFilePath);
+				
+				
+//				FtpLocation ftpLocation = (FtpLocation) location;
+
+				
+				
 				return albumArtImage;
 
+				
+				
 			}
 		}
 
@@ -297,58 +306,86 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		if (image == null) {
 			return null;
 		}
-
-		Library library = image.getLibrary();
-		if (library == null) {
+		
+		File file = new File(image.getUrl());
+		if (!file.exists()) {
 			return null;
 		}
-
-		Location location = library.getLocation();
-		if (location == null) {
-			return null;
-		}
-
-		String imagePath = StringUtils.trimToEmpty(image.getUrl());
-		if (StringUtils.isEmpty(imagePath)) {
-			return null;
-		}
-
-		byte[] bytes = null;
-
-		LocationType locationType = getLocationType(location);
-
-		if (locationType == LocationType.FTP) {
-			FtpLocation ftpLocation = (FtpLocation) location;
-			String password = ftpLocation.getPassword();
-			password = EncryptionHelper.decryptText(password);
-			ftpLocation.setPassword(password);
-			bytes = getFtpImageBytes(library, imagePath);
-		} else {
-			File imageFile = new File(imagePath);
-			FileInputStream fileInputStream = new FileInputStream(imageFile);
-			bytes = IOUtils.toByteArray(fileInputStream);
-			fileInputStream.close();
-		}
-
+		
+		FileInputStream fileInputStream = new FileInputStream(file);
+		byte[] bytes = IOUtils.toByteArray(fileInputStream);
 		return bytes;
+		
+
+//		Library library = image.getLibrary();
+//		if (library == null) {
+//			return null;
+//		}
+//
+//		Location location = library.getLocation();
+//		if (location == null) {
+//			return null;
+//		}
+//
+//		String imagePath = StringUtils.trimToEmpty(image.getUrl());
+//		if (StringUtils.isEmpty(imagePath)) {
+//			return null;
+//		}
+//		
+//		Album album = image.getAlbum();
+//		if (album == null) {
+//			return null;
+//		}
+//
+//		byte[] bytes = null;
+//
+//		LocationType locationType = getLocationType(location);
+//
+//		if (locationType == LocationType.FTP) {
+//			FtpLocation ftpLocation = (FtpLocation) location;
+//			String password = ftpLocation.getPassword();
+//			password = EncryptionHelper.decryptText(password);
+//			ftpLocation.setPassword(password);
+//			bytes = getFtpImageBytes(library, album.getId(), imagePath);
+//		} else {
+//			File imageFile = new File(imagePath);
+//			FileInputStream fileInputStream = new FileInputStream(imageFile);
+//			bytes = IOUtils.toByteArray(fileInputStream);
+//			fileInputStream.close();
+//		}
+//
+//		return bytes;
 
 	}
 
-	private byte[] getFtpImageBytes(Library library, String path) throws Exception {
-		FtpLocation ftpLocation = (FtpLocation) library.getLocation();
+	private String processFtpImageBytes(FTPClient ftpClient, long  libraryId, String path) throws Exception {
+//		FtpLocation ftpLocation = (FtpLocation) library.getLocation();
+//		File imageFile = FileHelper.createAlbumArtFile(library.getId());		
+//		FileInputStream fileInputStream = null;
+//		if (imageFile.exists()) {
+//			fileInputStream = new FileInputStream(imageFile);
+//			byte[] imageBytes = IOUtils.toByteArray(fileInputStream);
+//			fileInputStream.close();
+//			return imageBytes;
+//		}
+		
+		File imageFile = FileHelper.createAlbumArtFile(libraryId);
+		imageFile.createNewFile();
+		FileInputStream fileInputStream = new FileInputStream(imageFile);
 
-		FTPClient ftpClient = connectToFtp(ftpLocation);
-		try {
+//		FTPClient ftpClient = connectToFtp(ftpLocation);
+//		try {
 			ftpClient.setType(FTPClient.TYPE_BINARY);
-			File imageFile = FileHelper.createAlbumArtFile(library.getId());
-			ftpClient.download(path, imageFile);
-			FileInputStream fileInputStream = new FileInputStream(imageFile);
+			ftpClient.download(path, imageFile);				
 			byte[] imageBytes = IOUtils.toByteArray(fileInputStream);
+			FileUtils.writeByteArrayToFile(imageFile, imageBytes);
+			
 			fileInputStream.close();
-			return imageBytes;
-		} finally {
-			ftpClient.disconnect(true);
-		}
+			return imageFile.getAbsolutePath();
+//			return imageBytes;
+//		} finally {
+//			ftpClient.disconnect(true);
+//		}
 	}
 
 	@Override
