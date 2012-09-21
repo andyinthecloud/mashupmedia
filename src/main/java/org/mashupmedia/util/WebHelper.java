@@ -43,18 +43,8 @@ public class WebHelper {
 			return null;
 		}
 
-		String imageUrl = albumArtImage.getUrl();
-		imageUrl = StringUtils.trimToEmpty(imageUrl).toLowerCase();
-		if (StringUtils.isEmpty(imageUrl)) {
-			return null;
-		}
-
-		String imageExtension = StringUtils.trimToEmpty(StringHelper.find(imageUrl, "\\..*"));
-		if (imageExtension.startsWith(".")) {
-			imageExtension = imageExtension.replaceFirst("\\.", "");
-		}
-
-		return "image/" + imageExtension;
+		String contentType = albumArtImage.getContentType();
+		return "image/" + contentType;
 	}
 
 	public static String getMediaStreamingContentType(String format) {

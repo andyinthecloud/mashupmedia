@@ -74,10 +74,10 @@ public class MusicController extends BaseController {
 	@RequestMapping(value = "/album-art/{albumId}", method = RequestMethod.GET)
 	public ModelAndView getAlbumArt(@PathVariable("albumId") Long albumId, Model model) throws Exception {
 		Album album = musicManager.getAlbum(albumId);
-		AlbumArtImage image = album.getAlbumArtImage();
+		AlbumArtImage albumArtImage = album.getAlbumArtImage();
 
-		final byte[] imageBytes = connectionManager.getAlbumArtImageBytes(image);
-		final String contentType = WebHelper.getImageContentType(image);
+		final byte[] imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage);
+		final String contentType = WebHelper.getImageContentType(albumArtImage);
 		ModelAndView modelAndView = new ModelAndView(new View() {
 
 			@Override

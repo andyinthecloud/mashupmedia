@@ -160,7 +160,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		Integer port = ftpLocation.getPort();
 		String path = StringUtils.trimToEmpty(ftpLocation.getPath());
 		String username = ftpLocation.getUsername();
-		String password = ftpLocation.getPassword();
+		String password = EncryptionHelper.decryptText(ftpLocation.getPassword());
 
 		if (port == null) {
 			ftpClient.connect(host);

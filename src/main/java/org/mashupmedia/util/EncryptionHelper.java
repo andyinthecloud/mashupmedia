@@ -52,6 +52,9 @@ public class EncryptionHelper {
 	
 
 	public static String decryptText(String encryptedText) {
+		if (StringUtils.isBlank(encryptedText)) {
+			return encryptedText;
+		}
 		String text = getTextEncryptor().decrypt(encryptedText);
 		return text;
 	}
