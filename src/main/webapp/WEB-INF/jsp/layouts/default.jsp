@@ -46,6 +46,8 @@
 
 <body>
 	<tiles:insertAttribute name="topBar" />
+	
+	<input type="hidden" id="contextUrl" value="<c:url value="/" />" />
 
 	<img id="background-image" style="display: none;" />
 

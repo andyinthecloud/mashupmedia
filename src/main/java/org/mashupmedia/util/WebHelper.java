@@ -7,12 +7,12 @@ import org.mashupmedia.model.media.AlbumArtImage;
 
 public class WebHelper {
 
-	public enum ContentType {
+	public enum MediaContentType {
 		MP3("mp3");
 
 		private String value;
 
-		ContentType(String value) {
+		MediaContentType(String value) {
 			this.value = value;
 		}
 
@@ -50,10 +50,10 @@ public class WebHelper {
 	public static String getMediaStreamingContentType(String format) {
 		format = StringUtils.trimToEmpty(format);
 		if (format.equalsIgnoreCase("MPEG-1 Layer 3")) {
-			return ContentType.MP3.getValue();
+			return MediaContentType.MP3.getValue();
 		}
 
-		return ContentType.MP3.getValue();
+		return MediaContentType.MP3.getValue();
 	}
 
 }

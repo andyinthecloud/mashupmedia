@@ -1,5 +1,9 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+<div id="media-player-script">
+</div>
+
+
 <script type="text/javascript">
 	$(document).ready(function() {
 

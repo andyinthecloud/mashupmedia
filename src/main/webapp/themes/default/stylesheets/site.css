@@ -18,6 +18,10 @@ html,body {
 	font-weight: bold;
 }
 
+#player-script {
+	display: none;
+}
+
 #background-image {
 	position: fixed;
 	top: 0;

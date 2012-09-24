@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
+import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
+import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.web.page.AlbumPage;
 import org.mashupmedia.web.page.AlbumsPage;
 import org.mashupmedia.web.page.ArtistsPage;
@@ -22,6 +25,9 @@ public class AjaxMusicController extends BaseAjaxController{
 
 	@Autowired
 	private MusicManager musicManager;
+	
+	@Autowired
+	private MediaManager mediaManager;
 
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
 	public String getMusic(Model model) {
@@ -61,5 +67,15 @@ public class AjaxMusicController extends BaseAjaxController{
 		model.addAttribute(artistsPage);
 		return "ajax/music/artists";
 	}
+	
+	@RequestMapping(value = "/play/{mediaItemId}", method = RequestMethod.GET)
+	public String playSong(@PathVariable("mediaItemId") Long mediaItemId, Model model) {
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		String format = WebHelper.getMediaStreamingContentType(mediaItem.getFormat());		
+		model.addAttribute("format", format);
+		model.addAttribute("mediaItemId", mediaItem.getId());
+		return "ajax/music/player";
+	}
+	
 
 }

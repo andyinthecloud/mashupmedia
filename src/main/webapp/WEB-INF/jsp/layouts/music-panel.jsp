@@ -25,7 +25,7 @@
 							}
 						});
 
-						loadPlaylist();
+						mashupMedia.loadPlaylist();
 
 						$("#category-menu-home").click(function() {
 							$.address.value($(this).attr("id"));
@@ -46,16 +46,22 @@
 
 					});
 	
-
+/*
 	function loadPlaylist() {
 		$.post("<c:url value="/app/ajax/playlist/current-user-playlist" />",
 				function(data) {
 					$("#top-bar-music-player .songs").html(data);
+					$("#top-bar-music-player table.song-playlist tbody.tr").each(function(index) {
+						var 
+					    
+					});
 					loadCurrentSong();
 				});
 
 	}
+*/
 
+/*
 	function loadCurrentSong() {
 		var playingRow = $("#top-bar-music-player .songs table tbody tr.playing");
 		
@@ -73,7 +79,9 @@
 		playSong(mediaId);
 
 	}
-	
+*/
+/*
+
 	function playSong(mediaId) {
 		var songUrl = "<c:url value="/app/streaming/media/" />" + mediaId;
 		
@@ -81,10 +89,8 @@
 			ready: function (event) {
 				$(this).jPlayer("setMedia", {
 					mp3: songUrl
-					/*
 					m4a:"http://www.jplayer.org/audio/m4a/TSP-01-Cro_magnon_man.m4a",
 					oga:"http://www.jplayer.org/audio/ogg/TSP-01-Cro_magnon_man.ogg"
-					*/
 				});
 			},
 			swfPath: "http://www.jplayer.org/latest/js/Jplayer.swf",
@@ -96,6 +102,7 @@
 		
 	
 	}
+*/
 
 	function loadRandomAlbums() {
 		$.get("<c:url value="/app/ajax/music/random-albums" />",
