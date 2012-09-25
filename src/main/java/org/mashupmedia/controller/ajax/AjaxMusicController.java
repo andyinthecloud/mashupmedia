@@ -74,7 +74,7 @@ public class AjaxMusicController extends BaseAjaxController{
 		String format = WebHelper.getMediaStreamingContentType(mediaItem.getFormat());		
 		model.addAttribute("format", format);
 		model.addAttribute("mediaItemId", mediaItem.getId());
-		return "ajax/music/player";
+		return "ajax/music/player-script";
 	}
 	
 

@@ -9,33 +9,16 @@ var mashupMedia = new function() {
 	this.setContextUrl = function(contextUrl) {
 		this.contextUrl = contextUrl;
 	};
+	this.playingClass = "playing";
+	this.jPlayerId = "#jquery_jplayer_1";
 	this.loadPlaylist = function() {
-//		alert(this.contextUrl);
 		var contextUrl = this.contextUrl;
 		
 		$.post(contextUrl + "app/ajax/playlist/current-user-playlist",
 				function(data) {
-					$("#top-bar-music-player .songs").html(data);
+					$("#top-bar-music-player .songs").html(data);					
 					
-					/*
-					
-					$("#top-bar-music-player table.song-playlist tbody tr")
-							.each(function(index) {
-//								var format = $(this).find("input[name=format]").val();								
-								var format = "mp3";								
-								var playlistRowId = $(this).attr("id");
-								var mediaId = getMediaIdFromPlaylist(playlistRowId);
-								var mediaUrl = this.contextUrl + "/app/streaming/media" + mediaId;
-								var playlistItem = new PlaylistItem(format, mediaUrl);
-								playlistItems.push(playlistItem);
-
-							});
-					*/
-					
-//					loadCurrentSong();
-					
-					var playingRow = $("#top-bar-music-player .songs table tbody tr.playing");
-					
+					var playingRow = getPlayingRow();					
 					if ($(playingRow).length == 0) {
 						return;
 					}
@@ -58,8 +41,7 @@ var mashupMedia = new function() {
 				});
 	};
 	this.loadCurrentSong = function() {
-		var playingRow = $("#top-bar-music-player .songs table tbody tr.playing");
-		
+		var playingRow = getPlayingRow();
 		if ($(playingRow).length == 0) {
 			return;
 		}
@@ -70,7 +52,8 @@ var mashupMedia = new function() {
 		$("#current-song .song-title").text(currentTrackDisplay);	
 		$("#current-song .vote").show();
 		
-		var mediaId = $(playingRow).attr("id").replace("playlist-media-id-", "");
+		//var mediaId = $(playingRow).attr("id").replace("playlist-media-id-", "");
+		var mediaId = getMediaIdFromPlaylistRow(playlistRow);
 		
 		$.get(this.contextUrl + "/app/ajax/music/play/" + mediaId,
 			function(data) {
@@ -81,11 +64,52 @@ var mashupMedia = new function() {
 //		playSong(mediaId);
 		
 	};
+	
+	this.playNextSong = function() {
+		var playingRow = getPlayingRow();
+		if ($(playingRow).length == 0) {
+			return;
+		}
+		
+//		$(playingRow).removeClass(this.playingClass);		
+		var playingIndex = $("#top-bar-music-player .songs table tbody tr").index(playingRow);
+		
+		var nextPlayingRow =  $("#top-bar-music-player .songs table tbody tr")[playingIndex + 1];
+		if ($(nextPlayingRow).length == 0) {
+			return;
+		}
+		
+		$(playingRow).removeClass(this.playingClass);
+		$(nextPlayingRow).addClass(this.playingClass);
+		var mediaId = getMediaIdFromPlaylistRow(nextPlayingRow);		
+		var jPlayerId = this.jPlayerId;
+		
+		$.get(this.contextUrl + "/app/ajax/music/play/" + mediaId,
+			function(data) {
+				$("#media-player-script").html(data);
+				$(jPlayerId).jPlayer("destroy");
+				playSong();
+				$(jPlayerId).jPlayer("play");
+		});
+		
+	};
 }
 
 
-function getMediaIdFromPlaylist(playlistRowId) {
-	var mediaId = $(playlistRowId).attr("id").replace("playlist-media-id-", "");
+
+function getPlayingRow() {
+	var playingRow = $("#top-bar-music-player .songs table tbody tr." + mashupMedia.playingClass);
+	if ($(playingRow).length > 0) {
+		return playingRow;
+	}
+		
+	playingRow = $("#top-bar-music-player .songs table tbody tr").index(1);
+	return playingRow;
+}
+
+
+function getMediaIdFromPlaylistRow(playlistRow) {
+	var mediaId = $(playlistRow).attr("id").replace("playlist-media-id-", "");
 	return mediaId;
 }
 

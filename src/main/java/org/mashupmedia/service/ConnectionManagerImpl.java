@@ -440,6 +440,10 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	}
 
 	private void startFtpMediaStream(MediaItem mediaItem, FtpLocation ftpLocation, File file) throws Exception {
+		
+		if (file.exists()) {
+			return;
+		}
 
 		FTPClient ftpClient = null;
 		try {

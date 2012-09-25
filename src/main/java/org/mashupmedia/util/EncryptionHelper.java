@@ -19,17 +19,16 @@ public class EncryptionHelper {
 		passwordEncryptor = new StrongPasswordEncryptor();
 		return passwordEncryptor;
 	}
-	
+
 	public static BasicTextEncryptor getTextEncryptor() {
 		if (textEncryptor != null) {
 			return textEncryptor;
 		}
-		
+
 		textEncryptor = new BasicTextEncryptor();
 		textEncryptor.setPassword(EncryptionHelper.class.getCanonicalName());
 		return textEncryptor;
 	}
-	
 
 	public static String encodePassword(String password) {
 		String encodedPassword = getPasswordEncryptor().encryptPassword(password);
@@ -46,10 +45,9 @@ public class EncryptionHelper {
 		if (StringUtils.isEmpty(text)) {
 			return text;
 		}
-		String encryptedText = getTextEncryptor().encrypt(text);		
+		String encryptedText = getTextEncryptor().encrypt(text);
 		return encryptedText;
 	}
-	
 
 	public static String decryptText(String encryptedText) {
 		if (StringUtils.isBlank(encryptedText)) {
@@ -57,18 +55,6 @@ public class EncryptionHelper {
 		}
 		String text = getTextEncryptor().decrypt(encryptedText);
 		return text;
-	}
-	
-	public static String decrypt(String encryptedValue) {
-		encryptedValue = StringUtils.trimToEmpty(encryptedValue);
-		if (StringUtils.isEmpty(encryptedValue)) {
-			return encryptedValue;
-		}
-		
-		BasicTextEncryptor basicTextEncryptor = new BasicTextEncryptor();
-		basicTextEncryptor.setPassword(EncryptionHelper.class.getCanonicalName());
-		String value = basicTextEncryptor.decrypt(encryptedValue);
-		return value;
 	}
 
 }
