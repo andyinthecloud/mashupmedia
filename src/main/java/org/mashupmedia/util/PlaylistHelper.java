@@ -27,9 +27,22 @@ public class PlaylistHelper {
 			playlistSong.setPlaylist(playlist);
 			playlistMediaItems.add(playlistSong);
 		}
-		
+
 		playlistMediaItems.get(0).setPlaying(true);
 		playlist.setPlaylistMediaItems(playlistMediaItems);
+	}
+
+	public static List<MediaItem> getMediaItems(List<PlaylistMediaItem> playlistMediaItems) {
+		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return mediaItems;
+		}
+
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			mediaItems.add(playlistMediaItem.getMediaItem());
+		}
+
+		return mediaItems;
 	}
 
 }

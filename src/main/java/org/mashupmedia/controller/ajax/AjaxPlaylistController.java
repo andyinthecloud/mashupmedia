@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.Album;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
@@ -15,6 +16,7 @@ import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -76,7 +78,14 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 		model.addAttribute("playlist", playlist);
 		return "ajax/playlist/music-playlist";
-
 	}
 
+	@RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
+	public String playPlaylist(@PathVariable("playlistId") Long playlistId, Model model) {
+		Playlist playlist = playlistManager.getPlaylist(playlistId);
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		List<MediaItem> mediaItems = PlaylistHelper.getMediaItems(playlistMediaItems);
+		model.addAttribute("mediaItems", mediaItems);
+		return "ajax/playlist/player-script";
+	}
 }

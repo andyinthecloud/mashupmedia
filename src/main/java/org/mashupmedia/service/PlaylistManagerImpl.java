@@ -40,6 +40,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 			return playlist;
 		}
 		Hibernate.initialize(playlist.getPlaylistMediaItems());
+
 		
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		List<PlaylistMediaItem> playlistMediaItemsToDelete = new ArrayList<PlaylistMediaItem>();

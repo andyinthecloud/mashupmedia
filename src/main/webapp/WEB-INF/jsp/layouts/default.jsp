@@ -20,6 +20,8 @@
 
 <script type="text/javascript"
 	src="<c:url value="/jquery-plugins/jquery.jplayer/2.2.0/jquery.jplayer.min.js" />"></script>
+<script type="text/javascript"
+	src="<c:url value="/jquery-plugins/jquery.jplayer/2.2.0/add-on/jplayer.playlist.min.js" />"></script>
 <link type="text/css"
 	href="<c:url value="/jquery-plugins/jquery.jplayer/2.2.0/skins/pink.flag/jplayer.pink.flag.css" />"
 	rel="stylesheet" />

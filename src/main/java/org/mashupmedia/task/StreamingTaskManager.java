@@ -53,6 +53,12 @@ public class StreamingTaskManager {
 		File file = connectionManager.getMediaItemStreamFile(mediaItemId);
 		if (location instanceof FtpLocation) {
 			ftpDownloadTaskExecutor.execute(new DownloadTask(file, mediaItemId));
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				
+				e.printStackTrace();
+			}
 		} else {
 			localDownloadTaskExecutor.execute(new DownloadTask(file, mediaItemId));
 		}

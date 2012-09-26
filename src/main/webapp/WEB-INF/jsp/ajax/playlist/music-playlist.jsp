@@ -27,7 +27,7 @@
 
 <div class="playlist-title">
 
-
+	<input type="hidden" id="current-playlist-id" value="<c:out value="${playlist.id}" />"  />
 	<c:set var="playlistName" value="${playlist.name}" />
 	<c:if test="${playlist.isDefault}">
 		<c:set var="playlistName" value="${playlist.name}" />
