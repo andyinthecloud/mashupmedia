@@ -9,6 +9,7 @@ import org.mashupmedia.model.media.Song;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.WebHelper;
+import org.mashupmedia.util.WebHelper.FormatContentType;
 import org.mashupmedia.web.page.AlbumPage;
 import org.mashupmedia.web.page.AlbumsPage;
 import org.mashupmedia.web.page.ArtistsPage;
@@ -71,7 +72,7 @@ public class AjaxMusicController extends BaseAjaxController{
 	@RequestMapping(value = "/play/{mediaItemId}", method = RequestMethod.GET)
 	public String playSong(@PathVariable("mediaItemId") Long mediaItemId, Model model) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		String format = WebHelper.getMediaStreamingContentType(mediaItem.getFormat());		
+		String format = WebHelper.getContentType(mediaItem.getFormat(), FormatContentType.JPLAYER);		
 		model.addAttribute("format", format);
 		model.addAttribute("mediaItemId", mediaItem.getId());
 		return "ajax/music/player-script";

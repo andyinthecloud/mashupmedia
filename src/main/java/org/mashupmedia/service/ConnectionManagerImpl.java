@@ -455,5 +455,51 @@ public class ConnectionManagerImpl implements ConnectionManager {
 			ftpClient.disconnect(true);
 		}
 	}
+	
+	@Override
+	public long getMediaItemFileSize(long mediaItemId) {
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		if (mediaItem == null) {
+			logger.error("Unable to start media stream, no media type found");
+			return 0;
+		}
+
+		Library library = mediaItem.getLibrary();
+		Location location = library.getLocation();
+		LocationType locationType = getLocationType(location);
+		long size = 0;
+		if (locationType == LocationType.LOCAL) {
+			String path = mediaItem.getPath();
+			File file = new File(path);
+			size = file.length();
+
+		} else if (locationType == LocationType.FTP) {
+			FtpLocation ftpLocation = (FtpLocation) location;
+			try {
+				size = getFtpMediaItemFileSize(mediaItem, ftpLocation);
+			} catch (Exception e) {
+				logger.error("Unable to get the file size from ftp llibrary", e);
+			}
+		}
+		
+		return size;
+	}
+	
+	
+	private long getFtpMediaItemFileSize(MediaItem mediaItem, FtpLocation ftpLocation) throws Exception {
+		
+		long size = 0;
+		FTPClient ftpClient = null;
+		try {
+			ftpClient = connectToFtp(ftpLocation);
+			ftpClient.setType(FTPClient.TYPE_BINARY);
+			String mediaPath = mediaItem.getPath();
+			size = ftpClient.fileSize(mediaPath);
+		} finally {
+			ftpClient.disconnect(true);
+		}
+		
+		return size;
+	}
 
 }

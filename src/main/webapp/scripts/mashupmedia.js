@@ -87,14 +87,12 @@ var mashupMedia = new function() {
 		var mediaId = getMediaIdFromPlaylistRow(nextPlayingRow);		
 		var jPlayerId = this.jPlayerId;
 		
-		$.get(this.contextUrl + "/app/ajax/playlist/id/" + mediaId,
+		$.get(this.contextUrl + "/app/ajax/music/play/" + mediaId,
 			function(data) {
-			/*
 				$("#media-player-script").html(data);
 				$(jPlayerId).jPlayer("destroy");
 				playSong();
 				$(jPlayerId).jPlayer("play");
-			*/	
 		});
 		
 	};

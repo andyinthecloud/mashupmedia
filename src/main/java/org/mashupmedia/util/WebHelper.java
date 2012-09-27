@@ -7,17 +7,27 @@ import org.mashupmedia.model.media.AlbumArtImage;
 
 public class WebHelper {
 
+	public enum FormatContentType {
+		MIME, JPLAYER
+	}
+
 	public enum MediaContentType {
-		MP3("mp3");
+		MP3("audio/mpeg", "mp3");
 
-		private String value;
+		private String mimeContentType;
+		private String jPlayerContentType;
 
-		MediaContentType(String value) {
-			this.value = value;
+		private MediaContentType(String mimeContentType, String jPlayerContentType) {
+			this.mimeContentType = mimeContentType;
+			this.jPlayerContentType = jPlayerContentType;
 		}
 
-		public String getValue() {
-			return value;
+		public String getjPlayerContentType() {
+			return jPlayerContentType;
+		}
+
+		public String getMimeContentType() {
+			return mimeContentType;
 		}
 
 	}
@@ -47,13 +57,21 @@ public class WebHelper {
 		return "image/" + contentType;
 	}
 
-	public static String getMediaStreamingContentType(String format) {
+	public static String getContentType(String format, FormatContentType formatContentType) {
 		format = StringUtils.trimToEmpty(format);
+
+		MediaContentType mediaContentType = MediaContentType.MP3;
+
 		if (format.equalsIgnoreCase("MPEG-1 Layer 3")) {
-			return MediaContentType.MP3.getValue();
+			mediaContentType = MediaContentType.MP3;
 		}
 
-		return MediaContentType.MP3.getValue();
+		if (formatContentType == FormatContentType.JPLAYER) {
+			return mediaContentType.getjPlayerContentType();
+		} else {
+			return mediaContentType.getMimeContentType();
+		}
+
 	}
 
 }

@@ -10,6 +10,18 @@
 				$(this).jPlayer("setMedia", {
 					<c:out value="${format}" /> : "<c:url value="/app/streaming/media/${mediaItemId}" />"  
 				});
+				$(this).bind($.jPlayer.event.progress,
+			                function(event) {
+			                    if (event.jPlayer.status.seekPercent === 100) {
+			                        jPlayerElement.jPlayer("play");
+			                    }
+			                    /*
+			                    if (actionAfterMusic) {
+			                        actionAfterMusic.call();
+			                    }
+			                    */
+			                });
+
 			},
 			swfPath: "http://www.jplayer.org/latest/js/Jplayer.swf",
 			supplied: "mp3, ogg",
@@ -18,6 +30,7 @@
 			ended: function() { 
 				mashupMedia.playNextSong();				
 			},
+			preload: "auto",
 			errorAlerts: true
 		})
 		;	
