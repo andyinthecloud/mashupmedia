@@ -4,17 +4,22 @@
 
 
 <script type="text/javascript">
-	function playSong() {
+	function playSong() {		
+		
 		$(mashupMedia.jPlayerId).jPlayer({
 			ready: function (event) {
 				$(this).jPlayer("setMedia", {
-					<c:out value="${format}" /> : "<c:url value="/app/streaming/media/${mediaItemId}" />"  
+					<c:out value="${format}" /> : "<c:url value="/app/streaming/media/${mediaItemId}/song.${format}" />"  
 				});
-				$(this).bind($.jPlayer.event.progress,
+				$(this).bind($.jPlayer.event.play,
 			                function(event) {
+						alert("can play");
+						$(mashupMedia.jPlayerId).find(".jp-seek-bar").css("width", "100%");
+						/*
 			                    if (event.jPlayer.status.seekPercent === 100) {
 			                        jPlayerElement.jPlayer("play");
 			                    }
+						*/
 			                    /*
 			                    if (actionAfterMusic) {
 			                        actionAfterMusic.call();

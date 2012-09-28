@@ -2,6 +2,11 @@
 $(document).ready(function() {
 	var contextUrl = $("#contextUrl").val();
 	mashupMedia.setContextUrl(contextUrl);
+	$(".jp-play").click(function() {
+		$(".jp-progress").css("width", "100%");
+	});
+	
+	
 });
 
 var mashupMedia = new function() {
