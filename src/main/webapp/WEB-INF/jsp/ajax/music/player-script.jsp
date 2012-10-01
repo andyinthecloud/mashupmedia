@@ -9,12 +9,12 @@
 		$(mashupMedia.jPlayerId).jPlayer({
 			ready: function (event) {
 				$(this).jPlayer("setMedia", {
-					<c:out value="${format}" /> : "<c:url value="/app/streaming/media/${mediaItemId}/song.${format}" />"  
+					<c:out value="${format}" /> : "<c:url value="/app/streaming/media/${mediaItemId}" />"  
 				});
 				$(this).bind($.jPlayer.event.play,
 			                function(event) {
-						alert("can play");
-						$(mashupMedia.jPlayerId).find(".jp-seek-bar").css("width", "100%");
+//						alert("can play");
+//						$(mashupMedia.jPlayerId).find(".jp-seek-bar").css("width", "100%");
 						/*
 			                    if (event.jPlayer.status.seekPercent === 100) {
 			                        jPlayerElement.jPlayer("play");
@@ -35,8 +35,8 @@
 			ended: function() { 
 				mashupMedia.playNextSong();				
 			},
-			preload: "auto",
-			errorAlerts: true
+			preload: "auto"
+	//		errorAlerts: true
 		})
 		;	
 		

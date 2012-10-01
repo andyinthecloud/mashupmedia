@@ -32,5 +32,7 @@ public interface ConnectionManager {
 	public InputStream connect(String link);
 
 	public long getMediaItemFileSize(long mediaItemId);
+	
+	public LocationType getLocationType(long mediaItemId);
 
 }

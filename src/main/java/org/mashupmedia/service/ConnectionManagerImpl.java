@@ -406,6 +406,15 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		return file;
 	}
+	
+	@Override
+	public LocationType getLocationType(long mediaItemId) {
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		Library library = mediaItem.getLibrary();
+		Location location = library.getLocation();
+		LocationType locationType = getLocationType(location);
+		return locationType;
+	}
 
 	private LocationType getLocationType(Location location) {
 		if (location instanceof FtpLocation) {
