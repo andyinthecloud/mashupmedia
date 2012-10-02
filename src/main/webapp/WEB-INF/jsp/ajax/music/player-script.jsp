@@ -28,7 +28,9 @@
 			                });
 
 			},
-			swfPath: "http://www.jplayer.org/latest/js/Jplayer.swf",
+//			swfPath: "http://www.jplayer.org/latest/js/Jplayer.swf",
+			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/2.2.0" />",
+//			swfPath: "http://localhost:8080/mashupmedia/jquery-plugins/jquery.jplayer/2.2.0/Jplayer.swf",
 			supplied: "mp3, ogg",
 			solution: "html, flash",
 			wmode: "window",

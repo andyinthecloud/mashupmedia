@@ -303,6 +303,10 @@
 				<version>2.5</version>
 				<configuration>
 					<encoding>utf-8</encoding>
+					<nonFilteredFileExtensions>
+						<nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+						<nonFilteredFileExtension>swf</nonFilteredFileExtension>
+					</nonFilteredFileExtensions>
 				</configuration>
 				<executions>
 					<execution>
