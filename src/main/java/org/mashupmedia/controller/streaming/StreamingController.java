@@ -20,6 +20,7 @@ import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.ConnectionManager.LocationType;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.task.StreamingTaskManager;
+import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.FormatContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,10 @@ public class StreamingController {
 				if (locationType == LocationType.FTP) {
 					streamType = StreamType.REMOTE;
 				}
-
+				
+				
+				FileHelper.waitForFile(file, mediaItem.getSizeInBytes());
+				
 				// Check if file actually exists in filesystem.
 				if (!file.exists()) {
 					// Do your thing if the file appears to be non-existing.
@@ -315,6 +319,8 @@ public class StreamingController {
 				}
 
 			}
+
+
 
 			@Override
 			public String getContentType() {

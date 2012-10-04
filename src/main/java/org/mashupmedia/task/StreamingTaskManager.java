@@ -42,10 +42,6 @@ public class StreamingTaskManager {
 		}
 	}
 
-//	public StreamingTaskManager(TaskExecutor taskExecutor) {
-//		this.ftpDownloadTaskExecutor = taskExecutor;
-//	}
-
 	public File startMediaItemDownload(long mediaItemId) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		Library library = mediaItem.getLibrary();

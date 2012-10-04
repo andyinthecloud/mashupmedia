@@ -327,6 +327,7 @@ div.sub-panel div.album-art img {
 #current-song .album-art {
 	width: 100px;
 	height: auto;
+	margin-left: 10px; 	
 }
 
 #current-song .song-title {

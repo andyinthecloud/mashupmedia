@@ -4,33 +4,29 @@
 
 
 <script type="text/javascript">
-	function playSong() {		
+	function playSong() {
+		
+		var playingRow = getPlayingRow();
+		if ($(playingRow).length == 0) {
+			return;
+		}
+		
+		var rowId = $(playingRow).attr("id");
+		//var mediaItemId = parseId(rowId, "playlist-media-id");
+		var albumId = parseId(rowId, "album-id");
+		
+		var songTitle = $(playingRow).find("td.song-title").text();					
+		$("#current-song .song-title").text(songTitle);	
+		$("#current-song .vote").show();
+		$("#current-song .album-art").attr("src", "/mashupmedia/app/music/album-art/" + albumId);
 		
 		$(mashupMedia.jPlayerId).jPlayer({
 			ready: function (event) {
 				$(this).jPlayer("setMedia", {
 					<c:out value="${format}" /> : "<c:url value="/app/streaming/media/${mediaItemId}" />"  
 				});
-				$(this).bind($.jPlayer.event.play,
-			                function(event) {
-//						alert("can play");
-//						$(mashupMedia.jPlayerId).find(".jp-seek-bar").css("width", "100%");
-						/*
-			                    if (event.jPlayer.status.seekPercent === 100) {
-			                        jPlayerElement.jPlayer("play");
-			                    }
-						*/
-			                    /*
-			                    if (actionAfterMusic) {
-			                        actionAfterMusic.call();
-			                    }
-			                    */
-			                });
-
 			},
-//			swfPath: "http://www.jplayer.org/latest/js/Jplayer.swf",
 			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/2.2.0" />",
-//			swfPath: "http://localhost:8080/mashupmedia/jquery-plugins/jquery.jplayer/2.2.0/Jplayer.swf",
 			supplied: "mp3, ogg",
 			solution: "html, flash",
 			wmode: "window",
@@ -39,8 +35,7 @@
 			},
 			preload: "auto"
 	//		errorAlerts: true
-		})
-		;	
+		});	
 		
 		
 		/*
