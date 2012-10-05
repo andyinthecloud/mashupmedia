@@ -22,26 +22,26 @@ var mashupMedia = new function() {
 		$.post(mashupMedia.contextUrl + "app/ajax/playlist/current-user-playlist",
 				function(data) {
 					$("#top-bar-music-player .songs").html(data);							
-					mashupMedia.playSong();
+					mashupMedia.loadSong();
 				});
 	};
-	this.playSong = function() {
+	this.loadSong = function(isAutoPlay) {
 		var playingRow = getPlayingRow();
 		if ($(playingRow).length == 0) {
 			return;
 		}
-		
+					
 		var rowId = $(playingRow).attr("id");
 		var mediaId = parseId(rowId, "playlist-media-id");
 		
 		$.get(mashupMedia.contextUrl + "app/ajax/music/play/" + mediaId,
 				function(data) {
 					$("#media-player-script").html(data);
-					playSong();
+					setupJPlayer(true);
 		});
-		
-		
+				
 	};
+	
 	
 	this.playNextSong = function() {
 		var playingRow = getPlayingRow();
@@ -49,7 +49,6 @@ var mashupMedia = new function() {
 			return;
 		}
 		
-//		$(playingRow).removeClass(this.playingClass);		
 		var playingIndex = $("#top-bar-music-player .songs table tbody tr").index(playingRow);
 		
 		var nextPlayingRow =  $("#top-bar-music-player .songs table tbody tr")[playingIndex + 1];
@@ -60,8 +59,7 @@ var mashupMedia = new function() {
 		$(playingRow).removeClass(this.playingClass);
 		$(nextPlayingRow).addClass(this.playingClass);
 		
-		mashupMedia.playSong();
-		
+		mashupMedia.loadSong(true);		
 	};
 }
 
@@ -78,13 +76,6 @@ function getPlayingRow() {
 }
 
 
-/*
-function getMediaIdFromPlaylistRow(playlistRow) {
-	var mediaId = $(playlistRow).attr("id").replace("playlist-media-id-", "");
-	return mediaId;
-}
-*/
-
 function parseId(text, identifier) {
 	if (!endsWith(identifier, "-")) {
 		identifier = identifier + "-";
@@ -99,24 +90,3 @@ function parseId(text, identifier) {
 function endsWith(text, suffix) {
     return text.indexOf(suffix, text.length - suffix.length) !== -1;
 }
-
-
-/*
-function loadCurrentSong() {
-	var playingRow = $("#top-bar-music-player .songs table tbody tr.playing");
-	
-	if ($(playingRow).length == 0) {
-		return;
-	}
-	
-	var songTitle = $(playingRow).find("td.song-title").text();
-	
-	var currentTrackDisplay = songTitle;
-	$("#current-song .song-title").text(currentTrackDisplay);	
-	$("#current-song .vote").show();
-	
-	var mediaId = $(playingRow).attr("id").replace("playlist-media-id-", "");
-	playSong(mediaId);
-
-}
-*/

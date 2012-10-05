@@ -6,7 +6,7 @@
 					function() {
 
 						$("table.song-playlist tbody").sortable();
-						$("table.song-playlist")
+						var playlistTable = $("table.song-playlist")
 								.dataTable(
 										{
 											"bFilter" : false,
@@ -19,8 +19,10 @@
 											} ],
 											"bPaginate" : false,
 											"bAutoWidth" : false,
-											"bInfo" : false
+											"bInfo" : false,
+											 
 										});
+
 
 					});
 </script>

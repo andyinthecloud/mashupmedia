@@ -28,6 +28,7 @@
 
 <script type="text/javascript"
 	src="<c:url value="/jquery-plugins/datatables/1.9.1/jquery.dataTables.min.js" />"></script>
+	
 
 
 <link href="<c:url value="${themePath}/stylesheets/site.css"/>" rel="stylesheet" type="text/css" />

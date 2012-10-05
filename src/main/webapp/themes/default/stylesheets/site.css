@@ -352,11 +352,13 @@ div.sub-panel div.album-art img {
 #top-bar-music-player div.songs {
 	clear: both;
 	display: none;
-	padding-left: 10px;
-	height: 200px;
-	overflow: auto;
+	padding-left: 10px;	
+	height: 300px;
+	overflow: auto;	
 	font-size: 80%;
 }
+
+
 
 
 #top-bar-music-player div.songs table th .ui-icon {
