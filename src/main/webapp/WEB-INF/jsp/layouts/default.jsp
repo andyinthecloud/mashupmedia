@@ -4,8 +4,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/javascript" src="<c:url value="/jquery/1.7.1/jquery-1.7.1.min.js" />"></script>
-
 
 <link type="text/css"
 	href="<c:url value="/jquery-ui/1.8.21/css/smoothness/jquery-ui-1.8.21.custom.css" />"

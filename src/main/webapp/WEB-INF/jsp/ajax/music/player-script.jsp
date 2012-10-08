@@ -10,6 +10,7 @@
 		if ($(playingRow).length == 0) {
 			return;
 		}
+				
 		
 		$(mashupMedia.jPlayerId).jPlayer("destroy");
 		
@@ -17,10 +18,12 @@
 		//var mediaItemId = parseId(rowId, "playlist-media-id");
 		var albumId = parseId(rowId, "album-id");
 		
+		var albumUrl = "<c:url value="/app/ajax/music/album/" />" + albumId;
+		
 		var songTitle = $(playingRow).find("td.song-title").text();					
 		$("#current-song .song-title").text(songTitle);	
 		$("#current-song .vote").show();
-		$("#current-song .album-art").attr("src", "/mashupmedia/app/music/album-art/" + albumId);
+		$("#current-song .album-art img").attr("src", "/mashupmedia/app/music/album-art/" + albumId);
 		
 		var jPlayerStatus = "load";
 		if (isAutoPlay) {
@@ -45,13 +48,6 @@
 			errorAlerts: true
 		});	
 		
-		
-		/*
-		$(mashupMedia.jPlayerId).bind($.jPlayer.event.durationchange, function(event) { // Add a listener to report the time play began
-			alert('durationchange');
-		//	$("#playBeganAtTime").text("Play began at time = " + event.jPlayer.status.currentTime);
-		});
-*/
 		
 	}
 

@@ -9,16 +9,18 @@
 					$(this).removeClass("highlight");
 				});
 
-				$("div.random-album-art div.album a").click(
-						function() {
-							var albumId = $(this).attr("id");
-							albumId = albumId.replace("albumId-", "");
+				$("div.random-album-art div.album a").click(function() {
+					var albumId = $(this).attr("id");
+					albumId = albumId.replace("albumId-", "");
+					mashupMedia.loadAlbum(albumId);
+				/*	
 							$.get("<c:url value="/app/ajax/music/album/" />"
 									+ albumId, function(data) {
 								$("div.panel div.content").html(data);
 							});
+				*/			
 							
-						});
+				});
 
 			});
 </script>

@@ -2,10 +2,12 @@
 $(document).ready(function() {
 	var contextUrl = $("#contextUrl").val();
 	mashupMedia.setContextUrl(contextUrl);
-	$(".jp-play").click(function() {
-		$(".jp-progress").css("width", "100%");
+	$(".jp-previous").click(function() {
+		mashupMedia.playPreviousSong();
 	});
-	
+	$(".jp-next").click(function() {
+		mashupMedia.playNextSong();
+	});
 	
 });
 
@@ -22,7 +24,7 @@ var mashupMedia = new function() {
 		$.post(mashupMedia.contextUrl + "app/ajax/playlist/current-user-playlist",
 				function(data) {
 					$("#top-bar-music-player .songs").html(data);							
-					mashupMedia.loadSong();
+					mashupMedia.loadSong(false);
 				});
 	};
 	this.loadSong = function(isAutoPlay) {
@@ -37,30 +39,43 @@ var mashupMedia = new function() {
 		$.get(mashupMedia.contextUrl + "app/ajax/music/play/" + mediaId,
 				function(data) {
 					$("#media-player-script").html(data);
-					setupJPlayer(true);
+					setupJPlayer(isAutoPlay);
 		});
 				
 	};
 	
-	
 	this.playNextSong = function() {
-		var playingRow = getPlayingRow();
-		if ($(playingRow).length == 0) {
-			return;
-		}
-		
-		var playingIndex = $("#top-bar-music-player .songs table tbody tr").index(playingRow);
-		
-		var nextPlayingRow =  $("#top-bar-music-player .songs table tbody tr")[playingIndex + 1];
-		if ($(nextPlayingRow).length == 0) {
-			return;
-		}
-		
-		$(playingRow).removeClass(this.playingClass);
-		$(nextPlayingRow).addClass(this.playingClass);
-		
-		mashupMedia.loadSong(true);		
+		playRelativeSong(1);
 	};
+	
+	this.playPreviousSong = function() {
+		playRelativeSong(-1);
+	};
+	
+	this.loadAlbum = function(albumId) {
+		$.get("<c:url value="/app/ajax/music/album/" />" + albumId, function(data) {
+			$("div.panel div.content").html(data);
+		});		
+	}
+}
+
+function playRelativeSong(offset) {
+	var playingRow = getPlayingRow();
+	if ($(playingRow).length == 0) {
+		return;
+	}
+	
+	var playingIndex = $("#top-bar-music-player .songs table tbody tr").index(playingRow);
+	
+	var nextPlayingRow =  $("#top-bar-music-player .songs table tbody tr")[playingIndex + offset];
+	if ($(nextPlayingRow).length == 0) {
+		return;
+	}
+	
+	$(playingRow).removeClass(mashupMedia.playingClass);
+	$(nextPlayingRow).addClass(mashupMedia.playingClass);	
+	mashupMedia.loadSong(true);		
+	
 }
 
 

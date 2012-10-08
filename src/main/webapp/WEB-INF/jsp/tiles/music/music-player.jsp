@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
-<div id="media-player-script">
-</div>
+<div id="media-player-script"></div>
 
 
 <script type="text/javascript">
@@ -10,23 +9,55 @@
 		$("#current-song .toggle-playlist").click(function() {
 			$("#top-bar-music-player .songs").toggle("slow");
 		});
-		
-		/*
-		$("#jquery_jplayer_1").jPlayer({
-			ready: function (event) {
-				$(this).jPlayer("setMedia", {
-//					mp3: "http://localhost:8080/mashupmedia/app/streaming/media/44/song.mp3",
-					mp3: "/mashupmedia/app/streaming/media/44"
-				});
-			},
-			swfPath: "http://www.jplayer.org/latest/js/Jplayer.swf",
-			supplied: "mp3",
-			solution: "html, flash",
-			wmode: "window",
-			errorAlerts: true
+
+		$("#current-song a.album-art").click(function(event) {
+			event.preventDefault();
+			var albumImageSrc = $(this).find("img").attr("src");
+			var albumId = albumImageSrc.replace(/.*album-art\//, "");
+//			alert("album art");
+//			$.address.value("wrewr"); 
+			$.address.parameter("page", "art");
+			
 		});
-		*/
 		
+	    $('#current-song a.album-art').address(function() {
+			var albumImageSrc = $(this).find("img").attr("src");
+			var albumId = albumImageSrc.replace(/.*album-art\//, "");
+	    	mashupMedia.loadAlbum(albumId);
+	        //return $(this).attr('href').replace(/^#/, '');  
+	    });  
+
+/*		
+		$("#current-song a.album-art").live('click', function(event) {
+		    event.preventDefault();
+			$.address.parameter("page", $(this).attr("href"));
+		});
+*/		
+		
+		
+		$.address.change(function(event) {
+			alert("player address");
+			
+			var address = event.value;
+			address = address.replace("/", "");
+
+			switch (address) {
+				case "category-menu-home":
+					loadRandomAlbums();
+					break;
+				case "category-menu-albums":
+					loadAlbums();
+					break;
+				case "category-menu-artists":
+					loadArtists();
+					break;
+				default:
+					loadRandomAlbums();
+					break;
+			}
+		});
+		
+
 
 	});
 </script>
@@ -47,16 +78,17 @@
 
 	<div id="jquery_jplayer_1" class="jp-jplayer"></div>
 	<div id="jp_container_1" class="jp-audio">
-		<div class="jp-type-single">
+		<div class="jp-type-playlist">
 			<div class="jp-gui jp-interface">
 				<ul class="jp-controls">
+					<li><a href="javascript:;" class="jp-previous" tabindex="1">previous</a></li>
 					<li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
 					<li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+					<li><a href="javascript:;" class="jp-next" tabindex="1">next</a></li>
 					<li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
 					<li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
 					<li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
-					<li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max
-							volume</a></li>
+					<li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
 				</ul>
 				<div class="jp-progress">
 					<div class="jp-seek-bar">
@@ -71,37 +103,24 @@
 					<div class="jp-duration"></div>
 					<ul class="jp-toggles">
 						<li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
-						<li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat
-								off</a></li>
+						<li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
 					</ul>
 				</div>
 			</div>
-			<div class="jp-title">
-
-
-
-			</div>
+			<div class="jp-title"></div>
 			<div class="jp-no-solution">
-				<span>Update Required</span> To play the media you will need to either update your browser to a
-				recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash
+				<span>Update Required</span> To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash
 					plugin</a>.
 			</div>
 		</div>
 	</div>
 
 	<div id="current-song">
-		<input type="hidden" id="current-song-id" value="" /> <img class="album-art"
-			src="<c:url value="/images/no-album-art.png" />" /> <span class="song-title"><spring:message
-				code="music.playlist.current-song.empty" /></span> <span class="vote"> <a
-			href="javascript:void(0);"
-			title="<spring:message code="music.playlist.current-song.vote.love" />"><img
-				src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a
-			href="javascript:void(0);"><img
-				src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>"
+		<input type="hidden" id="current-song-id" value="" /> <a class="album-art" href="#"><img src="<c:url value="/images/no-album-art.png" />" /></a> <span class="song-title"><spring:message
+				code="music.playlist.current-song.empty" /></span> <span class="vote"> <a href="javascript:void(0);" title="<spring:message code="music.playlist.current-song.vote.love" />"><img
+				src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a href="javascript:void(0);"><img src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>"
 				title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
-		</span> <a class="toggle-playlist" href="javascript:void(0);"
-			title="<spring:message code="music.playlist.toggle" />"><img
-			src="<c:url value="${themePath}/images/controls/playlist.png"/>" /></a>
+		</span> <a class="toggle-playlist" href="javascript:void(0);" title="<spring:message code="music.playlist.toggle" />"><img src="<c:url value="${themePath}/images/controls/playlist.png"/>" /></a>
 	</div>
 
 

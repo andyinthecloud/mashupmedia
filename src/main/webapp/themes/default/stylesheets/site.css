@@ -303,6 +303,7 @@ div.sub-panel div.album-art img {
 
 #current-song {
 	padding-left: 20px;
+	margin-top: 10px;
 }
 
 #current-song .vote {
@@ -324,10 +325,10 @@ div.sub-panel div.album-art img {
 	padding-left: 20px;
 }
 
-#current-song .album-art {
+#current-song a.album-art img{
 	width: 100px;
 	height: auto;
-	margin-left: 10px; 	
+	margin-left: 10px;
 }
 
 #current-song .song-title {
@@ -341,7 +342,14 @@ div.sub-panel div.album-art img {
 
 #top-bar-music-player .jp-audio {
 	float: left;
-	padding: 0 20px;
+	padding-top: 10px;
+	padding-left: 20px;
+	padding-right: 20px;	
+	padding-bottom: 0;
+}
+
+#top-bar-music-player .jp-audio .jp-interface {
+	height: 75px;
 }
 
 #top-bar-music-player .jp-title {
