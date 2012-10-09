@@ -9,56 +9,6 @@
 		$("#current-song .toggle-playlist").click(function() {
 			$("#top-bar-music-player .songs").toggle("slow");
 		});
-
-		$("#current-song a.album-art").click(function(event) {
-			event.preventDefault();
-			var albumImageSrc = $(this).find("img").attr("src");
-			var albumId = albumImageSrc.replace(/.*album-art\//, "");
-//			alert("album art");
-//			$.address.value("wrewr"); 
-			$.address.parameter("page", "art");
-			
-		});
-		
-	    $('#current-song a.album-art').address(function() {
-			var albumImageSrc = $(this).find("img").attr("src");
-			var albumId = albumImageSrc.replace(/.*album-art\//, "");
-	    	mashupMedia.loadAlbum(albumId);
-	        //return $(this).attr('href').replace(/^#/, '');  
-	    });  
-
-/*		
-		$("#current-song a.album-art").live('click', function(event) {
-		    event.preventDefault();
-			$.address.parameter("page", $(this).attr("href"));
-		});
-*/		
-		
-		
-		$.address.change(function(event) {
-			alert("player address");
-			
-			var address = event.value;
-			address = address.replace("/", "");
-
-			switch (address) {
-				case "category-menu-home":
-					loadRandomAlbums();
-					break;
-				case "category-menu-albums":
-					loadAlbums();
-					break;
-				case "category-menu-artists":
-					loadArtists();
-					break;
-				default:
-					loadRandomAlbums();
-					break;
-			}
-		});
-		
-
-
 	});
 </script>
 
@@ -116,11 +66,19 @@
 	</div>
 
 	<div id="current-song">
-		<input type="hidden" id="current-song-id" value="" /> <a class="album-art" href="#"><img src="<c:url value="/images/no-album-art.png" />" /></a> <span class="song-title"><spring:message
-				code="music.playlist.current-song.empty" /></span> <span class="vote"> <a href="javascript:void(0);" title="<spring:message code="music.playlist.current-song.vote.love" />"><img
+		<input type="hidden" id="current-song-id" value="" /> 
+		<table>
+			<tbody>
+				<tr>
+					<td class="album-art"><a href="javascript:;"><img src="<c:url value="/images/no-album-art.png" />" /></a></td>
+					<td class="song-title"><div class="artist-name"></div><div class="title"><spring:message code="music.playlist.current-song.empty" /></div></td>
+					<td ><span class="vote"> <a href="javascript:void(0);" title="<spring:message code="music.playlist.current-song.vote.love" />"><img
 				src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a href="javascript:void(0);"><img src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>"
 				title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
-		</span> <a class="toggle-playlist" href="javascript:void(0);" title="<spring:message code="music.playlist.toggle" />"><img src="<c:url value="${themePath}/images/controls/playlist.png"/>" /></a>
+		</span> <a class="toggle-playlist" href="javascript:void(0);" title="<spring:message code="music.playlist.toggle" />"><img src="<c:url value="${themePath}/images/controls/playlist.png"/>" /></a></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 
 

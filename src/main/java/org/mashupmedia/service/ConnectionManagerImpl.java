@@ -272,29 +272,25 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		for (FTPFile ftpFile : ftpFiles) {
 			String fileName = ftpFile.getName();
 			if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
-				
+
 				String filePath = ftpClient.currentDirectory() + "/" + fileName;
-//				FtpLocation ftpLocation = (FtpLocation) musicLibrary.getLocation();
-//				String password = ftpLocation.getPassword();
-//				password = EncryptionHelper.decryptText(password);
-//				ftpLocation.setPassword(password);
+				// FtpLocation ftpLocation = (FtpLocation)
+				// musicLibrary.getLocation();
+				// String password = ftpLocation.getPassword();
+				// password = EncryptionHelper.decryptText(password);
+				// ftpLocation.setPassword(password);
 				String localFilePath = processFtpImageBytes(ftpClient, musicLibrary.getId(), filePath);
-				
+
 				AlbumArtImage albumArtImage = new AlbumArtImage();
 				albumArtImage.setAlbum(album);
 				albumArtImage.setLibrary(musicLibrary);
 				albumArtImage.setName(ftpFile.getName());
 				albumArtImage.setUrl(localFilePath);
-				
-				
-//				FtpLocation ftpLocation = (FtpLocation) location;
 
-				
-				
+				// FtpLocation ftpLocation = (FtpLocation) location;
+
 				return albumArtImage;
 
-				
-				
 			}
 		}
 
@@ -306,86 +302,29 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		if (image == null) {
 			return null;
 		}
-		
+
 		File file = new File(image.getUrl());
 		if (!file.exists()) {
 			return null;
 		}
-		
+
 		FileInputStream fileInputStream = new FileInputStream(file);
 		byte[] bytes = IOUtils.toByteArray(fileInputStream);
 		return bytes;
-		
-
-//		Library library = image.getLibrary();
-//		if (library == null) {
-//			return null;
-//		}
-//
-//		Location location = library.getLocation();
-//		if (location == null) {
-//			return null;
-//		}
-//
-//		String imagePath = StringUtils.trimToEmpty(image.getUrl());
-//		if (StringUtils.isEmpty(imagePath)) {
-//			return null;
-//		}
-//		
-//		Album album = image.getAlbum();
-//		if (album == null) {
-//			return null;
-//		}
-//
-//		byte[] bytes = null;
-//
-//		LocationType locationType = getLocationType(location);
-//
-//		if (locationType == LocationType.FTP) {
-//			FtpLocation ftpLocation = (FtpLocation) location;
-//			String password = ftpLocation.getPassword();
-//			password = EncryptionHelper.decryptText(password);
-//			ftpLocation.setPassword(password);
-//			bytes = getFtpImageBytes(library, album.getId(), imagePath);
-//		} else {
-//			File imageFile = new File(imagePath);
-//			FileInputStream fileInputStream = new FileInputStream(imageFile);
-//			bytes = IOUtils.toByteArray(fileInputStream);
-//			fileInputStream.close();
-//		}
-//
-//		return bytes;
-
 	}
 
-	private String processFtpImageBytes(FTPClient ftpClient, long  libraryId, String path) throws Exception {
-//		FtpLocation ftpLocation = (FtpLocation) library.getLocation();
-//		File imageFile = FileHelper.createAlbumArtFile(library.getId());		
-//		FileInputStream fileInputStream = null;
-//		if (imageFile.exists()) {
-//			fileInputStream = new FileInputStream(imageFile);
-//			byte[] imageBytes = IOUtils.toByteArray(fileInputStream);
-//			fileInputStream.close();
-//			return imageBytes;
-//		}
-		
+	private String processFtpImageBytes(FTPClient ftpClient, long libraryId, String path) throws Exception {
 		File imageFile = FileHelper.createAlbumArtFile(libraryId);
 		imageFile.createNewFile();
 		FileInputStream fileInputStream = new FileInputStream(imageFile);
 
-//		FTPClient ftpClient = connectToFtp(ftpLocation);
-//		try {
-			ftpClient.setType(FTPClient.TYPE_BINARY);
-			ftpClient.download(path, imageFile);				
-			byte[] imageBytes = IOUtils.toByteArray(fileInputStream);
-			FileUtils.writeByteArrayToFile(imageFile, imageBytes);
-			
-			fileInputStream.close();
-			return imageFile.getAbsolutePath();
-//			return imageBytes;
-//		} finally {
-//			ftpClient.disconnect(true);
-//		}
+		ftpClient.setType(FTPClient.TYPE_BINARY);
+		ftpClient.download(path, imageFile);
+		byte[] imageBytes = IOUtils.toByteArray(fileInputStream);
+		FileUtils.writeByteArrayToFile(imageFile, imageBytes);
+
+		fileInputStream.close();
+		return imageFile.getAbsolutePath();
 	}
 
 	@Override
@@ -406,7 +345,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		return file;
 	}
-	
+
 	@Override
 	public LocationType getLocationType(long mediaItemId) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
@@ -449,7 +388,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	}
 
 	private void startFtpMediaStream(MediaItem mediaItem, FtpLocation ftpLocation, File file) throws Exception {
-		
+
 		if (file.exists()) {
 			return;
 		}
@@ -464,7 +403,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 			ftpClient.disconnect(true);
 		}
 	}
-	
+
 	@Override
 	public long getMediaItemFileSize(long mediaItemId) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
@@ -490,13 +429,12 @@ public class ConnectionManagerImpl implements ConnectionManager {
 				logger.error("Unable to get the file size from ftp llibrary", e);
 			}
 		}
-		
+
 		return size;
 	}
-	
-	
+
 	private long getFtpMediaItemFileSize(MediaItem mediaItem, FtpLocation ftpLocation) throws Exception {
-		
+
 		long size = 0;
 		FTPClient ftpClient = null;
 		try {
@@ -507,7 +445,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		} finally {
 			ftpClient.disconnect(true);
 		}
-		
+
 		return size;
 	}
 

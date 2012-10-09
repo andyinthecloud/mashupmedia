@@ -38,9 +38,6 @@ public class StreamingController {
 
 	private Logger logger = Logger.getLogger(getClass());
 
-	// public static final int DEFAULT_REMOTE_BUFFER_SIZE = 16;
-	// public static final int DEFAULT_LOCAL_BUFFER_SIZE = 1024 * 4;
-
 	private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1
 																// week.
 	private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";

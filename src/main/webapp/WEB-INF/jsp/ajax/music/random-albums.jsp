@@ -12,14 +12,8 @@
 				$("div.random-album-art div.album a").click(function() {
 					var albumId = $(this).attr("id");
 					albumId = albumId.replace("albumId-", "");
-					mashupMedia.loadAlbum(albumId);
-				/*	
-							$.get("<c:url value="/app/ajax/music/album/" />"
-									+ albumId, function(data) {
-								$("div.panel div.content").html(data);
-							});
-				*/			
-							
+					var addressValue = "address-load-album-" + albumId;
+			    	$.address.value(addressValue);
 				});
 
 			});

@@ -8,6 +8,8 @@ import javax.persistence.ManyToOne;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.WebHelper;
+import org.mashupmedia.util.WebHelper.MediaContentType;
 
 @Entity
 @Cacheable
@@ -192,13 +194,10 @@ public class Song extends MediaItem {
 			String displayBytes = FileHelper.getDisplayBytes(sizeInBytes, true);
 			metaBuilder.append(displayBytes);
 		}
-
-		if (StringUtils.isNotBlank(getFormat())) {
-			if (metaBuilder.length() > 0) {
-				metaBuilder.append(" | ");
-			}
-			metaBuilder.append(getFormat());
-		}
+		
+		MediaContentType mediaContentType = WebHelper.getMediaContentType(getFormat(), MediaContentType.MP3);
+		metaBuilder.append(" | ");
+		metaBuilder.append(mediaContentType.getDisplayText());
 
 		return metaBuilder.toString();
 

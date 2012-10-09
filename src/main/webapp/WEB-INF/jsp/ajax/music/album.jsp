@@ -5,7 +5,7 @@
 		$("#play-all").click(function() {
 			var albumId = $(this).closest("ul").attr("id");
 			albumId = albumId.replace("albumId-", "");
-			playAlbum(albumId);
+			mashupMedia.playAlbum(albumId);
 		});
 
 	});
@@ -24,11 +24,11 @@
 
 
 	<ul class="control-menu" id="albumId-<c:out value="${albumPage.album.id}" />">
-		<li class="first"><a href="javascript:void(0);" id="play-all"> <spring:message
+		<li class="first"><a href="javascript:;" id="play-all"> <spring:message
 					code="action.play-all" />
 		</a></li>
 
-		<li><a href="javascript:void(0);" id="add-all"> <spring:message code="action.add-all" />
+		<li><a href="javascript:;" id="add-all"> <spring:message code="action.add-all" />
 		</a></li>
 
 	</ul>
@@ -45,7 +45,7 @@
 		<c:forEach items="${albumPage.songs}" var="song">
 			<li id="songId-<c:out value="${song.id}"/>">
 				<div class="controls">
-					<a class="play" href="javascript:void(0);" title="<spring:message code="control.play" />"><span
+					<a class="play" href="javascript:;" title="<spring:message code="control.play" />"><span
 						class="ui-icon ui-icon-play"></span></a> <a class="add" href="javascript:void(0);"
 						title="<spring:message code="control.add" />"><span class="ui-icon ui-icon-plus"></span></a></div>
 				<c:out value="${song.displayTitle}" />

@@ -12,14 +12,16 @@ public class WebHelper {
 	}
 
 	public enum MediaContentType {
-		MP3("audio/mpeg", "mp3");
+		MP3("audio/mpeg", "mp3", "mp3");
 
 		private String mimeContentType;
 		private String jPlayerContentType;
+		private String displayText;
 
-		private MediaContentType(String mimeContentType, String jPlayerContentType) {
+		private MediaContentType(String mimeContentType, String jPlayerContentType, String displayText) {
 			this.mimeContentType = mimeContentType;
 			this.jPlayerContentType = jPlayerContentType;
+			this.displayText = displayText;
 		}
 
 		public String getjPlayerContentType() {
@@ -28,6 +30,10 @@ public class WebHelper {
 
 		public String getMimeContentType() {
 			return mimeContentType;
+		}
+
+		public String getDisplayText() {
+			return displayText;
 		}
 
 	}
@@ -58,20 +64,26 @@ public class WebHelper {
 	}
 
 	public static String getContentType(String format, FormatContentType formatContentType) {
-		format = StringUtils.trimToEmpty(format);
-
-		MediaContentType mediaContentType = MediaContentType.MP3;
-
-		if (format.equalsIgnoreCase("MPEG-1 Layer 3")) {
-			mediaContentType = MediaContentType.MP3;
-		}
-
+		MediaContentType mediaContentType = getMediaContentType(format, MediaContentType.MP3);
 		if (formatContentType == FormatContentType.JPLAYER) {
 			return mediaContentType.getjPlayerContentType();
 		} else {
 			return mediaContentType.getMimeContentType();
 		}
 
+	}
+
+	public static MediaContentType getMediaContentType(String mediaFormat, MediaContentType defaultMediaContentType) {
+		mediaFormat = StringUtils.trimToEmpty(mediaFormat);
+		if (StringUtils.isEmpty(mediaFormat)) {
+			return defaultMediaContentType;
+		}
+
+		if (mediaFormat.equalsIgnoreCase("MPEG-1 Layer 3")) {
+			return MediaContentType.MP3;
+		}
+
+		return defaultMediaContentType;
 	}
 
 }

@@ -4,6 +4,17 @@
 
 
 <script type="text/javascript">
+	$(document).ready(function() {
+		
+	    $('#current-song .album-art a').address(function() {
+			var albumImageSrc = $(this).find("img").attr("src");
+			var albumId = albumImageSrc.replace(/.*album-art\//, "");
+			var addressValue = "address-load-album-" + albumId;
+	    	$.address.value(addressValue);  
+	    });
+	    
+	});
+
 	function setupJPlayer(isAutoPlay) {
 		
 		var playingRow = getPlayingRow();
@@ -21,7 +32,10 @@
 		var albumUrl = "<c:url value="/app/ajax/music/album/" />" + albumId;
 		
 		var songTitle = $(playingRow).find("td.song-title").text();					
-		$("#current-song .song-title").text(songTitle);	
+		$("#current-song td.song-title .title").text(songTitle);	
+		var artistName = $(playingRow).find("td.artist-name").text();
+		$("#current-song td.song-title .artist-name").text(artistName);
+		
 		$("#current-song .vote").show();
 		$("#current-song .album-art img").attr("src", "/mashupmedia/app/music/album-art/" + albumId);
 		
