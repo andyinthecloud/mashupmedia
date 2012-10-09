@@ -46,7 +46,8 @@ var mashupMedia = new function() {
 	};
 	this.loadSong = function(isAutoPlay) {
 		var playingRow = getPlayingRow();
-		if ($(playingRow).length == 0) {
+		
+		if (playingRow <= 0) {
 			return;
 		}
 
@@ -79,12 +80,11 @@ var mashupMedia = new function() {
 	};
 	
 	this.playAlbum = function(albumId) {
-		$.post(mashupMedia.contextUrl + "/app/ajax/playlist/play-album", {
-			albumId : albumId
+		$.post(mashupMedia.contextUrl + "app/ajax/playlist/play-album", {
+			"albumId" : albumId
 		}, function(data) {
 			$("#top-bar-music-player .songs").html(data);
 			mashupMedia.loadSong(true);
-//			loadCurrentSong();
 		});		
 	};
 }

@@ -83,9 +83,6 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		user.setCurrentPlaylistSong(playlistSong);
 		adminManager.saveUser(user);
 		
-		
-		
-
 		model.addAttribute("playlist", playlist);
 		return "ajax/playlist/music-playlist";
 	}

@@ -9,6 +9,12 @@
 		$("#current-song .toggle-playlist").click(function() {
 			$("#top-bar-music-player .songs").toggle("slow");
 		});
+		
+		$("div.sub-panel").click(function() {
+			$("#top-bar-music-player .songs").slideUp("slow");
+			
+		});
+		
 	});
 </script>
 
