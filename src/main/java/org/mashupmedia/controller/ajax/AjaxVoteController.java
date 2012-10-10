@@ -26,7 +26,7 @@ public class AjaxVoteController extends BaseAjaxController {
 
 		boolean isSuccessful = voteManager.voteLike(mediaItemId, userId);
 		model.addAttribute(MODEL_KEY_IS_VOTE_SUCCESSFUL, isSuccessful);
-		return "ajax/vote/like";
+		return "ajax/vote/message";
 	}
 
 	@RequestMapping(value = "/dislike", method = RequestMethod.POST)
@@ -36,7 +36,7 @@ public class AjaxVoteController extends BaseAjaxController {
 
 		boolean isSuccessful = voteManager.voteDislike(mediaItemId, userId);
 		model.addAttribute(MODEL_KEY_IS_VOTE_SUCCESSFUL, isSuccessful);
-		return "ajax/vote/dislike";
+		return "ajax/vote/message";
 	}
 
 }

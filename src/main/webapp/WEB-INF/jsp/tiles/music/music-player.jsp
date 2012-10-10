@@ -11,9 +11,26 @@
 		});
 		
 		$("div.sub-panel").click(function() {
-			$("#top-bar-music-player .songs").slideUp("slow");
-			
+			$("#top-bar-music-player .songs").slideUp("slow");			
 		});
+		
+		$("#current-song .vote .like").click(function() {
+			var mediaItemId = $("#current-song-id").val();
+			$.post(mashupMedia.contextUrl + "app/ajax/vote/like", {
+				"mediaItemId" : mediaItemId
+			}, function(data) {
+			});				
+						
+		});
+		
+		$("#current-song .vote .like").click(function() {
+			var mediaItemId = $("#current-song-id").val();
+			$.post(mashupMedia.contextUrl + "app/ajax/vote/dislike", {
+				"mediaItemId" : mediaItemId
+			}, function(data) {
+			});				
+		});
+		
 		
 	});
 </script>
@@ -78,8 +95,8 @@
 				<tr>
 					<td class="album-art"><a href="javascript:;"><img src="<c:url value="/images/no-album-art.png" />" /></a></td>
 					<td class="song-title"><div class="artist-name"></div><div class="title"><spring:message code="music.playlist.current-song.empty" /></div></td>
-					<td ><span class="vote"> <a href="javascript:void(0);" title="<spring:message code="music.playlist.current-song.vote.love" />"><img
-				src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a href="javascript:void(0);"><img src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>"
+					<td><span class="vote"> <a class="like" href="javascript:;" title="<spring:message code="music.playlist.current-song.vote.love" />"><img
+				src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a class="dislike" href="javascript:void(0);"><img src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>"
 				title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
 		</span> <a class="toggle-playlist" href="javascript:void(0);" title="<spring:message code="music.playlist.toggle" />"><img src="<c:url value="${themePath}/images/controls/playlist.png"/>" /></a></td>
 				</tr>
