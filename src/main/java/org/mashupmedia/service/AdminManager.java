@@ -10,6 +10,8 @@ public interface AdminManager {
 
 	public User getUser(String username);
 
+	public User getUser(long userId);
+
 	public void saveUser(User user);
 
 	public int getTotalUsers();
@@ -23,6 +25,7 @@ public interface AdminManager {
 	public List<Group> getGroups();
 
 	public Group getGroup(String idName);
+
 	
 
 }

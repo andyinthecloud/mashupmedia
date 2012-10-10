@@ -32,6 +32,15 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao{
 	}
 	
 	@Override
+	public User getUser(long userId) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from User where id = :userId");
+		query.setLong("userId", userId);
+		query.setCacheable(true);
+		User user = (User) query.uniqueResult();
+		return user;
+	}
+	
+	@Override
 	public int getTotalUsers() {
 		Criteria criteria =  sessionFactory.getCurrentSession().createCriteria(User.class);
 		criteria.setCacheable(true);

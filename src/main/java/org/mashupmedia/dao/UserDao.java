@@ -10,4 +10,6 @@ public interface UserDao {
 
 	public int getTotalUsers();
 
+	public User getUser(long userId);
+
 }

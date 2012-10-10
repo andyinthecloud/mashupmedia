@@ -1,5 +1,6 @@
 package org.mashupmedia.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.mashupmedia.dao.MediaDao;
@@ -43,6 +44,12 @@ public class MediaManagerImpl implements MediaManager{
 	public List<AlbumArtImage> getAlbumArtImages(long libraryId) {
 		List<AlbumArtImage> albumArtImages = mediaDao.getAlbumArtImages(libraryId);
 		return albumArtImages;
+	}
+	
+	@Override
+	public void updateMediaItem(MediaItem mediaItem) {
+		mediaItem.setUpdatedOn(new Date());
+		mediaDao.updateMediaItem(mediaItem);
 	}
 	
 }

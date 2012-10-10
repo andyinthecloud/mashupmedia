@@ -32,6 +32,8 @@ public class LibraryManagerImpl implements LibraryManager {
 	private MusicManager musicManager;
 	@Autowired
 	private PlaylistManager playlistManager;
+	@Autowired
+	private VoteManager voteManager;
 
 	@Override
 	public List<MusicLibrary> getMusicLibraries() {
@@ -106,6 +108,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	public void deleteLibrary(Library library) {
 		long id = library.getId();
 		List<MediaItem> mediaItems = mediaManager.getMediaItemsForLibrary(id);
+		deleteVotes(mediaItems);
 		playlistManager.deleteLibrary(library.getId());
 		mediaManager.deleteMediaItems(mediaItems);
 		List<AlbumArtImage> albumArtImages = mediaManager.getAlbumArtImages(id);
@@ -113,6 +116,12 @@ public class LibraryManagerImpl implements LibraryManager {
 		musicManager.deleteEmpty();
 		libraryDao.deleteLibrary(library);
 		FileHelper.deleteLibrary(id);
+	}
+
+	private void deleteVotes(List<MediaItem> mediaItems) {
+		for (MediaItem mediaItem : mediaItems) {
+			voteManager.deleteVotesForMediaItem(mediaItem.getId());			
+		}
 	}
 
 }

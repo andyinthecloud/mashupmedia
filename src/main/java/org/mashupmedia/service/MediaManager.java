@@ -18,5 +18,7 @@ public interface MediaManager {
 
 	public List<AlbumArtImage> getAlbumArtImages(long libraryId);
 
+	public void updateMediaItem(MediaItem mediaItem);
+
 
 }

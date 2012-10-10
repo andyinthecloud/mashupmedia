@@ -37,6 +37,13 @@ public class AdminManagerImpl implements AdminManager {
 		User user = userDao.getUser(username);
 		return user;
 	}
+	
+	@Override
+	public User getUser(long userId) {
+		User user = userDao.getUser(userId);
+		return user;
+	}
+
 
 	@Override
 	public void saveUser(User user) {
@@ -108,5 +115,6 @@ public class AdminManagerImpl implements AdminManager {
 		Group group = groupDao.getGroup(idName);
 		return group;
 	}
+	
 
 }

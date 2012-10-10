@@ -21,13 +21,14 @@ public class PlaylistHelper {
 			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 		}
 
-		for (MediaItem song : songs) {
+		for (int i = 0; i < songs.size(); i++) {
 			PlaylistMediaItem playlistSong = new PlaylistMediaItem();
-			playlistSong.setMediaItem(song);
+			playlistSong.setMediaItem(songs.get(i));
+			playlistSong.setRanking(i);
 			playlistSong.setPlaylist(playlist);
 			playlistMediaItems.add(playlistSong);
 		}
-
+		
 		playlistMediaItems.get(0).setPlaying(true);
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 	}

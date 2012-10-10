@@ -17,4 +17,6 @@ public interface MediaDao {
 
 	MediaItem getMediaItem(long mediaItemId);
 
+	void updateMediaItem(MediaItem mediaItem);
+
 }

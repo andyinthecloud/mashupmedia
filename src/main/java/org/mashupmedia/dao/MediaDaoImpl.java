@@ -74,4 +74,10 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		
 		return mediaItems.get(0);
 	}
+	
+	@Override
+	public void updateMediaItem(MediaItem mediaItem) {		
+		sessionFactory.getCurrentSession().update(mediaItem);
+		
+	}
 }

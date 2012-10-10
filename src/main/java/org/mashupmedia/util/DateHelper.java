@@ -1,5 +1,7 @@
 package org.mashupmedia.util;
 
+import java.util.Date;
+
 public class DateHelper {
 
 	public static String getDisplayTrackLength(long totalSeconds) {
@@ -19,6 +21,11 @@ public class DateHelper {
 		trackLengthBuilder.append(secondsValue);
 
 		return trackLengthBuilder.toString();
+	}
+
+	public static long getDifferenceInSeconds(Date fromDate, Date toDate) {
+		long seconds = (fromDate.getTime() - toDate.getTime()) / 1000;
+		return seconds;
 	}
 
 }
