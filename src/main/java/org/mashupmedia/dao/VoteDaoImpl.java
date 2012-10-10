@@ -14,8 +14,8 @@ public class VoteDaoImpl extends BaseDaoImpl implements VoteDao {
 	@Override
 	public Vote getLatestVote(long userId, long mediaItemId) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from Vote where user.id = :userId and mediaItem.id = :mediaItem "
-						+ "and createdOn = (select max(tv.createdOn) from Vote tv where tv.user.id = :userId and tv.mediaItem.id = :mediaItem)");
+				"from Vote where user.id = :userId and mediaItem.id = :mediaItemId "
+						+ "and createdOn = (select max(tv.createdOn) from Vote tv where tv.user.id = :userId and tv.mediaItem.id = :mediaItemId)");
 		query.setLong("userId", userId);
 		query.setLong("mediaItemId", mediaItemId);
 		query.setCacheable(true);

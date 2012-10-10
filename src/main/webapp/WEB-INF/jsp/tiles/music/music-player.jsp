@@ -23,7 +23,7 @@
 						
 		});
 		
-		$("#current-song .vote .like").click(function() {
+		$("#current-song .vote .dislike").click(function() {
 			var mediaItemId = $("#current-song-id").val();
 			$.post(mashupMedia.contextUrl + "app/ajax/vote/dislike", {
 				"mediaItemId" : mediaItemId
