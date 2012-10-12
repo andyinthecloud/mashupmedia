@@ -1,30 +1,43 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
-	$(document)
-			.ready(
-					function() {
+	$(document).ready(function() {
+		$("table.song-playlist tbody").sortable({
+			stop: function(event, ui) {
+				mashupMedia.saveCurrentPlaylist();
+		    }
+		});
+		var playlistTable = $("table.song-playlist").dataTable({
+			"bFilter" : false,
+			"oLanguage" : {
+				"sEmptyTable" : "<spring:message code="music.playlist.empty" />"
+			},
+			"aoColumnDefs" : [ {
+				"bSortable" : false,
+				"aTargets" : [ 0 ]
+			} ],
+			"bPaginate" : false,
+			"bAutoWidth" : false,
+			"bInfo" : false									 
+		});
+		
+		$("table.song-playlist td.controls a.delete").click(function() {
+			var songRow = $(this).closest("tr");
+			if ($(songRow).hasClass(mashupMedia.playingClass)) {
+				mashupMedia.destroyPlayer();
+			}			
+			$(this).closest("tr").remove();
+			mashupMedia.saveCurrentPlaylist();
+		});
 
-						$("table.song-playlist tbody").sortable();
-						var playlistTable = $("table.song-playlist")
-								.dataTable(
-										{
-											"bFilter" : false,
-											"oLanguage" : {
-												"sEmptyTable" : "<spring:message code="music.playlist.empty" />"
-											},
-											"aoColumnDefs" : [ {
-												"bSortable" : false,
-												"aTargets" : [ 0 ]
-											} ],
-											"bPaginate" : false,
-											"bAutoWidth" : false,
-											"bInfo" : false,
-											 
-										});
+		$("table.song-playlist td.controls a.play").click(function() {
+			$("table.song-playlist tbody tr").removeClass(mashupMedia.playingClass);
+			var songRow = $(this).closest("tr");
+			$(songRow).addClass(mashupMedia.playingClass);
+			mashupMedia.loadSong(true);
+		});
 
-
-					});
+	});
 </script>
 
 <div class="playlist-title">
@@ -58,10 +71,10 @@
 	<thead>
 		<tr>
 			<th class="first"></th>
-			<th class="song controls"><a href="javascript:void(0);"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.song" /></a></th>
-			<th class="album controls"><a href="javascript:void(0);"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.album" /></a></th>
-			<th class="artist controls"><a href="javascript:void(0);"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.artist" /></a></th>
-			<th class="length controls"><a href="javascript:void(0);"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.length" /></a></th>
+			<th class="song controls"><a href="javascript:;"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.song" /></a></th>
+			<th class="album controls"><a href="javascript:;"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.album" /></a></th>
+			<th class="artist controls"><a href="javascript:;"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.artist" /></a></th>
+			<th class="length controls"><a href="javascript:;"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.length" /></a></th>
 		</tr>
 
 	</thead>
@@ -74,10 +87,10 @@
 				<c:set var="playingClass" value="playing" />
 			</c:if>
 
-			<tr id="playlist-media-id-<c:out value="${song.id}"/>-media-format-${song.format}-album-id-${song.album.id}" class="<c:out value="${playingClass}"/>">
+			<tr id="playlist-media-id-<c:out value="${song.id}"/>-media-format-${song.mediaContentType}-album-id-${song.album.id}" class="<c:out value="${playingClass}"/>">
 
-				<td class="controls"><span class="ui-icon ui-icon-carat-2-n-s"></span> <a class="delete" href="javascript:void(0);" title="<spring:message code="control.delete" />"><span
-						class="ui-icon ui-icon-minus"></span></a> <a class="play" href="javascript:void(0);" title="<spring:message code="control.play" />"><span class="ui-icon ui-icon-play"></span></a> <input
+				<td class="controls"><span class="ui-icon ui-icon-carat-2-n-s"></span> <a class="delete" href="javascript:;" title="<spring:message code="control.delete" />"><span
+						class="ui-icon ui-icon-minus"></span></a> <a class="play" href="javascript:;" title="<spring:message code="control.play" />"><span class="ui-icon ui-icon-play"></span></a> <input
 					type="hidden" name="format" value="<c:out value="${song.format}" />" /><input type="hidden" name="album-id" value="<c:out value="${song.album.id}" />" /></td>
 
 				<td class="text song-title"><c:out value="${song.displayTitle}" /></td>

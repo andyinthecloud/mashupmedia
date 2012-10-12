@@ -1,5 +1,7 @@
+<%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
+
 $(document).ready(function() {
-	var contextUrl = $("#contextUrl").val();
+	var contextUrl = "<c:url value="/" />";
 	mashupMedia.setContextUrl(contextUrl);
 	$(".jp-previous").click(function() {
 		mashupMedia.playPreviousSong();
@@ -86,6 +88,25 @@ var mashupMedia = new function() {
 			$("#top-bar-music-player .songs").html(data);
 			mashupMedia.loadSong(true);
 		});		
+	};
+	
+	this.destroyPlayer = function() {
+		$(mashupMedia.jPlayerId).jPlayer("destroy");
+	};
+	
+	this.saveCurrentPlaylist = function() {
+		var mediaItemIds = new Array();
+		$("#top-bar-music-player table.song-playlist tbody tr").each(function(index) {
+			var rowId = $(this).attr("id");
+			var mediaItemId = parseId(rowId, "playlist-media-id");
+			mediaItemIds[index] = mediaItemId;
+		});
+		
+		$.post(mashupMedia.contextUrl + "app/ajax/playlist/save-current", {
+			"mediaItemIds" : mediaItemIds
+		}, function(data) {
+		});	
+		
 	};
 }
 

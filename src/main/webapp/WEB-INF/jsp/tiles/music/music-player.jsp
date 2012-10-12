@@ -7,7 +7,19 @@
 	$(document).ready(function() {
 
 		$("#current-song .toggle-playlist").click(function() {
-			$("#top-bar-music-player .songs").toggle("slow");
+			var songPlaylist = $("#top-bar-music-player .songs");
+			
+			$(songPlaylist).toggle('slow', function() {
+				var imagePath = "<c:url value="${themePath}/images/controls/open.png" />";
+				if ($(songPlaylist).is(":visible")) {
+					imagePath = "<c:url value="${themePath}/images/controls/close.png" />";
+				} 
+				$("#current-song .toggle-playlist img").attr("src", imagePath);
+			});
+			
+			
+			
+			
 		});
 		
 		$("div.sub-panel").click(function() {
@@ -98,10 +110,11 @@
 					<td><span class="vote"> <a class="like" href="javascript:;" title="<spring:message code="music.playlist.current-song.vote.love" />"><img
 				src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a class="dislike" href="javascript:void(0);"><img src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>"
 				title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
-		</span> <a class="toggle-playlist" href="javascript:void(0);" title="<spring:message code="music.playlist.toggle" />"><img src="<c:url value="${themePath}/images/controls/playlist.png"/>" /></a></td>
+		</span></td>
 				</tr>
 			</tbody>
 		</table>
+		<div class="toggle-playlist"><a href="javascript:;"><img src="<c:url value="${themePath}/images/controls/open.png"/>" /></a></div>
 	</div>
 
 

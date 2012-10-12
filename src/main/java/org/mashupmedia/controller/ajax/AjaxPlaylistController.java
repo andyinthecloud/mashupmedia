@@ -95,4 +95,9 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		model.addAttribute("mediaItems", mediaItems);
 		return "ajax/playlist/player-script";
 	}
+	
+	@RequestMapping(value = "/save-current", method = RequestMethod.POST)
+	public String handleSaveCurrentPlaylist(@RequestParam("mediaItemIds") Long[] mediaItemsIds, Model model) {
+		return "ajax/playlist/player-script";
+	}
 }

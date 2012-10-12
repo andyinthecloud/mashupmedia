@@ -301,6 +301,17 @@ div.sub-panel div.album-art img {
 	border-collapse: collapse; 
 }
 
+#current-song .toggle-playlist {
+	float: right;
+	margin-right: 10px;
+	margin-top: -10px;
+}
+
+#current-song .toggle-playlist img{
+	width: 20px;
+	height: auto;
+}
+
 
 #current-song img {
 	vertical-align: middle;

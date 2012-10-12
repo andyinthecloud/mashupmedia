@@ -12,7 +12,7 @@
 <script type="text/javascript"
 	src="<c:url value="/jquery-ui/1.8.21/js/jquery-ui-1.8.21.custom.min.js" />"></script>
 
-<script type="text/javascript" src="<c:url value="/scripts/mashupmedia.js" />"></script>
+<script type="text/javascript" src="<c:url value="/scripts/mashupmedia.jsp" />"></script>
 <script type="text/javascript"
 	src="<c:url value="/jquery-plugins/jquery.address/1.5/jquery.address-1.5.min.js" />"></script>
 
@@ -33,12 +33,10 @@
 <script type="text/javascript" src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 
 <script type="text/javascript">
-	$(document).ready(
-			function() {
-				processBackground("<c:url value="${themePath}/"/>",
-						"<tiles:getAsString name="backgroundImageType"/>");
-
-			});
+	$(document).ready(function() {
+		$("#contextUrl").val("<c:url value="/" />");
+		processBackground("<c:url value="${themePath}/"/>",	"<tiles:getAsString name="backgroundImageType"/>");
+	});
 </script>
 
 <title><tiles:getAsString name="title" /></title>
@@ -47,8 +45,7 @@
 
 <body>
 	<tiles:insertAttribute name="topBar" />
-	
-	<input type="hidden" id="contextUrl" value="<c:url value="/" />" />
+	<input type="hidden" id="contextUrl"  />
 
 	<img id="background-image" style="display: none;" />
 

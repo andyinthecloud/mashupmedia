@@ -195,12 +195,16 @@ public class Song extends MediaItem {
 			metaBuilder.append(displayBytes);
 		}
 		
-		MediaContentType mediaContentType = WebHelper.getMediaContentType(getFormat(), MediaContentType.MP3);
 		metaBuilder.append(" | ");
-		metaBuilder.append(mediaContentType.getDisplayText());
+		metaBuilder.append(getMediaContentType());
 
 		return metaBuilder.toString();
 
+	}
+	
+	public String getMediaContentType() {
+		MediaContentType mediaContentType = WebHelper.getMediaContentType(getFormat(), MediaContentType.MP3);
+		return mediaContentType.getDisplayText();
 	}
 
 	public String getDisplayTrackNumber() {
