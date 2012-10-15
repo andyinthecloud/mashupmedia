@@ -19,7 +19,7 @@ public interface PlaylistDao {
 
 	public void deletePlaylist(Playlist playlist);
 
-	public Playlist getDefaultMusicPlaylist(long userId);
+	public Playlist getDefaultMusicPlaylistForUser(long userId);
 
 	public void deletePlaylistMediaItems(List<? extends MediaItem> mediaItems);
 

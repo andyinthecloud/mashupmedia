@@ -46,6 +46,13 @@
 		<appender-ref ref="HibernateFileAppender" />
 	</logger>
 
+	<logger name="org.hsqldb" additivity="false">
+		<level value="${log4j.focus.level}" />
+		<appender-ref ref="HibernateFileAppender" />
+		<appender-ref ref="ConsoleAppender" />
+		<appender-ref ref="FileAppender" />
+	</logger>
+
  	
 	<logger name="org.springframework.context.support.ResourceBundleMessageSource" additivity="false">
 		<level value="error" />

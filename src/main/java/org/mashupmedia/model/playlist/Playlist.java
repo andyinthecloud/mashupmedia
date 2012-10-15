@@ -56,7 +56,7 @@ public class Playlist implements Serializable {
 	@ManyToOne
 	private User lastAccessedBy;
 
-	private boolean isDefault;
+	private boolean isUserDefault;
 
 	private String playlistType;
 
@@ -68,16 +68,16 @@ public class Playlist implements Serializable {
 		this.playlistType = playlistType;
 	}
 
-	public boolean isDefault() {
-		return isDefault;
+	public boolean isUserDefault() {
+		return isUserDefault;
 	}
 
-	public boolean getIsDefault() {
-		return isDefault();
+	public boolean getIsUserDefault() {
+		return isUserDefault();
 	}
 
-	public void setDefault(boolean isDefault) {
-		this.isDefault = isDefault;
+	public void setUserDefault(boolean isUserDefault) {
+		this.isUserDefault = isUserDefault;
 	}
 
 	public long getId() {
@@ -230,7 +230,7 @@ public class Playlist implements Serializable {
 		builder.append(", lastAccessedBy=");
 		builder.append(lastAccessedBy);
 		builder.append(", isDefault=");
-		builder.append(isDefault);
+		builder.append(isUserDefault);
 		builder.append(", playlistType=");
 		builder.append(playlistType);
 		builder.append("]");

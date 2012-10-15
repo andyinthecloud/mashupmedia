@@ -47,9 +47,8 @@ public class AjaxPlaylistController extends BaseAjaxController {
 			playlist = playlistSong.getPlaylist();
 			// reinitialise playlist from database
 			playlist = playlistManager.getPlaylist(playlist.getId());
-
 		} else {
-			playlist = new Playlist();
+			playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
 		}
 
 		model.addAttribute("playlist", playlist);
@@ -59,12 +58,6 @@ public class AjaxPlaylistController extends BaseAjaxController {
 	@RequestMapping(value = "/play-album", method = RequestMethod.POST)
 	public String playAlbum(@RequestParam("albumId") Long albumId, Model model) {
 		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
-		User user = SecurityHelper.getLoggedInUser();
-		if (playlist == null) {
-			playlist = new Playlist();
-			playlist.setDefault(true);
-			playlist.setOwner(user);
-		}
 
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs = album.getSongs();
@@ -80,6 +73,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 			playlistSong = playlist.getPlaylistMediaItems().get(0);			
 		}
 
+		User user = SecurityHelper.getLoggedInUser();
 		user.setCurrentPlaylistSong(playlistSong);
 		adminManager.saveUser(user);
 		

@@ -27,7 +27,8 @@ html,body {
 	top: 0;
 	left: 0;
 	z-index: -1;
-	filter: alpha(opacity =                               70); /* for IE */
+	filter: alpha(opacity =                                   70);
+	/* for IE */
 	-khtml-opacity: 0.7; /* khtml, old safari */
 	-moz-opacity: 0.7; /* old mozilla, netscape */
 	opacity: 0.7; /* good browsers: FF, safari, opera */
@@ -59,8 +60,6 @@ html,body {
 	padding: 5px;
 }
 
-
-
 .top-bar ul.main-menu {
 	padding: 0;
 	margin: 0;
@@ -77,7 +76,6 @@ html,body {
 div.panel {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
 	font-size: 0.8em;
-	color: #F8F8FF;
 	background-image: url("../images/transparent-background.png");
 	background-repeat: repeat;
 	background-position: left top;
@@ -104,7 +102,6 @@ div.music-sub-panel {
 	padding: 10px;
 }
 
-
 div.panel iframe {
 	width: 100%;
 	border: none;
@@ -122,8 +119,8 @@ div.panel .horizontal-gap {
 	margin-left: 10px;
 }
 
-div.panel a,div.panel a:VISITED {
-	color: #F8F8FF;
+div.panel,div.panel a,div.panel a:VISITED {
+	color: #E3DEDE;
 }
 
 div.panel fieldset {
@@ -131,7 +128,7 @@ div.panel fieldset {
 	-webkit-border-radius: 10px;
 	-khtml-border-radius: 10px;
 	border-radius: 10px;
-	border: 1px solid #F8F8FF;
+	border: 1px solid #E3DEDE;
 	padding: 10px;
 	margin-top: 10px;
 	font-size: 1em;
@@ -152,24 +149,28 @@ div.panel input[type='text'],div.panel input[type='password'] {
 div.button-panel {
 	margin-top: 20px;
 	margin-bottom: 10px;
+	text-align: right;
 }
 
 .button {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
-	border: 1px solid #E579E9;
-	color: #E579E9;
-	padding: 3px 10px;
-	font-size: 1.0em;
+	/*border: 1px solid #E579E9;	
+	color: #E579E9;*/
+	border: 2px solid #0E850C;
+	color: #E3DEDE;
+	padding: 3px 15px;
+	font-size: 1.1em;
 	cursor: default;
 	background-color: transparent;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-khtml-border-radius: 10px;
 	border-radius: 10px;
+	margin-left: 10px;
 }
 
-.button:HOVER, .hover {
-	background-color: #C8C0CE;
+.button:HOVER,.hover {
+	background-color: #0E850C;
 }
 
 .sub-rounded-corners {
@@ -179,9 +180,8 @@ div.button-panel {
 	border-radius: 10px;
 }
 
-
-div.panel div.breadcrumbs {
-	
+div.panel div.breadcrumbs a:HOVER,#top-bar ul.main-menu a:HOVER,#top-bar a.home:HOVER,#top-bar-music-player .main-menu a:hover,ul.main-control-menu a:HOVER {
+	text-decoration: underline;
 }
 
 div.panel a,div.panel a:VISITED {
@@ -190,7 +190,7 @@ div.panel a,div.panel a:VISITED {
 
 div.panel ul.main-menu {
 	padding: 0;
-	margin: 0;
+	margin: 10px 0;
 }
 
 div.panel ul.main-menu li {
@@ -204,7 +204,7 @@ div.panel ul.main-menu li a {
 }
 
 div.panel ul.main-menu a:HOVER {
-	background-color: #CD6600;
+	background-color: #0E850C;
 }
 
 div.random-album-art div.album {
@@ -217,7 +217,7 @@ div.random-album-art div.album {
 div.random-album-art div.album img {
 	width: 100%;
 	height: 100%;
-	filter: alpha(opacity =           60); /* for IE */
+	filter: alpha(opacity =               60); /* for IE */
 	-khtml-opacity: 0.60; /* khtml, old safari */
 	-moz-opacity: 0.60; /* old mozilla, netscape */
 	opacity: 0.60; /* good browsers: FF, safari, opera */
@@ -225,7 +225,7 @@ div.random-album-art div.album img {
 
 div.random-album-art div.highlight img {
 	background-color: gray;
-	filter: alpha(opacity =     100); /* for IE */
+	filter: alpha(opacity =         100); /* for IE */
 	-khtml-opacity: 1; /* khtml, old safari */
 	-moz-opacity: 1; /* old mozilla, netscape */
 	opacity: 1; /* good browsers: FF, safari, opera */
@@ -297,8 +297,8 @@ div.sub-panel div.album-art img {
 	color: #C8C0CE;
 }
 
-#current-song table{
-	border-collapse: collapse; 
+#current-song table {
+	border-collapse: collapse;
 }
 
 #current-song .toggle-playlist {
@@ -307,11 +307,10 @@ div.sub-panel div.album-art img {
 	margin-top: -10px;
 }
 
-#current-song .toggle-playlist img{
+#current-song .toggle-playlist img {
 	width: 20px;
 	height: auto;
 }
-
 
 #current-song img {
 	vertical-align: middle;
@@ -341,7 +340,7 @@ div.sub-panel div.album-art img {
 	padding-left: 20px;
 }
 
-#current-song .album-art img{
+#current-song .album-art img {
 	width: 100px;
 	height: auto;
 	margin-left: 10px;
@@ -351,19 +350,23 @@ div.sub-panel div.album-art img {
 	padding: 0 20px;
 }
 
-#current-song td.song-title .artist-name{
+#current-song td.song-title .artist-name {
 	font-size: 80%;
 }
 
-#top-bar-music-player .jp-controls li{
+#top-bar-music-player .jp-controls li {
 	padding-left: 0 !important;
+}
+
+#top-bar-music-player .jp-repeat-off { /* display: none; */
+	
 }
 
 #top-bar-music-player .jp-audio {
 	float: left;
 	padding-top: 10px;
 	padding-left: 20px;
-	padding-right: 20px;	
+	padding-right: 20px;
 	padding-bottom: 0;
 }
 
@@ -379,45 +382,37 @@ div.sub-panel div.album-art img {
 #top-bar-music-player div.songs {
 	clear: both;
 	display: none;
-	padding-left: 10px;	
+	padding-left: 10px;
 	height: 300px;
-	overflow: auto;	
+	overflow: auto;
 	font-size: 80%;
 }
-
-
-
 
 #top-bar-music-player div.songs table th .ui-icon {
 	float: right;
 }
 
-
 #top-bar-music-player div.songs table {
 	border-collapse: collapse;
-	
 }
 
 #top-bar-music-player div.songs table th.first {
-	padding-left: 0px;	
+	padding-left: 0px;
 }
 
-#top-bar-music-player div.songs table td, #top-bar-music-player div.songs table th {
+#top-bar-music-player div.songs table td,#top-bar-music-player div.songs table th
+	{
 	padding-left: 10px;
-	padding-top: 2px;
-	padding-bottom: 2px;
+	padding-top: 3px;
+	padding-bottom: 3px;
 	text-align: left;
 	min-width: 80px;
-	
 }
 
-#top-bar-music-player div.songs table tbody tr.odd td {
+#top-bar-music-player div.songs table tbody tr {
 	cursor: move;
-	background-color: #2E2534;
+	border-bottom: 1px solid #E579E9;
 }
-
-
-
 
 #top-bar-music-player div.songs table tbody td.text {
 	overflow: hidden;
@@ -429,7 +424,7 @@ div.sub-panel div.album-art img {
 
 .controls .ui-icon {
 	background-color: white;
-	filter: alpha(opacity =           60); /* for IE */
+	filter: alpha(opacity =               60); /* for IE */
 	-khtml-opacity: 0.60; /* khtml, old safari */
 	-moz-opacity: 0.60; /* old mozilla, netscape */
 	opacity: 0.60; /* good browsers: FF, safari, opera */
@@ -438,10 +433,21 @@ div.sub-panel div.album-art img {
 }
 
 #top-bar-music-player .playlist-title {
-	font-size: 110%;	
+	margin: 10px 0;
+	font-size: 110%;
 }
 
-#top-bar-music-player .playlist-title select{
-	margin-left: 10px;	
+#top-bar-music-player .playlist-title select {
+	margin-left: 10px;
 }
 
+#top-bar-music-player .button {
+	font-size: 100%;
+	color: #E579E9;
+	border: 1px solid #E579E9;
+}
+
+#top-bar-music-player .button:hover {
+	background-color: #E579E9;
+	color: #3A2A45;
+}

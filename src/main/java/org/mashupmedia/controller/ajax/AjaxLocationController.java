@@ -30,7 +30,7 @@ public class AjaxLocationController {
 		}
 		model.addAttribute("isValid", isValid);
 		model.addAttribute("messageCode", messageCode);
-		return "ajax/check-folder-location";
+		return "ajax/configuration/check-folder-location";
 	}
 
 	@RequestMapping(value = "/ajax/check-ftp-location", method = RequestMethod.POST)

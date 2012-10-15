@@ -43,28 +43,40 @@
 <div class="playlist-title">
 
 	<input type="hidden" id="current-playlist-id" value="<c:out value="${playlist.id}" />" />
-	<c:set var="playlistName" value="${playlist.name}" />
-	<c:if test="${playlist.isDefault}">
-		<c:set var="playlistName" value="${playlist.name}" />
-		<spring:message var="playlistName" code="music.playlist.default.name" />
-	</c:if>
-	<c:out value="${playlistName}" />
+	
+	
+	
+	<label><c:out value="${playlist.name}" /></label>
 
 	<select>
-		<option value="">&nbsp;</option>
-		<option id="playlist-action-new">
+		<option value="">
+			<spring:message code="music.playlist.actions" />		
+		</option>
+
+		<option value="clear">
+			<spring:message code="action.clear" />
+		</option>
+		
+		<option value="new">
 			<spring:message code="action.new" />
 		</option>
-		<option id="playlist-action-save">
-			<spring:message code="action.save" />
-		</option>
-		<option id="playlist-action-save-as">
+ 
+		<option id="save-as">
 			<spring:message code="action.saveas" />
 		</option>
-		<option id="playlist-action-delete">
-			<spring:message code="action.delete" />
-		</option>
-	</select> <input type="button" class="button" value="<spring:message code="action.ok" />" />
+ 
+		<c:if test="${!playlist.isUserDefault}">
+			<option id="delete">
+				<spring:message code="action.delete" />
+			</option>		
+		</c:if>
+
+	</select> 
+		
+	<c:if test="${playlist.isUserDefault}">
+		<input type="button" class="button" value="<spring:message code="music.playlist.button.save" />" />	
+	</c:if>
+	
 </div>
 
 <table class="song-playlist">

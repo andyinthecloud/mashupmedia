@@ -11,6 +11,7 @@ import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,14 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class PlaylistManagerImpl implements PlaylistManager {
-	
 
 	@Autowired
 	private PlaylistDao playlistDao;
-	
+
 	@Autowired
 	private MediaDao mediaDao;
-	
+
 	@Override
 	public List<Playlist> getPlaylists() {
 		List<Playlist> playlists = playlistDao.getPlaylists();
@@ -41,21 +41,20 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		}
 		Hibernate.initialize(playlist.getPlaylistMediaItems());
 
-		
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		List<PlaylistMediaItem> playlistMediaItemsToDelete = new ArrayList<PlaylistMediaItem>();
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			MediaItem mediaItem =  playlistMediaItem.getMediaItem();
+			MediaItem mediaItem = playlistMediaItem.getMediaItem();
 			mediaItem = mediaDao.getMediaItem(mediaItem.getId());
 			if (mediaItem == null) {
 				playlistMediaItemsToDelete.add(playlistMediaItem);
-			}			
+			}
 		}
-		
+
 		playlistMediaItems.removeAll(playlistMediaItemsToDelete);
-		
-//		playlist.setPlaylistMediaItems(playlistMediaItems);
-		
+
+		// playlist.setPlaylistMediaItems(playlistMediaItems);
+
 		return playlist;
 	}
 
@@ -68,20 +67,26 @@ public class PlaylistManagerImpl implements PlaylistManager {
 			playlist = playlistSong.getPlaylist();
 			return playlist;
 		}
-				
+
 		playlist = playlistDao.getLastAccessedMusicPlaylist(user.getId());
 		return playlist;
 	}
-	
 
 	@Override
 	public Playlist getDefaultMusicPlaylistForCurrentUser() {
 		User user = SecurityHelper.getLoggedInUser();
-		Playlist musicPlaylist = playlistDao.getDefaultMusicPlaylist(user.getId());
-		return musicPlaylist;
+		Playlist playlist = playlistDao.getDefaultMusicPlaylistForUser(user.getId());
+		if (playlist != null) {
+			return playlist;
+		}
+
+		playlist = new Playlist();
+		playlist.setName(MessageHelper.getMessage("music.playlist.default.name"));
+		playlist.setUserDefault(true);
+		playlist.setOwner(user);		
+		return playlist;
 	}
-	
-	
+
 	@Override
 	public void savePlaylist(Playlist playlist) {
 		User user = SecurityHelper.getLoggedInUser();
@@ -91,10 +96,10 @@ public class PlaylistManagerImpl implements PlaylistManager {
 			playlist.setCreatedOn(date);
 			playlist.setOwner(user);
 		}
-		
+
 		playlist.setUpdatedBy(user);
 		playlist.setUpdatedOn(date);
-		
+
 		playlistDao.savePlaylist(playlist);
 	}
 
@@ -102,7 +107,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	public List<Playlist> getPlaylistsForCurrentUser() {
 		User user = SecurityHelper.getLoggedInUser();
 		long userId = user.getId();
-		List<Playlist> playlists = playlistDao.getPlaylists(userId);		
+		List<Playlist> playlists = playlistDao.getPlaylists(userId);
 		return playlists;
 	}
 
@@ -111,11 +116,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		Playlist playlist = getPlaylist(id);
 		playlistDao.deletePlaylist(playlist);
 	}
-	
+
 	@Override
 	public void deleteLibrary(long libraryId) {
 		playlistDao.deleteLibrary(libraryId);
-		
+
 	}
 
 }
