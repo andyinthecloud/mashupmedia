@@ -45,6 +45,7 @@
 		<level value="${log4j.focus.level}" />
 		<appender-ref ref="HibernateFileAppender" />
 	</logger>
+	
 
 	<logger name="org.hsqldb" additivity="false">
 		<level value="${log4j.focus.level}" />

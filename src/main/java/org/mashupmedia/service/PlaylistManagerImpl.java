@@ -61,14 +61,13 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	@Override
 	public Playlist getLastAccessedMusicPlaylistForCurrentUser() {
 		User user = SecurityHelper.getLoggedInUser();
-		PlaylistMediaItem playlistSong = user.getCurrentPlaylistSong();
-		Playlist playlist = null;
-		if (playlistSong != null) {
-			playlist = playlistSong.getPlaylist();
-			return playlist;
+		Playlist playlist = playlistDao.getLastAccessedMusicPlaylist(user.getId());
+		if (playlist == null) {
+			playlist = getDefaultMusicPlaylistForCurrentUser();
 		}
-
-		playlist = playlistDao.getLastAccessedMusicPlaylist(user.getId());
+		
+		Hibernate.initialize(playlist.getPlaylistMediaItems());
+		
 		return playlist;
 	}
 
@@ -77,13 +76,15 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		User user = SecurityHelper.getLoggedInUser();
 		Playlist playlist = playlistDao.getDefaultMusicPlaylistForUser(user.getId());
 		if (playlist != null) {
+			Hibernate.initialize(playlist.getPlaylistMediaItems());
 			return playlist;
 		}
 
 		playlist = new Playlist();
 		playlist.setName(MessageHelper.getMessage("music.playlist.default.name"));
 		playlist.setUserDefault(true);
-		playlist.setOwner(user);		
+		playlist.setCreatedBy(user);
+		playlist.setPlaylistType(PlaylistType.MUSIC.getIdName());
 		return playlist;
 	}
 
@@ -94,7 +95,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		Date date = new Date();
 		if (playlistId == 0) {
 			playlist.setCreatedOn(date);
-			playlist.setOwner(user);
+			playlist.setCreatedBy(user);
 		}
 
 		playlist.setUpdatedBy(user);

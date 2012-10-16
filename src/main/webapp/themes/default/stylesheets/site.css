@@ -156,7 +156,7 @@ div.button-panel {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
 	/*border: 1px solid #E579E9;	
 	color: #E579E9;*/
-	border: 2px solid #0E850C;
+	border: 2px solid #E579E9;
 	color: #E3DEDE;
 	padding: 3px 15px;
 	font-size: 1.1em;
@@ -170,7 +170,8 @@ div.button-panel {
 }
 
 .button:HOVER,.hover {
-	background-color: #0E850C;
+	/*background-color: #0E850C;*/
+	background-color: #E579E9; 
 }
 
 .sub-rounded-corners {
@@ -204,7 +205,7 @@ div.panel ul.main-menu li a {
 }
 
 div.panel ul.main-menu a:HOVER {
-	background-color: #0E850C;
+	background-color: #E579E9;
 }
 
 div.random-album-art div.album {
@@ -354,6 +355,10 @@ div.sub-panel div.album-art img {
 	font-size: 80%;
 }
 
+#top-bar-music-player div.jp-audio ul.jp-toggles {
+	height: 15px;
+}
+
 #top-bar-music-player .jp-controls li {
 	padding-left: 0 !important;
 }
@@ -412,6 +417,11 @@ div.sub-panel div.album-art img {
 #top-bar-music-player div.songs table tbody tr {
 	cursor: move;
 	border-bottom: 1px solid #E579E9;
+}
+
+#top-bar-music-player div.songs table tbody tr.playing td {
+	color: white;
+	font-style: italic;
 }
 
 #top-bar-music-player div.songs table tbody td.text {

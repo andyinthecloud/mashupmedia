@@ -1,19 +1,19 @@
 package org.mashupmedia.controller.ajax;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.mashupmedia.model.User;
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
-import org.mashupmedia.service.AdminManager;
+import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.task.StreamingTaskManager;
 import org.mashupmedia.util.PlaylistHelper;
-import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,24 +33,14 @@ public class AjaxPlaylistController extends BaseAjaxController {
 	private MusicManager musicManager;
 
 	@Autowired
-	private AdminManager adminManager;
-	
-	@Autowired
 	private StreamingTaskManager streamingTaskManager;
+
+	@Autowired
+	private MediaManager mediaManager;
 
 	@RequestMapping(value = "/current-user-playlist", method = RequestMethod.POST)
 	public String getCurrentUserMusicPlaylist(Model model) {
-		User user = SecurityHelper.getLoggedInUser();
-		PlaylistMediaItem playlistSong = user.getCurrentPlaylistSong();
-		Playlist playlist = null;
-		if (playlistSong != null) {
-			playlist = playlistSong.getPlaylist();
-			// reinitialise playlist from database
-			playlist = playlistManager.getPlaylist(playlist.getId());
-		} else {
-			playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
-		}
-
+		Playlist playlist = playlistManager.getLastAccessedMusicPlaylistForCurrentUser();
 		model.addAttribute("playlist", playlist);
 		return "ajax/playlist/music-playlist";
 	}
@@ -67,16 +57,6 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		playlistManager.savePlaylist(playlist);
-
-		PlaylistMediaItem playlistSong = new PlaylistMediaItem();
-		if (songs != null && !songs.isEmpty()) {
-			playlistSong = playlist.getPlaylistMediaItems().get(0);			
-		}
-
-		User user = SecurityHelper.getLoggedInUser();
-		user.setCurrentPlaylistSong(playlistSong);
-		adminManager.saveUser(user);
-		
 		model.addAttribute("playlist", playlist);
 		return "ajax/playlist/music-playlist";
 	}
@@ -84,14 +64,34 @@ public class AjaxPlaylistController extends BaseAjaxController {
 	@RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
 	public String playPlaylist(@PathVariable("playlistId") Long playlistId, Model model) {
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
+		playlistManager.savePlaylist(playlist);
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		List<MediaItem> mediaItems = PlaylistHelper.getMediaItems(playlistMediaItems);
 		model.addAttribute("mediaItems", mediaItems);
 		return "ajax/playlist/player-script";
 	}
-	
-	@RequestMapping(value = "/save-current", method = RequestMethod.POST)
-	public String handleSaveCurrentPlaylist(@RequestParam("mediaItemIds") Long[] mediaItemsIds, Model model) {
-		return "ajax/playlist/player-script";
+
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	public String handleSaveCurrentPlaylist(@RequestParam("playlistId") Long playlistId,
+			@RequestParam(value = "mediaItemIds[]", required = false) Long[] mediaItemsIds, Model model) {
+
+		Playlist playlist = playlistManager.getPlaylist(playlistId);
+
+		if (mediaItemsIds == null) {
+			mediaItemsIds = new Long[0];
+		}
+
+		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		for (Long mediaItemId : mediaItemsIds) {
+			MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+			mediaItems.add(mediaItem);
+		}
+
+		PlaylistHelper.replacePlaylist(playlist, mediaItems);
+		playlistManager.savePlaylist(playlist);
+
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
+		return "ajax/json/response";
 	}
 }

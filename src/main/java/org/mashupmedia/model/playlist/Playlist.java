@@ -29,14 +29,13 @@ public class Playlist implements Serializable {
 	private long id;
 
 	private String name;
-	
-	
+
 	@OneToMany(mappedBy = "playlist")
 	@OrderBy("ranking")
 	private List<PlaylistMediaItem> playlistMediaItems;
 
 	@ManyToOne
-	private User owner;
+	private User createdBy;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdOn;
@@ -49,12 +48,6 @@ public class Playlist implements Serializable {
 
 	@ManyToOne
 	private Group group;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastAccessedOn;
-
-	@ManyToOne
-	private User lastAccessedBy;
 
 	private boolean isUserDefault;
 
@@ -96,12 +89,12 @@ public class Playlist implements Serializable {
 		this.playlistMediaItems = playlistMediaItems;
 	}
 
-	public User getOwner() {
-		return owner;
+	public User getCreatedBy() {
+		return createdBy;
 	}
 
-	public void setOwner(User owner) {
-		this.owner = owner;
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
 	}
 
 	public Date getCreatedOn() {
@@ -136,22 +129,6 @@ public class Playlist implements Serializable {
 		this.group = group;
 	}
 
-	public Date getLastAccessedOn() {
-		return lastAccessedOn;
-	}
-
-	public void setLastAccessedOn(Date lastAccessed) {
-		this.lastAccessedOn = lastAccessed;
-	}
-
-	public User getLastAccessedBy() {
-		return lastAccessedBy;
-	}
-
-	public void setLastAccessedBy(User lastAccessedBy) {
-		this.lastAccessedBy = lastAccessedBy;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -167,7 +144,7 @@ public class Playlist implements Serializable {
 		result = prime * result + ((createdOn == null) ? 0 : createdOn.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
 		result = prime * result + ((playlistType == null) ? 0 : playlistType.hashCode());
 		return result;
 	}
@@ -193,10 +170,10 @@ public class Playlist implements Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (owner == null) {
-			if (other.owner != null)
+		if (createdBy == null) {
+			if (other.createdBy != null)
 				return false;
-		} else if (!owner.equals(other.owner))
+		} else if (!createdBy.equals(other.createdBy))
 			return false;
 		if (playlistType == null) {
 			if (other.playlistType != null)
@@ -216,7 +193,7 @@ public class Playlist implements Serializable {
 		builder.append(", playlistMediaItems=");
 		builder.append(playlistMediaItems);
 		builder.append(", owner=");
-		builder.append(owner);
+		builder.append(createdBy);
 		builder.append(", createdOn=");
 		builder.append(createdOn);
 		builder.append(", updatedOn=");
@@ -225,10 +202,6 @@ public class Playlist implements Serializable {
 		builder.append(updatedBy);
 		builder.append(", group=");
 		builder.append(group);
-		builder.append(", lastAccessedOn=");
-		builder.append(lastAccessedOn);
-		builder.append(", lastAccessedBy=");
-		builder.append(lastAccessedBy);
 		builder.append(", isDefault=");
 		builder.append(isUserDefault);
 		builder.append(", playlistType=");

@@ -3,6 +3,7 @@ package org.mashupmedia.dao;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.mashupmedia.exception.MashupMediaException;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
@@ -35,32 +36,53 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		Query query = sessionFactory
 				.getCurrentSession()
 				.createQuery(
-						"from Playlist as mp where mp.owner.id = :userId and mp.playlistType = :playlistType and mp.lastAccessedOn = (select max(tmp.lastAccessedOn) from Playlist as tmp)");
+						"from Playlist as mp where mp.updatedBy.id = :userId and mp.playlistType = :playlistType and mp.updatedOn = (select max(tmp.updatedOn) from Playlist as tmp)");
 		query.setCacheable(true);
 		query.setLong("userId", userId);
 		query.setString("playlistType", PlaylistType.MUSIC.getIdName());
-		Playlist playlist = (Playlist) query.uniqueResult();
-		return playlist;
+		@SuppressWarnings("unchecked")
+		List<Playlist> playlists = query.list();
+		if (playlists == null || playlists.isEmpty()) {
+			return null;
+		}
+		
+		return playlists.get(0);
 	}
 
 	@Override
 	public Playlist getDefaultMusicPlaylistForUser(long userId) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from Playlist where owner.id = :userId and isUserDefault = true and playlistType = :playlistType");
+				"from Playlist where createdBy.id = :userId and isUserDefault = true and playlistType = :playlistType");
 		query.setCacheable(true);
 		query.setLong("userId", userId);
 		query.setString("playlistType", PlaylistType.MUSIC.getIdName());
-		Playlist musicPlaylist = (Playlist) query.uniqueResult();
-		return musicPlaylist;
+		@SuppressWarnings("unchecked")
+		List<Playlist> playlists = query.list();
+		if (playlists == null || playlists.isEmpty()) {
+			return null;
+		}
+		
+		if (playlists.size() > 1) {
+			throw new MashupMediaException("Error, more than one default playlist found for user id: " + userId);
+		}
+				
+		return playlists.get(0);
 	}
 
 	@Override
 	public void savePlaylist(Playlist playlist) {
-		deletePlaylistMediaItems(playlist.getId());
-		saveOrUpdate(playlist);
+		long playlistId = playlist.getId();
+		deletePlaylistMediaItems(playlistId);
+		if (playlistId == 0) {
+			sessionFactory.getCurrentSession().save(playlist);
+		} else {
+			sessionFactory.getCurrentSession().merge(playlist);
+		}
+		
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			sessionFactory.getCurrentSession().saveOrUpdate(playlistMediaItem);
+			playlistMediaItem.setId(0);
+			saveOrUpdate(playlistMediaItem);
 		}
 	}
 
@@ -69,9 +91,21 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			return;
 		}
 		
-		Query query = sessionFactory.getCurrentSession().createQuery("delete PlaylistMediaItem pmi where pmi.playlist.id = :playlistId");
+		Query query = sessionFactory.getCurrentSession().createQuery("from PlaylistMediaItem where playlist.id = :playlistId");
 		query.setLong("playlistId", playlistId);
-		int deletedItems = query.executeUpdate();
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<PlaylistMediaItem> playlistMediaItems = query.list();
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return;
+		}
+
+		int deletedItems = playlistMediaItems.size();
+		
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			sessionFactory.getCurrentSession().delete(playlistMediaItem);
+		}
+						
 		logger.info("Deleted " + deletedItems + " playlistMediaItems for playlist id: " + playlistId);
 	}
 

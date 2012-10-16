@@ -73,12 +73,9 @@ var mashupMedia = new function() {
 	};
 
 	this.showAlbum = function(albumId) {
-
-		$.get(mashupMedia.contextUrl + "app/ajax/music/album/" + albumId,
-				function(data) {
-					$("div.panel div.content").html(data);
-				});
-
+		$.get(mashupMedia.contextUrl + "app/ajax/music/album/" + albumId, function(data) {
+			$("div.panel div.content").html(data);
+		});
 	};
 	
 	this.playAlbum = function(albumId) {
@@ -95,6 +92,7 @@ var mashupMedia = new function() {
 	};
 	
 	this.saveCurrentPlaylist = function() {
+		var playlistId = $("#current-playlist-id").val();
 		var mediaItemIds = new Array();
 		$("#top-bar-music-player table.song-playlist tbody tr").each(function(index) {
 			var rowId = $(this).attr("id");
@@ -102,12 +100,48 @@ var mashupMedia = new function() {
 			mediaItemIds[index] = mediaItemId;
 		});
 		
-		$.post(mashupMedia.contextUrl + "app/ajax/playlist/save-current", {
+		$.post(mashupMedia.contextUrl + "app/ajax/playlist/save", {
+			"playlistId" : playlistId,
 			"mediaItemIds" : mediaItemIds
 		}, function(data) {
 		});	
 		
 	};
+	
+	this.clearPlaylist = function() {
+		$("#top-bar-music-player table.song-playlist tbody tr").remove();
+		mashupMedia.destroyPlayer();	
+		mashupMedia.showEmptySongInfo();
+		mashupMedia.loadSong(false);
+	};
+	
+	this.showEmptySongInfo = function() {		
+		mashupMedia.showSongInfo("", "", false, 0, 0);
+	};
+	
+	this.showSongInfo = function(songTitle, artistName, isShowVoteButtons, albumId, mediaItemId) {		
+		if (songTitle == "") {
+			songTitle = "<spring:message code="music.playlist.current-song.empty" />";
+		}
+		
+		var albumArtImageSrc = "<c:url value="/images/no-album-art.png" />";
+		if (albumId > 0) {
+			albumArtImageSrc = mashupMedia.contextUrl + "app/music/album-art/" + albumId;
+		}
+		
+		
+		$("#current-song td.song-title .title").text(songTitle);	
+		$("#current-song td.song-title .artist-name").text(artistName);
+		if (isShowVoteButtons) {
+			$("#current-song .vote").show();	
+		} else {
+			$("#current-song .vote").hide();
+		}
+				
+		$("#current-song .album-art img").attr("src", albumArtImageSrc);
+		$("#current-song-id").val(mediaItemId);
+	};
+	
 }
 
 function playRelativeSong(offset) {

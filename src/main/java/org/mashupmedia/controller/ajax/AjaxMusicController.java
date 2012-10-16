@@ -1,13 +1,18 @@
 package org.mashupmedia.controller.ajax;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
+import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
+import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.FormatContentType;
 import org.mashupmedia.web.page.AlbumPage;
@@ -29,6 +34,12 @@ public class AjaxMusicController extends BaseAjaxController{
 	
 	@Autowired
 	private MediaManager mediaManager;
+	
+	@Autowired
+	private PlaylistManager playlistManager;
+	
+	@Autowired
+	private AdminManager adminManager;
 
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
 	public String getMusic(Model model) {
@@ -71,11 +82,50 @@ public class AjaxMusicController extends BaseAjaxController{
 	
 	@RequestMapping(value = "/play/{mediaItemId}", method = RequestMethod.GET)
 	public String playSong(@PathVariable("mediaItemId") Long mediaItemId, Model model) {
-		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);		
+		Playlist playlist = playlistManager.getLastAccessedMusicPlaylistForCurrentUser();
+		playlist = updatePlayingSong(playlist, mediaItem);
+		playlistManager.savePlaylist(playlist);
 		String format = WebHelper.getContentType(mediaItem.getFormat(), FormatContentType.JPLAYER);		
 		model.addAttribute("format", format);
 		model.addAttribute("mediaItemId", mediaItem.getId());
 		return "ajax/music/player-script";
+	}
+
+	private Playlist updatePlayingSong(Playlist playlist, MediaItem mediaItem) {
+		
+		long mediaItemId = mediaItem.getId();
+		
+		if (playlist == null) {
+			playlist = new Playlist();
+		}
+		
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		if (playlistMediaItems == null) {
+			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
+		}
+		
+		boolean isFound = false;
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			MediaItem mi = playlistMediaItem.getMediaItem();
+			boolean isPlaying = false;
+			if (mediaItemId == mi.getId()) {
+				isFound = true;
+				isPlaying = true;
+			}
+			playlistMediaItem.setPlaying(isPlaying);
+		}
+		
+		if (!isFound) {
+			PlaylistMediaItem playlistMediaItem = new PlaylistMediaItem();
+			playlistMediaItem.setMediaItem(mediaItem);
+			playlistMediaItem.setPlaylist(playlist);
+			playlistMediaItem.setPlaying(true);
+			playlistMediaItems.add(playlistMediaItem);
+		}
+		
+		playlist.setPlaylistMediaItems(playlistMediaItems);
+		return playlist;
 	}
 	
 

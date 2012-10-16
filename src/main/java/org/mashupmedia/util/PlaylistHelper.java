@@ -10,16 +10,18 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 public class PlaylistHelper {
 
 	public static void replacePlaylist(Playlist playlist, List<? extends MediaItem> songs) {
-		if (songs == null || songs.isEmpty()) {
-			return;
-		}
-
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems != null) {
 			playlistMediaItems.clear();
 		} else {
 			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
+			playlist.setPlaylistMediaItems(playlistMediaItems);
 		}
+		
+		if (songs == null || songs.isEmpty()) {
+			return;
+		}
+
 
 		for (int i = 0; i < songs.size(); i++) {
 			PlaylistMediaItem playlistSong = new PlaylistMediaItem();
@@ -27,6 +29,10 @@ public class PlaylistHelper {
 			playlistSong.setRanking(i);
 			playlistSong.setPlaylist(playlist);
 			playlistMediaItems.add(playlistSong);
+		}
+		
+		if (playlistMediaItems.isEmpty()) {
+			return;
 		}
 		
 		playlistMediaItems.get(0).setPlaying(true);

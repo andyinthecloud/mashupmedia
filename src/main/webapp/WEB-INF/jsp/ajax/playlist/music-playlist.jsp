@@ -4,7 +4,6 @@
 	$(document).ready(function() {
 		$("table.song-playlist tbody").sortable({
 			stop: function(event, ui) {
-				mashupMedia.saveCurrentPlaylist();
 		    }
 		});
 		var playlistTable = $("table.song-playlist").dataTable({
@@ -27,7 +26,6 @@
 				mashupMedia.destroyPlayer();
 			}			
 			$(this).closest("tr").remove();
-			mashupMedia.saveCurrentPlaylist();
 		});
 
 		$("table.song-playlist td.controls a.play").click(function() {
@@ -36,6 +34,19 @@
 			$(songRow).addClass(mashupMedia.playingClass);
 			mashupMedia.loadSong(true);
 		});
+		
+		$("#playlist-actions").change(function() {
+			var action = $(this).val();
+			if (action == "clear") {
+				mashupMedia.clearPlaylist();	
+			}
+			
+		});
+		
+		$("#save-current-playlist").click(function() {
+			mashupMedia.saveCurrentPlaylist();
+		});
+		
 
 	});
 </script>
@@ -48,7 +59,7 @@
 	
 	<label><c:out value="${playlist.name}" /></label>
 
-	<select>
+	<select id="playlist-actions">
 		<option value="">
 			<spring:message code="music.playlist.actions" />		
 		</option>
@@ -74,7 +85,7 @@
 	</select> 
 		
 	<c:if test="${playlist.isUserDefault}">
-		<input type="button" class="button" value="<spring:message code="music.playlist.button.save" />" />	
+		<input type="button" class="button" id="save-current-playlist" value="<spring:message code="action.save" />" />
 	</c:if>
 	
 </div>
