@@ -17,6 +17,7 @@ import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
+import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -165,8 +166,13 @@ public class MusicManagerImpl implements MusicManager {
 			}
 
 			Album album = song.getAlbum();
-
+			String albumSearchIndexLetter = StringHelper.getSearchIndexLetter(album.getName());
+			album.setSearchIndexLetter(albumSearchIndexLetter);
+			
 			Artist artist = song.getArtist();
+			String artistSearchIndexLetter = StringHelper.getSearchIndexLetter(artist.getName());
+			artist.setIndexLetter(artistSearchIndexLetter);
+			
 			album = prepareAlbum(artist, album);
 			artist = album.getArtist();
 

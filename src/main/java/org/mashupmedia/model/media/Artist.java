@@ -19,9 +19,27 @@ public class Artist implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String name;
+	private String folderName;
 	@OneToMany(mappedBy = "artist")
 	@OrderBy("name")
 	private List<Album> albums;
+	private String indexLetter;
+
+	public String getIndexLetter() {
+		return indexLetter;
+	}
+
+	public void setIndexLetter(String indexLetter) {
+		this.indexLetter = indexLetter;
+	}
+
+	public String getFolderName() {
+		return folderName;
+	}
+
+	public void setFolderName(String folderName) {
+		this.folderName = folderName;
+	}
 
 	public long getId() {
 		return id;
@@ -79,6 +97,8 @@ public class Artist implements Serializable {
 		builder.append(id);
 		builder.append(", name=");
 		builder.append(name);
+		builder.append(", folderName=");
+		builder.append(folderName);
 		builder.append(", albums=");
 		builder.append(albums);
 		builder.append("]");

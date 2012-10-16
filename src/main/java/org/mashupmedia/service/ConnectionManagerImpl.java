@@ -236,10 +236,12 @@ public class ConnectionManagerImpl implements ConnectionManager {
 					trackNumber++;
 					Artist artist = new Artist();
 					artist.setName(artistName);
-
+					artist.setFolderName(artistName);
+					
 					Album album = new Album();
 					String albumName = StringHelper.getAlbumName(albumNameParts);
 					album.setName(albumName);
+					album.setFolderName(albumName);
 					album.setArtist(artist);
 
 					if (trackNumber == 1) {
