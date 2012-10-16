@@ -11,7 +11,7 @@ public interface PlaylistDao {
 
 	public Playlist getPlaylist(long id);
 
-//	public Playlist getLastAccessedMusicPlaylist(long userId);
+	public Playlist getLastAccessedMusicPlaylist(long userId);
 
 	public void savePlaylist(Playlist playlist);
 
