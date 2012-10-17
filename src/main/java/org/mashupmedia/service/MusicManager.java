@@ -23,7 +23,7 @@ public interface MusicManager {
 
 //	public void saveSongs(List<Song> songs);
 
-	public Album getAlbum(String name);
+	public Album getAlbum(String artistName, String albumName);
 
 	public List<Song> getSongs(Long albumId);
 

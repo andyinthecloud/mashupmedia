@@ -39,6 +39,7 @@ import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
+import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -244,10 +245,10 @@ public class ConnectionManagerImpl implements ConnectionManager {
 					album.setFolderName(albumName);
 					album.setArtist(artist);
 
-					if (trackNumber == 1) {
-						AlbumArtImage albumArtImage = getAlbumArtImage(ftpClient, musicLibrary, album);
-						album.setAlbumArtImage(albumArtImage);
-					}
+//					if (trackNumber == 1) {
+//						AlbumArtImage albumArtImage = getAlbumArtImage(ftpClient, musicLibrary, album);
+//						album.setAlbumArtImage(albumArtImage);
+//					}
 
 					Song song = new Song();
 					song.setArtist(artist);
@@ -267,37 +268,37 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		}
 	}
 
-	protected AlbumArtImage getAlbumArtImage(FTPClient ftpClient, MusicLibrary musicLibrary, Album album) throws Exception {
-
-		String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
-		FTPFile[] ftpFiles = ftpClient.list();
-		for (FTPFile ftpFile : ftpFiles) {
-			String fileName = ftpFile.getName();
-			if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
-
-				String filePath = ftpClient.currentDirectory() + "/" + fileName;
-				// FtpLocation ftpLocation = (FtpLocation)
-				// musicLibrary.getLocation();
-				// String password = ftpLocation.getPassword();
-				// password = EncryptionHelper.decryptText(password);
-				// ftpLocation.setPassword(password);
-				String localFilePath = processFtpImageBytes(ftpClient, musicLibrary.getId(), filePath);
-
-				AlbumArtImage albumArtImage = new AlbumArtImage();
-				albumArtImage.setAlbum(album);
-				albumArtImage.setLibrary(musicLibrary);
-				albumArtImage.setName(ftpFile.getName());
-				albumArtImage.setUrl(localFilePath);
-
-				// FtpLocation ftpLocation = (FtpLocation) location;
-
-				return albumArtImage;
-
-			}
-		}
-
-		return null;
-	}
+//	protected AlbumArtImage getAlbumArtImage(FTPClient ftpClient, MusicLibrary musicLibrary, Album album) throws Exception {
+//
+//		String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
+//		FTPFile[] ftpFiles = ftpClient.list();
+//		for (FTPFile ftpFile : ftpFiles) {
+//			String fileName = ftpFile.getName();
+//			if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
+//
+//				String filePath = ftpClient.currentDirectory() + "/" + fileName;
+//				// FtpLocation ftpLocation = (FtpLocation)
+//				// musicLibrary.getLocation();
+//				// String password = ftpLocation.getPassword();
+//				// password = EncryptionHelper.decryptText(password);
+//				// ftpLocation.setPassword(password);
+//				String localFilePath = processFtpImageBytes(ftpClient, musicLibrary.getId(), filePath);
+//
+//				AlbumArtImage albumArtImage = new AlbumArtImage();
+//				albumArtImage.setAlbum(album);
+//				albumArtImage.setLibrary(musicLibrary);
+//				albumArtImage.setName(ftpFile.getName());
+//				albumArtImage.setUrl(localFilePath);
+//
+//				// FtpLocation ftpLocation = (FtpLocation) location;
+//
+//				return albumArtImage;
+//
+//			}
+//		}
+//
+//		return null;
+//	}
 
 	@Override
 	public byte[] getAlbumArtImageBytes(AlbumArtImage image) throws Exception {
@@ -315,26 +316,14 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		return bytes;
 	}
 
-	private String processFtpImageBytes(FTPClient ftpClient, long libraryId, String path) throws Exception {
-		File imageFile = FileHelper.createAlbumArtFile(libraryId);
-		imageFile.createNewFile();
-		FileInputStream fileInputStream = new FileInputStream(imageFile);
 
-		ftpClient.setType(FTPClient.TYPE_BINARY);
-		ftpClient.download(path, imageFile);
-		byte[] imageBytes = IOUtils.toByteArray(fileInputStream);
-		FileUtils.writeByteArrayToFile(imageFile, imageBytes);
-
-		fileInputStream.close();
-		return imageFile.getAbsolutePath();
-	}
 
 	@Override
 	public File getMediaItemStreamFile(long mediaItemId) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		Library library = mediaItem.getLibrary();
 		Location location = library.getLocation();
-		LocationType locationType = getLocationType(location);
+		LocationType locationType = LibraryHelper.getLocationType(location);
 
 		File file = null;
 		if (locationType == LocationType.FTP) {
@@ -353,17 +342,11 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		Library library = mediaItem.getLibrary();
 		Location location = library.getLocation();
-		LocationType locationType = getLocationType(location);
+		LocationType locationType = LibraryHelper.getLocationType(location);
 		return locationType;
 	}
 
-	private LocationType getLocationType(Location location) {
-		if (location instanceof FtpLocation) {
-			return LocationType.FTP;
-		}
 
-		return LocationType.LOCAL;
-	}
 
 	@Override
 	public void startMediaItemStream(long mediaItemId, File file) {
@@ -375,7 +358,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		Library library = mediaItem.getLibrary();
 		Location location = library.getLocation();
-		LocationType locationType = getLocationType(location);
+		LocationType locationType = LibraryHelper.getLocationType(location);
 		if (locationType == LocationType.FTP) {
 			FtpLocation ftpLocation = (FtpLocation) location;
 			try {
@@ -416,7 +399,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		Library library = mediaItem.getLibrary();
 		Location location = library.getLocation();
-		LocationType locationType = getLocationType(location);
+		LocationType locationType = LibraryHelper.getLocationType(location);
 		long size = 0;
 		if (locationType == LocationType.LOCAL) {
 			String path = mediaItem.getPath();

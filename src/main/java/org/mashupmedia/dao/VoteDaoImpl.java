@@ -42,7 +42,7 @@ public class VoteDaoImpl extends BaseDaoImpl implements VoteDao {
 
 	@Override
 	public List<Vote> getVotesForMediaItem(long mediaItemId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Vote where mediaItem.id = :mediaItem");
+		Query query = sessionFactory.getCurrentSession().createQuery("from Vote where mediaItem.id = :mediaItemId");
 		query.setLong("mediaItemId", mediaItemId);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")

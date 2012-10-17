@@ -28,6 +28,9 @@ public class MusicManagerImpl implements MusicManager {
 	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
+	private AlbumArtManager albumArtManager;
+	
+	@Autowired
 	private MusicDao musicDao;
 
 	@Autowired
@@ -169,6 +172,9 @@ public class MusicManagerImpl implements MusicManager {
 			String albumSearchIndexLetter = StringHelper.getSearchIndexLetter(album.getName());
 			album.setSearchIndexLetter(albumSearchIndexLetter);
 			
+//			AlbumArtImage albumArtImage = album.getAlbumArtImage();
+			
+			
 			Artist artist = song.getArtist();
 			String artistSearchIndexLetter = StringHelper.getSearchIndexLetter(artist.getName());
 			artist.setIndexLetter(artistSearchIndexLetter);
@@ -176,10 +182,16 @@ public class MusicManagerImpl implements MusicManager {
 			album = prepareAlbum(artist, album);
 			artist = album.getArtist();
 
-			AlbumArtImage albumArtImage = album.getAlbumArtImage();
-			if (albumArtImage != null) {
-				album.setAlbumArtImage(albumArtImage);
+			AlbumArtImage albumArtImage = album.getAlbumArtImage();			
+			if (albumArtImage == null) {
+				try {
+					albumArtImage = albumArtManager.getAlbumArtImage(musicLibrary, song);
+				} catch (Exception e) {
+					logger.info("Error processing album image", e);
+				}
 			}
+			
+			album.setAlbumArtImage(albumArtImage);
 			song.setAlbum(album);
 
 			song.setArtist(artist);
@@ -237,8 +249,8 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public Album getAlbum(String name) {
-		Album album = musicDao.getAlbum(name);
+	public Album getAlbum(String artistName, String albumName) {
+		Album album = musicDao.getAlbum(artistName, albumName);
 		return album;
 	}
 
