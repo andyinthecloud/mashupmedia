@@ -41,9 +41,10 @@ public class TestMusicManager extends TestBaseService {
 		songs.add(song2);
 		musicManager.saveSongs(musicLibrary, songs);
 		
+		String artistName = song2.getArtist().getName();
 		String albumName = song2.getAlbum().getName();
 		
-		Album album = musicManager.getAlbum(albumName);
+		Album album = musicManager.getAlbum(artistName, albumName);
 		Assert.assertTrue(album.getId() > 0);
 
 	}

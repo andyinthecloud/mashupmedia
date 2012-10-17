@@ -50,9 +50,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public Album getAlbum(String artistName, String albumName) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Album where name = :name");
+		Query query = sessionFactory.getCurrentSession().createQuery("from Album where artist.name = :artistName and name = :albumName");
 		query.setCacheable(true);
-		query.setString("name", name);
+		query.setString("artistName", artistName);
+		query.setString("albumName", albumName);
 		Album album = (Album) query.uniqueResult();
 		return album;
 	}
@@ -82,7 +83,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	@Override
 	public List<Song> getSongsToDelete(long libraryId, Date date) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Song where library.id = :libraryId and updatedOn < :updatedOn");
-//		Query query = sessionFactory.getCurrentSession().createQuery("from Song where library.id = :libraryId");
+		// Query query =
+		// sessionFactory.getCurrentSession().createQuery("from Song where library.id = :libraryId");
 		query.setCacheable(true);
 		query.setLong("libraryId", libraryId);
 		query.setDate("updatedOn", date);
@@ -99,13 +101,13 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		Album album = song.getAlbum();
 		album = prepareAlbum(album);
-		logger.debug("Saving album: " + album.getName());
 		saveOrUpdate(album);
 		song.setAlbum(album);
-		
+
 		saveOrUpdate(song.getYear());
 		saveOrUpdate(song.getGenre());
 		saveOrUpdate(song);
+		logger.debug("Saved song: " + song.getTitle());
 	}
 
 	private Album prepareAlbum(Album album) {
@@ -118,11 +120,11 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		query.setString("artistName", artistName);
 
 		Album savedAlbum = (Album) query.uniqueResult();
-		
+
 		if (savedAlbum != null) {
 			return savedAlbum;
 		}
-		
+
 		return album;
 	}
 
@@ -161,7 +163,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		Genre genre = (Genre) query.uniqueResult();
 		return genre;
 	}
-	
+
 	@Override
 	public List<Song> getSongs(Long albumId) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Song where album.id = :albumId order by trackNumber");

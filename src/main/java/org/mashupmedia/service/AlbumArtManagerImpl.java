@@ -20,6 +20,7 @@ import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
+import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.service.ConnectionManager.LocationType;
 import org.mashupmedia.util.FileHelper;
@@ -63,9 +64,26 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 	}
 
 	private AlbumArtImage getAlbumArtImage(Song song) {
-		Album album = musicManager.getAlbum(name);
-		// TODO Auto-generated method stub
-		return null;
+		Artist artist = song.getArtist();
+		if (artist == null) {
+			return null;
+		}
+		
+		Album album = song.getAlbum();
+		if (album == null) {
+			return null;
+		}
+		
+		String artistName = artist.getName();
+		String albumName = album.getName();
+		
+		album = musicManager.getAlbum(artistName, albumName);
+		if (album == null) {
+			return null;
+		}
+		
+		AlbumArtImage albumArtImage = album.getAlbumArtImage();
+		return albumArtImage;		
 	}
 
 	private AlbumArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
