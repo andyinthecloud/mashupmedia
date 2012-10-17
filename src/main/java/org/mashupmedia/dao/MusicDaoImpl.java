@@ -49,7 +49,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public Album getAlbum(String name) {
+	public Album getAlbum(String artistName, String albumName) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Album where name = :name");
 		query.setCacheable(true);
 		query.setString("name", name);

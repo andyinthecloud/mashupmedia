@@ -19,7 +19,7 @@ public interface MusicDao {
 
 	public Song getSong(long libraryId, String songPath, long songSizeInBytes);
 
-	public Album getAlbum(String name);
+	public Album getAlbum(String artistName, String albumName);
 
 	public void saveSong(Song song);
 

@@ -79,7 +79,12 @@ public class StringHelper {
 			return null;
 		}
 		
-		return text.substring(0, 1);
+		Character c = text.charAt(0);		
+		if (!Character.isLetter(c)) {
+			c = '#';
+		}
+		
+		return c.toString();
 	}
 
 }
