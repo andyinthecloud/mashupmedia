@@ -21,6 +21,7 @@ public class Album implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String name;
+	private String folderName;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Artist artist;
 	@ManyToOne(cascade = { CascadeType.ALL })
@@ -28,6 +29,23 @@ public class Album implements Serializable {
 	@OneToMany(mappedBy = "album")
 	@OrderBy("trackNumber")
 	private List<Song> songs;
+	private String searchIndexLetter;
+
+	public String getSearchIndexLetter() {
+		return searchIndexLetter;
+	}
+
+	public void setSearchIndexLetter(String searchIndexLetter) {
+		this.searchIndexLetter = searchIndexLetter;
+	}
+
+	public String getFolderName() {
+		return folderName;
+	}
+
+	public void setFolderName(String folderName) {
+		this.folderName = folderName;
+	}
 
 	public long getId() {
 		return id;
@@ -107,9 +125,11 @@ public class Album implements Serializable {
 		builder.append(id);
 		builder.append(", name=");
 		builder.append(name);
+		builder.append(", folderName=");
+		builder.append(folderName);
 		builder.append(", artist=");
 		builder.append(artist);
-		builder.append(", image=");
+		builder.append(", albumArtImage=");
 		builder.append(albumArtImage);
 		builder.append(", songs=");
 		builder.append(songs);

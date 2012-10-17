@@ -122,7 +122,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	}
 
-	protected void prepareSongs(List<Song> songs, File folder, MusicLibrary musicLibrary, String artistName, String albumName)
+	protected void prepareSongs(List<Song> songs, File folder, MusicLibrary musicLibrary, String folderArtistName, String folderAlbumName)
 			throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
 		if (folder.isFile()) {
 			return;
@@ -137,20 +137,20 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			String fileName = StringUtils.trimToEmpty(file.getName());
 
 			if (file.isDirectory()) {
-				artistName = StringUtils.trimToEmpty(artistName);
+				folderArtistName = StringUtils.trimToEmpty(folderArtistName);
 
-				if (StringUtils.isEmpty(artistName)) {
-					artistName = fileName;
-					prepareSongs(songs, file, musicLibrary, artistName, albumName);
-					artistName = "";
+				if (StringUtils.isEmpty(folderArtistName)) {
+					folderArtistName = fileName;
+					prepareSongs(songs, file, musicLibrary, folderArtistName, folderAlbumName);
+					folderArtistName = "";
 				} else {
-					if (StringUtils.isBlank(albumName)) {
-						albumName = fileName;
+					if (StringUtils.isBlank(folderAlbumName)) {
+						folderAlbumName = fileName;
 					} else {
-						albumName += " - " + fileName;
+						folderAlbumName += " - " + fileName;
 					}
-					prepareSongs(songs, file, musicLibrary, artistName, albumName);
-					albumName = "";
+					prepareSongs(songs, file, musicLibrary, folderArtistName, folderAlbumName);
+					folderAlbumName = "";
 				}
 
 			}
@@ -162,10 +162,10 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				long bitRate = 0;
 				String format = null;
 				int trackLength = 0;
-				String songTitle = null;
+				String tagSongTitle = null;
 				int trackNumber = 0;
-				String artistNameValue = null;
-				String albumNameValue = null;
+				String tagArtistName = null;
+				String tagAlbumName = null;
 				String genreValue = null;
 				int yearValue = 0;
 
@@ -182,10 +182,10 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				}
 
 				if (tag != null) {
-					songTitle = StringUtils.trimToEmpty(tag.getFirst(FieldKey.TITLE));
+					tagSongTitle = StringUtils.trimToEmpty(tag.getFirst(FieldKey.TITLE));
 					trackNumber = NumberUtils.toInt(tag.getFirst(FieldKey.TRACK));
-					artistNameValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM_ARTIST));
-					albumNameValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM));
+					tagArtistName = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM_ARTIST));
+					tagAlbumName = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM));
 					genreValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.GENRE));
 					yearValue = NumberUtils.toInt(tag.getFirst(FieldKey.YEAR));
 				} else {
@@ -199,14 +199,14 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				}
 				song.setTrackNumber(trackNumber);
 
-				if (StringUtils.isEmpty(songTitle)) {
-					songTitle = file.getName();
+				if (StringUtils.isEmpty(tagSongTitle)) {
+					tagSongTitle = file.getName();
 				} else {
 					logger.debug("Found song title for music file: " + file.getAbsolutePath());
 					song.setReadableTag(true);
 				}
 
-				song.setTitle(songTitle);
+				song.setTitle(tagSongTitle);
 				song.setFormat(format);
 				song.setTrackLength(trackLength);
 				song.setBitRate(bitRate);
@@ -228,24 +228,26 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				}
 
 				Album album = new Album();
-				if (StringUtils.isNotEmpty(albumNameValue)) {
-					albumName = albumNameValue;
+				if (StringUtils.isEmpty(tagAlbumName)) {
+					tagAlbumName = folderAlbumName;
 				}
-				if (StringUtils.isBlank(albumName)) {
-					logger.info("Unable to add song to the library. No album found for artist = " + artistName + ", song title = " + songTitle);
+				if (StringUtils.isBlank(folderAlbumName)) {
+					logger.info("Unable to add song to the library. No album found for artist = " + folderArtistName + ", song title = " + tagSongTitle);
 				}
-				album.setName(albumName);
+				album.setName(tagAlbumName);
+				album.setFolderName(folderAlbumName);
 				song.setAlbum(album);
 
 				Artist artist = new Artist();
-				if (StringUtils.isNotEmpty(artistNameValue)) {
-					artistName = artistNameValue;
+				if (StringUtils.isEmpty(tagArtistName)) {
+					tagArtistName = folderArtistName;
 				}
-				artist.setName(artistName);
-
+				artist.setName(tagArtistName);
+				artist.setFolderName(folderArtistName);
+				
 				if (musicFileCount == 1) {
 					try {
-						AlbumArtImage albumArtImage = processAlbumArtImage(musicLibrary, file, albumName);
+						AlbumArtImage albumArtImage = processAlbumArtImage(musicLibrary, file, folderAlbumName);
 						album.setAlbumArtImage(albumArtImage);
 					} catch (Exception e) {
 						logger.info("Unable to read the album art...", e);

@@ -72,4 +72,14 @@ public class StringHelper {
 		return text;
 	}
 
+	public static String getSearchIndexLetter(String text) {
+		text = StringUtils.trimToEmpty(text).toLowerCase();
+		text = text.replaceAll("the ", "");
+		if (StringUtils.isEmpty(text)) {
+			return null;
+		}
+		
+		return text.substring(0, 1);
+	}
+
 }
