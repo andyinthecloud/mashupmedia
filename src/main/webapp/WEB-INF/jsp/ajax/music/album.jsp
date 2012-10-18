@@ -12,7 +12,6 @@
 </script>
 
 
-<div class="sub-panel album">
 
 	<h1>
 		<a id="artistId-<c:out value="${albumPage.album.artist.id}" />" href="javascript:;"><c:out
@@ -62,5 +61,4 @@
 
 
 
-</div>
 

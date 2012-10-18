@@ -43,7 +43,8 @@
 
 </head>
 
-<body>
+<body class="<tiles:getAsString name="bodyClass"/>">
+
 	<tiles:insertAttribute name="topBar" />
 	<input type="hidden" id="contextUrl"  />
 

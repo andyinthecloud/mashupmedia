@@ -46,6 +46,8 @@ public interface MusicDao {
 	public List<Album> getAlbumsByArtist(long artistId);
 
 	public Genre getGenre(String name);
+
+	public List<String> getArtistIndexLetters();
 	
 
 }

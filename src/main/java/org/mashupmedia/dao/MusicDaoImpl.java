@@ -199,5 +199,14 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		List<Album> albums = query.list();
 		return albums;
 	}
+	
+	@Override
+	public List<String> getArtistIndexLetters() {
+		Query query = sessionFactory.getCurrentSession().createQuery("select distinct indexLetter from Artist order by indexLetter");
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<String> indexLetters = query.list();
+		return indexLetters;		
+	}
 
 }

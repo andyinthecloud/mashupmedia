@@ -3,9 +3,30 @@
 <div id="media-player-script"></div>
 
 
+
+
 <script type="text/javascript">
 	$(document).ready(function() {
 
+		mashupMedia.loadPlaylist();
+
+		$("#menu-random-albums").click(function() {
+			$.address.value(addressRandomAlbums);
+//			loadRandomAlbums(false);
+		});
+
+		$("#menu-albums").click(function() {
+			$.address.value(addressListAlbums);
+//			loadAlbums();
+		});
+
+		$("#menu-artists").click(function() {
+			$.address.value(addressListArtists);
+//			loadArtists();
+		});
+
+		
+		
 		$("#current-song .toggle-playlist").click(function() {
 			var songPlaylist = $("#top-bar-music-player .songs");
 			
@@ -51,11 +72,17 @@
 <div id="top-bar-music-player" class="top-bar">
 
 	<ul class="main-menu group">
-		<li><a href="#">User</a></li>
-		<li><a href="#"><spring:message code="top-bar.now-playing" /></a></li>
-		<li><a href="#">Sunny</a></li>
-		<li><a href="#"><spring:message code="top-bar.log-out" /></a></li>
+		<li><a href="javascript:;" id="menu-random-albums"><spring:message code="top-bar.random-albums" /></a></li>
+		<li><a href="javascript:;" id="menu-artists"><spring:message code="top-bar.artists" /></a></li>
+		<li><a href="javascript:;" id="menu-albums"><spring:message code="top-bar.albums" /></a></li>
+		<li><a href="javascript:;" id="menu-playlists"><spring:message code="top-bar.playlists" /></a></li>		
+		<li><a href="javascript:;">Sunny</a></li>
+		<li><a href="javascript:;"><spring:message code="top-bar.my-account" /></a></li>
+		<li><a href="javascript:;"><spring:message code="top-bar.log-out" /></a></li>
 	</ul>
+	
+	<div class="top-home-link"><a href="<c:url value="/" />"><spring:message code="top-bar.home" /></a></div>
+	
 
 	<div class="clear"></div>
 

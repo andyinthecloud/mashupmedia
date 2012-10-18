@@ -7,7 +7,6 @@
 
 	<ul class="main-menu">
 		<li><a href="#">User</a></li>
-		<li><a href="#"><spring:message code="top-bar.now-playing" /></a></li>
 		<li><a href="#">Sunny</a></li>
 		<li><a href="#"><spring:message code="top-bar.log-out" /></a></li>
 	</ul>

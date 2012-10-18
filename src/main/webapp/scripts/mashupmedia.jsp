@@ -1,5 +1,13 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+var isLoadingContent = false;
+
+var addressRandomAlbums = "address-random-albums";
+var addressListArtists = "address-list-artists";
+var addressListAlbums = "address-list-albums";
+var addressAlbum = "address-load-album";
+
+
 $(document).ready(function() {
 	var contextUrl = "<c:url value="/" />";
 	mashupMedia.setContextUrl(contextUrl);
@@ -14,21 +22,24 @@ $(document).ready(function() {
 		var address = event.value;
 		address = address.replace("/", "");
 
-		if (textStartsWith(address, "address-load-album-")) {
+		if (textStartsWith(address, addressAlbum)) {
 			var albumId = getNumberFromText(address);
 			mashupMedia.showAlbum(albumId);
-		} else if (textStartsWith(address, "category-menu-home")) {
-			loadRandomAlbums();
-		} else if (textStartsWith(address, "category-menu-albums")) {
-			loadAlbums();
-		} else if (textStartsWith(address, "category-menu-artists")) {
+		} else if (textStartsWith(address, addressListArtists)) {
 			loadArtists();
-		} else {
-			loadRandomAlbums();
+		} else if (textStartsWith(address, addressListAlbums)) {
+			loadAlbums();			
+		} else if (textStartsWith(address, addressRandomAlbums)) {
+			loadRandomAlbums(false);
+		}else {
+			loadRandomAlbums(false);
 		}
 	});
 
 });
+
+
+
 
 var mashupMedia = new function() {
 	this.contextUrl = $("#contextUrl").val();
@@ -203,20 +214,30 @@ function textStartsWith(text, startsWithValue) {
 	return false;
 }
 
-
-function loadRandomAlbums() {
+function loadRandomAlbums(isAppend) {
+	if (isLoadingContent) {
+		return;
+	}
+	
+	isLoadingContent = true;
 	$.get(mashupMedia.contextUrl + "app/ajax/music/random-albums",
 		function(data) {
-			$("div.panel div.content").html(data);
+			if (isAppend) {
+				$("div.panel div.content").append(data);	
+			} else {
+				$("div.panel div.content").html(data);
+			}
+			isLoadingContent = false;			
 	});
 }
 
-/*
+
 function loadAlbums() {
 	$.get("<c:url value="/app/ajax/music/albums" />", function(data) {
 		$("div.panel div.content").html(data);
 	});
 }
+
 
 function loadArtists() {
 	$.get("<c:url value="/app/ajax/music/artists" />", function(data) {
@@ -224,6 +245,7 @@ function loadArtists() {
 	});
 }
 
+/*
 function playAlbum(albumId) {
 	$.post("<c:url value="/app/ajax/playlist/play-album" />", {
 		albumId : albumId

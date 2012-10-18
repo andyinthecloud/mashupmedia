@@ -4,10 +4,9 @@
        "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
 <tiles-definitions>
 
-
-
 	<definition name="home" template="/WEB-INF/jsp/layouts/default.jsp">
 		<put-attribute name="title" value="Tweeter | Home" />
+		<put-attribute name="bodyClass" value="default" />		
 		<put-attribute name="topBar" value="/WEB-INF/jsp/tiles/top-bar.jsp" />
 		<put-attribute name="backgroundImageType" value="default" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/home.jsp" />
@@ -45,6 +44,7 @@
 
 	<definition name="music" extends="home">
 		<put-attribute name="title" value="Tweeter | Music" />
+		<put-attribute name="bodyClass" value="music" />		
 		<put-attribute name="topBar" value="/WEB-INF/jsp/tiles/music/music-player.jsp" />
 		<put-attribute name="backgroundImageType" value="music" />
 		<put-attribute name="body">

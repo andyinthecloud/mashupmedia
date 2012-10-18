@@ -1,7 +1,6 @@
 package org.mashupmedia.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -86,26 +85,8 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public List<String> getArtistIndexLetters() {
-		List<Artist> artists = getArtists();
-		List<String> indexLetters = new ArrayList<String>();
-		String indexLetter = null;
-		for (Artist artist : artists) {
-			String name = StringUtils.trimToEmpty(artist.getName());
-			if (StringUtils.isEmpty(name)) {
-				continue;
-			}
-
-			String s = name.substring(0, 1).toUpperCase();
-			indexLetter = StringUtils.trimToEmpty(indexLetter);
-			if (!indexLetter.equals(s)) {
-				indexLetters.add(s);
-				indexLetter = s;
-			}
-
-		}
-
-		Collections.sort(indexLetters);
+	public List<String> getArtistIndexLetters() {		
+		List<String> indexLetters =  musicDao.getArtistIndexLetters();
 		return indexLetters;
 	}
 
