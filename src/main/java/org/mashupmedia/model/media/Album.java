@@ -29,14 +29,23 @@ public class Album implements Serializable {
 	@OneToMany(mappedBy = "album")
 	@OrderBy("trackNumber")
 	private List<Song> songs;
-	private String searchIndexLetter;
+	private String indexWord;
+	private String indexLetter;
 
-	public String getSearchIndexLetter() {
-		return searchIndexLetter;
+	public String getIndexWord() {
+		return indexWord;
 	}
 
-	public void setSearchIndexLetter(String searchIndexLetter) {
-		this.searchIndexLetter = searchIndexLetter;
+	public void setIndexWord(String indexName) {
+		this.indexWord = indexName;
+	}
+
+	public String getIndexLetter() {
+		return indexLetter;
+	}
+
+	public void setIndexLetter(String indexLetter) {
+		this.indexLetter = indexLetter;
 	}
 
 	public String getFolderName() {
@@ -133,6 +142,10 @@ public class Album implements Serializable {
 		builder.append(albumArtImage);
 		builder.append(", songs=");
 		builder.append(songs);
+		builder.append(", indexName=");
+		builder.append(indexWord);
+		builder.append(", indexLetter=");
+		builder.append(indexLetter);
 		builder.append("]");
 		return builder.toString();
 	}

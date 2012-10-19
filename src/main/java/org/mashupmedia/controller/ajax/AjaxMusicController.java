@@ -17,6 +17,7 @@ import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.FormatContentType;
 import org.mashupmedia.web.page.AlbumPage;
 import org.mashupmedia.web.page.AlbumsPage;
+import org.mashupmedia.web.page.ArtistPage;
 import org.mashupmedia.web.page.ArtistsPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -58,6 +59,16 @@ public class AjaxMusicController extends BaseAjaxController{
 		albumPage.setSongs(songs);
 		model.addAttribute(albumPage);
 		return "ajax/music/album";
+	}
+	
+	
+	@RequestMapping(value = "/artist/{artistId}", method = RequestMethod.GET)
+	public String getArtist(@PathVariable("artistId") Long artistId, Model model) throws Exception {
+		Artist artist = musicManager.getArtist(artistId);
+		ArtistPage artistPage = new ArtistPage();
+		artistPage.setArtist(artist);
+		model.addAttribute(artistPage);
+		return "ajax/music/artist";
 	}
 
 	@RequestMapping(value = "/albums", method = RequestMethod.GET)

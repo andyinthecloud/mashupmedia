@@ -12,28 +12,17 @@
 			var albumId = $(this).attr("id");
 			albumId = albumId.replace("albumId-", "");
 			var addressValue = "address-load-album-" + albumId;
-			$.address.value(addressValue);
+			loadLocation(addressValue);
 		});
 		
-		$(window).scroll(function () {
-			if ($("div.random-album-art").length == 0) {
-				return;
-			}
-			
-		    if ($(window).scrollTop() >= $(document).height() - $(window).height()) {
-		    	loadRandomAlbums(true);
-		    }
-		});
 
 	});
 </script>
 
-<h1>
-	<spring:message code="music.random-albums.title" />
-</h1>
+<h1>${artistPage.artist.name}</h1>
 
-<div class="random-album-art albums">
-	<c:forEach items="${albums}" var="album">
+<div class="albums">
+	<c:forEach items="${artistPage.artist.albums}" var="album">
 		<div class="album">
 			<a id="albumId-<c:out value="${album.id}" />" href="javascript:;"> <img src="<c:url value="/app/music/album-art/${album.id}" />"
 				title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />

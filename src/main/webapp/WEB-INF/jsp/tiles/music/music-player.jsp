@@ -9,7 +9,8 @@
 	$(document).ready(function() {
 
 		mashupMedia.loadPlaylist();
-
+		$.address.value(addressRandomAlbums);
+		
 		$("#menu-random-albums").click(function() {
 			$.address.value(addressRandomAlbums);
 //			loadRandomAlbums(false);

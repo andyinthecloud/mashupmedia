@@ -16,7 +16,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<Album> getAlbums() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Album order by name");
+		Query query = sessionFactory.getCurrentSession().createQuery("from Album order by indexWord");
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Album> albums = (List<Album>) query.list();
@@ -25,7 +25,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<Artist> getArtists() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Artist order by name");
+		Query query = sessionFactory.getCurrentSession().createQuery("from Artist order by indexWord");
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Artist> artists = (List<Artist>) query.list();
@@ -209,4 +209,12 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		return indexLetters;		
 	}
 
+	@Override
+	public Artist getArtist(Long artistId) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from Artist where id = :artistId");
+		query.setCacheable(true);
+		query.setLong("artistId", artistId);
+		Artist artist = (Artist) query.uniqueResult();
+		return artist;
+	}
 }

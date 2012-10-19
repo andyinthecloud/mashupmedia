@@ -28,7 +28,7 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Autowired
 	private AlbumArtManager albumArtManager;
-	
+
 	@Autowired
 	private MusicDao musicDao;
 
@@ -85,8 +85,8 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public List<String> getArtistIndexLetters() {		
-		List<String> indexLetters =  musicDao.getArtistIndexLetters();
+	public List<String> getArtistIndexLetters() {
+		List<String> indexLetters = musicDao.getArtistIndexLetters();
 		return indexLetters;
 	}
 
@@ -150,17 +150,23 @@ public class MusicManagerImpl implements MusicManager {
 			}
 
 			Album album = song.getAlbum();
-			String albumSearchIndexLetter = StringHelper.getSearchIndexLetter(album.getName());
-			album.setSearchIndexLetter(albumSearchIndexLetter);
-			
+			String albumName = album.getName();
+			String albumIndexLetter = StringHelper.getSearchIndexLetter(albumName);
+			album.setIndexLetter(albumIndexLetter);
+			String albumIndexWord = StringHelper.getSearchIndexWord(albumName);
+			album.setIndexWord(albumIndexWord);
+
 			Artist artist = song.getArtist();
-			String artistSearchIndexLetter = StringHelper.getSearchIndexLetter(artist.getName());
+			String artistName = artist.getName();
+			String artistSearchIndexLetter = StringHelper.getSearchIndexLetter(artistName);
 			artist.setIndexLetter(artistSearchIndexLetter);
-			
+			String artistSearchIndexWord = StringHelper.getSearchIndexWord(artistName);
+			artist.setIndexWord(artistSearchIndexWord);
+
 			album = prepareAlbum(artist, album);
 			artist = album.getArtist();
 
-			AlbumArtImage albumArtImage = album.getAlbumArtImage();			
+			AlbumArtImage albumArtImage = album.getAlbumArtImage();
 			if (albumArtImage == null) {
 				try {
 					albumArtImage = albumArtManager.getAlbumArtImage(musicLibrary, song);
@@ -168,7 +174,7 @@ public class MusicManagerImpl implements MusicManager {
 					logger.info("Error processing album image", e);
 				}
 			}
-			
+
 			album.setAlbumArtImage(albumArtImage);
 			song.setAlbum(album);
 
@@ -255,7 +261,13 @@ public class MusicManagerImpl implements MusicManager {
 				}
 			}
 		}
+	}
 
+	@Override
+	public Artist getArtist(Long artistId) {
+		Artist artist = musicDao.getArtist(artistId);
+		Hibernate.initialize(artist.getAlbums());
+		return artist;
 	}
 
 }

@@ -12,6 +12,8 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 public class StringHelper {
 	private static Logger logger = Logger.getLogger(StringHelper.class);
 
+	public static String[] STOP_WORDS = new String[]{"the", "a"};
+	
 	public enum Encoding {
 		UTF8("UTF-8");
 
@@ -72,9 +74,8 @@ public class StringHelper {
 		return text;
 	}
 
-	public static String getSearchIndexLetter(String text) {
-		text = StringUtils.trimToEmpty(text).toLowerCase();
-		text = text.replaceAll("the ", "");
+	public static String getSearchIndexLetter(String text) {		
+		text = removeInitialStopWords(text);
 		if (StringUtils.isEmpty(text)) {
 			return null;
 		}
@@ -85,6 +86,42 @@ public class StringHelper {
 		}
 		
 		return c.toString();
+	}
+	
+	
+	private static String removeInitialStopWords(String text) {
+		text = StringUtils.trimToEmpty(text).toLowerCase();
+		
+		StringBuilder regexBuilder = new StringBuilder(); 
+		for (String stopWord : STOP_WORDS) {
+			
+			if (regexBuilder.length() > 0) {
+				regexBuilder.append("|");
+			}
+			regexBuilder.append("^" + stopWord);			
+		}
+		
+		String modifiedText = text.replaceFirst(regexBuilder.toString(), "");
+		modifiedText = StringUtils.trimToEmpty(modifiedText);
+		if (StringUtils.isEmpty(modifiedText)) {
+			return text;
+		}
+		
+		return modifiedText;
+	}
+
+	public static String getSearchIndexWord(String text) {
+		text = removeInitialStopWords(text);
+		if (StringUtils.isEmpty(text)) {
+			return null;
+		}		
+		
+		String[] words = text.split("\\s");
+		if (words == null) {
+			return null;
+		}
+		
+		return words[0];		
 	}
 
 }

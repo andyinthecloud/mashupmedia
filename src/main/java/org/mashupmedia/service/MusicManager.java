@@ -13,15 +13,11 @@ public interface MusicManager {
 
 	public List<Artist> getArtists();
 
-//	public void saveArtists(Library library, List<Artist> artists);
-
 	public List<String> getArtistIndexLetters();
 
 	public Album getAlbum(long albumId);
 
 	public List<Album> getRandomAlbums(int numberOfAlbums);
-
-//	public void saveSongs(List<Song> songs);
 
 	public Album getAlbum(String artistName, String albumName);
 
@@ -32,7 +28,7 @@ public interface MusicManager {
 	public void deleteEmpty();
 
 	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs);
-	
-	
+
+	public Artist getArtist(Long artistId);
 
 }

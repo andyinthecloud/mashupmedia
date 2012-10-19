@@ -6,6 +6,7 @@ var addressRandomAlbums = "address-random-albums";
 var addressListArtists = "address-list-artists";
 var addressListAlbums = "address-list-albums";
 var addressAlbum = "address-load-album";
+var addressArtist = "address-artist-";
 
 
 $(document).ready(function() {
@@ -21,7 +22,14 @@ $(document).ready(function() {
 	$.address.change(function(event) {
 		var address = event.value;
 		address = address.replace("/", "");
-
+		
+		alert(address);
+		if (address.indexOf("null") > -1) {
+			$.address.path("banana");
+		}
+		
+//		alert(address);
+		
 		if (textStartsWith(address, addressAlbum)) {
 			var albumId = getNumberFromText(address);
 			mashupMedia.showAlbum(albumId);
@@ -31,9 +39,14 @@ $(document).ready(function() {
 			loadAlbums();			
 		} else if (textStartsWith(address, addressRandomAlbums)) {
 			loadRandomAlbums(false);
-		}else {
-			loadRandomAlbums(false);
+		} else if (textStartsWith(address, addressArtist)) {
+			var artistId = parseId(address, addressArtist);
+			if (isNaN(artistId)) {
+				return;
+			}
+			loadArtist(artistId)
 		}
+		
 	});
 
 });
@@ -155,6 +168,13 @@ var mashupMedia = new function() {
 	
 }
 
+function loadLink(path) {
+	var windowLocation = window.location;
+	windowLocation = windowLocation.replace()
+	
+	window.location = window.location + "#" + path;
+}
+
 function playRelativeSong(offset) {
 	var playingRow = getPlayingRow();
 	if ($(playingRow).length == 0) {
@@ -241,6 +261,13 @@ function loadAlbums() {
 
 function loadArtists() {
 	$.get("<c:url value="/app/ajax/music/artists" />", function(data) {
+		$("div.panel div.content").html(data);
+	});
+}
+
+
+function loadArtist(artistId) {
+	$.get("<c:url value="/app/ajax/music/artist/" />" + artistId, function(data) {
 		$("div.panel div.content").html(data);
 	});
 }
