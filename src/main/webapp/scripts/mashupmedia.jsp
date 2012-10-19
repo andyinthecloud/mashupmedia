@@ -23,12 +23,6 @@ $(document).ready(function() {
 		var address = event.value;
 		address = address.replace("/", "");
 		
-		alert(address);
-		if (address.indexOf("null") > -1) {
-			$.address.path("banana");
-		}
-		
-//		alert(address);
 		
 		if (textStartsWith(address, addressAlbum)) {
 			var albumId = getNumberFromText(address);

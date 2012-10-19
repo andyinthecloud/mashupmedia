@@ -8,13 +8,14 @@
 			$(this).removeClass("highlight");
 		});
 
+		/*
 		$("div.albums div.album a").click(function() {
 			var albumId = $(this).attr("id");
 			albumId = albumId.replace("albumId-", "");
 			var addressValue = "address-load-album-" + albumId;
 			loadLocation(addressValue);
 		});
-		
+		*/
 
 	});
 </script>
@@ -24,7 +25,7 @@
 <div class="albums">
 	<c:forEach items="${artistPage.artist.albums}" var="album">
 		<div class="album">
-			<a id="albumId-<c:out value="${album.id}" />" href="javascript:;"> <img src="<c:url value="/app/music/album-art/${album.id}" />"
+			<a id="albumId-<c:out value="${album.id}" />" href="javascript:;" rel="address:/address-load-album-${album.id}" ><img src="<c:url value="/app/music/album-art/${album.id}" />"
 				title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 			</a>
 		</div>

@@ -14,7 +14,7 @@
 
 
 	<h1>
-		<a id="artistId-<c:out value="${albumPage.album.artist.id}" />" href="javascript:;"><c:out
+		<a href="javascript:;" rel="address:/address-artist-${albumPage.album.artist.id}"><c:out
 				value="${albumPage.album.artist.name}" /></a> -
 		<c:out value="${albumPage.album.name}" />
 	</h1>

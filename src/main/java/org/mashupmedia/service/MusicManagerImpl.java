@@ -54,30 +54,39 @@ public class MusicManagerImpl implements MusicManager {
 		musicDao.saveAlbum(album);
 	}
 
-	protected Album prepareAlbum(Artist artist, Album album) {
-		album.setArtist(artist);
-
+	
+	protected Artist prepareArtist(Artist artist) {
 		Artist savedArtist = musicDao.getArtist(artist.getName());
-		if (savedArtist == null) {
-			return album;
+		if (savedArtist != null) {
+			return savedArtist;
 		}
 
-		List<Album> albums = artist.getAlbums();
-		if (albums == null) {
-			album.setArtist(savedArtist);
-			return album;
-		}
-
-		String albumName = StringUtils.trimToEmpty(album.getName());
-
-		for (Album savedAlbum : albums) {
-			if (albumName.equalsIgnoreCase(savedAlbum.getName())) {
-				return savedAlbum;
-			}
-		}
-
-		return album;
+		String artistName = artist.getName();
+		String artistSearchIndexLetter = StringHelper.getSearchIndexLetter(artistName);
+		artist.setIndexLetter(artistSearchIndexLetter);
+		String artistSearchIndexWord = StringHelper.getSearchIndexWord(artistName);
+		artist.setIndexWord(artistSearchIndexWord);
+		return artist;		
 	}
+	
+	
+	protected Album prepareAlbum(Album album) {
+		Artist artist = album.getArtist();
+		String albumName = album.getName();
+		Album savedAlbum = musicDao.getAlbum(artist.getName(), albumName);
+		if (savedAlbum != null) {
+			return savedAlbum;
+		}
+
+		String albumIndexLetter = StringHelper.getSearchIndexLetter(albumName);
+		album.setIndexLetter(albumIndexLetter);
+		String albumIndexWord = StringHelper.getSearchIndexWord(albumName);
+		album.setIndexWord(albumIndexWord);
+		
+		return album;
+		
+	}
+		
 
 	protected void saveArtist(Artist artist) {
 		musicDao.saveArtist(artist);
@@ -149,22 +158,16 @@ public class MusicManagerImpl implements MusicManager {
 				continue;
 			}
 
-			Album album = song.getAlbum();
-			String albumName = album.getName();
-			String albumIndexLetter = StringHelper.getSearchIndexLetter(albumName);
-			album.setIndexLetter(albumIndexLetter);
-			String albumIndexWord = StringHelper.getSearchIndexWord(albumName);
-			album.setIndexWord(albumIndexWord);
 
+
+//			Artist artist = album.getArtist();
 			Artist artist = song.getArtist();
-			String artistName = artist.getName();
-			String artistSearchIndexLetter = StringHelper.getSearchIndexLetter(artistName);
-			artist.setIndexLetter(artistSearchIndexLetter);
-			String artistSearchIndexWord = StringHelper.getSearchIndexWord(artistName);
-			artist.setIndexWord(artistSearchIndexWord);
-
-			album = prepareAlbum(artist, album);
-			artist = album.getArtist();
+			artist = prepareArtist(artist);
+			
+			
+			Album album = song.getAlbum();
+			album.setArtist(artist);
+			album = prepareAlbum(album);
 
 			AlbumArtImage albumArtImage = album.getAlbumArtImage();
 			if (albumArtImage == null) {

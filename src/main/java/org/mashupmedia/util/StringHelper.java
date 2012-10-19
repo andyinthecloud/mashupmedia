@@ -98,7 +98,7 @@ public class StringHelper {
 			if (regexBuilder.length() > 0) {
 				regexBuilder.append("|");
 			}
-			regexBuilder.append("^" + stopWord);			
+			regexBuilder.append("^" + stopWord + "\\s");			
 		}
 		
 		String modifiedText = text.replaceFirst(regexBuilder.toString(), "");

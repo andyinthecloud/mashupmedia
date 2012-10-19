@@ -2,10 +2,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("ul.main-menu li a").click(function() {
-			var artistId = parseId($(this).attr("id"), "artist-id");
-			loadLink(addressArtist + artistId);
-		});
+
 	});
 </script>
 
@@ -34,7 +31,7 @@
 		</c:choose>
 
 
-		<li id="${rowIndex}"><a href="javascript:;" id="artist-id-${artist.id}"><c:out value="${artist.name}" /></a></li>
+		<li id="${rowIndex}"><a href="<c:url value="/app/music#address-artist-${artist.id}"/>" rel="address:/address-artist-${artist.id}" id="artist-id-${artist.id}"><c:out value="${artist.name}" /></a></li>
 	</c:forEach>
 </ul>
 

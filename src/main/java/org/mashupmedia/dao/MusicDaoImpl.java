@@ -34,9 +34,9 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public Artist getArtist(String name) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Artist where name = :name");
+		Query query = sessionFactory.getCurrentSession().createQuery("from Artist where lower(name) = :name");
 		query.setCacheable(true);
-		query.setString("name", name);
+		query.setString("name", name.toLowerCase());
 		Artist artist = (Artist) query.uniqueResult();
 		return artist;
 	}
@@ -50,10 +50,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public Album getAlbum(String artistName, String albumName) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Album where artist.name = :artistName and name = :albumName");
+		Query query = sessionFactory.getCurrentSession().createQuery("from Album where lower(artist.name) = :artistName and lower(name) = :albumName");
 		query.setCacheable(true);
-		query.setString("artistName", artistName);
-		query.setString("albumName", albumName);
+		query.setString("artistName", artistName.toLowerCase());
+		query.setString("albumName", albumName.toLowerCase());
 		Album album = (Album) query.uniqueResult();
 		return album;
 	}
@@ -100,7 +100,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		saveOrUpdate(artist);
 
 		Album album = song.getAlbum();
-		album = prepareAlbum(album);
+//		album = prepareAlbum(album);
 		saveOrUpdate(album);
 		song.setAlbum(album);
 
@@ -110,23 +110,23 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		logger.debug("Saved song: " + song.getTitle());
 	}
 
-	private Album prepareAlbum(Album album) {
-		Artist artist = album.getArtist();
-		String artistName = artist.getName();
-		String albumName = album.getName();
-		Query query = sessionFactory.getCurrentSession().createQuery("from Album where name = :albumName and artist.name = :artistName");
-		query.setCacheable(true);
-		query.setString("albumName", albumName);
-		query.setString("artistName", artistName);
-
-		Album savedAlbum = (Album) query.uniqueResult();
-
-		if (savedAlbum != null) {
-			return savedAlbum;
-		}
-
-		return album;
-	}
+//	private Album prepareAlbum(Album album) {
+//		Artist artist = album.getArtist();
+//		String artistName = artist.getName();
+//		String albumName = album.getName();
+//		Query query = sessionFactory.getCurrentSession().createQuery("from Album where name = :albumName and artist.name = :artistName");
+//		query.setCacheable(true);
+//		query.setString("albumName", albumName);
+//		query.setString("artistName", artistName);
+//
+//		Album savedAlbum = (Album) query.uniqueResult();
+//
+//		if (savedAlbum != null) {
+//			return savedAlbum;
+//		}
+//
+//		return album;
+//	}
 
 	@Override
 	public void saveAlbum(Album album) {
