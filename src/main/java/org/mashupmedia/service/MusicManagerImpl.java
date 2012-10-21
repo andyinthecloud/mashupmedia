@@ -73,6 +73,10 @@ public class MusicManagerImpl implements MusicManager {
 	protected Album prepareAlbum(Album album) {
 		Artist artist = album.getArtist();
 		String albumName = album.getName();
+		if (StringUtils.isBlank(albumName)) {
+			return null;
+		}
+		
 		Album savedAlbum = musicDao.getAlbum(artist.getName(), albumName);
 		if (savedAlbum != null) {
 			return savedAlbum;
@@ -166,6 +170,11 @@ public class MusicManagerImpl implements MusicManager {
 			
 			
 			Album album = song.getAlbum();
+			if (StringUtils.isBlank(album.getName())) {
+				logger.error("Unable to save song: " + song.toString());
+				continue;
+			}
+			
 			album.setArtist(artist);
 			album = prepareAlbum(album);
 
@@ -213,13 +222,16 @@ public class MusicManagerImpl implements MusicManager {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
 			return null;
 		}
-
-		Genre savedGenre = musicDao.getGenre(genre.getName());
-		if (savedGenre == null) {
-			return genre;
+		
+		String genreName = StringHelper.normaliseTextForDatabase(genre.getName());
+		Genre savedGenre = musicDao.getGenre(genreName);
+		if (savedGenre != null) {
+			return savedGenre;
 		}
+		
 
-		return savedGenre;
+		genre.setName(genreName);
+		return genre;
 	}
 
 	private Year prepareYear(Year year) {

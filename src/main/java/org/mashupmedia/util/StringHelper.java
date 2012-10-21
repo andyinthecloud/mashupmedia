@@ -123,5 +123,10 @@ public class StringHelper {
 		
 		return words[0];		
 	}
+	
+	public static String normaliseTextForDatabase(String text) {
+		text = StringUtils.trimToEmpty(text).toLowerCase();
+		return text;
+	}
 
 }

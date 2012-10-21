@@ -3,13 +3,11 @@ package org.mashupmedia.service;
 import it.sauronsoftware.ftp4j.FTPClient;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -22,23 +20,19 @@ import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
-import org.jaudiotagger.tag.datatype.Artwork;
 import org.mashupmedia.comparator.FileComparator;
-import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.exception.MashupMediaException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
-import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -177,7 +171,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 					trackLength = audioHeader.getTrackLength();
 					tag = audioFile.getTag();
 
-				} catch (InvalidAudioFrameException e) {
+				} catch (Exception e) {
 					logger.info(e);
 				}
 

@@ -35,6 +35,12 @@
 		<appender-ref ref="FileAppender" />
 	</logger>
 
+	<logger name="org.jaudiotagger" additivity="false">
+		<level value="error" />
+		<appender-ref ref="FileAppender" />
+	</logger>
+	
+	
 	<logger name="org.hibernate.SQL" additivity="false">
 		<level value="${log4j.focus.level}" />
 		<appender-ref ref="HibernateFileAppender" />

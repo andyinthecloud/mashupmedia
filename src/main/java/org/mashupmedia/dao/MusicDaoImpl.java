@@ -75,9 +75,18 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		query.setLong("libraryId", libraryId);
 		query.setString("path", songPath);
 		query.setLong("sizeInBytes", songSizeInBytes);
-
-		Song song = (Song) query.uniqueResult();
-		return song;
+		
+		@SuppressWarnings("unchecked")
+		List<Song> songs = query.list();
+		if (songs.size() > 1) {
+			logger.error("Returning duplicate songs, using first in list...");
+		}
+		
+		if (songs.isEmpty()) {
+			return null;
+		}
+		
+		return songs.get(0);
 	}
 
 	@Override

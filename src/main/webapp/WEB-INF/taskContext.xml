@@ -17,7 +17,7 @@
 	<task:scheduler id="taskScheduler" pool-size="3" />
 	<task:scheduled-tasks scheduler="taskScheduler">
 		<task:scheduled ref="mashupMediaTaskScheduler" method="updateLibraries"
-			cron="0 * */15 * * *" />
+			cron="0 * */30 * * *" />
 	</task:scheduled-tasks>
 
 </beans>
