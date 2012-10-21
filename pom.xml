@@ -371,7 +371,24 @@
 				<log.path>${env.CATALINA_HOME}/logs</log.path>
 			</properties>
 		</profile>
-	</profiles>
+		<profile>
+			<id>mashupmedia-production</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>mashupmedia-production</value>
+				</property>
+			</activation>
+			<properties>
+				<exploded.war.path>${project.build.directory}/webapp</exploded.war.path>
+				<application.folder>/tmp/mashupmedia</application.folder>
+				<message.cache.seconds>1</message.cache.seconds>
+				<log4j.mashupmedia.level>error</log4j.mashupmedia.level>
+				<log4j.focus.level>error</log4j.focus.level>
+				<log4j.root.level>error</log4j.root.level>
+				<log.path>./logs</log.path>
+			</properties>
+		</profile>	</profiles>
 
 
 </project>
