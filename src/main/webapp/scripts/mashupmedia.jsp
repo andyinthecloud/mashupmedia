@@ -5,6 +5,7 @@ var isLoadingContent = false;
 var addressRandomAlbums = "address-random-albums";
 var addressListArtists = "address-list-artists";
 var addressListAlbums = "address-list-albums";
+var addressFilterAlbumsByLetter = "address-filter-albums-letter-";
 var addressAlbum = "address-load-album";
 var addressArtist = "address-artist-";
 
@@ -30,7 +31,14 @@ $(document).ready(function() {
 		} else if (textStartsWith(address, addressListArtists)) {
 			loadArtists();
 		} else if (textStartsWith(address, addressListAlbums)) {
-			loadAlbums();			
+			mashupMedia.filterAlbumsSearchLetter = "";
+			mashupMedia.filterAlbumsPageNumber = 0;
+			loadAlbums(false);			
+		} else if (textStartsWith(address, addressFilterAlbumsByLetter)) {
+			var searchLetter = address.replace(addressFilterAlbumsByLetter, "");
+			mashupMedia.filterAlbumsSearchLetter = searchLetter;
+			mashupMedia.filterAlbumsPageNumber = 0;
+			loadAlbums(false);			
 		} else if (textStartsWith(address, addressRandomAlbums)) {
 			loadRandomAlbums(false);
 		} else if (textStartsWith(address, addressArtist)) {
@@ -56,6 +64,8 @@ var mashupMedia = new function() {
 	this.playingClass = "playing";
 	this.jPlayerId = "#jquery_jplayer_1";
 	this.jPlayerContainerId = "#jp_container_1";
+	this.filterAlbumsPageNumber = 0;
+	this.filterAlbumsSearchLetter = "";
 
 	this.loadPlaylist = function() {
 		$.post(mashupMedia.contextUrl
@@ -241,14 +251,27 @@ function loadRandomAlbums(isAppend) {
 			} else {
 				$("div.panel div.content").html(data);
 			}
-			isLoadingContent = false;			
+			pauseScrollLoadMore();						
 	});
 }
 
 
-function loadAlbums() {
-	$.get("<c:url value="/app/ajax/music/albums" />", function(data) {
-		$("div.panel div.content").html(data);
+function loadAlbums(isAppend) {
+	if (isLoadingContent) {
+		return;
+	}
+	isLoadingContent = true;
+	
+	$.get("<c:url value="/app/ajax/music/albums" />", {
+		"pageNumber" : mashupMedia.filterAlbumsPageNumber,
+		"searchLetter": mashupMedia.filterAlbumsSearchLetter
+	}, function(data) {
+		if (isAppend) {
+			$("div.panel div.content").append(data);	
+		} else {
+			$("div.panel div.content").html(data);
+		}				
+		pauseScrollLoadMore();
 	});
 }
 
@@ -266,13 +289,16 @@ function loadArtist(artistId) {
 	});
 }
 
-/*
-function playAlbum(albumId) {
-	$.post("<c:url value="/app/ajax/playlist/play-album" />", {
-		albumId : albumId
-	}, function(data) {
-		$("#top-bar-music-player .songs").html(data);
-		loadCurrentSong();
-	});
+function prepareShowPageTitle() {
+	var selector = "h1.content-title";
+	if ($(selector).length == 1) {
+		$(selector).show();
+	}
 }
-*/
+
+function pauseScrollLoadMore() {
+	setTimeout(function() {
+		isLoadingContent = false;
+	}, 1000);
+}
+

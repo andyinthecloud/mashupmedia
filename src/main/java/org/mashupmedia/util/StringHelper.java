@@ -12,8 +12,8 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 public class StringHelper {
 	private static Logger logger = Logger.getLogger(StringHelper.class);
 
-	public static String[] STOP_WORDS = new String[]{"the", "a"};
-	
+	public static String[] STOP_WORDS = new String[] { "the", "a" };
+
 	public enum Encoding {
 		UTF8("UTF-8");
 
@@ -28,39 +28,38 @@ public class StringHelper {
 		}
 	}
 
-	
 	public static String find(String text, String expression) {
 		String match = "";
 		if (StringUtils.isEmpty(text)) {
 			return match;
 		}
-		
+
 		Pattern pattern = Pattern.compile(expression);
 		Matcher matcher = pattern.matcher(text);
 		if (matcher.find()) {
 			match = matcher.group();
 		}
-		
-		return match;		
+
+		return match;
 	}
 
 	public static String getAlbumName(List<String> albumNameParts) {
 		if (albumNameParts == null || albumNameParts.isEmpty()) {
-			return MashUpMediaConstants.UNKNOWN_NAME;		
+			return MashUpMediaConstants.UNKNOWN_NAME;
 		}
-		
+
 		StringBuilder builder = new StringBuilder();
 		for (String albumNamePart : albumNameParts) {
 			if (builder.length() > 0) {
 				builder.append(" - ");
 			}
-			
+
 			builder.append(albumNamePart);
 		}
-		
+
 		return builder.toString();
 	}
-	
+
 	public static String convertFromBytes(byte[] bytes) {
 		String text = "";
 		if (bytes == null) {
@@ -74,56 +73,55 @@ public class StringHelper {
 		return text;
 	}
 
-	public static String getSearchIndexLetter(String text) {		
+	public static String getSearchIndexLetter(String text) {
 		text = removeInitialStopWords(text);
 		if (StringUtils.isEmpty(text)) {
 			return null;
 		}
-		
-		Character c = text.charAt(0);		
+
+		Character c = text.charAt(0);
 		if (!Character.isLetter(c)) {
 			c = '#';
 		}
-		
+
 		return c.toString();
 	}
-	
-	
+
 	private static String removeInitialStopWords(String text) {
 		text = StringUtils.trimToEmpty(text).toLowerCase();
-		
-		StringBuilder regexBuilder = new StringBuilder(); 
+
+		StringBuilder regexBuilder = new StringBuilder();
 		for (String stopWord : STOP_WORDS) {
-			
+
 			if (regexBuilder.length() > 0) {
 				regexBuilder.append("|");
 			}
-			regexBuilder.append("^" + stopWord + "\\s");			
+			regexBuilder.append("^" + stopWord + "\\s");
 		}
-		
+
 		String modifiedText = text.replaceFirst(regexBuilder.toString(), "");
 		modifiedText = StringUtils.trimToEmpty(modifiedText);
 		if (StringUtils.isEmpty(modifiedText)) {
 			return text;
 		}
-		
+
 		return modifiedText;
 	}
 
-	public static String getSearchIndexWord(String text) {
+	public static String getSearchIndexText(String text) {
 		text = removeInitialStopWords(text);
 		if (StringUtils.isEmpty(text)) {
 			return null;
-		}		
-		
+		}
+
 		String[] words = text.split("\\s");
 		if (words == null) {
 			return null;
 		}
-		
-		return words[0];		
+
+		return words[0];
 	}
-	
+
 	public static String normaliseTextForDatabase(String text) {
 		text = StringUtils.trimToEmpty(text).toLowerCase();
 		return text;

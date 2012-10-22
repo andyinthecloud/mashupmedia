@@ -9,7 +9,7 @@ import org.mashupmedia.model.media.Song;
 
 public interface MusicManager {
 
-	public List<Album> getAlbums();
+	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems);
 
 	public List<Artist> getArtists();
 
@@ -30,5 +30,7 @@ public interface MusicManager {
 	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs);
 
 	public Artist getArtist(Long artistId);
+
+	public List<String> getAlbumIndexLetters();
 
 }

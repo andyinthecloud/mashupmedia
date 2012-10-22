@@ -25,26 +25,29 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/ajax/music")
-public class AjaxMusicController extends BaseAjaxController{
+public class AjaxMusicController extends BaseAjaxController {
+
+	private final static int TOTAL_ITEMS = 20;
 
 	@Autowired
 	private MusicManager musicManager;
-	
+
 	@Autowired
 	private MediaManager mediaManager;
-	
+
 	@Autowired
 	private PlaylistManager playlistManager;
-	
+
 	@Autowired
 	private AdminManager adminManager;
 
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
 	public String getMusic(Model model) {
-		List<Album> albums = musicManager.getRandomAlbums(30);
+		List<Album> albums = musicManager.getRandomAlbums(TOTAL_ITEMS);
 		model.addAttribute("albums", albums);
 		return "ajax/music/random-albums";
 
@@ -60,8 +63,7 @@ public class AjaxMusicController extends BaseAjaxController{
 		model.addAttribute(albumPage);
 		return "ajax/music/album";
 	}
-	
-	
+
 	@RequestMapping(value = "/artist/{artistId}", method = RequestMethod.GET)
 	public String getArtist(@PathVariable("artistId") Long artistId, Model model) throws Exception {
 		Artist artist = musicManager.getArtist(artistId);
@@ -72,50 +74,57 @@ public class AjaxMusicController extends BaseAjaxController{
 	}
 
 	@RequestMapping(value = "/albums", method = RequestMethod.GET)
-	public String getAlbums(Model model) {
+	public String getAlbums(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+			@RequestParam(value = "searchLetter", required = false) String searchLetter, Model model) {
 		AlbumsPage albumsPage = new AlbumsPage();
-		List<Album> albums = musicManager.getAlbums();
+		List<String> albumIndexLetters = musicManager.getAlbumIndexLetters();
+		albumsPage.setAlbumIndexLetters(albumIndexLetters);
+		if (pageNumber == null) {
+			pageNumber = 0;
+		}
+		
+		List<Album> albums = musicManager.getAlbums(searchLetter, pageNumber, TOTAL_ITEMS);
 		albumsPage.setAlbums(albums);
 		model.addAttribute(albumsPage);
 		return "ajax/music/albums";
 	}
-	
+
 	@RequestMapping(value = "/artists", method = RequestMethod.GET)
 	public String getArtists(Model model) {
 		ArtistsPage artistsPage = new ArtistsPage();
 		List<String> artistIndexLetters = musicManager.getArtistIndexLetters();
-		artistsPage.setArtistIndexLetters(artistIndexLetters);		
+		artistsPage.setArtistIndexLetters(artistIndexLetters);
 		List<Artist> artists = musicManager.getArtists();
-		artistsPage.setArtists(artists);		
+		artistsPage.setArtists(artists);
 		model.addAttribute(artistsPage);
 		return "ajax/music/artists";
 	}
-	
+
 	@RequestMapping(value = "/play/{mediaItemId}", method = RequestMethod.GET)
 	public String playSong(@PathVariable("mediaItemId") Long mediaItemId, Model model) {
-		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);		
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		Playlist playlist = playlistManager.getLastAccessedMusicPlaylistForCurrentUser();
 		playlist = updatePlayingSong(playlist, mediaItem);
 		playlistManager.savePlaylist(playlist);
-		String format = WebHelper.getContentType(mediaItem.getFormat(), FormatContentType.JPLAYER);		
+		String format = WebHelper.getContentType(mediaItem.getFormat(), FormatContentType.JPLAYER);
 		model.addAttribute("format", format);
 		model.addAttribute("mediaItemId", mediaItem.getId());
 		return "ajax/music/player-script";
 	}
 
 	private Playlist updatePlayingSong(Playlist playlist, MediaItem mediaItem) {
-		
+
 		long mediaItemId = mediaItem.getId();
-		
+
 		if (playlist == null) {
 			playlist = new Playlist();
 		}
-		
+
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems == null) {
 			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 		}
-		
+
 		boolean isFound = false;
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
 			MediaItem mi = playlistMediaItem.getMediaItem();
@@ -126,7 +135,7 @@ public class AjaxMusicController extends BaseAjaxController{
 			}
 			playlistMediaItem.setPlaying(isPlaying);
 		}
-		
+
 		if (!isFound) {
 			PlaylistMediaItem playlistMediaItem = new PlaylistMediaItem();
 			playlistMediaItem.setMediaItem(mediaItem);
@@ -134,10 +143,9 @@ public class AjaxMusicController extends BaseAjaxController{
 			playlistMediaItem.setPlaying(true);
 			playlistMediaItems.add(playlistMediaItem);
 		}
-		
+
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 		return playlist;
 	}
-	
 
 }

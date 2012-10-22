@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MusicManagerImpl implements MusicManager {
 	private Logger logger = Logger.getLogger(getClass());
+	private final int BATCH_INSERT_ITEMS = 20;
 
 	@Autowired
 	private AlbumArtManager albumArtManager;
@@ -36,10 +37,15 @@ public class MusicManagerImpl implements MusicManager {
 	private PlaylistDao playlistDao;
 
 	@Override
-	public List<Album> getAlbums() {
-		List<Album> albums = musicDao.getAlbums();
+	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems) {		
+		List<Album> albums = musicDao.getAlbums(searchLetter, pageNumber, totalItems);
 		return albums;
 	}
+	
+	@Override
+	public List<String> getAlbumIndexLetters() {
+		List<String> indexLetters = musicDao.getAlbumIndexLetters();
+		return indexLetters;	}
 
 	@Override
 	public List<Artist> getArtists() {
@@ -64,8 +70,8 @@ public class MusicManagerImpl implements MusicManager {
 		String artistName = artist.getName();
 		String artistSearchIndexLetter = StringHelper.getSearchIndexLetter(artistName);
 		artist.setIndexLetter(artistSearchIndexLetter);
-		String artistSearchIndexWord = StringHelper.getSearchIndexWord(artistName);
-		artist.setIndexWord(artistSearchIndexWord);
+		String artistSearchIndexText = StringHelper.getSearchIndexText(artistName);
+		artist.setIndexText(artistSearchIndexText);
 		return artist;		
 	}
 	
@@ -84,8 +90,8 @@ public class MusicManagerImpl implements MusicManager {
 
 		String albumIndexLetter = StringHelper.getSearchIndexLetter(albumName);
 		album.setIndexLetter(albumIndexLetter);
-		String albumIndexWord = StringHelper.getSearchIndexWord(albumName);
-		album.setIndexWord(albumIndexWord);
+		String albumIndexText = StringHelper.getSearchIndexText(albumName);
+		album.setIndexText(albumIndexText);
 		
 		return album;
 		
@@ -144,8 +150,9 @@ public class MusicManagerImpl implements MusicManager {
 		long totalSongsSaved = 0;
 
 		Date date = new Date();
-
-		for (Song song : songs) {
+		
+		for (int i = 0; i < songs.size(); i++) {
+			Song song = songs.get(i);
 			song.setLibrary(musicLibrary);
 			song.setUpdatedOn(date);
 
@@ -162,9 +169,6 @@ public class MusicManagerImpl implements MusicManager {
 				continue;
 			}
 
-
-
-//			Artist artist = album.getArtist();
 			Artist artist = song.getArtist();
 			artist = prepareArtist(artist);
 			
@@ -200,8 +204,15 @@ public class MusicManagerImpl implements MusicManager {
 			genre = prepareGenre(genre);
 			song.setGenre(genre);
 
-			musicDao.saveSong(song);
+			
+			boolean isSessionFlush = false;
+			if (i % BATCH_INSERT_ITEMS == 0 || i == (songs.size() - 1)) {
+				isSessionFlush = true;
+			}
+
+			musicDao.saveSong(song, isSessionFlush);
 			totalSongsSaved++;
+
 		}
 
 		logger.info("Saved " + totalSongsSaved + " songs.");

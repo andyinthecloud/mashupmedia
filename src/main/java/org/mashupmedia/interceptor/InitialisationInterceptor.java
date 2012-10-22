@@ -1,7 +1,5 @@
 package org.mashupmedia.interceptor;
 
-import java.util.logging.LogManager;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,9 +23,6 @@ public class InitialisationInterceptor extends HandlerInterceptorAdapter {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		LogManager.getLogManager().reset();
-		java.util.logging.Logger globalLogger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
-		globalLogger.setLevel(java.util.logging.Level.OFF);
 
 		int totalUsers = adminManager.getTotalUsers();
 		if (totalUsers == 0) {

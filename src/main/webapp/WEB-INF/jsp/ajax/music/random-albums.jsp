@@ -2,17 +2,12 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		prepareShowPageTitle();
+		
 		$("div.albums div.album").hover(function() {
 			$(this).addClass("highlight");
 		}, function() {
 			$(this).removeClass("highlight");
-		});
-
-		$("div.albums div.album a").click(function() {
-			var albumId = $(this).attr("id");
-			albumId = albumId.replace("albumId-", "");
-			var addressValue = "address-load-album-" + albumId;
-			$.address.value(addressValue);
 		});
 		
 		$(window).scroll(function () {
@@ -28,14 +23,14 @@
 	});
 </script>
 
-<h1>
+<h1 class="hide content-title">
 	<spring:message code="music.random-albums.title" />
 </h1>
 
 <div class="random-album-art albums">
 	<c:forEach items="${albums}" var="album">
 		<div class="album">
-			<a id="albumId-<c:out value="${album.id}" />" href="javascript:;"> <img src="<c:url value="/app/music/album-art/${album.id}" />"
+			<a href="javascript:;" rel="address:/address-load-album-${album.id}" > <img src="<c:url value="/app/music/album-art/${album.id}" />"
 				title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 			</a>
 		</div>

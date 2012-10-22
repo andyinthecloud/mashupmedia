@@ -30,7 +30,6 @@
 			</c:otherwise>
 		</c:choose>
 
-
 		<li id="${rowIndex}"><a href="<c:url value="/app/music#address-artist-${artist.id}"/>" rel="address:/address-artist-${artist.id}" id="artist-id-${artist.id}"><c:out value="${artist.name}" /></a></li>
 	</c:forEach>
 </ul>

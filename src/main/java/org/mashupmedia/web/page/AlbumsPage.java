@@ -6,7 +6,16 @@ import org.mashupmedia.model.media.Album;
 
 public class AlbumsPage {
 
+	private List<String> albumIndexLetters;
 	private List<Album> albums;
+
+	public List<String> getAlbumIndexLetters() {
+		return albumIndexLetters;
+	}
+
+	public void setAlbumIndexLetters(List<String> albumIndexLetters) {
+		this.albumIndexLetters = albumIndexLetters;
+	}
 
 	public List<Album> getAlbums() {
 		return albums;

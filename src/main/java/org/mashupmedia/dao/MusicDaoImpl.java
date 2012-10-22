@@ -3,6 +3,7 @@ package org.mashupmedia.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
@@ -15,8 +16,20 @@ import org.springframework.stereotype.Repository;
 public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
-	public List<Album> getAlbums() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Album order by indexWord");
+	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems) {
+
+		int firstResult = pageNumber * totalItems;
+
+		StringBuilder queryBuilder = new StringBuilder("from Album");
+		searchLetter = StringUtils.trimToEmpty(searchLetter);
+		if (StringUtils.isNotEmpty(searchLetter)) {
+			queryBuilder.append(" where indexLetter = '" + searchLetter.toLowerCase() + "'");
+		}
+		queryBuilder.append(" order by indexText");
+
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		query.setFirstResult(firstResult);
+		query.setMaxResults(totalItems);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Album> albums = (List<Album>) query.list();
@@ -24,8 +37,17 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
+	public List<String> getAlbumIndexLetters() {
+		Query query = sessionFactory.getCurrentSession().createQuery("select distinct indexLetter from Album order by indexLetter");
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<String> indexLetters = query.list();
+		return indexLetters;
+	}
+
+	@Override
 	public List<Artist> getArtists() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Artist order by indexWord");
+		Query query = sessionFactory.getCurrentSession().createQuery("from Artist order by indexText");
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Artist> artists = (List<Artist>) query.list();
@@ -50,7 +72,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public Album getAlbum(String artistName, String albumName) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Album where lower(artist.name) = :artistName and lower(name) = :albumName");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("from Album where lower(artist.name) = :artistName and lower(name) = :albumName");
 		query.setCacheable(true);
 		query.setString("artistName", artistName.toLowerCase());
 		query.setString("albumName", albumName.toLowerCase());
@@ -75,25 +98,23 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		query.setLong("libraryId", libraryId);
 		query.setString("path", songPath);
 		query.setLong("sizeInBytes", songSizeInBytes);
-		
+
 		@SuppressWarnings("unchecked")
 		List<Song> songs = query.list();
 		if (songs.size() > 1) {
 			logger.error("Returning duplicate songs, using first in list...");
 		}
-		
+
 		if (songs.isEmpty()) {
 			return null;
 		}
-		
+
 		return songs.get(0);
 	}
 
 	@Override
 	public List<Song> getSongsToDelete(long libraryId, Date date) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Song where library.id = :libraryId and updatedOn < :updatedOn");
-		// Query query =
-		// sessionFactory.getCurrentSession().createQuery("from Song where library.id = :libraryId");
 		query.setCacheable(true);
 		query.setLong("libraryId", libraryId);
 		query.setDate("updatedOn", date);
@@ -105,11 +126,15 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public void saveSong(Song song) {
+		saveSong(song, false);
+	}
+
+	@Override
+	public void saveSong(Song song, boolean isSessionFlush) {
 		Artist artist = song.getArtist();
 		saveOrUpdate(artist);
 
 		Album album = song.getAlbum();
-//		album = prepareAlbum(album);
 		saveOrUpdate(album);
 		song.setAlbum(album);
 
@@ -117,25 +142,12 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		saveOrUpdate(song.getGenre());
 		saveOrUpdate(song);
 		logger.debug("Saved song: " + song.getTitle());
-	}
 
-//	private Album prepareAlbum(Album album) {
-//		Artist artist = album.getArtist();
-//		String artistName = artist.getName();
-//		String albumName = album.getName();
-//		Query query = sessionFactory.getCurrentSession().createQuery("from Album where name = :albumName and artist.name = :artistName");
-//		query.setCacheable(true);
-//		query.setString("albumName", albumName);
-//		query.setString("artistName", artistName);
-//
-//		Album savedAlbum = (Album) query.uniqueResult();
-//
-//		if (savedAlbum != null) {
-//			return savedAlbum;
-//		}
-//
-//		return album;
-//	}
+		if (isSessionFlush) {
+			sessionFactory.getCurrentSession().flush();
+			logger.debug("Flushed cache");
+		}
+	}
 
 	@Override
 	public void saveAlbum(Album album) {
@@ -208,14 +220,14 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		List<Album> albums = query.list();
 		return albums;
 	}
-	
+
 	@Override
 	public List<String> getArtistIndexLetters() {
 		Query query = sessionFactory.getCurrentSession().createQuery("select distinct indexLetter from Artist order by indexLetter");
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<String> indexLetters = query.list();
-		return indexLetters;		
+		return indexLetters;
 	}
 
 	@Override

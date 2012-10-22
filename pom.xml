@@ -13,6 +13,7 @@
 		<spring.version>3.1.2.RELEASE</spring.version>
 		<hibernate.version>4.1.6.Final</hibernate.version>
 		<tiles.version>2.2.2</tiles.version>
+		<slf4j.version>1.7.2</slf4j.version>
 	</properties>
 
 	<dependencies>
@@ -29,7 +30,16 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt</artifactId>
@@ -119,6 +129,12 @@
 			<groupId>org.apache.tiles</groupId>
 			<artifactId>tiles-core</artifactId>
 			<version>${tiles.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jcl-over-slf4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 
@@ -388,7 +404,8 @@
 				<log4j.root.level>error</log4j.root.level>
 				<log.path>./logs</log.path>
 			</properties>
-		</profile>	</profiles>
+		</profile>
+	</profiles>
 
 
 </project>

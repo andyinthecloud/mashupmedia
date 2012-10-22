@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.LogManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -41,14 +42,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	private Logger logger = Logger.getLogger(getClass());
-	
-	
 
 	@Autowired
 	private ConnectionManager connectionManager;
 
 	@Autowired
 	private MusicManager musicManager;
+
+	private LibraryUpdateManagerImpl() {
+		// Disable the jaudiotagger library logging
+		LogManager.getLogManager().reset();
+		java.util.logging.Logger globalLogger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
+		globalLogger.setLevel(java.util.logging.Level.OFF);
+	}
 
 	@Override
 	public void updateLibrary(Library library) {
@@ -95,9 +101,6 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 		List<Song> songs = connectionManager.getFtpSongs(musicLibrary);
 		musicManager.saveSongs(musicLibrary, songs);
-
-		// List<Artist> artists = connectionManager.getFtpArtists(ftpLocation);
-		// musicManager.saveArtists(library, artists);
 
 	}
 
@@ -226,7 +229,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 					tagAlbumName = folderAlbumName;
 				}
 				if (StringUtils.isBlank(folderAlbumName)) {
-					logger.info("Unable to add song to the library. No album found for artist = " + folderArtistName + ", song title = " + tagSongTitle);
+					logger.info("Unable to add song to the library. No album found for artist = " + folderArtistName + ", song title = "
+							+ tagSongTitle);
 				}
 				album.setName(tagAlbumName);
 				album.setFolderName(folderAlbumName);
@@ -238,15 +242,16 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				}
 				artist.setName(tagArtistName);
 				artist.setFolderName(folderArtistName);
-				
-//				if (musicFileCount == 1) {
-//					try {
-//						AlbumArtImage albumArtImage = processAlbumArtImage(musicLibrary, file, folderAlbumName);
-//						album.setAlbumArtImage(albumArtImage);
-//					} catch (Exception e) {
-//						logger.info("Unable to read the album art...", e);
-//					}
-//				}
+
+				// if (musicFileCount == 1) {
+				// try {
+				// AlbumArtImage albumArtImage =
+				// processAlbumArtImage(musicLibrary, file, folderAlbumName);
+				// album.setAlbumArtImage(albumArtImage);
+				// } catch (Exception e) {
+				// logger.info("Unable to read the album art...", e);
+				// }
+				// }
 
 				album.setArtist(artist);
 				song.setArtist(artist);
@@ -259,67 +264,71 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	}
 
-//	private String prepareMimeType(String mimeType) {
-//		mimeType = StringUtils.trimToEmpty(mimeType);
-//		String extension = DEFAULT_MIME_TYPE;
-//		if (StringUtils.isNotEmpty(mimeType)) {
-//			extension = StringHelper.find(mimeType, "/.*").toLowerCase();
-//			extension = extension.replaceFirst("/", "");
-//		}
-//		return mimeType;
-//	}
+	// private String prepareMimeType(String mimeType) {
+	// mimeType = StringUtils.trimToEmpty(mimeType);
+	// String extension = DEFAULT_MIME_TYPE;
+	// if (StringUtils.isNotEmpty(mimeType)) {
+	// extension = StringHelper.find(mimeType, "/.*").toLowerCase();
+	// extension = extension.replaceFirst("/", "");
+	// }
+	// return mimeType;
+	// }
 
-//	protected AlbumArtImage processAlbumArtImage(MusicLibrary musicLibrary, File musicFile, String albumName) throws CannotReadException,
-//			IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
-//
-//		String imagePath = null;
-//		String albumArtFileName = MashUpMediaConstants.COVER_ART_DEFAULT_NAME;
-//		AudioFile audioFile = AudioFileIO.read(musicFile);
-//		Tag tag = audioFile.getTag();
-//		Artwork artwork = tag.getFirstArtwork();
-//		final String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
-//		String contentType = null;
-//		if (artwork != null) {
-//			contentType = prepareMimeType(artwork.getMimeType());
-//			byte[] bytes = artwork.getBinaryData();
-//			if (bytes == null || bytes.length == 0) {
-//				return null;
-//			}
-////			imagePath = FileHelper.writeAlbumArt(musicLibrary.getId(), bytes);
-//			File albumArtFile = FileHelper.createAlbumArtFile(musicLibrary.getId());
-//			FileUtils.writeByteArrayToFile(albumArtFile, bytes);
-//			imagePath = albumArtFile.getAbsolutePath();
-//			
-//			
-//		} else {
-//			File albumFolder = musicFile.getParentFile();
-//			File[] imageFiles = albumFolder.listFiles(new FilenameFilter() {
-//
-//				@Override
-//				public boolean accept(File file, String fileName) {
-//					if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
-//						return true;
-//					}
-//					return false;
-//				}
-//			});
-//
-//			if (imageFiles == null || imageFiles.length == 0) {
-//				return null;
-//			}
-//
-//			File albumArtFile = imageFiles[0];
-//			imagePath = albumArtFile.getAbsolutePath();
-//			albumArtFileName = albumArtFile.getName();
-//			contentType = FileHelper.getFileExtension(albumArtFileName);
-//		}
-//
-//		AlbumArtImage albumArtImage = new AlbumArtImage();
-//		albumArtImage.setLibrary(musicLibrary);
-//		albumArtImage.setName(albumArtFileName);
-//		albumArtImage.setUrl(imagePath);
-//		albumArtImage.setContentType(contentType);
-//		return albumArtImage;
-//	}
+	// protected AlbumArtImage processAlbumArtImage(MusicLibrary musicLibrary,
+	// File musicFile, String albumName) throws CannotReadException,
+	// IOException, TagException, ReadOnlyFileException,
+	// InvalidAudioFrameException {
+	//
+	// String imagePath = null;
+	// String albumArtFileName = MashUpMediaConstants.COVER_ART_DEFAULT_NAME;
+	// AudioFile audioFile = AudioFileIO.read(musicFile);
+	// Tag tag = audioFile.getTag();
+	// Artwork artwork = tag.getFirstArtwork();
+	// final String albumArtImagePattern =
+	// musicLibrary.getAlbumArtImagePattern();
+	// String contentType = null;
+	// if (artwork != null) {
+	// contentType = prepareMimeType(artwork.getMimeType());
+	// byte[] bytes = artwork.getBinaryData();
+	// if (bytes == null || bytes.length == 0) {
+	// return null;
+	// }
+	// // imagePath = FileHelper.writeAlbumArt(musicLibrary.getId(), bytes);
+	// File albumArtFile = FileHelper.createAlbumArtFile(musicLibrary.getId());
+	// FileUtils.writeByteArrayToFile(albumArtFile, bytes);
+	// imagePath = albumArtFile.getAbsolutePath();
+	//
+	//
+	// } else {
+	// File albumFolder = musicFile.getParentFile();
+	// File[] imageFiles = albumFolder.listFiles(new FilenameFilter() {
+	//
+	// @Override
+	// public boolean accept(File file, String fileName) {
+	// if (FileHelper.isSupportedImage(fileName) &&
+	// FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
+	// return true;
+	// }
+	// return false;
+	// }
+	// });
+	//
+	// if (imageFiles == null || imageFiles.length == 0) {
+	// return null;
+	// }
+	//
+	// File albumArtFile = imageFiles[0];
+	// imagePath = albumArtFile.getAbsolutePath();
+	// albumArtFileName = albumArtFile.getName();
+	// contentType = FileHelper.getFileExtension(albumArtFileName);
+	// }
+	//
+	// AlbumArtImage albumArtImage = new AlbumArtImage();
+	// albumArtImage.setLibrary(musicLibrary);
+	// albumArtImage.setName(albumArtFileName);
+	// albumArtImage.setUrl(imagePath);
+	// albumArtImage.setContentType(contentType);
+	// return albumArtImage;
+	// }
 
 }

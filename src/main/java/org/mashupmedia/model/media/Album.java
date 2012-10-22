@@ -29,15 +29,15 @@ public class Album implements Serializable {
 	@OneToMany(mappedBy = "album")
 	@OrderBy("trackNumber")
 	private List<Song> songs;
-	private String indexWord;
+	private String indexText;
 	private String indexLetter;
 
-	public String getIndexWord() {
-		return indexWord;
+	public String getIndexText() {
+		return indexText;
 	}
 
-	public void setIndexWord(String indexName) {
-		this.indexWord = indexName;
+	public void setIndexText(String indexName) {
+		this.indexText = indexName;
 	}
 
 	public String getIndexLetter() {
@@ -143,7 +143,7 @@ public class Album implements Serializable {
 		builder.append(", songs=");
 		builder.append(songs);
 		builder.append(", indexName=");
-		builder.append(indexWord);
+		builder.append(indexText);
 		builder.append(", indexLetter=");
 		builder.append(indexLetter);
 		builder.append("]");

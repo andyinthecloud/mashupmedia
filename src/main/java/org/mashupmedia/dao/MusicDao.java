@@ -11,7 +11,7 @@ import org.mashupmedia.model.media.Year;
 
 public interface MusicDao {
 
-	public List<Album> getAlbums();
+	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems);
 
 	public List<Artist> getArtists();
 
@@ -50,5 +50,9 @@ public interface MusicDao {
 	public List<String> getArtistIndexLetters();
 
 	public Artist getArtist(Long artistId);
+
+	public void saveSong(Song song, boolean isSessionFlush);
+
+	public List<String> getAlbumIndexLetters();
 	
 }
