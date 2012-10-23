@@ -16,7 +16,7 @@
 
 <ul id="albums">
 	<c:forEach items="${artistPage.artist.albums}" var="album">
-		<li><a class="album-cover" href="javascript:;" rel="address:/address-load-album-${album.id}"> <img src="<c:url value="/app/music/album-art/${album.id}" />"
+		<li><a class="album-cover" href="javascript:;" rel="address:/address-load-album-${album.id}"> <img src="<c:url value="/app/music/album-art-thumbnail/${album.id}" />"
 				title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 		</a>
 			<div class="artist">

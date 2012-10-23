@@ -399,7 +399,7 @@
 				<exploded.war.path>${project.build.directory}/webapp</exploded.war.path>
 				<application.folder>/tmp/mashupmedia</application.folder>
 				<message.cache.seconds>1</message.cache.seconds>
-				<log4j.mashupmedia.level>debug</log4j.mashupmedia.level>
+				<log4j.mashupmedia.level>error</log4j.mashupmedia.level>
 				<log4j.focus.level>error</log4j.focus.level>
 				<log4j.root.level>error</log4j.root.level>
 				<log.path>./logs</log.path>

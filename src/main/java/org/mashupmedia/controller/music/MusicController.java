@@ -17,6 +17,7 @@ import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.WebHelper;
+import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.web.Breadcrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,8 +31,6 @@ import org.springframework.web.servlet.View;
 @Controller
 @RequestMapping("/music")
 public class MusicController extends BaseController {
-
-//	private final int NUMBER_OF_RANDOM_ALBUMS = 50;
 
 	@Autowired
 	private MusicManager musicManager;
@@ -48,18 +47,6 @@ public class MusicController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String getMusic(Model model) {
-//		MusicPage musicPage = new MusicPage();
-//		List<Album> albums = musicManager.getRandomAlbums(NUMBER_OF_RANDOM_ALBUMS);
-//		musicPage.setAlbums(albums);
-//		Playlist playlist = playlistManager.getLastAccessedMusicPlaylistForCurrentUser();
-//		// If the user has no playlist create a default one
-//		if (playlist == null) {
-//			playlist = new Playlist();
-//			playlist.setDefault(true);
-//		}
-//		musicPage.setPlaylist(playlist);
-//		
-//		model.addAttribute(musicPage);
 		return "music";
 	}
 
@@ -73,10 +60,21 @@ public class MusicController extends BaseController {
 
 	@RequestMapping(value = "/album-art/{albumId}", method = RequestMethod.GET)
 	public ModelAndView getAlbumArt(@PathVariable("albumId") Long albumId, Model model) throws Exception {
+		ModelAndView modelAndView = getAlbumArtModelAndView(albumId, ImageType.ORIGINAL);
+		return modelAndView;
+	}
+
+	@RequestMapping(value = "/album-art-thumbnail/{albumId}", method = RequestMethod.GET)
+	public ModelAndView getAlbumArtThumbnail(@PathVariable("albumId") Long albumId, Model model) throws Exception {
+		ModelAndView modelAndView = getAlbumArtModelAndView(albumId, ImageType.THUMBNAIL);
+		return modelAndView;
+	}
+	
+	protected ModelAndView getAlbumArtModelAndView(Long albumId, ImageType imageType) throws Exception {
 		Album album = musicManager.getAlbum(albumId);
 		AlbumArtImage albumArtImage = album.getAlbumArtImage();
 
-		final byte[] imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage);
+		final byte[] imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage, imageType);
 		final String contentType = WebHelper.getImageContentType(albumArtImage);
 		ModelAndView modelAndView = new ModelAndView(new View() {
 

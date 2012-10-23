@@ -10,7 +10,7 @@
 						prepareShowPageTitle();
 						prepareShowIndexLetters();
 
-						$("#albums li a.album-cover img").hover(function() {
+						$("#albums li a.album-cover").hover(function() {
 							$(this).addClass("highlight");
 						}, function() {
 							$(this).removeClass("highlight");
@@ -60,7 +60,7 @@
 		<li><c:if test="${indexLetter != album.indexLetter}">
 				<div class="index-letter" id="index-letter-${album.indexLetter}">${album.indexLetter}</div>
 				<c:set var="indexLetter" value="${album.indexLetter}" />
-			</c:if> <a class="album-cover" href="javascript:;" rel="address:/address-load-album-${album.id}"> <img src="<c:url value="/app/music/album-art/${album.id}" />"
+			</c:if> <a class="album-cover" href="javascript:;" rel="address:/address-load-album-${album.id}"> <img src="<c:url value="/app/music/album-art-thumbnail/${album.id}" />"
 				title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 		</a>
 			<div class="album">

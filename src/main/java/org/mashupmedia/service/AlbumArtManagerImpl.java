@@ -24,6 +24,7 @@ import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.service.ConnectionManager.LocationType;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,9 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 		} else if (locationType == LocationType.FTP) {
 			albumArtImage = getFtpAlbumArtImage(musicLibrary, song);
 		}
-
+		
+		String thumbnailUrl = ImageHelper.generateAndSaveThumbnail(musicLibrary.getId(), albumArtImage.getUrl());
+		albumArtImage.setThumbnailUrl(thumbnailUrl);
 		return albumArtImage;
 	}
 
@@ -131,10 +134,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 			contentType = FileHelper.getFileExtension(albumArtFileName);
 		}
 
-		AlbumArtImage albumArtImage = new AlbumArtImage();
-		
-//		albumArtImage.setLibrary(musicLibrary);
-		
+		AlbumArtImage albumArtImage = new AlbumArtImage();				
 		albumArtImage.setName(albumArtFileName);
 		albumArtImage.setUrl(imagePath);
 		albumArtImage.setContentType(contentType);

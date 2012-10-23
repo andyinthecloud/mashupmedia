@@ -17,7 +17,7 @@ public class FileHelper {
 	public final static int FILE_WAIT_FOR_SECONDS = 1;
 
 	public enum FileType {
-		ALBUM_ART("album-art"), MEDIA_ITEM_STREAM("media-item-streams");
+		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM("media-item-streams");
 
 		private String folderName;
 
@@ -45,6 +45,14 @@ public class FileHelper {
 		mediaFolder.mkdirs();
 		File mediaFile = new File(mediaFolder, String.valueOf(System.nanoTime()));
 		return mediaFile;
+	}
+	
+	public static File createAlbumArtThumbnailFile(long libraryId) {
+		File libraryFolder = getLibraryFolder(libraryId);
+		File thumbnailFolder = new File(libraryFolder, FileType.ALBUM_ART_THUMBNAIL.getFolderName());
+		thumbnailFolder.mkdirs();
+		File thumbnailFile = new File(thumbnailFolder, String.valueOf(System.nanoTime()));
+		return thumbnailFile;
 	}
 
 	public static boolean isSupportedSong(String fileName) {
@@ -88,38 +96,6 @@ public class FileHelper {
 		return false;
 
 	}
-
-	// public static String writeAlbumArt(long libraryId, byte[] bytes) throws
-	// IOException {
-	// // mimeType = StringUtils.trimToEmpty(mimeType);
-	// // String extension = "jpg";
-	// // if (StringUtils.isNotEmpty(mimeType)) {
-	// // extension = StringHelper.find(mimeType, "/.*").toLowerCase();
-	// // extension = extension.replaceFirst("/", "");
-	// // }
-	//
-	// // File libraryAlbumArtFolder = new File(getLibraryFolder(libraryId),
-	// // ALBUM_ART_FOLDER);
-	// // libraryAlbumArtFolder.mkdirs();
-	// // String albumArtFileName = StringUtils.trimToEmpty(artistName + "-" +
-	// // albumArtName + "." + extension).toLowerCase();
-	// // albumArtFileName = albumArtFileName.replaceAll("\\s", "");
-	//
-	// // File albumArtFile = new File(libraryAlbumArtFolder,
-	// // albumArtFileName);
-	//
-	// File albumArtFile = FileHelper.createAlbumArtFile(libraryId);
-	//
-	// if (albumArtFile.exists()) {
-	// logger.info("Album art file already exists for libraryId:" + libraryId +
-	// ", albumId:" + albumId + ". Exiting...");
-	// return albumArtFile.getAbsolutePath();
-	//
-	// }
-	//
-	// FileUtils.writeByteArrayToFile(albumArtFile, bytes);
-	// return albumArtFile.getAbsolutePath();
-	// }
 
 	public static String getFileExtension(String fileName) {
 		fileName = StringUtils.trimToEmpty(fileName);
@@ -191,13 +167,13 @@ public class FileHelper {
 				logger.info("File is ready.");
 				return;
 			}
-						
+
 			Thread.sleep(FILE_WAIT_FOR_SECONDS * 1000);
 			timeOutSeconds = timeOutSeconds + FILE_WAIT_FOR_SECONDS;
 		}
 
 		logger.info("File timed out.");
-		
+
 	}
 
 }

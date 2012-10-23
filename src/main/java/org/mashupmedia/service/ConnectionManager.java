@@ -10,6 +10,7 @@ import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Song;
+import org.mashupmedia.util.ImageHelper.ImageType;
 
 public interface ConnectionManager {
 	
@@ -23,7 +24,7 @@ public interface ConnectionManager {
 
 	public FTPClient connectToFtp(FtpLocation ftpLocation) throws Exception;
 
-	public byte[] getAlbumArtImageBytes(AlbumArtImage albumArtImage) throws Exception;
+	public byte[] getAlbumArtImageBytes(AlbumArtImage albumArtImage, ImageType imageType) throws Exception;
 
 	public void startMediaItemStream(long mediaItemId, File file);
 

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +38,7 @@ import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
+import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ConnectionManagerImpl implements ConnectionManager {
 	private Logger logger = Logger.getLogger(getClass());
-
+	
 	@Autowired
 	private ConfigurationManager configurationManager;
 
@@ -268,45 +268,20 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		}
 	}
 
-//	protected AlbumArtImage getAlbumArtImage(FTPClient ftpClient, MusicLibrary musicLibrary, Album album) throws Exception {
-//
-//		String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
-//		FTPFile[] ftpFiles = ftpClient.list();
-//		for (FTPFile ftpFile : ftpFiles) {
-//			String fileName = ftpFile.getName();
-//			if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
-//
-//				String filePath = ftpClient.currentDirectory() + "/" + fileName;
-//				// FtpLocation ftpLocation = (FtpLocation)
-//				// musicLibrary.getLocation();
-//				// String password = ftpLocation.getPassword();
-//				// password = EncryptionHelper.decryptText(password);
-//				// ftpLocation.setPassword(password);
-//				String localFilePath = processFtpImageBytes(ftpClient, musicLibrary.getId(), filePath);
-//
-//				AlbumArtImage albumArtImage = new AlbumArtImage();
-//				albumArtImage.setAlbum(album);
-//				albumArtImage.setLibrary(musicLibrary);
-//				albumArtImage.setName(ftpFile.getName());
-//				albumArtImage.setUrl(localFilePath);
-//
-//				// FtpLocation ftpLocation = (FtpLocation) location;
-//
-//				return albumArtImage;
-//
-//			}
-//		}
-//
-//		return null;
-//	}
+
 
 	@Override
-	public byte[] getAlbumArtImageBytes(AlbumArtImage image) throws Exception {
+	public byte[] getAlbumArtImageBytes(AlbumArtImage image, ImageType imageType) throws Exception {
 		if (image == null) {
 			return null;
 		}
 
-		File file = new File(image.getUrl());
+		File file = null;
+		if (imageType  == ImageType.THUMBNAIL) {
+			file = new File(image.getThumbnailUrl());
+		} else {
+			file = new File(image.getUrl());
+		}		
 		if (!file.exists()) {
 			return null;
 		}

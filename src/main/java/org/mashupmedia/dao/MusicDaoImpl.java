@@ -141,12 +141,14 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		saveOrUpdate(song.getYear());
 		saveOrUpdate(song.getGenre());
 		saveOrUpdate(song);
-		logger.debug("Saved song: " + song.getTitle());
 
 		if (isSessionFlush) {
 			sessionFactory.getCurrentSession().flush();
-			logger.debug("Flushed cache");
+			sessionFactory.getCurrentSession().clear();
+			logger.debug("Flushed and cleared session.");
 		}
+		
+		logger.debug("Saved song: " + artist.getName() + " - " + album.getName() + " - " + song.getTitle());
 	}
 
 	@Override

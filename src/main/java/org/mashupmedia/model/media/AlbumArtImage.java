@@ -21,6 +21,7 @@ public class AlbumArtImage implements Serializable {
 	private long id;
 	private String name;
 	private String url;
+	private String thumbnailUrl;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Library library;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -75,6 +76,14 @@ public class AlbumArtImage implements Serializable {
 		this.url = url;
 	}
 
+	public String getThumbnailUrl() {
+		return thumbnailUrl;
+	}
+
+	public void setThumbnailUrl(String thumbnailUrl) {
+		this.thumbnailUrl = thumbnailUrl;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -115,10 +124,14 @@ public class AlbumArtImage implements Serializable {
 		builder.append(name);
 		builder.append(", url=");
 		builder.append(url);
+		builder.append(", thumbnailUrl=");
+		builder.append(thumbnailUrl);
 		builder.append(", library=");
 		builder.append(library);
 		builder.append(", album=");
-		builder.append(album.getName());
+		builder.append(album);
+		builder.append(", contentType=");
+		builder.append(contentType);
 		builder.append("]");
 		return builder.toString();
 	}

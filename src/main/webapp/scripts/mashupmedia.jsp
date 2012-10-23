@@ -21,6 +21,9 @@ $(document).ready(function() {
 	});
 
 	$.address.change(function(event) {
+		
+		window.scrollTo(0, 0);
+		
 		var address = event.value;
 		address = address.replace("/", "");
 		
