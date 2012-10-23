@@ -4,6 +4,7 @@ import it.sauronsoftware.ftp4j.FTPClient;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 import org.mashupmedia.model.library.MusicLibrary;
@@ -20,7 +21,7 @@ public interface ConnectionManager {
 	
 	public boolean isFtpLocationValid(FtpLocation ftpLocation);
 
-	public List<Song> getFtpSongs(MusicLibrary musicLibrary);
+	public List<Song> getFtpSongs(MusicLibrary musicLibrary, Date date);
 
 	public FTPClient connectToFtp(FtpLocation ftpLocation) throws Exception;
 

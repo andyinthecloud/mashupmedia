@@ -1,5 +1,6 @@
 package org.mashupmedia.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.mashupmedia.model.library.MusicLibrary;
@@ -32,5 +33,7 @@ public interface MusicManager {
 	public Artist getArtist(Long artistId);
 
 	public List<String> getAlbumIndexLetters();
+
+	public void deleteObsoleteSongs(long libraryId, Date date);
 
 }

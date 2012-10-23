@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.LogManager;
 
@@ -98,9 +99,11 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			logger.error("Unable to prepare music library, ftp client is null.");
 			return;
 		}
-
-		List<Song> songs = connectionManager.getFtpSongs(musicLibrary);
+		
+		Date date = new Date();
+		List<Song> songs = connectionManager.getFtpSongs(musicLibrary, date);
 		musicManager.saveSongs(musicLibrary, songs);
+		musicManager.deleteObsoleteSongs(musicLibrary.getId(), date);
 
 	}
 
@@ -113,13 +116,16 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			return;
 		}
 
+		Date date = new Date();
 		List<Song> songs = new ArrayList<Song>();
-		prepareSongs(songs, musicFolder, musicLibrary, null, null);
+		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
 		musicManager.saveSongs(musicLibrary, songs);
+		musicManager.deleteObsoleteSongs(musicLibrary.getId(), date);
+//		musicManager.saveSongs(musicLibrary, songs);
 
 	}
 
-	protected void prepareSongs(List<Song> songs, File folder, MusicLibrary musicLibrary, String folderArtistName, String folderAlbumName)
+	protected void prepareSongs(Date date, List<Song> songs, File folder, MusicLibrary musicLibrary, String folderArtistName, String folderAlbumName)
 			throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
 		if (folder.isFile()) {
 			return;
@@ -138,7 +144,12 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 				if (StringUtils.isEmpty(folderArtistName)) {
 					folderArtistName = fileName;
-					prepareSongs(songs, file, musicLibrary, folderArtistName, folderAlbumName);
+					prepareSongs(date, songs, file, musicLibrary, folderArtistName, folderAlbumName);
+					
+					musicManager.saveSongs(musicLibrary, songs);
+					songs = new ArrayList<Song>();
+//					songs.clear();
+					
 					folderArtistName = "";
 				} else {
 					if (StringUtils.isBlank(folderAlbumName)) {
@@ -146,7 +157,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 					} else {
 						folderAlbumName += " - " + fileName;
 					}
-					prepareSongs(songs, file, musicLibrary, folderArtistName, folderAlbumName);
+					prepareSongs(date, songs, file, musicLibrary, folderArtistName, folderAlbumName);
 					folderAlbumName = "";
 				}
 
@@ -190,6 +201,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				}
 
 				Song song = new Song();
+				song.setUpdatedOn(date);
 
 				if (trackNumber == 0) {
 					trackNumber = musicFileCount;

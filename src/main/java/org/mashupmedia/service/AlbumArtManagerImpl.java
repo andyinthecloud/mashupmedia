@@ -61,6 +61,9 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 			albumArtImage = getFtpAlbumArtImage(musicLibrary, song);
 		}
 		
+		if (albumArtImage == null) {
+			return null;
+		}
 		String thumbnailUrl = ImageHelper.generateAndSaveThumbnail(musicLibrary.getId(), albumArtImage.getUrl());
 		albumArtImage.setThumbnailUrl(thumbnailUrl);
 		return albumArtImage;

@@ -37,15 +37,16 @@ public class MusicManagerImpl implements MusicManager {
 	private PlaylistDao playlistDao;
 
 	@Override
-	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems) {		
+	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems) {
 		List<Album> albums = musicDao.getAlbums(searchLetter, pageNumber, totalItems);
 		return albums;
 	}
-	
+
 	@Override
 	public List<String> getAlbumIndexLetters() {
 		List<String> indexLetters = musicDao.getAlbumIndexLetters();
-		return indexLetters;	}
+		return indexLetters;
+	}
 
 	@Override
 	public List<Artist> getArtists() {
@@ -60,7 +61,6 @@ public class MusicManagerImpl implements MusicManager {
 		musicDao.saveAlbum(album);
 	}
 
-	
 	protected Artist prepareArtist(Artist artist) {
 		Artist savedArtist = musicDao.getArtist(artist.getName());
 		if (savedArtist != null) {
@@ -72,17 +72,16 @@ public class MusicManagerImpl implements MusicManager {
 		artist.setIndexLetter(artistSearchIndexLetter);
 		String artistSearchIndexText = StringHelper.getSearchIndexText(artistName);
 		artist.setIndexText(artistSearchIndexText);
-		return artist;		
+		return artist;
 	}
-	
-	
+
 	protected Album prepareAlbum(Album album) {
 		Artist artist = album.getArtist();
 		String albumName = album.getName();
 		if (StringUtils.isBlank(albumName)) {
 			return null;
 		}
-		
+
 		Album savedAlbum = musicDao.getAlbum(artist.getName(), albumName);
 		if (savedAlbum != null) {
 			return savedAlbum;
@@ -92,11 +91,10 @@ public class MusicManagerImpl implements MusicManager {
 		album.setIndexLetter(albumIndexLetter);
 		String albumIndexText = StringHelper.getSearchIndexText(albumName);
 		album.setIndexText(albumIndexText);
-		
+
 		return album;
-		
+
 	}
-		
 
 	protected void saveArtist(Artist artist) {
 		musicDao.saveArtist(artist);
@@ -149,12 +147,9 @@ public class MusicManagerImpl implements MusicManager {
 		long libraryId = musicLibrary.getId();
 		long totalSongsSaved = 0;
 
-		Date date = new Date();
-		
 		for (int i = 0; i < songs.size(); i++) {
 			Song song = songs.get(i);
 			song.setLibrary(musicLibrary);
-			song.setUpdatedOn(date);
 
 			String songPath = song.getPath();
 			long songSizeInBytes = song.getSizeInBytes();
@@ -163,7 +158,7 @@ public class MusicManagerImpl implements MusicManager {
 			if (savedSong != null) {
 				long savedSongId = savedSong.getId();
 				song.setId(savedSongId);
-				savedSong.setUpdatedOn(date);
+				savedSong.setUpdatedOn(song.getUpdatedOn());
 				musicDao.saveSong(savedSong);
 				logger.info("Song is already in database, updated song date.");
 				continue;
@@ -171,14 +166,13 @@ public class MusicManagerImpl implements MusicManager {
 
 			Artist artist = song.getArtist();
 			artist = prepareArtist(artist);
-			
-			
+
 			Album album = song.getAlbum();
 			if (StringUtils.isBlank(album.getName())) {
 				logger.error("Unable to save song: " + song.toString());
 				continue;
 			}
-			
+
 			album.setArtist(artist);
 			album = prepareAlbum(album);
 
@@ -204,7 +198,6 @@ public class MusicManagerImpl implements MusicManager {
 			genre = prepareGenre(genre);
 			song.setGenre(genre);
 
-			
 			boolean isSessionFlush = false;
 			if (i % BATCH_INSERT_ITEMS == 0 || i == (songs.size() - 1)) {
 				isSessionFlush = true;
@@ -217,6 +210,10 @@ public class MusicManagerImpl implements MusicManager {
 
 		logger.info("Saved " + totalSongsSaved + " songs.");
 
+	}
+
+	@Override
+	public void deleteObsoleteSongs(long libraryId, Date date) {
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
 
 		playlistDao.deletePlaylistMediaItems(songsToDelete);
@@ -233,13 +230,12 @@ public class MusicManagerImpl implements MusicManager {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
 			return null;
 		}
-		
+
 		String genreName = StringHelper.normaliseTextForDatabase(genre.getName());
 		Genre savedGenre = musicDao.getGenre(genreName);
 		if (savedGenre != null) {
 			return savedGenre;
 		}
-		
 
 		genre.setName(genreName);
 		return genre;

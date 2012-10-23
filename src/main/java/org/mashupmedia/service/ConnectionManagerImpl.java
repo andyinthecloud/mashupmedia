@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -55,6 +56,9 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 	@Autowired
 	private MediaManager mediaManager;
+	
+	@Autowired
+	private MusicManager musicManager;
 
 	protected boolean isProxyEnabled() {
 		boolean isProxyEnabled = BooleanUtils.toBoolean(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
@@ -181,7 +185,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	}
 
 	@Override
-	public List<Song> getFtpSongs(MusicLibrary musicLibrary) {
+	public List<Song> getFtpSongs(MusicLibrary musicLibrary, Date date) {
 
 		FtpLocation ftpLocation = (FtpLocation) musicLibrary.getLocation();
 
@@ -189,7 +193,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		FTPClient ftpClient = null;
 		try {
 			ftpClient = connectToFtp(ftpLocation);
-			processFtpSongs(ftpClient, songs, musicLibrary, null, new ArrayList<String>(), 0);
+			processFtpSongs(date, ftpClient, songs, musicLibrary, null, new ArrayList<String>(), 0);
 
 		} catch (Exception e) {
 			logger.error("Unable to connect to ftp server.", e);
@@ -204,7 +208,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		return songs;
 	}
 
-	protected void processFtpSongs(FTPClient ftpClient, List<Song> songs, MusicLibrary musicLibrary, String artistName, List<String> albumNameParts,
+	protected void processFtpSongs(Date date, FTPClient ftpClient, List<Song> songs, MusicLibrary musicLibrary, String artistName, List<String> albumNameParts,
 			int trackNumber) {
 		try {
 			FTPFile[] ftpFiles = ftpClient.list();
@@ -220,8 +224,10 @@ public class ConnectionManagerImpl implements ConnectionManager {
 						albumNameParts.add(fileName);
 					}
 
-					processFtpSongs(ftpClient, songs, musicLibrary, artistName, albumNameParts, 0);
+					processFtpSongs(date, ftpClient, songs, musicLibrary, artistName, albumNameParts, 0);
 					if (albumNameParts.isEmpty()) {
+						musicManager.saveSongs(musicLibrary, songs);
+						songs = new ArrayList<Song>();
 						artistName = null;
 					} else {
 						albumNameParts.remove(albumNameParts.size() - 1);
@@ -251,6 +257,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 //					}
 
 					Song song = new Song();
+					song.setUpdatedOn(date);
 					song.setArtist(artist);
 					song.setAlbum(album);
 					song.setFileName(fileName);

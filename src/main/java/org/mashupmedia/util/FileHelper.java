@@ -132,7 +132,7 @@ public class FileHelper {
 
 		fileNamePattern = StringUtils.trimToEmpty(fileNamePattern);
 		if (StringUtils.isEmpty(fileNamePattern)) {
-			fileNamePattern = MashUpMediaConstants.COVER_ART_DEFAULT_NAME + "*";
+			fileNamePattern = MashUpMediaConstants.COVER_ART_DEFAULT_NAME;
 		}
 
 		String[] patterns = fileNamePattern.split(",|;");
