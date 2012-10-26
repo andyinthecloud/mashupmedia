@@ -10,10 +10,10 @@
 						prepareShowPageTitle();
 						prepareShowIndexLetters();
 
-						$("#albums li a.album-cover").hover(function() {
-							$(this).addClass("highlight");
+						$("#albums li").hover(function() {
+							$(this).find("a.album-cover").addClass("highlight");
 						}, function() {
-							$(this).removeClass("highlight");
+							$(this).find("a.album-cover").removeClass("highlight");
 						});
 
 						$(window)

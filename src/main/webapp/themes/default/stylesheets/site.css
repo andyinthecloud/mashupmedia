@@ -552,3 +552,17 @@ ul.index-letters li {
 	text-transform: uppercase;
 	font-size: 120%;
 }
+
+
+input[type="text"], input[type="password"] {
+	padding: 2px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;
+	border: none;
+} 
+
+input[type="text"].disabled, input[type="password"].disabled {
+	background-color: #D3D3D3;
+}

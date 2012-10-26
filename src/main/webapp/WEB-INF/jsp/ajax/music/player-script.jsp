@@ -25,25 +25,12 @@
 		
 		$(mashupMedia.jPlayerId).jPlayer("destroy");
 		
-		var rowId = $(playingRow).attr("id");
-		
-//		var mediaItemId = parseId(rowId, "playlist-media-id");
-
-		
-		
+		var rowId = $(playingRow).attr("id");		
 		var albumId = parseId(rowId, "album-id");		
 		var albumUrl = "<c:url value="/app/ajax/music/album/" />" + albumId;
 		
 		var songTitle = $(playingRow).find("td.song-title").text();
 		var artistName = $(playingRow).find("td.artist-name").text();
-
-		/*
-		$("#current-song td.song-title .title").text(songTitle);	
-		$("#current-song td.song-title .artist-name").text(artistName);		
-		$("#current-song .vote").show();
-		$("#current-song .album-art img").attr("src", "/mashupmedia/app/music/album-art/" + albumId);
-		$("#current-song-id").val("${mediaItemId}");
-		*/
 		
 		mashupMedia.showSongInfo(songTitle, artistName, true, albumId, ${mediaItemId});
 		

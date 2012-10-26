@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
@@ -50,6 +51,38 @@ public class PlaylistHelper {
 		}
 
 		return mediaItems;
+	}
+
+	public static void appendPlaylist(Playlist playlist, List<Song> songs) {
+		
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		if (playlistMediaItems == null) {
+			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
+			playlist.setPlaylistMediaItems(playlistMediaItems);
+		}
+		
+		if (songs == null || songs.isEmpty()) {
+			return;
+		}
+		
+		int totalPlaylistItems = playlistMediaItems.size();
+		
+		for (int i = 0; i < songs.size(); i++) {
+			PlaylistMediaItem playlistSong = new PlaylistMediaItem();
+			playlistSong.setMediaItem(songs.get(i));
+			playlistSong.setRanking(totalPlaylistItems + i);
+			playlistSong.setPlaylist(playlist);
+			playlistMediaItems.add(playlistSong);
+		}
+		
+		if (playlistMediaItems.isEmpty()) {
+			return;
+		}
+		
+		playlistMediaItems.get(0).setPlaying(true);
+		playlist.setPlaylistMediaItems(playlistMediaItems);
+
+		
 	}
 
 }

@@ -1,8 +1,12 @@
 <html>
 <head>
 <title>Login Page</title>
+<!-- @LOGGED-OUT@ -->
+
 </head>
-<body >
+<body>
+	<input type="hidden" id="logged-out" value="true" />
+	
 	<h1>Login with Username and Password</h1>
 	<form method="POST" action="<%=request.getContextPath()%>/j_spring_security_check" name="f">
 		<table>

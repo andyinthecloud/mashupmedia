@@ -8,6 +8,11 @@
 			mashupMedia.playAlbum(albumId);
 		});
 
+		$("#add-all").click(function() {
+			var albumId = $(this).closest("ul").attr("id");
+			albumId = albumId.replace("albumId-", "");
+			mashupMedia.appendAlbum(albumId);
+		});	
 	});
 </script>
 

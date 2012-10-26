@@ -60,6 +60,26 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		model.addAttribute("playlist", playlist);
 		return "ajax/playlist/music-playlist";
 	}
+	
+	@RequestMapping(value = "/append-album", method = RequestMethod.POST)
+	public String appendAlbum(@RequestParam("albumId") Long albumId, Model model) {
+		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
+
+		Album album = musicManager.getAlbum(albumId);
+		List<Song> songs = album.getSongs();
+		for (Song song : songs) {
+			streamingTaskManager.startMediaItemDownload(song.getId());
+		}
+
+		PlaylistHelper.appendPlaylist(playlist, songs);
+		playlistManager.savePlaylist(playlist);
+		model.addAttribute("playlist", playlist);
+		return "ajax/playlist/append-playlist";
+	}
+	
+	
+	
+	
 
 	@RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
 	public String playPlaylist(@PathVariable("playlistId") Long playlistId, Model model) {

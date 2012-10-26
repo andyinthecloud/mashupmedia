@@ -6,24 +6,29 @@
 
 
 <script type="text/javascript">
-	$(document).ready(function() {
 
-		mashupMedia.loadPlaylist();
-		loadRandomAlbums(false);
+	var songPlaylistSelector = "#top-bar-music-player .songs";
+
+	$(document).ready(function() {
+		
+		mashupMedia.loadPlaylist();				
 		
 		$("#current-song .toggle-playlist").click(function() {
-			var songPlaylist = $("#top-bar-music-player .songs");
-			
-			$(songPlaylist).toggle('slow', function() {
+			$(songPlaylistSelector).toggle('slow', function() {
 				var imagePath = "<c:url value="${themePath}/images/controls/open.png" />";
-				if ($(songPlaylist).is(":visible")) {
+				if ($(songPlaylistSelector).is(":visible")) {
 					imagePath = "<c:url value="${themePath}/images/controls/close.png" />";
 				} 
 				$("#current-song .toggle-playlist img").attr("src", imagePath);
 			});
 		});
 		
-		
+
+		$("body").children().not("#top-bar-music-player").click(function() {
+			closeSongPlaylist();
+		});
+
+
 		$("#current-song .vote .like").click(function() {
 			var mediaItemId = $("#current-song-id").val();
 			$.post(mashupMedia.contextUrl + "app/ajax/vote/like", {
@@ -43,6 +48,13 @@
 		
 		
 	});
+	
+	function closeSongPlaylist() {
+		$(songPlaylistSelector).slideUp('slow', function() {
+			var imagePath = "<c:url value="${themePath}/images/controls/open.png" />";
+			$("#current-song .toggle-playlist img").attr("src", imagePath);
+		});			
+	}	
 </script>
 
 

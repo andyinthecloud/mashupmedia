@@ -2,12 +2,12 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("div.albums div.album").hover(function() {
-			$(this).addClass("highlight");
+		
+		$("#albums li").hover(function() {
+			$(this).find("a.album-cover").addClass("highlight");
 		}, function() {
-			$(this).removeClass("highlight");
-		});
-
+			$(this).find("a.album-cover").removeClass("highlight");
+		});		
 	});
 </script>
 

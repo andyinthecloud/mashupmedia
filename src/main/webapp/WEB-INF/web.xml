@@ -1,5 +1,8 @@
 <web-app version="2.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://java.sun.com/xml/ns/j2ee" xsi:schemalocation="http:/java.sun.com/dtd/web-app_2_5.dtd">
+	
+	
+	
 	<context-param>
 		<param-name>log4jConfigLocation</param-name>
 		<param-value>/WEB-INF/classes/log4j.xml</param-value>
@@ -47,5 +50,9 @@
 		<servlet-name>dispatcher</servlet-name>
 		<url-pattern>/app/*</url-pattern>
 	</servlet-mapping>
+
+	<session-config>
+	  <session-timeout>30</session-timeout>
+	</session-config>
 
 </web-app>

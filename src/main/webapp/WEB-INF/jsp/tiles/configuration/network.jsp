@@ -6,17 +6,24 @@
 		$("input[type='radio'][name='proxyEnabled']").change(function() {
 			processForm();
 		});
-
 	});
 
 	function processForm() {
 		var isDisabled = false;
-		if ($("input[type='radio'][name='proxyEnabled']:checked").val() == "false") {
+		if ($("input[type='radio'][name='proxyEnabled']:checked").val() == "false") {			
 			isDisabled = true;
 		}
+	
+		var fieldSelector = "input[type='text'], input[type='password']";
+		
+		$(fieldSelector).prop("disabled", isDisabled);
 
-		$("input[type='text'], input[type='password']").prop("disabled",
-				isDisabled);
+		if (isDisabled) {
+			$(fieldSelector).addClass("disabled");
+		} else {
+			$(fieldSelector).removeClass("disabled");
+		}
+		
 	}
 </script>
 
