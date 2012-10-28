@@ -13,6 +13,19 @@
 			albumId = albumId.replace("albumId-", "");
 			mashupMedia.appendAlbum(albumId);
 		});	
+
+		$("ul.album-menu a.play").click(function() {
+			var songId = $(this).closest("li").attr("id");
+			songId = parseId(songId, "song-id");
+			mashupMedia.playSong(songId);
+		});	
+	
+		$("ul.album-menu a.add").click(function() {
+			var songId = $(this).closest("li").attr("id");
+			songId = parseId(songId, "song-id");
+			mashupMedia.appendSong(songId);
+		});	
+	
 	});
 </script>
 
@@ -47,10 +60,10 @@
 
 	<ul class="album-menu">
 		<c:forEach items="${albumPage.songs}" var="song">
-			<li id="songId-<c:out value="${song.id}"/>">
+			<li id="song-id-<c:out value="${song.id}"/>">
 				<div class="controls">
 					<a class="play" href="javascript:;" title="<spring:message code="control.play" />"><span
-						class="ui-icon ui-icon-play"></span></a> <a class="add" href="javascript:void(0);"
+						class="ui-icon ui-icon-play"></span></a> <a class="add" href="javascript:;"
 						title="<spring:message code="control.add" />"><span class="ui-icon ui-icon-plus"></span></a></div>
 				<c:out value="${song.displayTitle}" />
 

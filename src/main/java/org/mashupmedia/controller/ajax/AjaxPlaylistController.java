@@ -60,7 +60,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		model.addAttribute("playlist", playlist);
 		return "ajax/playlist/music-playlist";
 	}
-	
+
 	@RequestMapping(value = "/append-album", method = RequestMethod.POST)
 	public String appendAlbum(@RequestParam("albumId") Long albumId, Model model) {
 		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
@@ -71,15 +71,47 @@ public class AjaxPlaylistController extends BaseAjaxController {
 			streamingTaskManager.startMediaItemDownload(song.getId());
 		}
 
-		PlaylistHelper.appendPlaylist(playlist, songs);
+		List<PlaylistMediaItem> appendPlaylistMediaItems = PlaylistHelper.appendPlaylist(playlist, songs);
 		playlistManager.savePlaylist(playlist);
-		model.addAttribute("playlist", playlist);
+		model.addAttribute("playlistMediaItems", appendPlaylistMediaItems);
 		return "ajax/playlist/append-playlist";
 	}
-	
-	
-	
-	
+
+	@RequestMapping(value = "/play-song", method = RequestMethod.POST)
+	public String playSong(@RequestParam("songId") Long songId, Model model) {
+		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
+
+		MediaItem mediaItem = mediaManager.getMediaItem(songId);
+		if (!(mediaItem instanceof Song)) {
+			return null;
+		}
+
+		Song song = (Song) mediaItem;
+		streamingTaskManager.startMediaItemDownload(song.getId());
+
+		PlaylistHelper.replacePlaylist(playlist, song);
+		playlistManager.savePlaylist(playlist);
+		model.addAttribute("playlist", playlist);
+		return "ajax/playlist/music-playlist";
+	}
+
+	@RequestMapping(value = "/append-song", method = RequestMethod.POST)
+	public String appendSong(@RequestParam("songId") Long songId, Model model) {
+		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
+
+		MediaItem mediaItem = mediaManager.getMediaItem(songId);
+		if (!(mediaItem instanceof Song)) {
+			return null;
+		}
+
+		Song song = (Song) mediaItem;
+		streamingTaskManager.startMediaItemDownload(song.getId());
+
+		List<PlaylistMediaItem> appendPlaylistMediaItems = PlaylistHelper.appendPlaylist(playlist, song);
+		playlistManager.savePlaylist(playlist);
+		model.addAttribute("playlistMediaItems", appendPlaylistMediaItems);
+		return "ajax/playlist/append-playlist";
+	}
 
 	@RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
 	public String playPlaylist(@PathVariable("playlistId") Long playlistId, Model model) {

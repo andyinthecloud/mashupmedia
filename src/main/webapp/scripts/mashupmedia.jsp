@@ -86,8 +86,6 @@ var mashupMedia = new function() {
 	this.filterAlbumsSearchLetter = "";
 
 	this.loadPlaylist = function() {
-		
-
 		$.post(mashupMedia.contextUrl
 				+ "app/ajax/playlist/current-user-playlist", function(data) {
 			$("#top-bar-music-player .songs").html(data);
@@ -135,6 +133,15 @@ var mashupMedia = new function() {
 		});		
 	};
 	
+	this.playSong = function(songId) {
+		$.post(mashupMedia.contextUrl + "app/ajax/playlist/play-song", {
+			"songId" : songId
+		}, function(data) {
+			$("#top-bar-music-player .songs").html(data);
+			mashupMedia.loadSong(true);
+		});		
+	};
+
 	this.appendAlbum = function(albumId) {
 		$.post(mashupMedia.contextUrl + "app/ajax/playlist/append-album", {
 			"albumId" : albumId
@@ -143,6 +150,14 @@ var mashupMedia = new function() {
 		});		
 	};
 	
+	this.appendSong = function(songId) {
+		$.post(mashupMedia.contextUrl + "app/ajax/playlist/append-song", {
+			"songId" : songId
+		}, function(data) {
+			$("#top-bar-music-player .songs table.song-playlist tbody").append(data);
+		});		
+	};
+
 	this.destroyPlayer = function() {
 		$(mashupMedia.jPlayerId).jPlayer("destroy");
 	};

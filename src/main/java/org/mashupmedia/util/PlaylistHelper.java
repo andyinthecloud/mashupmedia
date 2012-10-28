@@ -18,11 +18,10 @@ public class PlaylistHelper {
 			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 			playlist.setPlaylistMediaItems(playlistMediaItems);
 		}
-		
+
 		if (songs == null || songs.isEmpty()) {
 			return;
 		}
-
 
 		for (int i = 0; i < songs.size(); i++) {
 			PlaylistMediaItem playlistSong = new PlaylistMediaItem();
@@ -31,11 +30,11 @@ public class PlaylistHelper {
 			playlistSong.setPlaylist(playlist);
 			playlistMediaItems.add(playlistSong);
 		}
-		
+
 		if (playlistMediaItems.isEmpty()) {
 			return;
 		}
-		
+
 		playlistMediaItems.get(0).setPlaying(true);
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 	}
@@ -53,36 +52,63 @@ public class PlaylistHelper {
 		return mediaItems;
 	}
 
-	public static void appendPlaylist(Playlist playlist, List<Song> songs) {
-		
+	public static List<PlaylistMediaItem> appendPlaylist(Playlist playlist, List<Song> songs) {
+
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems == null) {
 			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 			playlist.setPlaylistMediaItems(playlistMediaItems);
 		}
-		
+
 		if (songs == null || songs.isEmpty()) {
-			return;
+			return playlistMediaItems;
 		}
-		
+
 		int totalPlaylistItems = playlistMediaItems.size();
 		
+		List<PlaylistMediaItem> appendPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
+
 		for (int i = 0; i < songs.size(); i++) {
 			PlaylistMediaItem playlistSong = new PlaylistMediaItem();
 			playlistSong.setMediaItem(songs.get(i));
 			playlistSong.setRanking(totalPlaylistItems + i);
 			playlistSong.setPlaylist(playlist);
-			playlistMediaItems.add(playlistSong);
+			appendPlaylistMediaItems.add(playlistSong);
 		}
 		
+		
+		playlistMediaItems.addAll(appendPlaylistMediaItems);		
+
 		if (playlistMediaItems.isEmpty()) {
-			return;
+			return playlistMediaItems;
 		}
-		
+
 		playlistMediaItems.get(0).setPlaying(true);
 		playlist.setPlaylistMediaItems(playlistMediaItems);
+		return appendPlaylistMediaItems;
 
-		
+	}
+
+	public static void replacePlaylist(Playlist playlist, Song song) {
+		if (song == null) {
+			return;
+		}
+
+		List<Song> songs = new ArrayList<Song>();
+		songs.add(song);
+		replacePlaylist(playlist, songs);
+	}
+
+	public static List<PlaylistMediaItem> appendPlaylist(Playlist playlist, Song song) {
+		List<PlaylistMediaItem> appendPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
+		if (song == null) {
+			return appendPlaylistMediaItems;
+		}
+
+		List<Song> songs = new ArrayList<Song>();
+		songs.add(song);
+		appendPlaylistMediaItems = appendPlaylist(playlist, songs);
+		return appendPlaylistMediaItems;
 	}
 
 }

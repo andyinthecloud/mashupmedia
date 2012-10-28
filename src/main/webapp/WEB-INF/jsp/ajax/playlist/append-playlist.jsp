@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
-<c:forEach items="${playlist.playlistMediaItems}" var="playlistMediaItem">
+<c:forEach items="${playlistMediaItems}" var="playlistMediaItem">
 	<c:set var="song" value="${playlistMediaItem.mediaItem}" />
 	<c:set var="playingClass" value="" />
 	<c:if test="${playlistMediaItem.playing }">
