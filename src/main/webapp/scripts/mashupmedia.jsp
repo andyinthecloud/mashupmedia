@@ -124,6 +124,15 @@ var mashupMedia = new function() {
 		});
 	};
 	
+	this.playArtist = function(artistId) {
+		$.post(mashupMedia.contextUrl + "app/ajax/playlist/play-artist", {
+			"artistId" : artistId
+		}, function(data) {
+			$("#top-bar-music-player .songs").html(data);
+			mashupMedia.loadSong(true);
+		});		
+	};
+
 	this.playAlbum = function(albumId) {
 		$.post(mashupMedia.contextUrl + "app/ajax/playlist/play-album", {
 			"albumId" : albumId
@@ -139,6 +148,14 @@ var mashupMedia = new function() {
 		}, function(data) {
 			$("#top-bar-music-player .songs").html(data);
 			mashupMedia.loadSong(true);
+		});		
+	};
+
+	this.appendArtist = function(artistId) {
+		$.post(mashupMedia.contextUrl + "app/ajax/playlist/append-artist", {
+			"artistId" : artistId
+		}, function(data) {
+			$("#top-bar-music-player .songs table.song-playlist tbody").append(data);
 		});		
 	};
 

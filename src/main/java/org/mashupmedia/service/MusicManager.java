@@ -36,4 +36,6 @@ public interface MusicManager {
 
 	public void deleteObsoleteSongs(long libraryId, Date date);
 
+	public List<Album> getAlbumsByArtist(Long artistId);
+
 }

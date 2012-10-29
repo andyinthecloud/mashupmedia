@@ -260,8 +260,7 @@ div.albums div.highlight img, #albums li a.highlight img {
 
 ul.control-menu {
 	margin: 0;
-	padding: 0;
-	padding-bottom: 5px;
+	padding: 5px 0;
 	clear: both;
 }
 
@@ -533,7 +532,7 @@ ul.index-letters li {
 	width: auto;
 }
 
-#albums li div.artist,#albums li div.album {
+#albums li div.artist, #albums li div.album, #albums ul.control-menu{
 	margin-left: 200px;
 }
 
@@ -546,6 +545,22 @@ ul.index-letters li {
 #albums li div.artist {
 	font-size: 90%;
 }
+
+ul.items ul.control-menu {
+	margin-top: 10px;
+	clear: none;
+}
+
+ul.items ul.control-menu li{
+	border-bottom: none !important;
+	padding: 0 0 0 5px !important;
+}
+
+ul.items ul.control-menu li.first{
+	padding: 0 5px 0 0 !important;
+}
+
+
 
 #albums div.index-letter {
 	float: right;

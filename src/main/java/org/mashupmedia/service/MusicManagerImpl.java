@@ -259,6 +259,20 @@ public class MusicManagerImpl implements MusicManager {
 		Album album = musicDao.getAlbum(artistName, albumName);
 		return album;
 	}
+	
+	@Override
+	public List<Album> getAlbumsByArtist(Long artistId) {
+		List<Album> albums = musicDao.getAlbumsByArtist(artistId);
+		if (albums == null || albums.isEmpty()) {
+			return albums;
+		}
+		
+		for (Album album : albums) {
+			Hibernate.initialize(album.getSongs());
+		}
+		
+		return albums;
+	}
 
 	@Override
 	public List<Song> getSongs(Long albumId) {
