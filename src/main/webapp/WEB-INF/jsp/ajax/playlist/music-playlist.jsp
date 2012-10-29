@@ -37,9 +37,15 @@
 		
 		$("#playlist-actions").change(function() {
 			var action = $(this).val();
-			if (action == "clear") {
-				mashupMedia.clearPlaylist();	
+			if (action == "") {
+				return;
 			}
+			
+			if (action == "clear") {
+				mashupMedia.clearPlaylist();
+			}
+			
+			$(this).val("");
 			
 		});
 		

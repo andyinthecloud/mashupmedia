@@ -81,10 +81,8 @@
 			</div>
 			
 			<ul class="control-menu">
-				<li class="first play-album"><a href="javascript:;"> <spring:message code="action.play-all" />
-				</a></li>
-				<li><a href="javascript:;" class="append-album"> <spring:message code="action.add-all" />
-				</a></li>
+				<li class="first play-album"><a href="javascript:;"><spring:message code="action.play-all" /></a></li>
+				<li class="append-album"><a href="javascript:;"><spring:message code="action.add-all" /></a></li>
 			</ul>			
 			
 			</li>

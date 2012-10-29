@@ -148,7 +148,7 @@ var mashupMedia = new function() {
 		}, function(data) {
 			$("#top-bar-music-player .songs").html(data);
 			mashupMedia.loadSong(true);
-		});		
+		});
 	};
 
 	this.appendArtist = function(artistId) {
@@ -156,7 +156,8 @@ var mashupMedia = new function() {
 			"artistId" : artistId
 		}, function(data) {
 			$("#top-bar-music-player .songs table.song-playlist tbody").append(data);
-		});		
+			loadNextSongIfNotPlaying();
+		});
 	};
 
 	this.appendAlbum = function(albumId) {
@@ -164,6 +165,7 @@ var mashupMedia = new function() {
 			"albumId" : albumId
 		}, function(data) {
 			$("#top-bar-music-player .songs table.song-playlist tbody").append(data);
+			loadNextSongIfNotPlaying();
 		});		
 	};
 	
@@ -172,6 +174,7 @@ var mashupMedia = new function() {
 			"songId" : songId
 		}, function(data) {
 			$("#top-bar-music-player .songs table.song-playlist tbody").append(data);
+			loadNextSongIfNotPlaying();
 		});		
 	};
 
@@ -230,6 +233,13 @@ var mashupMedia = new function() {
 		$("#current-song-id").val(mediaItemId);
 	};
 	
+}
+
+function loadNextSongIfNotPlaying() {
+	var currentSongId = $("#current-song-id").val();
+	if (currentSongId < 1) {
+		mashupMedia.loadSong(true);
+	}
 }
 
 function loadLink(path) {
