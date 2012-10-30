@@ -8,6 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+
 @Entity
 @Cacheable
 public class Year implements Serializable {
@@ -15,6 +18,7 @@ public class Year implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+	@Field(analyze = Analyze.NO)
 	private int year;
 
 	public long getId() {

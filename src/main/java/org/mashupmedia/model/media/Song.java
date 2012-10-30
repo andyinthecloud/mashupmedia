@@ -6,12 +6,18 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.MediaContentType;
 
 @Entity
+@Indexed
 @Cacheable
 public class Song extends MediaItem {
 
@@ -20,14 +26,19 @@ public class Song extends MediaItem {
 	public final static String TITLE_SEPERATOR = " - ";
 
 	private int trackNumber;
+	@Field(index = Index.YES, analyze = Analyze.YES)
 	private String title;
+	@IndexedEmbedded
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
 	@ManyToOne
+	@IndexedEmbedded
 	private Genre genre;
 	@ManyToOne
+	@IndexedEmbedded
 	private Year year;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@IndexedEmbedded
 	private Artist artist;
 	private long trackLength;
 	private long bitRate;
@@ -194,14 +205,14 @@ public class Song extends MediaItem {
 			String displayBytes = FileHelper.getDisplayBytes(sizeInBytes, true);
 			metaBuilder.append(displayBytes);
 		}
-		
+
 		metaBuilder.append(" | ");
 		metaBuilder.append(getMediaContentType());
 
 		return metaBuilder.toString();
 
 	}
-	
+
 	public String getMediaContentType() {
 		MediaContentType mediaContentType = WebHelper.getMediaContentType(getFormat(), MediaContentType.MP3);
 		return mediaContentType.getDisplayText();

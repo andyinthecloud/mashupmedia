@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class ConfigurationController extends BaseController{
+public class ConfigurationController extends BaseController {
 
 	@Autowired
 	private ConfigurationManager configurationManager;
-	
+
 	private final static String REDIRECT_PATH = "configuration";
 	private final static String PAGE_PATH = "/configuration";
 
@@ -29,7 +29,7 @@ public class ConfigurationController extends BaseController{
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"));
 		breadcrumbs.add(breadcrumb);
 	}
-	
+
 	@RequestMapping(value = PAGE_PATH, method = RequestMethod.GET)
 	public String getConfiguration(Model model) {
 

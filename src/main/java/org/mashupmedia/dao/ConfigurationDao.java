@@ -8,4 +8,7 @@ public interface ConfigurationDao {
 	
 	public void saveConfiguration(Configuration configuration);
 
+	public void indexMediaItems();
+	
+
 }

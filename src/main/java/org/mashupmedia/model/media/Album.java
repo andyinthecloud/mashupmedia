@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.hibernate.search.annotations.Field;
+
 @Entity
 @Cacheable
 public class Album implements Serializable {
@@ -20,6 +22,7 @@ public class Album implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+	@Field
 	private String name;
 	private String folderName;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

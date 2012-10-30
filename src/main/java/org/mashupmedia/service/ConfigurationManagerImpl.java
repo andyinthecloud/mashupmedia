@@ -62,4 +62,9 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 		String encryptedValue = EncryptionHelper.encryptText(value);
 		saveConfiguration(key, encryptedValue);
 	}
+	
+	@Override
+	public void indexMediaItems() {
+		configurationDao.indexMediaItems();
+	}
 }

@@ -16,4 +16,6 @@ public interface ConfigurationManager {
 
 	public void saveEncryptedConfiguration(String key, String value);
 
+	public void indexMediaItems();
+
 }

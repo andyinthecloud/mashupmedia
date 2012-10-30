@@ -15,10 +15,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.search.annotations.Indexed;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 
 @Entity
+@Indexed
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 public class MediaItem implements Serializable {

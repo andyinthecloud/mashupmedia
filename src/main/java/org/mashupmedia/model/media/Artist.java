@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.hibernate.search.annotations.Field;
+
 @Entity
 @Cacheable
 public class Artist implements Serializable {
@@ -18,6 +20,7 @@ public class Artist implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+	@Field
 	private String name;
 	private String folderName;
 	@OneToMany(mappedBy = "artist")
