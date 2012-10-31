@@ -15,7 +15,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 
@@ -25,6 +28,10 @@ import org.mashupmedia.model.library.Library;
 @Cacheable
 public class MediaItem implements Serializable {
 	private static final long serialVersionUID = -6694717782091959485L;
+
+	public enum MediaType {
+		SONG, VIDEO, IMAGE;
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -42,6 +49,56 @@ public class MediaItem implements Serializable {
 	private Date lastAccessed;
 	@ManyToOne
 	private User lastAccessedBy;
+	@Field
+	private String searchText;
+	@ManyToOne
+	@IndexedEmbedded
+	private Group group;
+	private String mediaType;
+	private String summary;
+
+	public MediaType getMediaType() {
+		if (mediaType == null) {
+			return null;
+		}
+
+		MediaType[] mediaTypes = MediaType.values();
+		for (MediaType mediaType : mediaTypes) {
+			if (this.mediaType == mediaType.toString()) {
+				return mediaType;
+			}
+		}
+
+		return null;
+	}
+
+	public void setMediaType(MediaType mediaType) {
+		this.mediaType = mediaType.toString();
+	}	
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public String getSearchText() {
+		return searchText;
+	}
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+
+	public Group getGroup() {
+		return group;
+	}
+
+	public void setGroup(Group group) {
+		this.group = group;
+	}
 
 	public User getLastAccessedBy() {
 		return lastAccessedBy;
@@ -160,7 +217,7 @@ public class MediaItem implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Media [id=");
+		builder.append("MediaItem [id=");
 		builder.append(id);
 		builder.append(", fileName=");
 		builder.append(fileName);
@@ -174,6 +231,16 @@ public class MediaItem implements Serializable {
 		builder.append(updatedOn);
 		builder.append(", format=");
 		builder.append(format);
+		builder.append(", vote=");
+		builder.append(vote);
+		builder.append(", lastAccessed=");
+		builder.append(lastAccessed);
+		builder.append(", lastAccessedBy=");
+		builder.append(lastAccessedBy);
+		builder.append(", searchText=");
+		builder.append(searchText);
+		builder.append(", group=");
+		builder.append(group);
 		builder.append("]");
 		return builder.toString();
 	}

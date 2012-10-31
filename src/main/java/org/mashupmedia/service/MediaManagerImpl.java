@@ -52,4 +52,10 @@ public class MediaManagerImpl implements MediaManager{
 		mediaDao.updateMediaItem(mediaItem);
 	}
 	
+	@Override
+	public List<String> findAutoCompleteMediaItems(String searchWords) {
+		List<String> suggestionWords = mediaDao.findAutoCompleteMediaItems(searchWords);
+		return suggestionWords;
+	}
+	
 }

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
@@ -100,7 +99,6 @@ public class LibraryManagerImpl implements LibraryManager {
 	@Override
 	public MusicLibrary getMusicLibrary(long id) {
 		MusicLibrary musicLibrary = libraryDao.getMusicLibrary(id);
-		Hibernate.initialize(musicLibrary.getGroups());
 		return musicLibrary;
 	}
 

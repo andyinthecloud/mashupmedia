@@ -10,6 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+
 @Entity
 @Cacheable
 @Table(name = "GROUPS")
@@ -19,6 +22,7 @@ public class Group extends Translation implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+	@Field(analyze = Analyze.NO)
 	private String idName;
 	private String name;
 	private Date createdOn;

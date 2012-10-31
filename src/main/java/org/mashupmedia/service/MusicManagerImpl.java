@@ -202,6 +202,27 @@ public class MusicManagerImpl implements MusicManager {
 			if (i % BATCH_INSERT_ITEMS == 0 || i == (songs.size() - 1)) {
 				isSessionFlush = true;
 			}
+			
+			StringBuilder searchTextBuilder = new StringBuilder();
+			if (artist != null) {
+				searchTextBuilder.append(" " + artist.getIndexText());	
+			}
+			
+			if (genre != null) {				
+				searchTextBuilder.append(" " + genre.getName());
+			}
+			
+			if (year != null) {
+				searchTextBuilder.append(" " + year.getYear());
+				
+			}
+			
+			searchTextBuilder.append(" " + song.getTitle());
+			String searchText = StringUtils.trimToEmpty(searchTextBuilder.toString());
+			searchText = searchText.replaceAll("\\s*\\b", " ");
+			song.setSearchText(searchText);
+			
+			
 
 			musicDao.saveSong(song, isSessionFlush);
 			totalSongsSaved++;

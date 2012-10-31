@@ -28,11 +28,11 @@ public class ConfigurationDaoImpl extends BaseDaoImpl implements ConfigurationDa
 
 	@Override
 	public void indexMediaItems() {
-		logger.info("About to start indexing mediaItems...");
+		logger.info("About to start indexing...");
 		FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
 		try {
 			fullTextSession.createIndexer().startAndWait();
-			logger.info("MediaItems indexed.");
+			logger.info("Indexation finished.");
 		} catch (InterruptedException e) {
 			throw new MashupMediaException("Error indexing content", e);
 		}

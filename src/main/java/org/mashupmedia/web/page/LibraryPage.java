@@ -1,5 +1,8 @@
 package org.mashupmedia.web.page;
 
+import java.util.List;
+
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 
@@ -9,6 +12,15 @@ public abstract class LibraryPage {
 	private String locationType;
 	private Location folderLocation;
 	private FtpLocation ftpLocation;
+	private List<Group> groups;
+
+	public List<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
+	}
 
 	public String getAction() {
 		return action;

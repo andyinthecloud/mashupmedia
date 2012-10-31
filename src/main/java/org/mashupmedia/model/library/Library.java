@@ -2,7 +2,6 @@ package org.mashupmedia.model.library;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -12,10 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.location.Location;
 
@@ -39,8 +36,6 @@ public class Library implements Serializable{
 	@ManyToOne
 	private User updatedBy;
 	private boolean enabled;
-	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-	private Set<Group> groups;
 	private String scanMinutesInterval;
 
 	public long getId() {
@@ -107,14 +102,6 @@ public class Library implements Serializable{
 		this.enabled = enabled;
 	}
 
-	public Set<Group> getGroups() {
-		return groups;
-	}
-
-	public void setGroups(Set<Group> groups) {
-		this.groups = groups;
-	}
-
 	public String getScanMinutesInterval() {
 		return scanMinutesInterval;
 	}
@@ -170,14 +157,12 @@ public class Library implements Serializable{
 		builder.append(createdOn);
 		builder.append(", createdBy=");
 		builder.append(createdBy);
-		builder.append(", lastModifiedOn=");
+		builder.append(", updatedOn=");
 		builder.append(updatedOn);
-		builder.append(", lastModifiedBy=");
+		builder.append(", updatedBy=");
 		builder.append(updatedBy);
 		builder.append(", enabled=");
 		builder.append(enabled);
-		builder.append(", groups=");
-		builder.append(groups);
 		builder.append(", scanMinutesInterval=");
 		builder.append(scanMinutesInterval);
 		builder.append("]");

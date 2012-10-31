@@ -1,13 +1,11 @@
 package org.mashupmedia.service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
@@ -30,8 +28,6 @@ public class TestLibraryManager extends TestBaseService {
 	public void testSaveMusicLibrary() {
 		MusicLibrary musicLibrary = new MusicLibrary();
 		musicLibrary.setEnabled(true);
-		List<Group> groups = adminManager.getGroups();
-		musicLibrary.setGroups(new HashSet<Group>(groups));
 		Location location = new Location();
 		location.setPath("path");
 		musicLibrary.setLocation(location);
@@ -47,8 +43,6 @@ public class TestLibraryManager extends TestBaseService {
 	public void testSaveFtpMusicLibrary() {
 		MusicLibrary musicLibrary = new MusicLibrary();
 		musicLibrary.setEnabled(true);
-		List<Group> groups = adminManager.getGroups();
-		musicLibrary.setGroups(new HashSet<Group>(groups));
 		FtpLocation location = new FtpLocation();
 		location.setHost("gloop.ath.cx");
 		location.setPassword("passwordpasswordpasswordpasswordpassword");
@@ -67,8 +61,6 @@ public class TestLibraryManager extends TestBaseService {
 	public void testDeleteLibrary() {
 		MusicLibrary musicLibrary = new MusicLibrary();
 		musicLibrary.setEnabled(true);
-		List<Group> groups = adminManager.getGroups();
-		musicLibrary.setGroups(new HashSet<Group>(groups));
 		FtpLocation location = new FtpLocation();
 		location.setHost("host");
 		location.setPassword("password");

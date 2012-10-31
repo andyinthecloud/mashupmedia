@@ -20,5 +20,7 @@ public interface MediaManager {
 
 	public void updateMediaItem(MediaItem mediaItem);
 
+	public List<String> findAutoCompleteMediaItems(String searchWords);
+
 
 }

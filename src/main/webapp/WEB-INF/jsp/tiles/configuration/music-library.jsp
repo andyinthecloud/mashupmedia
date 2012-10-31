@@ -169,9 +169,9 @@
 
 
 
-	<label class="new-line" for="musicLibrary-groups"><spring:message
-			code="musiclibrary.groups" /></label>
-	<form:select path="musicLibrary.groups" id="musicLibrary-groups" multiple="true">
+	<label class="new-line" for="groups"><spring:message
+			code="musiclibrary.groups" /></label>			
+	<form:select path="groups" id="groups" multiple="true">
 		<form:options items="${groups}" itemLabel="translatedName" itemValue="idName" />
 	</form:select>
 	<br />

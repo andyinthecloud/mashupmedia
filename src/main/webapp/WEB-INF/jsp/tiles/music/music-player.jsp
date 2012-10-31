@@ -46,8 +46,51 @@
 			});				
 		});
 		
+		var defaultSearchText = "<spring:message code="search" />";
+		var searchField = $("#top-bar-music-player div.search-box input[type=text]");
+		var searchText = getTextFromField(searchField);
+		if (searchText == "") {
+			$(searchField).val(defaultSearchText);
+		}
+		
+		$(searchField).focus(function() {
+			var text = getTextFromField(searchField);
+			if (text == defaultSearchText) {
+				$(searchField).val("");
+			}
+		});
+		
+		$(searchField).blur(function() {
+			var text = getTextFromField(searchField);
+			if (text == "") {
+				$(searchField).val(defaultSearchText);
+			}
+		});
+		
+	     $(searchField).autocomplete({
+            source: function (request, response) {
+            	
+            	$.post("<c:url value="/app/ajax/search/media-items-autocomplete" />", {
+        			"searchWords" : getTextFromField(searchField)
+        		}, function(data) {
+        			 console.log(data);		
+        		});
+            	
+                
+            },             	
+            minLength: 2,
+            select: function( event, ui ) {
+/*            	
+                log( ui.item ?
+                    "Selected: " + ui.item.value + " aka " + ui.item.id :
+                    "Nothing selected, input was " + this.value );
+                  */  
+            }
+		});
 		
 	});
+	
+	
 	
 	function closeSongPlaylist() {
 		$(songPlaylistSelector).slideUp('slow', function() {
@@ -69,9 +112,9 @@
 		<li><a href="javascript:;"><spring:message code="top-bar.my-account" /></a></li>
 		<li><a href="javascript:;"><spring:message code="top-bar.log-out" /></a></li>
 	</ul>
-	
 	<div class="top-home-link"><a href="<c:url value="/" />"><spring:message code="top-bar.home" /></a></div>
-	
+	<div class="search-box"><input type="text" /></div>
+		
 
 	<div class="clear"></div>
 

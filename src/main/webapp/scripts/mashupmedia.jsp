@@ -379,3 +379,13 @@ function closeSongPlaylist() {
 	});			
 }
 
+function getTextFromField(textField) {
+	if ($(textField).length = 0) {
+		return "";
+	}
+	
+	var text = $(textField).val();
+	text = $.trim(text);
+	return text;
+}
+
