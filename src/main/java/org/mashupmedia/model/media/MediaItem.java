@@ -15,15 +15,25 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.solr.analysis.LowerCaseFilterFactory;
+import org.apache.solr.analysis.SnowballPorterFilterFactory;
+import org.apache.solr.analysis.StandardTokenizerFactory;
+import org.hibernate.search.annotations.AnalyzerDef;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 
 @Entity
 @Indexed
+@AnalyzerDef(name = "customanalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
+		@TokenFilterDef(factory = LowerCaseFilterFactory.class),
+		@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = { @Parameter(name = "language", value = "English") }) })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 public class MediaItem implements Serializable {
@@ -54,6 +64,7 @@ public class MediaItem implements Serializable {
 	@ManyToOne
 	@IndexedEmbedded
 	private Group group;
+	@Field	
 	private String mediaType;
 	private String summary;
 
@@ -74,7 +85,7 @@ public class MediaItem implements Serializable {
 
 	public void setMediaType(MediaType mediaType) {
 		this.mediaType = mediaType.toString();
-	}	
+	}
 
 	public String getSummary() {
 		return summary;

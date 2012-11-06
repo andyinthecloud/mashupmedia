@@ -208,18 +208,22 @@ public class MusicManagerImpl implements MusicManager {
 				searchTextBuilder.append(" " + artist.getIndexText());	
 			}
 			
+			if (album != null) {
+				searchTextBuilder.append(" " + album.getIndexText());	
+			}
+			
 			if (genre != null) {				
 				searchTextBuilder.append(" " + genre.getName());
 			}
 			
 			if (year != null) {
-				searchTextBuilder.append(" " + year.getYear());
-				
+				searchTextBuilder.append(" " + year.getYear());				
 			}
 			
 			searchTextBuilder.append(" " + song.getTitle());
 			String searchText = StringUtils.trimToEmpty(searchTextBuilder.toString());
 			searchText = searchText.replaceAll("\\s*\\b", " ");
+			searchText = StringHelper.normaliseTextForDatabase(searchText);
 			song.setSearchText(searchText);
 			
 			

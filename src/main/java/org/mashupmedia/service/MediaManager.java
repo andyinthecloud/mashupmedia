@@ -2,6 +2,7 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
+import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.MediaItem;
 
@@ -21,6 +22,8 @@ public interface MediaManager {
 	public void updateMediaItem(MediaItem mediaItem);
 
 	public List<String> findAutoCompleteMediaItems(String searchWords);
+
+	public List<? extends MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria);
 
 
 }

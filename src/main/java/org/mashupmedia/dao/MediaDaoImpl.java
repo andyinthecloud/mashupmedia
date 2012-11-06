@@ -1,13 +1,16 @@
 package org.mashupmedia.dao;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
+import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.Album;
@@ -99,38 +102,54 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		
 		String[] searchWordsArray = searchWords.split("\\s");
 		String lastWord = searchWordsArray[searchWordsArray.length - 1];
+		lastWord = "\\b" + lastWord + ".*?\\b";
 		String suggestionPrefix = StringUtils.trimToEmpty(searchWords.replaceFirst("\\b\\w*$", ""));
 		
 		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
-		mediaItemSearchCriteria.setFetchSize(10);
+		mediaItemSearchCriteria.setMaximumResults(50);
 		mediaItemSearchCriteria.setSearchWords(searchWords + "*");
 		List<MediaItem> mediaItems = findMediaItems(mediaItemSearchCriteria);
 
-		List<String> suggestedWords = new ArrayList<String>();
+		Set<String> suggestedTextItems = new HashSet<String>();
 		if (mediaItems == null || mediaItems.isEmpty()) {
-			return suggestedWords;
+			return new ArrayList<String>();
 		}
 
 		for (MediaItem mediaItem : mediaItems) {
 			String searchText = mediaItem.getSearchText();
 			String suggestion = StringHelper.find(searchText, lastWord);
-			suggestedWords.add(suggestionPrefix + " " + suggestion);
+			String suggestedTextItem = StringUtils.trimToEmpty(suggestionPrefix + " " + suggestion);			
+			suggestedTextItems.add(suggestedTextItem);			
+			if (suggestedTextItems.size() > 10) {
+				return new ArrayList<String>(suggestedTextItems);
+			}
 		}
-		
-		return suggestedWords;
+					
+		return new ArrayList<String>(suggestedTextItems);
 
 	}
 
-	private List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria) {
+	@Override
+	public List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria) {
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
-
+		
 		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(MediaItem.class).get();
-		org.apache.lucene.search.Query luceneQuery = queryBuilder.keyword().wildcard().onField("searchText").matching(mediaItemSearchCriteria.getSearchWords())
-				.createQuery();
+		@SuppressWarnings("rawtypes")
+		BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
+
+		String searchWordsValue = mediaItemSearchCriteria.getSearchWords();
+		String[] searchWords = searchWordsValue.split("\\s");		
+		for (String searchWord : searchWords) {
+			booleanJunction.must(queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord).createQuery());
+		}		
+		
+		booleanJunction.must(queryBuilder.keyword().onField("mediaType").matching(mediaItemSearchCriteria.getMediaType()).createQuery());
+		
+		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
 		Query query = fullTextSession.createFullTextQuery(luceneQuery, MediaItem.class);
-		query.setFetchSize(mediaItemSearchCriteria.getFetchSize());
 		query.setFirstResult(mediaItemSearchCriteria.getFirstResult());
+		query.setMaxResults(mediaItemSearchCriteria.getMaximumResults());
 
 		@SuppressWarnings("unchecked")
 		List<MediaItem> mediaItems = query.list();

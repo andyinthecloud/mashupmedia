@@ -3,6 +3,7 @@ package org.mashupmedia.service;
 import java.util.Date;
 import java.util.List;
 
+import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.MediaItem;
@@ -56,6 +57,12 @@ public class MediaManagerImpl implements MediaManager{
 	public List<String> findAutoCompleteMediaItems(String searchWords) {
 		List<String> suggestionWords = mediaDao.findAutoCompleteMediaItems(searchWords);
 		return suggestionWords;
+	}
+	
+	@Override
+	public List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria) {
+		List<MediaItem> mediaItems = mediaDao.findMediaItems(mediaItemSearchCriteria);
+		return mediaItems;
 	}
 	
 }

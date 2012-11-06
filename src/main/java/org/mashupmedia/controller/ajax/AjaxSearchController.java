@@ -2,6 +2,9 @@ package org.mashupmedia.controller.ajax;
 
 import java.util.List;
 
+import org.mashupmedia.criteria.MediaItemSearchCriteria;
+import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.Song;
 import org.mashupmedia.service.MediaManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,5 +26,16 @@ public class AjaxSearchController extends BaseAjaxController {
 		model.addAttribute("suggestions", suggestions);
 		return "ajax/search/suggestions";
 	}
-	
+
+	@RequestMapping(value = "/media-items", method = RequestMethod.POST)
+	public String handleMediaItems(@RequestParam("searchWords") String searchWords, Model model) {
+		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
+		mediaItemSearchCriteria.setMediaType(MediaType.SONG);
+		mediaItemSearchCriteria.setSearchWords(searchWords);
+		@SuppressWarnings("unchecked")
+		List<Song> songs = (List<Song>) mediaManager.findMediaItems(mediaItemSearchCriteria);
+		model.addAttribute("songs", songs);
+		return "ajax/search/suggestions";
+	}
+
 }

@@ -1,18 +1,27 @@
 package org.mashupmedia.criteria;
 
+import org.mashupmedia.model.media.MediaItem.MediaType;
+
 public class MediaItemSearchCriteria {
 
 	private final static int DEFAULT_FETCH_SIZE = 20;
-	
-	
-	private String searchWords;
-	private int fetchSize;
-	private int firstResult;
 
-	
-	
+	private String searchWords;
+	private int maximumResults;
+	private int firstResult;
+	private MediaType mediaType;
+
 	public MediaItemSearchCriteria() {
-		setFetchSize(DEFAULT_FETCH_SIZE);
+		setMaximumResults(DEFAULT_FETCH_SIZE);
+		setMediaType(MediaType.SONG);
+	}
+
+	public MediaType getMediaType() {
+		return mediaType;
+	}
+
+	public void setMediaType(MediaType mediaType) {
+		this.mediaType = mediaType;
 	}
 
 	public String getSearchWords() {
@@ -23,12 +32,12 @@ public class MediaItemSearchCriteria {
 		this.searchWords = searchWords;
 	}
 
-	public int getFetchSize() {
-		return fetchSize;
+	public int getMaximumResults() {
+		return maximumResults;
 	}
 
-	public void setFetchSize(int fetchSize) {
-		this.fetchSize = fetchSize;
+	public void setMaximumResults(int maximumResults) {
+		this.maximumResults = maximumResults;
 	}
 
 	public int getFirstResult() {

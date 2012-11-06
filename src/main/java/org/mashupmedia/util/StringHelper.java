@@ -88,7 +88,7 @@ public class StringHelper {
 	}
 
 	private static String removeInitialStopWords(String text) {
-		text = StringUtils.trimToEmpty(text).toLowerCase();
+		text = normaliseTextForDatabase(text);
 
 		StringBuilder regexBuilder = new StringBuilder();
 		for (String stopWord : STOP_WORDS) {
@@ -114,12 +114,7 @@ public class StringHelper {
 			return null;
 		}
 
-		String[] words = text.split("\\s");
-		if (words == null) {
-			return null;
-		}
-
-		return words[0];
+		return text;
 	}
 
 	public static String normaliseTextForDatabase(String text) {

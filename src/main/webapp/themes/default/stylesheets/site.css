@@ -333,6 +333,16 @@ div.sub-panel div.album-art img {
 	color: #3A2A45;
 }
 
+#top-bar-music-player div.search-box a img{
+	width: 30px;
+	height: auto;
+	vertical-align: middle;
+	margin-left: 5px;
+}
+
+ul.ui-autocomplete {
+	font-size: 80%;
+}
 
 
 #current-song table {
@@ -595,3 +605,6 @@ input[type="text"], input[type="password"] {
 input[type="text"].disabled, input[type="password"].disabled {
 	background-color: #D3D3D3;
 }
+
+
+
