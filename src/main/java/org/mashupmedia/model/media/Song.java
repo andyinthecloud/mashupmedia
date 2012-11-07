@@ -2,6 +2,7 @@ package org.mashupmedia.model.media;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
@@ -27,6 +28,7 @@ public class Song extends MediaItem {
 
 	private int trackNumber;
 	@Field(index = Index.YES, analyze = Analyze.YES)
+	@Column(length = 1000)
 	private String title;
 	@IndexedEmbedded
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

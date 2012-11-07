@@ -74,9 +74,12 @@ $(document).ready(function() {
 		} else if (textStartsWith(address, addressQuickSearchMediaItems)) {
 			serialisedSearchForm = $("#quick-search").serialize();
 			loadSongSearchResults(false);			
-		} else {
+		} 
+		/*
+		else {
 			loadRandomAlbums(false);
 		}
+		*/
 		
 	});
 

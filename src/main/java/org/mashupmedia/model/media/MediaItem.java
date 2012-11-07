@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -64,12 +65,14 @@ public class MediaItem implements Serializable {
 	@ManyToOne
 	private User lastAccessedBy;
 	@Field
+	@Column(length = 1000)
 	private String searchText;
 	@ManyToOne
 	@IndexedEmbedded
 	private Group group;
 	@Field
 	private String mediaTypeValue;
+	@Column(length = 1000)
 	private String summary;
 
 	public String getMediaTypeValue() {
