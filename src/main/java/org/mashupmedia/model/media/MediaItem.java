@@ -28,6 +28,8 @@ import org.hibernate.search.annotations.TokenizerDef;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.StringHelper;
 
 @Entity
 @Indexed
@@ -64,27 +66,25 @@ public class MediaItem implements Serializable {
 	@ManyToOne
 	@IndexedEmbedded
 	private Group group;
-	@Field	
-	private String mediaType;
+	@Field
+	private String mediaTypeValue;
 	private String summary;
 
+	public String getMediaTypeValue() {
+		return mediaTypeValue;
+	}
+
+	public void setMediaTypeValue(String mediaTypeValue) {
+		this.mediaTypeValue = mediaTypeValue;
+	}
+
 	public MediaType getMediaType() {
-		if (mediaType == null) {
-			return null;
-		}
-
-		MediaType[] mediaTypes = MediaType.values();
-		for (MediaType mediaType : mediaTypes) {
-			if (this.mediaType == mediaType.toString()) {
-				return mediaType;
-			}
-		}
-
-		return null;
+		MediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
+		return mediaType;
 	}
 
 	public void setMediaType(MediaType mediaType) {
-		this.mediaType = mediaType.toString();
+		mediaTypeValue = StringHelper.normaliseTextForDatabase(mediaType.toString());
 	}
 
 	public String getSummary() {

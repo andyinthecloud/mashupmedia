@@ -3,9 +3,11 @@ package org.mashupmedia.controller.ajax;
 import java.util.List;
 
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
+import org.mashupmedia.exception.PageNotFoundException;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
-import org.mashupmedia.model.media.Song;
 import org.mashupmedia.service.MediaManager;
+import org.mashupmedia.util.MediaItemHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +21,7 @@ public class AjaxSearchController extends BaseAjaxController {
 
 	@Autowired
 	private MediaManager mediaManager;
-	
+
 	@RequestMapping(value = "/media-items-autocomplete", method = RequestMethod.POST)
 	public String handleMediaItemsAutocomplete(@RequestParam("searchWords") String searchWords, Model model) {
 		List<String> suggestions = mediaManager.findAutoCompleteMediaItems(searchWords);
@@ -28,14 +30,31 @@ public class AjaxSearchController extends BaseAjaxController {
 	}
 
 	@RequestMapping(value = "/media-items", method = RequestMethod.POST)
-	public String handleMediaItems(@RequestParam("searchWords") String searchWords, Model model) {
+	public String handleMediaItems(@RequestParam(value = "mediaType", required = false) String mediaTypeValue, @RequestParam(value = "page", required = false) Integer pageNumber, @RequestParam("searchWords") String searchWords, Model model) {
 		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
-		mediaItemSearchCriteria.setMediaType(MediaType.SONG);
+		
+		MediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
+		if (mediaType == null) {
+			mediaType = MediaType.SONG;
+		}
+		mediaItemSearchCriteria.setMediaType(mediaType);
+		
+		if (pageNumber == null) {
+			pageNumber = 0;
+		}
+		mediaItemSearchCriteria.setPageNumber(pageNumber);
+		
 		mediaItemSearchCriteria.setSearchWords(searchWords);
-		@SuppressWarnings("unchecked")
-		List<Song> songs = (List<Song>) mediaManager.findMediaItems(mediaItemSearchCriteria);
-		model.addAttribute("songs", songs);
-		return "ajax/search/suggestions";
+		List<MediaItem> mediaItems = mediaManager.findMediaItems(mediaItemSearchCriteria);
+
+		if (mediaType == MediaType.SONG) {
+			model.addAttribute("songs", mediaItems);
+			return "ajax/search/songs";
+			
+		}
+		
+		throw new PageNotFoundException("");
+		
 	}
 
 }

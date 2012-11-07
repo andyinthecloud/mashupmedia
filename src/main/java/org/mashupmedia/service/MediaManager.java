@@ -23,7 +23,7 @@ public interface MediaManager {
 
 	public List<String> findAutoCompleteMediaItems(String searchWords);
 
-	public List<? extends MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria);
+	public List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria);
 
 
 }

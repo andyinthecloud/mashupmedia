@@ -15,8 +15,25 @@
  *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mashupmedia.comparator;
+package org.mashupmedia.util;
 
-public class Test {
+import org.mashupmedia.model.media.MediaItem.MediaType;
+
+public class MediaItemHelper {
+	
+	public static MediaType getMediaType(String mediaTypeValue) {
+		if (mediaTypeValue == null) {
+			return null;
+		}
+
+		MediaType[] mediaTypes = MediaType.values();
+		for (MediaType mediaType : mediaTypes) {
+			if (mediaTypeValue.equalsIgnoreCase(mediaType.toString())) {
+				return mediaType;
+			}
+		}
+
+		return null;
+	}
 
 }

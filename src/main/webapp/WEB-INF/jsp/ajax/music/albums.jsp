@@ -4,45 +4,55 @@
 <script type="text/javascript">
 	var pageNumber = 0;
 	var searchLetter = "";
-	$(document).ready(function() {
-		$("ul.items ul.control-menu li.play-album a").click(function() {
-			var albumId = $(this).closest("li.item").attr("id");
-			albumId = parseId(albumId, "album-id");
-			mashupMedia.playAlbum(albumId);
-		});
-				
-		$("ul.items ul.control-menu li.append-album a").click(function() {
-			var albumId = $(this).closest("li.item").attr("id");
-			albumId = parseId(albumId, "album-id");
-			mashupMedia.appendAlbum(albumId);
-		});
-		
-		prepareShowPageTitle();
-		prepareShowIndexLetters();
+	$(document)
+			.ready(
+					function() {
+						$("ul.items div.controls a.play").click(
+								function() {
+									var albumId = $(this).closest("li.item")
+											.attr("id");
+									albumId = parseId(albumId, "album-id");
+									mashupMedia.playAlbum(albumId);
+								});
 
-		$("#albums li").hover(function() {
-			$(this).find("a.album-cover").addClass("highlight");
-		}, function() {
-			$(this).find("a.album-cover").removeClass("highlight");
-		});
+						$("ul.items div.controls a.add").click(
+								function() {
+									var albumId = $(this).closest("li.item")
+											.attr("id");
+									albumId = parseId(albumId, "album-id");
+									mashupMedia.appendAlbum(albumId);
+								});
 
-		$(window)
-				.scroll(
-						function() {
-							if ($("#albums li").length == 0) {
-								return;
-							}
+						prepareShowPageTitle();
+						prepareShowIndexLetters();
 
-							if ($(window).scrollTop() >= $(
-									document).height()
-									- $(window).height()) {
-								var pageNumber = mashupMedia.filterAlbumsPageNumber + 1;
-								mashupMedia.filterAlbumsPageNumber = pageNumber;
-								loadAlbums(true);
-							}
-						});
+						$("ul.items li").hover(
+								function() {
+									$(this).find("a.album-cover").addClass(
+											"highlight");
+								},
+								function() {
+									$(this).find("a.album-cover").removeClass(
+											"highlight");
+								});
 
-	});
+						$(window)
+								.scroll(
+										function() {
+											if ($("#albums li").length == 0) {
+												return;
+											}
+
+											if ($(window).scrollTop() >= $(
+													document).height()
+													- $(window).height()) {
+												var pageNumber = mashupMedia.filterPageNumber + 1;
+												mashupMedia.filterPageNumber = pageNumber;
+												loadAlbums(true);
+											}
+										});
+
+					});
 
 	function prepareShowIndexLetters() {
 		var selector = "ul.index-letters";
@@ -79,13 +89,12 @@
 			<div class="artist">
 				<a href="javascript:;" rel="address:/address-artist-${album.artist.id}"><c:out value="${album.artist.name}" /></a>
 			</div>
-			
-			<ul class="control-menu">
-				<li class="first play-album"><a href="javascript:;"><spring:message code="action.play-all" /></a></li>
-				<li class="append-album"><a href="javascript:;"><spring:message code="action.add-all" /></a></li>
-			</ul>			
-			
-			</li>
+
+
+			<div class="controls">
+				<a class="play" href="javascript:;" title="<spring:message code="action.play" />"><span class="ui-icon ui-icon-play"></span></a> <a class="add" href="javascript:;"
+					title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus"></span></a>
+			</div></li>
 
 	</c:forEach>
 </ul>

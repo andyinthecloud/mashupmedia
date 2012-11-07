@@ -43,8 +43,6 @@ public class Song extends MediaItem {
 	private long trackLength;
 	private long bitRate;
 	private boolean readableTag;
-	
-	
 
 	public Song() {
 		setMediaType(MediaType.SONG);
@@ -256,7 +254,7 @@ public class Song extends MediaItem {
 		title = title.substring(0, dotIndex);
 		return title;
 	}
-	
+
 	@Override
 	public String getSummary() {
 		StringBuilder summaryBuilder = new StringBuilder();
@@ -264,7 +262,7 @@ public class Song extends MediaItem {
 		summaryBuilder.append(TITLE_SEPERATOR);
 		summaryBuilder.append(getAlbum().getName());
 		summaryBuilder.append(TITLE_SEPERATOR);
-		summaryBuilder.append(getDisplayTitle());		
+		summaryBuilder.append(getDisplayTitle());
 		return summaryBuilder.toString();
 	}
 

@@ -1,8 +1,10 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 var isLoadingContent = false;
+var serialisedSearchForm = "";
 
 var addressRandomAlbums = "address-random-albums";
+var addressQuickSearchMediaItems = "address-quick-search-media-items";
 var addressListArtists = "address-list-artists";
 var addressListAlbums = "address-list-albums";
 var addressFilterAlbumsByLetter = "address-filter-albums-letter-";
@@ -30,6 +32,10 @@ $(document).ready(function() {
 		mashupMedia.playNextSong();
 	});
 
+	$.address.init(function(event) {
+		$("#quick-search").address();
+	});
+	
 	$.address.change(function(event) {
 		
 		window.scrollTo(0, 0);
@@ -43,6 +49,8 @@ $(document).ready(function() {
 		var address = event.value;
 		address = address.replace("/", "");		
 		
+		alert(address);
+		
 		if (textStartsWith(address, addressAlbum)) {
 			var albumId = getNumberFromText(address);
 			mashupMedia.showAlbum(albumId);
@@ -50,12 +58,12 @@ $(document).ready(function() {
 			loadArtists();
 		} else if (textStartsWith(address, addressListAlbums)) {
 			mashupMedia.filterAlbumsSearchLetter = "";
-			mashupMedia.filterAlbumsPageNumber = 0;
+			mashupMedia.filterPageNumber = 0;
 			loadAlbums(false);
 		} else if (textStartsWith(address, addressFilterAlbumsByLetter)) {
 			var searchLetter = address.replace(addressFilterAlbumsByLetter, "");
 			mashupMedia.filterAlbumsSearchLetter = searchLetter;
-			mashupMedia.filterAlbumsPageNumber = 0;
+			mashupMedia.filterPageNumber = 0;
 			loadAlbums(false);			
 		} else if (textStartsWith(address, addressRandomAlbums)) {
 			loadRandomAlbums(false);
@@ -65,6 +73,9 @@ $(document).ready(function() {
 				return;
 			}
 			loadArtist(artistId)
+		} else if (textStartsWith(address, addressQuickSearchMediaItems)) {
+			serialisedSearchForm = $("#quick-search").serialize();
+			loadSongSearchResults(false);			
 		} else {
 			loadRandomAlbums(false);
 		}
@@ -82,7 +93,7 @@ var mashupMedia = new function() {
 	this.playingClass = "playing";
 	this.jPlayerId = "#jquery_jplayer_1";
 	this.jPlayerContainerId = "#jp_container_1";
-	this.filterAlbumsPageNumber = 0;
+	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
 
 	this.loadPlaylist = function() {
@@ -233,6 +244,7 @@ var mashupMedia = new function() {
 		$("#current-song-id").val(mediaItemId);
 	};
 	
+	
 }
 
 function loadNextSongIfNotPlaying() {
@@ -326,6 +338,20 @@ function loadRandomAlbums(isAppend) {
 }
 
 
+function loadSongSearchResults(isAppend) {
+	$.post(mashupMedia.contextUrl + "app/ajax/search/media-items?" + serialisedSearchForm, {
+		"pageNumber" : mashupMedia.filterPageNumber,
+	},	function(data) {
+		if (isAppend) {
+			$("div.panel div.content").append(data);	
+		} else {
+			$("div.panel div.content").html(data);
+		}				
+		pauseScrollLoadMore();		
+	});				
+
+}
+
 function loadAlbums(isAppend) {	
 	if (isLoadingContent) {
 		return;
@@ -333,7 +359,7 @@ function loadAlbums(isAppend) {
 	isLoadingContent = true;
 	
 	$.get("<c:url value="/app/ajax/music/albums" />", {
-		"pageNumber" : mashupMedia.filterAlbumsPageNumber,
+		"pageNumber" : mashupMedia.filterPageNumber,
 		"searchLetter": mashupMedia.filterAlbumsSearchLetter
 	}, function(data) {
 		if (isAppend) {
@@ -387,5 +413,9 @@ function getTextFromField(textField) {
 	var text = $(textField).val();
 	text = $.trim(text);
 	return text;
+}
+
+function endsWith(text, suffix) {
+    return text.indexOf(suffix, text.length - suffix.length) !== -1;
 }
 

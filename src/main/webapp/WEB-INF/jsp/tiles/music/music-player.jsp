@@ -47,7 +47,7 @@
 		});
 		
 		var defaultSearchText = "<spring:message code="search" />";
-		var searchField = $("#top-bar-music-player div.search-box input[type=text]");
+		var searchField = $("#quick-search input[type=text]");
 		var searchText = getTextFromField(searchField);
 		if (searchText == "") {
 			$(searchField).val(defaultSearchText);
@@ -69,9 +69,14 @@
 		
 	     $(searchField).autocomplete({
             source: function (request, response) {
+            	var searchText = getTextFromField(searchField);
+            	//Ignore typed spaces
+            	if (endsWith(searchText, " ")) {
+            		return;
+            	}
             	
             	$.post("<c:url value="/app/ajax/search/media-items-autocomplete" />", {
-        			"searchWords" : getTextFromField(searchField)
+        			"searchWords" : searchText
         		}, function(data) {
         			response(jQuery.map(
 						data,
@@ -90,6 +95,15 @@
        			$("#top-bar-music-player div.search-box input[type=text]").val(ui.item.suggestion);
             }
 		});
+	     
+	     /*
+		$("#quick-search").submit(function() {
+			serialisedSearchForm = $(this).serialize();
+			window.location = "#"
+			loadSongSearchResults(false);
+	    	return false;
+	    });
+	     */
 		
 	});
 	
@@ -116,8 +130,14 @@
 		<li><a href="javascript:;"><spring:message code="top-bar.log-out" /></a></li>
 	</ul>
 	<div class="top-home-link"><a href="<c:url value="/" />"><spring:message code="top-bar.home" /></a></div>
-	<div class="search-box"><input type="text" /><a href="javascript:;"><img src="<c:url value="${themePath}/images/controls/search.png"/>" /></a></div>
-		
+
+<!-- 	
+	<form action="<c:url value="/app/ajax/search/media-items" />" id="quick-search">
+ -->
+	<form action="address-quick-search-media-items" id="quick-search">
+	<input type="hidden" name="mediaType" value="song"/>	
+	<input type="text" name="searchWords"/><input type="image" src="<c:url value="${themePath}/images/controls/search.png"/>" />
+	</form>
 
 	<div class="clear"></div>
 

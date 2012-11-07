@@ -7,13 +7,20 @@ public class MediaItemSearchCriteria {
 	private final static int DEFAULT_FETCH_SIZE = 20;
 
 	private String searchWords;
+	private int pageNumber;
 	private int maximumResults;
-	private int firstResult;
 	private MediaType mediaType;
+
+	public int getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
 
 	public MediaItemSearchCriteria() {
 		setMaximumResults(DEFAULT_FETCH_SIZE);
-		setMediaType(MediaType.SONG);
 	}
 
 	public MediaType getMediaType() {
@@ -38,14 +45,6 @@ public class MediaItemSearchCriteria {
 
 	public void setMaximumResults(int maximumResults) {
 		this.maximumResults = maximumResults;
-	}
-
-	public int getFirstResult() {
-		return firstResult;
-	}
-
-	public void setFirstResult(int firstResult) {
-		this.firstResult = firstResult;
 	}
 
 }

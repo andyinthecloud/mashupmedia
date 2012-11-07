@@ -1,6 +1,8 @@
 package org.mashupmedia.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,10 +14,12 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.mashupmedia.comparator.MediaItemComparator;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
@@ -100,8 +104,10 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 			return new ArrayList<String>();
 		}
 		
-		String[] searchWordsArray = searchWords.split("\\s");
-		String lastWord = searchWordsArray[searchWordsArray.length - 1];
+		searchWords = searchWords.replaceAll("\\s.*?\\b", " ").toLowerCase();
+		
+		List<String> searchWordsList = Arrays.asList(searchWords.split("\\s"));
+		String lastWord = searchWordsList.get(searchWordsList.size() - 1);
 		lastWord = "\\b" + lastWord + ".*?\\b";
 		String suggestionPrefix = StringUtils.trimToEmpty(searchWords.replaceFirst("\\b\\w*$", ""));
 		
@@ -118,6 +124,9 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		for (MediaItem mediaItem : mediaItems) {
 			String searchText = mediaItem.getSearchText();
 			String suggestion = StringHelper.find(searchText, lastWord);
+			if (searchWordsList.contains(suggestion)) {
+				continue;
+			}			
 			String suggestedTextItem = StringUtils.trimToEmpty(suggestionPrefix + " " + suggestion);			
 			suggestedTextItems.add(suggestedTextItem);			
 			if (suggestedTextItems.size() > 10) {
@@ -144,15 +153,23 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 			booleanJunction.must(queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord).createQuery());
 		}		
 		
-		booleanJunction.must(queryBuilder.keyword().onField("mediaType").matching(mediaItemSearchCriteria.getMediaType()).createQuery());
+		
+		MediaType mediaType = mediaItemSearchCriteria.getMediaType();
+		if (mediaType != null) {
+			String mediaTypeValue = StringHelper.normaliseTextForDatabase(mediaType.toString());
+			booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());			
+		}
 		
 		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
 		Query query = fullTextSession.createFullTextQuery(luceneQuery, MediaItem.class);
-		query.setFirstResult(mediaItemSearchCriteria.getFirstResult());
-		query.setMaxResults(mediaItemSearchCriteria.getMaximumResults());
+		int maximumResults = mediaItemSearchCriteria.getMaximumResults();
+		int firstResult = mediaItemSearchCriteria.getPageNumber() * maximumResults;
+		query.setFirstResult(firstResult);
+		query.setMaxResults(maximumResults);
 
 		@SuppressWarnings("unchecked")
 		List<MediaItem> mediaItems = query.list();
+		Collections.sort(mediaItems, new MediaItemComparator());
 		return mediaItems;
 	}
 }

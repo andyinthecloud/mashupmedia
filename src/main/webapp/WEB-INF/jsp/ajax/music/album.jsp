@@ -62,9 +62,9 @@
 		<c:forEach items="${albumPage.songs}" var="song">
 			<li id="song-id-<c:out value="${song.id}"/>">
 				<div class="controls">
-					<a class="play" href="javascript:;" title="<spring:message code="control.play" />"><span
+					<a class="play" href="javascript:;" title="<spring:message code="action.play" />"><span
 						class="ui-icon ui-icon-play"></span></a> <a class="add" href="javascript:;"
-						title="<spring:message code="control.add" />"><span class="ui-icon ui-icon-plus"></span></a></div>
+						title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus"></span></a></div>
 				<c:out value="${song.displayTitle}" />
 
 				<div class="meta">

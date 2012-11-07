@@ -29,6 +29,12 @@
 		</layout>
 	</appender>
 
+	<logger name="org.hibernate" additivity="false">
+		<level value="error" />
+		<appender-ref ref="ConsoleAppender" />
+		<appender-ref ref="FileAppender" />
+	</logger>
+
 	<logger name="org.mashupmedia" additivity="false">
 		<level value="${log4j.mashupmedia.level}" />
 		<appender-ref ref="ConsoleAppender" />
