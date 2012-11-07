@@ -49,8 +49,6 @@ $(document).ready(function() {
 		var address = event.value;
 		address = address.replace("/", "");		
 		
-		alert(address);
-		
 		if (textStartsWith(address, addressAlbum)) {
 			var albumId = getNumberFromText(address);
 			mashupMedia.showAlbum(albumId);
