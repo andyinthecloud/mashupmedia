@@ -340,6 +340,12 @@ function loadRandomAlbums(isAppend) {
 
 
 function loadSongSearchResults(isAppend) {
+	if (isLoadingContent) {
+		return;
+	}
+	
+	isLoadingContent = true;
+	
 	$.post(mashupMedia.contextUrl + "app/ajax/search/media-items?" + serialisedSearchForm, {
 		"pageNumber" : mashupMedia.filterPageNumber,
 	},	function(data) {

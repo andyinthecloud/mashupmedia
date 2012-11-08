@@ -30,7 +30,7 @@ public class AjaxSearchController extends BaseAjaxController {
 	}
 
 	@RequestMapping(value = "/media-items", method = RequestMethod.POST)
-	public String handleMediaItems(@RequestParam(value = "mediaType", required = false) String mediaTypeValue, @RequestParam(value = "page", required = false) Integer pageNumber, @RequestParam("searchWords") String searchWords, Model model) {
+	public String handleMediaItems(@RequestParam(value = "mediaType", required = false) String mediaTypeValue, @RequestParam(value = "pageNumber", required = false) Integer pageNumber, @RequestParam("searchWords") String searchWords, Model model) {
 		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
 		
 		MediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
