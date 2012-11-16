@@ -9,6 +9,7 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
@@ -104,7 +105,7 @@ public class AjaxMusicController extends BaseAjaxController {
 	@RequestMapping(value = "/play/{mediaItemId}", method = RequestMethod.GET)
 	public String playSong(@PathVariable("mediaItemId") Long mediaItemId, Model model) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		Playlist playlist = playlistManager.getLastAccessedMusicPlaylistForCurrentUser();
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 		playlist = updatePlayingSong(playlist, mediaItem);
 		playlistManager.savePlaylist(playlist);
 		String format = WebHelper.getContentType(mediaItem.getFormat(), FormatContentType.JPLAYER);

@@ -10,6 +10,7 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
@@ -41,41 +42,40 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 	@RequestMapping(value = "/current-user-playlist", method = RequestMethod.POST)
 	public String getCurrentUserMusicPlaylist(Model model) {
-		Playlist playlist = playlistManager.getLastAccessedMusicPlaylistForCurrentUser();
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 		model.addAttribute("playlist", playlist);
 		return "ajax/playlist/music-playlist";
 	}
 
-
 	@RequestMapping(value = "/play-artist", method = RequestMethod.POST)
 	public String playArtist(@RequestParam("artistId") Long artistId, Model model) {
-		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
-		
+		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
+
 		List<Album> albums = musicManager.getAlbumsByArtist(artistId);
 		if (albums == null || albums.isEmpty()) {
 			throw new PageNotFoundException("No songs found for artist id = " + artistId);
 		}
-		
+
 		List<Song> songs = new ArrayList<Song>();
 		for (Album album : albums) {
 			songs.addAll(album.getSongs());
 		}
-		
+
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		playlistManager.savePlaylist(playlist);
 		model.addAttribute("playlist", playlist);
 		return "ajax/playlist/music-playlist";
 	}
-	
+
 	@RequestMapping(value = "/append-artist", method = RequestMethod.POST)
 	public String appendArtist(@RequestParam("artistId") Long artistId, Model model) {
-		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
+		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		List<Album> albums = musicManager.getAlbumsByArtist(artistId);
 		if (albums == null || albums.isEmpty()) {
 			throw new PageNotFoundException("No songs found for artist id = " + artistId);
 		}
-				
+
 		List<Song> songs = new ArrayList<Song>();
 		for (Album album : albums) {
 			songs.addAll(album.getSongs());
@@ -87,10 +87,9 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		return "ajax/playlist/append-playlist";
 	}
 
-	
 	@RequestMapping(value = "/play-album", method = RequestMethod.POST)
 	public String playAlbum(@RequestParam("albumId") Long albumId, Model model) {
-		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
+		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs = album.getSongs();
@@ -106,7 +105,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 	@RequestMapping(value = "/append-album", method = RequestMethod.POST)
 	public String appendAlbum(@RequestParam("albumId") Long albumId, Model model) {
-		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
+		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs = album.getSongs();
@@ -122,7 +121,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 	@RequestMapping(value = "/play-song", method = RequestMethod.POST)
 	public String playSong(@RequestParam("songId") Long songId, Model model) {
-		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
+		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		MediaItem mediaItem = mediaManager.getMediaItem(songId);
 		if (!(mediaItem instanceof Song)) {
@@ -140,7 +139,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 	@RequestMapping(value = "/append-song", method = RequestMethod.POST)
 	public String appendSong(@RequestParam("songId") Long songId, Model model) {
-		Playlist playlist = playlistManager.getDefaultMusicPlaylistForCurrentUser();
+		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		MediaItem mediaItem = mediaManager.getMediaItem(songId);
 		if (!(mediaItem instanceof Song)) {

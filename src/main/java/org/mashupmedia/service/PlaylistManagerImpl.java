@@ -10,6 +10,7 @@ import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.SecurityHelper;
@@ -59,11 +60,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
-	public Playlist getLastAccessedMusicPlaylistForCurrentUser() {
+	public Playlist getLastAccessedPlaylistForCurrentUser(PlaylistType playlistType) {
 		User user = SecurityHelper.getLoggedInUser();
-		Playlist playlist = playlistDao.getLastAccessedMusicPlaylist(user.getId());
+		Playlist playlist = playlistDao.getLastAccessedPlaylist(user.getId(), playlistType);
 		if (playlist == null) {
-			playlist = getDefaultMusicPlaylistForCurrentUser();
+			playlist = getDefaultPlaylistForCurrentUser(playlistType);
 		}
 		
 		Hibernate.initialize(playlist.getPlaylistMediaItems());
@@ -72,9 +73,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
-	public Playlist getDefaultMusicPlaylistForCurrentUser() {
+	public Playlist getDefaultPlaylistForCurrentUser(PlaylistType playlistType) {
 		User user = SecurityHelper.getLoggedInUser();
-		Playlist playlist = playlistDao.getDefaultMusicPlaylistForUser(user.getId());
+		Playlist playlist = playlistDao.getDefaultPlaylistForUser(user.getId(), playlistType);
 		if (playlist != null) {
 			Hibernate.initialize(playlist.getPlaylistMediaItems());
 			return playlist;
@@ -84,7 +85,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		playlist.setName(MessageHelper.getMessage("music.playlist.default.name"));
 		playlist.setUserDefault(true);
 		playlist.setCreatedBy(user);
-		playlist.setPlaylistType(PlaylistType.MUSIC.getIdName());
+		playlist.setPlaylistTypeValue(PlaylistType.MUSIC.getValue());
 		return playlist;
 	}
 
@@ -105,10 +106,10 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
-	public List<Playlist> getPlaylistsForCurrentUser() {
+	public List<Playlist> getPlaylistsForCurrentUser(PlaylistType playlistType) {
 		User user = SecurityHelper.getLoggedInUser();
 		long userId = user.getId();
-		List<Playlist> playlists = playlistDao.getPlaylists(userId);
+		List<Playlist> playlists = playlistDao.getPlaylists(userId, playlistType);
 		return playlists;
 	}
 

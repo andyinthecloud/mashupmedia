@@ -20,7 +20,7 @@
 			"bInfo" : false									 
 		});
 		
-		$("table.song-playlist td.controls a.delete").click(function() {
+		$("table.song-playlist td.controls a.delete").on("click", function() {
 			var songRow = $(this).closest("tr");
 			if ($(songRow).hasClass(mashupMedia.playingClass)) {
 				mashupMedia.destroyPlayer();
@@ -28,7 +28,7 @@
 			$(this).closest("tr").remove();
 		});
 
-		$("table.song-playlist td.controls a.play").click(function() {
+		$("table.song-playlist td.controls a.play").on("click", function() {
 			$("table.song-playlist tbody tr").removeClass(mashupMedia.playingClass);
 			var songRow = $(this).closest("tr");
 			$(songRow).addClass(mashupMedia.playingClass);
@@ -64,6 +64,13 @@
 	
 	
 	<label><c:out value="${playlist.name}" /></label>
+	
+	<select id="playlists">
+		<c:forEach items="${playlists}" var="playlist">	
+			<option value="${playlist.id}">${playlist.name}</option>
+		</c:forEach>		
+	</select>
+	
 
 	<select id="playlist-actions">
 		<option value="">

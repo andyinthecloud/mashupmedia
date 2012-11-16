@@ -24,6 +24,15 @@ public class Playlist implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	public enum PlaylistType {
+		MUSIC;
+
+		public String getValue() {
+			return toString().toLowerCase();
+		}
+
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
@@ -51,14 +60,14 @@ public class Playlist implements Serializable {
 
 	private boolean isUserDefault;
 
-	private String playlistType;
+	private String playlistTypeValue;
 
-	public String getPlaylistType() {
-		return playlistType;
+	public String getPlaylistTypeValue() {
+		return playlistTypeValue;
 	}
 
-	public void setPlaylistType(String playlistType) {
-		this.playlistType = playlistType;
+	public void setPlaylistTypeValue(String playlistTypeValue) {
+		this.playlistTypeValue = playlistTypeValue;
 	}
 
 	public boolean isUserDefault() {
@@ -145,7 +154,7 @@ public class Playlist implements Serializable {
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
-		result = prime * result + ((playlistType == null) ? 0 : playlistType.hashCode());
+		result = prime * result + ((playlistTypeValue == null) ? 0 : playlistTypeValue.hashCode());
 		return result;
 	}
 
@@ -175,10 +184,10 @@ public class Playlist implements Serializable {
 				return false;
 		} else if (!createdBy.equals(other.createdBy))
 			return false;
-		if (playlistType == null) {
-			if (other.playlistType != null)
+		if (playlistTypeValue == null) {
+			if (other.playlistTypeValue != null)
 				return false;
-		} else if (!playlistType.equals(other.playlistType))
+		} else if (!playlistTypeValue.equals(other.playlistTypeValue))
 			return false;
 		return true;
 	}
@@ -205,7 +214,7 @@ public class Playlist implements Serializable {
 		builder.append(", isDefault=");
 		builder.append(isUserDefault);
 		builder.append(", playlistType=");
-		builder.append(playlistType);
+		builder.append(playlistTypeValue);
 		builder.append("]");
 		return builder.toString();
 	}

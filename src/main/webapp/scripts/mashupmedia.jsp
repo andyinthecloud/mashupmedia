@@ -17,8 +17,7 @@ $(document).ready(function() {
 	$("div.panel").ajaxComplete(function(e, xhr, settings) {
 		var responseHtml = xhr.responseText;
 		if (responseHtml.indexOf("@LOGGED-OUT@") >= 0) {
-			// alert("session expired");
-			window.location = document.URL;
+			window.location.reload();
 		}		
 	});	
 	
@@ -37,49 +36,54 @@ $(document).ready(function() {
 	});
 	
 	$.address.change(function(event) {
-		
-		window.scrollTo(0, 0);
 		isLoadingContent = false;
 		
 		if($("#top-bar-music-player .songs").length > 0) {			
 			closeSongPlaylist();	
 		}
 		
-		
+		var isScrollToTop = false;
 		var address = event.value;
-		address = address.replace("/", "");		
+		address = address.replace("/", "");
+		address = $.trim(address);
 		
 		if (textStartsWith(address, addressAlbum)) {
 			var albumId = getNumberFromText(address);
 			mashupMedia.showAlbum(albumId);
+			isScrollToTop = true;
 		} else if (textStartsWith(address, addressListArtists)) {
 			loadArtists();
+			isScrollToTop = true;
 		} else if (textStartsWith(address, addressListAlbums)) {
 			mashupMedia.filterAlbumsSearchLetter = "";
 			mashupMedia.filterPageNumber = 0;
 			loadAlbums(false);
+			isScrollToTop = true;
 		} else if (textStartsWith(address, addressFilterAlbumsByLetter)) {
 			var searchLetter = address.replace(addressFilterAlbumsByLetter, "");
 			mashupMedia.filterAlbumsSearchLetter = searchLetter;
 			mashupMedia.filterPageNumber = 0;
 			loadAlbums(false);			
-		} else if (textStartsWith(address, addressRandomAlbums)) {
+			isScrollToTop = true;
+		} else if (textStartsWith(address, addressRandomAlbums) || address == "") {
 			loadRandomAlbums(false);
+			isScrollToTop = true;
 		} else if (textStartsWith(address, addressArtist)) {
 			var artistId = parseId(address, addressArtist);
 			if (isNaN(artistId)) {
 				return;
 			}
 			loadArtist(artistId)
+			isScrollToTop = true;
 		} else if (textStartsWith(address, addressQuickSearchMediaItems)) {
 			serialisedSearchForm = $("#quick-search").serialize();
 			loadSongSearchResults(false);			
+			isScrollToTop = true;
 		} 
-		/*
-		else {
-			loadRandomAlbums(false);
+		
+		if (isScrollToTop) {
+			window.scrollTo(0, 0);
 		}
-		*/
 		
 	});
 

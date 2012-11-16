@@ -6,8 +6,8 @@ import org.hibernate.Query;
 import org.mashupmedia.exception.MashupMediaException;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
-import org.mashupmedia.service.PlaylistManager.PlaylistType;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -32,14 +32,14 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	}
 
 	@Override
-	public Playlist getLastAccessedMusicPlaylist(long userId) {
+	public Playlist getLastAccessedPlaylist(long userId, PlaylistType playlistType) {
 		Query query = sessionFactory
 				.getCurrentSession()
 				.createQuery(
 						"from Playlist as mp where mp.updatedBy.id = :userId and mp.playlistType = :playlistType and mp.updatedOn = (select max(tmp.updatedOn) from Playlist as tmp)");
 		query.setCacheable(true);
 		query.setLong("userId", userId);
-		query.setString("playlistType", PlaylistType.MUSIC.getIdName());
+		query.setString("playlistTypeValue", PlaylistType.MUSIC.getValue());
 		@SuppressWarnings("unchecked")
 		List<Playlist> playlists = query.list();
 		if (playlists == null || playlists.isEmpty()) {
@@ -50,12 +50,12 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	}
 
 	@Override
-	public Playlist getDefaultMusicPlaylistForUser(long userId) {
+	public Playlist getDefaultPlaylistForUser(long userId, PlaylistType playlistType) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
 				"from Playlist where createdBy.id = :userId and isUserDefault = true and playlistType = :playlistType");
 		query.setCacheable(true);
 		query.setLong("userId", userId);
-		query.setString("playlistType", PlaylistType.MUSIC.getIdName());
+		query.setString("playlistTypeValue", PlaylistType.MUSIC.getValue());
 		@SuppressWarnings("unchecked")
 		List<Playlist> playlists = query.list();
 		if (playlists == null || playlists.isEmpty()) {
@@ -110,10 +110,16 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	}
 
 	@Override
-	public List<Playlist> getPlaylists(long userId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Playlist where owner.id = :userId");
+	public List<Playlist> getPlaylists(long userId, PlaylistType playlistType) {
+		StringBuilder hqlBuilder  = new StringBuilder();
+		hqlBuilder.append("from Playlist");
+		hqlBuilder.append(" where createdBy.id = :userId ");
+		hqlBuilder.append(" and playlistTypeValue = :playlistType");
+				
+		Query query = sessionFactory.getCurrentSession().createQuery(hqlBuilder.toString());
 		query.setCacheable(true);
 		query.setLong("userId", userId);
+		query.setString("playlistType", playlistType.getValue());
 		@SuppressWarnings("unchecked")
 		List<Playlist> playlists = (List<Playlist>) query.list();
 		return playlists;
