@@ -6,142 +6,142 @@
 
 
 <script type="text/javascript">
-
 	var songPlaylistSelector = "#top-bar-music-player .songs";
 
-	$(document).ready(function() {
-		
-		mashupMedia.loadLastAccessedPlaylist();
-		
-		$("#current-song .toggle-playlist").click(function() {
-			$(songPlaylistSelector).toggle('slow', function() {
-				var imagePath = "<c:url value="${themePath}/images/controls/open.png" />";
-				if ($(songPlaylistSelector).is(":visible")) {
-					imagePath = "<c:url value="${themePath}/images/controls/close.png" />";
-				} 
-				$("#current-song .toggle-playlist img").attr("src", imagePath);
-			});
-		});
-		
+	$(document)
+			.ready(
+					function() {
 
-		$("body").children().not("#top-bar-music-player").click(function() {
-			closeSongPlaylist();
-		});
+						mashupMedia.loadLastAccessedPlaylist();
 
+						$("#current-song .vote .like").click(
+								function() {
+									var mediaItemId = $("#current-song-id")
+											.val();
+									$.post(mashupMedia.contextUrl
+											+ "app/ajax/vote/like", {
+										"mediaItemId" : mediaItemId
+									}, function(data) {
+									});
 
-		$("#current-song .vote .like").click(function() {
-			var mediaItemId = $("#current-song-id").val();
-			$.post(mashupMedia.contextUrl + "app/ajax/vote/like", {
-				"mediaItemId" : mediaItemId
-			}, function(data) {
-			});				
-						
-		});
-		
-		$("#current-song .vote .dislike").click(function() {
-			var mediaItemId = $("#current-song-id").val();
-			$.post(mashupMedia.contextUrl + "app/ajax/vote/dislike", {
-				"mediaItemId" : mediaItemId
-			}, function(data) {
-			});				
-		});
-		
-		var defaultSearchText = "<spring:message code="search" />";
-		var searchField = $("#quick-search input[type=text]");
-		var searchText = getTextFromField(searchField);
-		if (searchText == "") {
-			$(searchField).val(defaultSearchText);
-		}
-		
-		$(searchField).focus(function() {
-			var text = getTextFromField(searchField);
-			if (text == defaultSearchText) {
-				$(searchField).val("");
-			}
-		});
-		
-		$(searchField).blur(function() {
-			var text = getTextFromField(searchField);
-			if (text == "") {
-				$(searchField).val(defaultSearchText);
-			}
-		});
-		
-	     $(searchField).autocomplete({
-            source: function (request, response) {
-            	var searchText = getTextFromField(searchField);
-            	//Ignore typed spaces
-            	if (endsWith(searchText, " ")) {
-            		return;
-            	}
-            	
-            	$.post("<c:url value="/app/ajax/search/media-items-autocomplete" />", {
-        			"searchWords" : searchText
-        		}, function(data) {
-        			response(jQuery.map(
-						data,
-						function(item) {
-							return {
-								label : item.suggestion
-							}
+								});
+
+						$("#current-song .vote .dislike").click(
+								function() {
+									var mediaItemId = $("#current-song-id")
+											.val();
+									$.post(mashupMedia.contextUrl
+											+ "app/ajax/vote/dislike", {
+										"mediaItemId" : mediaItemId
+									}, function(data) {
+									});
+								});
+
+						var defaultSearchText = "<spring:message code="search" />";
+						var searchField = $("#quick-search input[type=text]");
+						var searchText = getTextFromField(searchField);
+						if (searchText == "") {
+							$(searchField).val(defaultSearchText);
 						}
-					));        			        			
-        		});
-            	
-                
-            },             	
-            minLength: 2,
-            select: function( event, ui ) {
-       			$("#top-bar-music-player div.search-box input[type=text]").val(ui.item.suggestion);
-            }
-		});
-	     
-	     /*
-		$("#quick-search").submit(function() {
-			serialisedSearchForm = $(this).serialize();
-			window.location = "#"
-			loadSongSearchResults(false);
-	    	return false;
-	    });
-	     */
-		
-	});
-	
-	
-	
-	function closeSongPlaylist() {
-		$(songPlaylistSelector).slideUp('slow', function() {
-			var imagePath = "<c:url value="${themePath}/images/controls/open.png" />";
-			$("#current-song .toggle-playlist img").attr("src", imagePath);
-		});			
-	}	
+
+						$(searchField).focus(function() {
+							var text = getTextFromField(searchField);
+							if (text == defaultSearchText) {
+								$(searchField).val("");
+							}
+						});
+
+						$(searchField).blur(function() {
+							var text = getTextFromField(searchField);
+							if (text == "") {
+								$(searchField).val(defaultSearchText);
+							}
+						});
+
+						$(searchField)
+								.autocomplete(
+										{
+											source : function(request, response) {
+												var searchText = getTextFromField(searchField);
+												//Ignore typed spaces
+												if (endsWith(searchText, " ")) {
+													return;
+												}
+
+												$
+														.post(
+																"<c:url value="/app/ajax/search/media-items-autocomplete" />",
+																{
+																	"searchWords" : searchText
+																},
+																function(data) {
+																	response(jQuery
+																			.map(
+																					data,
+																					function(
+																							item) {
+																						return {
+																							label : item.suggestion
+																						}
+																					}));
+																});
+
+											},
+											minLength : 2,
+											select : function(event, ui) {
+												$(
+														"#top-bar-music-player div.search-box input[type=text]")
+														.val(ui.item.suggestion);
+											}
+										});
+
+						/*
+						$("#quick-search").submit(function() {
+						serialisedSearchForm = $(this).serialize();
+						window.location = "#"
+						loadSongSearchResults(false);
+						return false;
+						});
+						 */
+
+					});
 </script>
 
 
 <div id="top-bar-music-player" class="top-bar">
 
 	<ul class="main-menu group">
-		<li><a href="javascript:;" rel="address:/address-random-albums"><spring:message code="top-bar.random-albums" /></a></li>
-		<li><a href="javascript:;" rel="address:/address-list-artists"><spring:message code="top-bar.artists" /></a></li>
-		<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message code="top-bar.albums" /></a></li>
-		<li><a href="javascript:;" rel="address:/address-list-playlists"><spring:message code="top-bar.playlists" /></a></li>		
+		<li><a href="javascript:;" rel="address:/address-random-albums"><spring:message
+					code="top-bar.random-albums" /></a></li>
+		<li><a href="javascript:;" rel="address:/address-list-artists"><spring:message
+					code="top-bar.artists" /></a></li>
+		<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message
+					code="top-bar.albums" /></a></li>
+		<li><a href="javascript:;" rel="address:/address-list-playlists"><spring:message
+					code="top-bar.playlists" /></a></li>
 		<li><a href="javascript:;">Sunny</a></li>
-		<li><a href="javascript:;"><spring:message code="top-bar.my-account" /></a></li>
-		<li><a href="javascript:;"><spring:message code="top-bar.log-out" /></a></li>
+		<li><a href="javascript:;"><spring:message
+					code="top-bar.my-account" /></a></li>
+		<li><a href="javascript:;"><spring:message
+					code="top-bar.log-out" /></a></li>
 	</ul>
-	<div class="top-home-link"><a href="<c:url value="/" />"><spring:message code="top-bar.home" /></a></div>
+	<div class="top-home-link">
+		<a href="<c:url value="/" />"><spring:message code="top-bar.home" /></a>
+	</div>
 
-<!-- 	
+	<!-- 	
 	<form action="<c:url value="/app/ajax/search/media-items" />" id="quick-search">
  -->
 	<form action="address-quick-search-media-items" id="quick-search">
-	<input type="hidden" name="mediaType" value="song"/>	
-	<input type="text" name="searchWords"/><input type="image" src="<c:url value="${themePath}/images/controls/search.png"/>" />
+		<input type="hidden" name="mediaType" value="song" /> <input
+			type="text" name="searchWords" /><input type="image"
+			src="<c:url value="${themePath}/images/controls/search.png"/>" />
 	</form>
 
 	<div class="clear"></div>
 
-	<input type="hidden" id="playlist-id" /> <input type="hidden" id="playlist-isDefault" />
+	<input type="hidden" id="playlist-id" /> <input type="hidden"
+		id="playlist-isDefault" />
 
 	<div id="jquery_jplayer_1" class="jp-jplayer"></div>
 	<div id="jp_container_1" class="jp-audio">
@@ -153,9 +153,12 @@
 					<li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
 					<li><a href="javascript:;" class="jp-next" tabindex="1">next</a></li>
 					<li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
-					<li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
-					<li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
-					<li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+					<li><a href="javascript:;" class="jp-mute" tabindex="1"
+						title="mute">mute</a></li>
+					<li><a href="javascript:;" class="jp-unmute" tabindex="1"
+						title="unmute">unmute</a></li>
+					<li><a href="javascript:;" class="jp-volume-max" tabindex="1"
+						title="max volume">max volume</a></li>
 				</ul>
 				<div class="jp-progress">
 					<div class="jp-seek-bar">
@@ -169,36 +172,46 @@
 					<div class="jp-current-time"></div>
 					<div class="jp-duration"></div>
 					<ul class="jp-toggles">
-						<li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>						
-						<li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>						
+						<li><a href="javascript:;" class="jp-repeat" tabindex="1"
+							title="repeat">repeat</a></li>
+						<li><a href="javascript:;" class="jp-repeat-off" tabindex="1"
+							title="repeat off">repeat off</a></li>
 					</ul>
 				</div>
 			</div>
 			<div class="jp-title"></div>
 			<div class="jp-no-solution">
-				<span>Update Required</span> To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash
+				<span>Update Required</span> To play the media you will need to
+				either update your browser to a recent version or update your <a
+					href="http://get.adobe.com/flashplayer/" target="_blank">Flash
 					plugin</a>.
 			</div>
 		</div>
 	</div>
 
 	<div id="current-song">
-		<input type="hidden" id="current-song-id" value="" /> 
+		<input type="hidden" id="current-song-id" value="" />
 		<table>
 			<tbody>
 				<tr>
-					<td class="album-art"><a href="javascript:;"><img src="<c:url value="/images/no-album-art.png" />" /></a></td>
-					<td class="song-title"><div class="artist-name"></div><div class="title"><spring:message code="music.playlist.current-song.empty" /></div></td>
-					<td><span class="vote"> <a class="like" href="javascript:;" title="<spring:message code="music.playlist.current-song.vote.love" />"><img
-				src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a class="dislike" href="javascript:void(0);"><img src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>"
-				title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
-		</span></td>
+					<td class="album-art"><a href="javascript:;"><img
+							src="<c:url value="/images/no-album-art.png" />" /></a></td>
+					<td class="song-title"><div class="artist-name"></div>
+						<div class="title">
+							<spring:message code="music.playlist.current-song.empty" />
+						</div></td>
+					<td><span class="vote"> <a class="like"
+							href="javascript:;"
+							title="<spring:message code="music.playlist.current-song.vote.love" />"><img
+								src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a>
+							<a class="dislike" href="javascript:;"><img
+								src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>"
+								title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
+					</span><span class="playlist"><a href="javascript:;"></a></span>
+					</td>
 				</tr>
 			</tbody>
 		</table>
-		<div class="toggle-playlist"><a href="javascript:;"><img src="<c:url value="${themePath}/images/controls/open.png"/>" /></a></div>
 	</div>
-
-	<div class="songs">&nbsp;</div>
 
 </div>

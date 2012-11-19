@@ -3,6 +3,7 @@ package org.mashupmedia.controller.ajax;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.MediaItem;
@@ -118,28 +119,14 @@ public class AjaxMusicController extends BaseAjaxController {
 			String format = WebHelper.getContentType(mediaItem.getFormat(), FormatContentType.JPLAYER);
 			model.addAttribute("format", format);
 			model.addAttribute("song", song);
+			model.addAttribute("playlist", playlist);			
 			return "ajax/music/player-script";			
 		}
 		
 		
 		return "";		
 	}
-	
-	
-	/*
-	@RequestMapping(value = "/play/current", method = RequestMethod.GET)
-	public String playCurrentSonginLastAccessedPlaylist(Model model) {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		MediaItem mediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
 		
-		playlistManager.savePlaylist(playlist);
-		String format = WebHelper.getContentType(mediaItem.getFormat(), FormatContentType.JPLAYER);
-		model.addAttribute("format", format);
-		model.addAttribute("mediaItemId", mediaItem.getId());
-		return "ajax/music/player-script";
-	}
-	*/
-	
 	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
 	public String playNextSonginLastAccessedPlaylist(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
@@ -148,17 +135,12 @@ public class AjaxMusicController extends BaseAjaxController {
 		playlist = PlaylistHelper.processNextMediaItem(playlist);
 		MediaItem nextMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
 		
-		Song song = new Song();
-		if (MediaItemHelper.isEquals(currentMediaItem, nextMediaItem)) {
+		if (!MediaItemHelper.isEquals(currentMediaItem, nextMediaItem)) {
 			playlistManager.savePlaylist(playlist);			
-		} else {
-			song = (Song) nextMediaItem;
-		}
+		} 
 		
-		String format = WebHelper.getContentType(nextMediaItem.getFormat(), FormatContentType.JPLAYER);
-		model.addAttribute("format", format);
-		model.addAttribute("song", song);
-		return "ajax/music/player-script";
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, nextMediaItem);
+		return "ajax/json/media-item";
 	}
 
 	
@@ -170,17 +152,12 @@ public class AjaxMusicController extends BaseAjaxController {
 		playlist = PlaylistHelper.processPreviousMediaItem(playlist);
 		MediaItem previousMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
 
-		Song song = new Song();
-		if (MediaItemHelper.isEquals(currentMediaItem, previousMediaItem)) {
+		if (!MediaItemHelper.isEquals(currentMediaItem, previousMediaItem)) {
 			playlistManager.savePlaylist(playlist);			
-		} else {
-			song = (Song) previousMediaItem;
-		}
+		} 
 		
-		String format = WebHelper.getContentType(previousMediaItem.getFormat(), FormatContentType.JPLAYER);
-		model.addAttribute("format", format);
-		model.addAttribute("song", song);
-		return "ajax/music/player-script";
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, previousMediaItem);
+		return "ajax/json/media-item";
 	}
 	
 	

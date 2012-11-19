@@ -358,16 +358,6 @@ ul.ui-autocomplete {
 	border-collapse: collapse;
 }
 
-#current-song .toggle-playlist {
-	float: right;
-	margin-right: 10px;
-	margin-top: -10px;
-}
-
-#current-song .toggle-playlist img {
-	width: 20px;
-	height: auto;
-}
 
 #current-song img {
 	vertical-align: middle;
@@ -382,6 +372,11 @@ ul.ui-autocomplete {
 	display: none;
 }
 
+#current-song span.playlist {
+	display: none;
+	margin-left: 20px;
+}
+
 #current-song .vote img {
 	background-color: #C8C0CE;
 	padding: 2px;
@@ -391,10 +386,6 @@ ul.ui-autocomplete {
 	border-radius: 5px;
 	width: 16px;
 	height: auto;
-}
-
-#current-song .toggle-playlist {
-	padding-left: 20px;
 }
 
 #current-song .album-art img {
@@ -449,19 +440,20 @@ ul.ui-autocomplete {
 	font-size: 80%;
 }
 
-#top-bar-music-player div.songs table th .ui-icon {
+
+#playlist table th .ui-icon {
 	float: right;
 }
 
-#top-bar-music-player div.songs table {
+#playlist table {
 	border-collapse: collapse;
 }
 
-#top-bar-music-player div.songs table th.first {
+#playlist table th.first {
 	padding-left: 0px;
 }
 
-#top-bar-music-player div.songs table td,#top-bar-music-player div.songs table th
+#playlist table td, #playlist table th
 	{
 	padding-left: 10px;
 	padding-top: 3px;
@@ -470,25 +462,25 @@ ul.ui-autocomplete {
 	min-width: 80px;
 }
 
-#top-bar-music-player div.songs table tbody tr {
+#playlist table tbody tr {
 	cursor: move;
 	border-bottom: 1px solid #E579E9;
 }
 
-#top-bar-music-player div.songs table tbody td.track-length {
+#playlist table tbody td.track-length {
 	text-align: right;
 }
 
-#top-bar-music-player div.songs table tbody tr.playing td {
+#playlist table tbody tr.playing td {
 	color: white;
 	font-style: italic;
 }
 
-#top-bar-music-player div.songs table tbody td.text {
+#playlist table tbody td.text {
 	overflow: hidden;
 }
 
-#top-bar-music-player div.songs table td.controls {
+#playlist table td.controls {
 	width: 75px;
 }
 
@@ -502,10 +494,6 @@ ul.ui-autocomplete {
 	margin-right: 5px;
 }
 
-#top-bar-music-player .playlist-title {
-	margin: 10px 0;
-	font-size: 110%;
-}
 
 #top-bar-music-player .playlist-title select {
 	margin-left: 10px;

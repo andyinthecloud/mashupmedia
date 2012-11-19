@@ -16,30 +16,10 @@
 	});
 
 	function setupJPlayer(isAutoPlay) {
-		/*
-		var playingRow = getPlayingRow();
-		if ($(playingRow).length == 0) {
-			return;
-		}
-		*/
-
-		
-		$(mashupMedia.jPlayerId).jPlayer("destroy");
-		
-		/*
-		var rowId = $(playingRow).attr("id");		
-		var albumId = parseId(rowId, "album-id");
-		*/
-		
-		var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";
-	
-		/*
-		var songTitle = $(playingRow).find("td.song-title").text();
-		var artistName = $(playingRow).find("td.artist-name").text();
-		*/
-		
-		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.artist.id}, ${song.id});
-		
+		$(mashupMedia.jPlayerId).jPlayer("destroy");		
+		var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";	
+		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.artist.id}, ${song.id}, "${playlist.name}", ${playlist.id});
+				
 		
 		var jPlayerStatus = "load";
 		if (isAutoPlay) {
