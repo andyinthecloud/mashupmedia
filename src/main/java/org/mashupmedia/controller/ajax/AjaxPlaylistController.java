@@ -44,7 +44,12 @@ public class AjaxPlaylistController extends BaseAjaxController {
 	public String getCurrentUserMusicPlaylist(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 		model.addAttribute("playlist", playlist);
-		return "ajax/playlist/music-playlist";
+		
+		MediaItem mediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		return "ajax/json/media-item";
+		
+//		return "ajax/playlist/music-playlist";
 	}
 
 	@RequestMapping(value = "/play-artist", method = RequestMethod.POST)
@@ -63,8 +68,10 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		playlistManager.savePlaylist(playlist);
-		model.addAttribute("playlist", playlist);
-		return "ajax/playlist/music-playlist";
+		
+		MediaItem mediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		return "ajax/json/media-item";
 	}
 
 	@RequestMapping(value = "/append-artist", method = RequestMethod.POST)
@@ -81,10 +88,15 @@ public class AjaxPlaylistController extends BaseAjaxController {
 			songs.addAll(album.getSongs());
 		}
 
-		List<PlaylistMediaItem> appendPlaylistMediaItems = PlaylistHelper.appendPlaylist(playlist, songs);
+		PlaylistHelper.appendPlaylist(playlist, songs);
 		playlistManager.savePlaylist(playlist);
-		model.addAttribute("playlistMediaItems", appendPlaylistMediaItems);
-		return "ajax/playlist/append-playlist";
+		
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
+		return "ajax/json/response";
+		
+//		model.addAttribute("playlistMediaItems", appendPlaylistMediaItems);
+//		return "ajax/playlist/append-playlist";
 	}
 
 	@RequestMapping(value = "/play-album", method = RequestMethod.POST)
@@ -99,8 +111,14 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		playlistManager.savePlaylist(playlist);
-		model.addAttribute("playlist", playlist);
-		return "ajax/playlist/music-playlist";
+		
+		
+		MediaItem mediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		return "ajax/json/media-item";
+
+		//		model.addAttribute("playlist", playlist);
+//		return "ajax/playlist/music-playlist";
 	}
 
 	@RequestMapping(value = "/append-album", method = RequestMethod.POST)
@@ -113,10 +131,15 @@ public class AjaxPlaylistController extends BaseAjaxController {
 			streamingTaskManager.startMediaItemDownload(song.getId());
 		}
 
-		List<PlaylistMediaItem> appendPlaylistMediaItems = PlaylistHelper.appendPlaylist(playlist, songs);
+		PlaylistHelper.appendPlaylist(playlist, songs);
 		playlistManager.savePlaylist(playlist);
-		model.addAttribute("playlistMediaItems", appendPlaylistMediaItems);
-		return "ajax/playlist/append-playlist";
+
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
+		return "ajax/json/response";
+
+//		model.addAttribute("playlistMediaItems", appendPlaylistMediaItems);
+//		return "ajax/playlist/append-playlist";
 	}
 
 	@RequestMapping(value = "/play-song", method = RequestMethod.POST)
@@ -133,8 +156,13 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 		PlaylistHelper.replacePlaylist(playlist, song);
 		playlistManager.savePlaylist(playlist);
-		model.addAttribute("playlist", playlist);
-		return "ajax/playlist/music-playlist";
+		
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		return "ajax/json/media-item";
+		
+		
+//		model.addAttribute("playlist", playlist);
+//		return "ajax/playlist/music-playlist";
 	}
 
 	@RequestMapping(value = "/append-song", method = RequestMethod.POST)
@@ -149,12 +177,19 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		Song song = (Song) mediaItem;
 		streamingTaskManager.startMediaItemDownload(song.getId());
 
-		List<PlaylistMediaItem> appendPlaylistMediaItems = PlaylistHelper.appendPlaylist(playlist, song);
+		PlaylistHelper.appendPlaylist(playlist, song);
 		playlistManager.savePlaylist(playlist);
-		model.addAttribute("playlistMediaItems", appendPlaylistMediaItems);
-		return "ajax/playlist/append-playlist";
+		
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
+		return "ajax/json/response";
+
+		
+//		model.addAttribute("playlistMediaItems", appendPlaylistMediaItems);
+//		return "ajax/playlist/append-playlist";
 	}
 
+	/*
 	@RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
 	public String playPlaylist(@PathVariable("playlistId") Long playlistId, Model model) {
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
@@ -164,6 +199,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		model.addAttribute("mediaItems", mediaItems);
 		return "ajax/playlist/player-script";
 	}
+	*/
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String handleSaveCurrentPlaylist(@RequestParam("playlistId") Long playlistId,
@@ -188,4 +224,23 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
 		return "ajax/json/response";
 	}
+	
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public String handleListPlaylists(@RequestParam("playlistType") String playlistType, Model model) {
+		List<Playlist> playlists = playlistManager.getPlaylists();
+		model.addAttribute("playlists", playlists);
+		return "ajax/playlist/list-playlists";
+	}
+
+
+	@RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
+	public String handleGetPlaylist(@PathVariable Long playlistId, Model model) {
+		Playlist playlist = playlistManager.getPlaylist(playlistId);
+		model.addAttribute("playlist", playlist);
+//		return "ajax/playlist/list-playlists";
+		return "ajax/playlist/music-playlist";
+
+	}
+
+
 }

@@ -11,7 +11,7 @@
 
 	$(document).ready(function() {
 		
-		mashupMedia.loadPlaylist();				
+		mashupMedia.loadLastAccessedPlaylist();
 		
 		$("#current-song .toggle-playlist").click(function() {
 			$(songPlaylistSelector).toggle('slow', function() {
@@ -124,7 +124,7 @@
 		<li><a href="javascript:;" rel="address:/address-random-albums"><spring:message code="top-bar.random-albums" /></a></li>
 		<li><a href="javascript:;" rel="address:/address-list-artists"><spring:message code="top-bar.artists" /></a></li>
 		<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message code="top-bar.albums" /></a></li>
-		<li><a href="javascript:;"><spring:message code="top-bar.playlists" /></a></li>		
+		<li><a href="javascript:;" rel="address:/address-list-playlists"><spring:message code="top-bar.playlists" /></a></li>		
 		<li><a href="javascript:;">Sunny</a></li>
 		<li><a href="javascript:;"><spring:message code="top-bar.my-account" /></a></li>
 		<li><a href="javascript:;"><spring:message code="top-bar.log-out" /></a></li>
@@ -198,7 +198,6 @@
 		</table>
 		<div class="toggle-playlist"><a href="javascript:;"><img src="<c:url value="${themePath}/images/controls/open.png"/>" /></a></div>
 	</div>
-
 
 	<div class="songs">&nbsp;</div>
 

@@ -64,13 +64,7 @@
 	
 	
 	<label><c:out value="${playlist.name}" /></label>
-	
-	<select id="playlists">
-		<c:forEach items="${playlists}" var="playlist">	
-			<option value="${playlist.id}">${playlist.name}</option>
-		</c:forEach>		
-	</select>
-	
+		
 
 	<select id="playlist-actions">
 		<option value="">

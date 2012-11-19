@@ -9,7 +9,7 @@ import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public class PlaylistHelper {
-
+	
 	public static void replacePlaylist(Playlist playlist, List<? extends MediaItem> songs) {
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems != null) {
@@ -52,7 +52,7 @@ public class PlaylistHelper {
 		return mediaItems;
 	}
 
-	public static List<PlaylistMediaItem> appendPlaylist(Playlist playlist, List<Song> songs) {
+	public static void appendPlaylist(Playlist playlist, List<Song> songs) {
 
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems == null) {
@@ -61,7 +61,7 @@ public class PlaylistHelper {
 		}
 
 		if (songs == null || songs.isEmpty()) {
-			return playlistMediaItems;
+			return;
 		}
 
 		int totalPlaylistItems = playlistMediaItems.size();
@@ -79,13 +79,14 @@ public class PlaylistHelper {
 		
 		playlistMediaItems.addAll(appendPlaylistMediaItems);		
 
-		if (playlistMediaItems.isEmpty()) {
-			return playlistMediaItems;
-		}
+//		if (playlistMediaItems.isEmpty()) {
+//			return playlistMediaItems;
+//		}
 
 		playlistMediaItems.get(0).setPlaying(true);
 		playlist.setPlaylistMediaItems(playlistMediaItems);
-		return appendPlaylistMediaItems;
+		
+//		return appendPlaylistMediaItems;
 
 	}
 
@@ -99,16 +100,75 @@ public class PlaylistHelper {
 		replacePlaylist(playlist, songs);
 	}
 
-	public static List<PlaylistMediaItem> appendPlaylist(Playlist playlist, Song song) {
-		List<PlaylistMediaItem> appendPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
+	public static void appendPlaylist(Playlist playlist, Song song) {
+//		List<PlaylistMediaItem> appendPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
 		if (song == null) {
-			return appendPlaylistMediaItems;
+			return;
 		}
 
 		List<Song> songs = new ArrayList<Song>();
 		songs.add(song);
-		appendPlaylistMediaItems = appendPlaylist(playlist, songs);
-		return appendPlaylistMediaItems;
+		appendPlaylist(playlist, songs);
+//		return appendPlaylistMediaItems;
+	}
+	
+	private static Playlist processPlayingMediaItem(Playlist playlist, int relativeOffset) {
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return null;
+		}
+		
+		int index = 0;	
+		
+		for (int i = 0; i < playlistMediaItems.size(); i++) {
+			PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(i);
+			if (playlistMediaItem.isPlaying()) {
+//				playlistMediaItem.setPlaying(false);
+				index = i;
+				break;
+			}
+		}
+		
+		int maxIndex = playlistMediaItems.size() - 1;
+		int selectedIndex = index + relativeOffset;
+		if (selectedIndex < 0 || selectedIndex > maxIndex) {
+			return playlist;
+		} 
+
+		playlistMediaItems.get(index).setPlaying(false);
+		playlistMediaItems.get(selectedIndex).setPlaying(true);
+		return playlist;
+	}
+	
+	
+
+	public static MediaItem getPlayingMediaItem(Playlist playlist) {
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return null;
+		}
+		
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			if (playlistMediaItem.isPlaying()) {
+				MediaItem mediaItem = playlistMediaItem.getMediaItem();
+				return mediaItem;
+			}
+		}
+		
+		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(0);
+		playlistMediaItem.setPlaying(true);
+		MediaItem mediaItem = playlistMediaItem.getMediaItem();
+		return mediaItem;
+	}
+
+	public static Playlist processNextMediaItem(Playlist playlist) {
+		playlist = processPlayingMediaItem(playlist, 1);
+		return playlist;
+	}
+
+	public static Playlist processPreviousMediaItem(Playlist playlist) {
+		playlist = processPlayingMediaItem(playlist, -1);
+		return playlist;
 	}
 
 }

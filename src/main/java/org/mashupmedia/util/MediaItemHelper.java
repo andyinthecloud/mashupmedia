@@ -17,10 +17,11 @@
 
 package org.mashupmedia.util;
 
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 
 public class MediaItemHelper {
-	
+
 	public static MediaType getMediaType(String mediaTypeValue) {
 		if (mediaTypeValue == null) {
 			return null;
@@ -34,6 +35,18 @@ public class MediaItemHelper {
 		}
 
 		return null;
+	}
+
+	public static boolean isEquals(MediaItem mediaItem1, MediaItem mediaItem2) {
+		if (mediaItem1 == null || mediaItem2 == null) {
+			return false;
+		}
+
+		if (mediaItem1.getId() == mediaItem2.getId()) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

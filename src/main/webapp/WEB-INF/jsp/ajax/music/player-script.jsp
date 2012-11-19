@@ -16,23 +16,29 @@
 	});
 
 	function setupJPlayer(isAutoPlay) {
-		
+		/*
 		var playingRow = getPlayingRow();
 		if ($(playingRow).length == 0) {
 			return;
 		}
-				
+		*/
+
 		
 		$(mashupMedia.jPlayerId).jPlayer("destroy");
 		
+		/*
 		var rowId = $(playingRow).attr("id");		
-		var albumId = parseId(rowId, "album-id");		
-		var albumUrl = "<c:url value="/app/ajax/music/album/" />" + albumId;
+		var albumId = parseId(rowId, "album-id");
+		*/
 		
+		var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";
+	
+		/*
 		var songTitle = $(playingRow).find("td.song-title").text();
 		var artistName = $(playingRow).find("td.artist-name").text();
+		*/
 		
-		mashupMedia.showSongInfo(songTitle, artistName, true, albumId, ${mediaItemId});
+		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.artist.id}, ${song.id});
 		
 		
 		var jPlayerStatus = "load";
@@ -43,7 +49,7 @@
 		$(mashupMedia.jPlayerId).jPlayer({
 			ready: function (event) {
 				$(this).jPlayer("setMedia", {
-					<c:out value="${format}" /> : "<c:url value="/app/streaming/media/${mediaItemId}" />"  
+					<c:out value="${format}" /> : "<c:url value="/app/streaming/media/${song.id}" />"  
 				}).jPlayer(jPlayerStatus);
 				
 			},

@@ -36,7 +36,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		Query query = sessionFactory
 				.getCurrentSession()
 				.createQuery(
-						"from Playlist as mp where mp.updatedBy.id = :userId and mp.playlistType = :playlistType and mp.updatedOn = (select max(tmp.updatedOn) from Playlist as tmp)");
+						"from Playlist as p where p.updatedBy.id = :userId and p.playlistTypeValue = :playlistTypeValue and p.updatedOn = (select max(tmp.updatedOn) from Playlist as tmp)");
 		query.setCacheable(true);
 		query.setLong("userId", userId);
 		query.setString("playlistTypeValue", PlaylistType.MUSIC.getValue());
@@ -52,7 +52,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	@Override
 	public Playlist getDefaultPlaylistForUser(long userId, PlaylistType playlistType) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from Playlist where createdBy.id = :userId and isUserDefault = true and playlistType = :playlistType");
+				"from Playlist where createdBy.id = :userId and isUserDefault = true and playlistTypeValue = :playlistTypeValue");
 		query.setCacheable(true);
 		query.setLong("userId", userId);
 		query.setString("playlistTypeValue", PlaylistType.MUSIC.getValue());
