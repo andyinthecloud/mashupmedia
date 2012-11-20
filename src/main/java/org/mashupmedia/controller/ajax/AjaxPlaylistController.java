@@ -3,6 +3,7 @@ package org.mashupmedia.controller.ajax;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.exception.PageNotFoundException;
 import org.mashupmedia.model.media.Album;
@@ -73,7 +74,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 	@RequestMapping(value = "/append-artist", method = RequestMethod.POST)
 	public String appendArtist(@RequestParam("artistId") Long artistId, Model model) {
-		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		List<Album> albums = musicManager.getAlbumsByArtist(artistId);
 		if (albums == null || albums.isEmpty()) {
@@ -113,7 +114,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 	@RequestMapping(value = "/append-album", method = RequestMethod.POST)
 	public String appendAlbum(@RequestParam("albumId") Long albumId, Model model) {
-		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs = album.getSongs();
@@ -150,7 +151,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 	@RequestMapping(value = "/append-song", method = RequestMethod.POST)
 	public String appendSong(@RequestParam("songId") Long songId, Model model) {
-		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		MediaItem mediaItem = mediaManager.getMediaItem(songId);
 		if (!(mediaItem instanceof Song)) {
@@ -170,6 +171,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String handleSaveCurrentPlaylist(@RequestParam("playlistId") Long playlistId,
+			@RequestParam(value = "playlistName", required = false) String playlistName,
 			@RequestParam(value = "mediaItemIds[]", required = false) Long[] mediaItemsIds, Model model) {
 
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
@@ -185,6 +187,12 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		}
 
 		PlaylistHelper.replacePlaylist(playlist, mediaItems);
+
+		playlistName = StringUtils.trimToEmpty(playlistName);
+		if (StringUtils.isNotEmpty(playlistName)) {
+			playlist.setName(playlistName);
+		}
+
 		playlistManager.savePlaylist(playlist);
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
@@ -192,6 +200,62 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		return "ajax/json/response";
 	}
 
+	@RequestMapping(value = "/save-as", method = RequestMethod.POST)
+	public String handleSaveAsPlaylist(@RequestParam("playlistId") Long playlistId, @RequestParam("playlistName") String playlistName,
+			@RequestParam(value = "mediaItemIds[]", required = false) Long[] mediaItemsIds, Model model) {
+
+		Playlist playlist = playlistManager.getPlaylist(playlistId);
+		playlist.setId(0);
+		playlistName = StringUtils.trimToEmpty(playlistName);
+		playlist.setName(playlistName);
+
+		if (mediaItemsIds == null) {
+			mediaItemsIds = new Long[0];
+		}
+
+		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		for (Long mediaItemId : mediaItemsIds) {
+			MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+			mediaItems.add(mediaItem);
+		}
+
+		PlaylistHelper.replacePlaylist(playlist, mediaItems);
+
+		playlistManager.savePlaylist(playlist);
+
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
+		return "ajax/json/response";
+	}
+
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	public String handleNewPlaylist(@RequestParam("playlistName") String playlistName, Model model) {
+
+		Playlist playlist = new Playlist();
+		playlist.setName(playlistName);
+		playlistManager.savePlaylist(playlist);
+
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
+		return "ajax/json/response";
+	}
+
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public String handleDeletePlaylist(@RequestParam("playlistId") Long playlistId, Model model) {
+		Playlist playlist = playlistManager.getPlaylist(playlistId);
+		
+		boolean isSuccessful = false;
+		if (!playlist.isUserDefault()) {
+			playlistManager.deletePlaylist(playlistId);	
+			isSuccessful = true;
+		}
+		
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, isSuccessful);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
+		return "ajax/json/response";
+	}
+
+	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String handleListPlaylists(@RequestParam("playlistType") String playlistType, Model model) {
 		List<Playlist> playlists = playlistManager.getPlaylists();

@@ -111,19 +111,13 @@
 <div id="top-bar-music-player" class="top-bar">
 
 	<ul class="main-menu group">
-		<li><a href="javascript:;" rel="address:/address-random-albums"><spring:message
-					code="top-bar.random-albums" /></a></li>
-		<li><a href="javascript:;" rel="address:/address-list-artists"><spring:message
-					code="top-bar.artists" /></a></li>
-		<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message
-					code="top-bar.albums" /></a></li>
-		<li><a href="javascript:;" rel="address:/address-list-playlists"><spring:message
-					code="top-bar.playlists" /></a></li>
+		<li><a href="javascript:;" rel="address:/address-random-albums"><spring:message code="top-bar.random-albums" /></a></li>
+		<li><a href="javascript:;" rel="address:/address-list-artists"><spring:message code="top-bar.artists" /></a></li>
+		<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message code="top-bar.albums" /></a></li>
+		<li><a href="javascript:;" rel="address:/address-list-playlists"><spring:message code="top-bar.playlists" /></a></li>
 		<li><a href="javascript:;">Sunny</a></li>
-		<li><a href="javascript:;"><spring:message
-					code="top-bar.my-account" /></a></li>
-		<li><a href="javascript:;"><spring:message
-					code="top-bar.log-out" /></a></li>
+		<li><a href="javascript:;"><spring:message code="top-bar.my-account" /></a></li>
+		<li><a href="javascript:;"><spring:message code="top-bar.log-out" /></a></li>
 	</ul>
 	<div class="top-home-link">
 		<a href="<c:url value="/" />"><spring:message code="top-bar.home" /></a>
@@ -133,15 +127,12 @@
 	<form action="<c:url value="/app/ajax/search/media-items" />" id="quick-search">
  -->
 	<form action="address-quick-search-media-items" id="quick-search">
-		<input type="hidden" name="mediaType" value="song" /> <input
-			type="text" name="searchWords" /><input type="image"
-			src="<c:url value="${themePath}/images/controls/search.png"/>" />
+		<input type="hidden" name="mediaType" value="song" /> <input type="text" name="searchWords" /><input type="image" src="<c:url value="${themePath}/images/controls/search.png"/>" />
 	</form>
 
 	<div class="clear"></div>
 
-	<input type="hidden" id="playlist-id" /> <input type="hidden"
-		id="playlist-isDefault" />
+	<input type="hidden" id="playlist-id" /> <input type="hidden" id="playlist-isDefault" />
 
 	<div id="jquery_jplayer_1" class="jp-jplayer"></div>
 	<div id="jp_container_1" class="jp-audio">
@@ -153,12 +144,9 @@
 					<li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
 					<li><a href="javascript:;" class="jp-next" tabindex="1">next</a></li>
 					<li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
-					<li><a href="javascript:;" class="jp-mute" tabindex="1"
-						title="mute">mute</a></li>
-					<li><a href="javascript:;" class="jp-unmute" tabindex="1"
-						title="unmute">unmute</a></li>
-					<li><a href="javascript:;" class="jp-volume-max" tabindex="1"
-						title="max volume">max volume</a></li>
+					<li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+					<li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+					<li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
 				</ul>
 				<div class="jp-progress">
 					<div class="jp-seek-bar">
@@ -172,18 +160,14 @@
 					<div class="jp-current-time"></div>
 					<div class="jp-duration"></div>
 					<ul class="jp-toggles">
-						<li><a href="javascript:;" class="jp-repeat" tabindex="1"
-							title="repeat">repeat</a></li>
-						<li><a href="javascript:;" class="jp-repeat-off" tabindex="1"
-							title="repeat off">repeat off</a></li>
+						<li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
+						<li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
 					</ul>
 				</div>
 			</div>
 			<div class="jp-title"></div>
 			<div class="jp-no-solution">
-				<span>Update Required</span> To play the media you will need to
-				either update your browser to a recent version or update your <a
-					href="http://get.adobe.com/flashplayer/" target="_blank">Flash
+				<span>Update Required</span> To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash
 					plugin</a>.
 			</div>
 		</div>
@@ -194,21 +178,18 @@
 		<table>
 			<tbody>
 				<tr>
-					<td class="album-art"><a href="javascript:;"><img
-							src="<c:url value="/images/no-album-art.png" />" /></a></td>
+					<td class="album-art"><a href="javascript:;"><img src="<c:url value="/images/no-album-art.png" />" /></a></td>
 					<td class="song-title"><div class="artist-name"></div>
 						<div class="title">
 							<spring:message code="music.playlist.current-song.empty" />
+						</div>
+						<div class="playlist">
+							<a href="javascript:;"></a>
 						</div></td>
-					<td><span class="vote"> <a class="like"
-							href="javascript:;"
-							title="<spring:message code="music.playlist.current-song.vote.love" />"><img
-								src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a>
-							<a class="dislike" href="javascript:;"><img
-								src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>"
+					<td><span class="vote"> <a class="like" href="javascript:;" title="<spring:message code="music.playlist.current-song.vote.love" />"><img
+								src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a class="dislike" href="javascript:;"><img src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>"
 								title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
-					</span><span class="playlist"><a href="javascript:;"></a></span>
-					</td>
+					</span></td>
 				</tr>
 			</tbody>
 		</table>

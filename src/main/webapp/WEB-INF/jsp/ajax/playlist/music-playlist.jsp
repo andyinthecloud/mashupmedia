@@ -24,8 +24,7 @@
 											"bInfo" : false
 										});
 
-						$("#playlist table.songs td.controls a.delete").on(
-								"click",
+						$("#playlist table.songs td.controls a.delete").click(
 								function() {
 									var songRow = $(this).closest("tr");
 									if ($(songRow).hasClass(
@@ -35,17 +34,16 @@
 									$(this).closest("tr").remove();
 								});
 
-						$("#playlist table.songs td.controls a.play").on(
-								"click",
+						$("#playlist table.songs td.controls a.play").click(
 								function() {
-									$("table.song-playlist tbody tr")
-											.removeClass(
-													mashupMedia.playingClass);
+									$("table.songs tbody tr").removeClass(
+											mashupMedia.playingClass);
 									var songRow = $(this).closest("tr");
 									$(songRow).addClass(
 											mashupMedia.playingClass);
 									var mediaItemId = $(songRow).attr("id");
-									var mediaItemId = parseId(mediaItemId, "playlist-media-id");
+									var mediaItemId = parseId(mediaItemId,
+											"playlist-media-id");
 									mashupMedia.loadSong(mediaItemId, true);
 								});
 
@@ -55,29 +53,83 @@
 								return;
 							}
 
+							var playlistAction = "save";
 							if (action == "clear") {
 								mashupMedia.clearPlayer();
 								$("#playlist table.songs tbody tr").remove();
+							} else if (action == "change-name") {
+								$("#playlist h1").hide();
+								$("#playlist div.change-name").show();
+								playlistAction = "save";
+							} else if (action == "new") {
+								$("#playlist h1").hide();
+								$("#playlist div.change-name").show();
+								$("#playlist table.songs tbody tr").remove();
+								playlistAction = "new";
+							} else if (action == "save-as") {
+								$("#playlist h1").hide();
+								$("#playlist div.change-name").show();
+								playlistAction = "save-as";
+							} else if (action == "delete") {
+								playlistAction = "delete";
 							}
 
+							$("#playlist input[name=playlistAction]").val(playlistAction);
 							$(this).val("");
 
 						});
 
 						$("#save-current-playlist").click(function() {
-							mashupMedia.saveCurrentPlaylist();
+							savePlaylist();
 						});
 
 					});
+
+	function savePlaylist() {
+		var playlistId = $("#current-playlist-id").val();
+		var mediaItemIds = new Array();
+		var playlistAction = $("#playlist input[type=playlistAction]").val();
+		
+		$("#playlist table.songs tbody tr").each(function(index) {
+			var rowId = $(this).attr("id");
+			var mediaItemId = parseId(rowId, "playlist-media-id");
+			mediaItemIds[index] = mediaItemId;
+		});
+		var playlistName = $("#playlist input[name=playlistName]").val();
+
+		$.post(mashupMedia.contextUrl + "app/ajax/playlist/" + playlistAction, {
+			"playlistId" : playlistId,
+			"playlistName" : playlistName,
+			"mediaItemIds" : mediaItemIds
+		}, function(data) {
+			$("#playlist input[type=playlistAction]").val("save");
+
+		});
+
+	};
 </script>
 
+
 <div id="playlist">
+	
+	<input type="hidden" name="playlistAction" value="save"/>
+	
+	<h1>
+		${playlist.name}
+		<c:if test="${playlist.isUserDefault}">
+			<spring:message code="playlist.user.default" />
+		</c:if>
 
-	<div class="playlist-title">
+	</h1>
 
-		<input type="hidden" id="current-playlist-id"
-			value="<c:out value="${playlist.id}" />" /> <label><c:out
-				value="${playlist.name}" /></label> <select id="playlist-actions">
+	<div class="hide change-name">
+		<input type="text" name="playlistName" value="${playlist.name}" />
+	</div>
+
+
+	<div class="controls">
+
+		<input type="hidden" id="current-playlist-id" value="<c:out value="${playlist.id}" />" /> <select id="playlist-actions">
 			<option value="">
 				<spring:message code="music.playlist.actions" />
 			</option>
@@ -88,6 +140,10 @@
 
 			<option value="new">
 				<spring:message code="action.new" />
+			</option>
+
+			<option value="change-name">
+				<spring:message code="action.change-name" />
 			</option>
 
 			<option id="save-as">
@@ -102,63 +158,41 @@
 
 		</select>
 
-		<c:if test="${playlist.isUserDefault}">
-			<input type="button" class="button" id="save-current-playlist"
-				value="<spring:message code="action.save" />" />
-		</c:if>
-
+		<input type="button" class="button" id="save-current-playlist" value="<spring:message code="action.save" />" />
+		
+		<input type="button" class="button play" id="play-playlist" value="<spring:message code="action.play" />" />
 	</div>
 
 	<table class="songs">
 		<thead>
 			<tr>
 				<th class="first"></th>
-				<th class="song controls"><a href="javascript:;"><span
-						class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message
-							code="music.playlist.song" /></a></th>
-				<th class="album controls"><a href="javascript:;"><span
-						class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message
-							code="music.playlist.album" /></a></th>
-				<th class="artist controls"><a href="javascript:;"><span
-						class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message
-							code="music.playlist.artist" /></a></th>
-				<th class="length controls"><a href="javascript:;"><span
-						class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message
-							code="music.playlist.length" /></a></th>
+				<th class="song controls"><a href="javascript:;"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.song" /></a></th>
+				<th class="album controls"><a href="javascript:;"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.album" /></a></th>
+				<th class="artist controls"><a href="javascript:;"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.artist" /></a></th>
+				<th class="length controls"><a href="javascript:;"><span class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message code="music.playlist.length" /></a></th>
 			</tr>
 
 		</thead>
 		<tbody>
 
-			<c:forEach items="${playlist.playlistMediaItems}"
-				var="playlistMediaItem">
+			<c:forEach items="${playlist.playlistMediaItems}" var="playlistMediaItem">
 				<c:set var="song" value="${playlistMediaItem.mediaItem}" />
 				<c:set var="playingClass" value="" />
 				<c:if test="${playlistMediaItem.playing }">
 					<c:set var="playingClass" value="playing" />
 				</c:if>
 
-				<tr
-					id="playlist-media-id-<c:out value="${song.id}"/>-media-format-${song.mediaContentType}-album-id-${song.album.id}"
-					class="<c:out value="${playingClass}"/>">
+				<tr id="playlist-media-id-<c:out value="${song.id}"/>-media-format-${song.mediaContentType}-album-id-${song.album.id}" class="<c:out value="${playingClass}"/>">
 
-					<td class="controls"><span class="ui-icon ui-icon-carat-2-n-s"></span>
-						<a class="delete" href="javascript:;"
-						title="<spring:message code="action.playlist.delete" />"><span
-							class="ui-icon ui-icon-minus"></span></a> <a class="play"
-						href="javascript:;" title="<spring:message code="action.play" />"><span
-							class="ui-icon ui-icon-play"></span></a> <input type="hidden"
-						name="format" value="<c:out value="${song.format}" />" /><input
-						type="hidden" name="album-id"
-						value="<c:out value="${song.album.id}" />" /></td>
+					<td class="controls"><span class="ui-icon ui-icon-carat-2-n-s"></span> <a class="delete" href="javascript:;" title="<spring:message code="action.playlist.delete" />"><span
+							class="ui-icon ui-icon-minus"></span></a> <a class="play" href="javascript:;" title="<spring:message code="action.play" />"><span class="ui-icon ui-icon-play"></span></a> <input type="hidden"
+						name="format" value="<c:out value="${song.format}" />" /><input type="hidden" name="album-id" value="<c:out value="${song.album.id}" />" /></td>
 
-					<td class="text song-title"><c:out
-							value="${song.displayTitle}" /></td>
+					<td class="text song-title"><c:out value="${song.displayTitle}" /></td>
 					<td class="text album-name"><c:out value="${song.album.name}" /></td>
-					<td class="text artist-name"><c:out
-							value="${song.artist.name}" /></td>
-					<td class="text track-length"><c:out
-							value="${song.displayTrackLength}" /></td>
+					<td class="text artist-name"><c:out value="${song.artist.name}" /></td>
+					<td class="text track-length"><c:out value="${song.displayTrackLength}" /></td>
 
 				</tr>
 

@@ -140,6 +140,7 @@ var mashupMedia = new function() {
 				+ "app/ajax/music/play/next", function(data) {
 			var mediaItemId = data.mediaItem.id;
 			mashupMedia.loadSong(mediaItemId, true);
+			updatePlaylistView(mediaItemId);
 		});
 	};
 
@@ -148,6 +149,7 @@ var mashupMedia = new function() {
 				+ "app/ajax/music/play/previous", function(data) {
 			var mediaItemId = data.mediaItem.id;
 			mashupMedia.loadSong(mediaItemId, true);
+			updatePlaylistView(mediaItemId);
 		});
 	};
 
@@ -213,23 +215,6 @@ var mashupMedia = new function() {
 		$(mashupMedia.jPlayerId).jPlayer("destroy");
 	};
 	
-	this.saveCurrentPlaylist = function() {
-		var playlistId = $("#current-playlist-id").val();
-		var mediaItemIds = new Array();
-		$("#top-bar-music-player table.song-playlist tbody tr").each(function(index) {
-			var rowId = $(this).attr("id");
-			var mediaItemId = parseId(rowId, "playlist-media-id");
-			mediaItemIds[index] = mediaItemId;
-		});
-		
-		$.post(mashupMedia.contextUrl + "app/ajax/playlist/save", {
-			"playlistId" : playlistId,
-			"mediaItemIds" : mediaItemIds
-		}, function(data) {
-		});	
-		
-	};
-	
 	this.clearPlayer = function() {
 		mashupMedia.destroyPlayer();	
 		mashupMedia.showEmptySongInfo();
@@ -268,11 +253,30 @@ var mashupMedia = new function() {
 			$("#current-song span.playlist").show();			
 		}
 		
-		$("#current-song span.playlist a").text(playlistName);
-		$("#current-song span.playlist a").attr("rel", "address:/address-playlist-" + playlistId);
+		$("#current-song .playlist a").text(playlistName);
+		$("#current-song .playlist a").attr("rel", "address:/address-playlist-" + playlistId);
 		
 	};
 	
+	
+}
+
+function updatePlaylistView(mediaItemId) {	
+	if ($("#playlist").length < 1) {
+		return;
+	}
+	
+	$("#playlist table.songs tbody tr").removeClass(mashupMedia.playingClass);
+	
+	$('#playlist table.songs tbody tr').each(function() {
+		var rowId = $(this).attr("id");
+		var rowMediaItemId = parseId(rowId, "media-id");
+		if (mediaItemId == rowMediaItemId) {
+			$(this).addClass(mashupMedia.playingClass);
+			return;
+		}
+		
+	});
 	
 }
 

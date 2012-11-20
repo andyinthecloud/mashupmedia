@@ -402,6 +402,12 @@ ul.ui-autocomplete {
 	font-size: 80%;
 }
 
+#current-song td.song-title .playlist {
+	margin-top: 10px;
+	font-size: 80%;
+}
+
+
 #top-bar-music-player div.jp-audio ul.jp-toggles {
 	height: 15px;
 }
@@ -440,6 +446,9 @@ ul.ui-autocomplete {
 	font-size: 80%;
 }
 
+#playlist input.play {
+	margin-left: 20px;
+}
 
 #playlist table th .ui-icon {
 	float: right;
@@ -494,6 +503,9 @@ ul.ui-autocomplete {
 	margin-right: 5px;
 }
 
+div.controls {
+	margin: 10px 0;
+}
 
 #top-bar-music-player .playlist-title select {
 	margin-left: 10px;
@@ -615,5 +627,7 @@ input[type="text"].disabled, input[type="password"].disabled {
 	background-color: #D3D3D3;
 }
 
-
+.bottom-margin {
+	margin-bottom: 10px;
+}
 
