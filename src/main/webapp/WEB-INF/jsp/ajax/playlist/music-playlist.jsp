@@ -1,11 +1,11 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
+	var playlistSelectName = $("#playlist input[name=playlistSelectName]").val();
+
 	$(document)
 			.ready(
 					function() {
-						
-						
 						
 						$("#playlist table.songs tbody").sortable({
 							stop : function(event, ui) {
@@ -51,13 +51,14 @@
 									mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 								});
 
-						var playlistSelectName = $("#playlist input[name=playlistSelectName]").val();
 						
 						$("#playlist-actions").change(function() {
 							var action = $(this).val();
 							if (action == "") {
 								return;
 							}
+							
+							var isHidePlaylistFeatures = false;
 							
 							var playlistName = "${playlist.name}";
 							var playlistAction = "save";
@@ -73,6 +74,7 @@
 								$("#playlist div.change-name").show();
 								$("#playlist table.songs tbody tr").remove();
 								playlistName = playlistSelectName;
+								isHidePlaylistFeatures = true;
 								playlistAction = "new";
 							} else if (action == "save-as") {
 								$("#playlist h1").hide();
@@ -84,7 +86,16 @@
 							}
 							
 							$("#playlist input[name=playlistName]").val(playlistName);
-							$("#playlist input[name=playlistAction]").val(playlistAction);							
+							$("#playlist input[name=playlistAction]").val(playlistAction);
+							
+							if (isHidePlaylistFeatures) {
+								$("#playlist table.songs").hide();
+								$("#play-playlist").hide();
+							} else {
+								$("#playlist table.songs").show();
+								$("#play-playlist").show();								
+							}
+							
 							
 						});
 
@@ -112,6 +123,14 @@
 								$(this).val("");
 							}  
 						});
+						
+						var playlistId = "${playlist.id}";						
+						if (playlistId.length == 0 || isNaN(playlistId)) {
+							$("#playlist-actions").val("new")
+							$("#playlist-actions").trigger("change");
+						}
+							
+						
 					});
 
 	function savePlaylist() {
@@ -124,7 +143,7 @@
 		}
 
 		if (isNewPlaylistId) {
-			if (playlistName.length == 0) {
+			if (playlistName.length == 0 || playlistName == playlistSelectName) {
 				alert("<spring:message code="playlist.error.empty-name" />");
 				return;
 			}

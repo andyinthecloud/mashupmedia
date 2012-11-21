@@ -1,5 +1,9 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+<div class="action-buttons">
+	<a class="button" href="javascript:;" rel="address:/address-playlist-0" ><spring:message code="playlists.create" /></a>
+</div>
+
 <h1 class="bottom-margin">
 	<spring:message code="playlists.title" />
 </h1>

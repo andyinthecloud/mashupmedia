@@ -130,6 +130,9 @@ var mashupMedia = new function() {
 	};
 	
 	this.loadSongFromPlaylist = function(playlistId, mediaItemId, isAutoPlay) {
+		if (playlistId.length == 0 || isNaN(playlistId) || playlistId < 1) {
+			return;
+		}
 		
 		if (mediaItemId.length == 0 || isNaN(mediaItemId)) {
 			$.get(mashupMedia.contextUrl + "app/ajax/playlist/id/" + playlistId, {
@@ -172,6 +175,10 @@ var mashupMedia = new function() {
 	};
 
 	this.showAlbum = function(albumId) {
+		if(!isValidNumber(albumId)) {
+			return;
+		}
+		
 		$.get(mashupMedia.contextUrl + "app/ajax/music/album/" + albumId, function(data) {
 			$("div.panel div.content").html(data);
 		});
@@ -450,5 +457,13 @@ function getTextFromField(textField) {
 
 function endsWith(text, suffix) {
     return text.indexOf(suffix, text.length - suffix.length) !== -1;
+}
+
+function isValidNumber(value) {
+	if (value.length == 0 || isNaN(value)) {
+		return false;
+	}
+	
+	return true;
 }
 

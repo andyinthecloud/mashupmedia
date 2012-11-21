@@ -131,6 +131,9 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 	@Override
 	public void deletePlaylist(Playlist playlist) {
+		Query query = sessionFactory.getCurrentSession().createQuery("delete PlaylistMediaItem pmi where pmi.playlist.id = :playlistId");
+		query.setLong("playlistId", playlist.getId());
+		query.executeUpdate();		
 		sessionFactory.getCurrentSession().delete(playlist);
 	}
 

@@ -631,3 +631,12 @@ input[type="text"].disabled, input[type="password"].disabled {
 	margin-bottom: 10px;
 }
 
+div.action-buttons {
+	float: right;
+}
+
+.icon {
+	width: 16px;
+	height: 16px;
+	background-color: #C8C0CE;
+}
