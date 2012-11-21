@@ -184,6 +184,7 @@
 							<spring:message code="music.playlist.current-song.empty" />
 						</div>
 						<div class="playlist">
+							<input type="hidden" id="current-playlist-id" value="" />
 							<a href="javascript:;"></a>
 						</div></td>
 					<td><span class="vote"> <a class="like" href="javascript:;" title="<spring:message code="music.playlist.current-song.vote.love" />"><img

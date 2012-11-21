@@ -80,6 +80,10 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		}
 		
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return;
+		}
+		
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
 			playlistMediaItem.setId(0);
 			saveOrUpdate(playlistMediaItem);

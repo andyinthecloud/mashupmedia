@@ -16,6 +16,8 @@ import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.task.StreamingTaskManager;
 import org.mashupmedia.util.PlaylistHelper;
+import org.mashupmedia.util.WebHelper;
+import org.mashupmedia.util.WebHelper.WebFormatType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,13 +42,25 @@ public class AjaxPlaylistController extends BaseAjaxController {
 	@Autowired
 	private MediaManager mediaManager;
 
-	@RequestMapping(value = "/current-user-playlist", method = RequestMethod.POST)
+	@RequestMapping(value = "/play/current", method = RequestMethod.GET)
 	public String getCurrentUserMusicPlaylist(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 		model.addAttribute("playlist", playlist);
 
 		MediaItem mediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
+		return "ajax/json/media-item";
+	}
+
+	@RequestMapping(value = "/play/id/{playlistId}", method = RequestMethod.GET)
+	public String handlePlayPlaylist(@PathVariable Long playlistId, Model model) {
+		Playlist playlist = playlistManager.getPlaylist(playlistId);
+		model.addAttribute("playlist", playlist);
+
+		MediaItem mediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";
 	}
 
@@ -69,6 +83,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 		MediaItem mediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";
 	}
 
@@ -109,6 +124,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 		MediaItem mediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";
 	}
 
@@ -146,6 +162,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		playlistManager.savePlaylist(playlist);
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";
 	}
 
@@ -224,7 +241,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		playlistManager.savePlaylist(playlist);
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, playlist.getId());
 		return "ajax/json/response";
 	}
 
@@ -233,29 +250,30 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 		Playlist playlist = new Playlist();
 		playlist.setName(playlistName);
+		playlist.setPlaylistType(PlaylistType.MUSIC);
+
 		playlistManager.savePlaylist(playlist);
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, playlist.getId());
 		return "ajax/json/response";
 	}
 
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public String handleDeletePlaylist(@RequestParam("playlistId") Long playlistId, Model model) {
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
-		
+
 		boolean isSuccessful = false;
 		if (!playlist.isUserDefault()) {
-			playlistManager.deletePlaylist(playlistId);	
+			playlistManager.deletePlaylist(playlistId);
 			isSuccessful = true;
 		}
-		
+
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, isSuccessful);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
 		return "ajax/json/response";
 	}
 
-	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String handleListPlaylists(@RequestParam("playlistType") String playlistType, Model model) {
 		List<Playlist> playlists = playlistManager.getPlaylists();
@@ -264,9 +282,22 @@ public class AjaxPlaylistController extends BaseAjaxController {
 	}
 
 	@RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
-	public String handleGetPlaylist(@PathVariable Long playlistId, Model model) {
+	public String handleGetPlaylist(@PathVariable Long playlistId,
+			@RequestParam(value = "webFormatType", required = false) String webFormatTypeValue,
+			@RequestParam(value = "updateLastAccessedToNow", required = false) Boolean isUpdateLastAccessedToNow, Model model) {
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
+		
+		if (isUpdateLastAccessedToNow != null && isUpdateLastAccessedToNow) {
+			playlistManager.savePlaylist(playlist);
+		}
+		
 		model.addAttribute("playlist", playlist);
+
+		WebFormatType webFormatType = WebHelper.getWebFormatType(webFormatTypeValue);
+		if (webFormatType == WebFormatType.JSON) {
+			return "ajax/json/playlist";
+		}
+
 		return "ajax/playlist/music-playlist";
 	}
 

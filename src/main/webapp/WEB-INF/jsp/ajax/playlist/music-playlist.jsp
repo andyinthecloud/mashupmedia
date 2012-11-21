@@ -4,6 +4,9 @@
 	$(document)
 			.ready(
 					function() {
+						
+						
+						
 						$("#playlist table.songs tbody").sortable({
 							stop : function(event, ui) {
 							}
@@ -44,15 +47,19 @@
 									var mediaItemId = $(songRow).attr("id");
 									var mediaItemId = parseId(mediaItemId,
 											"playlist-media-id");
-									mashupMedia.loadSong(mediaItemId, true);
+									var playlistId = $("#playlist input[name=playlistId]").val();
+									mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 								});
 
+						var playlistSelectName = $("#playlist input[name=playlistSelectName]").val();
+						
 						$("#playlist-actions").change(function() {
 							var action = $(this).val();
 							if (action == "") {
 								return;
 							}
-
+							
+							var playlistName = "${playlist.name}";
 							var playlistAction = "save";
 							if (action == "clear") {
 								mashupMedia.clearPlayer();
@@ -65,47 +72,96 @@
 								$("#playlist h1").hide();
 								$("#playlist div.change-name").show();
 								$("#playlist table.songs tbody tr").remove();
+								playlistName = playlistSelectName;
 								playlistAction = "new";
 							} else if (action == "save-as") {
 								$("#playlist h1").hide();
 								$("#playlist div.change-name").show();
+								playlistName = playlistSelectName;
 								playlistAction = "save-as";
 							} else if (action == "delete") {
 								playlistAction = "delete";
 							}
-
-							$("#playlist input[name=playlistAction]").val(playlistAction);
-							$(this).val("");
-
+							
+							$("#playlist input[name=playlistName]").val(playlistName);
+							$("#playlist input[name=playlistAction]").val(playlistAction);							
+							
 						});
 
 						$("#save-current-playlist").click(function() {
 							savePlaylist();
 						});
-
+						
+						$("#play-playlist").click(function() {
+							var playlistId = $("#playlist input[name=playlistId]").val();
+							mashupMedia.loadPlaylist(playlistId);
+						});
+						
+						
+						
+						$("#playlist input[name=playlistName]").blur(function() {
+							var playlistName = $.trim($(this).val());							
+							if (playlistName.length == 0) {
+								$(this).val(playlistSelectName);
+							}  
+						});
+						
+						$("#playlist input[name=playlistName]").focus(function() {
+							var playlistName = $.trim($(this).val());
+							if (playlistName == playlistSelectName) {
+								$(this).val("");
+							}  
+						});
 					});
 
 	function savePlaylist() {
-		var playlistId = $("#current-playlist-id").val();
+		
+		var playlistName = $.trim($("#playlist input[name=playlistName]").val());
+		var playlistAction = $("#playlist input[name=playlistAction]").val();
+		var isNewPlaylistId = false;
+		if (playlistAction == "save-as" || playlistAction == "new") {
+			isNewPlaylistId = true;
+		}
+
+		if (isNewPlaylistId) {
+			if (playlistName.length == 0) {
+				alert("<spring:message code="playlist.error.empty-name" />");
+				return;
+			}
+		}
+		
+		var playlistId = $("#playlist input[name=playlistId]").val();
 		var mediaItemIds = new Array();
-		var playlistAction = $("#playlist input[type=playlistAction]").val();
 		
 		$("#playlist table.songs tbody tr").each(function(index) {
 			var rowId = $(this).attr("id");
-			var mediaItemId = parseId(rowId, "playlist-media-id");
-			mediaItemIds[index] = mediaItemId;
+			if (rowId != undefined) {
+				var mediaItemId = parseId(rowId, "playlist-media-id");
+				mediaItemIds[index] = mediaItemId;
+			}
 		});
-		var playlistName = $("#playlist input[name=playlistName]").val();
-
+	
 		$.post(mashupMedia.contextUrl + "app/ajax/playlist/" + playlistAction, {
 			"playlistId" : playlistId,
 			"playlistName" : playlistName,
 			"mediaItemIds" : mediaItemIds
 		}, function(data) {
+			/*
 			$("#playlist input[type=playlistAction]").val("save");
-
+			$("#playlist-actions").val("");
+			*/
+			if (playlistAction == "delete") {
+				loadPlaylists();
+				return;
+			} 
+			
+			if (isNewPlaylistId) {
+				playlistId = data.response.message;
+			} 
+			
+			loadPlaylist(playlistId);
 		});
-
+		
 	};
 </script>
 
@@ -113,6 +169,8 @@
 <div id="playlist">
 	
 	<input type="hidden" name="playlistAction" value="save"/>
+	<input type="hidden" name="playlistSelectName" value="<spring:message code="playlist.select.name" />"/>
+	<input type="hidden" name="playlistId" value="<c:out value="${playlist.id}" />" />
 	
 	<h1>
 		${playlist.name}
@@ -129,7 +187,7 @@
 
 	<div class="controls">
 
-		<input type="hidden" id="current-playlist-id" value="<c:out value="${playlist.id}" />" /> <select id="playlist-actions">
+		<select id="playlist-actions">
 			<option value="">
 				<spring:message code="music.playlist.actions" />
 			</option>
@@ -146,12 +204,12 @@
 				<spring:message code="action.change-name" />
 			</option>
 
-			<option id="save-as">
+			<option value="save-as">
 				<spring:message code="action.saveas" />
 			</option>
 
 			<c:if test="${!playlist.isUserDefault}">
-				<option id="delete">
+				<option value="delete">
 					<spring:message code="action.delete" />
 				</option>
 			</c:if>

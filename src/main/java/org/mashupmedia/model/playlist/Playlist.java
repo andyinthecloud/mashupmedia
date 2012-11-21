@@ -70,6 +70,20 @@ public class Playlist implements Serializable {
 		this.playlistTypeValue = playlistTypeValue;
 	}
 
+	public void setPlaylistType(PlaylistType playlistType) {
+		this.playlistTypeValue = playlistType.getValue();
+	}
+	
+	public PlaylistType getPlaylistType() {
+		PlaylistType[] playlistTypes = PlaylistType.values();
+		for (PlaylistType playlistType : playlistTypes) {
+			if (playlistType.getValue().equalsIgnoreCase(getPlaylistTypeValue())) {
+				return playlistType;
+			}
+		}
+		return PlaylistType.MUSIC;
+	}
+
 	public boolean isUserDefault() {
 		return isUserDefault;
 	}

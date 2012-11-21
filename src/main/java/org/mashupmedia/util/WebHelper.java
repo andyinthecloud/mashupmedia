@@ -7,6 +7,25 @@ import org.mashupmedia.model.media.AlbumArtImage;
 
 public class WebHelper {
 
+	public enum WebFormatType {
+		HTML, JSON
+	}
+
+	public static WebFormatType getWebFormatType(String webFormatTypeValue) {
+		webFormatTypeValue = StringUtils.trimToEmpty(webFormatTypeValue);
+		if (StringUtils.isEmpty(webFormatTypeValue)) {
+			return WebFormatType.HTML;
+		}
+
+		WebFormatType[] webFormatTypes = WebFormatType.values();
+		for (WebFormatType webFormatType : webFormatTypes) {
+			if (webFormatTypeValue.equalsIgnoreCase(webFormatType.toString())) {
+				return webFormatType;
+			}
+		}
+		return WebFormatType.HTML;
+	}
+
 	public enum FormatContentType {
 		MIME, JPLAYER
 	}

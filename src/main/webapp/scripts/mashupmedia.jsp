@@ -113,33 +113,50 @@ var mashupMedia = new function() {
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
 	
-	this.loadLastAccessedPlaylist = function() {		
-		$.post(mashupMedia.contextUrl
-				+ "app/ajax/playlist/current-user-playlist", function(data) {
-			var mediaItemId = data.mediaItem.id;
-			mashupMedia.loadSong(mediaItemId, false);
+	this.loadLastAccessedPlaylist = function() {			
+		$.get(mashupMedia.contextUrl + "app/ajax/playlist/play/current", function(data) {
+			var playlistId = data.mediaItem.playlistId;
+			var mediaItemId = data.mediaItem.id;						
+			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, false);
 		});
 	};
 	
+	this.loadPlaylist = function(playlistId) {			
+		$.get(mashupMedia.contextUrl + "app/ajax/playlist/play/id/" + playlistId, function(data) {
+			var playlistId = data.mediaItem.playlistId;
+			var mediaItemId = data.mediaItem.id;						
+			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, false);
+		});
+	};
 	
-	this.loadSong = function(mediaItemId, isAutoPlay) {
+	this.loadSongFromPlaylist = function(playlistId, mediaItemId, isAutoPlay) {
+		
 		if (mediaItemId.length == 0 || isNaN(mediaItemId)) {
+			$.get(mashupMedia.contextUrl + "app/ajax/playlist/id/" + playlistId, {
+				"webFormatType" : "json",
+				"updateLastAccessedToNow" : true
+			}, function(data) {
+				var playlistId = data.playlist.id;
+				var playlistName = data.playlist.name;				
+				mashupMedia.showSongInfo("", "", false, 0, 0, playlistName, playlistId);
+			});
 			return;
 		}
 		
-		$.get(mashupMedia.contextUrl + "app/ajax/music/play/media-item/" + mediaItemId,
-				function(data) {
-					$("#media-player-script").html(data);
-					setupJPlayer(isAutoPlay);
-				});
-
+		$.get(mashupMedia.contextUrl + "app/ajax/music/play/media-item/" + mediaItemId, {
+			"playlistId" : playlistId
+		}, function(data) {
+			$("#media-player-script").html(data);
+			setupJPlayer(isAutoPlay);
+		});
 	};
 
 	this.playNextSong = function() {
 		$.get(mashupMedia.contextUrl
 				+ "app/ajax/music/play/next", function(data) {
 			var mediaItemId = data.mediaItem.id;
-			mashupMedia.loadSong(mediaItemId, true);
+			var playlistId = $("#current-playlist-id").val();
+			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 			updatePlaylistView(mediaItemId);
 		});
 	};
@@ -148,7 +165,8 @@ var mashupMedia = new function() {
 		$.get(mashupMedia.contextUrl
 				+ "app/ajax/music/play/previous", function(data) {
 			var mediaItemId = data.mediaItem.id;
-			mashupMedia.loadSong(mediaItemId, true);
+			var playlistId = $("#current-playlist-id").val();
+			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 			updatePlaylistView(mediaItemId);
 		});
 	};
@@ -165,7 +183,9 @@ var mashupMedia = new function() {
 			"artistId" : artistId
 		}, function(data) {
 			var mediaItemId = data.mediaItem.id;
-			mashupMedia.loadSong(mediaItemId, true);
+			
+			var playlistId = data.mediaItem.playlistId;
+			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 		});		
 	};
 
@@ -174,7 +194,8 @@ var mashupMedia = new function() {
 			"albumId" : albumId
 		}, function(data) {
 			var mediaItemId = data.mediaItem.id;
-			mashupMedia.loadSong(mediaItemId, true);
+			var playlistId = data.mediaItem.playlistId;
+			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 		});		
 	};
 	
@@ -183,7 +204,8 @@ var mashupMedia = new function() {
 			"songId" : songId
 		}, function(data) {
 			var mediaItemId = data.mediaItem.id;
-			mashupMedia.loadSong(mediaItemId, true);
+			var playlistId = data.mediaItem.playlistId;
+			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 		});
 	};
 
@@ -191,7 +213,6 @@ var mashupMedia = new function() {
 		$.post(mashupMedia.contextUrl + "app/ajax/playlist/append-artist", {
 			"artistId" : artistId
 		}, function(data) {
-			$("#top-bar-music-player .songs table.song-playlist tbody").append(data);
 		});
 	};
 
@@ -199,7 +220,6 @@ var mashupMedia = new function() {
 		$.post(mashupMedia.contextUrl + "app/ajax/playlist/append-album", {
 			"albumId" : albumId
 		}, function(data) {
-			$("#top-bar-music-player .songs table.song-playlist tbody").append(data);
 		});		
 	};
 	
@@ -207,7 +227,6 @@ var mashupMedia = new function() {
 		$.post(mashupMedia.contextUrl + "app/ajax/playlist/append-song", {
 			"songId" : songId
 		}, function(data) {
-			$("#top-bar-music-player .songs table.song-playlist tbody").append(data);
 		});		
 	};
 
@@ -254,6 +273,7 @@ var mashupMedia = new function() {
 		}
 		
 		$("#current-song .playlist a").text(playlistName);
+		$("#current-playlist-id").val(playlistId);
 		$("#current-song .playlist a").attr("rel", "address:/address-playlist-" + playlistId);
 		
 	};

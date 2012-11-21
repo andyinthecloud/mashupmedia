@@ -25,6 +25,6 @@ public interface MashUpMediaConstants {
 	public static final String MODEL_KEY_JSON_MESSAGE_CODE = "messageCode";	
 	public static final String MODEL_KEY_JSON_MESSAGE_SUCCESS = "json.message.success";
 	public static final String MODEL_KEY_JSON_MEDIA_ITEM = "mediaItem";	
-	
+	public static final String MODEL_KEY_JSON_PLAYLIST = "playlist";		
 
 }

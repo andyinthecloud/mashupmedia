@@ -88,7 +88,7 @@ public class AjaxMusicController extends BaseAjaxController {
 		if (pageNumber == null) {
 			pageNumber = 0;
 		}
-		
+
 		List<Album> albums = musicManager.getAlbums(searchLetter, pageNumber, TOTAL_ALBUMS);
 		albumsPage.setAlbums(albums);
 		model.addAttribute(albumsPage);
@@ -107,60 +107,63 @@ public class AjaxMusicController extends BaseAjaxController {
 	}
 
 	@RequestMapping(value = "/play/media-item/{mediaItemId}", method = RequestMethod.GET)
-	public String playSong(@PathVariable Long mediaItemId, Model model) {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+	public String playSong(@PathVariable Long mediaItemId, @RequestParam(value = "playlistId", required = false) Long playlistId, Model model) {
+		Playlist playlist = null;
 		
-		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);		
+		if (playlistId != null && playlistId > 0) {
+			playlist = playlistManager.getPlaylist(playlistId);
+		} else {
+			playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+		}
+
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		MediaType mediaType = mediaItem.getMediaType();
 		if (mediaType == MediaType.SONG) {
 			Song song = (Song) mediaItem;
 			playlist = updatePlayingSong(playlist, song);
-			playlistManager.savePlaylist(playlist);	
+			playlistManager.savePlaylist(playlist);
 			String format = WebHelper.getContentType(mediaItem.getFormat(), FormatContentType.JPLAYER);
 			model.addAttribute("format", format);
 			model.addAttribute("song", song);
-			model.addAttribute("playlist", playlist);			
-			return "ajax/music/player-script";			
+			model.addAttribute("playlist", playlist);
+			return "ajax/music/player-script";
 		}
-		
-		
-		return "";		
+
+		return "";
 	}
-		
+
 	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
 	public String playNextSonginLastAccessedPlaylist(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		MediaItem currentMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);		
-		
+		MediaItem currentMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
+
 		playlist = PlaylistHelper.processNextMediaItem(playlist);
 		MediaItem nextMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
-		
+
 		if (!MediaItemHelper.isEquals(currentMediaItem, nextMediaItem)) {
-			playlistManager.savePlaylist(playlist);			
-		} 
-		
+			playlistManager.savePlaylist(playlist);
+		}
+
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, nextMediaItem);
 		return "ajax/json/media-item";
 	}
 
-	
 	@RequestMapping(value = "/play/previous", method = RequestMethod.GET)
 	public String playPreviousSonginLastAccessedPlaylist(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		MediaItem currentMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);		
+		MediaItem currentMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
 
 		playlist = PlaylistHelper.processPreviousMediaItem(playlist);
 		MediaItem previousMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
 
 		if (!MediaItemHelper.isEquals(currentMediaItem, previousMediaItem)) {
-			playlistManager.savePlaylist(playlist);			
-		} 
-		
+			playlistManager.savePlaylist(playlist);
+		}
+
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, previousMediaItem);
 		return "ajax/json/media-item";
 	}
-	
-	
+
 	private Playlist updatePlayingSong(Playlist playlist, MediaItem mediaItem) {
 
 		long mediaItemId = mediaItem.getId();
@@ -196,6 +199,5 @@ public class AjaxMusicController extends BaseAjaxController {
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 		return playlist;
 	}
-	
 
 }

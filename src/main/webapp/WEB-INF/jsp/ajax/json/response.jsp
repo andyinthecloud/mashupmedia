@@ -4,6 +4,6 @@
 {"response" : 
 	{ 
 	"isSuccessful": "${isSuccessful}",
-	"message": "<spring:message code="${messageCode}"/>"
+	"message": "<spring:message code="${messageCode}" text="${messageCode}" />"
 	}
 }
