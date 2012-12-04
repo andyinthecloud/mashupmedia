@@ -29,6 +29,11 @@ public class AjaxSearchController extends BaseAjaxController {
 		return "ajax/search/suggestions";
 	}
 
+	@RequestMapping(value = "/search-form", method = RequestMethod.GET)
+	public String handleSearchForm(Model model) {		
+		return "ajax/search/search-form";
+	}
+	
 	@RequestMapping(value = "/media-items", method = RequestMethod.POST)
 	public String handleMediaItems(@RequestParam(value = "mediaType", required = false) String mediaTypeValue, @RequestParam(value = "pageNumber", required = false) Integer pageNumber, @RequestParam("searchWords") String searchWords, Model model) {
 		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();

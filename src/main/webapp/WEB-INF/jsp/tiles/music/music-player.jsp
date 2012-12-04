@@ -115,7 +115,7 @@
 		<li><a href="javascript:;" rel="address:/address-list-artists"><spring:message code="top-bar.artists" /></a></li>
 		<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message code="top-bar.albums" /></a></li>
 		<li><a href="javascript:;" rel="address:/address-list-playlists"><spring:message code="top-bar.playlists" /></a></li>
-		<li><a href="javascript:;">Sunny</a></li>
+		<li><a href="javascript:;" rel="address:/address-search"><spring:message code="top-bar.search" /></a></li>
 		<li><a href="javascript:;"><spring:message code="top-bar.my-account" /></a></li>
 		<li><a href="javascript:;"><spring:message code="top-bar.log-out" /></a></li>
 	</ul>

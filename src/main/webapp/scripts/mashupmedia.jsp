@@ -12,6 +12,7 @@ var addressAlbum = "address-load-album";
 var addressArtist = "address-artist-";
 var addressListPlaylists = "address-list-playlists";
 var addressPlaylist = "address-playlist-";
+var addressSearch = "address-search";
 
 
 $(document).ready(function() {
@@ -91,7 +92,11 @@ $(document).ready(function() {
 			}
 			loadPlaylist(playlistId);
 			isScrollToTop = true;
+		} else if (textStartsWith(address, addressSearch)) {
+		    	loadSearchForm();
+			isScrollToTop = true;		    
 		}
+		
 		
 		if (isScrollToTop) {
 			window.scrollTo(0, 0);
@@ -423,6 +428,12 @@ function loadArtist(artistId) {
 	$.get("<c:url value="/app/ajax/music/artist/" />" + artistId, function(data) {
 		$("div.panel div.content").html(data);
 	});
+}
+
+function loadSearchForm() {
+	$.get("<c:url value="/app/ajax/search/form" />" , function(data) {
+		$("div.panel div.content").html(data);
+	});	
 }
 
 function prepareShowPageTitle() {
