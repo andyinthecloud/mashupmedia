@@ -2,11 +2,14 @@ package org.mashupmedia.controller.ajax;
 
 import java.util.List;
 
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.exception.PageNotFoundException;
+import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.service.MediaManager;
+import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.MediaItemHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,9 +21,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/ajax/search")
 public class AjaxSearchController extends BaseAjaxController {
+	
 
 	@Autowired
 	private MediaManager mediaManager;
+	
+	@Autowired
+	private MusicManager musicManager;
+	
 
 	@RequestMapping(value = "/media-items-autocomplete", method = RequestMethod.POST)
 	public String handleMediaItemsAutocomplete(@RequestParam("searchWords") String searchWords, Model model) {
@@ -31,6 +39,10 @@ public class AjaxSearchController extends BaseAjaxController {
 
 	@RequestMapping(value = "/search-form", method = RequestMethod.GET)
 	public String handleSearchForm(Model model) {		
+		
+		List<Genre> genres = musicManager.getGenres();
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_GENRES, genres);
+		
 		return "ajax/search/search-form";
 	}
 	

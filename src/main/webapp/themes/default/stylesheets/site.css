@@ -152,6 +152,16 @@ div.panel fieldset {
 	line-height: 2em;
 }
 
+label {
+	padding-bottom: 5px;
+	padding-right: 5px;
+}
+
+label.date-to {
+	padding-left: 10px;
+}
+
+
 div.panel label.new-line {
 	display: block;
 	padding-top: 10px;
@@ -161,6 +171,11 @@ div.panel input[type='text'],div.panel input[type='password'] {
 	width: 99%;
 	min-width: 200px;
 }
+
+div.panel input.date {
+	width: 100px;
+}
+
 
 div.button-panel {
 	margin-top: 20px;

@@ -240,4 +240,13 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		Artist artist = (Artist) query.uniqueResult();
 		return artist;
 	}
+	
+	@Override
+	public List<Genre> getGenres() {
+		Query query = sessionFactory.getCurrentSession().createQuery("from Genre order by name");
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Genre> genres = query.list();
+		return genres;
+	}
 }

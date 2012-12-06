@@ -54,5 +54,7 @@ public interface MusicDao {
 	public void saveSong(Song song, boolean isSessionFlush);
 
 	public List<String> getAlbumIndexLetters();
+
+	public List<Genre> getGenres();
 	
 }

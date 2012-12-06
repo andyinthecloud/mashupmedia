@@ -431,7 +431,7 @@ function loadArtist(artistId) {
 }
 
 function loadSearchForm() {
-	$.get("<c:url value="/app/ajax/search/form" />" , function(data) {
+	$.get("<c:url value="/app/ajax/search/search-form" />" , function(data) {
 		$("div.panel div.content").html(data);
 	});	
 }

@@ -330,5 +330,11 @@ public class MusicManagerImpl implements MusicManager {
 		Hibernate.initialize(artist.getAlbums());
 		return artist;
 	}
+	
+	@Override
+	public List<Genre> getGenres() {
+		List<Genre> genres = musicDao.getGenres();
+		return genres;
+	}
 
 }
