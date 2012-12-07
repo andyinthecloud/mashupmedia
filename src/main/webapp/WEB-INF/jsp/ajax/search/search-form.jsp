@@ -35,10 +35,17 @@
 	<label class="date-to" for="date-to"><spring:message code="to" /></label><input class="date" id="date-to" type="text" name="dateTo"/>
 	<br />
 	<label class="new-line"><spring:message code="music.search.form.label.order" /></label>
-	<select name="genres" multiple="multiple" size="10">
-		<c:forEach items="${genres}" var="genre">
-			<option value="${genre.id}">${genre.name}</option>
-		</c:forEach>	
+	<select name="category">
+		<option value="likes">Likes</option>
+		<option value="last-played">Last played</option>
+		<option value="recently-added">Recently added</option>
+		<option value="album">Album</option>
+		<option value="artist">Artist</option>
+		<option value="song">Song title</option>
+	</select>	
+	<select name="sort">
+		<option value="ascending">Ascending</option>
+		<option value="descending">Descending</option>
 	</select>	
 	
 	

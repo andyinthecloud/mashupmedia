@@ -240,15 +240,19 @@ public class MusicManagerImpl implements MusicManager {
 	@Override
 	public void deleteObsoleteSongs(long libraryId, Date date) {
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
+		deleteSongs(songsToDelete);
+	}
+	
+	
+	@Override
+	public void deleteSongs(List<Song> songs) {
+		playlistDao.deletePlaylistMediaItems(songs);
 
-		playlistDao.deletePlaylistMediaItems(songsToDelete);
-
-		musicDao.deleteSongs(songsToDelete);
-		logger.info("Deleted " + songsToDelete.size() + " out of date songs.");
+		musicDao.deleteSongs(songs);
+		logger.info("Deleted " + songs.size() + " out of date songs.");
 
 		deleteEmpty();
 		logger.info("Cleaned library.");
-
 	}
 
 	private Genre prepareGenre(Genre genre) {

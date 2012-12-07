@@ -43,6 +43,8 @@ public class AjaxSearchController extends BaseAjaxController {
 		List<Genre> genres = musicManager.getGenres();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_GENRES, genres);
 		
+		
+		
 		return "ajax/search/search-form";
 	}
 	

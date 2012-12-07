@@ -40,5 +40,7 @@ public interface MusicManager {
 	public List<Album> getAlbumsByArtist(Long artistId);
 
 	public List<Genre> getGenres();
+	
+	public void deleteSongs(List<Song> songs);
 
 }

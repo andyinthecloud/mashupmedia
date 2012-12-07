@@ -13,6 +13,8 @@ import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,20 +107,34 @@ public class LibraryManagerImpl implements LibraryManager {
 	@Override
 	public void deleteLibrary(Library library) {
 		long id = library.getId();
+
 		List<MediaItem> mediaItems = mediaManager.getMediaItemsForLibrary(id);
+		if (mediaItems == null || mediaItems.isEmpty()) {
+			return;
+		}
+
 		deleteVotes(mediaItems);
 		playlistManager.deleteLibrary(library.getId());
-		mediaManager.deleteMediaItems(mediaItems);
-		List<AlbumArtImage> albumArtImages = mediaManager.getAlbumArtImages(id);
-		mediaManager.deleteAlbumArtImages(albumArtImages);
-		musicManager.deleteEmpty();
+
+		MediaType mediaType = mediaItems.get(0).getMediaType();
+		if (mediaType == MediaType.SONG) {
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+			List<Song> songs = (List) mediaItems;
+			musicManager.deleteSongs(songs);
+			List<AlbumArtImage> albumArtImages = mediaManager.getAlbumArtImages(id);
+			mediaManager.deleteAlbumArtImages(albumArtImages);
+			musicManager.deleteEmpty();
+		} else {
+			mediaManager.deleteMediaItems(mediaItems);
+		}
+
 		libraryDao.deleteLibrary(library);
 		FileHelper.deleteLibrary(id);
 	}
 
 	private void deleteVotes(List<MediaItem> mediaItems) {
 		for (MediaItem mediaItem : mediaItems) {
-			voteManager.deleteVotesForMediaItem(mediaItem.getId());			
+			voteManager.deleteVotesForMediaItem(mediaItem.getId());
 		}
 	}
 

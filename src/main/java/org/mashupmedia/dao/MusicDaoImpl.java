@@ -1,7 +1,9 @@
 package org.mashupmedia.dao;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
@@ -65,9 +67,50 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public void deleteSongs(List<Song> songs) {
+		StringBuilder songIdsBuilder = new StringBuilder();
+		Set<Genre> genres = new HashSet<Genre>();
+
 		for (Song song : songs) {
-			sessionFactory.getCurrentSession().delete(song);
+			if (songIdsBuilder.length() > 0) {
+				songIdsBuilder.append(",");
+			}
+
+			Genre genre = song.getGenre();
+			if (genre != null) {
+				genres.add(genre);
+			}
+
+			songIdsBuilder.append(song.getId());
 		}
+
+		deleteEmptyGenres(genres);
+
+		if (songIdsBuilder.length() == 0) {
+			return;
+		}
+
+		 for (Song song : songs) {
+			 sessionFactory.getCurrentSession().delete(song);
+		 }
+	}
+
+	private void deleteEmptyGenres(Set<Genre> genres) {
+		if (genres == null || genres.isEmpty()) {
+			return;
+		}
+
+		for (Genre genre : genres) {
+			Query query = sessionFactory.getCurrentSession().createQuery("select count(s.id) from Song s where s.genre.id = :genreId");
+			query.setCacheable(true);
+			query.setLong("genreId", genre.getId());
+			Long numberOfSongs = (Long) query.uniqueResult();
+			if (numberOfSongs > 0) {
+				continue;
+			}
+			
+			sessionFactory.getCurrentSession().delete(genre);			
+		}
+
 	}
 
 	@Override
@@ -147,7 +190,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 			sessionFactory.getCurrentSession().clear();
 			logger.debug("Flushed and cleared session.");
 		}
-		
+
 		logger.debug("Saved song: " + artist.getName() + " - " + album.getName() + " - " + song.getTitle());
 	}
 
@@ -240,7 +283,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		Artist artist = (Artist) query.uniqueResult();
 		return artist;
 	}
-	
+
 	@Override
 	public List<Genre> getGenres() {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Genre order by name");
