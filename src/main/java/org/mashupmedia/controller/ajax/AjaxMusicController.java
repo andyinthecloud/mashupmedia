@@ -134,34 +134,33 @@ public class AjaxMusicController extends BaseAjaxController {
 
 	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
 	public String playNextSonginLastAccessedPlaylist(Model model) {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		MediaItem currentMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
-
-		playlist = PlaylistHelper.processNextMediaItem(playlist);
-		MediaItem nextMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
-
-		if (!MediaItemHelper.isEquals(currentMediaItem, nextMediaItem)) {
-			playlistManager.savePlaylist(playlist);
-		}
-
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, nextMediaItem);
+		playRelativeSong(model, 1);		
 		return "ajax/json/media-item";
 	}
 
 	@RequestMapping(value = "/play/previous", method = RequestMethod.GET)
 	public String playPreviousSonginLastAccessedPlaylist(Model model) {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		MediaItem currentMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
-
-		playlist = PlaylistHelper.processPreviousMediaItem(playlist);
-		MediaItem previousMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
-
-		if (!MediaItemHelper.isEquals(currentMediaItem, previousMediaItem)) {
-			playlistManager.savePlaylist(playlist);
-		}
-
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, previousMediaItem);
+		playRelativeSong(model, -1);		
 		return "ajax/json/media-item";
+	}
+	
+	private void playRelativeSong(Model model, int relativeOffset) {
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+		MediaItem newMediaItem = new Song();
+		if (PlaylistHelper.hasRelativePlayingMediaItem(playlist, relativeOffset)) {
+			MediaItem oldMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
+
+			playlist = PlaylistHelper.processRelativePlayingMediaItem(playlist, relativeOffset);
+			newMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
+			
+			if (!MediaItemHelper.isEquals(oldMediaItem, newMediaItem)) {
+				playlistManager.savePlaylist(playlist);
+			}
+		} 		
+		
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, newMediaItem);
+
 	}
 
 	private Playlist updatePlayingSong(Playlist playlist, MediaItem mediaItem) {

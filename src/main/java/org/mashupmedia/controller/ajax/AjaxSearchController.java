@@ -2,10 +2,8 @@ package org.mashupmedia.controller.ajax;
 
 import java.util.List;
 
-import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.exception.PageNotFoundException;
-import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.service.MediaManager;
@@ -35,17 +33,6 @@ public class AjaxSearchController extends BaseAjaxController {
 		List<String> suggestions = mediaManager.findAutoCompleteMediaItems(searchWords);
 		model.addAttribute("suggestions", suggestions);
 		return "ajax/search/suggestions";
-	}
-
-	@RequestMapping(value = "/search-form", method = RequestMethod.GET)
-	public String handleSearchForm(Model model) {		
-		
-		List<Genre> genres = musicManager.getGenres();
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_GENRES, genres);
-		
-		
-		
-		return "ajax/search/search-form";
 	}
 	
 	@RequestMapping(value = "/media-items", method = RequestMethod.POST)

@@ -12,7 +12,6 @@ var addressAlbum = "address-load-album";
 var addressArtist = "address-artist-";
 var addressListPlaylists = "address-list-playlists";
 var addressPlaylist = "address-playlist-";
-var addressSearch = "address-search";
 
 
 $(document).ready(function() {
@@ -92,10 +91,7 @@ $(document).ready(function() {
 			}
 			loadPlaylist(playlistId);
 			isScrollToTop = true;
-		} else if (textStartsWith(address, addressSearch)) {
-		    	loadSearchForm();
-			isScrollToTop = true;		    
-		}
+		} 
 		
 		
 		if (isScrollToTop) {
@@ -163,6 +159,10 @@ var mashupMedia = new function() {
 		$.get(mashupMedia.contextUrl
 				+ "app/ajax/music/play/next", function(data) {
 			var mediaItemId = data.mediaItem.id;
+			if (mediaItemId < 1) {
+			    return;
+			}
+			
 			var playlistId = $("#current-playlist-id").val();
 			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 			updatePlaylistView(mediaItemId);
@@ -428,12 +428,6 @@ function loadArtist(artistId) {
 	$.get("<c:url value="/app/ajax/music/artist/" />" + artistId, function(data) {
 		$("div.panel div.content").html(data);
 	});
-}
-
-function loadSearchForm() {
-	$.get("<c:url value="/app/ajax/search/search-form" />" , function(data) {
-		$("div.panel div.content").html(data);
-	});	
 }
 
 function prepareShowPageTitle() {

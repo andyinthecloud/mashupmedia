@@ -73,12 +73,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	public void savePlaylist(Playlist playlist) {
 		long playlistId = playlist.getId();
 		deletePlaylistMediaItems(playlistId);
-		if (playlistId == 0) {
-			sessionFactory.getCurrentSession().save(playlist);
-		} else {
-			sessionFactory.getCurrentSession().merge(playlist);
-		}
-		
+		sessionFactory.getCurrentSession().saveOrUpdate(playlist);		
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
 			return;
@@ -95,20 +90,26 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			return;
 		}
 		
-		Query query = sessionFactory.getCurrentSession().createQuery("from PlaylistMediaItem where playlist.id = :playlistId");
+		Query query = sessionFactory.getCurrentSession().createQuery("delete PlaylistMediaItem where playlist.id = :playlistId");
 		query.setLong("playlistId", playlistId);
-		query.setCacheable(true);
-		@SuppressWarnings("unchecked")
-		List<PlaylistMediaItem> playlistMediaItems = query.list();
-		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-			return;
-		}
-
-		int deletedItems = playlistMediaItems.size();
-		
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			sessionFactory.getCurrentSession().delete(playlistMediaItem);
-		}
+		int deletedItems = query.executeUpdate();
+//		
+//		
+//		
+//		Query query = sessionFactory.getCurrentSession().createQuery("from PlaylistMediaItem where playlist.id = :playlistId");
+//		query.setLong("playlistId", playlistId);
+//		query.setCacheable(true);
+//		@SuppressWarnings("unchecked")
+//		List<PlaylistMediaItem> playlistMediaItems = query.list();
+//		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+//			return;
+//		}
+//
+//		int deletedItems = playlistMediaItems.size();
+//		
+//		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+//			sessionFactory.getCurrentSession().delete(playlistMediaItem);
+//		}
 						
 		logger.info("Deleted " + deletedItems + " playlistMediaItems for playlist id: " + playlistId);
 	}

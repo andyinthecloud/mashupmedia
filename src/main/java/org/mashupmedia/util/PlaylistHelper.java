@@ -109,38 +109,55 @@ public class PlaylistHelper {
 		List<Song> songs = new ArrayList<Song>();
 		songs.add(song);
 		appendPlaylist(playlist, songs);
-//		return appendPlaylistMediaItems;
 	}
 	
-	private static Playlist processPlayingMediaItem(Playlist playlist, int relativeOffset) {
+	public static Playlist processRelativePlayingMediaItem(Playlist playlist, int relativeOffset) {
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
 			return null;
-		}
+		}	
 		
-		int index = 0;	
-		
-		for (int i = 0; i < playlistMediaItems.size(); i++) {
-			PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(i);
-			if (playlistMediaItem.isPlaying()) {
-//				playlistMediaItem.setPlaying(false);
-				index = i;
-				break;
-			}
-		}
-		
+		int index = getPlayingIndex(playlistMediaItems);		
+		playlistMediaItems.get(index).setPlaying(false);
 		int maxIndex = playlistMediaItems.size() - 1;
 		int selectedIndex = index + relativeOffset;
 		if (selectedIndex < 0 || selectedIndex > maxIndex) {
 			return playlist;
 		} 
 
-		playlistMediaItems.get(index).setPlaying(false);
+		
 		playlistMediaItems.get(selectedIndex).setPlaying(true);
 		return playlist;
 	}
 	
 	
+	private static int getPlayingIndex(List<PlaylistMediaItem> playlistMediaItems) {		
+		for (int i = 0; i < playlistMediaItems.size(); i++) {
+			PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(i);
+			if (playlistMediaItem.isPlaying()) {
+				playlistMediaItem.setPlaying(false);
+				return i;
+			}
+		}
+		
+		return 0;
+	}
+	
+	public static boolean hasRelativePlayingMediaItem(Playlist playlist, int relativeOffset) {
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return false;
+		}
+		
+		int index = getPlayingIndex(playlistMediaItems);		
+		int maxIndex = playlistMediaItems.size() - 1;
+		int selectedIndex = index + relativeOffset;
+		if (selectedIndex < 0 || selectedIndex > maxIndex) {
+			return false;
+		} 
+
+		return true;
+	}
 
 	public static MediaItem getPlayingMediaItem(Playlist playlist) {
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
@@ -161,14 +178,22 @@ public class PlaylistHelper {
 		return mediaItem;
 	}
 
-	public static Playlist processNextMediaItem(Playlist playlist) {
-		playlist = processPlayingMediaItem(playlist, 1);
-		return playlist;
-	}
-
-	public static Playlist processPreviousMediaItem(Playlist playlist) {
-		playlist = processPlayingMediaItem(playlist, -1);
-		return playlist;
-	}
+//	public static Playlist processNextMediaItem(Playlist playlist) {
+//		playlist = processPlayingMediaItem(playlist, 1);
+//		return playlist;
+//	}
+//
+//	public static Playlist processPreviousMediaItem(Playlist playlist) {
+//		playlist = processPlayingMediaItem(playlist, -1);
+//		return playlist;
+//	}
+//
+//	public static boolean hasNextMediaItem(Playlist playlist) {
+//		return hasPlayingMediaItem(playlist, 1);
+//	}
+//
+//	public static boolean hasPreviousMediaItem(Playlist playlist) {
+//		return hasPlayingMediaItem(playlist, -1);
+//	}
 
 }
