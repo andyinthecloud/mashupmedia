@@ -47,7 +47,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 		model.addAttribute("playlist", playlist);
 
-		MediaItem mediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
+		MediaItem mediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";

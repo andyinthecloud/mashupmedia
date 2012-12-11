@@ -74,6 +74,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		long playlistId = playlist.getId();
 		deletePlaylistMediaItems(playlistId);
 		sessionFactory.getCurrentSession().saveOrUpdate(playlist);		
+		
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
 			return;
@@ -83,6 +84,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			playlistMediaItem.setId(0);
 			saveOrUpdate(playlistMediaItem);
 		}
+		logger.info("Playlist saved");
 	}
 
 	protected void deletePlaylistMediaItems(long playlistId) {

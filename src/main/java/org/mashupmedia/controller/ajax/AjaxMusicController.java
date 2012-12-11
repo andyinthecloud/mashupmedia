@@ -109,7 +109,7 @@ public class AjaxMusicController extends BaseAjaxController {
 	@RequestMapping(value = "/play/media-item/{mediaItemId}", method = RequestMethod.GET)
 	public String playSong(@PathVariable Long mediaItemId, @RequestParam(value = "playlistId", required = false) Long playlistId, Model model) {
 		Playlist playlist = null;
-		
+
 		if (playlistId != null && playlistId > 0) {
 			playlist = playlistManager.getPlaylist(playlistId);
 		} else {
@@ -134,32 +134,41 @@ public class AjaxMusicController extends BaseAjaxController {
 
 	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
 	public String playNextSonginLastAccessedPlaylist(Model model) {
-		playRelativeSong(model, 1);		
+		playRelativeSong(model, 1);
 		return "ajax/json/media-item";
 	}
 
 	@RequestMapping(value = "/play/previous", method = RequestMethod.GET)
 	public String playPreviousSonginLastAccessedPlaylist(Model model) {
-		playRelativeSong(model, -1);		
+		playRelativeSong(model, -1);
 		return "ajax/json/media-item";
 	}
-	
+
 	private void playRelativeSong(Model model, int relativeOffset) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		MediaItem newMediaItem = new Song();
-		if (PlaylistHelper.hasRelativePlayingMediaItem(playlist, relativeOffset)) {
-			MediaItem oldMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
+		MediaItem mediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, relativeOffset);
+//		int currentPlayingMediaItemIndex = PlaylistHelper.getCurrentPlayingMediaItemIndex(playlist);
+//		int selectedPlayingMediaItemIndex = PlaylistHelper.getRelativePlayingMediaItemIndex(playlist);
+//		if (PlaylistHelper.hasRelativePlayingMediaItem(currentPlayingMediaItemIndex, selectedPlayingMediaItemIndex, relativeOffset)) {
+		
+		
+		
+//		if (PlaylistHelper.hasRelativePlayingMediaItem(playlist, relativeOffset)) {
+//			MediaItem oldMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
 
-			playlist = PlaylistHelper.processRelativePlayingMediaItem(playlist, relativeOffset);
-			newMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
 			
-			if (!MediaItemHelper.isEquals(oldMediaItem, newMediaItem)) {
-				playlistManager.savePlaylist(playlist);
-			}
-		} 		
+//			mediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
+
+//			if (!MediaItemHelper.isEquals(oldMediaItem, newMediaItem)) {
+//				playlistManager.savePlaylist(playlist);
+//			}
+//		}
+
+		playlistManager.savePlaylist(playlist);
+		
 		
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, newMediaItem);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
 
 	}
 
