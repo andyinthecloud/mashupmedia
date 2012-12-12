@@ -31,6 +31,7 @@
 		}, function() {
 			$(this).find("a.album-cover").removeClass("highlight");
 		});
+		
 	});
 </script>
 

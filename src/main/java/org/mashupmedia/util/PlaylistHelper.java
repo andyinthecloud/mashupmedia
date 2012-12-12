@@ -1,7 +1,6 @@
 package org.mashupmedia.util;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.mashupmedia.model.media.MediaItem;
@@ -80,15 +79,8 @@ public class PlaylistHelper {
 		
 		playlistMediaItems.addAll(appendPlaylistMediaItems);		
 
-//		if (playlistMediaItems.isEmpty()) {
-//			return playlistMediaItems;
-//		}
-
 		playlistMediaItems.get(0).setPlaying(true);
 		playlist.setPlaylistMediaItems(playlistMediaItems);
-		
-//		return appendPlaylistMediaItems;
-
 	}
 
 	public static void replacePlaylist(Playlist playlist, Song song) {
@@ -102,7 +94,6 @@ public class PlaylistHelper {
 	}
 
 	public static void appendPlaylist(Playlist playlist, Song song) {
-//		List<PlaylistMediaItem> appendPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
 		if (song == null) {
 			return;
 		}
@@ -110,87 +101,9 @@ public class PlaylistHelper {
 		List<Song> songs = new ArrayList<Song>();
 		songs.add(song);
 		appendPlaylist(playlist, songs);
-	}
-	
-//	public static Playlist processRelativePlayingMediaItem(Playlist playlist, int relativeOffset) {
-//		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-//		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-//			return null;
-//		}	
-//		
-//		int index = getPlayingIndex(playlistMediaItems);		
-//		playlistMediaItems.get(index).setPlaying(false);
-//		int maxIndex = playlistMediaItems.size() - 1;
-//		int selectedIndex = index + relativeOffset;
-//		if (selectedIndex < 0 || selectedIndex > maxIndex) {
-//			return playlist;
-//		} 
-//
-//		
-//		playlistMediaItems.get(selectedIndex).setPlaying(true);
-//		return playlist;
-//	}
-	
-	
-//	private static int getPlayingIndex(List<PlaylistMediaItem> playlistMediaItems) {		
-//		for (int i = 0; i < playlistMediaItems.size(); i++) {
-//			PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(i);
-//			if (playlistMediaItem.isPlaying()) {
-//				playlistMediaItem.setPlaying(false);
-//				return i;
-//			}
-//		}
-//		
-//		return 0;
-//	}
-	
-//	public static boolean hasRelativePlayingMediaItem(Playlist playlist, int relativeOffset) {
-//		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-//		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-//			return false;
-//		}
-//		
-//		int index = getPlayingIndex(playlistMediaItems);		
-//		int maxIndex = playlistMediaItems.size() - 1;
-//		int selectedIndex = index + relativeOffset;
-//		if (selectedIndex < 0 || selectedIndex > maxIndex) {
-//			return false;
-//		} 
-//
-//		return true;
-//	}
+	}	
 
-//	public static int getPlayingMediaItemIndex(Playlist playlist) {
-//		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-//		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-//			return 0;
-//		}
-//		
-//		for (int i = 0; i < playlistMediaItems.size(); i++) {
-//			PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(i);
-//			if (playlistMediaItem.isPlaying()) {
-//				return i;
-////				MediaItem mediaItem = playlistMediaItem.getMediaItem();
-////				return mediaItem;
-//			}
-//			
-//		}
-//		
-////		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-////			if (playlistMediaItem.isPlaying()) {
-////				MediaItem mediaItem = playlistMediaItem.getMediaItem();
-////				return mediaItem;
-////			}
-////		}
-//		
-////		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(0);
-////		playlistMediaItem.setPlaying(true);
-////		MediaItem mediaItem = playlistMediaItem.getMediaItem();
-////		return mediaItem;
-//		return 0;
-//	}
-
-	public static MediaItem processRelativePlayingMediaItemFromPlaylist(Playlist playlist, int relativeOffset) {
+	public static MediaItem getRelativePlayingMediaItemFromPlaylist(Playlist playlist, int relativeOffset) {
 		
 		MediaItem emptyMediaItem = new MediaItem();
 		
@@ -218,23 +131,5 @@ public class PlaylistHelper {
 		playlistMediaItem.setPlaying(true);
 		return playlistMediaItem.getMediaItem();
 	}
-
-//	public static Playlist processNextMediaItem(Playlist playlist) {
-//		playlist = processPlayingMediaItem(playlist, 1);
-//		return playlist;
-//	}
-//
-//	public static Playlist processPreviousMediaItem(Playlist playlist) {
-//		playlist = processPlayingMediaItem(playlist, -1);
-//		return playlist;
-//	}
-//
-//	public static boolean hasNextMediaItem(Playlist playlist) {
-//		return hasPlayingMediaItem(playlist, 1);
-//	}
-//
-//	public static boolean hasPreviousMediaItem(Playlist playlist) {
-//		return hasPlayingMediaItem(playlist, -1);
-//	}
 
 }

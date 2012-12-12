@@ -35,22 +35,14 @@
 									$(this).find("a.album-cover").removeClass(
 											"highlight");
 								});
-
-						$(window)
-								.scroll(
-										function() {
-											if ($("#albums li").length == 0) {
-												return;
-											}
-
-											if ($(window).scrollTop() >= $(
-													document).height()
-													- $(window).height()) {
-												var pageNumber = mashupMedia.filterPageNumber + 1;
-												mashupMedia.filterPageNumber = pageNumber;
-												loadAlbums(true);
-											}
-										});
+						
+						$(window).scroll(function() {	    
+						    if ($("ul.items li").length == 0) {
+								return;
+						    }	    
+						    appendContentsOnScroll();
+						});
+						
 
 					});
 

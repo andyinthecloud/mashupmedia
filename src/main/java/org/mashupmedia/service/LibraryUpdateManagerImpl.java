@@ -33,8 +33,10 @@ import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
+import org.mashupmedia.service.ConnectionManager.LocationType;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.LibraryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,6 +68,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	}
 
 	@Override
+	@Transactional(noRollbackFor = RuntimeException.class)
 	public void updateMusicLibrary(MusicLibrary musicLibrary) {
 		if (!musicLibrary.isEnabled()) {
 			logger.info("Library is disabled, will not update:" + musicLibrary.toString());
@@ -74,11 +77,13 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 		try {
 			Location location = musicLibrary.getLocation();
-			if (location instanceof FtpLocation) {
+			LocationType locationType = LibraryHelper.getLocationType(location);
+			if (locationType == LocationType.FTP) {
 				prepareFtpMusicLibrary(musicLibrary, (FtpLocation) location);
-			} else {
+			} else if (locationType == LocationType.LOCAL) {
 				prepareFileMusicLibrary(musicLibrary);
-			}
+			} 
+			
 		} catch (Exception e) {
 			throw new MashupMediaException("Error updating the music library.", e);
 		}

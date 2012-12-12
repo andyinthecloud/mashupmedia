@@ -10,13 +10,12 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
-import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.FormatContentType;
@@ -146,26 +145,8 @@ public class AjaxMusicController extends BaseAjaxController {
 
 	private void playRelativeSong(Model model, int relativeOffset) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		MediaItem mediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, relativeOffset);
-//		int currentPlayingMediaItemIndex = PlaylistHelper.getCurrentPlayingMediaItemIndex(playlist);
-//		int selectedPlayingMediaItemIndex = PlaylistHelper.getRelativePlayingMediaItemIndex(playlist);
-//		if (PlaylistHelper.hasRelativePlayingMediaItem(currentPlayingMediaItemIndex, selectedPlayingMediaItemIndex, relativeOffset)) {
-		
-		
-		
-//		if (PlaylistHelper.hasRelativePlayingMediaItem(playlist, relativeOffset)) {
-//			MediaItem oldMediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
-
-			
-//			mediaItem = PlaylistHelper.getPlayingMediaItem(playlist);
-
-//			if (!MediaItemHelper.isEquals(oldMediaItem, newMediaItem)) {
-//				playlistManager.savePlaylist(playlist);
-//			}
-//		}
-
+		MediaItem mediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, relativeOffset);
 		playlistManager.savePlaylist(playlist);
-		
 		
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);

@@ -10,15 +10,14 @@
 			$(this).removeClass("highlight");
 		});
 		
-		$(window).scroll(function () {
-			if ($("div.random-album-art").length == 0) {
+		$(window).scroll(function() {	    
+		    if ($("div.random-album-art div.album").length == 0) {
 				return;
-			}
-			
-		    if ($(window).scrollTop() >= $(document).height() - $(window).height()) {
-		    	loadRandomAlbums(true);
-		    }
+		    }	    
+		    
+		    appendContentsOnScroll();
 		});
+		
 
 	});
 </script>

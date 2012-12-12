@@ -5,9 +5,12 @@
 <html lang="en">
 <head>
 
-<link type="text/css" href="<c:url value="/jquery-ui/1.8.21/css/smoothness/jquery-ui-1.8.21.custom.css" />" rel="Stylesheet" />
-<script type="text/javascript" src="<c:url value="/jquery-ui/1.8.21/js/jquery-1.7.2.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/jquery-ui/1.8.21/js/jquery-ui-1.8.21.custom.min.js" />"></script>
+<c:set var="jQueryUIVersion" value="1.9.2"/>
+<c:set var="jQueryVersion" value="1.8.3"/>
+
+<link type="text/css" href="<c:url value="/jquery-ui/${jQueryUIVersion}/css/smoothness/jquery-ui-${jQueryUIVersion}.custom.css" />" rel="stylesheet" />
+<script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-${jQueryVersion}.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-ui-${jQueryUIVersion}.custom.min.js" />"></script>
 
 <script type="text/javascript" src="<c:url value="/scripts/mashupmedia.jsp" />"></script>
 <script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.address/1.5/jquery.address-1.5.min.js" />"></script>
