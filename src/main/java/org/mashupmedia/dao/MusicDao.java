@@ -3,9 +3,11 @@ package org.mashupmedia.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 
@@ -56,5 +58,7 @@ public interface MusicDao {
 	public List<String> getAlbumIndexLetters();
 
 	public List<Genre> getGenres();
+	
+	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria);
 	
 }

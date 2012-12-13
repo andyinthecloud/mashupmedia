@@ -2,7 +2,6 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		prepareShowPageTitle();
 		
 		$("div.albums div.album").hover(function() {
 			$(this).addClass("highlight");
@@ -22,9 +21,11 @@
 	});
 </script>
 
-<h1 class="hide content-title">
+<c:if test="${showTitle}">
+<h1>
 	<spring:message code="music.random-albums.title" />
 </h1>
+</c:if>
 
 <div class="random-album-art albums">
 	<c:forEach items="${albums}" var="album">

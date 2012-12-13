@@ -20,11 +20,14 @@ import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
 import org.apache.solr.analysis.SnowballPorterFilterFactory;
 import org.apache.solr.analysis.StandardTokenizerFactory;
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.AnalyzerDef;
+import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.Resolution;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 import org.mashupmedia.model.Group;
@@ -59,8 +62,11 @@ public class MediaItem implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedOn;
 	private String format;
+	@Field(analyze = Analyze.NO)
 	private int vote;
 	@Temporal(TemporalType.TIMESTAMP)
+	@Field(analyze = Analyze.NO)
+	@DateBridge(resolution = Resolution.SECOND)
 	private Date lastAccessed;
 	@ManyToOne
 	private User lastAccessedBy;
@@ -70,7 +76,7 @@ public class MediaItem implements Serializable {
 	@ManyToOne
 	@IndexedEmbedded
 	private Group group;
-	@Field
+	@Field(analyze = Analyze.NO)
 	private String mediaTypeValue;
 	@Column(length = 1000)
 	private String summary;

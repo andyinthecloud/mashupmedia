@@ -16,30 +16,42 @@
 	    mashupMedia.appendSong(songId);
 	});
 
-	prepareShowPageTitle();
-
 	$("ul.items li").hover(function() {
 	    $(this).find("a.album-cover").addClass("highlight");
 	}, function() {
 	    $(this).find("a.album-cover").removeClass("highlight");
 	});
 
-	$(window).scroll(function() {	    
+	$(window).scroll(function() {
 	    if ($("ul.items li").length == 0) {
-			return;
-	    }	    
+		return;
+	    }
 	    appendContentsOnScroll();
 	});
 
     });
-    
-    
 </script>
 
+<div class="action-buttons">
+	<select name="order-by">
+		<option value=""><spring:message code="music.search-results.sort.category.empty" /></option>
+		<option value="last-played"><spring:message code="music.search-results.sort.category.last-played" /></option>
+		<option value="favourites"><spring:message code="music.search-results.sort.category.favourites" /></option>
+		<option value="name"><spring:message code="music.search-results.sort.category.song-title" /></option>
+		<option value="album"><spring:message code="music.search-results.sort.category.album" /></option>
+		<option value="artist"><spring:message code="music.search-results.sort.category.artist" /></option>
+	</select>
+	<select name="order-ascending">
+		<option value="ascending"><spring:message code="music.search-results.sort.order.ascending" /></option>
+		<option value="descending"><spring:message code="music.search-results.sort.order.descending" /></option>
+	</select>
+</div>
 
-<h1 class="hide content-title">
-	<spring:message code="music.search-results.title" />
-</h1>
+<c:if test="${pageNumber == 0}">
+	<h1>
+		<spring:message code="music.search-results.title" />
+	</h1>
+</c:if>
 
 <ul class="items">
 

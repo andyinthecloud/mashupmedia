@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
+import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.model.library.MusicLibrary;
@@ -14,6 +15,7 @@ import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.util.StringHelper;
@@ -341,4 +343,9 @@ public class MusicManagerImpl implements MusicManager {
 		return genres;
 	}
 
+	@Override
+	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria) {
+		List<MediaItem> mediaItems = musicDao.findSongs(mediaItemSearchCriteria);
+		return mediaItems;
+	}
 }

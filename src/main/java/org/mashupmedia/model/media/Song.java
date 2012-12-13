@@ -9,7 +9,6 @@ import javax.persistence.ManyToOne;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.util.DateHelper;
@@ -27,7 +26,7 @@ public class Song extends MediaItem {
 	public final static String TITLE_SEPERATOR = " - ";
 
 	private int trackNumber;
-	@Field(index = Index.YES, analyze = Analyze.YES)
+	@Field(analyze = Analyze.NO)
 	@Column(length = 1000)
 	private String title;
 	@IndexedEmbedded

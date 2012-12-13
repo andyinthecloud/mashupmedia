@@ -80,19 +80,19 @@ $(document).ready(function() {
 			isScrollToTop = true;
 		} else if (textStartsWith(address, addressQuickSearchMediaItems)) {		    	
 			serialisedSearchForm = $("#quick-search").serialize();
-//			alert(serialisedSearchForm);
+			mashupMedia.filterPageNumber = 0;
 			loadSongSearchResults(false);			
 			isScrollToTop = true;
 		} else if (textStartsWith(address, addressListPlaylists)) {			
 			loadPlaylists();
 			isScrollToTop = true;
 		}  else if (textStartsWith(address, addressPlaylist)) {
-			var playlistId = parseId(address, addressPlaylist);
-			if (isNaN(playlistId)) {
-				return;
-			}
-			loadPlaylist(playlistId);
-			isScrollToTop = true;
+    			var playlistId = parseId(address, addressPlaylist);
+    			if (isNaN(playlistId)) {
+    			    return;
+    			}
+    			loadPlaylist(playlistId);
+    			isScrollToTop = true;
 		} 
 		
 		
@@ -361,7 +361,9 @@ function loadRandomAlbums(isAppend) {
 	}
 	
 	isLoadingContent = true;
-	$.get(mashupMedia.contextUrl + "app/ajax/music/random-albums",
+	$.get(mashupMedia.contextUrl + "app/ajax/music/random-albums", {
+	    "isAppend" : isAppend
+	},
 		function(data) {
 			if (isAppend) {
 				$("div.panel div.content").append(data);	
@@ -436,13 +438,6 @@ function loadArtist(artistId) {
 	$.get("<c:url value="/app/ajax/music/artist/" />" + artistId, function(data) {
 		$("div.panel div.content").html(data);
 	});
-}
-
-function prepareShowPageTitle() {
-	var selector = "h1.content-title";
-	if ($(selector).length == 1) {
-		$(selector).show();
-	}
 }
 
 function pauseScrollLoadMore() {

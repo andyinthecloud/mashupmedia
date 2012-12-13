@@ -3,10 +3,12 @@ package org.mashupmedia.service;
 import java.util.Date;
 import java.util.List;
 
+import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 
 public interface MusicManager {
@@ -42,5 +44,8 @@ public interface MusicManager {
 	public List<Genre> getGenres();
 	
 	public void deleteSongs(List<Song> songs);
+
+	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria);
+	
 
 }

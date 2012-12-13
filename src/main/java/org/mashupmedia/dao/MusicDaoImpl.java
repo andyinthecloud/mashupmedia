@@ -1,17 +1,31 @@
 package org.mashupmedia.dao;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.search.FullTextSession;
+import org.hibernate.search.Search;
+import org.hibernate.search.query.dsl.BooleanJunction;
+import org.hibernate.search.query.dsl.QueryBuilder;
+import org.mashupmedia.comparator.MediaItemComparator;
+import org.mashupmedia.criteria.MediaItemSearchCriteria;
+import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
+import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -292,4 +306,57 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		List<Genre> genres = query.list();
 		return genres;
 	}
+	
+	@Override
+	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria) {
+		Session session = sessionFactory.getCurrentSession();
+		FullTextSession fullTextSession = Search.getFullTextSession(session);
+		
+		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(MediaItem.class).get();
+		@SuppressWarnings("rawtypes")
+		BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
+
+		String searchWordsValue = mediaItemSearchCriteria.getSearchWords();
+		String[] searchWords = searchWordsValue.split("\\s");		
+		for (String searchWord : searchWords) {
+			booleanJunction.must(queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord).createQuery());
+		}		
+		
+		
+//		MediaType mediaType = mediaItemSearchCriteria.getMediaType();
+//		if (mediaType != null) {
+			String mediaTypeValue = StringHelper.normaliseTextForDatabase(MediaType.SONG.toString());
+			booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());			
+//		}
+		
+		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
+		org.hibernate.search.FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, MediaItem.class);
+		
+		Sort sort = new Sort(new SortField("title", SortField.STRING));
+		
+		boolean isDescending = mediaItemSearchCriteria.isDescending();
+		MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaItemSortType();
+		if (mediaSortType == MediaSortType.FAVOURITES) {
+			sort = new Sort(new SortField("vote", SortField.INT, isDescending));
+		} else if (mediaSortType == MediaSortType.LAST_PLAYED) {
+			sort = new Sort(new SortField("lastAccessed", SortField.LONG, isDescending));
+		}else if (mediaSortType == MediaSortType.ALBUM_NAME) {
+			sort = new Sort(new SortField("album.name", SortField.STRING, isDescending));
+		} else if (mediaSortType == MediaSortType.ARTIST_NAME) {
+			sort = new Sort(new SortField("artist.name", SortField.STRING, isDescending));
+		}  
+		
+		query.setSort(sort);
+		
+		int maximumResults = mediaItemSearchCriteria.getMaximumResults();
+		int firstResult = mediaItemSearchCriteria.getPageNumber() * maximumResults;
+		query.setFirstResult(firstResult);
+		query.setMaxResults(maximumResults);
+
+		@SuppressWarnings("unchecked")
+		List<MediaItem> mediaItems = query.list();
+		Collections.sort(mediaItems, new MediaItemComparator());
+		return mediaItems;
+	}
+
 }
