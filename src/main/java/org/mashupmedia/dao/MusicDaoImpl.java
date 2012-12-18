@@ -103,9 +103,9 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 			return;
 		}
 
-		 for (Song song : songs) {
-			 sessionFactory.getCurrentSession().delete(song);
-		 }
+		for (Song song : songs) {
+			sessionFactory.getCurrentSession().delete(song);
+		}
 	}
 
 	private void deleteEmptyGenres(Set<Genre> genres) {
@@ -121,8 +121,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 			if (numberOfSongs > 0) {
 				continue;
 			}
-			
-			sessionFactory.getCurrentSession().delete(genre);			
+
+			sessionFactory.getCurrentSession().delete(genre);
 		}
 
 	}
@@ -306,48 +306,44 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		List<Genre> genres = query.list();
 		return genres;
 	}
-	
+
 	@Override
 	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria) {
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
-		
+
 		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(MediaItem.class).get();
 		@SuppressWarnings("rawtypes")
 		BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
 
 		String searchWordsValue = mediaItemSearchCriteria.getSearchWords();
-		String[] searchWords = searchWordsValue.split("\\s");		
+		String[] searchWords = searchWordsValue.split("\\s");
 		for (String searchWord : searchWords) {
 			booleanJunction.must(queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord).createQuery());
-		}		
-		
-		
-//		MediaType mediaType = mediaItemSearchCriteria.getMediaType();
-//		if (mediaType != null) {
-			String mediaTypeValue = StringHelper.normaliseTextForDatabase(MediaType.SONG.toString());
-			booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());			
-//		}
-		
+		}
+
+		String mediaTypeValue = StringHelper.normaliseTextForDatabase(MediaType.SONG.toString());
+		booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());
+
 		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
 		org.hibernate.search.FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, MediaItem.class);
-		
+
 		Sort sort = new Sort(new SortField("title", SortField.STRING));
-		
-		boolean isDescending = mediaItemSearchCriteria.isDescending();
-		MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaItemSortType();
+
+		boolean isReverse = !mediaItemSearchCriteria.isAscending();
+		MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaSortType();
 		if (mediaSortType == MediaSortType.FAVOURITES) {
-			sort = new Sort(new SortField("vote", SortField.INT, isDescending));
+			sort = new Sort(new SortField("vote", SortField.INT, isReverse));
 		} else if (mediaSortType == MediaSortType.LAST_PLAYED) {
-			sort = new Sort(new SortField("lastAccessed", SortField.LONG, isDescending));
-		}else if (mediaSortType == MediaSortType.ALBUM_NAME) {
-			sort = new Sort(new SortField("album.name", SortField.STRING, isDescending));
+			sort = new Sort(new SortField("lastAccessed", SortField.LONG, isReverse));
+		} else if (mediaSortType == MediaSortType.ALBUM_NAME) {
+			sort = new Sort(new SortField("album.name", SortField.STRING, isReverse));
 		} else if (mediaSortType == MediaSortType.ARTIST_NAME) {
-			sort = new Sort(new SortField("artist.name", SortField.STRING, isDescending));
-		}  
-		
+			sort = new Sort(new SortField("artist.name", SortField.STRING, isReverse));
+		}
+
 		query.setSort(sort);
-		
+
 		int maximumResults = mediaItemSearchCriteria.getMaximumResults();
 		int firstResult = mediaItemSearchCriteria.getPageNumber() * maximumResults;
 		query.setFirstResult(firstResult);

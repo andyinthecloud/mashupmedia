@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 var isLoadingContent = false;
-var serialisedSearchForm = "";
 var currentPage = "";
 
 var addressRandomAlbums = "address-random-albums";
@@ -79,7 +78,6 @@ $(document).ready(function() {
 			loadArtist(artistId)
 			isScrollToTop = true;
 		} else if (textStartsWith(address, addressQuickSearchMediaItems)) {		    	
-			serialisedSearchForm = $("#quick-search").serialize();
 			mashupMedia.filterPageNumber = 0;
 			loadSongSearchResults(false);			
 			isScrollToTop = true;
@@ -381,9 +379,11 @@ function loadSongSearchResults(isAppend) {
 	}
 	
 	isLoadingContent = true;
-	
+
+	var serialisedSearchForm = $("#quick-search").serialize();
+
 	$.post(mashupMedia.contextUrl + "app/ajax/search/media-items?" + serialisedSearchForm, {
-		"pageNumber" : mashupMedia.filterPageNumber,
+		"pageNumber" : mashupMedia.filterPageNumber
 	},	function(data) {
 		if (isAppend) {
 			$("div.panel div.content").append(data);	
@@ -394,6 +394,7 @@ function loadSongSearchResults(isAppend) {
 	});				
 
 }
+
 
 function loadAlbums(isAppend) {	
 	if (isLoadingContent) {

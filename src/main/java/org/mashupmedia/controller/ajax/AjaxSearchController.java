@@ -3,6 +3,7 @@ package org.mashupmedia.controller.ajax;
 import java.util.List;
 
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
+import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.exception.PageNotFoundException;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
@@ -36,9 +37,9 @@ public class AjaxSearchController extends BaseAjaxController {
 	@RequestMapping(value = "/media-items", method = RequestMethod.POST)
 	public String handleMediaItems(@RequestParam(value = "mediaType", required = false) String mediaTypeValue,
 			@RequestParam(value = "pageNumber", required = false) Integer pageNumber, @RequestParam("searchWords") String searchWords,
-			@RequestParam(value = "sortBy", required = false) String sortBy,
-			@RequestParam(value = "isSortAscending", required = false) Boolean isSortAscending, Model model) {
-		
+			@RequestParam(value = "orderBy", required = false) String orderBy,
+			@RequestParam(value = "isAscending", required = false) Boolean isAscending, Model model) {
+
 		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
 
 		MediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
@@ -51,8 +52,16 @@ public class AjaxSearchController extends BaseAjaxController {
 			pageNumber = 0;
 		}
 		mediaItemSearchCriteria.setPageNumber(pageNumber);
-
 		mediaItemSearchCriteria.setSearchWords(searchWords);
+
+		if (isAscending == null) {
+			isAscending = true;
+		}
+
+		mediaItemSearchCriteria.setAscending(isAscending);
+
+		MediaSortType mediaSortType = MediaItemHelper.getMediaSortType(orderBy);
+		mediaItemSearchCriteria.setMediaSortType(mediaSortType);
 
 		List<MediaItem> mediaItems = null;
 
@@ -66,6 +75,9 @@ public class AjaxSearchController extends BaseAjaxController {
 			return "ajax/search/no-results";
 		}
 
+		model.addAttribute("orderBy", mediaSortType.toString().toLowerCase());
+		model.addAttribute("isAscending", isAscending);
+
 		if (mediaType == MediaType.SONG) {
 			model.addAttribute("pageNumber", pageNumber);
 			model.addAttribute("songs", mediaItems);
@@ -76,5 +88,4 @@ public class AjaxSearchController extends BaseAjaxController {
 		throw new PageNotFoundException("");
 
 	}
-
 }

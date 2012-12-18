@@ -29,21 +29,48 @@
 	    appendContentsOnScroll();
 	});
 
+	
+	$("#order-by").change(function() {
+	   var orderBy = $(this).val();
+	   $("input[name='orderBy']").val(orderBy);
+	   
+	   var isAscending = $("#order-ascending").val();
+	   $("input[name='isAscending']").val(isAscending);
+
+	   loadSongSearchResults(false);
+	});
+
+	$("#order-ascending").change(function() {
+	   var orderBy = $("#order-by").val();
+	   $("input[name='orderBy']").val(orderBy);
+
+	   var isAscending = $(this).val();
+	   $("input[name='isAscending']").val(isAscending);
+
+	   loadSongSearchResults(false);
+	});
+	
+	var orderBy = "${orderBy}";
+	$("#order-by").val(orderBy);
+	
+	var isAscending = "${isAscending}";
+	$("#order-ascending").val(isAscending);
+		
+	
     });
 </script>
 
 <div class="action-buttons">
-	<select name="order-by">
-		<option value=""><spring:message code="music.search-results.sort.category.empty" /></option>
-		<option value="last-played"><spring:message code="music.search-results.sort.category.last-played" /></option>
+	<select id="order-by">
+		<option value="song_title"><spring:message code="music.search-results.sort.category.song-title" /></option>
+		<option value="last_played"><spring:message code="music.search-results.sort.category.last-played" /></option>
 		<option value="favourites"><spring:message code="music.search-results.sort.category.favourites" /></option>
-		<option value="name"><spring:message code="music.search-results.sort.category.song-title" /></option>
-		<option value="album"><spring:message code="music.search-results.sort.category.album" /></option>
-		<option value="artist"><spring:message code="music.search-results.sort.category.artist" /></option>
+		<option value="album_name"><spring:message code="music.search-results.sort.category.album" /></option>
+		<option value="artist_name"><spring:message code="music.search-results.sort.category.artist" /></option>
 	</select>
-	<select name="order-ascending">
-		<option value="ascending"><spring:message code="music.search-results.sort.order.ascending" /></option>
-		<option value="descending"><spring:message code="music.search-results.sort.order.descending" /></option>
+	<select id="order-ascending">
+		<option value="true"><spring:message code="music.search-results.sort.order.ascending" /></option>
+		<option value="false"><spring:message code="music.search-results.sort.order.descending" /></option>
 	</select>
 </div>
 

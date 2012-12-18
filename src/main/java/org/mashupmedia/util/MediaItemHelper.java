@@ -17,6 +17,8 @@
 
 package org.mashupmedia.util;
 
+import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 
@@ -47,6 +49,22 @@ public class MediaItemHelper {
 		}
 
 		return false;
+	}
+
+	public static MediaSortType getMediaSortType(String mediaSortTypeValue) {
+		mediaSortTypeValue = StringUtils.trimToEmpty(mediaSortTypeValue);
+		if (StringUtils.isEmpty(mediaSortTypeValue)) {
+			return MediaSortType.SONG_TITLE;
+		}
+		
+		MediaSortType[] mediaSortTypes = MediaSortType.values();
+		for (MediaSortType mediaSortType : mediaSortTypes) {
+			if (mediaSortType.toString().equalsIgnoreCase(mediaSortTypeValue)) {
+				return mediaSortType;
+			}
+		}
+		
+		return MediaSortType.SONG_TITLE;
 	}
 
 }

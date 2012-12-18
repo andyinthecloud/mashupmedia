@@ -14,23 +14,23 @@ public class MediaItemSearchCriteria {
 	private int pageNumber;
 	private int maximumResults;
 	private MediaType mediaType;
-	private MediaSortType mediaItemSortType;
-	boolean isDescending;
+	private MediaSortType mediaSortType;
+	boolean isAscending;
 	
-	public boolean isDescending() {
-		return isDescending;
+	public boolean isAscending() {
+		return isAscending;
 	}
 
-	public void setDescending(boolean isDescending) {
-		this.isDescending = isDescending;
+	public void setAscending(boolean isAscending) {
+		this.isAscending = isAscending;
 	}
 
-	public MediaSortType getMediaItemSortType() {
-		return mediaItemSortType;
+	public MediaSortType getMediaSortType() {
+		return mediaSortType;
 	}
 
-	public void setMediaItemSortType(MediaSortType mediaItemSortType) {
-		this.mediaItemSortType = mediaItemSortType;
+	public void setMediaSortType(MediaSortType mediaSortType) {
+		this.mediaSortType = mediaSortType;
 	}
 
 	public int getPageNumber() {
@@ -43,7 +43,8 @@ public class MediaItemSearchCriteria {
 
 	public MediaItemSearchCriteria() {
 		setMaximumResults(DEFAULT_FETCH_SIZE);
-		setMediaItemSortType(MediaSortType.SONG_TITLE);
+		setMediaSortType(MediaSortType.SONG_TITLE);
+		setAscending(true);
 	}
 
 	public MediaType getMediaType() {

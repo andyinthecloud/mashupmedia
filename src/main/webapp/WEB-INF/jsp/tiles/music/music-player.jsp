@@ -6,105 +6,85 @@
 
 
 <script type="text/javascript">
-	var songPlaylistSelector = "#top-bar-music-player .songs";
+    var songPlaylistSelector = "#top-bar-music-player .songs";
 
-	$(document)
-			.ready(
-					function() {
+    $(document).ready(function() {
 
-						mashupMedia.loadLastAccessedPlaylist();
+	mashupMedia.loadLastAccessedPlaylist();
 
-						$("#current-song .vote .like").click(
-								function() {
-									var mediaItemId = $("#current-song-id")
-											.val();
-									$.post(mashupMedia.contextUrl
-											+ "app/ajax/vote/like", {
-										"mediaItemId" : mediaItemId
-									}, function(data) {
-									});
+	$("#current-song .vote .like").click(function() {
+	    var mediaItemId = $("#current-song-id").val();
+	    $.post(mashupMedia.contextUrl + "app/ajax/vote/like", {
+		"mediaItemId" : mediaItemId
+	    }, function(data) {
+	    });
 
-								});
+	});
 
-						$("#current-song .vote .dislike").click(
-								function() {
-									var mediaItemId = $("#current-song-id")
-											.val();
-									$.post(mashupMedia.contextUrl
-											+ "app/ajax/vote/dislike", {
-										"mediaItemId" : mediaItemId
-									}, function(data) {
-									});
-								});
+	$("#current-song .vote .dislike").click(function() {
+	    var mediaItemId = $("#current-song-id").val();
+	    $.post(mashupMedia.contextUrl + "app/ajax/vote/dislike", {
+		"mediaItemId" : mediaItemId
+	    }, function(data) {
+	    });
+	});
 
-						var defaultSearchText = "<spring:message code="search" />";
-						var searchField = $("#quick-search input[type=text]");
-						var searchText = getTextFromField(searchField);
-						if (searchText == "") {
-							$(searchField).val(defaultSearchText);
-						}
+	var defaultSearchText = "<spring:message code="search" />";
+	var searchField = $("#quick-search input[type=text]");
+	var searchText = getTextFromField(searchField);
+	if (searchText == "") {
+	    $(searchField).val(defaultSearchText);
+	}
 
-						$(searchField).focus(function() {
-							var text = getTextFromField(searchField);
-							if (text == defaultSearchText) {
-								$(searchField).val("");
-							}
-						});
+	$(searchField).focus(function() {
+	    var text = getTextFromField(searchField);
+	    if (text == defaultSearchText) {
+		$(searchField).val("");
+	    }
+	});
 
-						$(searchField).blur(function() {
-							var text = getTextFromField(searchField);
-							if (text == "") {
-								$(searchField).val(defaultSearchText);
-							}
-						});
+	$(searchField).blur(function() {
+	    var text = getTextFromField(searchField);
+	    if (text == "") {
+		$(searchField).val(defaultSearchText);
+	    }
+	});
 
-						$(searchField)
-								.autocomplete(
-										{
-											source : function(request, response) {
-												var searchText = getTextFromField(searchField);
-												//Ignore typed spaces
-												if (endsWith(searchText, " ")) {
-													return;
-												}
+	$(searchField).autocomplete({
+	    source : function(request, response) {
+		var searchText = getTextFromField(searchField);
+		//Ignore typed spaces
+		if (endsWith(searchText, " ")) {
+		    return;
+		}
 
-												$
-														.post(
-																"<c:url value="/app/ajax/search/media-items-autocomplete" />",
-																{
-																	"searchWords" : searchText
-																},
-																function(data) {
-																	response(jQuery
-																			.map(
-																					data,
-																					function(
-																							item) {
-																						return {
-																							label : item.suggestion
-																						}
-																					}));
-																});
+		$.post("<c:url value="/app/ajax/search/media-items-autocomplete" />", {
+		    "searchWords" : searchText
+		}, function(data) {
+		    response(jQuery.map(data, function(item) {
+			return {
+			    label : item.suggestion
+			}
+		    }));
+		});
 
-											},
-											minLength : 2,
-											select : function(event, ui) {
-												$(
-														"#top-bar-music-player div.search-box input[type=text]")
-														.val(ui.item.suggestion);
-											}
-										});
+	    },
+	    minLength : 2,
+	    select : function(event, ui) {
+		$("#top-bar-music-player div.search-box input[type=text]").val(ui.item.suggestion);
+	    }
+	});
 
-						/*
-						$("#quick-search").submit(function() {
-						serialisedSearchForm = $(this).serialize();
-						window.location = "#"
-						loadSongSearchResults(false);
-						return false;
-						});
-						 */
+	/*
+	$("#quick-search").submit(function() {
+	serialisedSearchForm = $(this).serialize();
+	window.location = "#"
+	loadSongSearchResults(false);
+	return false;
+	});
+	 */
 
-					});
+    });
 </script>
 
 
@@ -127,7 +107,9 @@
 	<form action="<c:url value="/app/ajax/search/media-items" />" id="quick-search">
  -->
 	<form action="address-quick-search-media-items" id="quick-search">
-		<input type="hidden" name="mediaType" value="song" /> <input type="text" name="searchWords" /><input type="image" src="<c:url value="${themePath}/images/controls/search.png"/>" />
+		<input type="hidden" name="orderBy" value="song_title" /> <input type="hidden" name="isAscending" value="true" /> <input type="hidden" name="mediaType" value="song" /> <input type="text" name="searchWords" /><input type="image"
+			src="<c:url value="${themePath}/images/controls/search.png"/>" />
+
 	</form>
 
 	<div class="clear"></div>
@@ -167,8 +149,7 @@
 			</div>
 			<div class="jp-title"></div>
 			<div class="jp-no-solution">
-				<span>Update Required</span> To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash
-					plugin</a>.
+				<span>Update Required</span> To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
 			</div>
 		</div>
 	</div>
@@ -184,12 +165,10 @@
 							<spring:message code="music.playlist.current-song.empty" />
 						</div>
 						<div class="playlist">
-							<input type="hidden" id="current-playlist-id" value="" />
-							<a href="javascript:;"></a>
+							<input type="hidden" id="current-playlist-id" value="" /> <a href="javascript:;"></a>
 						</div></td>
-					<td><span class="vote"> <a class="like" href="javascript:;" title="<spring:message code="music.playlist.current-song.vote.love" />"><img
-								src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a class="dislike" href="javascript:;"><img src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>"
-								title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
+					<td><span class="vote"> <a class="like" href="javascript:;" title="<spring:message code="music.playlist.current-song.vote.love" />"><img src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a class="dislike" href="javascript:;"><img
+								src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>" title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
 					</span></td>
 				</tr>
 			</tbody>
