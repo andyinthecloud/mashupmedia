@@ -312,7 +312,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
 
-		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(MediaItem.class).get();
+		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(Song.class).get();
 		@SuppressWarnings("rawtypes")
 		BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
 
@@ -328,9 +328,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
 		org.hibernate.search.FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, MediaItem.class);
 
-		Sort sort = new Sort(new SortField("title", SortField.STRING));
 
 		boolean isReverse = !mediaItemSearchCriteria.isAscending();
+
+		Sort sort = new Sort(new SortField("title", SortField.STRING, isReverse));
 		MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaSortType();
 		if (mediaSortType == MediaSortType.FAVOURITES) {
 			sort = new Sort(new SortField("vote", SortField.INT, isReverse));
@@ -340,7 +341,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 			sort = new Sort(new SortField("album.name", SortField.STRING, isReverse));
 		} else if (mediaSortType == MediaSortType.ARTIST_NAME) {
 			sort = new Sort(new SortField("artist.name", SortField.STRING, isReverse));
-		}
+		} 
 
 		query.setSort(sort);
 
