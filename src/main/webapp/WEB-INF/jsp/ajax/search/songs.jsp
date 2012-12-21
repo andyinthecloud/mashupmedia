@@ -29,48 +29,67 @@
 	    appendContentsOnScroll();
 	});
 
-	
 	$("#order-by").change(function() {
-	   var orderBy = $(this).val();
-	   $("input[name='orderBy']").val(orderBy);
-	   
-	   var isAscending = $("#order-ascending").val();
-	   $("input[name='isAscending']").val(isAscending);
+	    var orderBy = $(this).val();
+	    $("input[name='orderBy']").val(orderBy);
 
-	   loadSongSearchResults(false);
+	    var isAscending = $("#order-ascending").val();
+	    $("input[name='isAscending']").val(isAscending);
+
+	    loadSongSearchResults(false);
 	});
 
 	$("#order-ascending").change(function() {
-	   var orderBy = $("#order-by").val();
-	   $("input[name='orderBy']").val(orderBy);
+	    var orderBy = $("#order-by").val();
+	    $("input[name='orderBy']").val(orderBy);
 
-	   var isAscending = $(this).val();
-	   $("input[name='isAscending']").val(isAscending);
+	    var isAscending = $(this).val();
+	    $("input[name='isAscending']").val(isAscending);
 
-	   loadSongSearchResults(false);
+	    loadSongSearchResults(false);
 	});
-	
+
 	var orderBy = "${orderBy}";
 	$("#order-by").val(orderBy);
-	
+
 	var isAscending = "${isAscending}";
 	$("#order-ascending").val(isAscending);
-		
-	
+
+	$("#play-all").click(function() {
+	    mashupMedia.playSongSearchResults();
+	});
+
+	$("#add-all").click(function() {
+	    mashupMedia.appendSongSearchResults();
+	});
+
     });
 </script>
 
 <div class="action-buttons">
 	<select id="order-by">
-		<option value="song_title"><spring:message code="music.search-results.sort.category.song-title" /></option>
-		<option value="last_played"><spring:message code="music.search-results.sort.category.last-played" /></option>
-		<option value="favourites"><spring:message code="music.search-results.sort.category.favourites" /></option>
-		<option value="album_name"><spring:message code="music.search-results.sort.category.album" /></option>
-		<option value="artist_name"><spring:message code="music.search-results.sort.category.artist" /></option>
-	</select>
-	<select id="order-ascending">
-		<option value="true"><spring:message code="music.search-results.sort.order.ascending" /></option>
-		<option value="false"><spring:message code="music.search-results.sort.order.descending" /></option>
+		<option value="song_title">
+			<spring:message code="music.search-results.sort.category.song-title" />
+		</option>
+		<option value="last_played">
+			<spring:message code="music.search-results.sort.category.last-played" />
+		</option>
+		<option value="favourites">
+			<spring:message code="music.search-results.sort.category.favourites" />
+		</option>
+		<option value="album_name">
+			<spring:message code="music.search-results.sort.category.album" />
+		</option>
+		<option value="artist_name">
+			<spring:message code="music.search-results.sort.category.artist" />
+		</option>
+	</select> <select id="order-ascending">
+		<option value="true">
+			<spring:message code="music.search-results.sort.order.ascending" />
+		</option>
+		<option value="false">
+			<spring:message code="music.search-results.sort.order.descending" />
+		</option>
 	</select>
 </div>
 
@@ -78,6 +97,12 @@
 	<h1>
 		<spring:message code="music.search-results.title" />
 	</h1>
+
+	<ul class="control-menu" id="artist-id-<c:out value="${artistPage.artist.id}" />">
+		<li class="first"><a href="javascript:;" id="play-all"><spring:message code="action.play-all" /></a></li>
+		<li><a href="javascript:;" id="add-all"><spring:message code="action.add-all" /></a></li>
+	</ul>
+
 </c:if>
 
 <ul class="items">
@@ -93,6 +118,10 @@
 
 			<div class="artist-and-album">
 				<a href="javascript:;" rel="address:/address-artist-${song.artist.id}"><c:out value="${song.artist.name}" /></a> - <a href="javascript:;" rel="address:/address-load-album-${song.album.id}"><c:out value="${song.album.name}" /></a>
+			</div>
+
+			<div class="meta">
+				<spring:message code="meta.likes" arguments="${song.vote}"/> | <a href="javascript:;" rel="address:/search-genre-${song.genre.id}"><c:out value="${song.genre.name}" /></a>
 			</div>
 
 			<div class="controls">

@@ -38,6 +38,12 @@
 			value="/WEB-INF/jsp/tiles/configuration/music-library.jsp" />
 	</definition>
 
+	<definition name="configuration/list-users" extends="home">
+		<put-attribute name="title" value="Tweeter | List Users" />
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/list-users.jsp" />
+	</definition>
+
 	<definition name="music.panel" template="/WEB-INF/jsp/layouts/music-panel.jsp">
 		<put-attribute name="body" value="" />
 	</definition>

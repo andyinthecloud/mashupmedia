@@ -107,7 +107,7 @@
 	<form action="<c:url value="/app/ajax/search/media-items" />" id="quick-search">
  -->
 	<form action="address-quick-search-media-items" id="quick-search">
-		<input type="hidden" name="orderBy" value="song_title" /> <input type="hidden" name="isAscending" value="true" /> <input type="hidden" name="mediaType" value="song" /> <input type="text" name="searchWords" /><input type="image"
+		<input type="hidden" name="orderBy" value="${orderBy}" /> <input type="hidden" name="isAscending" value="${isAscending}" /> <input type="hidden" name="mediaType" value="${mediaType}" /> <input type="text" name="searchWords" value="${searchWords}" /><input type="image"
 			src="<c:url value="${themePath}/images/controls/search.png"/>" />
 
 	</form>

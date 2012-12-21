@@ -26,6 +26,8 @@ public interface AdminManager {
 
 	public Group getGroup(String idName);
 
+	public List<User> getUsers();
+
 	
 
 }

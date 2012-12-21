@@ -40,12 +40,14 @@ import org.mashupmedia.util.StringHelper;
 @Indexed
 @AnalyzerDef(name = "customanalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
 		@TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
-		@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = { @Parameter(name = "language", value = "English")
-		}) })
+		@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = { @Parameter(name = "language", value = "English") }) })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 public class MediaItem implements Serializable {
 	private static final long serialVersionUID = -6694717782091959485L;
+	
+	public final static String TITLE_SEPERATOR = " - ";
+
 
 	public enum MediaType {
 		SONG, VIDEO, IMAGE;
@@ -80,6 +82,16 @@ public class MediaItem implements Serializable {
 	private String mediaTypeValue;
 	@Column(length = 1000)
 	private String summary;
+	@Field(analyze = Analyze.NO)
+	private String displayTitle;
+
+	public String getDisplayTitle() {
+		return displayTitle;
+	}
+
+	public void setDisplayTitle(String displayTitle) {
+		this.displayTitle = displayTitle;
+	}
 
 	public String getMediaTypeValue() {
 		return mediaTypeValue;

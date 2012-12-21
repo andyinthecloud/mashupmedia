@@ -11,6 +11,26 @@ public class WebHelper {
 		HTML, JSON
 	}
 
+	public enum ActionType {
+		NONE, PLAY, APPEND
+	}
+
+	public static ActionType getActionType(String action) {
+		action = StringUtils.trimToEmpty(action);
+		if (StringUtils.isEmpty(action)) {
+			return ActionType.NONE;
+		}
+
+		ActionType[] actionTypes = ActionType.values();
+		for (ActionType actionType : actionTypes) {
+			if (action.equalsIgnoreCase(actionType.toString())) {
+				return actionType;
+			}
+		}
+
+		return ActionType.NONE;
+	}
+
 	public static WebFormatType getWebFormatType(String webFormatTypeValue) {
 		webFormatTypeValue = StringUtils.trimToEmpty(webFormatTypeValue);
 		if (StringUtils.isEmpty(webFormatTypeValue)) {

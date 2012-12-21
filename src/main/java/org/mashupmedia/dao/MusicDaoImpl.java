@@ -1,6 +1,5 @@
 package org.mashupmedia.dao;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -15,16 +14,15 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
-import org.mashupmedia.comparator.MediaItemComparator;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
-import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
@@ -326,21 +324,21 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());
 
 		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
-		org.hibernate.search.FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, MediaItem.class);
+		org.hibernate.search.FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, Song.class);
 
 
 		boolean isReverse = !mediaItemSearchCriteria.isAscending();
 
-		Sort sort = new Sort(new SortField("title", SortField.STRING, isReverse));
+		Sort sort = new Sort(new SortField("displayTitle", SortField.STRING, isReverse));
 		MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaSortType();
 		if (mediaSortType == MediaSortType.FAVOURITES) {
 			sort = new Sort(new SortField("vote", SortField.INT, isReverse));
 		} else if (mediaSortType == MediaSortType.LAST_PLAYED) {
 			sort = new Sort(new SortField("lastAccessed", SortField.LONG, isReverse));
 		} else if (mediaSortType == MediaSortType.ALBUM_NAME) {
-			sort = new Sort(new SortField("album.name", SortField.STRING, isReverse));
+			sort = new Sort(new SortField("album.indexText", SortField.STRING, isReverse));
 		} else if (mediaSortType == MediaSortType.ARTIST_NAME) {
-			sort = new Sort(new SortField("artist.name", SortField.STRING, isReverse));
+			sort = new Sort(new SortField("artist.indexText", SortField.STRING, isReverse));
 		} 
 
 		query.setSort(sort);
@@ -352,7 +350,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		@SuppressWarnings("unchecked")
 		List<MediaItem> mediaItems = query.list();
-		Collections.sort(mediaItems, new MediaItemComparator());
+//		Collections.sort(mediaItems, new MediaItemComparator());
 		return mediaItems;
 	}
 

@@ -1,5 +1,7 @@
 package org.mashupmedia.dao;
 
+import java.util.List;
+
 import org.mashupmedia.model.User;
 
 public interface UserDao {
@@ -11,5 +13,7 @@ public interface UserDao {
 	public int getTotalUsers();
 
 	public User getUser(long userId);
+
+	public List<User> getUsers();
 
 }

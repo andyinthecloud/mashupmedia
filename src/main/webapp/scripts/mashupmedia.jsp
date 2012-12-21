@@ -79,6 +79,14 @@ $(document).ready(function() {
 			isScrollToTop = true;
 		} else if (textStartsWith(address, addressQuickSearchMediaItems)) {		    	
 			mashupMedia.filterPageNumber = 0;
+						
+			/*
+			$("input[name=orderBy]").val(getURLParameter("orderBy"));
+			$("input[name=isAscending]").val(getURLParameter("isAscending"));
+			$("input[name=mediaType]").val(getURLParameter("mediaType"));
+			$("input[name=searchWords]").val(getURLParameter("searchWords"));
+			*/
+			
 			loadSongSearchResults(false);			
 			isScrollToTop = true;
 		} else if (textStartsWith(address, addressListPlaylists)) {			
@@ -163,7 +171,6 @@ var mashupMedia = new function() {
 		$.get(mashupMedia.contextUrl
 				+ "app/ajax/music/play/next", function(data) {
 			var mediaItemId = data.mediaItem.id;
-		    	alert(mediaItemId);
 			var playlistId = $("#current-playlist-id").val();
 			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 			updatePlaylistView(mediaItemId);
@@ -222,6 +229,37 @@ var mashupMedia = new function() {
 		});
 	};
 
+	
+    
+    	this.playSongSearchResults = function() {
+    	    	var serialisedSearchForm = $("#quick-search").serialize();
+
+    		$.post(mashupMedia.contextUrl + "app/ajax/search/media-items?" + serialisedSearchForm, {
+    		    "action" : "play",
+    		    "pageNumber" : 0,
+    		    "maximumResults" : 500
+    		}, function(data) {
+			var mediaItemId = data.mediaItem.id;
+			var playlistId = data.mediaItem.playlistId;
+			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
+    		});	    	    	
+    	    
+    	};
+
+	this.appendSongSearchResults = function() {
+	    	var serialisedSearchForm = $("#quick-search").serialize();
+
+    		$.post(mashupMedia.contextUrl + "app/ajax/search/media-items?" + serialisedSearchForm, {
+    		    "action" : "append",
+    		    "pageNumber" : 0,
+    		    "maximumResults" : 500
+    		}, function(data) {
+    		    
+    		});	    	    	
+
+	};
+
+	
 	this.appendArtist = function(artistId) {
 		$.post(mashupMedia.contextUrl + "app/ajax/playlist/append-artist", {
 			"artistId" : artistId
@@ -492,4 +530,11 @@ function appendContentsOnScroll() {
 	
     }
 }
+
+function getURLParameter(name) {
+    return decodeURIComponent(
+        (location.search.match(RegExp("[?|&]"+name+'=(.+?)(&|$)'))||[,null])[1]
+    );  
+}
+
 

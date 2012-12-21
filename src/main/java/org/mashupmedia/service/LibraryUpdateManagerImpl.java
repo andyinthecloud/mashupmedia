@@ -82,8 +82,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				prepareFtpMusicLibrary(musicLibrary, (FtpLocation) location);
 			} else if (locationType == LocationType.LOCAL) {
 				prepareFileMusicLibrary(musicLibrary);
-			} 
-			
+			}
+
 		} catch (Exception e) {
 			throw new MashupMediaException("Error updating the music library.", e);
 		}
@@ -104,7 +104,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			logger.error("Unable to prepare music library, ftp client is null.");
 			return;
 		}
-		
+
 		Date date = new Date();
 		List<Song> songs = connectionManager.getFtpSongs(musicLibrary, date);
 		musicManager.saveSongs(musicLibrary, songs);
@@ -126,7 +126,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
 		musicManager.saveSongs(musicLibrary, songs);
 		musicManager.deleteObsoleteSongs(musicLibrary.getId(), date);
-//		musicManager.saveSongs(musicLibrary, songs);
+		// musicManager.saveSongs(musicLibrary, songs);
 
 	}
 
@@ -150,11 +150,11 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				if (StringUtils.isEmpty(folderArtistName)) {
 					folderArtistName = fileName;
 					prepareSongs(date, songs, file, musicLibrary, folderArtistName, folderAlbumName);
-					
+
 					musicManager.saveSongs(musicLibrary, songs);
 					songs = new ArrayList<Song>();
-//					songs.clear();
-					
+					// songs.clear();
+
 					folderArtistName = "";
 				} else {
 					if (StringUtils.isBlank(folderAlbumName)) {
@@ -273,12 +273,37 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				album.setArtist(artist);
 				song.setArtist(artist);
 
+				StringBuilder displayTitleBuilder = new StringBuilder();
+				displayTitleBuilder.append(song.getDisplayTrackNumber());
+				displayTitleBuilder.append(Song.TITLE_SEPERATOR);
+				displayTitleBuilder.append(song.getTitle());
+
+				String displayTitle = prepareDisplayTitle(song);
+				song.setDisplayTitle(displayTitle);
+
 				songs.add(song);
 
 			}
+		}
+	}
 
+	private String prepareDisplayTitle(Song song) {
+		StringBuilder titleBuilder = new StringBuilder();
+		if (song.isReadableTag()) {
+			titleBuilder.append(song.getDisplayTrackNumber());
+			titleBuilder.append(Song.TITLE_SEPERATOR);
+			titleBuilder.append(song.getTitle());
+			return titleBuilder.toString();
 		}
 
+		String title = StringUtils.trimToEmpty(song.getTitle());
+		int dotIndex = title.lastIndexOf(".");
+		if (dotIndex < 0) {
+			return title;
+		}
+
+		title = title.substring(0, dotIndex);
+		return title;
 	}
 
 	// private String prepareMimeType(String mimeType) {

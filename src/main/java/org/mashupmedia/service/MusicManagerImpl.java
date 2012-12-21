@@ -239,6 +239,9 @@ public class MusicManagerImpl implements MusicManager {
 
 	}
 
+	
+
+	
 	@Override
 	public void deleteObsoleteSongs(long libraryId, Date date) {
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);

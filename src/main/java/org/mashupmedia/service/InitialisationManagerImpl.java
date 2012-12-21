@@ -48,6 +48,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	protected void initialiseAdminUserAndRoles() {
 		Set<Role> roles = initialiseFirstRoles();
 		User user = new User();
+		user.setName(DEFAULT_NAME);
 		user.setUsername(DEFAULT_USERNAME);
 		user.setEnabled(true);
 		user.setRoles(roles);

@@ -581,7 +581,7 @@ ul.items li a.album-cover img {
 	width: auto;
 }
 
-ul.items li div.artist, ul.items li div.album, ul.items ul.control-menu, ul.items li div.song, ul.items li div.artist-and-album, ul.items div.controls {
+ul.items li div.artist, ul.items li div.album, ul.items ul.control-menu, ul.items li div.song, ul.items li div.artist-and-album, ul.items div.controls, ul.items li div.meta{
 	margin-left: 200px;
 }
 

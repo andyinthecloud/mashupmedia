@@ -116,5 +116,10 @@ public class AdminManagerImpl implements AdminManager {
 		return group;
 	}
 	
+	@Override
+	public List<User> getUsers() {
+		List<User> users = userDao.getUsers();
+		return users;
+	}
 
 }

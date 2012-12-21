@@ -31,6 +31,15 @@ public class User implements UserDetails, Serializable {
 	private Set<Role> roles;
 	private Date createdOn;
 	private Date updatedOn;
+	private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public Date getCreatedOn() {
 		return createdOn;
@@ -150,6 +159,8 @@ public class User implements UserDetails, Serializable {
 		builder.append(createdOn);
 		builder.append(", updatedOn=");
 		builder.append(updatedOn);
+		builder.append(", name=");
+		builder.append(name);
 		builder.append("]");
 		return builder.toString();
 	}

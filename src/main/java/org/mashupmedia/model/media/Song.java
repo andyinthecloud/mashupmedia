@@ -23,7 +23,6 @@ public class Song extends MediaItem {
 
 	private static final long serialVersionUID = -8767965461920368852L;
 
-	public final static String TITLE_SEPERATOR = " - ";
 
 	private int trackNumber;
 	@Field(analyze = Analyze.NO)
@@ -235,25 +234,6 @@ public class Song extends MediaItem {
 		}
 		trackNumberBuilder.append(getTrackNumber());
 		return trackNumberBuilder.toString();
-	}
-
-	public String getDisplayTitle() {
-		StringBuilder titleBuilder = new StringBuilder();
-		if (isReadableTag()) {
-			titleBuilder.append(getDisplayTrackNumber());
-			titleBuilder.append(TITLE_SEPERATOR);
-			titleBuilder.append(getTitle());
-			return titleBuilder.toString();
-		}
-
-		String title = StringUtils.trimToEmpty(getTitle());
-		int dotIndex = title.lastIndexOf(".");
-		if (dotIndex < 0) {
-			return title;
-		}
-
-		title = title.substring(0, dotIndex);
-		return title;
 	}
 
 	@Override

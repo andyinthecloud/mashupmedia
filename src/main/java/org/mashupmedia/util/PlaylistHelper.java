@@ -52,7 +52,7 @@ public class PlaylistHelper {
 		return mediaItems;
 	}
 
-	public static void appendPlaylist(Playlist playlist, List<Song> songs) {
+	public static void appendPlaylist(Playlist playlist, List<? extends MediaItem> mediaItems) {
 
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems == null) {
@@ -60,7 +60,7 @@ public class PlaylistHelper {
 			playlist.setPlaylistMediaItems(playlistMediaItems);
 		}
 
-		if (songs == null || songs.isEmpty()) {
+		if (mediaItems == null || mediaItems.isEmpty()) {
 			return;
 		}
 
@@ -68,12 +68,12 @@ public class PlaylistHelper {
 		
 		List<PlaylistMediaItem> appendPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
 
-		for (int i = 0; i < songs.size(); i++) {
-			PlaylistMediaItem playlistSong = new PlaylistMediaItem();
-			playlistSong.setMediaItem(songs.get(i));
-			playlistSong.setRanking(totalPlaylistItems + i);
-			playlistSong.setPlaylist(playlist);
-			appendPlaylistMediaItems.add(playlistSong);
+		for (int i = 0; i < mediaItems.size(); i++) {
+			PlaylistMediaItem playlistMediaItem = new PlaylistMediaItem();
+			playlistMediaItem.setMediaItem(mediaItems.get(i));
+			playlistMediaItem.setRanking(totalPlaylistItems + i);
+			playlistMediaItem.setPlaylist(playlist);
+			appendPlaylistMediaItems.add(playlistMediaItem);
 		}
 		
 		
@@ -93,14 +93,14 @@ public class PlaylistHelper {
 		replacePlaylist(playlist, songs);
 	}
 
-	public static void appendPlaylist(Playlist playlist, Song song) {
-		if (song == null) {
+	public static void appendPlaylist(Playlist playlist, MediaItem mediaItem) {
+		if (mediaItem == null) {
 			return;
 		}
 
-		List<Song> songs = new ArrayList<Song>();
-		songs.add(song);
-		appendPlaylist(playlist, songs);
+		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		mediaItems.add(mediaItem);
+		appendPlaylist(playlist, mediaItems);
 	}	
 
 	public static MediaItem getRelativePlayingMediaItemFromPlaylist(Playlist playlist, int relativeOffset) {

@@ -1,5 +1,7 @@
 package org.mashupmedia.dao;
 
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -46,4 +48,12 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao{
 		return total.intValue();
 	}
 
+	@Override
+	public List<User> getUsers() {
+		Query query = sessionFactory.getCurrentSession().createQuery("from User order by name");
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<User> users = query.list();
+		return users;
+	}
 }
