@@ -39,6 +39,7 @@ import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -60,6 +61,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = RuntimeException.class)
 	public void updateLibrary(Library library) {
 		if (library instanceof MusicLibrary) {
 			MusicLibrary musicLibrary = (MusicLibrary) library;
@@ -67,8 +69,6 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		}
 	}
 
-	@Override
-	@Transactional(noRollbackFor = RuntimeException.class)
 	public void updateMusicLibrary(MusicLibrary musicLibrary) {
 		if (!musicLibrary.isEnabled()) {
 			logger.info("Library is disabled, will not update:" + musicLibrary.toString());

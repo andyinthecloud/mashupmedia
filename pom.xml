@@ -411,7 +411,7 @@
 				<log4j.mashupmedia.level>error</log4j.mashupmedia.level>
 				<log4j.focus.level>error</log4j.focus.level>
 				<log4j.root.level>error</log4j.root.level>
-				<log.path>./logs</log.path>
+				<log.path>/var/log/tomcat6</log.path>
 			</properties>
 		</profile>
 	</profiles>
