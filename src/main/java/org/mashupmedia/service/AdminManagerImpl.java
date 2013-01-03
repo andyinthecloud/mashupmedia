@@ -121,5 +121,17 @@ public class AdminManagerImpl implements AdminManager {
 		List<User> users = userDao.getUsers();
 		return users;
 	}
+	
+	@Override
+	public List<Role> getRoles() {
+		List<Role> roles = roleDao.getRoles();
+		return roles;
+	}
+	
+	@Override
+	public Role getRole(String idName) {
+		Role role = roleDao.getRole(idName);
+		return role;
+	}
 
 }

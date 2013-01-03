@@ -1,5 +1,7 @@
 package org.mashupmedia.dao;
 
+import java.util.List;
+
 import org.hibernate.Query;
 import org.mashupmedia.model.Role;
 import org.springframework.stereotype.Repository;
@@ -20,6 +22,15 @@ public class RoleDaoImpl extends BaseDaoImpl implements RoleDao {
 		query.setCacheable(true);
 		Role role = (Role) query.uniqueResult();
 		return role;
+	}
+
+	@Override
+	public List<Role> getRoles() {
+		Query query = sessionFactory.getCurrentSession().createQuery("from Role order by name");
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Role> roles = query.list();
+		return roles;
 	}
 
 }

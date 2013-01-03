@@ -28,6 +28,8 @@ public interface AdminManager {
 
 	public List<User> getUsers();
 
-	
+	public List<Role> getRoles();
+
+	public Role getRole(String idName);
 
 }

@@ -655,3 +655,8 @@ div.action-buttons {
 	height: 16px;
 	background-color: #C8C0CE;
 }
+
+input.cancel {
+	margin-left: 30px;
+}
+

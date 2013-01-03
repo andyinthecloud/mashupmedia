@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
+@RequestMapping("/configuration/administration")
 public class UserController extends BaseController {
 
 	@Autowired
@@ -46,15 +47,15 @@ public class UserController extends BaseController {
 		breadcrumbs.add(networkBreadcrumb);
 	}
 
-	@RequestMapping(value = "/configuration/list-users", method = RequestMethod.GET)
+	@RequestMapping(value = "/list-users", method = RequestMethod.GET)
 	public String getUsers(Model model) {
-		ListUsersPage listUsersPage = new ListUsersPage();		
+		ListUsersPage listUsersPage = new ListUsersPage();
 		List<User> users = adminManager.getUsers();
-		listUsersPage.setUsers(users);				
-		
+		listUsersPage.setUsers(users);
+
 		model.addAttribute("listUsersPage", listUsersPage);
-		
-		return "configuration/list-users";
+
+		return "configuration/administration/list-users";
 	}
 
 }
