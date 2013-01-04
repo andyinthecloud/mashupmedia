@@ -16,4 +16,6 @@ public interface UserDao {
 
 	public List<User> getUsers();
 
+	public void deleteUser(User user);
+
 }

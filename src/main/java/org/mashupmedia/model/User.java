@@ -27,11 +27,30 @@ public class User implements UserDetails, Serializable {
 	private String username;
 	private String password;
 	private boolean enabled;
+	private boolean editable;	
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	private Set<Role> roles;
+	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+	private Set<Group> groups;
 	private Date createdOn;
 	private Date updatedOn;
 	private String name;
+
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
+	}
+
+	public Set<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(Set<Group> groups) {
+		this.groups = groups;
+	}
 
 	public String getName() {
 		return name;
@@ -155,6 +174,8 @@ public class User implements UserDetails, Serializable {
 		builder.append(enabled);
 		builder.append(", roles=");
 		builder.append(roles);
+		builder.append(", groups=");
+		builder.append(groups);
 		builder.append(", createdOn=");
 		builder.append(createdOn);
 		builder.append(", updatedOn=");

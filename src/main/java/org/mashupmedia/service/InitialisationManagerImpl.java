@@ -34,7 +34,6 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	protected void initialiseGroups() {
 		saveGroup("group.friends", "Friends");
 		saveGroup("group.family", "Family");
-
 	}
 
 	protected void saveGroup(String idName, String name) {
@@ -51,6 +50,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		user.setName(DEFAULT_NAME);
 		user.setUsername(DEFAULT_USERNAME);
 		user.setEnabled(true);
+		user.setEditable(false);
 		user.setRoles(roles);
 		adminManager.saveUser(user);
 		adminManager.updatePassword(DEFAULT_USERNAME, DEFAULT_PASSWORD);

@@ -37,22 +37,35 @@ public class AdminManagerImpl implements AdminManager {
 		User user = userDao.getUser(username);
 		return user;
 	}
-	
+
 	@Override
 	public User getUser(long userId) {
 		User user = userDao.getUser(userId);
 		return user;
 	}
 
-
 	@Override
 	public void saveUser(User user) {
 		Date date = new Date();
-		if (user.getId() == 0) {
+		long userId = user.getId();
+		String username = user.getUsername();
+		String password = user.getPassword();
+
+		if (userId == 0) {
 			user.setCreatedOn(date);
+		} else {
+			User savedUser = getUser(userId);
+			user.setPassword(savedUser.getPassword());
 		}
+
 		user.setUpdatedOn(date);
 		userDao.saveUser(user);
+
+		if (StringUtils.isNotBlank(password)) {
+			logger.info("Updating user password...");
+			updatePassword(username, password);
+		}
+
 	}
 
 	@Override
@@ -115,23 +128,28 @@ public class AdminManagerImpl implements AdminManager {
 		Group group = groupDao.getGroup(idName);
 		return group;
 	}
-	
+
 	@Override
 	public List<User> getUsers() {
 		List<User> users = userDao.getUsers();
 		return users;
 	}
-	
+
 	@Override
 	public List<Role> getRoles() {
 		List<Role> roles = roleDao.getRoles();
 		return roles;
 	}
-	
+
 	@Override
 	public Role getRole(String idName) {
 		Role role = roleDao.getRole(idName);
 		return role;
+	}
+	
+	@Override
+	public void deleteUser(User user) {
+		userDao.deleteUser(user);		
 	}
 
 }

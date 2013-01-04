@@ -19,13 +19,42 @@ package org.mashupmedia.web.page;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 
 public class EditUserPage {
 
+	private String action;
 	private User user;
 	private List<Role> roles;
+	private List<Group> groups;
+	private String repeatPassword;
+
+	public String getRepeatPassword() {
+		return repeatPassword;
+	}
+
+	public void setRepeatPassword(String repeatPassword) {
+		this.repeatPassword = repeatPassword;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public List<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
+	}
 
 	public List<Role> getRoles() {
 		return roles;
@@ -41,6 +70,20 @@ public class EditUserPage {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public boolean getHasPassword() {
+		if (user == null) {
+			return false;
+		}
+
+		String password = user.getPassword();
+		if (StringUtils.isBlank(password)) {
+			return false;
+		}
+
+		return true;
+
 	}
 
 }

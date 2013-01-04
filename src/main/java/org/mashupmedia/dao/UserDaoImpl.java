@@ -56,4 +56,26 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao{
 		List<User> users = query.list();
 		return users;
 	}
+	
+	@Override
+	public void deleteUser(User user) {
+		
+		// Clean up user		
+		Long userId = user.getId();
+		
+		Query updateMediaItemQuery = sessionFactory.getCurrentSession().createQuery("update MediaItem set lastAccessedBy = null where lastAccessedBy.id = :userId");
+		updateMediaItemQuery.setLong("userId", userId);
+		updateMediaItemQuery.executeUpdate();
+		
+		Query updatePlaylistCreatedByQuery = sessionFactory.getCurrentSession().createQuery("update Playlist set createdBy = null where createdBy.id = :userId");
+		updatePlaylistCreatedByQuery.setLong("userId", userId);
+		updatePlaylistCreatedByQuery.executeUpdate();
+		
+		Query updatePlaylistUpdatedByQuery = sessionFactory.getCurrentSession().createQuery("update Playlist set updatedBy = null where updatedBy.id = :userId");
+		updatePlaylistUpdatedByQuery.setLong("userId", userId);
+		updatePlaylistUpdatedByQuery.executeUpdate();
+		
+		
+		sessionFactory.getCurrentSession().delete(user);		
+	}
 }

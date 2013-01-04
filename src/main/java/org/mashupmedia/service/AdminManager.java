@@ -32,4 +32,6 @@ public interface AdminManager {
 
 	public Role getRole(String idName);
 
+	public void deleteUser(User user);
+
 }
