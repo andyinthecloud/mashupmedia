@@ -67,9 +67,9 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao{
 		updateMediaItemQuery.setLong("userId", userId);
 		updateMediaItemQuery.executeUpdate();
 		
-		Query updatePlaylistCreatedByQuery = sessionFactory.getCurrentSession().createQuery("update Playlist set createdBy = null where createdBy.id = :userId");
-		updatePlaylistCreatedByQuery.setLong("userId", userId);
-		updatePlaylistCreatedByQuery.executeUpdate();
+//		Query updatePlaylistCreatedByQuery = sessionFactory.getCurrentSession().createQuery("update Playlist set createdBy = null where createdBy.id = :userId");
+//		updatePlaylistCreatedByQuery.setLong("userId", userId);
+//		updatePlaylistCreatedByQuery.executeUpdate();
 		
 		Query updatePlaylistUpdatedByQuery = sessionFactory.getCurrentSession().createQuery("update Playlist set updatedBy = null where updatedBy.id = :userId");
 		updatePlaylistUpdatedByQuery.setLong("userId", userId);

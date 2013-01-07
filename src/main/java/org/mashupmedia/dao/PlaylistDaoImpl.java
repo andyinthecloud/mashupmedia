@@ -103,12 +103,14 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		StringBuilder hqlBuilder = new StringBuilder();
 		hqlBuilder.append("from Playlist");
 		hqlBuilder.append(" where createdBy.id = :userId ");
-		hqlBuilder.append(" and playlistTypeValue = :playlistType");
+		
+		if (playlistType != PlaylistType.ALL) {
+			hqlBuilder.append(" and playlistTypeValue = '" + playlistType.getValue() + "'");			
+		}
 
 		Query query = sessionFactory.getCurrentSession().createQuery(hqlBuilder.toString());
 		query.setCacheable(true);
 		query.setLong("userId", userId);
-		query.setString("playlistType", playlistType.getValue());
 		@SuppressWarnings("unchecked")
 		List<Playlist> playlists = (List<Playlist>) query.list();
 		return playlists;

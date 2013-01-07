@@ -6,12 +6,15 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.dao.GroupDao;
+import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.dao.RoleDao;
 import org.mashupmedia.dao.UserDao;
 import org.mashupmedia.exception.MashupMediaException;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
+import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,9 @@ public class AdminManagerImpl implements AdminManager {
 	@Autowired
 	private GroupDao groupDao;
 
+	@Autowired
+	private PlaylistDao playlistDao;
+	
 	@Override
 	public User getUser(String username) {
 		User user = userDao.getUser(username);
@@ -149,6 +155,12 @@ public class AdminManagerImpl implements AdminManager {
 	
 	@Override
 	public void deleteUser(User user) {
+		long userId = user.getId();
+		List<Playlist> playlists = playlistDao.getPlaylists(userId, PlaylistType.ALL);
+		for (Playlist playlist : playlists) {
+			playlistDao.deletePlaylist(playlist);
+		}
+		
 		userDao.deleteUser(user);		
 	}
 

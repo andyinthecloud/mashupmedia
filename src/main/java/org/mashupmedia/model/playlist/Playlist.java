@@ -25,7 +25,7 @@ public class Playlist implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public enum PlaylistType {
-		MUSIC;
+		ALL, MUSIC;
 
 		public String getValue() {
 			return toString().toLowerCase();
