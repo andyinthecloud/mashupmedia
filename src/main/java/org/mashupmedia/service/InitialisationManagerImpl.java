@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
+import org.mashupmedia.util.AdminHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,10 +59,10 @@ public class InitialisationManagerImpl implements InitialisationManager {
 
 	protected Set<Role> initialiseFirstRoles() {
 		Set<Role> roles = new HashSet<Role>();
-		Role adminRole = saveRole("role.admin", "Administrator", "ROLE_ADMINISTRATOR");
+		Role adminRole = saveRole(AdminHelper.ROLE_ADMIN_IDNAME, "Administrator", "ROLE_ADMINISTRATOR");
 		roles.add(adminRole);
-		Role userRole = saveRole("role.user", "User", "ROLE_USER");
-		roles.add(userRole);
+//		Role userRole = saveRole("role.user", "User", "ROLE_USER");
+//		roles.add(userRole);
 		return roles;
 
 	}

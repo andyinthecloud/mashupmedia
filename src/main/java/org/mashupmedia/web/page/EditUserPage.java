@@ -31,6 +31,19 @@ public class EditUserPage {
 	private List<Role> roles;
 	private List<Group> groups;
 	private String repeatPassword;
+	private boolean isAdministrator;
+	
+	public boolean isAdministrator() {
+		return isAdministrator;
+	}
+	
+	public boolean getIsAdministrator() {
+		return isAdministrator();
+	}
+
+	public void setAdministrator(boolean isAdministrator) {
+		this.isAdministrator = isAdministrator;
+	}
 
 	public String getRepeatPassword() {
 		return repeatPassword;

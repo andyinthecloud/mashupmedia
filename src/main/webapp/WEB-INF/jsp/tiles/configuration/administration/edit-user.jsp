@@ -32,37 +32,27 @@
 </script>
 
 
-
-<form:form commandName="editUserPage">
+<c:url var="actionUrl" value="/app/configuration/administration/submit-user" />
+<form:form commandName="editUserPage" action="${actionUrl}"  >
 
 	<form:hidden path="action" />
+	<form:hidden path="user.id"/>
 
 	<form:errors path="*" cssClass="error-box" />
 
-	<c:if test="${editUserPage.user.editable}">
 		<form:checkbox path="user.enabled" value="true" id="user_enabled" />
 		<label for="user_enabled"><spring:message code="configuration.administration.edit-user.enabled" /></label>
-	</c:if>
-
-
+		
+		<form:checkbox path="isAdministrator" value="true"/>
+		<label for="isAdministrator"><spring:message code="configuration.administration.edit-user.administrator" /></label>
+		
+	
 	<label class="new-line"><spring:message code="configuration.administration.edit-user.username" /></label>
 	<form:input path="user.username" />
 	<br />
 
 	<label class="new-line"><spring:message code="configuration.administration.edit-user.name" /></label>
 	<form:input path="user.name" />
-	<br />
-
-
-	<label class="new-line"><spring:message code="configuration.administration.edit-user.roles" /></label>
-	<c:choose>
-		<c:when test="${editUserPage.user.editable}">
-			<form:checkboxes path="user.roles" items="${editUserPage.roles}" itemLabel="name" itemValue="idName" cssClass="checkboxes" delimiter="<br/>" />
-		</c:when>
-		<c:otherwise>
-			<form:checkboxes path="user.roles" items="${editUserPage.user.roles}" itemLabel="name" itemValue="idName" cssClass="checkboxes hide" delimiter="<br/>" />
-		</c:otherwise>
-	</c:choose>
 	<br />
 
 

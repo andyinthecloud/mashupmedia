@@ -28,4 +28,5 @@ public interface MashUpMediaConstants {
 	public static final String MODEL_KEY_JSON_PLAYLIST = "playlist";		
 	public static final String MODEL_KEY_GENRES = "genres";		
 	
+	
 }
