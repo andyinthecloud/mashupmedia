@@ -17,32 +17,22 @@
 
 package org.mashupmedia.web.page;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.model.Group;
-import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 
 public class EditUserPage {
 
 	private String action;
 	private User user;
-	private List<Role> roles;
-	private List<Group> groups;
 	private String repeatPassword;
-	private boolean isAdministrator;
-	
+	private boolean administrator;
+
 	public boolean isAdministrator() {
-		return isAdministrator;
-	}
-	
-	public boolean getIsAdministrator() {
-		return isAdministrator();
+		return administrator;
 	}
 
 	public void setAdministrator(boolean isAdministrator) {
-		this.isAdministrator = isAdministrator;
+		this.administrator = isAdministrator;
 	}
 
 	public String getRepeatPassword() {
@@ -59,22 +49,6 @@ public class EditUserPage {
 
 	public void setAction(String action) {
 		this.action = action;
-	}
-
-	public List<Group> getGroups() {
-		return groups;
-	}
-
-	public void setGroups(List<Group> groups) {
-		this.groups = groups;
-	}
-
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
 	}
 
 	public User getUser() {

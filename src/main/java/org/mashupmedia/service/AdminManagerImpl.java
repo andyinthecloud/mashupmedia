@@ -1,7 +1,9 @@
 package org.mashupmedia.service;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,6 +17,7 @@ import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +59,16 @@ public class AdminManagerImpl implements AdminManager {
 		long userId = user.getId();
 		String username = user.getUsername();
 		String password = user.getPassword();
+		
+		// All users should have the user role to access the application
+		Set<Role> roles = user.getRoles();
+		if (roles == null) {
+			roles = new HashSet<Role>();
+		}
+		Role userRole = getRole(AdminHelper.ROLE_USER_IDNAME);
+		roles.add(userRole);
+		user.setRoles(roles);
+		
 
 		if (userId == 0) {
 			user.setCreatedOn(date);

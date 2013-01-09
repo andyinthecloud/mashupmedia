@@ -50,19 +50,21 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		User user = new User();
 		user.setName(DEFAULT_NAME);
 		user.setUsername(DEFAULT_USERNAME);
+		user.setPassword(DEFAULT_PASSWORD);
+		
 		user.setEnabled(true);
 		user.setEditable(false);
 		user.setRoles(roles);
 		adminManager.saveUser(user);
-		adminManager.updatePassword(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+//		adminManager.updatePassword(DEFAULT_USERNAME, DEFAULT_PASSWORD);
 	}
 
 	protected Set<Role> initialiseFirstRoles() {
 		Set<Role> roles = new HashSet<Role>();
 		Role adminRole = saveRole(AdminHelper.ROLE_ADMIN_IDNAME, "Administrator", "ROLE_ADMINISTRATOR");
 		roles.add(adminRole);
-//		Role userRole = saveRole("role.user", "User", "ROLE_USER");
-//		roles.add(userRole);
+		Role userRole = saveRole(AdminHelper.ROLE_USER_IDNAME, "User", "ROLE_USER");
+		roles.add(userRole);
 		return roles;
 
 	}

@@ -15,37 +15,24 @@
  *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mashupmedia.util;
+package org.mashupmedia.web.page;
 
+import java.util.List;
 
-import java.util.Set;
+import org.mashupmedia.model.Group;
 
-import org.mashupmedia.model.Role;
-import org.mashupmedia.model.User;
-
-public class AdminHelper {
+public class ListGroupsPage {
 	
-	public static final String ROLE_ADMIN_IDNAME = "role.admin";
-	public static final String ROLE_USER_IDNAME = "role.user";
+	private List<Group> groups;
 
-	public static boolean isAdministrator(User user) {
-		if (user == null) {
-			return false;
-		}
-		
-		Set<Role> roles = user.getRoles();
-		if (roles == null || roles.isEmpty()) {
-			return false;
-		}
-		
-		
-		for (Role role : roles) {
-			if (role.getIdName().equalsIgnoreCase(ROLE_ADMIN_IDNAME)) {
-				return true;
-			}
-		}
-		
-		return false;
+	public List<Group> getGroups() {
+		return groups;
 	}
+
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
+	}
+	
+	
 
 }

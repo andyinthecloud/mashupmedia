@@ -43,8 +43,8 @@
 		<form:checkbox path="user.enabled" value="true" id="user_enabled" />
 		<label for="user_enabled"><spring:message code="configuration.administration.edit-user.enabled" /></label>
 		
-		<form:checkbox path="isAdministrator" value="true"/>
-		<label for="isAdministrator"><spring:message code="configuration.administration.edit-user.administrator" /></label>
+		<form:checkbox path="administrator" value="true"/>
+		<label for="administrator1"><spring:message code="configuration.administration.edit-user.administrator" /></label>
 		
 	
 	<label class="new-line"><spring:message code="configuration.administration.edit-user.username" /></label>
@@ -57,7 +57,7 @@
 
 
 	<label class="new-line"><spring:message code="configuration.administration.edit-user.groups" /></label>
-	<form:checkboxes path="user.groups" items="${editUserPage.groups}" itemLabel="name" itemValue="idName" cssClass="checkboxes" delimiter="<br/>" />
+	<form:checkboxes path="user.groups" items="${groups}" itemLabel="name" itemValue="idName" cssClass="checkboxes" delimiter="<br/>" />
 	<br />
 
 	<fieldset id="change-password" class="hide">

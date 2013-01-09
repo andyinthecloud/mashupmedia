@@ -65,6 +65,18 @@ public class EditUserController extends BaseController {
 		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.edit-user")));
 	}
 
+	@ModelAttribute("groups")
+	public List<Group> getGroups() {
+		List<Group> groups = adminManager.getGroups();
+		return groups;
+	}
+
+	@ModelAttribute("roles")
+	public List<Role> getRoles() {
+		List<Role> roles = adminManager.getRoles();
+		return roles;
+	}
+
 	@RequestMapping(value = "/edit-user/{userId}", method = RequestMethod.GET)
 	public String editUser(@PathVariable("userId") Long userId, Model model) {
 		User user = adminManager.getUser(userId);
@@ -85,59 +97,51 @@ public class EditUserController extends BaseController {
 
 	@RequestMapping(value = "/submit-user", method = RequestMethod.POST)
 	public String processSubmitUser(@ModelAttribute("editUserPage") EditUserPage editUserPage, BindingResult bindingResult, Model model) {
-		
+
 		new EditUserPageValidator().validate(editUserPage, bindingResult);
 		if (bindingResult.hasErrors()) {
-			return "configuration/administration/edit-user";			
+			return "configuration/administration/edit-user";
 		}
 
 		processAdministratorRole(editUserPage);
-		
+
 		User user = editUserPage.getUser();
-		
+
 		String action = StringUtils.trimToEmpty(editUserPage.getAction());
 
 		if (action.equalsIgnoreCase("delete")) {
 			adminManager.deleteUser(user);
-		}  else {
-			adminManager.saveUser(user);			
+		} else {
+			adminManager.saveUser(user);
 		}
-		
+
 		return "redirect:/app/configuration/administration/list-users";
 	}
 
 	protected void processAdministratorRole(EditUserPage editUserPage) {
 		boolean isAdministrator = editUserPage.isAdministrator();
 		User user = editUserPage.getUser();
-		
-		Role administrationRole = adminManager.getRole(AdminHelper.ROLE_ADMIN_IDNAME);		
+
+		Role administrationRole = adminManager.getRole(AdminHelper.ROLE_ADMIN_IDNAME);
 		Set<Role> roles = user.getRoles();
 		if (roles == null) {
 			roles = new HashSet<Role>();
 		}
-		
+
 		if (isAdministrator) {
 			roles.add(administrationRole);
 		} else {
 			roles.remove(administrationRole);
 		}
-		
+
 		user.setRoles(roles);
 	}
 
 	protected EditUserPage prepareEditUserPage(User user) {
-		
 		EditUserPage editUserPage = new EditUserPage();
 		editUserPage.setUser(user);
 		boolean isAdministrator = AdminHelper.isAdministrator(user);
 		editUserPage.setAdministrator(isAdministrator);
-
-		List<Role> roles = adminManager.getRoles();
-		editUserPage.setRoles(roles);
-
-		List<Group> groups = adminManager.getGroups();
-		editUserPage.setGroups(groups);
-
 		return editUserPage;
 	}
 

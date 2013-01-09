@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping("/configuration/administration")
-public class UserController extends BaseController {
+public class ListUsersController extends BaseController {
 
 	@Autowired
 	private AdminManager adminManager;
