@@ -19,7 +19,6 @@ import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.EncryptionHelper;
-import org.mashupmedia.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +39,7 @@ public class AdminManagerImpl implements AdminManager {
 
 	@Autowired
 	private PlaylistDao playlistDao;
-	
+
 	@Override
 	public User getUser(String username) {
 		User user = userDao.getUser(username);
@@ -59,7 +58,7 @@ public class AdminManagerImpl implements AdminManager {
 		long userId = user.getId();
 		String username = user.getUsername();
 		String password = user.getPassword();
-		
+
 		// All users should have the user role to access the application
 		Set<Role> roles = user.getRoles();
 		if (roles == null) {
@@ -68,7 +67,6 @@ public class AdminManagerImpl implements AdminManager {
 		Role userRole = getRole(AdminHelper.ROLE_USER_IDNAME);
 		roles.add(userRole);
 		user.setRoles(roles);
-		
 
 		if (userId == 0) {
 			user.setCreatedOn(date);
@@ -126,13 +124,6 @@ public class AdminManagerImpl implements AdminManager {
 		if (group.getId() == 0) {
 			group.setCreatedOn(new Date());
 		}
-
-		String idName = ModelUtil.prepareIdName(group.getIdName(), group.getName());
-		Group savedGroup = groupDao.getGroup(idName);
-		if (savedGroup != null) {
-			throw new IllegalArgumentException("Unable to save group, already exists with idName: " + idName);
-		}
-
 		groupDao.saveGroup(group);
 	}
 
@@ -143,8 +134,8 @@ public class AdminManagerImpl implements AdminManager {
 	}
 
 	@Override
-	public Group getGroup(String idName) {
-		Group group = groupDao.getGroup(idName);
+	public Group getGroup(long groupId) {
+		Group group = groupDao.getGroup(groupId);
 		return group;
 	}
 
@@ -165,16 +156,22 @@ public class AdminManagerImpl implements AdminManager {
 		Role role = roleDao.getRole(idName);
 		return role;
 	}
-	
+
 	@Override
-	public void deleteUser(User user) {
-		long userId = user.getId();
+	public void deleteUser(long userId) {
+		User user = getUser(userId);
 		List<Playlist> playlists = playlistDao.getPlaylists(userId, PlaylistType.ALL);
 		for (Playlist playlist : playlists) {
 			playlistDao.deletePlaylist(playlist);
 		}
-		
-		userDao.deleteUser(user);		
+
+		userDao.deleteUser(user);
+	}
+
+	@Override
+	public void deleteGroup(long groupId) {
+		Group group = getGroup(groupId);
+		groupDao.deleteGroup(group);
 	}
 
 }

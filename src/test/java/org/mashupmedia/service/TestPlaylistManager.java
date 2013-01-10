@@ -78,7 +78,7 @@ public class TestPlaylistManager extends TestBaseService {
 		MusicLibrary musicLibrary = new MusicLibrary();
 		musicLibrary.setLocation(location);
 		musicLibrary.setName("test");
-		libraryManager.saveMusicLibrary(musicLibrary);
+		libraryManager.saveLibrary(musicLibrary);
 		Assert.assertTrue(musicLibrary.getId() > 0);
 		return musicLibrary;
 

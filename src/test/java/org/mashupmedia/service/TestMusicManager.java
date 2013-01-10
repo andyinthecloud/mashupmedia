@@ -27,7 +27,7 @@ public class TestMusicManager extends TestBaseService {
 		MusicLibrary musicLibrary = new MusicLibrary();
 		musicLibrary.setLocation(location);
 		musicLibrary.setName("test");
-		libraryManager.saveMusicLibrary(musicLibrary);
+		libraryManager.saveLibrary(musicLibrary);
 		Assert.assertTrue(musicLibrary.getId() > 0);
 		
 		List<Song> songs = new ArrayList<Song>();
@@ -56,7 +56,7 @@ public class TestMusicManager extends TestBaseService {
 		MusicLibrary musicLibrary = new MusicLibrary();
 		musicLibrary.setLocation(location);
 		musicLibrary.setName("test");
-		libraryManager.saveMusicLibrary(musicLibrary);
+		libraryManager.saveLibrary(musicLibrary);
 		
 		List<Song> songs = new ArrayList<Song>();
 		Song song1 = TestHelper.prepareSong(musicLibrary, "song1");

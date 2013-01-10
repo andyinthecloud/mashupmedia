@@ -10,20 +10,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-
 @Entity
 @Cacheable
 @Table(name = "GROUPS")
-public class Group extends Translation implements Serializable {
+public class Group implements Serializable {
 
 	private static final long serialVersionUID = 6142620896348154603L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	@Field(analyze = Analyze.NO)
-	private String idName;
 	private String name;
 	private Date createdOn;
 
@@ -43,13 +38,6 @@ public class Group extends Translation implements Serializable {
 		this.id = id;
 	}
 
-	public String getIdName() {
-		return idName;
-	}
-
-	public void setIdName(String idName) {
-		this.idName = idName;
-	}
 
 	public String getName() {
 		return name;
@@ -63,7 +51,8 @@ public class Group extends Translation implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((idName == null) ? 0 : idName.hashCode());
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
@@ -76,10 +65,12 @@ public class Group extends Translation implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Group other = (Group) obj;
-		if (idName == null) {
-			if (other.idName != null)
+		if (id != other.id)
+			return false;
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!idName.equals(other.idName))
+		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}
@@ -89,8 +80,6 @@ public class Group extends Translation implements Serializable {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Group [id=");
 		builder.append(id);
-		builder.append(", idName=");
-		builder.append(idName);
 		builder.append(", name=");
 		builder.append(name);
 		builder.append(", createdOn=");

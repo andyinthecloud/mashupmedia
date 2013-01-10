@@ -8,8 +8,10 @@ public interface GroupDao {
 
 	public void saveGroup(Group group);
 
-	public Group getGroup(String idName);
+	public Group getGroup(long groupId);
 
 	public List<Group> getGroups();
+
+	public void deleteGroup(Group group);
 
 }

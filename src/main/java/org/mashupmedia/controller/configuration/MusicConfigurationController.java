@@ -5,6 +5,7 @@ import java.util.List;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.service.LibraryManager;
+import org.mashupmedia.service.LibraryManager.LibraryType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.MusicConfigurationPage;
@@ -39,7 +40,8 @@ public class MusicConfigurationController extends BaseController {
 		MusicConfigurationPage musicConfigurationPage = new MusicConfigurationPage();
 		model.addAttribute(musicConfigurationPage);
 		
-		List<MusicLibrary> musicLibraries = libraryManager.getMusicLibraries();
+		@SuppressWarnings("unchecked")
+		List<MusicLibrary> musicLibraries = (List<MusicLibrary>) libraryManager.getLibraries(LibraryType.MUSIC);
 		musicConfigurationPage.setMusicLibraries(musicLibraries);
 		
 		return PAGE_PATH;

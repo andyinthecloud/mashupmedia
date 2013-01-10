@@ -33,7 +33,7 @@ public class TestLibraryManager extends TestBaseService {
 		musicLibrary.setLocation(location);
 		musicLibrary.setName("name");
 
-		libraryManager.saveMusicLibrary(musicLibrary);
+		libraryManager.saveLibrary(musicLibrary);
 
 		Assert.assertTrue(musicLibrary.getId() > 0);
 
@@ -52,7 +52,7 @@ public class TestLibraryManager extends TestBaseService {
 		musicLibrary.setLocation(location);
 		musicLibrary.setName("name");
 
-		libraryManager.saveMusicLibrary(musicLibrary);
+		libraryManager.saveLibrary(musicLibrary);
 
 		Assert.assertTrue(musicLibrary.getId() > 0);
 	}
@@ -70,7 +70,7 @@ public class TestLibraryManager extends TestBaseService {
 		musicLibrary.setLocation(location);
 		musicLibrary.setName("name");
 
-		libraryManager.saveMusicLibrary(musicLibrary);
+		libraryManager.saveLibrary(musicLibrary);
 
 		long musicLibraryId = musicLibrary.getId();
 		Assert.assertTrue(musicLibrary.getId() > 0);
@@ -83,7 +83,7 @@ public class TestLibraryManager extends TestBaseService {
 		
 		libraryManager.deleteLibrary(musicLibrary);
 		
-		musicLibrary = libraryManager.getMusicLibrary(musicLibraryId);
+		musicLibrary = (MusicLibrary) libraryManager.getLibrary(musicLibraryId);
 //		Assert.assertNull(musicLibrary);
 		
 		Assert.assertTrue(true);

@@ -24,14 +24,16 @@ public interface AdminManager {
 
 	public List<Group> getGroups();
 
-	public Group getGroup(String idName);
-
 	public List<User> getUsers();
 
 	public List<Role> getRoles();
 
 	public Role getRole(String idName);
 
-	public void deleteUser(User user);
+	public void deleteUser(long userId);
+
+	public Group getGroup(long groupId);
+
+	public void deleteGroup(long groupId);
 
 }

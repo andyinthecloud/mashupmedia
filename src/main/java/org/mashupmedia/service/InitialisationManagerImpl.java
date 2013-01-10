@@ -33,13 +33,12 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	}
 
 	protected void initialiseGroups() {
-		saveGroup("group.friends", "Friends");
-		saveGroup("group.family", "Family");
+		saveGroup("Friends");
+		saveGroup("Family");
 	}
 
-	protected void saveGroup(String idName, String name) {
+	protected void saveGroup(String name) {
 		Group group = new Group();
-		group.setIdName(idName);
 		group.setName(name);
 		adminManager.saveGroup(group);
 

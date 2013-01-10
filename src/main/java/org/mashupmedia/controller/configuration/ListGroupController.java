@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping("/configuration/administration")
-public class ListGroupsController extends BaseController {
+public class ListGroupController extends BaseController {
 	@Autowired
 	private AdminManager adminManager;
 
@@ -54,6 +54,5 @@ public class ListGroupsController extends BaseController {
 		model.addAttribute("listGroupsPage", listGroupsPage);
 		return "configuration/administration/list-groups";
 	}
-
 
 }

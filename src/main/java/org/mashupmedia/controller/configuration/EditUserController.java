@@ -106,11 +106,12 @@ public class EditUserController extends BaseController {
 		processAdministratorRole(editUserPage);
 
 		User user = editUserPage.getUser();
+		user.setEditable(true);
 
 		String action = StringUtils.trimToEmpty(editUserPage.getAction());
 
 		if (action.equalsIgnoreCase("delete")) {
-			adminManager.deleteUser(user);
+			adminManager.deleteUser(user.getId());
 		} else {
 			adminManager.saveUser(user);
 		}

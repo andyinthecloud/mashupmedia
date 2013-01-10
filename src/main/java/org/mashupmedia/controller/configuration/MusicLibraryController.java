@@ -1,5 +1,6 @@
 package org.mashupmedia.controller.configuration;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -88,7 +89,7 @@ public class MusicLibraryController extends BaseController {
 			return musicLibraryPage;
 		}
 
-		musicLibrary = libraryManager.getMusicLibrary(libraryId);
+		musicLibrary = (MusicLibrary) libraryManager.getLibrary(libraryId);
 		musicLibraryPage.setMusicLibrary(musicLibrary);
 		location = musicLibrary.getLocation();
 		String locationType = LOCATION_TYPE_FOLDER;
@@ -148,10 +149,12 @@ public class MusicLibraryController extends BaseController {
 
 		MusicLibrary musicLibrary = musicLibraryPage.getMusicLibrary();
 		musicLibrary.setLocation(location);
-		libraryManager.saveMusicLibrary(musicLibrary);
-
+		
+		List<Group> groups = musicLibraryPage.getGroups();
+		musicLibrary.setGroups(new HashSet<Group>(groups));				
+		libraryManager.saveLibrary(musicLibrary);
 	}
-
+	
 	private void processDeleteAction(MusicLibraryPage musicLibraryPage) {
 		MusicLibrary musicLibrary = musicLibraryPage.getMusicLibrary();
 		libraryManager.deleteLibrary(musicLibrary);

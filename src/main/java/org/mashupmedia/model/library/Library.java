@@ -2,27 +2,31 @@ package org.mashupmedia.model.library;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.location.Location;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public class Library implements Serializable{
+public class Library implements Serializable {
 
 	private static final long serialVersionUID = 4337414530802373218L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
@@ -37,6 +41,16 @@ public class Library implements Serializable{
 	private User updatedBy;
 	private boolean enabled;
 	private String scanMinutesInterval;
+	@ManyToMany(fetch = FetchType.EAGER)
+	private Set<Group> groups;
+
+	public Set<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(Set<Group> groups) {
+		this.groups = groups;
+	}
 
 	public long getId() {
 		return id;
@@ -165,6 +179,8 @@ public class Library implements Serializable{
 		builder.append(enabled);
 		builder.append(", scanMinutesInterval=");
 		builder.append(scanMinutesInterval);
+		builder.append(", groups=");
+		builder.append(groups);
 		builder.append("]");
 		return builder.toString();
 	}

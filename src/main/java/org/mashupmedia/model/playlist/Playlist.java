@@ -15,7 +15,6 @@ import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 
 @Entity
@@ -54,9 +53,6 @@ public class Playlist implements Serializable {
 
 	@ManyToOne
 	private User updatedBy;
-
-	@ManyToOne
-	private Group group;
 
 	private boolean isUserDefault;
 
@@ -144,14 +140,6 @@ public class Playlist implements Serializable {
 		this.updatedBy = updatedBy;
 	}
 
-	public Group getGroup() {
-		return group;
-	}
-
-	public void setGroup(Group group) {
-		this.group = group;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -223,8 +211,6 @@ public class Playlist implements Serializable {
 		builder.append(updatedOn);
 		builder.append(", updatedBy=");
 		builder.append(updatedBy);
-		builder.append(", group=");
-		builder.append(group);
 		builder.append(", isDefault=");
 		builder.append(isUserDefault);
 		builder.append(", playlistType=");

@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.AlbumArtImage;
@@ -37,16 +36,20 @@ public class LibraryManagerImpl implements LibraryManager {
 	private VoteManager voteManager;
 
 	@Override
-	public List<MusicLibrary> getMusicLibraries() {
-		List<MusicLibrary> musicLibraries = libraryDao.getMusicLibraries();
+	public List<Library> getLibraries(LibraryType libraryType) {
+		List<Library> musicLibraries = libraryDao.getLibraries(libraryType);
 		return musicLibraries;
 	}
 
 	@Override
-	public void saveMusicLibrary(MusicLibrary musicLibrary) {
-
-		prepareLocation(musicLibrary);
-
+	public List<Library> getLibrariesForGroup(long groupId) {
+		List<Library> musicLibraries = libraryDao.getLibrariesForGroup(groupId);
+		return musicLibraries;
+	}
+	
+	@Override
+	public void saveLibrary(Library library) {
+		prepareLocation(library);
 		User user = SecurityHelper.getLoggedInUser();
 		if (user == null) {
 			logger.error("No user found in session, exiting...");
@@ -54,23 +57,24 @@ public class LibraryManagerImpl implements LibraryManager {
 		}
 
 		Date date = new Date();
-		if (musicLibrary.getId() == 0) {
-			musicLibrary.setCreatedBy(user);
-			musicLibrary.setCreatedOn(date);
+		if (library.getId() == 0) {
+			library.setCreatedBy(user);
+			library.setCreatedOn(date);
 		}
 
-		musicLibrary.setUpdatedBy(user);
-		musicLibrary.setUpdatedOn(date);
+		library.setUpdatedBy(user);
+		library.setUpdatedOn(date);
 
-		libraryDao.saveMusicLibrary(musicLibrary);
+		libraryDao.saveLibrary(library);
+
 	}
 
-	protected void prepareLocation(MusicLibrary musicLibrary) {
-		if (musicLibrary.getId() == 0) {
+	protected void prepareLocation(Library library) {
+		if (library.getId() == 0) {
 			return;
 		}
 
-		Location location = musicLibrary.getLocation();
+		Location location = library.getLocation();
 		if (location == null) {
 			return;
 		}
@@ -85,9 +89,9 @@ public class LibraryManagerImpl implements LibraryManager {
 			return;
 		}
 
-		long id = musicLibrary.getId();
-		MusicLibrary savedMusicLibrary = getMusicLibrary(id);
-		Location savedLocation = savedMusicLibrary.getLocation();
+		long id = library.getId();
+		Library savedLibrary = getLibrary(id);
+		Location savedLocation = savedLibrary.getLocation();
 		if (!(savedLocation instanceof FtpLocation)) {
 			return;
 		}
@@ -95,13 +99,13 @@ public class LibraryManagerImpl implements LibraryManager {
 		FtpLocation savedFtpLocation = (FtpLocation) savedLocation;
 		password = savedFtpLocation.getPassword();
 		ftpLocation.setPassword(password);
-		musicLibrary.setLocation(ftpLocation);
+		library.setLocation(ftpLocation);
 	}
 
 	@Override
-	public MusicLibrary getMusicLibrary(long id) {
-		MusicLibrary musicLibrary = libraryDao.getMusicLibrary(id);
-		return musicLibrary;
+	public Library getLibrary(long id) {
+		Library library = libraryDao.getLibrary(id);
+		return library;
 	}
 
 	@Override

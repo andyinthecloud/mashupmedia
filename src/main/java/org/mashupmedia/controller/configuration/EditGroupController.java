@@ -1,0 +1,162 @@
+/*
+ *  This file is part of MashupMedia.
+ *
+ *  MashupMedia is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  MashupMedia is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.mashupmedia.controller.configuration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.mashupmedia.controller.BaseController;
+import org.mashupmedia.editor.LibraryEditor;
+import org.mashupmedia.model.Group;
+import org.mashupmedia.model.library.Library;
+import org.mashupmedia.service.AdminManager;
+import org.mashupmedia.service.LibraryManager;
+import org.mashupmedia.service.LibraryManager.LibraryType;
+import org.mashupmedia.util.MessageHelper;
+import org.mashupmedia.validator.EditGroupPageValidator;
+import org.mashupmedia.web.Breadcrumb;
+import org.mashupmedia.web.WebOption;
+import org.mashupmedia.web.page.EditGroupPage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller
+@RequestMapping("/configuration/administration")
+public class EditGroupController extends BaseController {
+
+	@Autowired
+	private AdminManager adminManager;
+
+	@Autowired
+	private LibraryManager libraryManager;
+
+	@Autowired
+	private LibraryEditor libraryEditor;
+
+	@Override
+	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
+		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration"));
+		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.groups"), "/app/configuration/administration/list-groups"));
+		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.edit-group")));
+	}
+
+	@ModelAttribute("libraries")
+	public List<WebOption> getLibraries() {
+		@SuppressWarnings("unchecked")
+		List<Library> libraries = (List<Library>) libraryManager.getLibraries(LibraryType.ALL);
+		List<WebOption> webOptions = generateWebOptions(libraries);
+		return webOptions;
+	}
+	
+	protected List<WebOption> generateWebOptions(List<Library> libraries) {
+		List<WebOption> webOptions = new ArrayList<WebOption>();
+		for (Library library : libraries) {
+			WebOption webOption = new WebOption(library.getName(), String.valueOf(library.getId()));
+			webOptions.add(webOption);
+		}
+		return webOptions;
+	}
+
+	@RequestMapping(value = "/edit-group/{groupId}", method = RequestMethod.GET)
+	public String editUser(@PathVariable("groupId") Long groupId, Model model) {
+		Group group = adminManager.getGroup(groupId);
+		EditGroupPage editGroupPage = prepareEditGroupPage(group);
+		model.addAttribute("editGroupPage", editGroupPage);
+		return "configuration/administration/edit-group";
+	}
+
+	protected EditGroupPage prepareEditGroupPage(Group group) {
+		EditGroupPage editGroupPage = new EditGroupPage();
+		editGroupPage.setGroup(group);
+		List<Library> selectedLibraries = libraryManager.getLibrariesForGroup(group.getId());
+		List<WebOption> selectedLibraryWebOptions = generateWebOptions(selectedLibraries);		
+		editGroupPage.setSelectedLibraries(selectedLibraryWebOptions);
+		return editGroupPage;
+	}
+
+	@RequestMapping(value = "/add-group", method = RequestMethod.GET)
+	public String addUser(Model model) {
+		Group group = new Group();
+		EditGroupPage editGroupPage = prepareEditGroupPage(group);
+		model.addAttribute("editGroupPage", editGroupPage);
+		return "configuration/administration/edit-group";
+	}
+
+	@RequestMapping(value = "/submit-group", method = RequestMethod.POST)
+	public String processSubmitUser(@ModelAttribute("editGroupPage") EditGroupPage editGroupPage, BindingResult bindingResult, Model model) {
+
+		new EditGroupPageValidator().validate(editGroupPage, bindingResult);
+		if (bindingResult.hasErrors()) {
+			return "configuration/administration/edit-group";
+		}
+
+		Group group = editGroupPage.getGroup();
+
+		String action = StringUtils.trimToEmpty(editGroupPage.getAction());
+
+		if (action.equalsIgnoreCase("delete")) {
+			adminManager.deleteGroup(group.getId());
+		} else {
+			List<WebOption> selectedLibraryWebOptions = editGroupPage.getSelectedLibraries();
+			processSaveLibraries(selectedLibraryWebOptions);
+
+			adminManager.saveGroup(group);
+		}
+
+		return "redirect:/app/configuration/administration/list-groups";
+	}
+
+	protected void processSaveLibraries(List<WebOption> webOptions, Group group) {
+		if (webOptions == null || webOptions.isEmpty()) {
+			return;
+		}
+
+		List<Library> selectedLibraries = new ArrayList<Library>();
+		for (WebOption webOption : webOptions) {
+			long libraryId = NumberUtils.toLong(webOption.getValue());
+			if (libraryId == 0) {
+				continue;
+			}
+			Library library = libraryManager.getLibrary(libraryId);		
+			selectedLibraries.add(library);
+//			libraryManager.saveLibrary(library);
+		}
+
+		List<Library> libraries = getLibraries();
+		libraries.removeAll(webOptions);
+		for (Library library : libraries) {
+			libraryManager.saveLibrary(library);
+		}
+	}
+
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+		binder.registerCustomEditor(Library.class, libraryEditor);
+	}
+
+}

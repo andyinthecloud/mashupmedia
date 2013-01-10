@@ -3,16 +3,18 @@ package org.mashupmedia.dao;
 import java.util.List;
 
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.library.MusicLibrary;
+import org.mashupmedia.service.LibraryManager.LibraryType;
 
 public interface LibraryDao {
 
-	public List<MusicLibrary> getMusicLibraries();
+	public List<Library> getLibraries(LibraryType libraryType);
 
-	public void saveMusicLibrary(MusicLibrary musicLibrary);
+	public void saveLibrary(Library musicLibrary);
 
-	public MusicLibrary getMusicLibrary(long id);
+	public Library getLibrary(long id);
 
 	public void deleteLibrary(Library library);
+
+	public List<Library> getLibrariesForGroup(long groupId);
 
 }

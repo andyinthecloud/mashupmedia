@@ -25,12 +25,10 @@ import org.hibernate.search.annotations.AnalyzerDef;
 import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.Resolution;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.util.MediaItemHelper;
@@ -45,9 +43,8 @@ import org.mashupmedia.util.StringHelper;
 @Cacheable
 public class MediaItem implements Serializable {
 	private static final long serialVersionUID = -6694717782091959485L;
-	
-	public final static String TITLE_SEPERATOR = " - ";
 
+	public final static String TITLE_SEPERATOR = " - ";
 
 	public enum MediaType {
 		SONG, VIDEO, IMAGE;
@@ -75,15 +72,13 @@ public class MediaItem implements Serializable {
 	@Field
 	@Column(length = 1000)
 	private String searchText;
-	@ManyToOne
-	@IndexedEmbedded
-	private Group group;
 	@Field(analyze = Analyze.NO)
 	private String mediaTypeValue;
 	@Column(length = 1000)
 	private String summary;
 	@Field(analyze = Analyze.NO)
 	private String displayTitle;
+
 
 	public String getDisplayTitle() {
 		return displayTitle;
@@ -124,14 +119,6 @@ public class MediaItem implements Serializable {
 
 	public void setSearchText(String searchText) {
 		this.searchText = searchText;
-	}
-
-	public Group getGroup() {
-		return group;
-	}
-
-	public void setGroup(Group group) {
-		this.group = group;
 	}
 
 	public User getLastAccessedBy() {
@@ -273,8 +260,12 @@ public class MediaItem implements Serializable {
 		builder.append(lastAccessedBy);
 		builder.append(", searchText=");
 		builder.append(searchText);
-		builder.append(", group=");
-		builder.append(group);
+		builder.append(", mediaTypeValue=");
+		builder.append(mediaTypeValue);
+		builder.append(", summary=");
+		builder.append(summary);
+		builder.append(", displayTitle=");
+		builder.append(displayTitle);
 		builder.append("]");
 		return builder.toString();
 	}

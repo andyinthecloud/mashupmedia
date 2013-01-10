@@ -33,20 +33,22 @@
 
 
 <c:url var="actionUrl" value="/app/configuration/administration/submit-user" />
-<form:form commandName="editUserPage" action="${actionUrl}"  >
+<form:form commandName="editUserPage" action="${actionUrl}">
 
 	<form:hidden path="action" />
-	<form:hidden path="user.id"/>
+	<form:hidden path="user.id" />
 
 	<form:errors path="*" cssClass="error-box" />
 
+	<c:if test="${editUserPage.user.editable}">
+
 		<form:checkbox path="user.enabled" value="true" id="user_enabled" />
 		<label for="user_enabled"><spring:message code="configuration.administration.edit-user.enabled" /></label>
-		
-		<form:checkbox path="administrator" value="true"/>
+
+		<form:checkbox path="administrator" value="true" />
 		<label for="administrator1"><spring:message code="configuration.administration.edit-user.administrator" /></label>
-		
-	
+	</c:if>
+
 	<label class="new-line"><spring:message code="configuration.administration.edit-user.username" /></label>
 	<form:input path="user.username" />
 	<br />
@@ -57,7 +59,7 @@
 
 
 	<label class="new-line"><spring:message code="configuration.administration.edit-user.groups" /></label>
-	<form:checkboxes path="user.groups" items="${groups}" itemLabel="name" itemValue="idName" cssClass="checkboxes" delimiter="<br/>" />
+	<form:checkboxes path="user.groups" items="${groups}" itemLabel="name" itemValue="id" cssClass="checkboxes" delimiter="<br/>" />
 	<br />
 
 	<fieldset id="change-password" class="hide">
@@ -71,8 +73,13 @@
 	</fieldset>
 
 
+
 	<div class="button-panel">
-		<input id="button-change-password" class="button" type="button" value="<spring:message code="action.change-password"/>" /> <input id="button-delete" class="button" type="button" value="<spring:message code="action.delete"/>" /> <input class="button" type="submit" value="<spring:message code="action.save"/>" /> <input id="button-cancel" class="button cancel" type="button" value="<spring:message code="action.cancel"/>" />
+		<input id="button-change-password" class="button" type="button" value="<spring:message code="action.change-password"/>" />
+		<c:if test="${editUserPage.user.id > 0}">
+			<input id="button-delete" class="button" type="button" value="<spring:message code="action.delete"/>" />
+		</c:if>
+		<input class="button" type="submit" value="<spring:message code="action.save"/>" /> <input id="button-cancel" class="button cancel" type="button" value="<spring:message code="action.cancel"/>" />
 	</div>
 
 

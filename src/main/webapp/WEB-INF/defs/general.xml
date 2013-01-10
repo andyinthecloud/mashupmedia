@@ -6,7 +6,7 @@
 
 	<definition name="home" template="/WEB-INF/jsp/layouts/default.jsp">
 		<put-attribute name="title" value="Tweeter | Home" />
-		<put-attribute name="bodyClass" value="default" />		
+		<put-attribute name="bodyClass" value="default" />
 		<put-attribute name="topBar" value="/WEB-INF/jsp/tiles/top-bar.jsp" />
 		<put-attribute name="backgroundImageType" value="default" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/home.jsp" />
@@ -14,46 +14,48 @@
 
 	<definition name="configuration" extends="home">
 		<put-attribute name="title" value="Tweeter | Configuration" />
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/configuration.jsp" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration.jsp" />
 	</definition>
 
 	<definition name="configuration/network" extends="home">
 		<put-attribute name="title" value="Tweeter | Configuration - Network" />
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/configuration/network.jsp" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/network.jsp" />
 	</definition>
 
-	<definition name="configuration/music-configuration"
-		extends="home">
+	<definition name="configuration/music-configuration" extends="home">
 		<put-attribute name="title" value="Tweeter | Music Configuration" />
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/configuration/music-configuration.jsp" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/music-configuration.jsp" />
 	</definition>
 
 
 	<definition name="configuration/music-library" extends="home">
 		<put-attribute name="title" value="Tweeter | Music Library" />
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/configuration/music-library.jsp" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/music-library.jsp" />
 	</definition>
 
 	<definition name="configuration/administration/list-users" extends="home">
 		<put-attribute name="title" value="Tweeter | List Users" />
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/configuration/administration/list-users.jsp" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/list-users.jsp" />
 	</definition>
 
 	<definition name="configuration/administration/edit-user" extends="home">
 		<put-attribute name="title" value="Tweeter | Edit user" />
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
+	</definition>
+
+	<definition name="configuration/administration/list-groups" extends="home">
+		<put-attribute name="title" value="Tweeter | List Groups" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/list-groups.jsp" />
+	</definition>
+
+	<definition name="configuration/administration/edit-group" extends="home">
+		<put-attribute name="title" value="Tweeter | Edit Group" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/edit-group.jsp" />
 	</definition>
 
 	<definition name="configuration/administration/new-user" extends="home">
 		<put-attribute name="title" value="Tweeter | New user" />
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
 	</definition>
 
 	<definition name="music.panel" template="/WEB-INF/jsp/layouts/music-panel.jsp">
@@ -62,50 +64,21 @@
 
 	<definition name="music" extends="home">
 		<put-attribute name="title" value="Tweeter | Music" />
-		<put-attribute name="bodyClass" value="music" />		
+		<put-attribute name="bodyClass" value="music" />
 		<put-attribute name="topBar" value="/WEB-INF/jsp/tiles/music/music-player.jsp" />
 		<put-attribute name="backgroundImageType" value="music" />
 		<put-attribute name="body">
 			<definition extends="music.panel">
-				<put-attribute name="body"
-					value="/WEB-INF/jsp/tiles/music/music.jsp" />
+				<put-attribute name="body" value="/WEB-INF/jsp/tiles/music/music.jsp" />
 			</definition>
 		</put-attribute>
 	</definition>
 
-<!-- 
-	<definition name="music/artists" extends="home">
-		<put-attribute name="title" value="Tweeter | Music | Artists" />
-		<put-attribute name="body">
-			<definition extends="music.panel">
-				<put-attribute name="body"
-					value="/WEB-INF/jsp/tiles/music/artists.jsp" />
-			</definition>
-		</put-attribute>
-	</definition>
-
-	<definition name="music/albums" extends="home">
-		<put-attribute name="title" value="Tweeter | Music | Albums" />
-		<put-attribute name="body">
-			<definition extends="music.panel">
-				<put-attribute name="body"
-					value="/WEB-INF/jsp/tiles/music/albums.jsp" />
-			</definition>
-		</put-attribute>
-
-	</definition>
-
-
-	<definition name="music/album" extends="home">
-		<put-attribute name="title" value="Tweeter | Music | Albums" />
-		<put-attribute name="body">
-			<definition extends="music.panel">
-				<put-attribute name="body"
-					value="/WEB-INF/jsp/tiles/music/album.jsp" />
-			</definition>
-		</put-attribute>
-
-	</definition>
- -->	
+	<!-- <definition name="music/artists" extends="home"> <put-attribute name="title" value="Tweeter | Music | Artists" /> <put-attribute name="body"> <definition 
+		extends="music.panel"> <put-attribute name="body" value="/WEB-INF/jsp/tiles/music/artists.jsp" /> </definition> </put-attribute> </definition> <definition 
+		name="music/albums" extends="home"> <put-attribute name="title" value="Tweeter | Music | Albums" /> <put-attribute name="body"> <definition extends="music.panel"> 
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/music/albums.jsp" /> </definition> </put-attribute> </definition> <definition name="music/album" extends="home"> 
+		<put-attribute name="title" value="Tweeter | Music | Albums" /> <put-attribute name="body"> <definition extends="music.panel"> <put-attribute name="body" 
+		value="/WEB-INF/jsp/tiles/music/album.jsp" /> </definition> </put-attribute> </definition> -->
 
 </tiles-definitions>
