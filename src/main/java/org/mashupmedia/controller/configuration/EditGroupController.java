@@ -18,7 +18,9 @@
 package org.mashupmedia.controller.configuration;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -123,7 +125,7 @@ public class EditGroupController extends BaseController {
 			adminManager.deleteGroup(group.getId());
 		} else {
 			List<WebOption> selectedLibraryWebOptions = editGroupPage.getSelectedLibraries();
-			processSaveLibraries(selectedLibraryWebOptions);
+			processSaveLibraries(selectedLibraryWebOptions, group);
 
 			adminManager.saveGroup(group);
 		}
@@ -136,22 +138,53 @@ public class EditGroupController extends BaseController {
 			return;
 		}
 
-		List<Library> selectedLibraries = new ArrayList<Library>();
+		
+		@SuppressWarnings("unchecked")
+		List<Library> libraries = (List<Library>) libraryManager.getLibraries(LibraryType.ALL);
+		
 		for (WebOption webOption : webOptions) {
 			long libraryId = NumberUtils.toLong(webOption.getValue());
 			if (libraryId == 0) {
 				continue;
 			}
-			Library library = libraryManager.getLibrary(libraryId);		
-			selectedLibraries.add(library);
-//			libraryManager.saveLibrary(library);
+			Library library = libraryManager.getLibrary(libraryId);
+			Set<Group> groups = library.getGroups();
+			if (groups == null) {
+				groups = new HashSet<Group>();
+			}
+			groups.add(group);
+			library.setGroups(groups);
+			adminManager.saveGroup(group);
+			
+			removeLibrary(libraries, libraryId);
 		}
 
-		List<Library> libraries = getLibraries();
-		libraries.removeAll(webOptions);
 		for (Library library : libraries) {
+			Set<Group> groups = library.getGroups();
+			if (groups == null || groups.isEmpty()) {
+				continue;
+			}
+			groups.remove(group);
+			library.setGroups(groups);
 			libraryManager.saveLibrary(library);
 		}
+	}
+
+	protected void removeLibrary(List<Library> libraries, long libraryId) {
+		
+		Library libraryToRemove = null;
+		for (Library library : libraries) {
+			if (library.getId() == libraryId) {
+				libraryToRemove = library;
+				break;
+			}
+		}
+		
+		if (libraryToRemove == null) {
+			return;
+		}
+		
+		libraries.remove(libraryToRemove);
 	}
 
 	@InitBinder
