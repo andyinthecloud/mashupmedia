@@ -26,6 +26,15 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
 		Group group = (Group) query.uniqueResult();
 		return group;
 	}
+	
+	@Override
+	public List<Long> getGroupIds() {
+		Query query = sessionFactory.getCurrentSession().createQuery("select id from Group");
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Long> groupIds = (List<Long>) query.list();
+		return groupIds;
+	}
 
 	@Override
 	public List<Group> getGroups() {

@@ -1,7 +1,10 @@
 package org.mashupmedia.validator;
 
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
@@ -39,6 +42,12 @@ public class MusicLibraryPageValidator implements Validator {
 			validateFtpLocation(musicLibraryPage.getFtpLocation(), errors);
 		} else {
 			validateFolderLocation(musicLibraryPage.getFolderLocation(), errors);
+		}
+		
+		Set<Group> groups = musicLibrary.getGroups();
+		if (groups == null || groups.isEmpty()) {
+			errors.rejectValue("groups", "musiclibrary.error.groups");
+			
 		}
 
 	}

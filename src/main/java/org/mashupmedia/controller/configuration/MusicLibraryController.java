@@ -151,7 +151,10 @@ public class MusicLibraryController extends BaseController {
 		musicLibrary.setLocation(location);
 		
 		List<Group> groups = musicLibraryPage.getGroups();
-		musicLibrary.setGroups(new HashSet<Group>(groups));				
+		if (groups != null) {
+			musicLibrary.setGroups(new HashSet<Group>(groups));							
+		}
+		
 		libraryManager.saveLibrary(musicLibrary);
 	}
 	

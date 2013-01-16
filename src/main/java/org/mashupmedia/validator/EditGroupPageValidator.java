@@ -37,6 +37,7 @@ public class EditGroupPageValidator implements Validator {
 		if (StringUtils.isBlank(group.getName())) {
 			errors.rejectValue("group.name", "configuration.administration.edit-group.error.name");
 		}
+		
 	}
 
 }

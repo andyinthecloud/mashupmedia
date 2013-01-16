@@ -14,4 +14,6 @@ public interface GroupDao {
 
 	public void deleteGroup(Group group);
 
+	public List<Long> getGroupIds();
+
 }

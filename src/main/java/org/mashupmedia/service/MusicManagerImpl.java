@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
+import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.model.library.MusicLibrary;
@@ -18,6 +19,7 @@ import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
+import org.mashupmedia.util.SecurityHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,22 +39,28 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Autowired
 	private PlaylistDao playlistDao;
+	
+	@Autowired
+	private GroupDao groupDao;
 
 	@Override
 	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems) {
-		List<Album> albums = musicDao.getAlbums(searchLetter, pageNumber, totalItems);
+		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Album> albums = musicDao.getAlbums(userGroupIds, searchLetter, pageNumber, totalItems);
 		return albums;
 	}
 
 	@Override
 	public List<String> getAlbumIndexLetters() {
-		List<String> indexLetters = musicDao.getAlbumIndexLetters();
+		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<String> indexLetters = musicDao.getAlbumIndexLetters(userGroupIds);
 		return indexLetters;
 	}
 
 	@Override
 	public List<Artist> getArtists() {
-		List<Artist> artists = musicDao.getArtists();
+		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();	
+		List<Artist> artists = musicDao.getArtists(userGroupIds);
 		for (Artist artist : artists) {
 			Hibernate.initialize(artist.getAlbums());
 		}
@@ -63,8 +71,8 @@ public class MusicManagerImpl implements MusicManager {
 		musicDao.saveAlbum(album);
 	}
 
-	protected Artist prepareArtist(Artist artist) {
-		Artist savedArtist = musicDao.getArtist(artist.getName());
+	protected Artist prepareArtist(List<Long> userGroupIds, Artist artist) {
+		Artist savedArtist = musicDao.getArtist(userGroupIds, artist.getName());
 		if (savedArtist != null) {
 			return savedArtist;
 		}
@@ -77,14 +85,14 @@ public class MusicManagerImpl implements MusicManager {
 		return artist;
 	}
 
-	protected Album prepareAlbum(Album album) {
+	protected Album prepareAlbum(List<Long> userGroupIds, Album album) {
 		Artist artist = album.getArtist();
 		String albumName = album.getName();
 		if (StringUtils.isBlank(albumName)) {
 			return null;
 		}
 
-		Album savedAlbum = musicDao.getAlbum(artist.getName(), albumName);
+		Album savedAlbum = musicDao.getAlbum(userGroupIds, artist.getName(), albumName);
 		if (savedAlbum != null) {
 			return savedAlbum;
 		}
@@ -105,21 +113,24 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public List<String> getArtistIndexLetters() {
-		List<String> indexLetters = musicDao.getArtistIndexLetters();
+		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<String> indexLetters = musicDao.getArtistIndexLetters(userGroupIds);
 		return indexLetters;
 	}
 
 	@Override
 	public Album getAlbum(long albumId) {
-		Album album = musicDao.getAlbum(albumId);
+		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		Album album = musicDao.getAlbum(userGroupIds, albumId);
 		Hibernate.initialize(album.getSongs());
 		return album;
 	}
 
 	@Override
 	public List<Album> getRandomAlbums(int numberOfAlbums) {
+		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();		
 		List<Album> albums = new ArrayList<Album>();
-		List<Album> randomAlbums = musicDao.getRandomAlbums(numberOfAlbums);
+		List<Album> randomAlbums = musicDao.getRandomAlbums(userGroupIds, numberOfAlbums);
 		if (randomAlbums.isEmpty()) {
 			return albums;
 		}
@@ -146,6 +157,8 @@ public class MusicManagerImpl implements MusicManager {
 			return;
 		}
 
+		
+		List<Long> groupIds = groupDao.getGroupIds();
 		long libraryId = musicLibrary.getId();
 		long totalSongsSaved = 0;
 
@@ -155,7 +168,7 @@ public class MusicManagerImpl implements MusicManager {
 
 			String songPath = song.getPath();
 			long songSizeInBytes = song.getSizeInBytes();
-			Song savedSong = musicDao.getSong(libraryId, songPath, songSizeInBytes);
+			Song savedSong = musicDao.getSong(groupIds, libraryId, songPath, songSizeInBytes);
 
 			if (savedSong != null) {
 				long savedSongId = savedSong.getId();
@@ -167,7 +180,7 @@ public class MusicManagerImpl implements MusicManager {
 			}
 
 			Artist artist = song.getArtist();
-			artist = prepareArtist(artist);
+			artist = prepareArtist(groupIds, artist);
 
 			Album album = song.getAlbum();
 			if (StringUtils.isBlank(album.getName())) {
@@ -176,7 +189,7 @@ public class MusicManagerImpl implements MusicManager {
 			}
 
 			album.setArtist(artist);
-			album = prepareAlbum(album);
+			album = prepareAlbum(groupIds, album);
 
 			AlbumArtImage albumArtImage = album.getAlbumArtImage();
 			if (albumArtImage == null) {
@@ -290,13 +303,15 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public Album getAlbum(String artistName, String albumName) {
-		Album album = musicDao.getAlbum(artistName, albumName);
+		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();		
+		Album album = musicDao.getAlbum(userGroupIds, artistName, albumName);
 		return album;
 	}
 	
 	@Override
 	public List<Album> getAlbumsByArtist(Long artistId) {
-		List<Album> albums = musicDao.getAlbumsByArtist(artistId);
+		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Album> albums = musicDao.getAlbumsByArtist(userGroupIds, artistId);
 		if (albums == null || albums.isEmpty()) {
 			return albums;
 		}
@@ -310,22 +325,25 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public List<Song> getSongs(Long albumId) {
-		List<Song> songs = musicDao.getSongs(albumId);
+		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Song> songs = musicDao.getSongs(userGroupIds, albumId);
 		return songs;
 	}
 
 	@Override
 	public void deleteEmpty() {
+		List<Long> groupIds = groupDao.getGroupIds();
+		
 		List<Artist> artists = getArtists();
 		for (Artist artist : artists) {
-			List<Album> albums = musicDao.getAlbumsByArtist(artist.getId());
+			List<Album> albums = musicDao.getAlbumsByArtist(groupIds, artist.getId());
 			if (albums == null || albums.isEmpty()) {
 				musicDao.deleteArtist(artist);
 				continue;
 			}
 
 			for (Album album : albums) {
-				List<Song> songs = musicDao.getSongs(album.getId());
+				List<Song> songs = musicDao.getSongs(groupIds, album.getId());
 				if (songs == null || songs.isEmpty()) {
 					musicDao.deleteAlbum(album);
 				}
@@ -335,7 +353,8 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public Artist getArtist(Long artistId) {
-		Artist artist = musicDao.getArtist(artistId);
+		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		Artist artist = musicDao.getArtist(userGroupIds, artistId);
 		Hibernate.initialize(artist.getAlbums());
 		return artist;
 	}
@@ -348,7 +367,8 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria) {
-		List<MediaItem> mediaItems = musicDao.findSongs(mediaItemSearchCriteria);
+		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<MediaItem> mediaItems = musicDao.findSongs(userGroupIds, mediaItemSearchCriteria);
 		return mediaItems;
 	}
 }

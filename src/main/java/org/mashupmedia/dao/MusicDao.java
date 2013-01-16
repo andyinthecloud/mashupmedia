@@ -13,15 +13,15 @@ import org.mashupmedia.model.media.Year;
 
 public interface MusicDao {
 
-	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems);
+	public List<Album> getAlbums(List<Long> groupIds, String searchLetter, int pageNumber, int totalItems);
 
-	public List<Artist> getArtists();
+	public List<Artist> getArtists(List<Long> groupIds);
 
-	public Artist getArtist(String name);
+	public Artist getArtist(List<Long> groupIds, String name);
 
-	public Song getSong(long libraryId, String songPath, long songSizeInBytes);
+	public Song getSong(List<Long> groupIds, long libraryId, String songPath, long songSizeInBytes);
 
-	public Album getAlbum(String artistName, String albumName);
+	public Album getAlbum(List<Long> groupIds, String artistName, String albumName);
 
 	public void saveSong(Song song);
 
@@ -33,32 +33,32 @@ public interface MusicDao {
 
 	public void saveArtist(Artist artist);
 
-	public Album getAlbum(long albumId);
+	public Album getAlbum(List<Long> groupIds, long albumId);
 
-	public List<Album> getRandomAlbums(int numberOfAlbums);
+	public List<Album> getRandomAlbums(List<Long> groupIds, int numberOfAlbums);
 
 	public Year getYear(int year);
 
-	public List<Song> getSongs(Long albumId);
+	public List<Song> getSongs(List<Long> groupIds, Long albumId);
 
 	public void deleteArtist(Artist artist);
 
 	public void deleteAlbum(Album album);
 
-	public List<Album> getAlbumsByArtist(long artistId);
+	public List<Album> getAlbumsByArtist(List<Long> groupIds, long artistId);
 
 	public Genre getGenre(String name);
 
-	public List<String> getArtistIndexLetters();
+	public List<String> getArtistIndexLetters(List<Long> groupIds);
 
-	public Artist getArtist(Long artistId);
+	public Artist getArtist(List<Long> groupIds, Long artistId);
 
 	public void saveSong(Song song, boolean isSessionFlush);
 
-	public List<String> getAlbumIndexLetters();
+	public List<String> getAlbumIndexLetters(List<Long> groupIds);
 
 	public List<Genre> getGenres();
 	
-	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria);
+	public List<MediaItem> findSongs(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria);
 	
 }

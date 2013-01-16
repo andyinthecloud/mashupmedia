@@ -16,6 +16,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.location.Location;
@@ -41,6 +42,7 @@ public class Library implements Serializable {
 	private User updatedBy;
 	private boolean enabled;
 	private String scanMinutesInterval;
+	@IndexedEmbedded
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Group> groups;
 
