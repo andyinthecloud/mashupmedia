@@ -17,6 +17,7 @@
 
 package org.mashupmedia.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DaoHelper {
@@ -42,16 +43,19 @@ public class DaoHelper {
 	 */
 	public static void appendGroupFilter(StringBuilder queryBuilder, List<? extends Number> groupIds) {
 		if (groupIds == null || groupIds.isEmpty()) {
-			return;
+			List<Integer> emptyGroupIds = new ArrayList<Integer>();
+			emptyGroupIds.add(-1);
+			groupIds = new ArrayList<Number>(emptyGroupIds);			
 		}
 
-		String keyword = "where";
-		if (queryBuilder.toString().toLowerCase().matches("\\bwhere\\s.*")) {
-			keyword = "and";
+		int whereIndex = queryBuilder.toString().toLowerCase().indexOf(" where");
+		String keyword = "and";
+		if (whereIndex < 0) {
+			keyword = "where";
 		}
 
 		String groupHqlText = convertToHqlParameters(groupIds);
-		queryBuilder.append(" " + keyword + " s.library.groups.id in (" + groupHqlText + ")");
+		queryBuilder.append(" " + keyword + " g.id in (" + groupHqlText + ")");
 	}
 
 }

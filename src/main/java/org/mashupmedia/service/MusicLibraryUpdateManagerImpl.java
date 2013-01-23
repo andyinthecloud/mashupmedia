@@ -13,6 +13,7 @@ import java.util.logging.LogManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.AudioHeader;
@@ -23,12 +24,16 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.mashupmedia.comparator.FileComparator;
+import org.mashupmedia.dao.GroupDao;
+import org.mashupmedia.dao.MusicDao;
+import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.exception.MashupMediaException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
+import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.Song;
@@ -37,6 +42,7 @@ import org.mashupmedia.service.ConnectionManager.LocationType;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
+import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -44,20 +50,39 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
+public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager {
+	private final int BATCH_INSERT_ITEMS = 20;
+
 	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private ConnectionManager connectionManager;
 
 	@Autowired
-	private MusicManager musicManager;
+	private AlbumArtManager albumArtManager;
 
-	private LibraryUpdateManagerImpl() {
+	@Autowired
+	private MusicDao musicDao;
+
+	@Autowired
+	private PlaylistDao playlistDao;
+
+	@Autowired
+	private GroupDao groupDao;
+
+	// @Autowired
+	// private MusicManager musicManager;
+
+	private MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
 		LogManager.getLogManager().reset();
 		java.util.logging.Logger globalLogger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
 		globalLogger.setLevel(java.util.logging.Level.OFF);
+	}
+
+	protected void deleteObsoleteSongs(long libraryId, Date date) {
+		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
+		deleteSongs(songsToDelete);
 	}
 
 	@Override
@@ -107,9 +132,135 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 		Date date = new Date();
 		List<Song> songs = connectionManager.getFtpSongs(musicLibrary, date);
-		musicManager.saveSongs(musicLibrary, songs);
-		musicManager.deleteObsoleteSongs(musicLibrary.getId(), date);
+		saveSongs(musicLibrary, songs);
+		deleteObsoleteSongs(musicLibrary.getId(), date);
 
+	}
+
+	@Override
+	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs) {
+		if (songs == null || songs.isEmpty()) {
+			return;
+		}
+
+		List<Long> groupIds = groupDao.getGroupIds();
+		long libraryId = musicLibrary.getId();
+		long totalSongsSaved = 0;
+
+		for (int i = 0; i < songs.size(); i++) {
+			Song song = songs.get(i);
+			song.setLibrary(musicLibrary);
+
+			String songPath = song.getPath();
+			long songSizeInBytes = song.getSizeInBytes();
+			Song savedSong = musicDao.getSong(groupIds, libraryId, songPath, songSizeInBytes);
+
+			if (savedSong != null) {
+				long savedSongId = savedSong.getId();
+				song.setId(savedSongId);
+				savedSong.setUpdatedOn(song.getUpdatedOn());
+				musicDao.saveSong(savedSong);
+				logger.info("Song is already in database, updated song date.");
+				continue;
+			}
+
+			Artist artist = song.getArtist();
+			artist = prepareArtist(groupIds, artist);
+
+			Album album = song.getAlbum();
+			if (StringUtils.isBlank(album.getName())) {
+				logger.error("Unable to save song: " + song.toString());
+				continue;
+			}
+
+			album.setArtist(artist);
+			album = prepareAlbum(groupIds, album);
+
+			AlbumArtImage albumArtImage = album.getAlbumArtImage();
+			if (albumArtImage == null) {
+				try {
+					albumArtImage = albumArtManager.getAlbumArtImage(musicLibrary, song);
+				} catch (Exception e) {
+					logger.info("Error processing album image", e);
+				}
+			}
+
+			album.setAlbumArtImage(albumArtImage);
+			song.setAlbum(album);
+
+			song.setArtist(artist);
+
+			Year year = song.getYear();
+			year = prepareYear(year);
+			song.setYear(year);
+
+			Genre genre = song.getGenre();
+			genre = prepareGenre(genre);
+			song.setGenre(genre);
+
+			boolean isSessionFlush = false;
+			if (i % BATCH_INSERT_ITEMS == 0 || i == (songs.size() - 1)) {
+				isSessionFlush = true;
+			}
+
+			StringBuilder searchTextBuilder = new StringBuilder();
+			if (artist != null) {
+				searchTextBuilder.append(" " + artist.getIndexText());
+			}
+
+			if (album != null) {
+				searchTextBuilder.append(" " + album.getIndexText());
+			}
+
+			if (genre != null) {
+				searchTextBuilder.append(" " + genre.getName());
+			}
+
+			if (year != null) {
+				searchTextBuilder.append(" " + year.getYear());
+			}
+
+			searchTextBuilder.append(" " + song.getTitle());
+			String searchText = StringUtils.trimToEmpty(searchTextBuilder.toString());
+			searchText = searchText.replaceAll("\\s*\\b", " ");
+			searchText = StringHelper.normaliseTextForDatabase(searchText);
+			song.setSearchText(searchText);
+
+			musicDao.saveSong(song, isSessionFlush);
+			totalSongsSaved++;
+
+		}
+
+		logger.info("Saved " + totalSongsSaved + " songs.");
+
+	}
+
+	private Genre prepareGenre(Genre genre) {
+		if (genre == null || StringUtils.isBlank(genre.getName())) {
+			return null;
+		}
+
+		String genreName = StringHelper.normaliseTextForDatabase(genre.getName());
+		Genre savedGenre = musicDao.getGenre(genreName);
+		if (savedGenre != null) {
+			return savedGenre;
+		}
+
+		genre.setName(genreName);
+		return genre;
+	}
+
+	private Year prepareYear(Year year) {
+		if (year == null || year.getYear() == 0) {
+			return null;
+		}
+
+		Year savedYear = musicDao.getYear(year.getYear());
+		if (savedYear == null) {
+			return year;
+		}
+
+		return savedYear;
 	}
 
 	private void prepareFileMusicLibrary(MusicLibrary musicLibrary) throws CannotReadException, IOException, TagException, ReadOnlyFileException,
@@ -124,8 +275,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		Date date = new Date();
 		List<Song> songs = new ArrayList<Song>();
 		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
-		musicManager.saveSongs(musicLibrary, songs);
-		musicManager.deleteObsoleteSongs(musicLibrary.getId(), date);
+		saveSongs(musicLibrary, songs);
+		deleteObsoleteSongs(musicLibrary.getId(), date);
 		// musicManager.saveSongs(musicLibrary, songs);
 
 	}
@@ -151,7 +302,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 					folderArtistName = fileName;
 					prepareSongs(date, songs, file, musicLibrary, folderArtistName, folderAlbumName);
 
-					musicManager.saveSongs(musicLibrary, songs);
+					saveSongs(musicLibrary, songs);
 					songs = new ArrayList<Song>();
 					// songs.clear();
 
@@ -306,71 +457,80 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		return title;
 	}
 
-	// private String prepareMimeType(String mimeType) {
-	// mimeType = StringUtils.trimToEmpty(mimeType);
-	// String extension = DEFAULT_MIME_TYPE;
-	// if (StringUtils.isNotEmpty(mimeType)) {
-	// extension = StringHelper.find(mimeType, "/.*").toLowerCase();
-	// extension = extension.replaceFirst("/", "");
-	// }
-	// return mimeType;
-	// }
+	@Override
+	public void deleteSongs(List<Song> songs) {
+		playlistDao.deletePlaylistMediaItems(songs);
 
-	// protected AlbumArtImage processAlbumArtImage(MusicLibrary musicLibrary,
-	// File musicFile, String albumName) throws CannotReadException,
-	// IOException, TagException, ReadOnlyFileException,
-	// InvalidAudioFrameException {
-	//
-	// String imagePath = null;
-	// String albumArtFileName = MashUpMediaConstants.COVER_ART_DEFAULT_NAME;
-	// AudioFile audioFile = AudioFileIO.read(musicFile);
-	// Tag tag = audioFile.getTag();
-	// Artwork artwork = tag.getFirstArtwork();
-	// final String albumArtImagePattern =
-	// musicLibrary.getAlbumArtImagePattern();
-	// String contentType = null;
-	// if (artwork != null) {
-	// contentType = prepareMimeType(artwork.getMimeType());
-	// byte[] bytes = artwork.getBinaryData();
-	// if (bytes == null || bytes.length == 0) {
-	// return null;
-	// }
-	// // imagePath = FileHelper.writeAlbumArt(musicLibrary.getId(), bytes);
-	// File albumArtFile = FileHelper.createAlbumArtFile(musicLibrary.getId());
-	// FileUtils.writeByteArrayToFile(albumArtFile, bytes);
-	// imagePath = albumArtFile.getAbsolutePath();
-	//
-	//
-	// } else {
-	// File albumFolder = musicFile.getParentFile();
-	// File[] imageFiles = albumFolder.listFiles(new FilenameFilter() {
-	//
-	// @Override
-	// public boolean accept(File file, String fileName) {
-	// if (FileHelper.isSupportedImage(fileName) &&
-	// FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
-	// return true;
-	// }
-	// return false;
-	// }
-	// });
-	//
-	// if (imageFiles == null || imageFiles.length == 0) {
-	// return null;
-	// }
-	//
-	// File albumArtFile = imageFiles[0];
-	// imagePath = albumArtFile.getAbsolutePath();
-	// albumArtFileName = albumArtFile.getName();
-	// contentType = FileHelper.getFileExtension(albumArtFileName);
-	// }
-	//
-	// AlbumArtImage albumArtImage = new AlbumArtImage();
-	// albumArtImage.setLibrary(musicLibrary);
-	// albumArtImage.setName(albumArtFileName);
-	// albumArtImage.setUrl(imagePath);
-	// albumArtImage.setContentType(contentType);
-	// return albumArtImage;
-	// }
+		musicDao.deleteSongs(songs);
+		logger.info("Deleted " + songs.size() + " out of date songs.");
+
+		deleteEmpty();
+		logger.info("Cleaned library.");
+	}
+
+	protected Artist prepareArtist(List<Long> userGroupIds, Artist artist) {
+		Artist savedArtist = musicDao.getArtist(userGroupIds, artist.getName());
+		if (savedArtist != null) {
+			return savedArtist;
+		}
+
+		String artistName = artist.getName();
+		String artistSearchIndexLetter = StringHelper.getSearchIndexLetter(artistName);
+		artist.setIndexLetter(artistSearchIndexLetter);
+		String artistSearchIndexText = StringHelper.getSearchIndexText(artistName);
+		artist.setIndexText(artistSearchIndexText);
+		return artist;
+	}
+
+	protected Album prepareAlbum(List<Long> userGroupIds, Album album) {
+		Artist artist = album.getArtist();
+		String albumName = album.getName();
+		if (StringUtils.isBlank(albumName)) {
+			return null;
+		}
+
+		Album savedAlbum = musicDao.getAlbum(userGroupIds, artist.getName(), albumName);
+		if (savedAlbum != null) {
+			return savedAlbum;
+		}
+
+		String albumIndexLetter = StringHelper.getSearchIndexLetter(albumName);
+		album.setIndexLetter(albumIndexLetter);
+		String albumIndexText = StringHelper.getSearchIndexText(albumName);
+		album.setIndexText(albumIndexText);
+
+		return album;
+
+	}
+
+	@Override
+	public void deleteEmpty() {
+		List<Long> groupIds = groupDao.getGroupIds();
+
+		List<Artist> artists = getArtists();
+		for (Artist artist : artists) {
+			List<Album> albums = musicDao.getAlbumsByArtist(groupIds, artist.getId());
+			if (albums == null || albums.isEmpty()) {
+				musicDao.deleteArtist(artist);
+				continue;
+			}
+
+			for (Album album : albums) {
+				List<Song> songs = musicDao.getSongs(groupIds, album.getId());
+				if (songs == null || songs.isEmpty()) {
+					musicDao.deleteAlbum(album);
+				}
+			}
+		}
+	}
+
+	public List<Artist> getArtists() {
+		List<Long> groupIds = groupDao.getGroupIds();
+		List<Artist> artists = musicDao.getArtists(groupIds);
+		for (Artist artist : artists) {
+			Hibernate.initialize(artist.getAlbums());
+		}
+		return artists;
+	}
 
 }

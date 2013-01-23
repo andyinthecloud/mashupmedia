@@ -18,6 +18,9 @@ public class TestMusicManager extends TestBaseService {
 	private MusicManager musicManager;
 
 	@Autowired
+	private MusicLibraryUpdateManager musicLibraryUpdateManager;
+	
+	@Autowired
 	LibraryManager libraryManager;
 
 	@Test
@@ -33,13 +36,13 @@ public class TestMusicManager extends TestBaseService {
 		List<Song> songs = new ArrayList<Song>();
 		Song song1 = TestHelper.prepareSong(musicLibrary, "song1");
 		songs.add(song1);
-		musicManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
 		
 
 		songs = new ArrayList<Song>();
 		Song song2 = TestHelper.prepareSong(musicLibrary, "song2");
 		songs.add(song2);
-		musicManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
 		
 		String artistName = song2.getArtist().getName();
 		String albumName = song2.getAlbum().getName();
@@ -61,19 +64,19 @@ public class TestMusicManager extends TestBaseService {
 		List<Song> songs = new ArrayList<Song>();
 		Song song1 = TestHelper.prepareSong(musicLibrary, "song1");
 		songs.add(song1);
-		musicManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
 
 		songs = new ArrayList<Song>();
 		Song song2 = TestHelper.prepareSong(musicLibrary, "song2");
 		song2.getAlbum().setName("album2");
 		songs.add(song2);
-		musicManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
 
 		songs = new ArrayList<Song>();
 		Song song3 = TestHelper.prepareSong(musicLibrary, "song2");
 		song3.getAlbum().setName("album3");
 		songs.add(song3);
-		musicManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
 		
 		
 		int totalAlbums = 30;

@@ -1,7 +1,7 @@
 package org.mashupmedia.task;
 
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.service.LibraryUpdateManager;
+import org.mashupmedia.service.MusicLibraryUpdateManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ public class LibraryUpdateTaskManager {
     private ThreadPoolTaskExecutor libraryUpdateThreadPoolTaskExecutor;
     
     @Autowired
-    private LibraryUpdateManager libraryUpdateManager;
+    private MusicLibraryUpdateManager libraryUpdateManager;
 
     public void updateLibrary(Library library) {
     	libraryUpdateThreadPoolTaskExecutor.execute(new LibraryUpdateTask(library));

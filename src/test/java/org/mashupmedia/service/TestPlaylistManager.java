@@ -32,6 +32,9 @@ public class TestPlaylistManager extends TestBaseService {
 	
 	@Autowired
 	private MusicDao musicDao;
+	
+	@Autowired
+	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 		
 	@Test
 	public void testSavePlaylist() {
@@ -90,7 +93,7 @@ public class TestPlaylistManager extends TestBaseService {
 		List<Song> songs = new ArrayList<Song>();
 		Song song1 = TestHelper.prepareSong(musicLibrary, songName);
 		songs.add(song1);
-		musicManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
 		
 		PlaylistMediaItem playlistMediaItem = new PlaylistMediaItem();
 		playlistMediaItem.setMediaItem(song1);

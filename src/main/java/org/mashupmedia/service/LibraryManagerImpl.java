@@ -34,6 +34,8 @@ public class LibraryManagerImpl implements LibraryManager {
 	private PlaylistManager playlistManager;
 	@Autowired
 	private VoteManager voteManager;
+	@Autowired
+	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 
 	@Override
 	public List<Library> getLibraries(LibraryType libraryType) {
@@ -124,10 +126,10 @@ public class LibraryManagerImpl implements LibraryManager {
 		if (mediaType == MediaType.SONG) {
 			@SuppressWarnings({ "unchecked", "rawtypes" })
 			List<Song> songs = (List) mediaItems;
-			musicManager.deleteSongs(songs);
+			musicLibraryUpdateManager.deleteSongs(songs);
 			List<AlbumArtImage> albumArtImages = mediaManager.getAlbumArtImages(id);
 			mediaManager.deleteAlbumArtImages(albumArtImages);
-			musicManager.deleteEmpty();
+			musicLibraryUpdateManager.deleteEmpty();
 		} else {
 			mediaManager.deleteMediaItems(mediaItems);
 		}

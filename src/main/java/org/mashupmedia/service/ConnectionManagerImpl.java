@@ -58,8 +58,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	private MediaManager mediaManager;
 	
 	@Autowired
-	private MusicManager musicManager;
-
+	private MusicLibraryUpdateManager musicLibraryUpdateManager;
+	
 	protected boolean isProxyEnabled() {
 		boolean isProxyEnabled = BooleanUtils.toBoolean(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
 		return isProxyEnabled;
@@ -226,7 +226,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 					processFtpSongs(date, ftpClient, songs, musicLibrary, artistName, albumNameParts, 0);
 					if (albumNameParts.isEmpty()) {
-						musicManager.saveSongs(musicLibrary, songs);
+						musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
 						songs = new ArrayList<Song>();
 						artistName = null;
 					} else {

@@ -1,10 +1,8 @@
 package org.mashupmedia.service;
 
-import java.util.Date;
 import java.util.List;
 
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
-import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
@@ -29,23 +27,14 @@ public interface MusicManager {
 
 	public void saveAlbum(Album album);
 
-	public void deleteEmpty();
-
-	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs);
-
 	public Artist getArtist(Long artistId);
 
 	public List<String> getAlbumIndexLetters();
 
-	public void deleteObsoleteSongs(long libraryId, Date date);
-
 	public List<Album> getAlbumsByArtist(Long artistId);
 
 	public List<Genre> getGenres();
-	
-	public void deleteSongs(List<Song> songs);
 
 	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria);
-	
 
 }

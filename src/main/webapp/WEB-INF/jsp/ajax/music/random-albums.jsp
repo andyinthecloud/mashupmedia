@@ -1,39 +1,40 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
-	$(document).ready(function() {
-		
-		$("div.albums div.album").hover(function() {
-			$(this).addClass("highlight");
-		}, function() {
-			$(this).removeClass("highlight");
-		});
-		
-		$(window).scroll(function() {	    
-		    if ($("div.random-album-art div.album").length == 0) {
-				return;
-		    }	    
-		    
-		    appendContentsOnScroll();
-		});
-		
+    $(document).ready(function() {
 
+	$("div.albums div.album").hover(function() {
+	    $(this).addClass("highlight");
+	}, function() {
+	    $(this).removeClass("highlight");
 	});
+
+	$(window).scroll(function() {
+	    if ($("div.random-album-art div.album").length == 0) {
+		return;
+	    }
+
+	    appendContentsOnScroll();
+	});
+
+    });
 </script>
 
 <c:if test="${showTitle}">
-<h1>
-	<spring:message code="music.random-albums.title" />
-</h1>
+	<h1>
+		<spring:message code="music.random-albums.title" />
+	</h1>
 </c:if>
+
 
 <div class="random-album-art albums">
 	<c:forEach items="${albums}" var="album">
 		<div class="album">
-			<a href="javascript:;" rel="address:/address-load-album-${album.id}" > <img src="<c:url value="/app/music/album-art-thumbnail/${album.id}" />"
-				title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
+			<a href="javascript:;" rel="address:/address-load-album-${album.id}"> <img src="<c:url value="/app/music/album-art-thumbnail/${album.id}" />" title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />"
+				alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 			</a>
 		</div>
 	</c:forEach>
 </div>
+
 

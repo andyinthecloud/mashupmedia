@@ -21,8 +21,9 @@ public class TestLibraryManager extends TestBaseService {
 	@Autowired
 	private LibraryManager libraryManager;
 	
+	
 	@Autowired
-	private MusicManager musicManager;
+	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 
 	@Test
 	public void testSaveMusicLibrary() {
@@ -78,7 +79,7 @@ public class TestLibraryManager extends TestBaseService {
 		Song song = TestHelper.prepareSong(musicLibrary, "title");
 		List<Song> songs = new ArrayList<Song>();
 		songs.add(song);
-		musicManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
 		
 		
 		libraryManager.deleteLibrary(musicLibrary);
