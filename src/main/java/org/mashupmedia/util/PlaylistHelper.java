@@ -9,7 +9,7 @@ import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public class PlaylistHelper {
-	
+
 	public static void replacePlaylist(Playlist playlist, List<? extends MediaItem> songs) {
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems != null) {
@@ -65,7 +65,7 @@ public class PlaylistHelper {
 		}
 
 		int totalPlaylistItems = playlistMediaItems.size();
-		
+
 		List<PlaylistMediaItem> appendPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
 
 		for (int i = 0; i < mediaItems.size(); i++) {
@@ -75,9 +75,8 @@ public class PlaylistHelper {
 			playlistMediaItem.setPlaylist(playlist);
 			appendPlaylistMediaItems.add(playlistMediaItem);
 		}
-		
-		
-		playlistMediaItems.addAll(appendPlaylistMediaItems);		
+
+		playlistMediaItems.addAll(appendPlaylistMediaItems);
 
 		playlistMediaItems.get(0).setPlaying(true);
 		playlist.setPlaylistMediaItems(playlistMediaItems);
@@ -101,35 +100,37 @@ public class PlaylistHelper {
 		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
 		mediaItems.add(mediaItem);
 		appendPlaylist(playlist, mediaItems);
-	}	
+	}
 
 	public static MediaItem getRelativePlayingMediaItemFromPlaylist(Playlist playlist, int relativeOffset) {
-		
+
 		MediaItem emptyMediaItem = new MediaItem();
-		
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+
+//		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
 			return emptyMediaItem;
 		}
-		
+
 		int playingIndex = 0;
 		for (int i = 0; i < playlistMediaItems.size(); i++) {
 			PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(i);
 			if (playlistMediaItem.isPlaying()) {
 				playingIndex = i;
-			}			
+			}
 			playlistMediaItem.setPlaying(false);
 		}
-		
+
 		int newPlayingIndex = playingIndex + relativeOffset;
 		if (newPlayingIndex < 0 || newPlayingIndex > (playlistMediaItems.size() - 1)) {
 			playlistMediaItems.get(playingIndex).setPlaying(true);
 			return emptyMediaItem;
 		}
-		
+
 		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(newPlayingIndex);
 		playlistMediaItem.setPlaying(true);
 		return playlistMediaItem.getMediaItem();
 	}
+
 
 }

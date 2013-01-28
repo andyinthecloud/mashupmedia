@@ -35,5 +35,7 @@ public interface AdminManager {
 	public Group getGroup(long groupId);
 
 	public void deleteGroup(long groupId);
+	
+	
 
 }

@@ -33,6 +33,9 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Autowired
 	private GroupDao groupDao;
+	
+	@Autowired
+	private SecurityManager securityManager;
 
 	@Override
 	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems) {
