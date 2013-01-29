@@ -26,6 +26,7 @@ public class User implements UserDetails, Serializable {
 	private long id;
 	private String username;
 	private String password;
+	private String name;
 	private boolean enabled;
 	private boolean editable;	
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
@@ -34,7 +35,6 @@ public class User implements UserDetails, Serializable {
 	private Set<Group> groups;
 	private Date createdOn;
 	private Date updatedOn;
-	private String name;
 
 	public boolean isEditable() {
 		return editable;

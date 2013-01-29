@@ -40,14 +40,20 @@
 
 	<form:errors path="*" cssClass="error-box" />
 
-	<c:if test="${editUserPage.user.editable}">
+	<c:choose>
+		<c:when test="${editUserPage.user.editable}">
+			<form:checkbox path="user.enabled" value="true" id="user_enabled" />
+			<label for="user_enabled"><spring:message code="configuration.administration.edit-user.enabled" /></label>
 
-		<form:checkbox path="user.enabled" value="true" id="user_enabled" />
-		<label for="user_enabled"><spring:message code="configuration.administration.edit-user.enabled" /></label>
+			<form:checkbox path="administrator" value="true" />
+			<label for="administrator1"><spring:message code="configuration.administration.edit-user.administrator" /></label>
+		</c:when>
 
-		<form:checkbox path="administrator" value="true" />
-		<label for="administrator1"><spring:message code="configuration.administration.edit-user.administrator" /></label>
-	</c:if>
+		<c:otherwise>
+			<form:hidden path="user.enabled" />
+			<form:hidden path="administrator" />
+		</c:otherwise>
+	</c:choose>
 
 	<label class="new-line"><spring:message code="configuration.administration.edit-user.username" /></label>
 	<form:input path="user.username" />

@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.Hibernate;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.PlaylistDao;
+import org.mashupmedia.exception.UnauthorisedException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
@@ -27,11 +28,34 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 	@Autowired
 	private MediaDao mediaDao;
+	
+	@Autowired
+	private SecurityManager securityManager;
 
 	@Override
 	public List<Playlist> getPlaylists() {
 		List<Playlist> playlists = playlistDao.getPlaylists();
 		return playlists;
+	}
+	
+	protected void initialisePlaylist(Playlist playlist) {
+		
+		if (playlist == null) {
+			return;
+		}
+		
+		Hibernate.initialize(playlist.getPlaylistMediaItems());
+		
+		List<PlaylistMediaItem> accessiblePlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();		
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			if (securityManager.canAccessPlaylistMediaItem(playlistMediaItem)) {
+				accessiblePlaylistMediaItems.add(playlistMediaItem);
+			}
+		}
+		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
+		
+		
 	}
 
 	@Override
@@ -40,7 +64,8 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		if (playlist == null) {
 			return playlist;
 		}
-		Hibernate.initialize(playlist.getPlaylistMediaItems());
+		
+		initialisePlaylist(playlist);
 
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		List<PlaylistMediaItem> playlistMediaItemsToDelete = new ArrayList<PlaylistMediaItem>();
@@ -67,7 +92,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 			playlist = getDefaultPlaylistForCurrentUser(playlistType);
 		}
 		
-		Hibernate.initialize(playlist.getPlaylistMediaItems());
+		initialisePlaylist(playlist);
 		
 		return playlist;
 	}
@@ -77,7 +102,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		User user = SecurityHelper.getLoggedInUser();
 		Playlist playlist = playlistDao.getDefaultPlaylistForUser(user.getId(), playlistType);
 		if (playlist != null) {
-			Hibernate.initialize(playlist.getPlaylistMediaItems());
+			initialisePlaylist(playlist);
 			return playlist;
 		}
 
@@ -86,13 +111,20 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		playlist.setUserDefault(true);
 		playlist.setCreatedBy(user);
 		playlist.setPlaylistType(PlaylistType.MUSIC);
+		playlist.setPlaylistMediaItems(new ArrayList<PlaylistMediaItem>());
 
 		return playlist;
 	}
 
 	@Override
 	public void savePlaylist(Playlist playlist) {
+		User createdbyUser = playlist.getCreatedBy();
 		User user = SecurityHelper.getLoggedInUser();
+		
+		if (!user.equals(createdbyUser)) {
+			throw new UnauthorisedException("Unable to save user playlist");
+		}
+		
 		long playlistId = playlist.getId();
 		Date date = new Date();
 		if (playlistId == 0) {
@@ -117,6 +149,14 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	@Override
 	public void deletePlaylist(long id) {
 		Playlist playlist = getPlaylist(id);
+
+		User createdbyUser = playlist.getCreatedBy();
+		User user = SecurityHelper.getLoggedInUser();
+		
+		if (!user.equals(createdbyUser)) {
+			throw new UnauthorisedException("Unable to delete user playlist");
+		}
+
 		playlistDao.deletePlaylist(playlist);
 	}
 

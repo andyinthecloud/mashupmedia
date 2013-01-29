@@ -58,6 +58,10 @@ public class AdminManagerImpl implements AdminManager {
 		long userId = user.getId();
 		String username = user.getUsername();
 		String password = user.getPassword();
+//		String name = user.getName();
+//		boolean isEnabled = user.isEnabled();
+//		boolean isEditable = user.isEditable();
+		
 
 		// All users should have the user role to access the application
 		Set<Role> roles = user.getRoles();

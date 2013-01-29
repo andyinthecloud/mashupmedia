@@ -13,7 +13,6 @@ import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
-import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,21 +38,21 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems) {
-		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		List<Album> albums = musicDao.getAlbums(userGroupIds, searchLetter, pageNumber, totalItems);
 		return albums;
 	}
 
 	@Override
 	public List<String> getAlbumIndexLetters() {
-		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		List<String> indexLetters = musicDao.getAlbumIndexLetters(userGroupIds);
 		return indexLetters;
 	}
 
 	@Override
 	public List<Artist> getArtists() {
-		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		List<Artist> artists = musicDao.getArtists(userGroupIds);
 		for (Artist artist : artists) {
 			Hibernate.initialize(artist.getAlbums());
@@ -72,14 +71,14 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public List<String> getArtistIndexLetters() {
-		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		List<String> indexLetters = musicDao.getArtistIndexLetters(userGroupIds);
 		return indexLetters;
 	}
 
 	@Override
 	public Album getAlbum(long albumId) {
-		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		Album album = musicDao.getAlbum(userGroupIds, albumId);
 		if (album == null) {
 			return null;
@@ -91,7 +90,7 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public List<Album> getRandomAlbums(int numberOfAlbums) {
-		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		List<Album> albums = new ArrayList<Album>();
 		List<Album> randomAlbums = musicDao.getRandomAlbums(userGroupIds, numberOfAlbums);
 		if (randomAlbums.isEmpty()) {
@@ -116,14 +115,14 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public Album getAlbum(String artistName, String albumName) {
-		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		Album album = musicDao.getAlbum(userGroupIds, artistName, albumName);
 		return album;
 	}
 
 	@Override
 	public List<Album> getAlbumsByArtist(Long artistId) {
-		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		List<Album> albums = musicDao.getAlbumsByArtist(userGroupIds, artistId);
 		if (albums == null || albums.isEmpty()) {
 			return albums;
@@ -138,14 +137,14 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public List<Song> getSongs(Long albumId) {
-		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		List<Song> songs = musicDao.getSongs(userGroupIds, albumId);
 		return songs;
 	}
 
 	@Override
 	public Artist getArtist(Long artistId) {
-		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		Artist artist = musicDao.getArtist(userGroupIds, artistId);
 		Hibernate.initialize(artist.getAlbums());
 		return artist;
@@ -159,7 +158,7 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria) {
-		List<Long> userGroupIds = SecurityHelper.getLoggedInUserGroupIds();
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		List<MediaItem> mediaItems = musicDao.findSongs(userGroupIds, mediaItemSearchCriteria);
 		return mediaItems;
 	}

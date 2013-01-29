@@ -1,7 +1,6 @@
 package org.mashupmedia.model.playlist;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,9 +14,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.mashupmedia.model.User;
-import org.mashupmedia.util.SecurityHelper;
 
 @Entity
 @Cacheable
@@ -43,6 +42,9 @@ public class Playlist implements Serializable {
 	@OneToMany(mappedBy = "playlist")
 	@OrderBy("ranking")
 	private List<PlaylistMediaItem> playlistMediaItems;
+	
+	@Transient
+	private List<PlaylistMediaItem> accessiblePlaylistMediaItems;
 
 	@ManyToOne
 	private User createdBy;
@@ -106,17 +108,13 @@ public class Playlist implements Serializable {
 		return playlistMediaItems;
 	}
 
+	
 	public List<PlaylistMediaItem> getAccessiblePlaylistMediaItems() {
-		
-		List<PlaylistMediaItem> accessiblePlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
-		List<PlaylistMediaItem> playlistMediaItems = getPlaylistMediaItems();		
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			if (SecurityHelper.canAccessPlaylistMediaItem(playlistMediaItem)) {
-				accessiblePlaylistMediaItems.add(playlistMediaItem);
-			}
-		}
-				
 		return accessiblePlaylistMediaItems;
+	}
+
+	public void setAccessiblePlaylistMediaItems(List<PlaylistMediaItem> accessiblePlaylistMediaItems) {
+		this.accessiblePlaylistMediaItems = accessiblePlaylistMediaItems;
 	}
 
 	public void setPlaylistMediaItems(List<PlaylistMediaItem> playlistMediaItems) {
