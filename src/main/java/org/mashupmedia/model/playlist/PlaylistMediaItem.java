@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import org.mashupmedia.model.media.MediaItem;
 
@@ -21,8 +22,8 @@ public class PlaylistMediaItem implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private int ranking;
+	@Transient
 	private boolean playing;
-
 	@ManyToOne
 	private Playlist playlist;
 
@@ -31,10 +32,6 @@ public class PlaylistMediaItem implements Serializable {
 
 	public boolean isPlaying() {
 		return playing;
-	}
-
-	public boolean getPlaying() {
-		return isPlaying();
 	}
 
 	public void setPlaying(boolean playing) {
@@ -117,7 +114,7 @@ public class PlaylistMediaItem implements Serializable {
 		builder.append(", playing=");
 		builder.append(playing);
 		builder.append(", playlist=");
-		builder.append(playlist.getId());
+		builder.append(playlist);
 		builder.append(", mediaItem=");
 		builder.append(mediaItem);
 		builder.append("]");

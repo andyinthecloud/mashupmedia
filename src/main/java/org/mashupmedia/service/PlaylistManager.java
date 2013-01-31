@@ -2,8 +2,10 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public interface PlaylistManager {
 
@@ -22,5 +24,8 @@ public interface PlaylistManager {
 	public List<Playlist> getPlaylistsForCurrentUser(PlaylistType playlistType);
 
 	public void deleteLibrary(long libraryId);
+
+	public void saveUserPlaylistMediaItem(User user, PlaylistMediaItem playlistMediaItem);
+	
 
 }

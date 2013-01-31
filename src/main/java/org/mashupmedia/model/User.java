@@ -13,7 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -28,13 +30,23 @@ public class User implements UserDetails, Serializable {
 	private String password;
 	private String name;
 	private boolean enabled;
-	private boolean editable;	
+	private boolean editable;
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	private Set<Role> roles;
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	private Set<Group> groups;
 	private Date createdOn;
 	private Date updatedOn;
+	@ManyToOne
+	private PlaylistMediaItem playlistMediaItem;
+
+	public PlaylistMediaItem getPlaylistMediaItem() {
+		return playlistMediaItem;
+	}
+
+	public void setPlaylistMediaItem(PlaylistMediaItem playlistMediaItem) {
+		this.playlistMediaItem = playlistMediaItem;
+	}
 
 	public boolean isEditable() {
 		return editable;

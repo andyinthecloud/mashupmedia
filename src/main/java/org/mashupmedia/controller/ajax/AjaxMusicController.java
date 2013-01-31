@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.MediaItem;
@@ -17,6 +18,7 @@ import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.PlaylistHelper;
+import org.mashupmedia.util.SecurityHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.FormatContentType;
 import org.mashupmedia.web.page.AlbumPage;
@@ -123,11 +125,15 @@ public class AjaxMusicController extends BaseAjaxController {
 		}
 
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		
+		PlaylistMediaItem playlistMediaItem = new PlaylistMediaItem();
+		playlistMediaItem.setPlaylist(playlist);
+		playlistMediaItem.setMediaItem(mediaItem);	
+		
 		MediaType mediaType = mediaItem.getMediaType();
 		if (mediaType == MediaType.SONG) {
 			Song song = (Song) mediaItem;
-			playlist = updatePlayingSong(playlist, song);
-			playlistManager.savePlaylist(playlist);
+			playlist = updatePlayingSong(playlist, song);						
 			String format = WebHelper.getContentType(mediaItem.getFormat(), FormatContentType.JPLAYER);
 			model.addAttribute("format", format);
 			model.addAttribute("song", song);
@@ -152,11 +158,13 @@ public class AjaxMusicController extends BaseAjaxController {
 
 	private void playRelativeSong(Model model, int relativeOffset) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		MediaItem mediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, relativeOffset);
-		playlistManager.savePlaylist(playlist);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, relativeOffset);
+		
+		User user = SecurityHelper.getLoggedInUser();
+		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
 		
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, playlistMediaItem.getMediaItem());
 
 	}
 
@@ -172,6 +180,8 @@ public class AjaxMusicController extends BaseAjaxController {
 		if (playlistMediaItems == null) {
 			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 		}
+		
+		User user = SecurityHelper.getLoggedInUser();
 
 		boolean isFound = false;
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
@@ -182,6 +192,12 @@ public class AjaxMusicController extends BaseAjaxController {
 				isPlaying = true;
 			}
 			playlistMediaItem.setPlaying(isPlaying);
+			
+			if (isPlaying) {
+				playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
+			}
+			
+			
 		}
 
 		if (!isFound) {

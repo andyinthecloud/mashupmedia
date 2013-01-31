@@ -57,11 +57,7 @@ public class AdminManagerImpl implements AdminManager {
 		Date date = new Date();
 		long userId = user.getId();
 		String username = user.getUsername();
-		String password = user.getPassword();
-//		String name = user.getName();
-//		boolean isEnabled = user.isEnabled();
-//		boolean isEditable = user.isEditable();
-		
+		String password = user.getPassword();		
 
 		// All users should have the user role to access the application
 		Set<Role> roles = user.getRoles();
@@ -77,6 +73,7 @@ public class AdminManagerImpl implements AdminManager {
 		} else {
 			User savedUser = getUser(userId);
 			user.setPassword(savedUser.getPassword());
+			user.setPlaylistMediaItem(savedUser.getPlaylistMediaItem());
 		}
 
 		user.setUpdatedOn(date);

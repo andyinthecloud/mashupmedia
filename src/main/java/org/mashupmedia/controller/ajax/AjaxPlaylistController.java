@@ -6,16 +6,19 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.exception.PageNotFoundException;
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.task.StreamingTaskManager;
 import org.mashupmedia.util.PlaylistHelper;
+import org.mashupmedia.util.SecurityHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.WebFormatType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +50,8 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 		model.addAttribute("playlist", playlist);
 
-		MediaItem mediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";
@@ -58,7 +62,8 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
 		model.addAttribute("playlist", playlist);
 
-		MediaItem mediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";
@@ -81,7 +86,8 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		playlistManager.savePlaylist(playlist);
 
-		MediaItem mediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";
@@ -122,7 +128,8 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		playlistManager.savePlaylist(playlist);
 
-		MediaItem mediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";
@@ -237,8 +244,10 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		}
 
 		PlaylistHelper.replacePlaylist(playlist, mediaItems);
-
 		playlistManager.savePlaylist(playlist);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getFirstPlayListMediaItem(playlist);
+		User user = SecurityHelper.getLoggedInUser();
+		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, playlist.getId());

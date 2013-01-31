@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.mashupmedia.exception.MashupMediaException;
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
@@ -91,10 +92,21 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		if (playlistId < 1) {
 			return;
 		}
+		
+		Query playlistMediaItemQuery = sessionFactory.getCurrentSession().createQuery(
+				"select pmi.id from PlaylistMediaItem pmi where pmi.playlist.id = :playlistId");
+		playlistMediaItemQuery.setLong("playlistId", playlistId);
+		@SuppressWarnings("unchecked")
+		List<Long> playlistMediaItemIds = playlistMediaItemQuery.list();		
+		for (Long playlistMediaItemId : playlistMediaItemIds) {
+			Query updateUserQuery = sessionFactory.getCurrentSession().createQuery("update User u set u.playlistMediaItem = null where u.playlistMediaItem.id = :playlistMediaItemId");
+			updateUserQuery.setLong("playlistMediaItemId", playlistMediaItemId);
+			updateUserQuery.executeUpdate();						
+		}
 
-		Query query = sessionFactory.getCurrentSession().createQuery("delete PlaylistMediaItem where playlist.id = :playlistId");
-		query.setLong("playlistId", playlistId);
-		int deletedItems = query.executeUpdate();
+		Query updateMediaItemQuery = sessionFactory.getCurrentSession().createQuery("delete PlaylistMediaItem where playlist.id = :playlistId");
+		updateMediaItemQuery.setLong("playlistId", playlistId);
+		int deletedItems = updateMediaItemQuery.executeUpdate();
 		logger.info("Deleted " + deletedItems + " playlistMediaItems for playlist id: " + playlistId);
 	}
 
@@ -146,6 +158,11 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			sessionFactory.getCurrentSession().delete(playlistMediaItem);
 		}
 		logger.info("Deleted " + deletedItems + " playlistMediaItems");
+	}
+	
+	@Override
+	public void updateUserPlayingMediaItem(User user) {
+		sessionFactory.getCurrentSession().merge(user);
 	}
 
 }

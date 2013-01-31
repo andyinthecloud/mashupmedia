@@ -3,6 +3,7 @@ package org.mashupmedia.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
@@ -102,20 +103,24 @@ public class PlaylistHelper {
 		appendPlaylist(playlist, mediaItems);
 	}
 
-	public static MediaItem getRelativePlayingMediaItemFromPlaylist(Playlist playlist, int relativeOffset) {
+	public static PlaylistMediaItem getRelativePlayingMediaItemFromPlaylist(Playlist playlist, int relativeOffset) {
 
-		MediaItem emptyMediaItem = new MediaItem();
+		PlaylistMediaItem emptyPlaylistMediaItem = new PlaylistMediaItem();
+		emptyPlaylistMediaItem.setPlaylist(playlist);
+		emptyPlaylistMediaItem.setMediaItem(new MediaItem());
 
-//		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-			return emptyMediaItem;
+			return emptyPlaylistMediaItem;
 		}
 
+		User user = SecurityHelper.getLoggedInUser();
+		PlaylistMediaItem currentPlaylistMediaItem = user.getPlaylistMediaItem();
+		
 		int playingIndex = 0;
 		for (int i = 0; i < playlistMediaItems.size(); i++) {
 			PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(i);
-			if (playlistMediaItem.isPlaying()) {
+			if (playlistMediaItem.equals(currentPlaylistMediaItem) ) {
 				playingIndex = i;
 			}
 			playlistMediaItem.setPlaying(false);
@@ -124,12 +129,25 @@ public class PlaylistHelper {
 		int newPlayingIndex = playingIndex + relativeOffset;
 		if (newPlayingIndex < 0 || newPlayingIndex > (playlistMediaItems.size() - 1)) {
 			playlistMediaItems.get(playingIndex).setPlaying(true);
-			return emptyMediaItem;
+			return emptyPlaylistMediaItem;
 		}
 
 		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(newPlayingIndex);
 		playlistMediaItem.setPlaying(true);
-		return playlistMediaItem.getMediaItem();
+		return playlistMediaItem;
+	}
+
+	public static PlaylistMediaItem getFirstPlayListMediaItem(Playlist playlist) {
+		if (playlist == null) {
+			return null;
+		}
+		
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return null;
+		}
+				
+		return playlistMediaItems.get(0);
 	}
 
 

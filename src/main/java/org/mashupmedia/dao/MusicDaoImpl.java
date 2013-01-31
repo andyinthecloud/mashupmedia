@@ -40,7 +40,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	public List<Album> getAlbums(List<Long> groupIds, String searchLetter, int pageNumber, int totalItems) {
 
 		int firstResult = pageNumber * totalItems;
-		StringBuilder queryBuilder = new StringBuilder("select a from Album a join a.songs join a.library.groups g");
+		StringBuilder queryBuilder = new StringBuilder("select distinct a from Album a join a.songs s join s.library.groups g");
 		searchLetter = StringUtils.trimToEmpty(searchLetter);
 		if (StringUtils.isNotEmpty(searchLetter)) {
 			queryBuilder.append(" where a.indexLetter = '" + searchLetter.toLowerCase() + "'");

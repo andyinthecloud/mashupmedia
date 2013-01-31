@@ -9,6 +9,7 @@ import org.mashupmedia.exception.PageNotFoundException;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
@@ -151,7 +152,8 @@ public class AjaxSearchController extends BaseAjaxController {
 			PlaylistHelper.replacePlaylist(playlist, mediaItems);
 			playlistManager.savePlaylist(playlist);
 
-			MediaItem mediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+			PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+			MediaItem mediaItem = playlistMediaItem.getMediaItem();
 			model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
 			model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 			return "ajax/json/media-item";

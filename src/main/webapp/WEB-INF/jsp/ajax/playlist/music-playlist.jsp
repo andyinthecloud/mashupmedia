@@ -253,7 +253,7 @@
 		</thead>
 		<tbody>
 
-			<c:forEach items="${playlist.playlistMediaItems}" var="playlistMediaItem">
+			<c:forEach items="${playlist.accessiblePlaylistMediaItems}" var="playlistMediaItem">
 				<c:set var="song" value="${playlistMediaItem.mediaItem}" />
 				<c:set var="playingClass" value="" />
 				<c:if test="${playlistMediaItem.playing }">
