@@ -302,6 +302,10 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		
 		model.addAttribute("playlist", playlist);
 
+		boolean canSavePlaylist = PlaylistHelper.canSavePlaylist(playlist);
+		model.addAttribute("canSavePlaylist", canSavePlaylist);
+		
+		
 		WebFormatType webFormatType = WebHelper.getWebFormatType(webFormatTypeValue);
 		if (webFormatType == WebFormatType.JSON) {
 			return "ajax/json/playlist";

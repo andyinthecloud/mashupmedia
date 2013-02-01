@@ -23,7 +23,6 @@
 									mashupMedia.appendAlbum(albumId);
 								});
 
-						prepareShowPageTitle();
 						prepareShowIndexLetters();
 
 						$("ul.items li").hover(
@@ -54,7 +53,7 @@
 	}
 </script>
 
-<h1 class="hide content-title">
+<h1>
 	<spring:message code="music.albums.title" />
 </h1>
 

@@ -150,5 +150,26 @@ public class PlaylistHelper {
 		return playlistMediaItems.get(0);
 	}
 
+	public static boolean canSavePlaylist(Playlist playlist) {
+		if (playlist == null) {
+			return false;
+		}				
+
+		User createdBy = playlist.getCreatedBy();
+		if (createdBy == null) {
+			return true;
+		}
+		long createdById = createdBy.getId();
+
+		User user = SecurityHelper.getLoggedInUser();
+		long userId = user.getId();
+		
+		if (createdById == userId) {
+			return true;
+		}
+		
+		return false;
+	}
+
 
 }
