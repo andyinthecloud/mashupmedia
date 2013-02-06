@@ -295,6 +295,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 			@RequestParam(value = "webFormatType", required = false) String webFormatTypeValue,
 			@RequestParam(value = "updateLastAccessedToNow", required = false) Boolean isUpdateLastAccessedToNow, Model model) {
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
+		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
 		
 		if (isUpdateLastAccessedToNow != null && isUpdateLastAccessedToNow) {
 			playlistManager.savePlaylist(playlist);

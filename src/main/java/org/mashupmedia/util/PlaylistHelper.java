@@ -171,5 +171,31 @@ public class PlaylistHelper {
 		return false;
 	}
 
+	public static void initialiseCurrentlyPlaying(Playlist playlist) {
+		if (playlist == null) {
+			return;
+		}
+		
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return;
+		}
+		
+		User user = SecurityHelper.getLoggedInUser();
+		if (user == null) {
+			return;
+		}
+		
+		PlaylistMediaItem userPlaylistMediaItem = user.getPlaylistMediaItem();		
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			if (playlistMediaItem.equals(userPlaylistMediaItem)) {
+				playlistMediaItem.setPlaying(true);
+				return;
+			}
+		}
+		
+		
+	}
+
 
 }

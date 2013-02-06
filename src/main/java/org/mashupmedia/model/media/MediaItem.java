@@ -69,7 +69,7 @@ public class MediaItem implements Serializable {
 	@Field(analyze = Analyze.NO)
 	@DateBridge(resolution = Resolution.SECOND)
 	private Date lastAccessed;
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.PERSIST})
 	private User lastAccessedBy;
 	@Field
 	@Column(length = 1000)

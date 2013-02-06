@@ -138,13 +138,32 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 	@Override
 	public void deletePlaylistMediaItems(List<? extends MediaItem> mediaItems) {
+		long totalDeletedItems = 0;
+
 		for (MediaItem mediaItem : mediaItems) {
 			long mediaItemId = mediaItem.getId();
-			Query query = sessionFactory.getCurrentSession().createQuery("delete PlaylistMediaItem pmi where pmi.mediaItem.id = :mediaItemId");
+			
+			Query query = sessionFactory.getCurrentSession().createQuery("from PlaylistMediaItem pmi where pmi.mediaItem.id = :mediaItemId");
 			query.setLong("mediaItemId", mediaItemId);
-			int deletedItems = query.executeUpdate();
-			logger.info("Deleted " + deletedItems + " playlistMediaItems");
+			query.setCacheable(true);
+			@SuppressWarnings("unchecked")
+			List<PlaylistMediaItem> playlistMediaItems = query.list();
+			if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+				continue;
+			}
+			
+			for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+				long playlistMediaItemId = playlistMediaItem.getId();				
+				Query userQuery = sessionFactory.getCurrentSession().createQuery("update User set playlistMediaItem = null where playlistMediaItem.id = :playlistMediaItemId");
+				userQuery.setLong("playlistMediaItemId", playlistMediaItemId);
+				userQuery.executeUpdate();
+				
+				sessionFactory.getCurrentSession().delete(playlistMediaItem);
+				totalDeletedItems++;
+			}
+						
 		}
+		logger.info("Deleted " + totalDeletedItems + " playlistMediaItems");
 	}
 
 	@Override
