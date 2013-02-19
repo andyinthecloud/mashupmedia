@@ -84,13 +84,20 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		}
 
 		PlaylistHelper.replacePlaylist(playlist, songs);
-		playlistManager.savePlaylist(playlist);
+		savePlaylist(playlist);
 
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
 		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";
+	}
+	
+	protected void savePlaylist(Playlist playlist) {
+		playlistManager.savePlaylist(playlist);
+		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlistManager.getAccessiblePlaylistMediaItems(playlist.getId());
+		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
+
 	}
 
 	@RequestMapping(value = "/append-artist", method = RequestMethod.POST)
@@ -108,7 +115,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		}
 
 		PlaylistHelper.appendPlaylist(playlist, songs);
-		playlistManager.savePlaylist(playlist);
+		savePlaylist(playlist);
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
@@ -126,7 +133,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		}
 
 		PlaylistHelper.replacePlaylist(playlist, songs);
-		playlistManager.savePlaylist(playlist);
+		savePlaylist(playlist);
 
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
 		MediaItem mediaItem = playlistMediaItem.getMediaItem();
@@ -146,7 +153,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		}
 
 		PlaylistHelper.appendPlaylist(playlist, songs);
-		playlistManager.savePlaylist(playlist);
+		savePlaylist(playlist);
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
@@ -166,7 +173,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		streamingTaskManager.startMediaItemDownload(song.getId());
 
 		PlaylistHelper.replacePlaylist(playlist, song);
-		playlistManager.savePlaylist(playlist);
+		savePlaylist(playlist);
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
@@ -186,7 +193,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		streamingTaskManager.startMediaItemDownload(song.getId());
 
 		PlaylistHelper.appendPlaylist(playlist, song);
-		playlistManager.savePlaylist(playlist);
+		savePlaylist(playlist);
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);

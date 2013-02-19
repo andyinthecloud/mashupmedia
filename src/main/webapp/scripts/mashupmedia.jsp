@@ -143,6 +143,11 @@ var mashupMedia = new function() {
 			return;
 		}
 		
+		alert("playlistId = " + playlistId);
+		alert("mediaItemId = " + mediaItemId);
+		
+		
+		
 		if (mediaItemId.length == 0 || isNaN(mediaItemId)) {
 			$.get(mashupMedia.contextUrl + "app/ajax/playlist/id/" + playlistId, {
 				"webFormatType" : "json",
