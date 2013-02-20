@@ -157,17 +157,19 @@ public class AjaxMusicController extends BaseAjaxController {
 	}
 
 	private void playRelativeSong(Model model, int relativeOffset) {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, relativeOffset);
-		
 		User user = SecurityHelper.getLoggedInUser();
-		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-		
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);		
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, relativeOffset);
+		if (playlistMediaItem.getId() > 0) {
+			playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
+			
+		}
+				
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, playlistMediaItem.getMediaItem());
 
 	}
-
+	
 	private Playlist updatePlayingSong(Playlist playlist, MediaItem mediaItem) {
 
 		long mediaItemId = mediaItem.getId();

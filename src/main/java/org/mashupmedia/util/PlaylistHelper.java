@@ -131,7 +131,7 @@ public class PlaylistHelper {
 			playlistMediaItems.get(playingIndex).setPlaying(true);
 			return emptyPlaylistMediaItem;
 		}
-
+		
 		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(newPlayingIndex);
 		playlistMediaItem.setPlaying(true);
 		return playlistMediaItem;

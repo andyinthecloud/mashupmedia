@@ -95,9 +95,8 @@ public class AjaxPlaylistController extends BaseAjaxController {
 	
 	protected void savePlaylist(Playlist playlist) {
 		playlistManager.savePlaylist(playlist);
-		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlistManager.getAccessiblePlaylistMediaItems(playlist.getId());
+		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getPlaylistMediaItems();
 		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
-
 	}
 
 	@RequestMapping(value = "/append-artist", method = RequestMethod.POST)

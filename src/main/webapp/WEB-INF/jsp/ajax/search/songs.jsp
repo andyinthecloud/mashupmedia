@@ -100,7 +100,9 @@
 
 	<ul class="control-menu" id="artist-id-<c:out value="${artistPage.artist.id}" />">
 		<li class="first"><a href="javascript:;" id="play-all"><spring:message code="action.play-all" /></a></li>
-		<li><a href="javascript:;" id="add-all"><spring:message code="action.add-all" /></a></li>
+		<c:if test="${isPlaylistOwner}">
+			<li><a href="javascript:;" id="add-all"><spring:message code="action.add-all" /></a></li>
+		</c:if>
 	</ul>
 
 </c:if>
@@ -125,7 +127,10 @@
 			</div>
 
 			<div class="controls">
-				<a class="play" href="javascript:;" title="<spring:message code="action.play" />"><span class="ui-icon ui-icon-play"></span></a> <a class="add" href="javascript:;" title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus"></span></a>
+				<a class="play" href="javascript:;" title="<spring:message code="action.play" />"><span class="ui-icon ui-icon-play"></span></a>
+				<c:if test="${isPlaylistOwner}">
+					<a class="add" href="javascript:;" title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus"></span></a>
+				</c:if>
 			</div></li>
 	</c:forEach>
 

@@ -26,8 +26,6 @@ public interface PlaylistManager {
 	public void deleteLibrary(long libraryId);
 
 	public void saveUserPlaylistMediaItem(User user, PlaylistMediaItem playlistMediaItem);
-
-	public List<PlaylistMediaItem> getAccessiblePlaylistMediaItems(long playlistId);
 	
 
 }
