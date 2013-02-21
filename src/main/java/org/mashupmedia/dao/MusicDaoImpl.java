@@ -172,7 +172,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	@Override
 	public Song getSong(List<Long> groupIds, long libraryId, String songPath, long songSizeInBytes) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select s from Song s inner join s.library.groups g where s.library.id = :libraryId and s.path = :path and s.sizeInBytes = :sizeInBytes");
+				"select distinct s from Song s inner join s.library.groups g where s.library.id = :libraryId and s.path = :path and s.sizeInBytes = :sizeInBytes");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		query.setCacheable(true);
