@@ -16,12 +16,14 @@ var addressPlaylist = "address-playlist-";
 
 $(document).ready(function() {
     
-	$("div.panel").ajaxComplete(function(e, xhr, settings) {
+	$(document).ajaxComplete(function(e, xhr, settings) {
 		var responseHtml = xhr.responseText;
 		if (responseHtml.indexOf("@LOGGED-OUT@") >= 0) {
 			window.location.reload();
 		}		
-	});	
+	});
+	
+	
 		
 	var contextUrl = "<c:url value="/" />";
 	mashupMedia.setContextUrl(contextUrl);

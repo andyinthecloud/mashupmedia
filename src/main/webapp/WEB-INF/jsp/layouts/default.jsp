@@ -5,11 +5,18 @@
 <html lang="en">
 <head>
 
-<c:set var="jQueryUIVersion" value="1.9.2"/>
-<c:set var="jQueryVersion" value="1.8.3"/>
+<c:set var="jQueryUIVersion" value="1.10.1"/>
+<c:set var="jQueryVersion" value="1.9.1"/>
+
+
 
 <link type="text/css" href="<c:url value="/jquery-ui/${jQueryUIVersion}/css/smoothness/jquery-ui-${jQueryUIVersion}.custom.css" />" rel="stylesheet" />
 <script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-${jQueryVersion}.min.js" />"></script>
+
+<!-- 
+<script src="http://code.jquery.com/jquery-migrate-1.1.0.js"></script>
+ -->
+ 
 <script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-ui-${jQueryUIVersion}.custom.min.js" />"></script>
 
 <script type="text/javascript" src="<c:url value="/scripts/mashupmedia.jsp" />"></script>
