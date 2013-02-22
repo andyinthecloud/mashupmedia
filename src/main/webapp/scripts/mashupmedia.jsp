@@ -40,7 +40,7 @@ $(document).ready(function() {
 	
 	$.address.change(function(event) {
 		isLoadingContent = false;
-		 
+				 
 		if($("#top-bar-music-player .songs").length > 0) {			
 			closeSongPlaylist();	
 		}
