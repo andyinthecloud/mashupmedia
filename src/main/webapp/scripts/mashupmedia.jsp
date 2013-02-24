@@ -539,4 +539,15 @@ function getURLParameter(name) {
     );  
 }
 
+function fireRelLink(element) {	
+	var rel = $(element).attr("rel");
+	if (rel === undefined) {
+		return;
+	}
+	
+	if (rel.length > 0) {
+		$.address.value(rel); 
+	}
+}
+
 

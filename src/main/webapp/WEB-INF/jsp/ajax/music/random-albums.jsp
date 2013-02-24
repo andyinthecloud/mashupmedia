@@ -1,23 +1,27 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
-    $(document).ready(function() {
+	$(document).ready(function() {
 
-	$("div.albums div.album").hover(function() {
-	    $(this).addClass("highlight");
-	}, function() {
-	    $(this).removeClass("highlight");
+		$("div.albums div.album").hover(function() {
+			$(this).addClass("highlight");
+		}, function() {
+			$(this).removeClass("highlight");
+		});
+
+		$("div.albums div.album a").click(function() {
+			 $.address.value($(this).attr('rel')); 
+		});
+
+		$(window).scroll(function() {
+			if ($("div.random-album-art div.album").length == 0) {
+				return;
+			}
+
+			appendContentsOnScroll();
+		});
+
 	});
-
-	$(window).scroll(function() {
-	    if ($("div.random-album-art div.album").length == 0) {
-		return;
-	    }
-
-	    appendContentsOnScroll();
-	});
-
-    });
 </script>
 
 <c:if test="${showTitle}">
@@ -30,7 +34,10 @@
 <div class="random-album-art albums">
 	<c:forEach items="${albums}" var="album">
 		<div class="album">
-			<a href="javascript:;" rel="address:/address-load-album-${album.id}"> <img src="<c:url value="/app/music/album-art-thumbnail/${album.id}" />" title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />"
+			<a href="javascript:;" rel="address:/address-load-album-${album.id}">
+				<img
+				src="<c:url value="/app/music/album-art-thumbnail/${album.id}" />"
+				title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />"
 				alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 			</a>
 		</div>

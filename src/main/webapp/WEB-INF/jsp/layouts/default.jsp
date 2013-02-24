@@ -7,25 +7,28 @@
 
 <c:set var="jQueryUIVersion" value="1.10.1"/>
 <c:set var="jQueryVersion" value="1.9.1"/>
-
+<c:set var="jQueryAddress" value="1.6"/>
+<c:set var="jPlayer" value="2.2.0"/>
+<c:set var="dataTables" value="1.9.1"/>
 
 
 <link type="text/css" href="<c:url value="/jquery-ui/${jQueryUIVersion}/css/smoothness/jquery-ui-${jQueryUIVersion}.custom.css" />" rel="stylesheet" />
 <script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-${jQueryVersion}.min.js" />"></script>
 
-
+<!-- 
 <script src="http://code.jquery.com/jquery-migrate-1.1.0.js"></script>
-  
+ -->
+   
 <script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-ui-${jQueryUIVersion}.custom.min.js" />"></script>
 
 <script type="text/javascript" src="<c:url value="/scripts/mashupmedia.jsp" />"></script>
-<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.address/1.5/jquery.address-1.5.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.address/${jQueryAddress}/jquery.address-${jQueryAddress}.min.js" />"></script>
 
-<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/2.2.0/jquery.jplayer.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/2.2.0/add-on/jplayer.playlist.min.js" />"></script>
-<link type="text/css" href="<c:url value="/jquery-plugins/jquery.jplayer/2.2.0/skins/pink.flag/jplayer.pink.flag.css" />" rel="stylesheet" />
+<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayer}/jquery.jplayer.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayer}/add-on/jplayer.playlist.min.js" />"></script>
+<link type="text/css" href="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayer}/skins/pink.flag/jplayer.pink.flag.css" />" rel="stylesheet" />
 
-<script type="text/javascript" src="<c:url value="/jquery-plugins/datatables/1.9.1/jquery.dataTables.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/jquery-plugins/datatables/${dataTables}/jquery.dataTables.min.js" />"></script>
 
 
 

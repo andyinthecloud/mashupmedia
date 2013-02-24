@@ -13,7 +13,7 @@
 	    artistId = parseId(artistId, "artist-id");
 	    mashupMedia.appendArtist(artistId);
 	});
-
+	
 	$("ul.items ul.control-menu li.play-album a").click(function() {
 	    var albumId = $(this).closest("li.item").attr("id");
 	    albumId = parseId(albumId, "album-id");
@@ -24,6 +24,10 @@
 	    var albumId = $(this).closest("li.item").attr("id");
 	    albumId = parseId(albumId, "album-id");
 	    mashupMedia.appendAlbum(albumId);
+	});
+
+	$("#albums li div.album a").click(function() {
+		fireRelLink(this);
 	});
 
 	$("#albums li").hover(function() {
