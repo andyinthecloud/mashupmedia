@@ -37,4 +37,6 @@ public interface MusicManager {
 
 	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria);
 
+	public void saveArtist(Artist artist);
+
 }

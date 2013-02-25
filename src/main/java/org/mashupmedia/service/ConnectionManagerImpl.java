@@ -24,6 +24,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.apache.log4j.Logger;
 import org.mashupmedia.comparator.FtpFileComparator;
 import org.mashupmedia.constants.MashUpMediaConstants;
@@ -91,9 +92,12 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(link);
+		
+		BasicHeader header = new BasicHeader("User-Agent", "MyDiscogsClient/1.0 +http://mydiscogsclient.org");
+		httpGet.addHeader(header);
 		try {
 			HttpResponse httpResponse = httpClient.execute(httpGet);
-			HttpEntity httpEntity = httpResponse.getEntity();
+			HttpEntity httpEntity = httpResponse.getEntity();			
 			if (httpEntity != null) {
 				InputStream inputStream = httpEntity.getContent();
 				return inputStream;

@@ -29,6 +29,15 @@ public class Artist implements Serializable {
 	private List<Album> albums;
 	private String indexText;
 	private String indexLetter;
+	private long discogId;
+
+	public long getDiscogId() {
+		return discogId;
+	}
+
+	public void setDiscogId(long discogId) {
+		this.discogId = discogId;
+	}
 
 	public String getIndexText() {
 		return indexText;
@@ -114,10 +123,12 @@ public class Artist implements Serializable {
 		builder.append(folderName);
 		builder.append(", albums=");
 		builder.append(albums);
-		builder.append(", indexWord=");
+		builder.append(", indexText=");
 		builder.append(indexText);
 		builder.append(", indexLetter=");
 		builder.append(indexLetter);
+		builder.append(", discogId=");
+		builder.append(discogId);
 		builder.append("]");
 		return builder.toString();
 	}

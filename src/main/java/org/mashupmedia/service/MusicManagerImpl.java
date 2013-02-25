@@ -162,4 +162,6 @@ public class MusicManagerImpl implements MusicManager {
 		List<MediaItem> mediaItems = musicDao.findSongs(userGroupIds, mediaItemSearchCriteria);
 		return mediaItems;
 	}
+	
+	
 }

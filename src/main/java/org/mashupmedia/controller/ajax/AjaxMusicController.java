@@ -3,6 +3,7 @@ package org.mashupmedia.controller.ajax;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.Album;
@@ -13,6 +14,7 @@ import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.restful.DiscogsWebService;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
@@ -51,6 +53,9 @@ public class AjaxMusicController extends BaseAjaxController {
 
 	@Autowired
 	private AdminManager adminManager;
+	
+	@Autowired
+	private DiscogsWebService discogsWebService;
 
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
 	public String getMusic(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
@@ -81,6 +86,8 @@ public class AjaxMusicController extends BaseAjaxController {
 	@RequestMapping(value = "/artist/{artistId}", method = RequestMethod.GET)
 	public String getArtist(@PathVariable("artistId") Long artistId, Model model) throws Exception {
 		Artist artist = musicManager.getArtist(artistId);
+		String discogsResponse = discogsWebService.getArtistInformation(artist);
+		
 		ArtistPage artistPage = new ArtistPage();
 		artistPage.setArtist(artist);
 		model.addAttribute(artistPage);
