@@ -44,6 +44,15 @@
 			});
 </script>
 
+<link rel="stylesheet" href="<c:url value="/jquery-plugins/nivo-slider/3.2/nivo-slider.css" />" type="text/css" media="screen" />
+<link rel="stylesheet" href="<c:url value="/jquery-plugins/nivo-slider/3.2/themes/dark/dark.css" />" type="text/css" media="screen" />
+<script src="<c:url value="/jquery-plugins/nivo-slider/3.2/jquery.nivo.slider.pack.js" />" type="text/javascript"></script>
+
+<link rel="stylesheet" href="<c:url value="/jquery-plugins/fancybox/2.1.4/jquery.fancybox.css" />" type="text/css" media="screen" />
+<script type="text/javascript" src="<c:url value="/jquery-plugins/fancybox/2.1.4/jquery.fancybox.pack.js" />"></script>
+
+
+
 <title><tiles:getAsString name="title" /></title>
 
 </head>

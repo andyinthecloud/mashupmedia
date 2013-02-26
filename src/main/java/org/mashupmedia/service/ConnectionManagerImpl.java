@@ -93,7 +93,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(link);
 		
-		BasicHeader header = new BasicHeader("User-Agent", "MyDiscogsClient/1.0 +http://mydiscogsclient.org");
+		BasicHeader header = new BasicHeader("User-Agent", "Mashup Media/1.0 +https://gloop.ath.cx/mashupmedia");
 		httpGet.addHeader(header);
 		try {
 			HttpResponse httpResponse = httpClient.execute(httpGet);

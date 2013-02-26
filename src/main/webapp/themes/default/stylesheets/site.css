@@ -660,3 +660,40 @@ input.cancel {
 	margin-left: 30px;
 }
 
+div.information{
+	margin: 10px 0;	
+}
+
+
+div.information div.images img{
+	float: left;
+	height: 150px;
+	max-height: 150px;
+	width: auto;
+	margin-right: 10px;
+	margin-top: 10px;
+}
+
+.slider-wrapper {
+	width: 170px !important;
+	height: 170px !important;
+}
+
+
+
+#slider {
+	margin-left: 10px;
+	margin-top: 10px;
+	width: auto;
+	height: 150px;	
+}
+
+#slider .nivo-directionNav {
+	display: none;
+}
+
+#slider .nivo-controlNav {
+	text-align: center;
+}
+
+
