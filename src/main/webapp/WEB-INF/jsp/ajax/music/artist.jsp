@@ -13,7 +13,7 @@
 	    artistId = parseId(artistId, "artist-id");
 	    mashupMedia.appendArtist(artistId);
 	});
-	
+
 	$("ul.items ul.control-menu li.play-album a").click(function() {
 	    var albumId = $(this).closest("li.item").attr("id");
 	    albumId = parseId(albumId, "album-id");
@@ -27,7 +27,7 @@
 	});
 
 	$("#albums li div.album a").click(function() {
-		fireRelLink(this);
+	    fireRelLink(this);
 	});
 
 	$("#albums li").hover(function() {
@@ -46,6 +46,19 @@
 		<li><a href="javascript:;" id="add-all"><spring:message code="action.add-all" /></a></li>
 	</c:if>
 </ul>
+
+<div class="information">
+	<div class="profile">
+		<c:out value="${artistPage.remoteMediaMeta.profile}" escapeXml="false" />
+	</div>
+
+	<div class="images">
+		<c:forEach items="${artistPage.remoteMediaMeta.remoteImages}" var="remoteImage">
+			<img src="${remoteImage.thumbUrl}" width="150" height="auto"/>
+		</c:forEach>
+	</div>
+
+</div>
 
 
 <ul id="albums" class="items">

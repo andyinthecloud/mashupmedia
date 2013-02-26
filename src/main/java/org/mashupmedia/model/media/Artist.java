@@ -29,14 +29,14 @@ public class Artist implements Serializable {
 	private List<Album> albums;
 	private String indexText;
 	private String indexLetter;
-	private long discogId;
+	private String remoteId;
 
-	public long getDiscogId() {
-		return discogId;
+	public String getRemoteId() {
+		return remoteId;
 	}
 
-	public void setDiscogId(long discogId) {
-		this.discogId = discogId;
+	public void setRemoteId(String remoteId) {
+		this.remoteId = remoteId;
 	}
 
 	public String getIndexText() {
@@ -127,8 +127,8 @@ public class Artist implements Serializable {
 		builder.append(indexText);
 		builder.append(", indexLetter=");
 		builder.append(indexLetter);
-		builder.append(", discogId=");
-		builder.append(discogId);
+		builder.append(", remoteId=");
+		builder.append(remoteId);
 		builder.append("]");
 		return builder.toString();
 	}

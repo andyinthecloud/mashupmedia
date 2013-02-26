@@ -60,11 +60,13 @@ public class MusicManagerImpl implements MusicManager {
 		return artists;
 	}
 
+	@Override
 	public void saveAlbum(Album album) {
 		musicDao.saveAlbum(album);
 	}
 
-	protected void saveArtist(Artist artist) {
+	@Override
+	public void saveArtist(Artist artist) {
 		musicDao.saveArtist(artist);
 
 	}

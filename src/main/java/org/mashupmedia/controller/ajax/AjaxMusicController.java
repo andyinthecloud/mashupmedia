@@ -3,7 +3,6 @@ package org.mashupmedia.controller.ajax;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.Album;
@@ -27,6 +26,7 @@ import org.mashupmedia.web.page.AlbumPage;
 import org.mashupmedia.web.page.AlbumsPage;
 import org.mashupmedia.web.page.ArtistPage;
 import org.mashupmedia.web.page.ArtistsPage;
+import org.mashupmedia.web.remote.RemoteMediaMeta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,19 +53,19 @@ public class AjaxMusicController extends BaseAjaxController {
 
 	@Autowired
 	private AdminManager adminManager;
-	
+
 	@Autowired
 	private DiscogsWebService discogsWebService;
 
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
 	public String getMusic(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
 		List<Album> albums = musicManager.getRandomAlbums(TOTAL_RANDOM_ALBUMS);
-		
+
 		boolean isShowTitle = true;
 		if (isAppend != null && isAppend) {
 			isShowTitle = false;
 		}
-		
+
 		model.addAttribute("isShowTitle", isShowTitle);
 		model.addAttribute("albums", albums);
 		return "ajax/music/random-albums";
@@ -86,10 +86,12 @@ public class AjaxMusicController extends BaseAjaxController {
 	@RequestMapping(value = "/artist/{artistId}", method = RequestMethod.GET)
 	public String getArtist(@PathVariable("artistId") Long artistId, Model model) throws Exception {
 		Artist artist = musicManager.getArtist(artistId);
-		String discogsResponse = discogsWebService.getArtistInformation(artist);
-		
+		RemoteMediaMeta remoteMediaMeta = discogsWebService.getArtistInformation(artist);
+
 		ArtistPage artistPage = new ArtistPage();
 		artistPage.setArtist(artist);
+		artistPage.setRemoteMediaMeta(remoteMediaMeta);
+
 		model.addAttribute(artistPage);
 		return "ajax/music/artist";
 	}
@@ -132,15 +134,15 @@ public class AjaxMusicController extends BaseAjaxController {
 		}
 
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		
+
 		PlaylistMediaItem playlistMediaItem = new PlaylistMediaItem();
 		playlistMediaItem.setPlaylist(playlist);
-		playlistMediaItem.setMediaItem(mediaItem);	
-		
+		playlistMediaItem.setMediaItem(mediaItem);
+
 		MediaType mediaType = mediaItem.getMediaType();
 		if (mediaType == MediaType.SONG) {
 			Song song = (Song) mediaItem;
-			playlist = updatePlayingSong(playlist, song);						
+			playlist = updatePlayingSong(playlist, song);
 			String format = WebHelper.getContentType(mediaItem.getFormat(), FormatContentType.JPLAYER);
 			model.addAttribute("format", format);
 			model.addAttribute("song", song);
@@ -165,18 +167,18 @@ public class AjaxMusicController extends BaseAjaxController {
 
 	private void playRelativeSong(Model model, int relativeOffset) {
 		User user = SecurityHelper.getLoggedInUser();
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);		
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, relativeOffset);
 		if (playlistMediaItem.getId() > 0) {
 			playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-			
+
 		}
-				
+
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, playlistMediaItem.getMediaItem());
 
 	}
-	
+
 	private Playlist updatePlayingSong(Playlist playlist, MediaItem mediaItem) {
 
 		long mediaItemId = mediaItem.getId();
@@ -189,7 +191,7 @@ public class AjaxMusicController extends BaseAjaxController {
 		if (playlistMediaItems == null) {
 			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 		}
-		
+
 		User user = SecurityHelper.getLoggedInUser();
 
 		boolean isFound = false;
@@ -201,12 +203,11 @@ public class AjaxMusicController extends BaseAjaxController {
 				isPlaying = true;
 			}
 			playlistMediaItem.setPlaying(isPlaying);
-			
+
 			if (isPlaying) {
 				playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
 			}
-			
-			
+
 		}
 
 		if (!isFound) {
