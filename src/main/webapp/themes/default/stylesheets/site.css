@@ -667,33 +667,10 @@ div.information{
 
 div.information div.images img{
 	float: left;
-	height: 150px;
-	max-height: 150px;
+	height: 90px;
+	max-height: 90px;
 	width: auto;
 	margin-right: 10px;
 	margin-top: 10px;
 }
-
-.slider-wrapper {
-	width: 170px !important;
-	height: 170px !important;
-}
-
-
-
-#slider {
-	margin-left: 10px;
-	margin-top: 10px;
-	width: auto;
-	height: 150px;	
-}
-
-#slider .nivo-directionNav {
-	display: none;
-}
-
-#slider .nivo-controlNav {
-	text-align: center;
-}
-
 

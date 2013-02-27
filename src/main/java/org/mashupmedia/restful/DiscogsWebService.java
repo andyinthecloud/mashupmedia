@@ -31,15 +31,8 @@ public class DiscogsWebService {
 	
 	private Logger logger = Logger.getLogger(getClass());
 	
-	
-	
-	private Map<String, RemoteMediaMeta> remoteMediaCache = new HashMap<String, RemoteMediaMeta>();
-	
-	
-	
+	private Map<String, RemoteMediaMeta> remoteMediaCache = new HashMap<String, RemoteMediaMeta>();	
 	public static int DEFAULT_CACHE_SECONDS = 86400;
-
-	
 
 	@Autowired
 	private MusicManager musicManager;
@@ -98,8 +91,7 @@ public class DiscogsWebService {
 			for (int i = 0; i < jsonImages.size(); i++) {
 				JSONObject jsonImage = jsonImages.getJSONObject(i);
 				RemoteImage remoteImage = new RemoteImage();
-				String imageUrl = StringUtils.trimToEmpty(jsonImage.getString("resource_url"));
-//				imageUrl = "http://s.pixogs.com/image/" + imageUrl.replaceFirst(".*/", "");				
+				String imageUrl = convertImageToProxyUrl(jsonImage.getString("resource_url"));
 				remoteImage.setImageUrl(imageUrl);
 
 				int width = jsonImage.getInt("width");
@@ -108,7 +100,7 @@ public class DiscogsWebService {
 				int height = jsonImage.getInt("height");
 				remoteImage.setHeight(height);
 				
-				String thumbUrl = jsonImage.getString("uri150");
+				String thumbUrl = convertImageToProxyUrl(jsonImage.getString("uri150"));
 				remoteImage.setThumbUrl(thumbUrl);
 				
 				remoteImages.add(remoteImage);
@@ -121,6 +113,12 @@ public class DiscogsWebService {
 		remoteMediaCache.put(cacheArtistKey, remoteMediaMeta);
 
 		return remoteMediaMeta;
+	}
+	
+	protected String convertImageToProxyUrl(String url) {
+		url = StringUtils.trimToEmpty(url);
+		url = "/app/proxy/discogs-image/" + url.replaceFirst(".*/", "");
+		return url;		
 	}
 
 
