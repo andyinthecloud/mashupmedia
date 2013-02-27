@@ -99,7 +99,7 @@ public class DiscogsWebService {
 				JSONObject jsonImage = jsonImages.getJSONObject(i);
 				RemoteImage remoteImage = new RemoteImage();
 				String imageUrl = StringUtils.trimToEmpty(jsonImage.getString("resource_url"));
-				imageUrl = "http://s.pixogs.com/image/" + imageUrl.replaceFirst(".*/", "");				
+//				imageUrl = "http://s.pixogs.com/image/" + imageUrl.replaceFirst(".*/", "");				
 				remoteImage.setImageUrl(imageUrl);
 
 				int width = jsonImage.getInt("width");
