@@ -38,8 +38,57 @@
 
 	$("div.information div.images .fancybox").fancybox();
 
+	$("div.information div.discogs a.incorrect").click(function() {
+	    $("#discogs-dialog").dialog();
+	    $("#discogs-dialog input[type=text]").blur();
+	});
+	
+
+	var artistNameLabel = "<spring:message code="music.artists.discogs.search" />"; 
+	    
+	
+	$("#discogs-dialog input[type=text]").blur(function() {
+	    var artistName = $.trim($(this).val());
+	    if (artistName.length == 0) {
+			$(this).val(artistNameLabel);
+	    }
+	});
+
+	
+	$("#discogs-dialog input[type=text]").focus(function() {
+	    var artistName = $.trim($(this).val());
+	    if (artistName == artistNameLabel) {
+			$(this).val("");
+	    }
+	});
+	
+
+	$("#discogs-dialog input[type=button]").click(function() {
+	    var searchArtist = $("#discogs-dialog input[type=text]").val();
+	    if (searchArtist == artistNameLabel) {
+			return;
+	    }	    
+	    
+	    $.post("<c:url value="/app/ajax/discogs/search-artist" /> ", { name: searchArtist}).done(function(data) {
+	    	console.log(data);
+	    });
+	});
+
     });
 </script>
+
+<div id="discogs-dialog" class="dialog" title="Search Discogs for artist information">
+	<p>
+		<input type="text" name="name" class="search-field" value="<spring:message code="music.artists.discogs.search" />" /><input type="button" value="Search" />
+	<ul class="search-results">
+
+
+	</ul>
+
+
+	</p>
+</div>
+
 
 <h1>${artistPage.artist.name}</h1>
 <ul class="control-menu" id="artist-id-<c:out value="${artistPage.artist.id}" />">
@@ -60,7 +109,11 @@
 		</c:forEach>
 	</div>
 
+	<div class="discogs">
+		<spring:message code="music.artists.discogs" />
+		<img src="<c:url value="/images/discogs.png" />" />. <a class="incorrect" href="javascript:;"><spring:message code="music.artists.discogs.correct" /></a>
 
+	</div>
 </div>
 
 

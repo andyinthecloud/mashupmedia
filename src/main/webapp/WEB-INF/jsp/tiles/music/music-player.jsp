@@ -85,11 +85,6 @@
 	 */
 	 
 	
-	
-	$("#top-bar-music-player a").click(function() {
-	    fireRelLink(this);
-	});
-
     });
 </script>
 

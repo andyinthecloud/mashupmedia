@@ -552,8 +552,21 @@ ul.index-letters li {
 	padding: 0 5px;
 }
 
-.hide {
+.hide, div.dialog{
 	display: none;
+}
+
+div.ui-dialog {
+	font-size: 70%;
+	z-index: 1000;
+}
+
+div.ui-dialog input.search-field{
+	border-color: #383838;
+	border: 1px solid;
+	background-color: #E8E8E8;
+	width: 70%;
+	margin-right: 10px;
 }
 
 ul.items {
@@ -673,4 +686,19 @@ div.information div.images img{
 	margin-right: 10px;
 	margin-top: 10px;
 }
+
+div.information div.discogs{
+	padding-top: 10px;
+	clear: both; 		
+}
+
+div.information div.discogs img{
+	vertical-align: middle;
+	background-color: white;
+	border: 3px solid;	
+}
+
+
+
+
 

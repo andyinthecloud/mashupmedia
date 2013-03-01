@@ -13,7 +13,7 @@ import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
-import org.mashupmedia.restful.DiscogsWebService;
+import org.mashupmedia.restful.DiscogsWebServiceImpl;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
@@ -55,7 +55,7 @@ public class AjaxMusicController extends BaseAjaxController {
 	private AdminManager adminManager;
 
 	@Autowired
-	private DiscogsWebService discogsWebService;
+	private DiscogsWebServiceImpl discogsWebService;
 
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
 	public String getMusic(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
