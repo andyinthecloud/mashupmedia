@@ -51,16 +51,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ConnectionManagerImpl implements ConnectionManager {
 	private Logger logger = Logger.getLogger(getClass());
-	
+
 	@Autowired
 	private ConfigurationManager configurationManager;
 
 	@Autowired
 	private MediaManager mediaManager;
-	
+
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
-	
+
 	protected boolean isProxyEnabled() {
 		boolean isProxyEnabled = BooleanUtils.toBoolean(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
 		return isProxyEnabled;
@@ -90,41 +90,47 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 	public InputStream connect(String link) {
 
+		String proxyEnabledValue = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
+		boolean isProxyEnabled = BooleanUtils.toBoolean(proxyEnabledValue);
+
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(link);
-		
+
 		BasicHeader header = new BasicHeader("User-Agent", "Mashup Media/1.0 +http://www.mashupmedia.org");
 		httpGet.addHeader(header);
-		try {
-			HttpResponse httpResponse = httpClient.execute(httpGet);
-			HttpEntity httpEntity = httpResponse.getEntity();			
-			if (httpEntity != null) {
-				InputStream inputStream = httpEntity.getContent();
-				return inputStream;
+
+		if (!isProxyEnabled) {
+			try {
+				HttpResponse httpResponse = httpClient.execute(httpGet);
+				HttpEntity httpEntity = httpResponse.getEntity();
+				if (httpEntity != null) {
+					InputStream inputStream = httpEntity.getContent();
+					return inputStream;
+				}
+			} catch (Exception e) {
+				logger.error("Unable to connect to host: " + link + ". Trying proxy...");
 			}
-		} catch (Exception e) {
-			logger.error("Unable to connect to host: " + link + ". Trying proxy...");
-		}
+		} else {
+			httpClient.getCredentialsProvider().setCredentials(new AuthScope(getProxyUrl(), getProxyPort()),
+					new UsernamePasswordCredentials(getProxyUsername(), getProxyPassword()));
 
-		httpClient.getCredentialsProvider().setCredentials(new AuthScope(getProxyUrl(), getProxyPort()),
-				new UsernamePasswordCredentials(getProxyUsername(), getProxyPassword()));
+			HttpHost proxy = new HttpHost(getProxyUrl(), getProxyPort());
+			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+			httpGet = new HttpGet(link);
 
-		HttpHost proxy = new HttpHost(getProxyUrl(), getProxyPort());
-		httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-		httpGet = new HttpGet(link);
+			try {
+				HttpResponse httpResponse = httpClient.execute(httpGet);
+				HttpEntity httpEntity = httpResponse.getEntity();
+				if (httpEntity != null) {
+					InputStream inputStream = httpEntity.getContent();
+					return inputStream;
+				}
 
-		try {
-			HttpResponse httpResponse = httpClient.execute(httpGet);
-			HttpEntity httpEntity = httpResponse.getEntity();
-			if (httpEntity != null) {
-				InputStream inputStream = httpEntity.getContent();
-				return inputStream;
+			} catch (Exception e) {
+				logger.error("Unable to connect to host: " + link + " through proxy.", e);
 			}
 
-		} catch (Exception e) {
-			logger.error("Unable to connect to host: " + link + " through proxy.", e);
 		}
-
 		return null;
 
 	}
@@ -212,8 +218,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		return songs;
 	}
 
-	protected void processFtpSongs(Date date, FTPClient ftpClient, List<Song> songs, MusicLibrary musicLibrary, String artistName, List<String> albumNameParts,
-			int trackNumber) {
+	protected void processFtpSongs(Date date, FTPClient ftpClient, List<Song> songs, MusicLibrary musicLibrary, String artistName,
+			List<String> albumNameParts, int trackNumber) {
 		try {
 			FTPFile[] ftpFiles = ftpClient.list();
 			Arrays.sort(ftpFiles, new FtpFileComparator());
@@ -248,17 +254,18 @@ public class ConnectionManagerImpl implements ConnectionManager {
 					Artist artist = new Artist();
 					artist.setName(artistName);
 					artist.setFolderName(artistName);
-					
+
 					Album album = new Album();
 					String albumName = StringHelper.getAlbumName(albumNameParts);
 					album.setName(albumName);
 					album.setFolderName(albumName);
 					album.setArtist(artist);
 
-//					if (trackNumber == 1) {
-//						AlbumArtImage albumArtImage = getAlbumArtImage(ftpClient, musicLibrary, album);
-//						album.setAlbumArtImage(albumArtImage);
-//					}
+					// if (trackNumber == 1) {
+					// AlbumArtImage albumArtImage = getAlbumArtImage(ftpClient,
+					// musicLibrary, album);
+					// album.setAlbumArtImage(albumArtImage);
+					// }
 
 					Song song = new Song();
 					song.setUpdatedOn(date);
@@ -279,8 +286,6 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		}
 	}
 
-
-
 	@Override
 	public byte[] getAlbumArtImageBytes(AlbumArtImage image, ImageType imageType) throws Exception {
 		if (image == null) {
@@ -288,11 +293,11 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		}
 
 		File file = null;
-		if (imageType  == ImageType.THUMBNAIL) {
+		if (imageType == ImageType.THUMBNAIL) {
 			file = new File(image.getThumbnailUrl());
 		} else {
 			file = new File(image.getUrl());
-		}		
+		}
 		if (!file.exists()) {
 			return null;
 		}
@@ -301,8 +306,6 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		byte[] bytes = IOUtils.toByteArray(fileInputStream);
 		return bytes;
 	}
-
-
 
 	@Override
 	public File getMediaItemStreamFile(long mediaItemId) {
@@ -331,8 +334,6 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		LocationType locationType = LibraryHelper.getLocationType(location);
 		return locationType;
 	}
-
-
 
 	@Override
 	public void startMediaItemStream(long mediaItemId, File file) {

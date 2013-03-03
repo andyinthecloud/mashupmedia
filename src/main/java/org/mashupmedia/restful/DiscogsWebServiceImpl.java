@@ -103,34 +103,42 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 			}
 
 			remoteMediaMeta = new RemoteMediaMeta();
+			remoteMediaMeta.setId(discogsArtistId);
+			String name = StringUtils.trimToEmpty(jsonArtist.getString("name"));			
+			remoteMediaMeta.setName(name);
 			String profile = StringUtils.trimToEmpty(jsonArtist.getString(profileKey));
 			profile = profile.replaceAll("\\[.=", "");
 			profile = profile.replaceAll("\\]", "");
 			profile = profile.replaceAll("(\r\n|\n\r|\r|\n)", "<br />");
 			remoteMediaMeta.setProfile(profile);
-
-			JSONArray jsonImages = jsonArtist.getJSONArray("images");
+			
 			List<RemoteImage> remoteImages = new ArrayList<RemoteImage>();
+			String imagesKey = "images";
+			if (jsonArtist.has(imagesKey)) {
+				JSONArray jsonImages = jsonArtist.getJSONArray(imagesKey);
 
-			if (jsonImages != null) {
-				for (int i = 0; i < jsonImages.size(); i++) {
-					JSONObject jsonImage = jsonImages.getJSONObject(i);
-					RemoteImage remoteImage = new RemoteImage();
-					String imageUrl = convertImageToProxyUrl(jsonImage.getString("resource_url"));
-					remoteImage.setImageUrl(imageUrl);
+				if (jsonImages != null) {
+					for (int i = 0; i < jsonImages.size(); i++) {
+						JSONObject jsonImage = jsonImages.getJSONObject(i);
+						RemoteImage remoteImage = new RemoteImage();
+						String imageUrl = convertImageToProxyUrl(jsonImage.getString("resource_url"));
+						remoteImage.setImageUrl(imageUrl);
 
-					int width = jsonImage.getInt("width");
-					remoteImage.setWidth(width);
+						int width = jsonImage.getInt("width");
+						remoteImage.setWidth(width);
 
-					int height = jsonImage.getInt("height");
-					remoteImage.setHeight(height);
+						int height = jsonImage.getInt("height");
+						remoteImage.setHeight(height);
 
-					String thumbUrl = convertImageToProxyUrl(jsonImage.getString("uri150"));
-					remoteImage.setThumbUrl(thumbUrl);
+						String thumbUrl = convertImageToProxyUrl(jsonImage.getString("uri150"));
+						remoteImage.setThumbUrl(thumbUrl);
 
-					remoteImages.add(remoteImage);
-				}
+						remoteImages.add(remoteImage);
+					}
+				}				
 			}
+
+
 
 			inputStream.close();
 
@@ -193,7 +201,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 			JSONObject jsonArtist = jsonArray.getJSONObject(i);
 			logger.debug("Found jsonObject: " + jsonArtist.toString(2));
 			String discogsArtistId = jsonArtist.getString("id");
-			if (!discogsArtistId.contains(discogsArtistId)) {
+			if (!discogsArtistIds.contains(discogsArtistId)) {
 				discogsArtistIds.add(discogsArtistId);
 				if (discogsArtistIds.size() >= numberOfArtistIds) {
 					break;

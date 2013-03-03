@@ -34,6 +34,7 @@ import org.mashupmedia.web.remote.RemoteMediaMeta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,6 +60,7 @@ public class AjaxDiscogsController {
 
 			@Override
 			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+				response.setContentType(getContentType());
 				response.getWriter().print(jsonArray.toString());
 			}
 
@@ -85,6 +87,7 @@ public class AjaxDiscogsController {
 
 			@Override
 			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+				response.setContentType(getContentType());
 				response.getWriter().print(jsonObject.toString());
 			}
 
@@ -96,5 +99,31 @@ public class AjaxDiscogsController {
 
 		return modelAndView;
 	}
+	
+	@RequestMapping(value = "/discogs-artist-id/{discogsArtistId}", method = RequestMethod.GET)
+	public ModelAndView handleGetDiscogsId(@PathVariable String discogsArtistId, Model model)
+			throws IOException {
+		
+		RemoteMediaMeta remoteMediaMeta = discogsWebService.getDiscogsArtistMeta(discogsArtistId);
+		
+		final JSONObject jsonObject = JSONObject.fromObject(remoteMediaMeta);
+		
+		ModelAndView modelAndView = new ModelAndView(new View() {
+
+			@Override
+			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+				response.setContentType(getContentType());
+				response.getWriter().print(jsonObject.toString());
+			}
+
+			@Override
+			public String getContentType() {
+				return "application/json; charset=utf-8";
+			}
+		});
+
+		return modelAndView;
+	}
+
 
 }

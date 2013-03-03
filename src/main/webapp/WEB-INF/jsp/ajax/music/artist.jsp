@@ -69,18 +69,35 @@
 			return;
 	    }	    
 	    
-	    $.post("<c:url value="/app/ajax/discogs/search-artist" /> ", { name: searchArtist}).done(function(data) {
-	    	console.log(data);
+	    $.post("<c:url value="/app/ajax/discogs/search-artist" />", { name: searchArtist}).done(function(data) {
+	   		$.each(data, function(index) {
+	    		var searchResult = "<li><a id=\"" + data[index].id + "\" href=\"javascript:;\">" + data[index].name + "</a></li>"
+	    		$("#discogs-dialog ul.search-results").append(searchResult);	        
+			});	    	
 	    });
 	});
 
-    });
+	$("#discogs-dialog ul.search-results li a").click(function() {
+		var discogsId = $(this).attr("id");
+	    var artistId = $(this).closest("ul").attr("id");
+	    artistId = parseId(albumId, "search-results-artist-id");
+	    $.post("<c:url value="/app/ajax/discogs/save-artist" />", { discogsId: discogsId, artistId: artistId}).done(function(data) {
+		    $.get("<c:url value="/app/ajax/discogs/discogs-artist-id/" />/" + discogsId).done(function(data) {
+				logger.console(data);
+		    });	    		    		    	
+		});	    	
+		
+		
+	});
+
+	
+	});
 </script>
 
 <div id="discogs-dialog" class="dialog" title="Search Discogs for artist information">
 	<p>
 		<input type="text" name="name" class="search-field" value="<spring:message code="music.artists.discogs.search" />" /><input type="button" value="Search" />
-	<ul class="search-results">
+	<ul class="search-results" id="search-results-artist-id-${artistPage.artist.id}">
 
 
 	</ul>
