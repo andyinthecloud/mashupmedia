@@ -1,17 +1,17 @@
 package org.mashupmedia.web.page;
 
 import org.mashupmedia.model.media.Artist;
-import org.mashupmedia.web.remote.RemoteMediaMeta;
+import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 
 public class ArtistPage {
 	private Artist artist;
-	private RemoteMediaMeta remoteMediaMeta;
+	private RemoteMediaMetaItem remoteMediaMeta;
 
-	public RemoteMediaMeta getRemoteMediaMeta() {
+	public RemoteMediaMetaItem getRemoteMediaMeta() {
 		return remoteMediaMeta;
 	}
 
-	public void setRemoteMediaMeta(RemoteMediaMeta remoteMediaMeta) {
+	public void setRemoteMediaMeta(RemoteMediaMetaItem remoteMediaMeta) {
 		this.remoteMediaMeta = remoteMediaMeta;
 	}
 

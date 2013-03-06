@@ -26,7 +26,7 @@ import org.mashupmedia.web.page.AlbumPage;
 import org.mashupmedia.web.page.AlbumsPage;
 import org.mashupmedia.web.page.ArtistPage;
 import org.mashupmedia.web.page.ArtistsPage;
-import org.mashupmedia.web.remote.RemoteMediaMeta;
+import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -86,7 +86,7 @@ public class AjaxMusicController extends BaseAjaxController {
 	@RequestMapping(value = "/artist/{artistId}", method = RequestMethod.GET)
 	public String getArtist(@PathVariable("artistId") Long artistId, Model model) throws Exception {
 		Artist artist = musicManager.getArtist(artistId);
-		RemoteMediaMeta remoteMediaMeta = discogsWebService.getArtistInformation(artist);
+		RemoteMediaMetaItem remoteMediaMeta = discogsWebService.getArtistInformation(artist);
 
 		ArtistPage artistPage = new ArtistPage();
 		artistPage.setArtist(artist);

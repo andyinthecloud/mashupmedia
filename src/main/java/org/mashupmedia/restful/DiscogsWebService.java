@@ -21,14 +21,14 @@ import java.io.IOException;
 import java.util.List;
 
 import org.mashupmedia.model.media.Artist;
-import org.mashupmedia.web.remote.RemoteMediaMeta;
+import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 
 public interface DiscogsWebService {
 
-	public RemoteMediaMeta getArtistInformation(Artist artist) throws IOException;
+	public RemoteMediaMetaItem getArtistInformation(Artist artist) throws IOException;
 
-	public List<RemoteMediaMeta> searchArtist(String artistName) throws IOException;
+	public List<RemoteMediaMetaItem> searchArtist(String artistName) throws IOException;
 
-	public RemoteMediaMeta getDiscogsArtistMeta(String discogsArtistId) throws IOException;
+	public RemoteMediaMetaItem getDiscogsArtistMeta(String discogsArtistId) throws IOException;
 
 }

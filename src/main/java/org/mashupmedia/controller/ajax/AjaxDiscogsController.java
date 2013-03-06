@@ -30,7 +30,7 @@ import net.sf.json.JSONObject;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.restful.DiscogsWebService;
 import org.mashupmedia.service.MusicManager;
-import org.mashupmedia.web.remote.RemoteMediaMeta;
+import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,7 +53,7 @@ public class AjaxDiscogsController {
 
 	@RequestMapping(value = "/search-artist", method = RequestMethod.POST)
 	public ModelAndView handleSearchArtists(@RequestParam("name") String name, Model model) throws IOException {
-		List<RemoteMediaMeta> remoteMediaMetas = discogsWebService.searchArtist(name);
+		List<RemoteMediaMetaItem> remoteMediaMetas = discogsWebService.searchArtist(name);
 		final JSONArray jsonArray = JSONArray.fromObject(remoteMediaMetas);
 
 		ModelAndView modelAndView = new ModelAndView(new View() {
@@ -80,7 +80,7 @@ public class AjaxDiscogsController {
 		artist.setRemoteId(discogsId);
 		musicManager.saveArtist(artist);
 		
-		RemoteMediaMeta remoteMediaMeta = discogsWebService.getDiscogsArtistMeta(discogsId);
+		RemoteMediaMetaItem remoteMediaMeta = discogsWebService.getDiscogsArtistMeta(discogsId);
 		final JSONObject jsonObject = JSONObject.fromObject(remoteMediaMeta);
 		
 		ModelAndView modelAndView = new ModelAndView(new View() {
@@ -104,7 +104,7 @@ public class AjaxDiscogsController {
 	public ModelAndView handleGetDiscogsId(@PathVariable String discogsArtistId, Model model)
 			throws IOException {
 		
-		RemoteMediaMeta remoteMediaMeta = discogsWebService.getDiscogsArtistMeta(discogsArtistId);
+		RemoteMediaMetaItem remoteMediaMeta = discogsWebService.getDiscogsArtistMeta(discogsArtistId);
 		
 		final JSONObject jsonObject = JSONObject.fromObject(remoteMediaMeta);
 		

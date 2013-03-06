@@ -20,7 +20,7 @@ import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.StringHelper.Encoding;
 import org.mashupmedia.web.remote.RemoteImage;
-import org.mashupmedia.web.remote.RemoteMediaMeta;
+import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriUtils;
@@ -31,7 +31,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 
 	private Logger logger = Logger.getLogger(getClass());
 
-	private Map<String, RemoteMediaMeta> remoteMediaCache = new HashMap<String, RemoteMediaMeta>();
+	private Map<String, RemoteMediaMetaItem> remoteMediaCache = new HashMap<String, RemoteMediaMetaItem>();
 	public static int DEFAULT_CACHE_SECONDS = 86400;
 
 	@Autowired
@@ -43,24 +43,28 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 	private ConnectionManager connectionManager;
 
 	@Override
-	public RemoteMediaMeta getArtistInformation(Artist artist) throws IOException {
+	public RemoteMediaMetaItem getArtistInformation(Artist artist) throws IOException {
 
 		if (artist == null) {
 			return null;
 		}
 
 		String discogsArtistId = getDiscogArtistId(artist, true);
-		RemoteMediaMeta remoteMediaMeta = getDiscogsArtistMeta(discogsArtistId);
+		RemoteMediaMetaItem remoteMediaMeta = getDiscogsArtistMeta(discogsArtistId);
 		artist.setRemoteId(discogsArtistId);
 		musicManager.saveArtist(artist);
 		return remoteMediaMeta;
 	}
 
 	@Override
-	public RemoteMediaMeta getDiscogsArtistMeta(String discogsArtistId) throws IOException {
-		List<String> discogsArtistIds = new ArrayList<String>();
-		discogsArtistIds.add(discogsArtistId);
-		List<RemoteMediaMeta> remoteMediaMetaItems = getDiscogsArtistMetaItems(discogsArtistIds);
+	public RemoteMediaMetaItem getDiscogsArtistMeta(String discogsArtistId) throws IOException {
+		List<RemoteMediaMetaItem> remoteMediaMetaItems = new ArrayList<RemoteMediaMetaItem>();
+		
+		RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
+		remoteMediaMeta.setId(discogsArtistId);
+		remoteMediaMetaItems.add(remoteMediaMeta);
+		
+		populateRemoteMediaMetaItems(remoteMediaMetaItems);
 		if (remoteMediaMetaItems == null || remoteMediaMetaItems.isEmpty()) {
 			return null;
 		}
@@ -68,26 +72,30 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 		return remoteMediaMetaItems.get(0);
 	}
 
-	protected List<RemoteMediaMeta> getDiscogsArtistMetaItems(List<String> discogsArtistIds) throws IOException {
+	protected void populateRemoteMediaMetaItems(List<RemoteMediaMetaItem> remoteMediaMetaItems) throws IOException {
 
-		List<RemoteMediaMeta> remoteMediaMetaItems = new ArrayList<RemoteMediaMeta>();
+//		List<RemoteMediaMetaItem> remoteMediaMetaItems = new ArrayList<RemoteMediaMetaItem>();
 
-		for (String discogsArtistId : discogsArtistIds) {
+		for (int i = 0; i < remoteMediaMetaItems.size(); i++) {
+			RemoteMediaMetaItem remoteMediaMetaItem = remoteMediaMetaItems.get(i);
+			String discogsArtistId = remoteMediaMetaItem.getId();
+			
 			if (StringUtils.isBlank(discogsArtistId)) {
 				continue;
 			}
 
 			String cacheArtistKey = PREPEND_CACHE_KEY_ARTIST + discogsArtistId;
 			Date date = new Date();
-			RemoteMediaMeta remoteMediaMeta = remoteMediaCache.get(cacheArtistKey);
-			if (remoteMediaMeta != null) {
-				long seconds = (date.getTime() - remoteMediaMeta.getDate().getTime()) / 1000;
+			RemoteMediaMetaItem cachedRemoteMediaMetaItem = remoteMediaCache.get(cacheArtistKey);
+			if (cachedRemoteMediaMetaItem != null) {
+				long seconds = (date.getTime() - cachedRemoteMediaMetaItem.getDate().getTime()) / 1000;
 				if (DEFAULT_CACHE_SECONDS > seconds) {
-					remoteMediaMetaItems.add(remoteMediaMeta);
+//					remoteMediaMetaItems.add(cachedRemoteMediaMetaItem);
+					remoteMediaMetaItems.set(i, cachedRemoteMediaMetaItem);
 					continue;
 				}
 
-				remoteMediaCache.remove(remoteMediaMeta);
+				remoteMediaCache.remove(cachedRemoteMediaMetaItem);
 
 			}
 
@@ -97,20 +105,25 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 			String jsonArtistText = IOUtils.toString(inputStream, Encoding.UTF8.getEncodingString());
 			JSONObject jsonArtist = JSONObject.fromObject(jsonArtistText);
 
-			String profileKey = "profile";
-			if (!jsonArtist.containsKey(profileKey)) {
-				continue;
+			if (StringUtils.isBlank(remoteMediaMetaItem.getName())) {
+				String name = StringUtils.trimToEmpty(jsonArtist.getString("name"));			
+				remoteMediaMetaItem.setName(name);				
 			}
 
-			remoteMediaMeta = new RemoteMediaMeta();
-			remoteMediaMeta.setId(discogsArtistId);
-			String name = StringUtils.trimToEmpty(jsonArtist.getString("name"));			
-			remoteMediaMeta.setName(name);
-			String profile = StringUtils.trimToEmpty(jsonArtist.getString(profileKey));
-			profile = profile.replaceAll("\\[.=", "");
-			profile = profile.replaceAll("\\]", "");
-			profile = profile.replaceAll("(\r\n|\n\r|\r|\n)", "<br />");
-			remoteMediaMeta.setProfile(profile);
+			String profileKey = "profile";
+			String profile = "";
+			if (jsonArtist.containsKey(profileKey)) {
+				profile = StringUtils.trimToEmpty(jsonArtist.getString(profileKey));
+				profile = profile.replaceAll("\\[.=", "");
+				profile = profile.replaceAll("\\]", "");
+				profile = profile.replaceAll("(\r\n|\n\r|\r|\n)", "<br />");
+			}
+
+//			cachedRemoteMediaMetaItem = new RemoteMediaMeta();
+//			cachedRemoteMediaMetaItem.setId(discogsArtistId);
+			
+			
+			remoteMediaMetaItem.setProfile(profile);
 			
 			List<RemoteImage> remoteImages = new ArrayList<RemoteImage>();
 			String imagesKey = "images";
@@ -118,8 +131,8 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 				JSONArray jsonImages = jsonArtist.getJSONArray(imagesKey);
 
 				if (jsonImages != null) {
-					for (int i = 0; i < jsonImages.size(); i++) {
-						JSONObject jsonImage = jsonImages.getJSONObject(i);
+					for (int j = 0; j < jsonImages.size(); j++) {
+						JSONObject jsonImage = jsonImages.getJSONObject(j);
 						RemoteImage remoteImage = new RemoteImage();
 						String imageUrl = convertImageToProxyUrl(jsonImage.getString("resource_url"));
 						remoteImage.setImageUrl(imageUrl);
@@ -142,13 +155,11 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 
 			inputStream.close();
 
-			remoteMediaMeta.setRemoteImages(remoteImages);
-			remoteMediaCache.put(cacheArtistKey, remoteMediaMeta);
-			remoteMediaMetaItems.add(remoteMediaMeta);
+			remoteMediaMetaItem.setRemoteImages(remoteImages);
+			remoteMediaCache.put(cacheArtistKey, remoteMediaMetaItem);
 			throttle(true);
 		}
 
-		return remoteMediaMetaItems;
 	}
 
 	protected String convertImageToProxyUrl(String url) {
@@ -164,23 +175,23 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 		}
 
 		String artistName = artist.getName();
-		List<String> discogsArtistIds = getDiscogArtistId(artistName, isThrottle, 1);
+		List<RemoteMediaMetaItem> discogsArtistIds = findRemoteMediaMetaItems(artistName, isThrottle, 1);
 
 		if (discogsArtistIds == null || discogsArtistIds.isEmpty()) {
 			return "";
 		}
 
-		remoteId = discogsArtistIds.get(0);
+		remoteId = discogsArtistIds.get(0).getId();
 		return remoteId;
 	}
 
-	protected List<String> getDiscogArtistId(String name, boolean isThrottle, int numberOfArtistIds) throws IOException {
+	protected List<RemoteMediaMetaItem> findRemoteMediaMetaItems(String name, boolean isThrottle, int numberOfArtistIds) throws IOException {
 
-		List<String> discogsArtistIds = new ArrayList<String>();
+		List<RemoteMediaMetaItem> remoteMediaMetaItems = new ArrayList<RemoteMediaMetaItem>();
 
 		name = prepareSearchParameter(name);
 		if (StringUtils.isEmpty(name)) {
-			return discogsArtistIds;
+			return remoteMediaMetaItems;
 		}
 
 		String searchUrl = "http://api.discogs.com/database/search?q=" + name + "&type=artist";
@@ -190,20 +201,28 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 		JSONObject jsonObject = JSONObject.fromObject(jsonSearchResults);
 		JSONArray jsonArray = jsonObject.getJSONArray("results");
 		if (jsonArray == null) {
-			return discogsArtistIds;
+			return remoteMediaMetaItems;
 		}
 		int size = jsonArray.size();
 		if (size == 0) {
-			return discogsArtistIds;
+			return remoteMediaMetaItems;
 		}
 
 		for (int i = 0; i < jsonArray.size(); i++) {
 			JSONObject jsonArtist = jsonArray.getJSONObject(i);
 			logger.debug("Found jsonObject: " + jsonArtist.toString(2));
 			String discogsArtistId = jsonArtist.getString("id");
-			if (!discogsArtistIds.contains(discogsArtistId)) {
-				discogsArtistIds.add(discogsArtistId);
-				if (discogsArtistIds.size() >= numberOfArtistIds) {
+			RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
+			remoteMediaMeta.setId(discogsArtistId);
+
+			
+			if (!remoteMediaMetaItems.contains(remoteMediaMeta)) {								
+				String title = jsonArtist.getString("title");
+				remoteMediaMeta.setName(title);
+				
+				
+				remoteMediaMetaItems.add(remoteMediaMeta);
+				if (remoteMediaMetaItems.size() >= numberOfArtistIds) {
 					break;
 				}
 			}
@@ -211,13 +230,13 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 
 		inputStream.close();
 		throttle(isThrottle);
-		return discogsArtistIds;
+		return remoteMediaMetaItems;
 	}
 
 	@Override
-	public List<RemoteMediaMeta> searchArtist(String artistName) throws IOException {
-		List<String> discogsArtistIds = getDiscogArtistId(artistName, true, 5);
-		List<RemoteMediaMeta> remoteMediaMetaItems = getDiscogsArtistMetaItems(discogsArtistIds);
+	public List<RemoteMediaMetaItem> searchArtist(String artistName) throws IOException {
+		List<RemoteMediaMetaItem> remoteMediaMetaItems = findRemoteMediaMetaItems(artistName, true, 5);
+//		populateRemoteMediaMetaItems(remoteMediaMetaItems);
 		return remoteMediaMetaItems;
 	}
 

@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class RemoteMediaMeta implements Serializable {
+public class RemoteMediaMetaItem implements Serializable {
 	private static final long serialVersionUID = 2688532085007514994L;
 	private String id;
 	private String name;
@@ -69,7 +69,7 @@ public class RemoteMediaMeta implements Serializable {
 		this.remoteImages = remoteImages;
 	}
 
-	public RemoteMediaMeta() {
+	public RemoteMediaMetaItem() {
 		this.date = new Date();
 	}
 
@@ -91,7 +91,7 @@ public class RemoteMediaMeta implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RemoteMediaMeta other = (RemoteMediaMeta) obj;
+		RemoteMediaMetaItem other = (RemoteMediaMetaItem) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -113,7 +113,7 @@ public class RemoteMediaMeta implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("RemoteMediaMeta [id=");
+		builder.append("RemoteMediaMetaItem [id=");
 		builder.append(id);
 		builder.append(", name=");
 		builder.append(name);
