@@ -28,6 +28,15 @@ public class RemoteMediaMetaItem implements Serializable {
 	private String profile;
 	private Date date;
 	private List<RemoteImage> remoteImages;
+	private boolean isComplete;
+	
+	public boolean isComplete() {
+		return isComplete;
+	}
+
+	public void setComplete(boolean isComplete) {
+		this.isComplete = isComplete;
+	}
 
 	public String getName() {
 		return name;

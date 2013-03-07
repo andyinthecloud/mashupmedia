@@ -69,16 +69,26 @@
 			return;
 	    }	    
 	    
+	    	    
+	    
 	    $.post("<c:url value="/app/ajax/discogs/search-artist" />", { name: searchArtist}).done(function(data) {
+			var artistsHtml = "";
 	   		$.each(data, function(index) {
-	    		var searchResult = "<li><a id=\"" + data[index].id + "\" href=\"javascript:;\">" + data[index].name + "</a></li>"
-	    		$("#discogs-dialog ul.search-results").append(searchResult);	        
-			});	    	
+	   		 	artistsHtml += "<li><a id=\"search-results-discogs-id-" + data[index].id + "\" href=\"javascript:;\">" + data[index].name + "</a></li>"
+			});
+	   		$("#discogs-dialog ul.search-results").html(artistsHtml);
 	    });
 	});
 
-	$("#discogs-dialog ul.search-results li a").click(function() {
+	$("#discogs-dialog ul.search-results li a").live("click", function(event){
+	    alert("click");
+	});  
+	    
+	$("#discogs-dialog ul.search-results li a").on("click", function(event) {
 		var discogsId = $(this).attr("id");
+		discogsId = parseId(discogsId, "search-results-discogs-id");		
+		alert(discogsId);
+
 	    var artistId = $(this).closest("ul").attr("id");
 	    artistId = parseId(albumId, "search-results-artist-id");
 	    $.post("<c:url value="/app/ajax/discogs/save-artist" />", { discogsId: discogsId, artistId: artistId}).done(function(data) {
