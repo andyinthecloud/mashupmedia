@@ -80,11 +80,8 @@
 	    });
 	});
 
-	$("#discogs-dialog ul.search-results li a").live("click", function(event){
-	    alert("click");
-	});  
 	    
-	$("#discogs-dialog ul.search-results li a").on("click", function(event) {
+	$("#discogs-dialog ul.search-results").on("click", "li a", function(event) {
 		var discogsId = $(this).attr("id");
 		discogsId = parseId(discogsId, "search-results-discogs-id");		
 		alert(discogsId);
@@ -108,7 +105,7 @@
 	<p>
 		<input type="text" name="name" class="search-field" value="<spring:message code="music.artists.discogs.search" />" /><input type="button" value="Search" />
 	<ul class="search-results" id="search-results-artist-id-${artistPage.artist.id}">
-
+<li><a href="javascript:;">click</a></li>
 
 	</ul>
 
