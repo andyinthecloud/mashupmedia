@@ -79,17 +79,14 @@
 	   		$("#discogs-dialog ul.search-results").html(artistsHtml);
 	    });
 	});
-
 	    
 	$("#discogs-dialog ul.search-results").on("click", "li a", function(event) {
 		var discogsId = $(this).attr("id");
 		discogsId = parseId(discogsId, "search-results-discogs-id");		
-		alert(discogsId);
-
 	    var artistId = $(this).closest("ul").attr("id");
-	    artistId = parseId(albumId, "search-results-artist-id");
+	    artistId = parseId(artistId, "search-results-artist-id");
 	    $.post("<c:url value="/app/ajax/discogs/save-artist" />", { discogsId: discogsId, artistId: artistId}).done(function(data) {
-		    $.get("<c:url value="/app/ajax/discogs/discogs-artist-id/" />/" + discogsId).done(function(data) {
+		    $.get("<c:url value="/app/ajax/discogs/discogs-artist-id/" />/" + discogsId).done(function(data) {				
 				logger.console(data);
 		    });	    		    		    	
 		});	    	
@@ -105,7 +102,6 @@
 	<p>
 		<input type="text" name="name" class="search-field" value="<spring:message code="music.artists.discogs.search" />" /><input type="button" value="Search" />
 	<ul class="search-results" id="search-results-artist-id-${artistPage.artist.id}">
-<li><a href="javascript:;">click</a></li>
 
 	</ul>
 
