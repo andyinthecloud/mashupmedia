@@ -87,7 +87,19 @@
 	    artistId = parseId(artistId, "search-results-artist-id");
 	    $.post("<c:url value="/app/ajax/discogs/save-artist" />", { discogsId: discogsId, artistId: artistId}).done(function(data) {
 		    $.get("<c:url value="/app/ajax/discogs/discogs-artist-id/" />/" + discogsId).done(function(data) {				
-				logger.console(data);
+				// console.log(data);
+				$("div.music-sub-panel h1").html(data.name);
+				$("div.music-sub-panel div.information div.profile").html(data.profile);
+				
+				var artistImagesHtml = "";
+				$.each(data.remoteImages, function(index) {
+					var imageUrl = prepareImageUrl(data.remoteImages[index].imageUrl);
+					var thumbUrl = prepareImageUrl(data.remoteImages[index].thumbUrl);
+					
+					artistImagesHtml += "<a class=\"fancybox\" rel=\"artist-images\" href=\"" + imageUrl + "\"><img src=\"" + thumbUrl + "\" /></a>";
+				});
+				$("div.music-sub-panel div.information div.images").html(artistImagesHtml);
+				
 		    });	    		    		    	
 		});	    	
 		
@@ -96,6 +108,22 @@
 
 	
 	});
+    
+    function prepareImageUrl(imageUrl) {
+    	imageUrl = $.trim(imageUrl);
+    	if (imageUrl.length == 0) {
+    		return "";
+    	}
+    	    	
+    	if (imageUrl.indexOf("/") == 0) {
+    		imageUrl = imageUrl.substring(1);
+    	}
+    	
+    	imageUrl = "<c:url value="/" />" + imageUrl;
+    	return imageUrl;
+    	
+    }
+    
 </script>
 
 <div id="discogs-dialog" class="dialog" title="Search Discogs for artist information">

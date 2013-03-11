@@ -36,6 +36,10 @@
 			}
 			appendContentsOnScroll();
 		});
+		
+		$("ul.index-letters a").click(function() {
+		    fireRelLink(this);
+		});
 
 	});
 

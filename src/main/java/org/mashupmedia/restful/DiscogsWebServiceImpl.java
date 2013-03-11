@@ -127,7 +127,8 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 			
 			RemoteMediaMetaItem cachedRemoteMediaMetaItem = getRemoteMediaItemFromCache(cacheArtistKey, date);
 			if (cachedRemoteMediaMetaItem != null && cachedRemoteMediaMetaItem.isComplete()) {
-				remoteMediaMetaItem = cachedRemoteMediaMetaItem;
+//				remoteMediaMetaItem = cachedRemoteMediaMetaItem;
+				remoteMediaMetaItems.set(i, cachedRemoteMediaMetaItem);
 				continue;
 			}
 			
@@ -152,7 +153,13 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 			InputStream inputStream = connectionManager.connect(artistUrl);
 			String jsonArtistText = IOUtils.toString(inputStream, Encoding.UTF8.getEncodingString());
 			JSONObject jsonArtist = JSONObject.fromObject(jsonArtistText);
-
+			
+			String nameKey = "name";
+			if (!jsonArtist.containsKey(nameKey)) {
+				inputStream.close();
+				continue;
+			}
+			
 			if (StringUtils.isBlank(remoteMediaMetaItem.getName())) {
 				String name = StringUtils.trimToEmpty(jsonArtist.getString("name"));			
 				remoteMediaMetaItem.setName(name);				

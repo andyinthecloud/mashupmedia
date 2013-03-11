@@ -84,6 +84,9 @@
 	});
 	 */
 	 
+	$("#current-song a").click(function() {
+	    fireRelLink(this);
+	});
 	
     });
 </script>
