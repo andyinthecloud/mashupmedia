@@ -253,6 +253,10 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 		String searchUrl = "http://api.discogs.com/database/search?q=" + name + "&type=artist";
 		logger.debug("Searching Discogs for artist id using url: " + searchUrl);
 		InputStream inputStream = connectionManager.connect(searchUrl);
+		if (inputStream == null) {
+			logger.error("Could not connect to Discogs web service.");
+			return remoteMediaMetaItems;
+		}
 		String jsonSearchResults = IOUtils.toString(inputStream, Encoding.UTF8.getEncodingString());
 		JSONObject jsonObject = JSONObject.fromObject(jsonSearchResults);
 		JSONArray jsonArray = jsonObject.getJSONArray("results");

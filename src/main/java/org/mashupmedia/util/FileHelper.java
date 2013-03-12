@@ -17,7 +17,7 @@ public class FileHelper {
 	public final static int FILE_WAIT_FOR_SECONDS = 1;
 
 	public enum FileType {
-		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM("media-item-streams");
+		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM("media-item-stream"), MEDIA_ITEM_ENCODED("media-item-encoded") ;
 
 		private String folderName;
 
@@ -35,7 +35,13 @@ public class FileHelper {
 		File libraryFolder = getLibraryFolder(libraryId);
 		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
 		mediaFolder.mkdirs();
-		File mediaFile = new File(mediaFolder, String.valueOf(mediaItemId));
+		
+		String fileName = String.valueOf(mediaItemId);
+		if (fileType == FileType.MEDIA_ITEM_ENCODED) {
+			fileName += ".ogg";
+		}
+		
+		File mediaFile = new File(mediaFolder, fileName);
 		return mediaFile;
 	}
 

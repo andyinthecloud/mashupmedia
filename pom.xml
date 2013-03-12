@@ -16,6 +16,7 @@
 		<hibernate.search.version>4.2.0.Final</hibernate.search.version>
 		<tiles.version>3.0.1</tiles.version>
 		<slf4j.version>1.7.2</slf4j.version>
+		<hsqldb.version>2.2.9</hsqldb.version>
 	</properties>
 
 	<dependencies>
@@ -207,13 +208,10 @@
 			<type>tld</type>
 		</dependency>
 
-
-
-		<!-- <dependency> <groupId>org.apache.derby</groupId> <artifactId>derby</artifactId> <version>10.8.2.2</version> <scope>compile</scope> </dependency> -->
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<version>2.2.8</version>
+			<version>${hsqldb.version}</version>
 		</dependency>
 
 		<dependency>
@@ -262,6 +260,12 @@
 			<classifier>jdk15</classifier>
 		</dependency>
 
+		<dependency>
+			<groupId>xuggle</groupId>
+			<artifactId>xuggle-xuggler</artifactId>
+			<version>5.4</version>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>
@@ -272,6 +276,11 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
+		</repository>
+
+		<repository>
+			<id>xuggle repo</id>
+			<url>http://xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
 		</repository>
 
 	</repositories>

@@ -2,6 +2,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 {"response" : { 
-	"isSuccessful": "<c:out value="${isVoteSuccessful}" />"
+	"isSuccessful": "<c:out value="${isSuccessful}" />"
 	}
 }

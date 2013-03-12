@@ -65,4 +65,9 @@ public class MediaManagerImpl implements MediaManager{
 		return mediaItems;
 	}
 	
+	@Override
+	public void saveMediaItem(MediaItem mediaItem) {
+		mediaDao.saveMediaItem(mediaItem);				
+	}
+	
 }

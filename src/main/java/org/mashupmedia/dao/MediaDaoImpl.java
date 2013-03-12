@@ -173,4 +173,9 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		Collections.sort(mediaItems, new MediaItemComparator());
 		return mediaItems;
 	}
+	
+	@Override
+	public void saveMediaItem(MediaItem mediaItem) {
+		saveOrUpdate(mediaItem);		
+	}
 }

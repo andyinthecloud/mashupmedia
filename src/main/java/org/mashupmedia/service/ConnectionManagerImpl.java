@@ -311,10 +311,17 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	public File getMediaItemStreamFile(long mediaItemId) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		Library library = mediaItem.getLibrary();
+		File file = null;
+		
+		if (mediaItem.isEncoded()) {
+			file = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_ENCODED);
+			return file;
+		}
+		
+		
 		Location location = library.getLocation();
 		LocationType locationType = LibraryHelper.getLocationType(location);
-
-		File file = null;
+		
 		if (locationType == LocationType.FTP) {
 			long libraryId = library.getId();
 			file = FileHelper.createMediaFile(libraryId, mediaItemId, FileType.MEDIA_ITEM_STREAM);

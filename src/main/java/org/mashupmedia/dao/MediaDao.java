@@ -24,4 +24,6 @@ public interface MediaDao {
 
 	public List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria);
 
+	public void saveMediaItem(MediaItem mediaItem);
+
 }

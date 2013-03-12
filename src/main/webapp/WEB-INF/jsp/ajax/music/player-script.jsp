@@ -42,7 +42,12 @@
 				mashupMedia.playNextSong();				
 			},
 			preload: "auto",
-			errorAlerts: true
+//			errorAlerts: true
+			error: function (event) {
+		        console.log(event.jPlayer.error);
+		        console.log(event.jPlayer.error.type);
+			}			
+			
 		});	
 		
 		

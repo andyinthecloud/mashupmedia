@@ -69,7 +69,7 @@ public class MediaItem implements Serializable {
 	@Field(analyze = Analyze.NO)
 	@DateBridge(resolution = Resolution.SECOND)
 	private Date lastAccessed;
-	@ManyToOne(cascade = {CascadeType.PERSIST})
+	@ManyToOne(cascade = { CascadeType.PERSIST })
 	private User lastAccessedBy;
 	@Field
 	@Column(length = 1000)
@@ -80,7 +80,16 @@ public class MediaItem implements Serializable {
 	private String summary;
 	@Field(analyze = Analyze.NO)
 	private String displayTitle;
+	@Field(analyze = Analyze.NO)
+	private boolean isEncoded;
 
+	public boolean isEncoded() {
+		return isEncoded;
+	}
+
+	public void setEncoded(boolean isEncoded) {
+		this.isEncoded = isEncoded;
+	}
 
 	public String getDisplayTitle() {
 		return displayTitle;

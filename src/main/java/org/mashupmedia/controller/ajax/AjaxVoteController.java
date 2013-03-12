@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/ajax/vote")
 public class AjaxVoteController extends BaseAjaxController {
 
-	public static final String MODEL_KEY_IS_VOTE_SUCCESSFUL = "isVoteSuccessful";
+	public static final String MODEL_KEY_IS_SUCCESSFUL = "isSuccessful";
 
 	@Autowired
 	private VoteManager voteManager;
@@ -25,8 +25,8 @@ public class AjaxVoteController extends BaseAjaxController {
 		long userId = user.getId();
 
 		boolean isSuccessful = voteManager.voteLike(mediaItemId, userId);
-		model.addAttribute(MODEL_KEY_IS_VOTE_SUCCESSFUL, isSuccessful);
-		return "ajax/vote/message";
+		model.addAttribute(MODEL_KEY_IS_SUCCESSFUL, isSuccessful);
+		return "ajax/message";
 	}
 
 	@RequestMapping(value = "/dislike", method = RequestMethod.POST)
@@ -35,8 +35,8 @@ public class AjaxVoteController extends BaseAjaxController {
 		long userId = user.getId();
 
 		boolean isSuccessful = voteManager.voteDislike(mediaItemId, userId);
-		model.addAttribute(MODEL_KEY_IS_VOTE_SUCCESSFUL, isSuccessful);
-		return "ajax/vote/message";
+		model.addAttribute(MODEL_KEY_IS_SUCCESSFUL, isSuccessful);
+		return "ajax/message";
 	}
 
 }

@@ -25,5 +25,6 @@ public interface MediaManager {
 
 	public List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria);
 
+	public void saveMediaItem(MediaItem mediaItem);
 
 }
