@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +49,26 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 		
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 
-		if (mediaItem.isEncoded()) {
+		EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
+		
+		if (encodeStatusType == EncodeStatusType.ENCODED) {
 			logger.info("Media file has already been encoded, exiting...");
+			return;
+		} else if (encodeStatusType == EncodeStatusType.PROCESSING) {
+			logger.info("Media file is being encoded, exiting...");
+			return;			
 		}
 
 		logger.info("Starting to decode media file to ogg format");
+		mediaItem.setEncodeStatusType(EncodeStatusType.PROCESSING);
+		mediaManager.saveMediaItem(mediaItem);
 
 		File originalFile = connectionManager.getMediaItemStreamFile(mediaItemId);
+		if (originalFile.length() == 0) {
+			mediaItem.setEncodeStatusType(EncodeStatusType.UNPROCESSED);
+			mediaManager.saveMediaItem(mediaItem);
+			originalFile = connectionManager.getMediaItemStreamFile(mediaItemId);			
+		}		
 
 		// create a media reader
 		IMediaReader reader = ToolFactory.makeReader(originalFile.getAbsolutePath());
@@ -62,7 +76,7 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 		// add a viewer to the reader, to see progress as the media is
 		// transcoded
 //		reader.addListener(ToolFactory.makeViewer(true));
-//		reader.addListener(ToolFactory.makeDebugListener());
+		reader.addListener(ToolFactory.makeDebugListener());
 //		reader.addListener(ToolFactory.isTurboCharged());
 
 		// add a viewer to the reader, to see the decoded media
@@ -80,7 +94,7 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 
 		logger.info("Media file decoded to ogg format");
 		
-		mediaItem.setEncoded(true);
+		mediaItem.setEncodeStatusType(EncodeStatusType.ENCODED);
 		mediaManager.saveMediaItem(mediaItem);
 	}
 

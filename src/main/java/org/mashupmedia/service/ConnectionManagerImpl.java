@@ -36,6 +36,7 @@ import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
@@ -312,16 +313,16 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		Library library = mediaItem.getLibrary();
 		File file = null;
-		
-		if (mediaItem.isEncoded()) {
+
+		EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
+		if (encodeStatusType == EncodeStatusType.PROCESSING || encodeStatusType == EncodeStatusType.ENCODED) {
 			file = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_ENCODED);
 			return file;
 		}
-		
-		
+
 		Location location = library.getLocation();
 		LocationType locationType = LibraryHelper.getLocationType(location);
-		
+
 		if (locationType == LocationType.FTP) {
 			long libraryId = library.getId();
 			file = FileHelper.createMediaFile(libraryId, mediaItemId, FileType.MEDIA_ITEM_STREAM);

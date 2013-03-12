@@ -177,10 +177,6 @@
 
 	<h1>
 		${playlist.name}
-		<c:if test="${playlist.isUserDefault}">
-			<spring:message code="playlist.user.default" />
-		</c:if>
-
 	</h1>
 
 	<div class="hide change-name">

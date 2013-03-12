@@ -152,7 +152,7 @@ var mashupMedia = new function() {
 			}, function(data) {
 				var playlistId = data.playlist.id;
 				var playlistName = data.playlist.name;				
-				mashupMedia.showSongInfo("", "", false, 0, 0, playlistName, playlistId);
+				mashupMedia.showSongInfo("", "", false, 0, 0, playlistName, playlistId, "");
 			});
 			return;
 		}
@@ -294,10 +294,10 @@ var mashupMedia = new function() {
 	};
 	
 	this.showEmptySongInfo = function() {		
-		mashupMedia.showSongInfo("", "", false, 0, 0, "", 0);
+		mashupMedia.showSongInfo("", "", false, 0, 0, "", 0, "");
 	};
 	
-	this.showSongInfo = function(songTitle, artistName, isShowVoteButtons, albumId, mediaItemId, playlistName, playlistId) {		
+	this.showSongInfo = function(songTitle, artistName, isShowVoteButtons, albumId, mediaItemId, playlistName, playlistId, encodeStatus) {		
 		if (songTitle == "") {
 			songTitle = "<spring:message code="music.playlist.current-song.empty" />";
 		}
@@ -329,6 +329,15 @@ var mashupMedia = new function() {
 		$("#current-playlist-id").val(playlistId);
 		$("#current-song .playlist a").attr("rel", "address:/address-playlist-" + playlistId);
 		
+		var encodeMessage = "<a href=\"javascript:;\"><spring:message code="music.playlist.encode.process" /></a>"
+		if (encodeStatus == "PROCESSING") {
+			encodeMessage = "<spring:message code="music.playlist.encode.processing" />"
+		} else if (encodeStatus == "ENCODED") {
+			encodeMessage = "<spring:message code="music.playlist.encode.processed" />"			
+		} else if (encodeStatus == "ERROR") {
+			encodeMessage = "<spring:message code="music.playlist.encode.error" />"			
+		} 
+		$("#current-song .encode").html(encodeMessage);
 	};
 	
 	

@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
 import org.apache.solr.analysis.SnowballPorterFilterFactory;
@@ -50,6 +51,10 @@ public class MediaItem implements Serializable {
 	public enum MediaType {
 		SONG, VIDEO, IMAGE;
 	}
+	
+	public enum EncodeStatusType {
+		UNPROCESSED, PROCESSING, ENCODED, ERROR
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -81,14 +86,30 @@ public class MediaItem implements Serializable {
 	@Field(analyze = Analyze.NO)
 	private String displayTitle;
 	@Field(analyze = Analyze.NO)
-	private boolean isEncoded;
+	private String encodeStatus;
 
-	public boolean isEncoded() {
-		return isEncoded;
+	public EncodeStatusType getEncodeStatusType() {
+		if (StringUtils.isEmpty(this.encodeStatus)) {
+			return EncodeStatusType.UNPROCESSED;
+		}
+		
+		EncodeStatusType[] encodeStatusTypes = EncodeStatusType.values();
+		for (EncodeStatusType encodeStatusType : encodeStatusTypes) {
+			if (this.encodeStatus.equals(encodeStatusType.toString())) {
+				return encodeStatusType;
+			}
+		}
+		
+		return EncodeStatusType.UNPROCESSED;
 	}
 
-	public void setEncoded(boolean isEncoded) {
-		this.isEncoded = isEncoded;
+	public String getEncodeStatusTypeValue() {
+		EncodeStatusType encodeStatusType = getEncodeStatusType();
+		return encodeStatusType.toString();
+	}
+		
+		public void setEncodeStatusType(EncodeStatusType encodeStatusType) {
+		this.encodeStatus = encodeStatusType.toString();
 	}
 
 	public String getDisplayTitle() {

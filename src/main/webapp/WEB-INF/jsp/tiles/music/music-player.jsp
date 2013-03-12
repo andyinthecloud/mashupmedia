@@ -29,6 +29,20 @@
 	    });
 	});
 
+	$("#current-song div.encode").on("click", "a", function(event) {
+	    var mediaItemId = $("#current-song-id").val();
+	    $("#current-song .encode").html("<spring:message code="music.playlist.encode.processing" />");
+		$.get(mashupMedia.contextUrl + "app/ajax/encode/" + mediaItemId,
+		function(data) {
+			var encodeMessage = $("#current-song .encode").html("<spring:message code="music.playlist.encode.error" />");
+			if (data.response.isSuccessful) {
+				encodeMessage = $("#current-song .encode").html("<spring:message code="music.playlist.encode.processed" />");				
+			} 
+			
+		    $("#current-song .encode").html(encodeMessage);
+		});
+	});
+
 	var defaultSearchText = "<spring:message code="search" />";
 	var searchField = $("#quick-search input[type=text]");
 	var searchText = getTextFromField(searchField);
@@ -170,7 +184,9 @@
 						</div>
 						<div class="playlist">
 							<input type="hidden" id="current-playlist-id" value="" /> <a href="javascript:;"></a>
-						</div></td>
+						</div>
+						<div class="encode">&nbsp;</div>
+						</td>
 					<td><span class="vote"> <a class="like" href="javascript:;" title="<spring:message code="music.playlist.current-song.vote.love" />"><img src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a class="dislike" href="javascript:;"><img
 								src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>" title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
 					</span></td>
