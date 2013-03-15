@@ -142,7 +142,7 @@
 		<br />
 
 		<div class="check-location">
-			<a class="button" href="javascript:void(0);"><spring:message code="musiclibrary.location.path.check" /></a> <span class="message horizontal-gap"></span>
+			<a class="button" href="javascript:void(0);"><spring:message code="path.check" /></a> <span class="message horizontal-gap"></span>
 		</div>
 	</fieldset>
 
