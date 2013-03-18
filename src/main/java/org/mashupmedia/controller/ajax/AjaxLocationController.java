@@ -1,14 +1,15 @@
 package org.mashupmedia.controller.ajax;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.location.FtpLocation;
+import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.ConnectionManager;
-import org.mashupmedia.util.ProcessHelper;
+import org.mashupmedia.util.EncodeHelper;
+import org.mashupmedia.util.MessageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,10 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class AjaxLocationController {
 
-	private Logger logger = Logger.getLogger(getClass());
-	
 	@Autowired
 	private ConnectionManager connectionManager;
+
+	@Autowired
+	private ConfigurationManager configurationManager;
 
 	@RequestMapping(value = "/ajax/check-folder-location", method = RequestMethod.POST)
 	public String checkFolderLocation(@RequestParam("path") String path, Model model) {
@@ -68,25 +70,23 @@ public class AjaxLocationController {
 		return "ajax/configuration/check-folder-location";
 	}
 
-	@RequestMapping(value = "/ajax/check-ffmpeg", method = RequestMethod.POST)
-	public String checkFfmpegLocation(@RequestParam("path") String path, Model model) {
-		File file = new File(path);
-		boolean isValid = false;
+	@RequestMapping(value = "/ajax/check-ffmpeg", method = RequestMethod.GET)
+	public String checkFfmpegLocation(Model model) {
 
-		String messageCode = "musiclibrary.location.invalid";
-		if (file.isFile()) {
+		boolean isValid = false;
+		String ffmpegStatusText = MessageHelper.getMessage("encoding.ffmpeg.path.invalid");
+		String ffMpegFilePath = "";
+		File ffMpegFile = EncodeHelper.findFFMpegExecutable();
+		if (ffMpegFile != null) {
+			ffMpegFilePath = ffMpegFile.getAbsolutePath();
+			ffmpegStatusText = MessageHelper.getMessage("encoding.ffmpeg.path.valid");
 			isValid = true;
-			messageCode = "musiclibrary.location.ok";
-			try {
-				ProcessHelper.callProcess(file.getAbsolutePath());
-			} catch (IOException e) {
-				isValid = false;
-				logger.error("Error runnning process:  ", e);
-			}
 		}
 
+		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegFilePath);
+
 		model.addAttribute("isValid", isValid);
-		model.addAttribute("messageCode", messageCode);
+		model.addAttribute("messageCode", ffmpegStatusText);
 		return "ajax/configuration/check-folder-location";
 	}
 }

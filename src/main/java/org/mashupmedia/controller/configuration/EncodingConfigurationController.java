@@ -17,12 +17,15 @@
 
 package org.mashupmedia.controller.configuration;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.service.ConfigurationManager;
+import org.mashupmedia.util.EncodeHelper;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.EncodingPage;
@@ -40,6 +43,8 @@ public class EncodingConfigurationController extends BaseController{
 	private final static String PAGE_NAME = "encoding";
 	private final static String PAGE_PATH = "configuration/" + PAGE_NAME;
 	private final static String PAGE_URL = "/" + PAGE_PATH;
+	
+	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private ConfigurationManager configurationManager;
@@ -53,22 +58,39 @@ public class EncodingConfigurationController extends BaseController{
 		breadcrumbs.add(networkBreadcrumb);		
 	}
 	
+	
+	
+	
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.GET)
 	public String getNetwork(Model model) {
 
 		EncodingPage encodingPage = new EncodingPage();
-
-		String ffmpegPath = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH));
-		encodingPage.setFfmpegPath(ffmpegPath);
-
+		String ffMpegFolderPath = EncodeHelper.getFFMpegFolderPath();
+		encodingPage.setFfmpegFolderPath(ffMpegFolderPath);
+		
+		String ffMpegFilePath = "";
+		File ffMpegFile = EncodeHelper.findFFMpegExecutable();
+		if (ffMpegFile != null) {
+			try {
+				if (EncodeHelper.isValidFfMpeg(ffMpegFile)) {
+					ffMpegFilePath = ffMpegFile.getAbsolutePath();
+					encodingPage.setFfMpegFound(true);
+				}
+			} catch (IOException e) {
+				encodingPage.setAdditionalErrorMessage(e.getLocalizedMessage());
+				logger.error("Error running ffmpeg: " + ffMpegFilePath, e );
+			}
+				
+			
+		}
+		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegFilePath);
+		
 		model.addAttribute(encodingPage);
 		return PAGE_PATH;
 	}
 
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.POST)
 	public String processNetwork(@ModelAttribute("encodingPage") EncodingPage encodingPage, Model model, BindingResult result) {				
-		String proxyEnabled = encodingPage.getFfmpegPath();
-		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, proxyEnabled);		
 		
 		return "redirect:/app/configuration";
 	}

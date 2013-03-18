@@ -11,6 +11,10 @@ html,body {
 	clear: both;
 }
 
+.no-wrap {
+	white-space: nowrap;
+}
+
 h1 {
 	margin: 0;
 }
@@ -95,6 +99,10 @@ div.panel {
 	padding: 10px;
 	margin-top: 10px;
 	-moz-border-radius: 20px
+}
+
+.status-message {
+	font-style: italic;
 }
 
 div.panel form {

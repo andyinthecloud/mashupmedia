@@ -19,14 +19,36 @@ package org.mashupmedia.web.page;
 
 public class EncodingPage {
 
-	private String ffmpegPath;
+	private String ffmpegFolderPath;
+	private boolean isFfMpegFound;
+	private String additionalErrorMessage;
 
-	public String getFfmpegPath() {
-		return ffmpegPath;
+	public String getAdditionalErrorMessage() {
+		return additionalErrorMessage;
 	}
 
-	public void setFfmpegPath(String ffmpegPath) {
-		this.ffmpegPath = ffmpegPath;
+	public void setAdditionalErrorMessage(String additionalErrorMessage) {
+		this.additionalErrorMessage = additionalErrorMessage;
+	}
+
+	public boolean getIsFfmpegFound() {
+		return isFfmpegFound();
+	}
+
+	public boolean isFfmpegFound() {
+		return isFfMpegFound;
+	}
+
+	public void setFfMpegFound(boolean isFfMpegFound) {
+		this.isFfMpegFound = isFfMpegFound;
+	}
+
+	public String getFfmpegFolderPath() {
+		return ffmpegFolderPath;
+	}
+
+	public void setFfmpegFolderPath(String ffmpegFolderPath) {
+		this.ffmpegFolderPath = ffmpegFolderPath;
 	}
 
 }

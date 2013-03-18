@@ -107,7 +107,7 @@ public class FileHelper {
 		fileName = StringUtils.trimToEmpty(fileName);
 		String extension = "jpg";
 		if (StringUtils.isNotEmpty(fileName)) {
-			extension = extension.replaceAll(".*\\.", "").toLowerCase();
+			extension = fileName.replaceAll(".*\\.", "").toLowerCase();
 		}
 
 		return extension;
