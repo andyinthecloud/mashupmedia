@@ -21,14 +21,24 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 public class ProcessHelper {
 	private static Logger logger = Logger.getLogger(ProcessHelper.class);
 
-	public static void callProcess(String path) throws IOException {
-		ProcessBuilder processBuilder = new ProcessBuilder(path);
+	public static String callProcess(String path) throws IOException {
+		List<String> commands = new ArrayList<String>();
+		commands.add(path);
+		return callProcess(commands);	
+	}
+	
+	public static String callProcess(List<String> commands) throws IOException {
+		ProcessBuilder processBuilder = new ProcessBuilder(commands);
+//		processBuilder.redirectOutput();
+		
 		Process process = processBuilder.start();
 
 		InputStream inputStream = process.getInputStream();
@@ -36,9 +46,12 @@ public class ProcessHelper {
 
 		String line = null;
 		int exit = -1;
+		
+		StringBuilder outputBuilder = new StringBuilder();
 
 		while ((line = bufferedReader.readLine()) != null) {
 			logger.debug(line);
+			outputBuilder.append(line);
 			try {
 				exit = process.exitValue();
 				if (exit == 0) {
@@ -49,6 +62,8 @@ public class ProcessHelper {
 				break;
 			}
 		}
+		
+		return outputBuilder.toString();
 	}
 
 }

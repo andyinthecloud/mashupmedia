@@ -19,35 +19,39 @@ package org.mashupmedia.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 
 public class EncodeHelper {
 
 	private static final String FFMPEG_FOLDER_NAME = "ffmpeg";
 	private static final String FFMPEG_EXECUTABLE_NAME = "ffmpeg";
-	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[]{"exe", "sh"};
+	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh" };
+	
+	private static Logger logger = Logger.getLogger(EncodeHelper.class);
 
 	public static String getFFMpegFolderPath() {
 		File ffMpegFolder = new File(MessageHelper.getMessage(MashUpMediaConstants.APPLICATION_FOLDER), FFMPEG_FOLDER_NAME);
 		return ffMpegFolder.getAbsolutePath();
 	}
 
-	public static File findFFMpegExecutable()  {
+	public static File findFFMpegExecutable() {
 		File ffMpegFolder = new File(getFFMpegFolderPath());
-		ffMpegFolder.mkdirs();		
+		ffMpegFolder.mkdirs();
 		File ffMpegExecutableFile = findFFMpegExecutable(ffMpegFolder);
 		if (ffMpegExecutableFile == null) {
 			return ffMpegExecutableFile;
 		}
-		
+
 		return ffMpegExecutableFile;
 	}
 
 	private static File findFFMpegExecutable(File folder) {
-		File[] files = folder.listFiles();		
+		File[] files = folder.listFiles();
 		for (File file : files) {
-						
+
 			if (file.isDirectory()) {
 				File ffMpegExecutable = findFFMpegExecutable(file);
 				if (ffMpegExecutable != null) {
@@ -66,26 +70,39 @@ public class EncodeHelper {
 		String fileName = file.getName().toLowerCase();
 		if (!fileName.startsWith(FFMPEG_EXECUTABLE_NAME)) {
 			return false;
-		}		
+		}
 
-		if (fileName.equals(FFMPEG_EXECUTABLE_NAME)) {			
+		if (fileName.equals(FFMPEG_EXECUTABLE_NAME)) {
 			return true;
 		}
-		
+
 		String fileExtension = FileHelper.getFileExtension(fileName);
-		
-		for (String ffmpegExecutableFileExtension : FFMPEG_EXECUTABLE_EXTENSIONS) {			
+
+		for (String ffmpegExecutableFileExtension : FFMPEG_EXECUTABLE_EXTENSIONS) {
 			if (fileExtension.equals(ffmpegExecutableFileExtension)) {
 				return true;
-			}			
+			}
 		}
-		
+
+		return false;
+	}
+	
+	public static boolean isValidFfMpeg(File ffMpegExecutableFile) throws IOException {
+		String outputText = ProcessHelper.callProcess(ffMpegExecutableFile.getAbsolutePath());
+		if (outputText.contains(FFMPEG_EXECUTABLE_NAME)) {
+			return true;
+		}
 		return false;
 	}
 
-	public static boolean isValidFfMpeg(File ffMpegExecutableFile) throws IOException {
-		ProcessHelper.callProcess(ffMpegExecutableFile.getAbsolutePath());
-		return true;
+	public static void encodeAudioToHtml5(String pathToFfMpeg, File inputAudioFile, File outputAudioFile) throws IOException {
+		
+		StringBuilder commandBuilder = new StringBuilder("\"" + pathToFfMpeg + "\"");
+		commandBuilder.append(" -i" + " \"" + inputAudioFile.getAbsolutePath() + "\"");
+		commandBuilder.append(" -f ogg -acodec libvorbis -ab 128k");
+		commandBuilder.append(" \"" + outputAudioFile.getAbsolutePath() + "\"");
+		String outputText = ProcessHelper.callProcess(commandBuilder.toString());
+		logger.info(outputText);
 	}
 
 }

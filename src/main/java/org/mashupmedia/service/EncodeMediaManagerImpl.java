@@ -17,11 +17,18 @@
 
 package org.mashupmedia.service;
 
+import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
+import org.mashupmedia.util.EncodeHelper;
+import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.FileHelper.FileType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,9 +43,18 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 	
 	@Autowired
 	private MediaManager mediaManager;
+	
+	@Autowired
+	private ConfigurationManager configurationManager;
 
 	@Override
 	public void encodeMedia(long mediaItemId) throws IOException {
+		
+		String pathToFfMpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
+		if (StringUtils.isBlank(pathToFfMpeg)) {
+			logger.info("Unable to encode media, ffmpeg is not configured.");
+			return;
+		}
 		
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 
@@ -54,7 +70,13 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 
 		logger.info("Starting to decode media file to ogg format");
 		
+		Library library = mediaItem.getLibrary();
 		
+		File inputAudioFile = connectionManager.getMediaItemStreamFile(mediaItemId);
+		File outputAudioFile = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_ENCODED);
+		
+		EncodeHelper.encodeAudioToHtml5(pathToFfMpeg, inputAudioFile, outputAudioFile);
+	
 
 		logger.info("Media file decoded to ogg format");
 		
