@@ -20,6 +20,7 @@ package org.mashupmedia.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
@@ -97,11 +98,19 @@ public class EncodeHelper {
 
 	public static void encodeAudioToHtml5(String pathToFfMpeg, File inputAudioFile, File outputAudioFile) throws IOException {
 		
-		StringBuilder commandBuilder = new StringBuilder("\"" + pathToFfMpeg + "\"");
-		commandBuilder.append(" -i" + " \"" + inputAudioFile.getAbsolutePath() + "\"");
-		commandBuilder.append(" -f ogg -acodec libvorbis -ab 128k");
-		commandBuilder.append(" \"" + outputAudioFile.getAbsolutePath() + "\"");
-		String outputText = ProcessHelper.callProcess(commandBuilder.toString());
+		List<String> commands = new ArrayList<String>();
+		commands.add(pathToFfMpeg);
+		commands.add("-i");
+		commands.add(inputAudioFile.getAbsolutePath());
+		commands.add("-f");
+		commands.add("ogg");
+		commands.add("-acodec");
+		commands.add("libvorbis");
+		commands.add("-ab");
+		commands.add("128k");
+		commands.add(outputAudioFile.getAbsolutePath());
+		
+		String outputText = ProcessHelper.callProcess(commands);
 		logger.info(outputText);
 	}
 

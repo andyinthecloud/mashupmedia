@@ -158,7 +158,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 				userQuery.setLong("playlistMediaItemId", playlistMediaItemId);
 				userQuery.executeUpdate();
 				
-				sessionFactory.getCurrentSession().delete(playlistMediaItem);
+//				sessionFactory.getCurrentSession().delete(playlistMediaItem);
 				totalDeletedItems++;
 			}
 						

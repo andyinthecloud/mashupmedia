@@ -19,7 +19,6 @@ package org.mashupmedia.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,30 +36,23 @@ public class ProcessHelper {
 	
 	public static String callProcess(List<String> commands) throws IOException {
 		ProcessBuilder processBuilder = new ProcessBuilder(commands);
-//		processBuilder.redirectOutput();
-		
+		processBuilder.redirectErrorStream(true);
 		Process process = processBuilder.start();
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-		InputStream inputStream = process.getInputStream();
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-		String line = null;
-		int exit = -1;
-		
+		String line = null;		
 		StringBuilder outputBuilder = new StringBuilder();
 
 		while ((line = bufferedReader.readLine()) != null) {
 			logger.debug(line);
 			outputBuilder.append(line);
-			try {
-				exit = process.exitValue();
-				if (exit == 0) {
-					break;
-				}
-			} catch (IllegalThreadStateException t) {
-				process.destroy();
-				break;
-			}
+		}
+		
+		logger.info("Process exit value = " + process.exitValue());
+		try {
+			logger.info("Process waitFor value = " + process.waitFor());
+		} catch (InterruptedException e) {
+			logger.error("Error running process:", e);
 		}
 		
 		return outputBuilder.toString();

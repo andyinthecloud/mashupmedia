@@ -26,7 +26,6 @@ public class PlaylistMediaItem implements Serializable {
 	private boolean playing;
 	@ManyToOne
 	private Playlist playlist;
-
 	@ManyToOne
 	private MediaItem mediaItem;
 
