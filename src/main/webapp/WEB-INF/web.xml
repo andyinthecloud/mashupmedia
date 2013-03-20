@@ -55,4 +55,29 @@
 	  <session-timeout>30</session-timeout>
 	</session-config>
 
+	
+	<!-- Audio mime types -->
+    <mime-mapping>
+        <extension>oga</extension>
+        <mime-type>audio/ogg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>ogg</extension>
+        <mime-type>audio/ogg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>mp3</extension>
+        <mime-type>audio/mpeg</mime-type>
+    </mime-mapping>
+    
+	<!-- Video mime types -->
+    <mime-mapping>
+        <extension>ogv</extension>
+        <mime-type>video/ogg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>webm</extension>
+        <mime-type>video/webm</mime-type>
+    </mime-mapping>
+    
 </web-app>

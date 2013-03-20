@@ -232,12 +232,6 @@
 			<version>4.2-beta1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>it.sauronsoftware</groupId>
-			<artifactId>ftp4j</artifactId>
-			<version>1.6</version>
-		</dependency>
-
 		<!-- <dependency> <groupId>commons-net</groupId> <artifactId>commons-net</artifactId> <version>3.0.1</version> </dependency> -->
 
 		<dependency>

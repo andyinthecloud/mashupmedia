@@ -15,14 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.service.ConnectionManager;
-import org.mashupmedia.service.ConnectionManager.LocationType;
+import org.mashupmedia.service.ConnectionManager.EncodeType;
 import org.mashupmedia.service.MediaManager;
-import org.mashupmedia.task.StreamingTaskManager;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.FileHelper.FileType;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.FormatContentType;
+import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,65 +45,63 @@ public class StreamingController {
 																// week.
 	private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
 
-	public enum StreamType {
-		REMOTE(16), LOCAL(1024 * 4);
-
-		private int bufferSize;
-
-		private StreamType(int bufferSize) {
-			this.bufferSize = bufferSize;
-		}
-
-		public int getBufferSize() {
-			return bufferSize;
-		}
-
-	};
+	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
 	@Autowired
 	private MediaManager mediaManager;
 
 	@Autowired
-	private StreamingTaskManager streamingTaskManager;
-
-	@Autowired
 	private ConnectionManager connectionManager;
 
-	@RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.HEAD)
+	@RequestMapping(value = "/media/encoded/{mediaItemId}", method = RequestMethod.HEAD)
+	public ModelAndView getEncodedMediaStreamHead(@PathVariable("mediaItemId") final Long mediaItemId, Model model) throws Exception {
+		ModelAndView modelAndView = prepareModelAndView(mediaItemId, false, EncodeType.ENCODED);
+		return modelAndView;
+	}
+
+	@RequestMapping(value = "/media/encoded/{mediaItemId}", method = RequestMethod.GET)
+	public ModelAndView getEncodedMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model) throws Exception {
+		ModelAndView modelAndView = prepareModelAndView(mediaItemId, true, EncodeType.ENCODED);
+		return modelAndView;
+	}
+
+	@RequestMapping(value = "/media/unprocessed/{mediaItemId}", method = RequestMethod.HEAD)
 	public ModelAndView getMediaStreamHead(@PathVariable("mediaItemId") final Long mediaItemId, Model model) throws Exception {
-		ModelAndView modelAndView = prepareModelAndView(mediaItemId, false);
+		ModelAndView modelAndView = prepareModelAndView(mediaItemId, false, EncodeType.UNPROCESSED);
 		return modelAndView;
 	}
 
-	@RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/media/unprocessed/{mediaItemId}", method = RequestMethod.GET)
 	public ModelAndView getMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model) throws Exception {
-		ModelAndView modelAndView = prepareModelAndView(mediaItemId, true);
+		ModelAndView modelAndView = prepareModelAndView(mediaItemId, true, EncodeType.UNPROCESSED);
 		return modelAndView;
 	}
 
-	public ModelAndView prepareModelAndView(final long mediaItemId, final boolean content) throws Exception {
+	protected ModelAndView prepareModelAndView(final long mediaItemId, final boolean content, final EncodeType encodeType) throws Exception {
 
-		final MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		// final boolean content = true;
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		Library library = mediaItem.getLibrary();		
 		String format = mediaItem.getFormat();
-		final String contentType = WebHelper.getContentType(format, FormatContentType.MIME);
-		// final StreamType streamType = StreamType.REMOTE;
+		String tempContentType = WebHelper.getContentType(format, FormatContentType.MIME);
+		FileType fileType = FileType.MEDIA_ITEM_STREAM_UNPROCESSED;
+		File tempFile = new File(mediaItem.getPath()); 
+		
+		if (encodeType == EncodeType.ENCODED || encodeType == EncodeType.BEST) {
+			if (mediaItem.getEncodeStatusType() == EncodeStatusType.ENCODED || mediaItem.getEncodeStatusType() == EncodeStatusType.PROCESSING) {
+				tempContentType = MediaContentType.OGA.getMimeContentType();
+				fileType = FileType.MEDIA_ITEM_STREAM_ENCODED;
+				tempFile = FileHelper.createMediaFile(library.getId(), mediaItemId, fileType);
+			}
+		} 
+				
+		final String contentType = tempContentType;
+		final File file = tempFile;
 
 		ModelAndView modelAndView = new ModelAndView(new View() {
 
 			@Override
 			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-				File file = streamingTaskManager.startMediaItemDownload(mediaItemId);
 
-				LocationType locationType = connectionManager.getLocationType(mediaItemId);
-				StreamType streamType = StreamType.LOCAL;
-				if (locationType == LocationType.FTP) {
-					streamType = StreamType.REMOTE;
-				}
-				
-				
-				FileHelper.waitForFile(file, mediaItem.getSizeInBytes());
-				
 				// Check if file actually exists in filesystem.
 				if (!file.exists()) {
 					// Do your thing if the file appears to be non-existing.
@@ -112,9 +113,9 @@ public class StreamingController {
 
 				// Prepare some variables. The ETag is an unique identifier of
 				// the file.
-				String fileName = String.valueOf(mediaItem.getId());
-				long length = mediaItem.getSizeInBytes();
-				long lastModified = mediaItem.getUpdatedOn().getTime();
+				String fileName = String.valueOf(file.getName());
+				long length = file.length();
+				long lastModified = file.lastModified();
 				String eTag = fileName + "_" + length + "_" + lastModified;
 
 				// Validate request headers for caching
@@ -237,9 +238,7 @@ public class StreamingController {
 
 				response.reset();
 
-				int defaultBufferSize = streamType.getBufferSize();
-
-				response.setBufferSize(defaultBufferSize);
+				response.setBufferSize(DEFAULT_BUFFER_SIZE);
 				response.setHeader("Content-Disposition", disposition + ";filename=\"" + fileName + "\"");
 				response.setHeader("Accept-Ranges", "bytes");
 				response.setHeader("ETag", eTag);
@@ -263,7 +262,7 @@ public class StreamingController {
 
 						if (content) {
 							response.setHeader("Content-Length", String.valueOf(r.length));
-							copy(input, output, r.start, r.length, streamType);
+							copy(input, output, r.start, r.length);
 						}
 
 					} else if (ranges.size() == 1) {
@@ -277,7 +276,7 @@ public class StreamingController {
 
 						if (content) {
 							// Copy single part range.
-							copy(input, output, r.start, r.length, streamType);
+							copy(input, output, r.start, r.length);
 						}
 
 					} else {
@@ -301,7 +300,7 @@ public class StreamingController {
 								sos.println("Content-Range: bytes " + r.start + "-" + r.end + "/" + r.total);
 
 								// Copy single part range of multi part range.
-								copy(input, output, r.start, r.length, streamType);
+								copy(input, output, r.start, r.length);
 							}
 
 							// End with multipart boundary.
@@ -316,8 +315,6 @@ public class StreamingController {
 				}
 
 			}
-
-
 
 			@Override
 			public String getContentType() {
@@ -340,8 +337,8 @@ public class StreamingController {
 		return (substring.length() > 0) ? Long.parseLong(substring) : -1;
 	}
 
-	private void copy(RandomAccessFile input, OutputStream output, long start, long length, StreamType streamType) throws IOException {
-		byte[] buffer = new byte[streamType.getBufferSize()];
+	private void copy(RandomAccessFile input, OutputStream output, long start, long length) throws IOException {
+		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 		int read;
 
 		if (input.length() == length) {
@@ -370,7 +367,7 @@ public class StreamingController {
 			try {
 				resource.close();
 			} catch (IOException ignore) {
-				logger.info("Error closing stream.", ignore);
+				logger.info("Error closing stream.");
 			}
 		}
 	}

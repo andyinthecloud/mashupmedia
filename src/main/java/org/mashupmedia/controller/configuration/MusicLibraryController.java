@@ -9,12 +9,10 @@ import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.editor.GroupEditor;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.task.LibraryUpdateTaskManager;
-import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.validator.MusicLibraryPageValidator;
 import org.mashupmedia.web.Breadcrumb;
@@ -36,9 +34,6 @@ public class MusicLibraryController extends BaseController {
 	private final static String PAGE_NAME = "music-library";
 	private final static String PAGE_PATH = "configuration/" + PAGE_NAME;
 	private final static String PAGE_URL = "/" + PAGE_PATH;
-
-	private final static String LOCATION_TYPE_FOLDER = "folder";
-	private final static String LOCATION_TYPE_FTP = "ftp";
 
 	@Autowired
 	private AdminManager adminManager;
@@ -77,13 +72,9 @@ public class MusicLibraryController extends BaseController {
 		MusicLibrary musicLibrary = new MusicLibrary();
 		musicLibrary.setEnabled(true);
 		musicLibraryPage.setMusicLibrary(musicLibrary);
-		musicLibraryPage.setLocationType(LOCATION_TYPE_FOLDER);
 
 		Location location = new Location();
 		musicLibraryPage.setFolderLocation(location);
-
-		FtpLocation ftpLocation = new FtpLocation();
-		musicLibraryPage.setFtpLocation(ftpLocation);
 
 		if (libraryId == null) {
 			return musicLibraryPage;
@@ -92,17 +83,6 @@ public class MusicLibraryController extends BaseController {
 		musicLibrary = (MusicLibrary) libraryManager.getLibrary(libraryId);
 		musicLibraryPage.setMusicLibrary(musicLibrary);
 		location = musicLibrary.getLocation();
-		String locationType = LOCATION_TYPE_FOLDER;
-		if (location instanceof FtpLocation) {
-			musicLibraryPage.setFtpLocation((FtpLocation) location);
-			locationType = LOCATION_TYPE_FTP;
-		} else {
-			musicLibraryPage.setFolderLocation((Location) location);
-			locationType = LOCATION_TYPE_FOLDER;
-		}
-
-		musicLibraryPage.setLocationType(locationType);
-
 		return musicLibraryPage;
 	}
 
@@ -134,19 +114,7 @@ public class MusicLibraryController extends BaseController {
 	}
 
 	private void processSaveAction(MusicLibraryPage musicLibraryPage) {
-		String locationType = StringUtils.trimToEmpty(musicLibraryPage.getLocationType());
-		Location location = null;
-		if (locationType.equalsIgnoreCase(LOCATION_TYPE_FTP)) {
-			FtpLocation ftpLocation = musicLibraryPage.getFtpLocation();
-			String ftpPassword = ftpLocation.getPassword();
-			String encryptedProxyPassword = EncryptionHelper.encryptText(ftpPassword);
-			ftpLocation.setPassword(encryptedProxyPassword);
-			location = ftpLocation;
-
-		} else {
-			location = musicLibraryPage.getFolderLocation();
-		}
-
+		Location location = musicLibraryPage.getFolderLocation();
 		MusicLibrary musicLibrary = musicLibraryPage.getMusicLibrary();
 		musicLibrary.setLocation(location);
 		

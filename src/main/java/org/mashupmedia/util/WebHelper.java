@@ -51,7 +51,7 @@ public class WebHelper {
 	}
 
 	public enum MediaContentType {
-		MP3("audio/mpeg", "mp3", "mp3");
+		MP3("audio/mpeg", "mp3", "mp3"), OGA("audio/ogg", "oga", "oga");
 
 		private String mimeContentType;
 		private String jPlayerContentType;
@@ -120,6 +120,8 @@ public class WebHelper {
 
 		if (mediaFormat.equalsIgnoreCase("MPEG-1 Layer 3")) {
 			return MediaContentType.MP3;
+		} else if (mediaFormat.equalsIgnoreCase("oga")) {
+			return MediaContentType.OGA;
 		}
 
 		return defaultMediaContentType;

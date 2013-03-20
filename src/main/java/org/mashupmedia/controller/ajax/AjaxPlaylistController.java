@@ -16,7 +16,6 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
-import org.mashupmedia.task.StreamingTaskManager;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.SecurityHelper;
 import org.mashupmedia.util.WebHelper;
@@ -39,8 +38,6 @@ public class AjaxPlaylistController extends BaseAjaxController {
 	@Autowired
 	private MusicManager musicManager;
 
-	@Autowired
-	private StreamingTaskManager streamingTaskManager;
 
 	@Autowired
 	private MediaManager mediaManager;
@@ -92,7 +89,7 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";
 	}
-	
+
 	protected void savePlaylist(Playlist playlist) {
 		playlistManager.savePlaylist(playlist);
 		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getPlaylistMediaItems();
@@ -127,10 +124,6 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs = album.getSongs();
-		for (Song song : songs) {
-			streamingTaskManager.startMediaItemDownload(song.getId());
-		}
-
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		savePlaylist(playlist);
 
@@ -147,10 +140,6 @@ public class AjaxPlaylistController extends BaseAjaxController {
 
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs = album.getSongs();
-		for (Song song : songs) {
-			streamingTaskManager.startMediaItemDownload(song.getId());
-		}
-
 		PlaylistHelper.appendPlaylist(playlist, songs);
 		savePlaylist(playlist);
 
@@ -169,7 +158,6 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		}
 
 		Song song = (Song) mediaItem;
-		streamingTaskManager.startMediaItemDownload(song.getId());
 
 		PlaylistHelper.replacePlaylist(playlist, song);
 		savePlaylist(playlist);
@@ -189,8 +177,6 @@ public class AjaxPlaylistController extends BaseAjaxController {
 		}
 
 		Song song = (Song) mediaItem;
-		streamingTaskManager.startMediaItemDownload(song.getId());
-
 		PlaylistHelper.appendPlaylist(playlist, song);
 		savePlaylist(playlist);
 
@@ -302,17 +288,16 @@ public class AjaxPlaylistController extends BaseAjaxController {
 			@RequestParam(value = "updateLastAccessedToNow", required = false) Boolean isUpdateLastAccessedToNow, Model model) {
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
 		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
-		
+
 		if (isUpdateLastAccessedToNow != null && isUpdateLastAccessedToNow) {
 			playlistManager.savePlaylist(playlist);
 		}
-		
+
 		model.addAttribute("playlist", playlist);
 
 		boolean canSavePlaylist = PlaylistHelper.canSavePlaylist(playlist);
 		model.addAttribute("canSavePlaylist", canSavePlaylist);
-		
-		
+
 		WebFormatType webFormatType = WebHelper.getWebFormatType(webFormatTypeValue);
 		if (webFormatType == WebFormatType.JSON) {
 			return "ajax/json/playlist";

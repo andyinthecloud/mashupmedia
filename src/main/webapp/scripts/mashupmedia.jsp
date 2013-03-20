@@ -163,7 +163,7 @@ var mashupMedia = new function() {
 		
 		$.get(mashupMedia.contextUrl + "app/ajax/music/play/media-item/" + mediaItemId, {
 			"playlistId" : playlistId
-		}, function(data) {
+		}, function(data) {		    
 			$("#media-player-script").html(data);
 			setupJPlayer(isAutoPlay);
 		});
@@ -329,19 +329,27 @@ var mashupMedia = new function() {
 		$("#current-playlist-id").val(playlistId);
 		$("#current-song .playlist a").attr("rel", "address:/address-playlist-" + playlistId);
 		
-		var encodeMessage = "<a href=\"javascript:;\"><spring:message code="music.playlist.encode.process" /></a>"
-		if (encodeStatus == "PROCESSING") {
-			encodeMessage = "<spring:message code="music.playlist.encode.processing" />"
-		} else if (encodeStatus == "ENCODED") {
-			encodeMessage = "<spring:message code="music.playlist.encode.processed" />"			
-		} else if (encodeStatus == "ERROR") {
-			encodeMessage = "<spring:message code="music.playlist.encode.error" />"			
-		} 
+		var encodeMessage = getAudioEncodeStatus(encodeStatus);
 		$("#current-song .encode").html(encodeMessage);
 	};
-	
-	
 }
+
+function getAudioEncodeStatus(encodeStatus) {
+    var encodeMessage = "";
+		
+    if (encodeStatus == "PROCESSING") {
+	encodeMessage = "<spring:message code="music.playlist.encode.processing" />";			
+    } else if (encodeStatus == "ENCODED") {
+	encodeMessage = "<spring:message code="music.playlist.encode.processed" />";
+    } else if (encodeStatus == "ERROR") {
+	encodeMessage = "<spring:message code="music.playlist.encode.error" />";	
+    } else {
+	encodeMessage = "<spring:message code="music.playlist.encode.process" />";	    
+    }
+	
+    return encodeMessage;    
+}
+
 
 function updatePlaylistView(mediaItemId) {	
 	if ($("#playlist").length < 1) {

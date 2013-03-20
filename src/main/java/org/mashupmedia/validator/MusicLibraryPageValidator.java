@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.web.page.MusicLibraryPage;
 import org.springframework.validation.Errors;
@@ -32,22 +31,13 @@ public class MusicLibraryPageValidator implements Validator {
 		if (StringUtils.isNotEmpty(scanMinutesIntervalValue) && !NumberUtils.isDigits(scanMinutesIntervalValue)) {
 			errors.rejectValue("musicLibrary.scanMinutesInterval", "error.number");
 		}
-		
-		String locationType = StringUtils.trimToEmpty(musicLibraryPage.getLocationType());
-		if (StringUtils.isEmpty(locationType)) {
-			errors.rejectValue("locationType", "musiclibrary.error.locationtype");
-		}
 
-		if (locationType.equalsIgnoreCase("ftp")) {
-			validateFtpLocation(musicLibraryPage.getFtpLocation(), errors);
-		} else {
-			validateFolderLocation(musicLibraryPage.getFolderLocation(), errors);
-		}
-		
+		validateFolderLocation(musicLibraryPage.getFolderLocation(), errors);
+
 		Set<Group> groups = musicLibrary.getGroups();
 		if (groups == null || groups.isEmpty()) {
 			errors.rejectValue("groups", "musiclibrary.error.groups");
-			
+
 		}
 
 	}
@@ -60,18 +50,6 @@ public class MusicLibraryPageValidator implements Validator {
 
 		if (StringUtils.isBlank(location.getPath())) {
 			errors.rejectValue("folderLocation.path", "musiclibrary.error.location.folder.path");
-		}
-
-	}
-
-	private void validateFtpLocation(FtpLocation ftpLocation, Errors errors) {
-		if (ftpLocation == null) {
-			errors.rejectValue("ftpLocation", "musiclibrary.error.locationtype");
-			return;
-		}
-		
-		if (StringUtils.isBlank(ftpLocation.getHost())) {
-			errors.rejectValue("ftpLocation.host", "musiclibrary.error.location.ftp.host");
 		}
 
 	}

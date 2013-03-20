@@ -1,7 +1,5 @@
 package org.mashupmedia.service;
 
-import it.sauronsoftware.ftp4j.FTPClient;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +28,6 @@ import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.exception.MashupMediaException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
@@ -38,10 +35,7 @@ import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
-import org.mashupmedia.service.ConnectionManager.LocationType;
-import org.mashupmedia.util.EncryptionHelper;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,39 +95,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 
 		try {
-			Location location = musicLibrary.getLocation();
-			LocationType locationType = LibraryHelper.getLocationType(location);
-			if (locationType == LocationType.FTP) {
-				prepareFtpMusicLibrary(musicLibrary, (FtpLocation) location);
-			} else if (locationType == LocationType.LOCAL) {
-				prepareFileMusicLibrary(musicLibrary);
-			}
-
+			prepareFileMusicLibrary(musicLibrary);
 		} catch (Exception e) {
 			throw new MashupMediaException("Error updating the music library.", e);
 		}
-
-	}
-
-	private void prepareFtpMusicLibrary(MusicLibrary musicLibrary, FtpLocation ftpLocation) {
-		FTPClient ftpClient = null;
-		try {
-			String decryptedPassword = EncryptionHelper.decryptText(ftpLocation.getPassword());
-			ftpLocation.setPassword(decryptedPassword);
-			ftpClient = connectionManager.connectToFtp(ftpLocation);
-		} catch (Exception e) {
-			throw new MashupMediaException("Unable to connect to ftp server", e);
-		}
-
-		if (ftpClient == null) {
-			logger.error("Unable to prepare music library, ftp client is null.");
-			return;
-		}
-
-		Date date = new Date();
-		List<Song> songs = connectionManager.getFtpSongs(musicLibrary, date);
-		saveSongs(musicLibrary, songs);
-		deleteObsoleteSongs(musicLibrary.getId(), date);
 
 	}
 

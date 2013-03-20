@@ -13,11 +13,9 @@ public class FileHelper {
 	private static Logger logger = Logger.getLogger(FileHelper.class);
 
 	public final static String ALBUM_ART_FOLDER = "cover-art";
-	public final static int FILE_TIME_OUT_SECONDS = 300;
-	public final static int FILE_WAIT_FOR_SECONDS = 1;
 
 	public enum FileType {
-		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM("media-item-stream"), MEDIA_ITEM_ENCODED("media-item-encoded") ;
+		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM_UNPROCESSED("media-item-stream"), MEDIA_ITEM_STREAM_ENCODED("media-item-encoded") ;
 
 		private String folderName;
 
@@ -37,7 +35,7 @@ public class FileHelper {
 		mediaFolder.mkdirs();
 		
 		String fileName = String.valueOf(mediaItemId);
-		if (fileType == FileType.MEDIA_ITEM_ENCODED) {
+		if (fileType == FileType.MEDIA_ITEM_STREAM_ENCODED) {
 			fileName += ".ogg";
 		}
 		
@@ -164,22 +162,5 @@ public class FileHelper {
 		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 
-	public static void waitForFile(File file, long sizeInBytes) throws InterruptedException {
-		// Allow for a 5% margin of error
-		Double sizeInBytesWithErrorMargin = sizeInBytes * 0.95;
-		int timeOutSeconds = 0;
-		while (timeOutSeconds < FILE_TIME_OUT_SECONDS) {
-			if (sizeInBytesWithErrorMargin < file.length()) {
-				logger.info("File is ready.");
-				return;
-			}
-
-			Thread.sleep(FILE_WAIT_FOR_SECONDS * 1000);
-			timeOutSeconds = timeOutSeconds + FILE_WAIT_FOR_SECONDS;
-		}
-
-		logger.info("File timed out.");
-
-	}
 
 }

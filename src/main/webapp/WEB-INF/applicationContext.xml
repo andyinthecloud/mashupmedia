@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans 
@@ -23,18 +22,8 @@
 	<context:component-scan base-package="org.mashupmedia.editor" />
 	<context:component-scan base-package="org.mashupmedia.interceptor" />
 	<context:component-scan base-package="org.mashupmedia.restful" />
-	
 
-	<bean id="ftpDownloadTaskExecutor"
-		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-		<property name="corePoolSize" value="5" />
-		<property name="maxPoolSize" value="10" />
-		<property name="queueCapacity" value="25" />
-	</bean>
-
-
-	<bean id="localDownloadTaskExecutor"
-		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+	<bean id="localDownloadTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 		<property name="corePoolSize" value="10" />
 		<property name="maxPoolSize" value="20" />
 		<property name="queueCapacity" value="50" />
@@ -42,22 +31,15 @@
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
-	<!-- 
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-		<property name="url" value="jdbc:hsqldb:file:${application.folder}/db" />
-		<property name="username" value="sa" />
-		<property name="password" value="" />
-	</bean>
- 	-->
+	<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"> <property name="driverClassName" value="org.hsqldb.jdbcDriver" 
+		/> <property name="url" value="jdbc:hsqldb:file:${application.folder}/db" /> <property name="username" value="sa" /> <property name="password" value="" 
+		/> </bean> -->
 
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
-		destroy-method="close">
-   		<property name="driverClass" value="org.hsqldb.jdbcDriver" />
-        <property name="jdbcUrl" value="jdbc:hsqldb:file:${application.folder}/db" />
-        <property name="user" value="sa" />
-        <property name="password" value="" /> 		
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="org.hsqldb.jdbcDriver" />
+		<property name="jdbcUrl" value="jdbc:hsqldb:file:${application.folder}/db" />
+		<property name="user" value="sa" />
+		<property name="password" value="" />
 
 		<property name="acquireIncrement" value="1" />
 		<property name="minPoolSize" value="2" />
@@ -67,8 +49,7 @@
 
 	</bean>
 
-	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="annotatedPackages">
 			<array>
@@ -84,10 +65,10 @@
 				<prop key="hibernate.cache.use_query_cache">true</prop>
 				<prop key="hibernate.query.substitutions">true '1', false '0'</prop>
 				<prop key="hibernate.cache.use_second_level_cache">true</prop>
-				
+
 				<prop key="hibernate.search.default.directory_provider">filesystem</prop>
-				<prop key="hibernate.search.default.indexBase">${application.folder}/lucene/indexes</prop>	
-           
+				<prop key="hibernate.search.default.indexBase">${application.folder}/lucene/indexes</prop>
+
 			</props>
 		</property>
 		<property name="packagesToScan">
@@ -102,16 +83,14 @@
 	</bean>
 
 
-	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="globalRollbackOnParticipationFailure" value="false" />
 	</bean>
 
 	<tx:annotation-driven />
 
-	<bean id="messageSource"
-		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
 				<value>/WEB-INF/classes/messages</value>

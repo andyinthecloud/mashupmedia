@@ -113,5 +113,21 @@ public class EncodeHelper {
 		String outputText = ProcessHelper.callProcess(commands);
 		logger.info(outputText);
 	}
+	
+	
+//	public static void encodeAudioToHtml5(String pathToFfMpeg, File inputAudioFile, File outputAudioFile) throws IOException {
+//		
+//		List<String> commands = new ArrayList<String>();
+//		commands.add(pathToFfMpeg);
+//		commands.add("-i");
+//		commands.add(inputAudioFile.getAbsolutePath());
+//		commands.add("-b:a");
+//		commands.add("160k");
+//		commands.add(outputAudioFile.getAbsolutePath());
+//		
+//		String outputText = ProcessHelper.callProcess(commands);
+//		logger.info(outputText);
+//	}
+	
 
 }

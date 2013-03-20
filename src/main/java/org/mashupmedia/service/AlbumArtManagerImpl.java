@@ -1,14 +1,9 @@
 package org.mashupmedia.service;
 
-import it.sauronsoftware.ftp4j.FTPClient;
-import it.sauronsoftware.ftp4j.FTPFile;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -16,16 +11,12 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.datatype.Artwork;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.location.FtpLocation;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
-import org.mashupmedia.service.ConnectionManager.LocationType;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
-import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,22 +35,13 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 
 	
 	@Override
-	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
-		Location location = musicLibrary.getLocation();
-		LocationType locationType = LibraryHelper.getLocationType(location);
-		
+	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {		
 		AlbumArtImage savedAlbumArtImage = getAlbumArtImage(song);
 		if (savedAlbumArtImage != null) {
 			return savedAlbumArtImage;
 		}
 		
-		AlbumArtImage albumArtImage = null;
-
-		if (locationType == LocationType.LOCAL) {
-			albumArtImage = getLocalAlbumArtImage(musicLibrary, song);
-		} else if (locationType == LocationType.FTP) {
-			albumArtImage = getFtpAlbumArtImage(musicLibrary, song);
-		}
+		AlbumArtImage albumArtImage = getLocalAlbumArtImage(musicLibrary, song);
 		
 		if (albumArtImage == null) {
 			return null;
@@ -144,52 +126,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 		return albumArtImage;
 	}
 
-	private AlbumArtImage getFtpAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
 
-		FtpLocation ftpLocation = (FtpLocation) musicLibrary.getLocation();
-		String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
-
-		FTPClient ftpClient = null;
-		try {
-			ftpClient = connectionManager.connectToFtp(ftpLocation);
-			ftpClient.setType(FTPClient.TYPE_BINARY);
-			String mediaPath = song.getPath();
-			
-			
-			String albumPath = StringHelper.find(mediaPath, ".*/");
-			ftpClient.changeDirectory(albumPath);
-
-			FTPFile[] ftpFiles = ftpClient.list();
-			for (FTPFile ftpFile : ftpFiles) {
-				String fileName = ftpFile.getName();
-				if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
-
-					String filePath = ftpClient.currentDirectory() + "/" + fileName;
-					// FtpLocation ftpLocation = (FtpLocation)
-					// musicLibrary.getLocation();
-					// String password = ftpLocation.getPassword();
-					// password = EncryptionHelper.decryptText(password);
-					// ftpLocation.setPassword(password);
-					String localFilePath = processFtpImageBytes(ftpClient, musicLibrary.getId(), filePath);
-
-					AlbumArtImage albumArtImage = new AlbumArtImage();
-					
-//					albumArtImage.setAlbum(album);
-//					albumArtImage.setLibrary(musicLibrary);
-					albumArtImage.setName(ftpFile.getName());
-					albumArtImage.setUrl(localFilePath);
-
-					return albumArtImage;
-
-				}
-			}
-
-		} finally {
-			ftpClient.disconnect(true);
-		}
-
-		return null;
-	}
 
 	private String prepareMimeType(String mimeType) {
 		mimeType = StringUtils.trimToEmpty(mimeType);
@@ -201,18 +138,5 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 		return mimeType;
 	}
 	
-	private String processFtpImageBytes(FTPClient ftpClient, long libraryId, String path) throws Exception {
-		File imageFile = FileHelper.createAlbumArtFile(libraryId);
-		imageFile.createNewFile();
-		FileInputStream fileInputStream = new FileInputStream(imageFile);
-
-		ftpClient.setType(FTPClient.TYPE_BINARY);
-		ftpClient.download(path, imageFile);
-		byte[] imageBytes = IOUtils.toByteArray(fileInputStream);
-		FileUtils.writeByteArrayToFile(imageFile, imageBytes);
-
-		fileInputStream.close();
-		return imageFile.getAbsolutePath();
-	}
 
 }

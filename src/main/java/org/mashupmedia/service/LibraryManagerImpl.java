@@ -3,13 +3,10 @@ package org.mashupmedia.service;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.location.FtpLocation;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
@@ -51,7 +48,6 @@ public class LibraryManagerImpl implements LibraryManager {
 	
 	@Override
 	public void saveLibrary(Library library) {
-		prepareLocation(library);
 		User user = SecurityHelper.getLoggedInUser();
 		if (user == null) {
 			logger.error("No user found in session, exiting...");
@@ -71,38 +67,6 @@ public class LibraryManagerImpl implements LibraryManager {
 
 	}
 
-	protected void prepareLocation(Library library) {
-		if (library.getId() == 0) {
-			return;
-		}
-
-		Location location = library.getLocation();
-		if (location == null) {
-			return;
-		}
-
-		if (!(location instanceof FtpLocation)) {
-			return;
-		}
-
-		FtpLocation ftpLocation = (FtpLocation) location;
-		String password = ftpLocation.getPassword();
-		if (StringUtils.isNotBlank(password)) {
-			return;
-		}
-
-		long id = library.getId();
-		Library savedLibrary = getLibrary(id);
-		Location savedLocation = savedLibrary.getLocation();
-		if (!(savedLocation instanceof FtpLocation)) {
-			return;
-		}
-
-		FtpLocation savedFtpLocation = (FtpLocation) savedLocation;
-		password = savedFtpLocation.getPassword();
-		ftpLocation.setPassword(password);
-		library.setLocation(ftpLocation);
-	}
 
 	@Override
 	public Library getLibrary(long id) {

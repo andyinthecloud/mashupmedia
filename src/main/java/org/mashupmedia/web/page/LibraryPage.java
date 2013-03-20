@@ -3,15 +3,12 @@ package org.mashupmedia.web.page;
 import java.util.List;
 
 import org.mashupmedia.model.Group;
-import org.mashupmedia.model.location.FtpLocation;
 import org.mashupmedia.model.location.Location;
 
 public abstract class LibraryPage {
 
 	private String action;
-	private String locationType;
 	private Location folderLocation;
-	private FtpLocation ftpLocation;
 	private List<Group> groups;
 
 	public List<Group> getGroups() {
@@ -36,22 +33,6 @@ public abstract class LibraryPage {
 
 	public void setFolderLocation(Location location) {
 		this.folderLocation = location;
-	}
-
-	public FtpLocation getFtpLocation() {
-		return ftpLocation;
-	}
-
-	public void setFtpLocation(FtpLocation ftpLocation) {
-		this.ftpLocation = ftpLocation;
-	}
-
-	public String getLocationType() {
-		return locationType;
-	}
-
-	public void setLocationType(String locationType) {
-		this.locationType = locationType;
 	}
 
 }

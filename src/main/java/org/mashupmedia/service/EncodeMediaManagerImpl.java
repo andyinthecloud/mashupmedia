@@ -26,6 +26,7 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
+import org.mashupmedia.service.ConnectionManager.EncodeType;
 import org.mashupmedia.util.EncodeHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
@@ -60,10 +61,12 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 
 		EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
 		
-		if (encodeStatusType == EncodeStatusType.ENCODED) {
-			logger.info("Media file has already been encoded, exiting...");
-			return;
-		} else if (encodeStatusType == EncodeStatusType.PROCESSING) {
+//		if (encodeStatusType == EncodeStatusType.ENCODED) {
+//			logger.info("Media file has already been encoded, exiting...");
+//			return;
+//		} else 
+			
+		if (encodeStatusType == EncodeStatusType.PROCESSING) {
 			logger.info("Media file is being encoded, exiting...");
 			return;			
 		}
@@ -72,8 +75,8 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 		
 		Library library = mediaItem.getLibrary();
 		
-		File inputAudioFile = connectionManager.getMediaItemStreamFile(mediaItemId);
-		File outputAudioFile = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_ENCODED);
+		File inputAudioFile = connectionManager.getMediaItemStreamFile(mediaItemId, EncodeType.UNPROCESSED);
+		File outputAudioFile = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_STREAM_ENCODED);
 		
 		EncodeHelper.encodeAudioToHtml5(pathToFfMpeg, inputAudioFile, outputAudioFile);
 	

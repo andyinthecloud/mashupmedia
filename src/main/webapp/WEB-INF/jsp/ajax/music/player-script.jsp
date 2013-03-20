@@ -2,10 +2,16 @@
 
 
 
+<c:url var="streamingUrl" value="/app/streaming/media/unprocessed/${song.id}"/>
+<c:set var="streamingFormat" value="${song.mediaContentType}"/>
+<c:if test="${song.encodeStatusTypeValue == 'PROCESSING' || song.encodeStatusTypeValue == 'ENCODED'}">
+	<c:url var="streamingUrl" value="/app/streaming/media/encoded/${song.id}"/>
+	<c:set var="streamingFormat" value="oga"/>
+</c:if>
+
 
 <script type="text/javascript">
-	$(document).ready(function() {
-		
+	$(document).ready(function() {		
 	    $('#current-song .album-art a').address(function() {
 			var albumImageSrc = $(this).find("img").attr("src");
 			var albumId = albumImageSrc.replace(/.*album-art\//, "");
@@ -27,27 +33,29 @@
 			jPlayerStatus = "play";
 		}
 		
+		
+		
 		$(mashupMedia.jPlayerId).jPlayer({
 			ready: function (event) {
 				$(this).jPlayer("setMedia", {
-					<c:out value="${format}" /> : "<c:url value="/app/streaming/media/${song.id}" />"  
-				}).jPlayer(jPlayerStatus);
-				
+					${streamingFormat} : "${streamingUrl}"
+				}).jPlayer(jPlayerStatus);				
 			},
 			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/2.2.0" />",
-			supplied: "mp3, ogg",
+			supplied: "${streamingFormat}",
 			solution: "html, flash",
 			wmode: "window",
 			ended: function() { 
 				mashupMedia.playNextSong();				
 			},
-			preload: "auto",
+			preload: "auto"
 //			errorAlerts: true
+/*
 			error: function (event) {
 		        console.log(event.jPlayer.error);
 		        console.log(event.jPlayer.error.type);
 			}			
-			
+*/			
 		});	
 		
 		
