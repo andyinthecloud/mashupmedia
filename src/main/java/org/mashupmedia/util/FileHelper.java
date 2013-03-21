@@ -71,7 +71,11 @@ public class FileHelper {
 			return true;
 		} else if (fileName.endsWith(".m4a")) {
 			return true;
-		} else if (fileName.endsWith(".aac")) {
+		} else if (fileName.endsWith(".mp4")) {
+			return true;
+		} else if (fileName.endsWith(".flac")) {
+			return true;
+		} else if (fileName.endsWith(".wma")) {
 			return true;
 		}
 

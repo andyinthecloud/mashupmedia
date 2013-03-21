@@ -18,7 +18,6 @@
 package org.mashupmedia.service;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -38,55 +37,59 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class EncodeMediaManagerImpl implements EncodeMediaManager {
 	private Logger logger = Logger.getLogger(getClass());
+	
+	
 
 	@Autowired
 	private ConnectionManager connectionManager;
-	
+
 	@Autowired
 	private MediaManager mediaManager;
-	
+
 	@Autowired
 	private ConfigurationManager configurationManager;
 
 	@Override
-	public void encodeMedia(long mediaItemId) throws IOException {
-		
+	public synchronized void encodeMedia(long mediaItemId) {
+
 		String pathToFfMpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
 		if (StringUtils.isBlank(pathToFfMpeg)) {
 			logger.info("Unable to encode media, ffmpeg is not configured.");
 			return;
 		}
-		
+
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 
-		EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
-		
-//		if (encodeStatusType == EncodeStatusType.ENCODED) {
-//			logger.info("Media file has already been encoded, exiting...");
-//			return;
-//		} else 
-			
-		if (encodeStatusType == EncodeStatusType.PROCESSING) {
-			logger.info("Media file is being encoded, exiting...");
-			return;			
-		}
+		try {
+			EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
 
-		logger.info("Starting to decode media file to ogg format");
-		
-		Library library = mediaItem.getLibrary();
-		
-		File inputAudioFile = connectionManager.getMediaItemStreamFile(mediaItemId, EncodeType.UNPROCESSED);
-		File outputAudioFile = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_STREAM_ENCODED);
-		
-		EncodeHelper.encodeAudioToHtml5(pathToFfMpeg, inputAudioFile, outputAudioFile);
-	
+			if (encodeStatusType == EncodeStatusType.PROCESSING) {
+				logger.info("Media file is being encoded, exiting...");
+				return;
+			}
 
-		logger.info("Media file decoded to ogg format");
-		
-		mediaItem.setEncodeStatusType(EncodeStatusType.ENCODED);
-		mediaManager.saveMediaItem(mediaItem);
+			mediaItem.setEncodeStatusType(EncodeStatusType.PROCESSING);
+			mediaManager.saveMediaItem(mediaItem);
+
+			logger.info("Starting to decode media file to ogg format");
+
+			Library library = mediaItem.getLibrary();
+
+			File inputAudioFile = connectionManager.getMediaItemStreamFile(mediaItemId, EncodeType.UNPROCESSED);
+			File outputAudioFile = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_STREAM_ENCODED);
+
+			EncodeHelper.encodeAudioToHtml5(pathToFfMpeg, inputAudioFile, outputAudioFile);
+
+			logger.info("Media file decoded to ogg format");
+
+			mediaItem.setEncodeStatusType(EncodeStatusType.ENCODED);
+			mediaManager.saveMediaItem(mediaItem);
+		} catch (Exception e) {
+			logger.error("Error encoding media item: " + mediaItemId, e);
+			mediaItem.setEncodeStatusType(EncodeStatusType.ERROR);
+			mediaManager.saveMediaItem(mediaItem);
+		} 
+
 	}
-	
-	
 
 }

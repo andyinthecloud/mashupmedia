@@ -17,11 +17,10 @@
 
 package org.mashupmedia.service;
 
-import java.io.IOException;
 
 
 public interface EncodeMediaManager {
 	
-	public void encodeMedia(long mediaItemId) throws IOException;
+	public void encodeMedia(long mediaItemId);
 
 }

@@ -28,34 +28,50 @@ import org.apache.log4j.Logger;
 public class ProcessHelper {
 	private static Logger logger = Logger.getLogger(ProcessHelper.class);
 
+	private static List<String> processCache = new ArrayList<String>();
+
 	public static String callProcess(String path) throws IOException {
 		List<String> commands = new ArrayList<String>();
 		commands.add(path);
-		return callProcess(commands);	
+		return callProcess(commands);
 	}
-	
-	public static String callProcess(List<String> commands) throws IOException {
-		ProcessBuilder processBuilder = new ProcessBuilder(commands);
-		processBuilder.redirectErrorStream(true);
-		Process process = processBuilder.start();
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-		String line = null;		
-		StringBuilder outputBuilder = new StringBuilder();
+	public synchronized static String callProcess(List<String> commands) throws IOException {
 
-		while ((line = bufferedReader.readLine()) != null) {
-			logger.debug(line);
-			outputBuilder.append(line);
-		}
-		
-		logger.info("Process exit value = " + process.exitValue());
+		String processString = commands.toString();
 		try {
-			logger.info("Process waitFor value = " + process.waitFor());
-		} catch (InterruptedException e) {
-			logger.error("Error running process:", e);
+
+			if (processCache.contains(processString)) {
+				logger.info("Process already running. Exiting...");
+			}
+			processCache.add(processString);
+			logger.info("Starting process...");
+			
+
+			ProcessBuilder processBuilder = new ProcessBuilder(commands);
+			processBuilder.redirectErrorStream(true);
+			Process process = processBuilder.start();
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+			String line = null;
+			StringBuilder outputBuilder = new StringBuilder();
+
+			while ((line = bufferedReader.readLine()) != null) {
+				logger.debug(line);
+				outputBuilder.append(line);
+			}
+
+			try {
+				logger.info("Process waitFor value = " + process.waitFor());
+				logger.info("Process exit value = " + process.exitValue());
+			} catch (InterruptedException e) {
+				logger.error("Error running process:", e);
+			}
+
+			return outputBuilder.toString();
+		} finally {
+			processCache.remove(processString);
 		}
-		
-		return outputBuilder.toString();
 	}
 
 }

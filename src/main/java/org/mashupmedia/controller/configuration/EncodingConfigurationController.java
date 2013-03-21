@@ -59,11 +59,8 @@ public class EncodingConfigurationController extends BaseController{
 	}
 	
 	
-	
-	
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.GET)
 	public String getNetwork(Model model) {
-
 		EncodingPage encodingPage = new EncodingPage();
 		String ffMpegFolderPath = EncodeHelper.getFFMpegFolderPath();
 		encodingPage.setFfmpegFolderPath(ffMpegFolderPath);

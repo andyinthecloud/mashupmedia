@@ -17,9 +17,6 @@
 
 package org.mashupmedia.task;
 
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
 import org.mashupmedia.service.EncodeMediaManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -27,33 +24,28 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EncodeMediaItemTaskManager {
-	private Logger logger = Logger.getLogger(getClass());
 	
-    @Autowired
-    private ThreadPoolTaskExecutor encodeMediaItemThreadPoolTaskExecutor;
-    
-    @Autowired
-    private EncodeMediaManager encodeMediaManager;
+	@Autowired
+	private ThreadPoolTaskExecutor encodeMediaItemThreadPoolTaskExecutor;
 
-    public void encodeMediaItem(long mediaItemId) {
-    	encodeMediaItemThreadPoolTaskExecutor.execute(new EncodeMediaItemTask(mediaItemId));
-    }
+	@Autowired
+	private EncodeMediaManager encodeMediaManager;
 
-    private class EncodeMediaItemTask implements Runnable {
+	public void encodeMediaItem(long mediaItemId) {
+		encodeMediaItemThreadPoolTaskExecutor.execute(new EncodeMediaItemTask(mediaItemId));
+	}
 
-        private long mediaItemId;
+	private class EncodeMediaItemTask implements Runnable {
 
-        public EncodeMediaItemTask(long mediaItemId) {
-            this.mediaItemId = mediaItemId;
-        }
+		private long mediaItemId;
 
-        public void run() {
-        	try {
-				encodeMediaManager.encodeMedia(mediaItemId);
-			} catch (IOException e) {
-				logger.error("Error encoding mediaItem: " + mediaItemId, e);
-			}
-        }
-    }
+		public EncodeMediaItemTask(long mediaItemId) {
+			this.mediaItemId = mediaItemId;
+		}
+
+		public void run() {
+			encodeMediaManager.encodeMedia(mediaItemId);
+		}
+	}
 
 }
