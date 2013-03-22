@@ -24,7 +24,6 @@ import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
 import org.mashupmedia.util.WebHelper;
-import org.mashupmedia.util.WebHelper.FormatContentType;
 import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -82,19 +81,19 @@ public class StreamingController {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		Library library = mediaItem.getLibrary();		
 		String format = mediaItem.getFormat();
-		String tempContentType = WebHelper.getContentType(format, FormatContentType.MIME);
+		MediaContentType mediaContentType = WebHelper.getMediaContentType(format, MediaContentType.MP3);
 		FileType fileType = FileType.MEDIA_ITEM_STREAM_UNPROCESSED;
 		File tempFile = new File(mediaItem.getPath()); 
 		
 		if (encodeType == EncodeType.ENCODED || encodeType == EncodeType.BEST) {
 			if (mediaItem.getEncodeStatusType() == EncodeStatusType.ENCODED || mediaItem.getEncodeStatusType() == EncodeStatusType.PROCESSING) {
-				tempContentType = MediaContentType.OGA.getMimeContentType();
+				mediaContentType = MediaContentType.OGA;
 				fileType = FileType.MEDIA_ITEM_STREAM_ENCODED;
 				tempFile = FileHelper.createMediaFile(library.getId(), mediaItemId, fileType);
 			}
 		} 
 				
-		final String contentType = tempContentType;
+		final String contentType = mediaContentType.getMimeContentType();
 		final File file = tempFile;
 
 		ModelAndView modelAndView = new ModelAndView(new View() {

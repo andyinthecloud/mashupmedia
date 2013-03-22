@@ -17,7 +17,11 @@
 
 package org.mashupmedia.controller.ajax;
 
+import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
+import org.mashupmedia.util.WebHelper;
+import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,19 +30,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("/ajax/encode")
-public class AjaxEncodeMediaItemController {
+@RequestMapping("/ajax/media/")
+public class AjaxMediaItemController {
 
 	public static final String MODEL_KEY_IS_SUCCESSFUL = "isSuccessful";
-
+	
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 
-	@RequestMapping(value = "/{mediaItemId}", method = RequestMethod.GET)
-	public String handleEncodeOgg(@PathVariable Long mediaItemId, Model model) {
+	@Autowired
+	private MediaManager mediaManager;
+	
+	@RequestMapping(value = "/encode/{mediaItemId}", method = RequestMethod.GET)
+	public String handleEncodeHtml5(@PathVariable Long mediaItemId, Model model) {
 		encodeMediaItemTaskManager.encodeMediaItem(mediaItemId);
 		model.addAttribute(MODEL_KEY_IS_SUCCESSFUL, true);
 		return "ajax/message";
+	}
+	
+	
+	@RequestMapping(value = "/{mediaItemId}", method = RequestMethod.GET)
+	public String handleGetOriginalMediaFormat(@PathVariable Long mediaItemId, Model model) {	
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		model.addAttribute("mediaItem", mediaItem);
+		String originalMediaFormat = mediaItem.getFormat();
+		MediaContentType mediaContentType = WebHelper.getMediaContentType(originalMediaFormat, MediaContentType.MP3);		
+		model.addAttribute("jPlayerFormat", mediaContentType.getjPlayerContentType());
+		return "ajax/media/media-item";
 	}
 
 }

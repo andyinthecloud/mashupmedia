@@ -35,14 +35,22 @@
 	    var mediaItemId = $("#current-song-id").val();
 	    
 		if (className == "play-original-file") {
-		    $( mashupMedia.jPlayerId).jPlayer('setMedia', {
-				mp3: mashupMedia.contextUrl + "app/streaming/media/" + mediaItemId
- 		    }).jPlayer("play");;
+		    
+		    $.get(mashupMedia.contextUrl + "app/ajax/media/" + mediaItemId, 
+			    function(data) {
+				var jPlayerFormat = data.mediaItem.jPlayerFormat;
+				
+			    $( mashupMedia.jPlayerId).jPlayer('setMedia', {
+					jPlayerFormat: mashupMedia.contextUrl + "app/streaming/media/unprocessed/" + mediaItemId
+	 		    }).jPlayer("play");
+				
+		    });		    
+		    
 		    
 		} else if (className == "encode-file") {
 		    $("#current-song .encode").html("<spring:message code="music.playlist.encode.processing" />");
 		    
-			$.get(mashupMedia.contextUrl + "app/ajax/encode/" + mediaItemId,
+			$.get(mashupMedia.contextUrl + "app/ajax/media/encode/" + mediaItemId,
 			function(data) {
 				var encodeStatus = "ERROR";
 				if (data.response.isSuccessful) {
@@ -53,7 +61,7 @@
 			    $("#current-song .encode").html(encodeMessage);
 			    
 			    $( mashupMedia.jPlayerId).jPlayer('setMedia', {
-					oga: mashupMedia.contextUrl + "app/streaming/encoded/media/" + mediaItemId,					
+					oga: mashupMedia.contextUrl + "app/streaming/media/encoded/" + mediaItemId,					
 	 		    }).jPlayer("play");
 			    
 			    

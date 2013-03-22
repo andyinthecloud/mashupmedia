@@ -19,6 +19,7 @@ package org.mashupmedia.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,32 +47,39 @@ public class ProcessHelper {
 			}
 			processCache.add(processString);
 			logger.info("Starting process...");
-			
 
 			ProcessBuilder processBuilder = new ProcessBuilder(commands);
 			processBuilder.redirectErrorStream(true);
 			Process process = processBuilder.start();
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-			String line = null;
-			StringBuilder outputBuilder = new StringBuilder();
-
-			while ((line = bufferedReader.readLine()) != null) {
-				logger.debug(line);
-				outputBuilder.append(line);
-			}
+			String inputStreamText = loadStream(process.getInputStream());
+			loadStream(process.getErrorStream());
 
 			try {
-				logger.info("Process waitFor value = " + process.waitFor());
-				logger.info("Process exit value = " + process.exitValue());
+				int waitForValue = process.waitFor();
+				logger.info("Process waitFor value = " + waitForValue);
 			} catch (InterruptedException e) {
-				logger.error("Error running process:", e);
+				logger.error("Error waiting for waitFor.", e);
 			}
 
-			return outputBuilder.toString();
+			int exitValue = process.exitValue();
+			logger.info("Process exit value = " + exitValue);
+
+			return inputStreamText;
 		} finally {
 			processCache.remove(processString);
 		}
+
+	}
+
+	private static String loadStream(InputStream s) throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(s));
+		StringBuilder stringBuilder = new StringBuilder();
+		String line;
+		while ((line = bufferedReader.readLine()) != null) {
+			logger.debug(line);
+			stringBuilder.append(line);
+		}
+		return stringBuilder.toString();
 	}
 
 }

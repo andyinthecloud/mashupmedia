@@ -15,7 +15,8 @@ public class FileHelper {
 	public final static String ALBUM_ART_FOLDER = "cover-art";
 
 	public enum FileType {
-		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM_UNPROCESSED("media-item-stream"), MEDIA_ITEM_STREAM_ENCODED("media-item-encoded") ;
+		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM_UNPROCESSED("media-item-stream"), MEDIA_ITEM_STREAM_ENCODED(
+				"media-item-encoded");
 
 		private String folderName;
 
@@ -33,12 +34,12 @@ public class FileHelper {
 		File libraryFolder = getLibraryFolder(libraryId);
 		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
 		mediaFolder.mkdirs();
-		
+
 		String fileName = String.valueOf(mediaItemId);
 		if (fileType == FileType.MEDIA_ITEM_STREAM_ENCODED) {
 			fileName += ".ogg";
 		}
-		
+
 		File mediaFile = new File(mediaFolder, fileName);
 		return mediaFile;
 	}
@@ -50,7 +51,7 @@ public class FileHelper {
 		File mediaFile = new File(mediaFolder, String.valueOf(System.nanoTime()));
 		return mediaFile;
 	}
-	
+
 	public static File createAlbumArtThumbnailFile(long libraryId) {
 		File libraryFolder = getLibraryFolder(libraryId);
 		File thumbnailFolder = new File(libraryFolder, FileType.ALBUM_ART_THUMBNAIL.getFolderName());
@@ -166,5 +167,28 @@ public class FileHelper {
 		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 
+	public static boolean deleteFile(File file) {
+		if (file.isDirectory()) {
+			logger.info("Unable to delete file. It is in fact a folder: " + file.getAbsolutePath());
+			return true;
+		}
+
+		if (!file.exists()) {
+			logger.info("Unable to delete file. It is does not exist: " + file.getAbsolutePath());
+			return true;
+		}
+
+		try {
+			if (file.delete()) {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.info("Unable to delete file: ", e);
+		}
+
+		logger.info("Unable to delete file, will try to remove when web server stops...");
+		file.deleteOnExit();
+		return false;
+	}
 
 }

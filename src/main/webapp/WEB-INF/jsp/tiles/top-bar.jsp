@@ -6,9 +6,9 @@
 	<a class="home" href="<c:url value="/" />"><spring:message code="top-bar.home" /></a>
 
 	<ul class="main-menu">
-		<li><a href="#">User</a></li>
-		<li><a href="#">Sunny</a></li>
-		<li><a href="#"><spring:message code="top-bar.log-out" /></a></li>
+		<li><a href="Javascript:;">User</a></li>
+		<li><a href="Javascript:;">Sunny</a></li>
+		<li><a href="Javascript:;"><spring:message code="top-bar.log-out" /></a></li>
 	</ul>
 
 </div>

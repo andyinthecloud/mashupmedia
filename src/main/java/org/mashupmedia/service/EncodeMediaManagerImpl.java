@@ -77,7 +77,13 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 
 			File inputAudioFile = connectionManager.getMediaItemStreamFile(mediaItemId, EncodeType.UNPROCESSED);
 			File outputAudioFile = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_STREAM_ENCODED);
-
+			boolean isDeleted = FileHelper.deleteFile(outputAudioFile);
+			
+			if (!isDeleted) {
+				logger.info("Exiting, unable to delete encoded media file: " + outputAudioFile.getAbsolutePath());
+				return;
+			}
+			
 			EncodeHelper.encodeAudioToHtml5(pathToFfMpeg, inputAudioFile, outputAudioFile);
 
 			logger.info("Media file decoded to ogg format");

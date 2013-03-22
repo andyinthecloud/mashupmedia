@@ -1,14 +1,18 @@
 package org.mashupmedia.dao;
 
+import java.io.File;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.mashupmedia.exception.MashupMediaException;
 import org.mashupmedia.model.User;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.FileHelper.FileType;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -161,6 +165,10 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 //				sessionFactory.getCurrentSession().delete(playlistMediaItem);
 				totalDeletedItems++;
 			}
+			
+			Library library = mediaItem.getLibrary();
+			File outputAudioFile = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_STREAM_ENCODED);
+			FileHelper.deleteFile(outputAudioFile);
 						
 		}
 		logger.info("Deleted " + totalDeletedItems + " playlistMediaItems");

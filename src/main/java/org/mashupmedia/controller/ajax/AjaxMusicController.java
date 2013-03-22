@@ -21,7 +21,7 @@ import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.SecurityHelper;
 import org.mashupmedia.util.WebHelper;
-import org.mashupmedia.util.WebHelper.FormatContentType;
+import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.mashupmedia.web.page.AlbumPage;
 import org.mashupmedia.web.page.AlbumsPage;
 import org.mashupmedia.web.page.ArtistPage;
@@ -143,8 +143,8 @@ public class AjaxMusicController extends BaseAjaxController {
 		if (mediaType == MediaType.SONG) {
 			Song song = (Song) mediaItem;
 			playlist = updatePlayingSong(playlist, song);
-			String format = WebHelper.getContentType(mediaItem.getFormat(), FormatContentType.JPLAYER);
-			model.addAttribute("format", format);
+			MediaContentType mediaContentType = WebHelper.getMediaContentType(mediaItem.getFormat(), MediaContentType.MP3);
+			model.addAttribute("format", mediaContentType.getjPlayerContentType());
 			model.addAttribute("song", song);
 			model.addAttribute("playlist", playlist);
 			return "ajax/music/player-script";

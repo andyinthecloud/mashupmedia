@@ -102,15 +102,15 @@ public class WebHelper {
 		return "image/" + contentType;
 	}
 
-	public static String getContentType(String format, FormatContentType formatContentType) {
-		MediaContentType mediaContentType = getMediaContentType(format, MediaContentType.MP3);
-		if (formatContentType == FormatContentType.JPLAYER) {
-			return mediaContentType.getjPlayerContentType();
-		} else {
-			return mediaContentType.getMimeContentType();
-		}
-
-	}
+//	public static String getContentType(String format, FormatContentType formatContentType) {
+//		MediaContentType mediaContentType = getMediaContentType(format, MediaContentType.MP3);
+//		if (formatContentType == FormatContentType.JPLAYER) {
+//			return mediaContentType.getjPlayerContentType();
+//		} else {
+//			return mediaContentType.getMimeContentType();
+//		}
+//
+//	}
 
 	public static MediaContentType getMediaContentType(String mediaFormat, MediaContentType defaultMediaContentType) {
 		mediaFormat = StringUtils.trimToEmpty(mediaFormat);

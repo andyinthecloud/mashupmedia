@@ -34,7 +34,7 @@
 		<appender-ref ref="fileAppender" />
 	</logger>
 
-	<logger name="org.mashupmedia" additivity="true">
+	<logger name="org.mashupmedia" additivity="false">
 		<level value="${log4j.mashupmedia.level}" />
 		<appender-ref ref="consoleAppender" />
 		<appender-ref ref="fileAppender" />

@@ -424,6 +424,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Override
 	public void deleteSongs(List<Song> songs) {
+				
 		playlistDao.deletePlaylistMediaItems(songs);
 
 		musicDao.deleteSongs(songs);
