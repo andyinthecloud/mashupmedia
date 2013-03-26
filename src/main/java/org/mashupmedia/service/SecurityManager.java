@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.mashupmedia.model.Group;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public interface SecurityManager {
@@ -30,5 +31,7 @@ public interface SecurityManager {
 	public boolean isLoggedInUserInGroup(Collection<Group> groups);
 	
 	public boolean canAccessPlaylistMediaItem(PlaylistMediaItem playlistMediaItem);
+
+	public boolean canAccessMediaItem(MediaItem mediaItem);
 
 }

@@ -102,6 +102,7 @@ public class EncodeHelper {
 		commands.add(pathToFfMpeg);
 		commands.add("-i");
 		commands.add(inputAudioFile.getAbsolutePath());
+		commands.add("-y");
 		commands.add("-f");
 		commands.add("ogg");
 		commands.add("-acodec");

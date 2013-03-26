@@ -176,6 +176,11 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 	
 	@Override
 	public void saveMediaItem(MediaItem mediaItem) {
-		saveOrUpdate(mediaItem);		
+		long mediaItemId = mediaItem.getId();
+		if (mediaItemId == 0) {
+			saveOrUpdate(mediaItem);
+		} else {
+			sessionFactory.getCurrentSession().merge(mediaItem);
+		}
 	}
 }

@@ -231,8 +231,6 @@ var mashupMedia = new function() {
 		});
 	};
 
-	
-    
     	this.playSongSearchResults = function() {
     	    	var serialisedSearchForm = $("#quick-search").serialize();
 
@@ -335,6 +333,8 @@ var mashupMedia = new function() {
 }
 
 function getAudioEncodeStatus(encodeStatus) {
+    alert(encodeStatus);
+    
     var encodeMessage = "";
 		
     if (encodeStatus == "PROCESSING") {
@@ -343,6 +343,8 @@ function getAudioEncodeStatus(encodeStatus) {
 	encodeMessage = "<spring:message code="music.playlist.encode.processed" />";
     } else if (encodeStatus == "ERROR") {
 	encodeMessage = "<spring:message code="music.playlist.encode.error" />";	
+    } else if (encodeStatus == "OVERRIDE") {
+	encodeMessage = "<spring:message code="music.playlist.encode.override" />";	
     } else {
 	encodeMessage = "<spring:message code="music.playlist.encode.process" />";	    
     }

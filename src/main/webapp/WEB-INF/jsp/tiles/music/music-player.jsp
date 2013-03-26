@@ -35,18 +35,16 @@
 	    var mediaItemId = $("#current-song-id").val();
 	    
 		if (className == "play-original-file") {
-		    
-		    $.get(mashupMedia.contextUrl + "app/ajax/media/" + mediaItemId, 
-			    function(data) {
-				var jPlayerFormat = data.mediaItem.jPlayerFormat;
-				
-			    $( mashupMedia.jPlayerId).jPlayer('setMedia', {
-					jPlayerFormat: mashupMedia.contextUrl + "app/streaming/media/unprocessed/" + mediaItemId
-	 		    }).jPlayer("play");
-				
+		    $.get(mashupMedia.contextUrl + "app/ajax/media/format-unprocessed/" + mediaItemId,
+			function(data) {
+				mashupMedia.playSong(mediaItemId);
 		    });		    
-		    
-		    
+		} else if (className == "play-encoded-file") {
+		    $.get(mashupMedia.contextUrl + "app/ajax/media/format-encoded/" + mediaItemId,
+				function(data) {
+					mashupMedia.playSong(mediaItemId);
+			    });		    
+			    
 		} else if (className == "encode-file") {
 		    $("#current-song .encode").html("<spring:message code="music.playlist.encode.processing" />");
 		    
@@ -59,13 +57,7 @@
 				
 				var encodeMessage = getAudioEncodeStatus(encodeStatus);
 			    $("#current-song .encode").html(encodeMessage);
-			    
-			    $( mashupMedia.jPlayerId).jPlayer('setMedia', {
-					oga: mashupMedia.contextUrl + "app/streaming/media/encoded/" + mediaItemId,					
-	 		    }).jPlayer("play");
-			    
-			    
-			    
+			    mashupMedia.playSong(mediaItemId);
 			});
 		    
 		}

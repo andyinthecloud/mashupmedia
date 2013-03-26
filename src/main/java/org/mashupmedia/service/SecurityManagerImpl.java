@@ -102,8 +102,14 @@ public class SecurityManagerImpl implements SecurityManager {
 		if (playlistMediaItem == null) {
 			return false;
 		}
-
+				
 		MediaItem mediaItem = playlistMediaItem.getMediaItem();
+		boolean canAccessMediaItem = canAccessMediaItem(mediaItem);
+		return canAccessMediaItem;
+	}
+	
+	@Override
+	public boolean canAccessMediaItem(MediaItem mediaItem) {
 		if (mediaItem == null) {
 			return false;
 		}

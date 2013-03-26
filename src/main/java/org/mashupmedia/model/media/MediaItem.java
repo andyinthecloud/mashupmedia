@@ -53,7 +53,7 @@ public class MediaItem implements Serializable {
 	}
 	
 	public enum EncodeStatusType {
-		UNPROCESSED, PROCESSING, ENCODED, ERROR
+		UNPROCESSED, PROCESSING, ENCODED, ERROR, OVERRIDE
 	}
 
 	@Id

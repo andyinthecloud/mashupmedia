@@ -17,6 +17,9 @@ public class MediaManagerImpl implements MediaManager{
 	
 	@Autowired
 	private MediaDao mediaDao;
+	
+	@Autowired
+	private SecurityManager securityManager;
 
 	@Override
 	public List<MediaItem> getMediaItemsForLibrary(long libraryId) {
@@ -67,6 +70,11 @@ public class MediaManagerImpl implements MediaManager{
 	
 	@Override
 	public void saveMediaItem(MediaItem mediaItem) {
+//		if (!securityManager.canAccessMediaItem(mediaItem)) {
+//			throw new UnauthorisedException("Logged in user unable to access media item: " + mediaItem.getId());
+//		}
+		
+		mediaItem.setUpdatedOn(new Date());
 		mediaDao.saveMediaItem(mediaItem);				
 	}
 	
