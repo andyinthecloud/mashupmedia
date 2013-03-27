@@ -32,7 +32,8 @@ public class MusicLibraryPageValidator implements Validator {
 			errors.rejectValue("musicLibrary.scanMinutesInterval", "error.number");
 		}
 
-		validateFolderLocation(musicLibraryPage.getFolderLocation(), errors);
+		Location location = musicLibrary.getLocation();
+		validateFolderLocation(location, errors);
 
 		Set<Group> groups = musicLibrary.getGroups();
 		if (groups == null || groups.isEmpty()) {
@@ -44,12 +45,12 @@ public class MusicLibraryPageValidator implements Validator {
 
 	private void validateFolderLocation(Location location, Errors errors) {
 		if (location == null) {
-			errors.rejectValue("folderLocation", "musiclibrary.error.locationtype");
+			errors.rejectValue("musicLibrary.location.path", "musiclibrary.error.locationtype");
 			return;
 		}
 
 		if (StringUtils.isBlank(location.getPath())) {
-			errors.rejectValue("folderLocation.path", "musiclibrary.error.location.folder.path");
+			errors.rejectValue("musicLibrary.location.path", "musiclibrary.error.location.folder.path");
 		}
 
 	}

@@ -71,7 +71,7 @@
 
 		<div class="folder">
 			<label class="new-line" for="folderLocation-path"><spring:message code="musiclibrary.location.path" /></label>
-			<form:input path="folderLocation.path" id="folderLocation-path" />
+			<form:input path="musicLibrary.location.path" id="folderLocation-path" />
 		</div>
 
 

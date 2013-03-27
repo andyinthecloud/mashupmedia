@@ -71,10 +71,10 @@ public class MusicLibraryController extends BaseController {
 		MusicLibraryPage musicLibraryPage = new MusicLibraryPage();
 		MusicLibrary musicLibrary = new MusicLibrary();
 		musicLibrary.setEnabled(true);
-		musicLibraryPage.setMusicLibrary(musicLibrary);
-
 		Location location = new Location();
-		musicLibraryPage.setFolderLocation(location);
+		musicLibrary.setLocation(location);
+
+		musicLibraryPage.setMusicLibrary(musicLibrary);
 
 		if (libraryId == null) {
 			return musicLibraryPage;
@@ -82,7 +82,6 @@ public class MusicLibraryController extends BaseController {
 
 		musicLibrary = (MusicLibrary) libraryManager.getLibrary(libraryId);
 		musicLibraryPage.setMusicLibrary(musicLibrary);
-		location = musicLibrary.getLocation();
 		return musicLibraryPage;
 	}
 
@@ -114,9 +113,7 @@ public class MusicLibraryController extends BaseController {
 	}
 
 	private void processSaveAction(MusicLibraryPage musicLibraryPage) {
-		Location location = musicLibraryPage.getFolderLocation();
 		MusicLibrary musicLibrary = musicLibraryPage.getMusicLibrary();
-		musicLibrary.setLocation(location);
 		
 		List<Group> groups = musicLibraryPage.getGroups();
 		if (groups != null) {

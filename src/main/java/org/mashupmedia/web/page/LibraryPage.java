@@ -3,12 +3,10 @@ package org.mashupmedia.web.page;
 import java.util.List;
 
 import org.mashupmedia.model.Group;
-import org.mashupmedia.model.location.Location;
 
 public abstract class LibraryPage {
 
 	private String action;
-	private Location folderLocation;
 	private List<Group> groups;
 
 	public List<Group> getGroups() {
@@ -25,14 +23,6 @@ public abstract class LibraryPage {
 
 	public void setAction(String action) {
 		this.action = action;
-	}
-
-	public Location getFolderLocation() {
-		return folderLocation;
-	}
-
-	public void setFolderLocation(Location location) {
-		this.folderLocation = location;
 	}
 
 }
