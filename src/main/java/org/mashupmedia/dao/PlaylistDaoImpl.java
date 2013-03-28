@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.mashupmedia.exception.MashupMediaException;
-import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
@@ -158,11 +157,11 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			
 			for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
 				long playlistMediaItemId = playlistMediaItem.getId();				
-				Query userQuery = sessionFactory.getCurrentSession().createQuery("update User set playlistMediaItem = null where playlistMediaItem.id = :playlistMediaItemId");
+				Query userQuery = sessionFactory.getCurrentSession().createQuery("update User set playlistMediaItemId = null where playlistMediaItemId = :playlistMediaItemId");
 				userQuery.setLong("playlistMediaItemId", playlistMediaItemId);
 				userQuery.executeUpdate();
 				
-//				sessionFactory.getCurrentSession().delete(playlistMediaItem);
+				sessionFactory.getCurrentSession().delete(playlistMediaItem);
 				totalDeletedItems++;
 			}
 			
@@ -187,9 +186,22 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		logger.info("Deleted " + deletedItems + " playlistMediaItems");
 	}
 	
-	@Override
-	public void updateUserPlayingMediaItem(User user) {
-		sessionFactory.getCurrentSession().merge(user);
-	}
 
+	@Override
+	public PlaylistMediaItem getPlaylistMediaItem(long playlistMediaItemId) {
+		if (playlistMediaItemId == 0) {
+			return null;
+		}
+		
+		Query query = sessionFactory.getCurrentSession().createQuery("from PlaylistMediaItem where id = :playlistMediaItemId");
+		query.setLong("playlistMediaItemId", playlistMediaItemId);
+		@SuppressWarnings("unchecked")
+		List<PlaylistMediaItem> playlistMediaItems = query.list();
+		if (playlistMediaItems.isEmpty()) {
+			return null;
+		}
+		
+		return playlistMediaItems.get(0);
+	}
+	
 }

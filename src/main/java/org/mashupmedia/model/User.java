@@ -13,7 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,8 +37,19 @@ public class User implements UserDetails, Serializable {
 	private Set<Group> groups;
 	private Date createdOn;
 	private Date updatedOn;
-	@ManyToOne
+	private long playlistMediaItemId;
+	@Transient
 	private PlaylistMediaItem playlistMediaItem;
+
+	
+	
+	public long getPlaylistMediaItemId() {
+		return playlistMediaItemId;
+	}
+
+	public void setPlaylistMediaItemId(long playlistMediaItemId) {
+		this.playlistMediaItemId = playlistMediaItemId;
+	}
 
 	public PlaylistMediaItem getPlaylistMediaItem() {
 		return playlistMediaItem;
@@ -182,8 +193,12 @@ public class User implements UserDetails, Serializable {
 		builder.append(username);
 		builder.append(", password=");
 		builder.append(password);
+		builder.append(", name=");
+		builder.append(name);
 		builder.append(", enabled=");
 		builder.append(enabled);
+		builder.append(", editable=");
+		builder.append(editable);
 		builder.append(", roles=");
 		builder.append(roles);
 		builder.append(", groups=");
@@ -192,8 +207,8 @@ public class User implements UserDetails, Serializable {
 		builder.append(createdOn);
 		builder.append(", updatedOn=");
 		builder.append(updatedOn);
-		builder.append(", name=");
-		builder.append(name);
+		builder.append(", playlistMediaItemId=");
+		builder.append(playlistMediaItemId);
 		builder.append("]");
 		return builder.toString();
 	}

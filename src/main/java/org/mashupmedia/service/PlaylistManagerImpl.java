@@ -32,6 +32,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	
 	@Autowired
 	private SecurityManager securityManager;
+	
+	@Autowired
+	private AdminManager adminManager;
 
 	@Override
 	public List<Playlist> getPlaylists() {
@@ -178,7 +181,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		}
 		
 		user.setPlaylistMediaItem(playlistMediaItem);
-		playlistDao.updateUserPlayingMediaItem(user);
+		adminManager.updateUser(user);
 		
 	}
 

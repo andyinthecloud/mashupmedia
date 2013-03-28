@@ -1,6 +1,7 @@
 package org.mashupmedia.service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -28,8 +29,8 @@ public class InitialisationManagerImpl implements InitialisationManager {
 			return;
 		}
 
-		initialiseAdminUserAndRoles();
 		initialiseGroups();
+		initialiseAdminUserAndRoles();
 	}
 
 	protected void initialiseGroups() {
@@ -54,6 +55,9 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		user.setEnabled(true);
 		user.setEditable(false);
 		user.setRoles(roles);
+		
+		List<Group> groups = adminManager.getGroups();
+		user.setGroups(new HashSet<Group>(groups));		
 		adminManager.saveUser(user);
 //		adminManager.updatePassword(DEFAULT_USERNAME, DEFAULT_PASSWORD);
 	}

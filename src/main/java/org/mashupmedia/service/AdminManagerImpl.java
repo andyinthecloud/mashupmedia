@@ -17,6 +17,7 @@ import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.EncryptionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +44,22 @@ public class AdminManagerImpl implements AdminManager {
 	@Override
 	public User getUser(String username) {
 		User user = userDao.getUser(username);
+		initialisePlaylistMediaItem(user);
 		return user;
 	}
 
+	private void initialisePlaylistMediaItem(User user) {
+		if (user == null) {
+			return;
+		}
+		
+		long playlistMediaItemId = user.getPlaylistMediaItemId();
+		PlaylistMediaItem playlistMediaItem = playlistDao.getPlaylistMediaItem(playlistMediaItemId);
+		user.setPlaylistMediaItem(playlistMediaItem);
+	}
+	
+	
+	
 	@Override
 	public User getUser(long userId) {
 		User user = userDao.getUser(userId);
@@ -84,6 +98,19 @@ public class AdminManagerImpl implements AdminManager {
 			updatePassword(username, password);
 		}
 
+	}
+	
+	@Override
+	public void updateUser(User user) {
+		if (user.getId() == 0) {
+			throw new MashupMediaException("Can only update an existing user.");
+		}
+		
+		
+		PlaylistMediaItem playlistMediaItem = user.getPlaylistMediaItem();
+		long playlistMediaItemId = playlistMediaItem.getId();
+		user.setPlaylistMediaItemId(playlistMediaItemId);
+		userDao.saveUser(user);
 	}
 
 	@Override
