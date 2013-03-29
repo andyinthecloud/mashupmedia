@@ -1,10 +1,12 @@
 package org.mashupmedia.service;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
@@ -20,6 +22,9 @@ public class InitialisationManagerImpl implements InitialisationManager {
 
 	@Autowired
 	private AdminManager adminManager;
+	
+	@Autowired
+	private ConfigurationManager configurationManager;
 
 	@Override
 	public void initialiseApplication() {
@@ -28,9 +33,26 @@ public class InitialisationManagerImpl implements InitialisationManager {
 			logger.info("Database has already been initialised. Exiting....");
 			return;
 		}
-
+		
+		initialiseUniqueInstallationName();
 		initialiseGroups();
 		initialiseAdminUserAndRoles();
+	}
+
+	private void initialiseUniqueInstallationName() {
+		
+		StringBuilder uniqueNameBuilder = new StringBuilder();
+		uniqueNameBuilder.append(System.getenv("os.arch"));
+		uniqueNameBuilder.append(System.getenv("os.name"));
+		uniqueNameBuilder.append(System.getenv("os.version"));
+		uniqueNameBuilder.append(System.getenv("user.country"));
+		uniqueNameBuilder.append(System.getenv("user.dir"));
+		uniqueNameBuilder.append(System.getenv("user.home"));
+		uniqueNameBuilder.append(System.getenv("user.name"));
+		
+		Date date = new Date();
+		String uniqueInstallationName = String.valueOf(date.getTime()) + String.valueOf(uniqueNameBuilder.toString().hashCode());
+		configurationManager.saveConfiguration(MashUpMediaConstants.UNIQUE_INSTALLATION_NAME, uniqueInstallationName);
 	}
 
 	protected void initialiseGroups() {

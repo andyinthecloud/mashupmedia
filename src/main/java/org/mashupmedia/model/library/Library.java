@@ -15,6 +15,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.Group;
@@ -45,14 +46,15 @@ public class Library implements Serializable {
 	@IndexedEmbedded
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Group> groups;
-	private boolean remoteShareEnabled;
+	@OneToMany
+	private Set<RemoteShare> remoteShares;
 
-	public boolean isRemoteShareEnabled() {
-		return remoteShareEnabled;
+	public Set<RemoteShare> getRemoteShares() {
+		return remoteShares;
 	}
 
-	public void setRemoteShareEnabled(boolean remoteShareEnabled) {
-		this.remoteShareEnabled = remoteShareEnabled;
+	public void setRemoteShares(Set<RemoteShare> remoteShares) {
+		this.remoteShares = remoteShares;
 	}
 
 	public Set<Group> getGroups() {
@@ -192,6 +194,8 @@ public class Library implements Serializable {
 		builder.append(scanMinutesInterval);
 		builder.append(", groups=");
 		builder.append(groups);
+		builder.append(", remoteShares=");
+		builder.append(remoteShares);
 		builder.append("]");
 		return builder.toString();
 	}
