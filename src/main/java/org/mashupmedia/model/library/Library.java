@@ -45,6 +45,15 @@ public class Library implements Serializable {
 	@IndexedEmbedded
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Group> groups;
+	private boolean remoteShareEnabled;
+
+	public boolean isRemoteShareEnabled() {
+		return remoteShareEnabled;
+	}
+
+	public void setRemoteShareEnabled(boolean remoteShareEnabled) {
+		this.remoteShareEnabled = remoteShareEnabled;
+	}
 
 	public Set<Group> getGroups() {
 		return groups;

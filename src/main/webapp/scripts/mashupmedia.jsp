@@ -333,7 +333,6 @@ var mashupMedia = new function() {
 }
 
 function getAudioEncodeStatus(encodeStatus) {
-    alert(encodeStatus);
     
     var encodeMessage = "";
 		
