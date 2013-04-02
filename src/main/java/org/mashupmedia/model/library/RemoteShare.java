@@ -3,15 +3,51 @@ package org.mashupmedia.model.library;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import org.mashupmedia.model.User;
+
+@Entity
+@Cacheable
 public class RemoteShare implements Serializable {
 
 	private static final long serialVersionUID = 7908980996923387604L;
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String uniqueName;
 	private String remoteUrl;
-	private Date lastAcccessed;
+	private Date createdOn;
+	@ManyToOne
+	private User createdBy;
+	private Date lastAccessed;
 	private long totalPlayedMediaItems;
+	
+	public RemoteShare() {
+		this.createdOn = new Date();
+	}
+	
+	public Date getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public User getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
+	}
 
 	public long getId() {
 		return id;
@@ -37,12 +73,12 @@ public class RemoteShare implements Serializable {
 		this.remoteUrl = remoteUrl;
 	}
 
-	public Date getLastAcccessed() {
-		return lastAcccessed;
+	public Date getLastAccessed() {
+		return lastAccessed;
 	}
 
-	public void setLastAcccessed(Date lastAcccessed) {
-		this.lastAcccessed = lastAcccessed;
+	public void setLastAccessed(Date lastAccessed) {
+		this.lastAccessed = lastAccessed;
 	}
 
 	public long getTotalPlayedMediaItems() {
@@ -90,8 +126,12 @@ public class RemoteShare implements Serializable {
 		builder.append(uniqueName);
 		builder.append(", remoteUrl=");
 		builder.append(remoteUrl);
+		builder.append(", createdOn=");
+		builder.append(createdOn);
+		builder.append(", createdBy=");
+		builder.append(createdBy);
 		builder.append(", lastAcccessed=");
-		builder.append(lastAcccessed);
+		builder.append(lastAccessed);
 		builder.append(", totalPlayedMediaItems=");
 		builder.append(totalPlayedMediaItems);
 		builder.append("]");

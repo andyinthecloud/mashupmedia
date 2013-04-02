@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class MusicLibraryController extends BaseController {
@@ -82,6 +83,7 @@ public class MusicLibraryController extends BaseController {
 
 		musicLibrary = (MusicLibrary) libraryManager.getLibrary(libraryId);
 		musicLibraryPage.setMusicLibrary(musicLibrary);
+		musicLibraryPage.setExists(true);
 		return musicLibraryPage;
 	}
 
@@ -93,7 +95,7 @@ public class MusicLibraryController extends BaseController {
 	}
 
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.POST)
-	public String processMusicLibrary(@ModelAttribute("musicLibraryPage") MusicLibraryPage musicLibraryPage, Model model, BindingResult result) {
+	public String processMusicLibrary(@ModelAttribute("musicLibraryPage") MusicLibraryPage musicLibraryPage, Model model, BindingResult result, RedirectAttributes redirectAttributes) {
 
 		new MusicLibraryPageValidator().validate(musicLibraryPage, result);
 		if (result.hasErrors()) {

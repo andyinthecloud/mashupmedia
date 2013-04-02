@@ -170,10 +170,13 @@ label.date-to {
 }
 
 
-div.panel label.new-line {
+.new-line {
 	display: block;
 	padding-top: 10px;
 }
+
+
+
 
 div.panel input[type='text'],div.panel input[type='password'] {
 	width: 99%;

@@ -1,8 +1,31 @@
 package org.mashupmedia.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
+import org.apache.log4j.Logger;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 public class DateHelper {
+
+	private static Logger logger = Logger.getLogger(DateHelper.class);
+
+	public enum DateFormatType {
+
+		URL("dd-MM-yyyy"), SHORT_DISPLAY_WITH_TIME("dd/MM/yyyy HH:mm:ss z");
+
+		DateFormatType(String pattern) {
+			this.pattern = pattern;
+		}
+
+		private String pattern;
+
+		public String getPattern() {
+			return pattern;
+		}
+
+	}
 
 	public static String getDisplayTrackLength(long totalSeconds) {
 		StringBuilder trackLengthBuilder = new StringBuilder();
@@ -26,6 +49,28 @@ public class DateHelper {
 	public static long getDifferenceInSeconds(Date fromDate, Date toDate) {
 		long seconds = (fromDate.getTime() - toDate.getTime()) / 1000;
 		return seconds;
+	}
+
+	public static String parseToText(Date date, DateFormatType dateFormatType) {
+		Locale locale = LocaleContextHolder.getLocale();
+		String text = parseToText(date, dateFormatType, locale);
+		return text;
+	}
+
+	public static String parseToText(Date date, DateFormatType dateFormatType, Locale locale) {
+
+		if (date == null) {
+			logger.info("Cannot convert null date, defaulting to current date.");
+			date = new Date();
+		}
+
+		if (locale == null) {
+			locale = Locale.ENGLISH;
+		}
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatType.getPattern(), locale);
+		String text = simpleDateFormat.format(date);
+		return text;
 	}
 
 }

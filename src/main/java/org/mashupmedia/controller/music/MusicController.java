@@ -73,7 +73,7 @@ public class MusicController extends BaseController {
 		ModelAndView modelAndView = getAlbumArtModelAndView(albumId, ImageType.THUMBNAIL);
 		return modelAndView;
 	}
-	
+
 	protected ModelAndView getAlbumArtModelAndView(Long albumId, ImageType imageType) throws Exception {
 		Album album = musicManager.getAlbum(albumId);
 		AlbumArtImage albumArtImage = album.getAlbumArtImage();
@@ -88,11 +88,13 @@ public class MusicController extends BaseController {
 					response.sendRedirect(request.getContextPath() + "/images/no-album-art.png");
 					return;
 				}
-
 				ServletOutputStream outputStream = response.getOutputStream();
-				IOUtils.write(imageBytes, outputStream);
-				outputStream.flush();
-				outputStream.close();
+				try {
+					IOUtils.write(imageBytes, outputStream);
+					outputStream.flush();
+				} finally {
+					IOUtils.closeQuietly(outputStream);
+				}
 			}
 
 			@Override

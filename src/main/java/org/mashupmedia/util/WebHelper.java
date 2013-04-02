@@ -8,7 +8,18 @@ import org.mashupmedia.model.media.AlbumArtImage;
 public class WebHelper {
 
 	public enum WebFormatType {
-		HTML, JSON
+		HTML("text/html; charset=utf-8"), JSON("application/json; charset=utf-8");
+		
+		WebFormatType(String contentType) {
+			this.contentType = contentType;
+		}
+		
+		private String contentType;
+		
+		public String getContentType() {
+			return contentType;
+		}
+		
 	}
 
 	public enum ActionType {

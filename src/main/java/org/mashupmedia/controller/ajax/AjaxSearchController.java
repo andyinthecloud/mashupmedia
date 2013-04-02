@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/ajax/search")
-public class AjaxSearchController extends BaseAjaxController {
+public class AjaxSearchController extends AjaxBaseController {
 	
 
 	@Autowired

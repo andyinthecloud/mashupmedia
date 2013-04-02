@@ -5,9 +5,13 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
+import org.apache.commons.io.IOUtils;
 
 public class ImageHelper {
 
@@ -48,10 +52,15 @@ public class ImageHelper {
 			return null;
 		}
 
-		Image image = ImageIO.read(imageFile);
+		FileInputStream imageFileInputStream = new FileInputStream(imageFile);
+		Image image = ImageIO.read(imageFileInputStream);
+		IOUtils.closeQuietly(imageFileInputStream);
+		
 		BufferedImage thumbnailImage = createThumbnail(image);
 		File thumbnailFile = FileHelper.createAlbumArtThumbnailFile(libraryId);
-		ImageIO.write(thumbnailImage, ImageFormatType.PNG.getFormat(), thumbnailFile);
+		FileOutputStream thumbnailFileOutputStream = new FileOutputStream(thumbnailFile);		
+		ImageIO.write(thumbnailImage, ImageFormatType.PNG.getFormat(), thumbnailFileOutputStream);
+		IOUtils.closeQuietly(thumbnailFileOutputStream);
 		return thumbnailFile.getAbsolutePath();
 	}
 

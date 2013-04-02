@@ -9,7 +9,7 @@ import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-public abstract class BaseAjaxController {
+public abstract class AjaxBaseController {
 	
 	@Autowired
 	private PlaylistManager playlistManager;

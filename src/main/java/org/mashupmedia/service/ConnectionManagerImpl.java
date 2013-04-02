@@ -136,6 +136,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		FileInputStream fileInputStream = new FileInputStream(file);
 		byte[] bytes = IOUtils.toByteArray(fileInputStream);
+		IOUtils.closeQuietly(fileInputStream);
 		return bytes;
 	}
 

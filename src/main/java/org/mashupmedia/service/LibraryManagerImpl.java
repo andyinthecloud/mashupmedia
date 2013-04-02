@@ -2,11 +2,16 @@ package org.mashupmedia.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
+import org.mashupmedia.controller.configuration.LibraryHelper;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
@@ -55,13 +60,25 @@ public class LibraryManagerImpl implements LibraryManager {
 		}
 
 		Date date = new Date();
-		if (library.getId() == 0) {
+		long libraryId = library.getId();		
+
+		if (libraryId == 0) {
 			library.setCreatedBy(user);
 			library.setCreatedOn(date);
 		}
 
 		library.setUpdatedBy(user);
 		library.setUpdatedOn(date);
+		
+		Set<RemoteShare> remoteShares = library.getRemoteShares();
+		for (RemoteShare remoteShare : remoteShares) {
+			String uniqueName = remoteShare.getUniqueName();
+			if (StringUtils.isBlank(uniqueName)) {
+				remoteShare.setUniqueName(LibraryHelper.createUniqueName());
+			}
+			remoteShare.setCreatedBy(user);
+			remoteShare.setCreatedOn(new Date());			
+		}		
 
 		libraryDao.saveLibrary(library);
 
@@ -70,7 +87,8 @@ public class LibraryManagerImpl implements LibraryManager {
 
 	@Override
 	public Library getLibrary(long id) {
-		Library library = libraryDao.getLibrary(id);
+		Library library = libraryDao.getLibrary(id);		
+		Hibernate.initialize(library.getRemoteShares());		
 		return library;
 	}
 

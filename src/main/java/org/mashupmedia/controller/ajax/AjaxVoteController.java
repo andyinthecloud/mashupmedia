@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/ajax/vote")
-public class AjaxVoteController extends BaseAjaxController {
+public class AjaxVoteController extends AjaxBaseController {
 
 	public static final String MODEL_KEY_IS_SUCCESSFUL = "isSuccessful";
 
