@@ -51,7 +51,7 @@ public class MediaItem implements Serializable {
 	public enum MediaType {
 		SONG, VIDEO, IMAGE;
 	}
-	
+
 	public enum EncodeStatusType {
 		UNPROCESSED, PROCESSING, ENCODED, ERROR, OVERRIDE
 	}
@@ -87,19 +87,33 @@ public class MediaItem implements Serializable {
 	private String displayTitle;
 	@Field(analyze = Analyze.NO)
 	private String encodeStatus;
+	@Field(analyze = Analyze.NO)
+	private boolean enabled;
+
+	public MediaItem() {
+		this.enabled = true;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
 	public EncodeStatusType getEncodeStatusType() {
 		if (StringUtils.isEmpty(this.encodeStatus)) {
 			return EncodeStatusType.UNPROCESSED;
 		}
-		
+
 		EncodeStatusType[] encodeStatusTypes = EncodeStatusType.values();
 		for (EncodeStatusType encodeStatusType : encodeStatusTypes) {
 			if (this.encodeStatus.equals(encodeStatusType.toString())) {
 				return encodeStatusType;
 			}
 		}
-		
+
 		return EncodeStatusType.UNPROCESSED;
 	}
 
@@ -107,8 +121,8 @@ public class MediaItem implements Serializable {
 		EncodeStatusType encodeStatusType = getEncodeStatusType();
 		return encodeStatusType.toString();
 	}
-		
-		public void setEncodeStatusType(EncodeStatusType encodeStatusType) {
+
+	public void setEncodeStatusType(EncodeStatusType encodeStatusType) {
 		this.encodeStatus = encodeStatusType.toString();
 	}
 
@@ -298,6 +312,10 @@ public class MediaItem implements Serializable {
 		builder.append(summary);
 		builder.append(", displayTitle=");
 		builder.append(displayTitle);
+		builder.append(", encodeStatus=");
+		builder.append(encodeStatus);
+		builder.append(", enabled=");
+		builder.append(enabled);
 		builder.append("]");
 		return builder.toString();
 	}

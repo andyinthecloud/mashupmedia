@@ -53,6 +53,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		List<PlaylistMediaItem> accessiblePlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();		
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			MediaItem mediaItem = playlistMediaItem.getMediaItem();
+			if (!mediaItem.isEnabled()) {
+				continue;
+			}			
+			
 			if (securityManager.canAccessPlaylistMediaItem(playlistMediaItem)) {
 				accessiblePlaylistMediaItems.add(playlistMediaItem);
 			}

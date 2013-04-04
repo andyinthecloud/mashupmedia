@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hibernate.Query;
@@ -32,6 +33,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
+
+	// Used for remote library synchronisation
+	private final static int NUMBER_OF_DAYS_TO_KEEP_DISABLED_SONGS = 1;
 
 	@Autowired
 	private GroupDao groupDao;
@@ -99,31 +103,26 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public void deleteSongs(List<Song> songs) {
-		StringBuilder songIdsBuilder = new StringBuilder();
 		Set<Genre> genres = new HashSet<Genre>();
+		Date deleteDate = DateUtils.addDays(new Date(), -NUMBER_OF_DAYS_TO_KEEP_DISABLED_SONGS);
 
 		for (Song song : songs) {
-			if (songIdsBuilder.length() > 0) {
-				songIdsBuilder.append(",");
+
+			Date updatedOn = song.getUpdatedOn();
+			if (deleteDate.after(updatedOn)) {
+				song.setEnabled(true);
+				sessionFactory.getCurrentSession().merge(song);
+			} else {
+				Genre genre = song.getGenre();
+				if (genre != null) {
+					genres.add(genre);
+				}
+				sessionFactory.getCurrentSession().delete(song);
 			}
 
-			Genre genre = song.getGenre();
-			if (genre != null) {
-				genres.add(genre);
-			}
-
-			songIdsBuilder.append(song.getId());
 		}
 
 		deleteEmptyGenres(genres);
-
-		if (songIdsBuilder.length() == 0) {
-			return;
-		}
-
-		for (Song song : songs) {
-			sessionFactory.getCurrentSession().delete(song);
-		}
 	}
 
 	private void deleteEmptyGenres(Set<Genre> genres) {
@@ -373,6 +372,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		String mediaTypeValue = StringHelper.normaliseTextForDatabase(MediaType.SONG.toString());
 		booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());
+		booleanJunction.must(queryBuilder.keyword().onField("enabled").matching(mediaItemSearchCriteria.isEnabled()).createQuery());
 		for (Long groupId : groupIds) {
 			booleanJunction.must(queryBuilder.keyword().onField("library.groups.id").matching(groupId).createQuery());
 		}

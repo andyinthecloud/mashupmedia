@@ -15,14 +15,25 @@ public class MediaItemSearchCriteria {
 	private int maximumResults;
 	private MediaType mediaType;
 	private MediaSortType mediaSortType;
-	boolean isAscending;
+	boolean ascending;
+	boolean enabled;
 	
+	
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	public boolean isAscending() {
-		return isAscending;
+		return ascending;
 	}
 
 	public void setAscending(boolean isAscending) {
-		this.isAscending = isAscending;
+		this.ascending = isAscending;
 	}
 
 	public MediaSortType getMediaSortType() {
@@ -45,6 +56,7 @@ public class MediaItemSearchCriteria {
 		setMaximumResults(DEFAULT_FETCH_SIZE);
 		setMediaSortType(MediaSortType.SONG_TITLE);
 		setAscending(true);
+		setEnabled(true);
 	}
 
 	public MediaType getMediaType() {

@@ -50,7 +50,7 @@ public class AjaxSearchController extends AjaxBaseController {
 	public String handleMediaItems(@RequestParam(value = "mediaType", required = false) String mediaTypeValue,
 			@RequestParam(value = "pageNumber", required = false) Integer pageNumber, @RequestParam("searchWords") String searchWords,
 			@RequestParam(value = "orderBy", required = false) String orderBy,
-			@RequestParam(value = "isAscending", required = false) Boolean isAscending,
+			@RequestParam(value = "ascending", required = false) Boolean isAscending,
 			@RequestParam(value = "action", required = false) String action, @RequestParam(value = "maximumResults", required = false) Integer maximumResults, Model model) {
 
 		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
@@ -100,7 +100,7 @@ public class AjaxSearchController extends AjaxBaseController {
 //			}
 //
 //			model.addAttribute("orderBy", mediaSortType.toString().toLowerCase());
-//			model.addAttribute("isAscending", isAscending);
+//			model.addAttribute("ascending", ascending);
 //
 //			if (mediaType == MediaType.SONG) {
 //				model.addAttribute("pageNumber", pageNumber);
@@ -124,7 +124,7 @@ public class AjaxSearchController extends AjaxBaseController {
 			}
 
 			model.addAttribute("orderBy", mediaSortType.toString().toLowerCase());
-			model.addAttribute("isAscending", isAscending);
+			model.addAttribute("ascending", isAscending);
 
 			if (mediaType == MediaType.SONG) {
 				model.addAttribute("pageNumber", pageNumber);

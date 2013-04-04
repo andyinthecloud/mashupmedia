@@ -48,7 +48,7 @@ public class MusicController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String getMusic(Model model) {
 		model.addAttribute("orderBy", "song-title");
-		model.addAttribute("isAscending", true);
+		model.addAttribute("ascending", true);
 		model.addAttribute("mediaType", "song");
 		model.addAttribute("searchWords", "");
 		return "music";
