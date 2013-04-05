@@ -46,7 +46,7 @@ public class Library implements Serializable {
 	@IndexedEmbedded
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Group> groups;
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<RemoteShare> remoteShares;
 
 	public Set<RemoteShare> getRemoteShares() {

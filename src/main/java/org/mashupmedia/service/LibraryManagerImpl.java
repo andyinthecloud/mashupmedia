@@ -50,7 +50,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		List<Library> musicLibraries = libraryDao.getLibrariesForGroup(groupId);
 		return musicLibraries;
 	}
-	
+
 	@Override
 	public void saveLibrary(Library library) {
 		User user = SecurityHelper.getLoggedInUser();
@@ -60,7 +60,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		}
 
 		Date date = new Date();
-		long libraryId = library.getId();		
+		long libraryId = library.getId();
 
 		if (libraryId == 0) {
 			library.setCreatedBy(user);
@@ -69,26 +69,27 @@ public class LibraryManagerImpl implements LibraryManager {
 
 		library.setUpdatedBy(user);
 		library.setUpdatedOn(date);
-		
+
 		Set<RemoteShare> remoteShares = library.getRemoteShares();
-		for (RemoteShare remoteShare : remoteShares) {
-			String uniqueName = remoteShare.getUniqueName();
-			if (StringUtils.isBlank(uniqueName)) {
-				remoteShare.setUniqueName(LibraryHelper.createUniqueName());
+		if (remoteShares != null) {
+			for (RemoteShare remoteShare : remoteShares) {
+				String uniqueName = remoteShare.getUniqueName();
+				if (StringUtils.isBlank(uniqueName)) {
+					remoteShare.setUniqueName(LibraryHelper.createUniqueName());
+				}
+				remoteShare.setCreatedBy(user);
+				remoteShare.setCreatedOn(new Date());
 			}
-			remoteShare.setCreatedBy(user);
-			remoteShare.setCreatedOn(new Date());			
-		}		
+		}
 
 		libraryDao.saveLibrary(library);
 
 	}
 
-
 	@Override
 	public Library getLibrary(long id) {
-		Library library = libraryDao.getLibrary(id);		
-		Hibernate.initialize(library.getRemoteShares());		
+		Library library = libraryDao.getLibrary(id);
+		Hibernate.initialize(library.getRemoteShares());
 		return library;
 	}
 

@@ -2,21 +2,21 @@ package org.mashupmedia.web.page;
 
 import org.mashupmedia.model.library.MusicLibrary;
 
-public class MusicLibraryPage extends LibraryPage{
-	
+public class MusicLibraryPage extends LibraryPage {
+
 	private MusicLibrary musicLibrary;
-	boolean isExists;
-	
+	boolean exists;
+
 	public boolean isExists() {
-		return isExists;
+		return exists;
 	}
 	
 	public boolean getIsExists() {
 		return isExists();
 	}
 
-	public void setExists(boolean isExists) {
-		this.isExists = isExists;
+	public void setExists(boolean exists) {
+		this.exists = exists;
 	}
 
 	public MusicLibrary getMusicLibrary() {
@@ -26,5 +26,5 @@ public class MusicLibraryPage extends LibraryPage{
 	public void setMusicLibrary(MusicLibrary musicLibrary) {
 		this.musicLibrary = musicLibrary;
 	}
-	
+
 }

@@ -34,6 +34,27 @@
 
 	});
 
+	
+	<c:if test="${musicLibraryPage.isExists}">
+	$.ajax({
+		url : "<c:url value="/app/ajax/library/get-remote-shares"/>",
+		type : "get",
+		data : {
+		    libraryId : ${musicLibraryPage.musicLibrary.id}
+		},
+		success : function(data) {
+		    if (data.length == 0) {
+				return;
+		    }
+		    
+		    $("#remote-share").click();
+		    console.log(data);
+		}
+    });
+	</c:if>	
+
+	
+	
 	$("#musicLibraryPage input:submit").click(function() {
 	    var action = $(this).attr("name");
 	    $("#action").val(action);
@@ -46,11 +67,25 @@
 	});
 	
 	$("#create-remote-link").click(function() {
-	    
-	});
+		$.ajax({
+			url : "<c:url value="/app/ajax/library/add-remote-share"/>",
+			type : "post",
+			data : {
+			    libraryId : ${musicLibraryPage.musicLibrary.id}
+			},
+			success : function(data) {
+			    console.log(data);
+			}
+	    });	    
+	})
 	
 	
     });
+    
+    function addRemoteLink(server, version, created, lastConnected, totalPlayedMediaItems, status) {
+	
+    }
+    
 </script>
 
 
@@ -100,8 +135,7 @@
 	<c:if test="${musicLibraryPage.isExists}">
 		<div class="new-line">
 
-
-			<input type="checkbox" id="remote-share" value="1" /> <label for="remote-share"><spring:message code="library.remote.enable" /></label> <br />
+			<input type="checkbox" id="remote-share" value="1"/> <label for="remote-share"><spring:message code="library.remote.enable" /></label> <br />
 			<fieldset id="remote-share-panel">
 				<legend>
 					<spring:message code="library.remote.title" />

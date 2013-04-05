@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import org.mashupmedia.model.User;
 
@@ -28,7 +29,41 @@ public class RemoteShare implements Serializable {
 	private User createdBy;
 	private Date lastAccessed;
 	private long totalPlayedMediaItems;
+	private String remoteMashupMediaVersion;
+	private String status;
+	@Transient
+	private RemoteShareStatusType statusType;
 	
+	
+	public enum RemoteShareStatusType {
+		ENABLED, DISABLED, UNKNOWN
+	}
+	
+	
+	public RemoteShareStatusType getStatusType() {
+		RemoteShareStatusType[] remoteShareStatusTypes = RemoteShareStatusType.values();
+		for (RemoteShareStatusType remoteShareStatusType : remoteShareStatusTypes) {
+			if (remoteShareStatusType.toString().equals(this.status)) {
+				return remoteShareStatusType;
+			}
+		}
+				
+		return RemoteShareStatusType.UNKNOWN;
+	}
+
+	public void setStatusType(RemoteShareStatusType remoteShareStatusType) {
+		this.statusType = remoteShareStatusType;
+		this.status = remoteShareStatusType.toString();
+	}
+
+	public String getRemoteMashupMediaVersion() {
+		return remoteMashupMediaVersion;
+	}
+
+	public void setRemoteMashupMediaVersion(String remoteMashupMediaVersion) {
+		this.remoteMashupMediaVersion = remoteMashupMediaVersion;
+	}
+
 	public RemoteShare() {
 		this.createdOn = new Date();
 	}
@@ -130,10 +165,14 @@ public class RemoteShare implements Serializable {
 		builder.append(createdOn);
 		builder.append(", createdBy=");
 		builder.append(createdBy);
-		builder.append(", lastAcccessed=");
+		builder.append(", lastAccessed=");
 		builder.append(lastAccessed);
 		builder.append(", totalPlayedMediaItems=");
 		builder.append(totalPlayedMediaItems);
+		builder.append(", remoteMashupMediaVersion=");
+		builder.append(remoteMashupMediaVersion);
+		builder.append(", status=");
+		builder.append(status);
 		builder.append("]");
 		return builder.toString();
 	}

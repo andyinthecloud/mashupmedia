@@ -29,6 +29,7 @@ import net.sf.json.JSONObject;
 
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.RemoteShare;
+import org.mashupmedia.model.library.RemoteShare.RemoteShareStatusType;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.DateHelper.DateFormatType;
@@ -60,17 +61,19 @@ public class AjaxLibraryController {
 
 		remoteShares = new HashSet<RemoteShare>(remoteShares);
 		RemoteShare remoteShare = new RemoteShare();
-		remoteShare.setUniqueName(LibraryHelper.createUniqueName());		
+		remoteShare.setStatusType(RemoteShareStatusType.ENABLED);
+		remoteShare.setUniqueName(LibraryHelper.createUniqueName());
 		remoteShares.add(remoteShare);
+		library.setRemoteShares(remoteShares);
 		libraryManager.saveLibrary(library);
-		
+
 		ModelAndView modelAndView = getRemoteShares(library);
 		return modelAndView;
 	}
 
 	@RequestMapping(value = "/get-remote-shares", method = RequestMethod.GET)
 	public ModelAndView handleGetRemoteShares(@RequestParam("libraryId") Long libraryId, Model model) {
-		Library library = libraryManager.getLibrary(libraryId);		
+		Library library = libraryManager.getLibrary(libraryId);
 		ModelAndView modelAndView = getRemoteShares(library);
 		return modelAndView;
 	}
@@ -92,10 +95,12 @@ public class AjaxLibraryController {
 			remoteSharePropertiesJson.put("remoteUrl", remoteShare.getRemoteUrl());
 			remoteSharePropertiesJson.put("totalPlayedMediaItems", remoteShare.getTotalPlayedMediaItems());
 			remoteSharePropertiesJson.put("unique", remoteShare.getUniqueName());
+			remoteSharePropertiesJson.put("remoteMashupMediaVersion", remoteShare.getRemoteMashupMediaVersion());
+			remoteSharePropertiesJson.put("status", remoteShare.getStatusType().toString());
 
 			JSONObject remoteShareJson = new JSONObject();
 			remoteShareJson.put("remoteShare", remoteSharePropertiesJson);
-			jsonArray.add(remoteShare);
+			jsonArray.add(remoteShareJson);
 
 		}
 
