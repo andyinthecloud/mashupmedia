@@ -34,27 +34,8 @@
 
 	});
 
-	
-	<c:if test="${musicLibraryPage.isExists}">
-	$.ajax({
-		url : "<c:url value="/app/ajax/library/get-remote-shares"/>",
-		type : "get",
-		data : {
-		    libraryId : ${musicLibraryPage.musicLibrary.id}
-		},
-		success : function(data) {
-		    if (data.length == 0) {
-				return;
-		    }
-		    
-		    $("#remote-share").click();
-		    console.log(data);
-		}
-    });
-	</c:if>	
+	showRemoteShares();
 
-	
-	
 	$("#musicLibraryPage input:submit").click(function() {
 	    var action = $(this).attr("name");
 	    $("#action").val(action);
@@ -77,13 +58,76 @@
 			    console.log(data);
 			}
 	    });	    
+	});
+	
+	$("#save-library-remote-connections").click(function() {
+		var remoteShareIds = new Array();
+		$("#remote-share-panel > table > tbody > tr").each(function() {
+			var remoteShareId = $(this).attr("id");
+			remoteShareIds.push(remoteShareId);			
+		});
+		
+		if (remoteShareIds.length == 0) {
+			return;
+		}
+		
+		/*
+		$.ajax({
+			url : "<c:url value="/app/ajax/library/update-remote-shares"/>",
+			type : "post",
+			data : {
+				remoteShareIds : remoteShareIds
+			},
+			success : function(data) {
+			    console.log(data);
+			}
+	    });
+		*/
+		
+		showRemoteShares();
 	})
 	
 	
     });
     
-    function addRemoteLink(server, version, created, lastConnected, totalPlayedMediaItems, status) {
-	
+    function showRemoteShares() {
+   	<c:if test="${musicLibraryPage.isExists}">
+   	$.ajax({
+   		url : "<c:url value="/app/ajax/library/get-remote-shares"/>",
+   		type : "get",
+   		data : {
+   		    libraryId : ${musicLibraryPage.musicLibrary.id}
+   		},
+   		success : function(data) {
+   		    if (data.length == 0) {
+   				return;
+   		    }
+   		    
+   		    if ($("#remote-share-panel").is(":hidden")) {
+   	   		    $("#remote-share").click();   		    	
+   		    }
+   		    
+   		    var remoteShareHtml = "";
+   		    
+   		    $.each(data, function(i, item) {
+   		    	var remoteShare = item.remoteShare;
+   			    remoteShareHtml = "<tr id=\"remote-share-" + remoteShare.id + "\">";
+   			    remoteShareHtml += "<td><input type=\"checkbox\" /></td>";
+   			    remoteShareHtml += "<td>" + getHostUrl() + "app/remote-library/" + remoteShare.uniqueName + "</td>";
+   			    remoteShareHtml += "<td>" + remoteShare.remoteUrl + "</td>";
+   			    remoteShareHtml += "<td>" + remoteShare.remoteMashupMediaVersion + "</td>";
+   			    remoteShareHtml += "<td>" + remoteShare.createdOn + "</td>";
+   			    remoteShareHtml += "<td>" + remoteShare.lastAccessed + "</td>";
+   			    remoteShareHtml += "<td>" + remoteShare.totalPlayedMediaItems + "</td>";
+   			    remoteShareHtml += "<td>" + remoteShare.status + "</td>";			    
+   			    remoteShareHtml += "</tr>";			    
+   		    });
+   		    
+   		    $("#remote-share-panel table tbody").html(remoteShareHtml);
+   		    
+   		}
+       });
+   	</c:if>	
     }
     
 </script>
@@ -155,13 +199,14 @@
 				<table>
 					<thead>
 						<tr>
+							<th>&nbsp;</th>
+							<th><spring:message code="library.remote.connection.url" /></th>
 							<th><spring:message code="library.remote.connection.server" /></th>
 							<th><spring:message code="library.remote.connection.version" /></th>
 							<th><spring:message code="library.remote.connection.created" /></th>
 							<th><spring:message code="library.remote.connection.last-connected" /></th>
 							<th><spring:message code="library.remote.connection.played-items" /></th>
 							<th><spring:message code="library.remote.connection.status" /></th>
-							<th>&nbsp;</th>
 						</tr>
 					</thead>
 
@@ -185,6 +230,10 @@
 						<option value="">
 							<spring:message code="library.remote.connection.select-status" />
 						</option>
+						<option value="enable"><spring:message code="library.remote.connection.status.enable"/></option>
+						<option value="disable"><spring:message code="library.remote.connection.status.disable"/></option>
+						<option value="delete"><spring:message code="library.remote.connection.status.delete"/></option>
+						
 					</select> <input id="save-library-remote-connections" type="button" class="button" value="<spring:message code="library.remote.connection.button.save" />" />
 				</div>
 

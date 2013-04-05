@@ -17,6 +17,7 @@
 
 package org.mashupmedia.controller.configuration;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.model.library.RemoteShare.RemoteShareStatusType;
@@ -91,11 +93,17 @@ public class AjaxLibraryController {
 			remoteSharePropertiesJson.put("createdBy", remoteShare.getCreatedBy().getName());
 			remoteSharePropertiesJson.put("createdOn", DateHelper.parseToText(remoteShare.getCreatedOn(), DateFormatType.SHORT_DISPLAY_WITH_TIME));
 			remoteSharePropertiesJson.put("id", remoteShare.getId());
-			remoteSharePropertiesJson.put("lastAccessed", remoteShare.getLastAccessed());
-			remoteSharePropertiesJson.put("remoteUrl", remoteShare.getRemoteUrl());
+			String lastAccessedValue = "";
+			Date lastAccessed = remoteShare.getLastAccessed();
+			if (lastAccessed != null) {
+				lastAccessedValue = DateHelper.parseToText(remoteShare.getCreatedOn(), DateFormatType.SHORT_DISPLAY_WITH_TIME);
+			}
+			
+			remoteSharePropertiesJson.put("lastAccessed", lastAccessedValue);
+			remoteSharePropertiesJson.put("remoteUrl", StringUtils.trimToEmpty(remoteShare.getRemoteUrl()));
 			remoteSharePropertiesJson.put("totalPlayedMediaItems", remoteShare.getTotalPlayedMediaItems());
-			remoteSharePropertiesJson.put("unique", remoteShare.getUniqueName());
-			remoteSharePropertiesJson.put("remoteMashupMediaVersion", remoteShare.getRemoteMashupMediaVersion());
+			remoteSharePropertiesJson.put("uniqueName", StringUtils.trimToEmpty(remoteShare.getUniqueName()));
+			remoteSharePropertiesJson.put("remoteMashupMediaVersion", StringUtils.trimToEmpty(remoteShare.getRemoteMashupMediaVersion()));
 			remoteSharePropertiesJson.put("status", remoteShare.getStatusType().toString());
 
 			JSONObject remoteShareJson = new JSONObject();

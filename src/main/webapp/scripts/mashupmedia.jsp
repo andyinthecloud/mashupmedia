@@ -568,4 +568,11 @@ function fireRelLink(element) {
 	}
 }
 
+function getHostUrl() {
+	var hostUrl = window.location.protocol;
+	hostUrl += "//";
+	hostUrl += window.location.hostname;
+	hostUrl += mashupMedia.contextUrl;
+	return hostUrl;
+}
 
