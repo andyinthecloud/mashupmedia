@@ -177,4 +177,17 @@ public class RemoteShare implements Serializable {
 		return builder.toString();
 	}
 
+	public void setStatusType(String remoteShareStatus) {
+		RemoteShareStatusType[] remoteShareStatusTypes = RemoteShareStatusType.values();
+		for (RemoteShareStatusType remoteShareStatusType : remoteShareStatusTypes) {
+			if (remoteShareStatusType.toString().equalsIgnoreCase(remoteShareStatus)) {
+				this.status = remoteShareStatusType.toString();
+				return;
+			}
+		}
+		
+		this.status = RemoteShareStatusType.UNKNOWN.toString();
+		
+	}
+
 }

@@ -71,20 +71,28 @@
 			return;
 		}
 		
-		/*
+		var remoteShareStatus = $("#library-remote-connection-action").val();
+		if (remoteShareStatus == "") {
+			return;
+		}
+		
+		
 		$.ajax({
 			url : "<c:url value="/app/ajax/library/update-remote-shares"/>",
 			type : "post",
 			data : {
-				remoteShareIds : remoteShareIds
+				remoteShareIds : remoteShareIds,
+			    libraryId : ${musicLibraryPage.musicLibrary.id},
+			    remoteShareStatus : remoteShareStatus
 			},
 			success : function(data) {
-			    console.log(data);
+//			    console.log(data);
+			    showRemoteShares();
 			}
 	    });
 		*/
 		
-		showRemoteShares();
+		
 	})
 	
 	

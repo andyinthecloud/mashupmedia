@@ -127,4 +127,25 @@ public class LibraryManagerImpl implements LibraryManager {
 		}
 	}
 
+	@Override
+	public void saveRemoteShares(Long[] remoteShareIds, String remoteShareStatus) {
+		if (remoteShareIds == null){
+			return;		
+		}		
+		for (Long remoteShareId : remoteShareIds) {
+			RemoteShare remoteShare = getRemoteShare(remoteShareId);
+			remoteShare.setStatusType(remoteShareStatus);
+			saveRemoteShare(remoteShare);
+		}		
+	}
+
+	private void saveRemoteShare(RemoteShare remoteShare) {
+		libraryDao.saveRemoteShare(remoteShare);
+	}
+
+	private RemoteShare getRemoteShare(Long remoteShareId) {
+		RemoteShare remoteShare = libraryDao.getRemoteShare(remoteShareId);
+		return remoteShare;
+	}
+
 }

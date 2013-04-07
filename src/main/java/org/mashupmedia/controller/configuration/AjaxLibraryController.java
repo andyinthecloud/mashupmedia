@@ -80,6 +80,15 @@ public class AjaxLibraryController {
 		return modelAndView;
 	}
 
+	@RequestMapping(value = "/update-remote-shares", method = RequestMethod.POST)
+	public ModelAndView handleUpdateRemoteShares(@RequestParam("libraryId") Long libraryId, @RequestParam("remoteShareIds") Long[] remoteShareIds,
+			@RequestParam("remoteShareStatus") String remoteShareStatus, Model model) {
+		libraryManager.saveRemoteShares(remoteShareIds, remoteShareStatus);
+		Library library = libraryManager.getLibrary(libraryId);
+		ModelAndView modelAndView = getRemoteShares(library);
+		return modelAndView;
+	}
+
 	private ModelAndView getRemoteShares(Library library) {
 		Set<RemoteShare> remoteShares = library.getRemoteShares();
 
@@ -98,7 +107,7 @@ public class AjaxLibraryController {
 			if (lastAccessed != null) {
 				lastAccessedValue = DateHelper.parseToText(remoteShare.getCreatedOn(), DateFormatType.SHORT_DISPLAY_WITH_TIME);
 			}
-			
+
 			remoteSharePropertiesJson.put("lastAccessed", lastAccessedValue);
 			remoteSharePropertiesJson.put("remoteUrl", StringUtils.trimToEmpty(remoteShare.getRemoteUrl()));
 			remoteSharePropertiesJson.put("totalPlayedMediaItems", remoteShare.getTotalPlayedMediaItems());

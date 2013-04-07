@@ -3,8 +3,10 @@ package org.mashupmedia.dao;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.mashupmedia.exception.MashupMediaException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.MusicLibrary;
+import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.service.LibraryManager.LibraryType;
 import org.springframework.stereotype.Repository;
 
@@ -65,5 +67,30 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		List<Library> libraries = (List<Library>) query.list();
 		return libraries;
 	}
+	
+	@Override
+	public RemoteShare getRemoteShare(Long remoteShareId) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from RemoteShare where id = :remoteShareId");
+		query.setLong("remoteShareId", remoteShareId);
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<RemoteShare> remoteShares = (List<RemoteShare>) query.list();
+		if (remoteShares == null || remoteShares.isEmpty()) {
+			return null;
+		}
+		
+		return remoteShares.get(0);	
+	}
+	
+	
+	@Override
+	public void saveRemoteShare(RemoteShare remoteShare) {
+		if (remoteShare.getId() == 0) {
+			throw new MashupMediaException("Only existing remote shares can be saved!");
+		}
+		
+		sessionFactory.getCurrentSession().merge(remoteShare);
+	}
+	
 
 }

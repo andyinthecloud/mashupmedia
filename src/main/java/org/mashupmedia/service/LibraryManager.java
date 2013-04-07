@@ -5,13 +5,13 @@ import java.util.List;
 import org.mashupmedia.model.library.Library;
 
 public interface LibraryManager {
-	
-	public enum LibraryType{
+
+	public enum LibraryType {
 		ALL, MUSIC
 	}
 
 	public List<? extends Library> getLibraries(LibraryType libraryType);
-	
+
 	public Library getLibrary(long id);
 
 	public void deleteLibrary(Library library);
@@ -19,5 +19,7 @@ public interface LibraryManager {
 	public void saveLibrary(Library library);
 
 	public List<Library> getLibrariesForGroup(long groupId);
+
+	public void saveRemoteShares(Long[] remoteShareIds, String remoteShareStatus);
 
 }
