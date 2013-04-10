@@ -81,12 +81,48 @@ public class AjaxLibraryController {
 	}
 
 	@RequestMapping(value = "/update-remote-shares", method = RequestMethod.POST)
-	public ModelAndView handleUpdateRemoteShares(@RequestParam("libraryId") Long libraryId, @RequestParam("remoteShareIds") Long[] remoteShareIds,
+	public ModelAndView handleUpdateRemoteShares(@RequestParam("libraryId") Long libraryId, @RequestParam("remoteShareIds[]") Long[] remoteShareIds,
 			@RequestParam("remoteShareStatus") String remoteShareStatus, Model model) {
-		libraryManager.saveRemoteShares(remoteShareIds, remoteShareStatus);
+
+		remoteShareStatus = StringUtils.trimToEmpty(remoteShareStatus);
+		if (remoteShareStatus.equalsIgnoreCase("delete")) {
+			deleteRemoteShares(libraryId, remoteShareIds);
+
+		} else {
+			libraryManager.saveRemoteShares(remoteShareIds, remoteShareStatus);
+		}
+
 		Library library = libraryManager.getLibrary(libraryId);
 		ModelAndView modelAndView = getRemoteShares(library);
 		return modelAndView;
+	}
+
+	private void deleteRemoteShares(Long libraryId, Long[] remoteShareIds) {
+
+		if (remoteShareIds == null || remoteShareIds.length == 0) {
+			return;
+		}
+
+		Library library = libraryManager.getLibrary(libraryId);
+		Set<RemoteShare> remoteShares = library.getRemoteShares();
+		if (remoteShares == null || remoteShares.isEmpty()) {
+			return;
+		}
+
+		for (Long remoteShareId : remoteShareIds) {
+			RemoteShare remoteShareToDelete = null;
+			for (RemoteShare remoteShare : remoteShares) {
+				if (remoteShare.getId() == remoteShareId) {
+					remoteShareToDelete = remoteShare;
+				}
+			}
+			if (remoteShareToDelete != null) {
+				remoteShares.remove(remoteShareToDelete);
+			}
+
+		}
+
+		libraryManager.saveLibrary(library);
 	}
 
 	private ModelAndView getRemoteShares(Library library) {

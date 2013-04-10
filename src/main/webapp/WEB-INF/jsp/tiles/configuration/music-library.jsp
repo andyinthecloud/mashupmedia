@@ -64,6 +64,7 @@
 		var remoteShareIds = new Array();
 		$("#remote-share-panel > table > tbody > tr").each(function() {
 			var remoteShareId = $(this).attr("id");
+			remoteShareId = parseId(remoteShareId, "remote-share-");
 			remoteShareIds.push(remoteShareId);			
 		});
 		
@@ -90,7 +91,7 @@
 			    showRemoteShares();
 			}
 	    });
-		*/
+		
 		
 		
 	})
@@ -238,8 +239,8 @@
 						<option value="">
 							<spring:message code="library.remote.connection.select-status" />
 						</option>
-						<option value="enable"><spring:message code="library.remote.connection.status.enable"/></option>
-						<option value="disable"><spring:message code="library.remote.connection.status.disable"/></option>
+						<option value="enabled"><spring:message code="library.remote.connection.status.enable"/></option>
+						<option value="disabled"><spring:message code="library.remote.connection.status.disable"/></option>
 						<option value="delete"><spring:message code="library.remote.connection.status.delete"/></option>
 						
 					</select> <input id="save-library-remote-connections" type="button" class="button" value="<spring:message code="library.remote.connection.button.save" />" />
