@@ -2,6 +2,7 @@ package org.mashupmedia.model.library;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
@@ -16,6 +17,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.Group;
@@ -47,13 +49,14 @@ public class Library implements Serializable {
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Group> groups;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<RemoteShare> remoteShares;
+	@OrderBy("createdOn")
+	private List<RemoteShare> remoteShares;
 
-	public Set<RemoteShare> getRemoteShares() {
+	public List<RemoteShare> getRemoteShares() {
 		return remoteShares;
 	}
 
-	public void setRemoteShares(Set<RemoteShare> remoteShares) {
+	public void setRemoteShares(List<RemoteShare> remoteShares) {
 		this.remoteShares = remoteShares;
 	}
 

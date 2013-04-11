@@ -62,7 +62,7 @@ public class WebHelper {
 	}
 
 	public enum MediaContentType {
-		MP3("audio/mpeg", "mp3", "mp3"), OGA("audio/ogg", "oga", "oga");
+		MP3("audio/mpeg", "mp3", "mp3"), OGA("audio/ogg", "oga", "oga"), UNSUPPORTED("audio/unsupported", "unsupported", "unsupported");
 
 		private String mimeContentType;
 		private String jPlayerContentType;
@@ -131,9 +131,14 @@ public class WebHelper {
 
 		if (mediaFormat.equalsIgnoreCase("MPEG-1 Layer 3")) {
 			return MediaContentType.MP3;
-		} else if (mediaFormat.equalsIgnoreCase("oga")) {
+		} else if (mediaFormat.equalsIgnoreCase("Vorbis")) {
 			return MediaContentType.OGA;
+		} else if (mediaFormat.equalsIgnoreCase("Free Lossless Audio Codec")) {
+			return MediaContentType.MP3;
 		}
+		
+		
+		
 
 		return defaultMediaContentType;
 	}

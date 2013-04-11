@@ -17,10 +17,10 @@
 
 package org.mashupmedia.controller.configuration;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,12 +56,12 @@ public class AjaxLibraryController {
 	public ModelAndView handleAddRemoteShare(@RequestParam("libraryId") Long libraryId, Model model) {
 
 		Library library = libraryManager.getLibrary(libraryId);
-		Set<RemoteShare> remoteShares = library.getRemoteShares();
+		List<RemoteShare> remoteShares = library.getRemoteShares();
 		if (remoteShares == null) {
-			remoteShares = new HashSet<RemoteShare>();
+			remoteShares = new ArrayList<RemoteShare>();
 		}
 
-		remoteShares = new HashSet<RemoteShare>(remoteShares);
+		remoteShares = new ArrayList<RemoteShare>(remoteShares);
 		RemoteShare remoteShare = new RemoteShare();
 		remoteShare.setStatusType(RemoteShareStatusType.ENABLED);
 		remoteShare.setUniqueName(LibraryHelper.createUniqueName());
@@ -104,7 +104,7 @@ public class AjaxLibraryController {
 		}
 
 		Library library = libraryManager.getLibrary(libraryId);
-		Set<RemoteShare> remoteShares = library.getRemoteShares();
+		List<RemoteShare> remoteShares = library.getRemoteShares();
 		if (remoteShares == null || remoteShares.isEmpty()) {
 			return;
 		}
@@ -126,11 +126,11 @@ public class AjaxLibraryController {
 	}
 
 	private ModelAndView getRemoteShares(Library library) {
-		Set<RemoteShare> remoteShares = library.getRemoteShares();
+		List<RemoteShare> remoteShares = library.getRemoteShares();
 
 		final JSONArray jsonArray = new JSONArray();
 		if (remoteShares == null || remoteShares.isEmpty()) {
-			remoteShares = new HashSet<RemoteShare>();
+			remoteShares = new ArrayList<RemoteShare>();
 		}
 
 		for (RemoteShare remoteShare : remoteShares) {

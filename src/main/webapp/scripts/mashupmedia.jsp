@@ -569,9 +569,22 @@ function fireRelLink(element) {
 }
 
 function getHostUrl() {
-	var hostUrl = window.location.protocol;
+ 	var protocol = window.location.protocol;
+	var hostUrl = protocol;
 	hostUrl += "//";
 	hostUrl += window.location.hostname;
+	
+	var port = window.location.port;
+	var portUrl = "";
+	
+	
+	if (protocol == "http:" && port != 80) {
+	    portUrl = ":" + port;
+	} else if (protocol == "https:" && port != 443) {
+	    portUrl = ":" + port;	    
+	}
+	
+	hostUrl += portUrl;
 	hostUrl += mashupMedia.contextUrl;
 	return hostUrl;
 }

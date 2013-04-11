@@ -1,8 +1,8 @@
 package org.mashupmedia.service;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -70,15 +70,18 @@ public class LibraryManagerImpl implements LibraryManager {
 		library.setUpdatedBy(user);
 		library.setUpdatedOn(date);
 
-		Set<RemoteShare> remoteShares = library.getRemoteShares();
+		Collection<RemoteShare> remoteShares = library.getRemoteShares();
 		if (remoteShares != null) {
 			for (RemoteShare remoteShare : remoteShares) {
+				if (remoteShare.getId() == 0) {
+					remoteShare.setCreatedBy(user);
+					remoteShare.setCreatedOn(new Date());					
+				}
+
 				String uniqueName = remoteShare.getUniqueName();
 				if (StringUtils.isBlank(uniqueName)) {
 					remoteShare.setUniqueName(LibraryHelper.createUniqueName());
-				}
-				remoteShare.setCreatedBy(user);
-				remoteShare.setCreatedOn(new Date());
+				}				
 			}
 		}
 

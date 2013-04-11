@@ -55,7 +55,7 @@
 			    libraryId : ${musicLibraryPage.musicLibrary.id}
 			},
 			success : function(data) {
-			    console.log(data);
+			    showRemoteShares();
 			}
 	    });	    
 	});
@@ -63,9 +63,11 @@
 	$("#save-library-remote-connections").click(function() {
 		var remoteShareIds = new Array();
 		$("#remote-share-panel > table > tbody > tr").each(function() {
-			var remoteShareId = $(this).attr("id");
-			remoteShareId = parseId(remoteShareId, "remote-share-");
-			remoteShareIds.push(remoteShareId);			
+		    if ($(this).find("input[type='checkbox']").is(":checked")) {
+				var remoteShareId = $(this).attr("id");
+				remoteShareId = parseId(remoteShareId, "remote-share-");
+				remoteShareIds.push(remoteShareId);					    
+			}		    
 		});
 		
 		if (remoteShareIds.length == 0) {
@@ -87,7 +89,6 @@
 			    remoteShareStatus : remoteShareStatus
 			},
 			success : function(data) {
-//			    console.log(data);
 			    showRemoteShares();
 			}
 	    });
@@ -108,7 +109,9 @@
    		    libraryId : ${musicLibraryPage.musicLibrary.id}
    		},
    		success : function(data) {
+   		       		    
    		    if (data.length == 0) {
+   			 	$("#remote-share-panel table tbody").html("");
    				return;
    		    }
    		    
@@ -120,7 +123,7 @@
    		    
    		    $.each(data, function(i, item) {
    		    	var remoteShare = item.remoteShare;
-   			    remoteShareHtml = "<tr id=\"remote-share-" + remoteShare.id + "\">";
+   			    remoteShareHtml += "<tr id=\"remote-share-" + remoteShare.id + "\">";
    			    remoteShareHtml += "<td><input type=\"checkbox\" /></td>";
    			    remoteShareHtml += "<td>" + getHostUrl() + "app/remote-library/" + remoteShare.uniqueName + "</td>";
    			    remoteShareHtml += "<td>" + remoteShare.remoteUrl + "</td>";
@@ -131,7 +134,7 @@
    			    remoteShareHtml += "<td>" + remoteShare.status + "</td>";			    
    			    remoteShareHtml += "</tr>";			    
    		    });
-   		    
+   		       		    
    		    $("#remote-share-panel table tbody").html(remoteShareHtml);
    		    
    		}
