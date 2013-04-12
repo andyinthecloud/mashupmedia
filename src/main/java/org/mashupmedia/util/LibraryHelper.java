@@ -15,7 +15,7 @@
  *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mashupmedia.controller.configuration;
+package org.mashupmedia.util;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -25,5 +25,5 @@ public class LibraryHelper {
 		String uniqueName = RandomStringUtils.randomAlphanumeric(14);
 		return uniqueName;
 	}
-
+	
 }

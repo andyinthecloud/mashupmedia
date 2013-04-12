@@ -15,7 +15,7 @@
  *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mashupmedia.controller.configuration;
+package org.mashupmedia.controller.ajax;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +34,7 @@ import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.model.library.RemoteShare.RemoteShareStatusType;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.util.DateHelper;
+import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.DateHelper.DateFormatType;
 import org.mashupmedia.util.WebHelper.WebFormatType;
 import org.springframework.beans.factory.annotation.Autowired;

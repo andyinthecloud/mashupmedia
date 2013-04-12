@@ -36,6 +36,7 @@ import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,9 +64,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Autowired
 	private GroupDao groupDao;
-
-	// @Autowired
-	// private MusicManager musicManager;
 
 	private MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
@@ -95,7 +93,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 
 		try {
-			prepareFileMusicLibrary(musicLibrary);
+			prepareMusicLibrary(musicLibrary);
 		} catch (Exception e) {
 			throw new MashupMediaException("Error updating the music library.", e);
 		}
@@ -228,8 +226,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return savedYear;
 	}
 
-	private void prepareFileMusicLibrary(MusicLibrary musicLibrary) throws CannotReadException, IOException, TagException, ReadOnlyFileException,
-			InvalidAudioFrameException {
+	private void prepareMusicLibrary(MusicLibrary musicLibrary) throws CannotReadException, IOException, TagException, ReadOnlyFileException,
+			InvalidAudioFrameException{
 		Location location = musicLibrary.getLocation();
 		File musicFolder = new File(location.getPath());
 		if (!musicFolder.isDirectory()) {
@@ -239,8 +237,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		Date date = new Date();
 		List<Song> songs = new ArrayList<Song>();
-		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
+		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);		
 		saveSongs(musicLibrary, songs);
+		MediaItemHelper.writeSongsToXml(songs);
 		deleteObsoleteSongs(musicLibrary.getId(), date);
 		// musicManager.saveSongs(musicLibrary, songs);
 

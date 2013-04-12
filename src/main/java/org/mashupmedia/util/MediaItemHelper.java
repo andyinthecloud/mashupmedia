@@ -17,10 +17,15 @@
 
 package org.mashupmedia.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.Song;
+import org.mashupmedia.remote.RemoteSong;
 
 public class MediaItemHelper {
 
@@ -65,6 +70,20 @@ public class MediaItemHelper {
 		}
 		
 		return MediaSortType.SONG_TITLE;
+	}
+	
+	public static void writeSongsToXml(List<Song> songs) {
+		if (songs == null || songs.isEmpty()) {
+			return;
+		}
+		
+		List<RemoteSong> songXmls = new ArrayList<RemoteSong>();
+		for (Song song : songs) {
+			RemoteSong songXml = new RemoteSong();
+			
+		}
+		
+		
 	}
 
 }
