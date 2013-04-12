@@ -17,6 +17,7 @@
 		<tiles.version>3.0.1</tiles.version>
 		<slf4j.version>1.7.2</slf4j.version>
 		<hsqldb.version>2.2.9</hsqldb.version>
+		<castor.version>1.3.2</castor.version>		
 	</properties>
 
 	<dependencies>
@@ -117,6 +118,24 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.castor</groupId>
+			<artifactId>castor-core</artifactId>
+			<version>${castor.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.castor</groupId>
+			<artifactId>castor-xml</artifactId>
+			<version>${castor.version}</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 			<version>${spring.security.version}</version>
@@ -152,9 +171,6 @@
 			<artifactId>tiles-jsp</artifactId>
 			<version>${tiles.version}</version>
 		</dependency>
-
-
-
 
 		<dependency>
 			<groupId>junit</groupId>
