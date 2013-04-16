@@ -1,8 +1,19 @@
 <?xml version="1.0"?>
- <!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Object Mapping DTD Version 1.0//EN"
-                                 "http://Castor.exolab.org/mapping.dtd">
 
-<mapping>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN" castor.org "http://castor.org/mapping.dtd">
+
+<mapping >
+
+	
+	<class name="org.mashupmedia.model.media.MediaItem" auto-complete="true">		
+		<field name="id" type="transient"/>
+		<map-to xml="library" />
+		<field name="library" type="org.mashupmedia.model.library.Library">
+			<bind-xml name="meta" node="element" />
+		</field>
+		
+	</class>
+
 <!-- 
 	<class name="eu.europa.ec.newsroom.calendar.xml.CalendarEventExport">
 		<field name="eventTranslations" collection="arraylist"
