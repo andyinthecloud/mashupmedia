@@ -1,117 +1,52 @@
-<?xml version="1.0"?>
-
-<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN" castor.org "http://castor.org/mapping.dtd">
-
-<mapping >
-
-	
-	<class name="org.mashupmedia.model.media.MediaItem" auto-complete="true">		
-		<field name="id" type="transient"/>
-		<map-to xml="library" />
-		<field name="library" type="org.mashupmedia.model.library.Library">
-			<bind-xml name="meta" node="element" />
-		</field>
-		
-	</class>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!-- 
-	<class name="eu.europa.ec.newsroom.calendar.xml.CalendarEventExport">
-		<field name="eventTranslations" collection="arraylist"
-			type="eu.europa.ec.newsroom.calendar.model.EventTranslation"
-			container="false">
-			<bind-xml name="events" />
+<!DOCTYPE mapping SYSTEM "http://castor.codehaus.org/mapping.dtd">
+ -->
+ 
+<mapping>
+
+	<class name="org.mashupmedia.model.media.Song" auto-complete="true">
+		<field name="album" type="org.mashupmedia.model.media.Album">
+			<bind-xml name="album" node="element" />
+		</field>
+		<field name="genre" type="org.mashupmedia.model.media.Genre">
+			<bind-xml name="genre" node="element" />
+		</field>
+		<field name="year" type="org.mashupmedia.model.media.Year">
+			<bind-xml name="year" node="element" />
+		</field>
+		<field name="artist" type="org.mashupmedia.model.media.Artist">
+			<bind-xml name="artist" node="element" />
 		</field>
 	</class>
 
-	<class name="eu.europa.ec.newsroom.calendar.model.EventTranslation">
-		<map-to xml="event" />
-		<field name="id" type="long">
-			<bind-xml name="identity" node="attribute" />
+	<class name="org.mashupmedia.model.media.Album" auto-complete="true">
+		<field name="id" transient="true"/>
+		<field name="artist" transient="true" />
+		<field name="albumArtImage" type="org.mashupmedia.model.media.AlbumArtImage">
+			<bind-xml name="albumArtImage" node="element" />
 		</field>
-
-		<field name="title" type="string" />
-		<field name="titleUrl" type="string">
-			<bind-xml name="link" node="element" />
-		</field>
-		<field name="location" type="string" />
-		<field name="language" type="eu.europa.ec.newsroom.calendar.model.Language" />
-		<field name="event" type="eu.europa.ec.newsroom.calendar.model.Event">
-			<bind-xml name="meta" node="element" />
-		</field>
-
-		<field name="links" collection="arraylist"
-			type="eu.europa.ec.newsroom.calendar.model.Link" container="false">
-			<bind-xml name="links" />
-		</field>
-
-		<field name="media" type="eu.europa.ec.newsroom.calendar.model.Media" />
-		<field name="summary" type="string" />
-
-
-		<field name="contacts" collection="arraylist"
-			type="eu.europa.ec.newsroom.calendar.model.Contact" container="false">
-			<bind-xml name="contacts" />
-		</field>
-
-
-
+		<field name="songs" transient="true" />
 	</class>
 
-	<class name="eu.europa.ec.newsroom.calendar.model.Event">
-
-		<field name="eventTypes" collection="set"
-			type="eu.europa.ec.newsroom.calendar.model.EventType" container="false">
-			<bind-xml name="eventTypes" />
-		</field>
-
-		<field name="institution" type="eu.europa.ec.newsroom.calendar.model.Institution" />
-		<field name="startDate" type="date" />
-		<field name="endDate" type="date" />
+	<class name="org.mashupmedia.model.media.Artist" auto-complete="true">
+		<field name="id" transient="true" />
+		<field name="albums" transient="true" />
 	</class>
 
-
-	<class name="eu.europa.ec.newsroom.calendar.model.EventType">
-		<field name="translatedName" type="string">
-			<bind-xml name="name" node="element" />
-		</field>
+	<class name="org.mashupmedia.model.media.Genre" auto-complete="true">
+		<field name="id" transient="true" />
 	</class>
 
-	<class name="eu.europa.ec.newsroom.calendar.model.Institution">
-		<field name="translatedName" type="string">
-			<bind-xml name="name" node="element" />
-		</field>
+	<class name="org.mashupmedia.model.media.Year" auto-complete="true">
+		<field name="id" transient="true" />
 	</class>
 
-	<class name="eu.europa.ec.newsroom.calendar.model.Media">
-		<field name="url" type="string">
-			<bind-xml name="link" node="element" />
-		</field>
+	<class name="org.mashupmedia.model.media.AlbumArtImage" auto-complete="true">
+		<field name="id" transient="true" />
+		<field name="library" transient="true" />
+		<field name="album" transient="true" />
 	</class>
-
-	<class name="eu.europa.ec.newsroom.calendar.model.Language">
-		<field name="name" transient="true" /> <field name="idName" transient="true" 
-			/> <field name="messageKey" transient="true" /> 
-		<field name="translatedName" type="string">
-			<bind-xml name="name" node="element" />
-		</field>
-	</class>
-
-	<class name="eu.europa.ec.newsroom.calendar.model.Link">
-		<field name="url" type="string" />
-		<field name="title" type="string" />
-	</class>
-
-	<class name="eu.europa.ec.newsroom.calendar.model.Contact">
-		<field name="name" type="string" />
-		<field name="phone" type="string" />
-		<field name="email" type="string" />
-		<field name="contactType" type="eu.europa.ec.newsroom.calendar.model.ContactType" />
-	</class>
-
-	<class name="eu.europa.ec.newsroom.calendar.model.ContactType">
-		<field name="name" type="string" />
-	</class>
-	
-	 -->
 
 </mapping>

@@ -17,10 +17,13 @@
 
 package org.mashupmedia.util;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.exolab.castor.xml.Marshaller;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
@@ -76,6 +79,10 @@ public class MediaItemHelper {
 		if (songs == null || songs.isEmpty()) {
 			return;
 		}
+		
+//		FileWriter fileWriter = new FileWriter(new File(""));
+		
+//		Marshaller.
 		
 		List<RemoteSong> songXmls = new ArrayList<RemoteSong>();
 		for (Song song : songs) {
