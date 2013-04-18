@@ -1,6 +1,6 @@
 package org.mashupmedia.service;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -62,15 +62,20 @@ public class LibraryManagerImpl implements LibraryManager {
 		Date date = new Date();
 		long libraryId = library.getId();
 
+		
+		List<RemoteShare> remoteShares = new ArrayList<RemoteShare>();
 		if (libraryId == 0) {
 			library.setCreatedBy(user);
 			library.setCreatedOn(date);
+		} else {
+			Library savedLibrary = getLibrary(libraryId);
+			remoteShares = savedLibrary.getRemoteShares();
 		}
+		library.setRemoteShares(remoteShares);
 
 		library.setUpdatedBy(user);
 		library.setUpdatedOn(date);
 
-		Collection<RemoteShare> remoteShares = library.getRemoteShares();
 		if (remoteShares != null) {
 			for (RemoteShare remoteShare : remoteShares) {
 				if (remoteShare.getId() == 0) {

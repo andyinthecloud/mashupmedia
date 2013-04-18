@@ -226,8 +226,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return savedYear;
 	}
 
-	private void prepareMusicLibrary(MusicLibrary musicLibrary) throws CannotReadException, IOException, TagException, ReadOnlyFileException,
-			InvalidAudioFrameException{
+	private void prepareMusicLibrary(MusicLibrary musicLibrary) throws Exception {
 		Location location = musicLibrary.getLocation();
 		File musicFolder = new File(location.getPath());
 		if (!musicFolder.isDirectory()) {
@@ -237,9 +236,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		Date date = new Date();
 		List<Song> songs = new ArrayList<Song>();
-		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);		
+		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
 		saveSongs(musicLibrary, songs);
-		MediaItemHelper.writeSongsToXml(songs);
+		MediaItemHelper.writeSongsToXml(musicLibrary.getId(), songs);
 		deleteObsoleteSongs(musicLibrary.getId(), date);
 		// musicManager.saveSongs(musicLibrary, songs);
 
@@ -335,6 +334,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 					song.setReadableTag(true);
 				}
 
+				tagAlbumName = StringHelper.escapeXml(tagAlbumName);
+				tagArtistName = StringHelper.escapeXml(tagAlbumName);
+				tagSongTitle = StringHelper.escapeXml(tagSongTitle);
+
 				song.setTitle(tagSongTitle);
 				song.setFormat(format);
 				song.setTrackLength(trackLength);
@@ -423,7 +426,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Override
 	public void deleteSongs(List<Song> songs) {
-				
+
 		playlistDao.deletePlaylistMediaItems(songs);
 
 		musicDao.deleteSongs(songs);

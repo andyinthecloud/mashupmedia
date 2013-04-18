@@ -19,16 +19,19 @@ package org.mashupmedia.util;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
+import org.exolab.castor.xml.ValidationException;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Song;
-import org.mashupmedia.remote.RemoteSong;
+import org.mashupmedia.remote.RemoteMusicLibrary;
+import org.mashupmedia.util.StringHelper.Encoding;
 
 public class MediaItemHelper {
 
@@ -75,22 +78,26 @@ public class MediaItemHelper {
 		return MediaSortType.SONG_TITLE;
 	}
 	
-	public static void writeSongsToXml(List<Song> songs) {
+	public static void writeSongsToXml(long libraryId, List<Song> songs) throws IOException, MarshalException, ValidationException {
 		if (songs == null || songs.isEmpty()) {
 			return;
 		}
+				
+		RemoteMusicLibrary remoteMusicLibrary = new RemoteMusicLibrary();
+		remoteMusicLibrary.setSongs(songs);
 		
-//		FileWriter fileWriter = new FileWriter(new File(""));
+		File file = FileHelper.getLibraryXmlFile(libraryId);
+		FileHelper.deleteFile(file);
+		file.createNewFile();
 		
-//		Marshaller.
+		FileWriter fileWriter = new FileWriter(file);
 		
-		List<RemoteSong> songXmls = new ArrayList<RemoteSong>();
-		for (Song song : songs) {
-			RemoteSong songXml = new RemoteSong();
-			
-		}
+		Marshaller marshaller = new Marshaller(fileWriter);
+		marshaller.setEncoding(Encoding.UTF8.getEncodingString());
+		marshaller.marshal(remoteMusicLibrary);
 		
-		
+		fileWriter.flush();
+		fileWriter.close();
 	}
 
 }

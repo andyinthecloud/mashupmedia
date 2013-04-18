@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
@@ -121,5 +122,16 @@ public class StringHelper {
 		text = StringUtils.trimToEmpty(text).toLowerCase();
 		return text;
 	}
+	
+	public static String escapeXml(String text) {
+		text = StringUtils.trimToEmpty(text);
+		if (StringUtils.isEmpty(text)) {
+			return text;
+		}
+		
+		text = StringEscapeUtils.escapeXml(text);
+		return text;
+	}
+
 
 }

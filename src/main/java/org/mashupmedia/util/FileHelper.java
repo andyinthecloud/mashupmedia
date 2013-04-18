@@ -191,4 +191,9 @@ public class FileHelper {
 		return false;
 	}
 
+	public static File getLibraryXmlFile(long libraryId) {
+		File file = new File(getLibraryFolder(libraryId), String.valueOf(libraryId));
+		return file;
+	}
+
 }
