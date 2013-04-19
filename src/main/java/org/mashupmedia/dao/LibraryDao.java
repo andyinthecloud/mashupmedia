@@ -22,4 +22,6 @@ public interface LibraryDao {
 
 	public RemoteShare getRemoteShare(Long remoteShareId);
 
+	public List<Library> getRemoteLibraries();
+
 }

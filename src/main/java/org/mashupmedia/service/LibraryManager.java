@@ -22,4 +22,6 @@ public interface LibraryManager {
 
 	public void saveRemoteShares(Long[] remoteShareIds, String remoteShareStatus);
 
+	public List<Library> getRemoteLibraries();
+
 }

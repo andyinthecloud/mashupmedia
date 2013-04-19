@@ -156,4 +156,9 @@ public class LibraryManagerImpl implements LibraryManager {
 		return remoteShare;
 	}
 
+	@Override
+	public List<Library> getRemoteLibraries() {		
+		List<Library> remoteLibraries = libraryDao.getRemoteLibraries();
+		return remoteLibraries;
+	}
 }

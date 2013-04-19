@@ -57,7 +57,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		library = getLibrary(libraryId);
 		sessionFactory.getCurrentSession().delete(library);
 	}
-	
+
 	@Override
 	public List<Library> getLibrariesForGroup(long groupId) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Library l inner join l.groups g where g.id = :groupId order by l.name");
@@ -67,7 +67,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		List<Library> libraries = (List<Library>) query.list();
 		return libraries;
 	}
-	
+
 	@Override
 	public RemoteShare getRemoteShare(Long remoteShareId) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from RemoteShare where id = :remoteShareId");
@@ -78,19 +78,26 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		if (remoteShares == null || remoteShares.isEmpty()) {
 			return null;
 		}
-		
-		return remoteShares.get(0);	
+
+		return remoteShares.get(0);
 	}
-	
-	
+
 	@Override
 	public void saveRemoteShare(RemoteShare remoteShare) {
 		if (remoteShare.getId() == 0) {
 			throw new MashupMediaException("Only existing remote shares can be saved!");
 		}
-		
+
 		sessionFactory.getCurrentSession().merge(remoteShare);
 	}
-	
+
+	@Override
+	public List<Library> getRemoteLibraries() {
+		Query query = sessionFactory.getCurrentSession().createQuery("from Library where remote = true order by name");
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Library> libraries = (List<Library>) query.list();
+		return libraries;
+	}
 
 }

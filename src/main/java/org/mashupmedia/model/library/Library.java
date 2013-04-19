@@ -51,6 +51,15 @@ public class Library implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("createdOn")
 	private List<RemoteShare> remoteShares;
+	private boolean remote;
+
+	public boolean isRemote() {
+		return remote;
+	}
+
+	public void setRemote(boolean remote) {
+		this.remote = remote;
+	}
 
 	public List<RemoteShare> getRemoteShares() {
 		return remoteShares;

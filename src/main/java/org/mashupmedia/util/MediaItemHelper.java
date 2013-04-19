@@ -18,10 +18,11 @@
 package org.mashupmedia.util;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.exolab.castor.xml.MarshalException;
 import org.exolab.castor.xml.Marshaller;
@@ -87,17 +88,13 @@ public class MediaItemHelper {
 		remoteMusicLibrary.setSongs(songs);
 		
 		File file = FileHelper.getLibraryXmlFile(libraryId);
-		FileHelper.deleteFile(file);
-		file.createNewFile();
 		
-		FileWriter fileWriter = new FileWriter(file);
-		
-		Marshaller marshaller = new Marshaller(fileWriter);
+		StringWriter writer = new StringWriter();				
+		Marshaller marshaller = new Marshaller(writer);
 		marshaller.setEncoding(Encoding.UTF8.getEncodingString());
 		marshaller.marshal(remoteMusicLibrary);
-		
-		fileWriter.flush();
-		fileWriter.close();
+				
+		FileUtils.writeStringToFile(file, writer.toString(), Encoding.UTF8.getEncodingString());		
 	}
 
 }
