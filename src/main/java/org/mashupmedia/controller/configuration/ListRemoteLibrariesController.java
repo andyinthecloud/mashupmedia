@@ -32,7 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class RemoteLibrariesController extends BaseController {
+@RequestMapping("/configuration")
+public class ListRemoteLibrariesController extends BaseController {
 
 	@Autowired
 	private LibraryManager libraryManager;
@@ -54,7 +55,6 @@ public class RemoteLibrariesController extends BaseController {
 		listRemoteLibrariesPage.setRemoteLibraries(remoteLibraries);
 
 		model.addAttribute("listRemoteLibrariesPage", listRemoteLibrariesPage);
-
-		return "/configuration/list-remote-libraries";
+		return "configuration/list-remote-libraries";
 	}
 }
