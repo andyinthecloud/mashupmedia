@@ -5,7 +5,7 @@
 	<ul class="main-menu">
 		<c:forEach items="${listRemoteLibrariesPage.remoteLibraries}"
 			var="library">
-			<li><c:out value="${library.name}" /></li>
+			<li><a href="<c:url value="/app/configuration/edit-remote-library?libraryId=${library.id}" />"><c:out value="${library.name}" /></a></li>
 		</c:forEach>
 	</ul>
 
@@ -13,6 +13,6 @@
 
 <div class="button-panel">
 	<a class="button"
-		href="<c:url value="/app/configuration/administration/add-user" />"><spring:message
-			code="configuration.administration.list-remote-libraries.add-remote-library" /></a>
+		href="<c:url value="/app/configuration/edit-remote-library" />"><spring:message
+			code="configuration.list-remote-libraries.add-remote-library" /></a>
 </div>
