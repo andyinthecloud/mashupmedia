@@ -49,7 +49,16 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		Library library = (Library) query.uniqueResult();
 		return library;
 	}
-
+	
+	@Override
+	public Library getRemoteLibrary(long libraryId) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from Library where id = :id and remote = true");
+		query.setParameter("id", libraryId);
+		query.setCacheable(true);
+		Library library = (Library) query.uniqueResult();
+		return library;
+	}
+	
 	@Override
 	public void deleteLibrary(Library library) {
 		long libraryId = library.getId();

@@ -24,4 +24,6 @@ public interface LibraryManager {
 
 	public List<Library> getRemoteLibraries();
 
+	public Library getRemoteLibrary(long libraryId);	
+
 }

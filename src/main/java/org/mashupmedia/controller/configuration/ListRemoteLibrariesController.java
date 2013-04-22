@@ -32,12 +32,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("/configuration")
+@RequestMapping("/configuration/list-remote-libraries")
 public class ListRemoteLibrariesController extends BaseController {
+	
 
 	@Autowired
 	private LibraryManager libraryManager;
 	
+
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
@@ -47,14 +49,18 @@ public class ListRemoteLibrariesController extends BaseController {
 		breadcrumbs.add(networkBreadcrumb);
 	}
 	
-	@RequestMapping(value = "/list-remote-libraries", method = RequestMethod.GET)
-	public String handleLiistRemoteLibraries(Model model) {
+
+
+	@RequestMapping(method = RequestMethod.GET)
+	public String getRemoteLibraries(Model model) {
 		ListRemoteLibrariesPage listRemoteLibrariesPage = new ListRemoteLibrariesPage();
-		
-		List<Library> remoteLibraries= libraryManager.getRemoteLibraries();
+
+		List<Library> remoteLibraries = libraryManager.getRemoteLibraries();
 		listRemoteLibrariesPage.setRemoteLibraries(remoteLibraries);
 
 		model.addAttribute("listRemoteLibrariesPage", listRemoteLibrariesPage);
 		return "configuration/list-remote-libraries";
 	}
+
+
 }
