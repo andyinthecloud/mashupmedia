@@ -36,7 +36,7 @@ import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.DateHelper.DateFormatType;
-import org.mashupmedia.util.WebHelper.WebFormatType;
+import org.mashupmedia.util.WebHelper.WebContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -149,7 +149,6 @@ public class AjaxLibraryController {
 			remoteSharePropertiesJson.put("remoteUrl", StringUtils.trimToEmpty(remoteShare.getRemoteUrl()));
 			remoteSharePropertiesJson.put("totalPlayedMediaItems", remoteShare.getTotalPlayedMediaItems());
 			remoteSharePropertiesJson.put("uniqueName", StringUtils.trimToEmpty(remoteShare.getUniqueName()));
-			remoteSharePropertiesJson.put("remoteMashupMediaVersion", StringUtils.trimToEmpty(remoteShare.getRemoteMashupMediaVersion()));
 			remoteSharePropertiesJson.put("status", remoteShare.getStatusType().toString());
 
 			JSONObject remoteShareJson = new JSONObject();
@@ -170,7 +169,7 @@ public class AjaxLibraryController {
 
 			@Override
 			public String getContentType() {
-				return WebFormatType.JSON.getContentType();
+				return WebContentType.JSON.getContentType();
 			}
 		});
 

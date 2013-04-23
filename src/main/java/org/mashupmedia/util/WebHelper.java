@@ -7,19 +7,20 @@ import org.mashupmedia.model.media.AlbumArtImage;
 
 public class WebHelper {
 
-	public enum WebFormatType {
-		HTML("text/html; charset=utf-8"), JSON("application/json; charset=utf-8");
-		
-		WebFormatType(String contentType) {
+	public enum WebContentType {
+		HTML("text/html; charset=utf-8"), JSON("application/json; charset=utf-8"), XML("text/xml; charset=utf-8"), FLASH(
+				"application/x-shockwave-flash"), JPG("image/jpeg");
+
+		WebContentType(String contentType) {
 			this.contentType = contentType;
 		}
-		
+
 		private String contentType;
-		
+
 		public String getContentType() {
 			return contentType;
 		}
-		
+
 	}
 
 	public enum ActionType {
@@ -42,19 +43,19 @@ public class WebHelper {
 		return ActionType.NONE;
 	}
 
-	public static WebFormatType getWebFormatType(String webFormatTypeValue) {
+	public static WebContentType getWebFormatType(String webFormatTypeValue) {
 		webFormatTypeValue = StringUtils.trimToEmpty(webFormatTypeValue);
 		if (StringUtils.isEmpty(webFormatTypeValue)) {
-			return WebFormatType.HTML;
+			return WebContentType.HTML;
 		}
 
-		WebFormatType[] webFormatTypes = WebFormatType.values();
-		for (WebFormatType webFormatType : webFormatTypes) {
+		WebContentType[] webFormatTypes = WebContentType.values();
+		for (WebContentType webFormatType : webFormatTypes) {
 			if (webFormatTypeValue.equalsIgnoreCase(webFormatType.toString())) {
 				return webFormatType;
 			}
 		}
-		return WebFormatType.HTML;
+		return WebContentType.HTML;
 	}
 
 	public enum FormatContentType {
@@ -113,15 +114,17 @@ public class WebHelper {
 		return "image/" + contentType;
 	}
 
-//	public static String getContentType(String format, FormatContentType formatContentType) {
-//		MediaContentType mediaContentType = getMediaContentType(format, MediaContentType.MP3);
-//		if (formatContentType == FormatContentType.JPLAYER) {
-//			return mediaContentType.getjPlayerContentType();
-//		} else {
-//			return mediaContentType.getMimeContentType();
-//		}
-//
-//	}
+	// public static String getContentType(String format, FormatContentType
+	// formatContentType) {
+	// MediaContentType mediaContentType = getMediaContentType(format,
+	// MediaContentType.MP3);
+	// if (formatContentType == FormatContentType.JPLAYER) {
+	// return mediaContentType.getjPlayerContentType();
+	// } else {
+	// return mediaContentType.getMimeContentType();
+	// }
+	//
+	// }
 
 	public static MediaContentType getMediaContentType(String mediaFormat, MediaContentType defaultMediaContentType) {
 		mediaFormat = StringUtils.trimToEmpty(mediaFormat);
@@ -136,9 +139,6 @@ public class WebHelper {
 		} else if (mediaFormat.equalsIgnoreCase("Free Lossless Audio Codec")) {
 			return MediaContentType.MP3;
 		}
-		
-		
-		
 
 		return defaultMediaContentType;
 	}

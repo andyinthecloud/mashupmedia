@@ -29,7 +29,6 @@ public class RemoteShare implements Serializable {
 	private User createdBy;
 	private Date lastAccessed;
 	private long totalPlayedMediaItems;
-	private String remoteMashupMediaVersion;
 	private String status;
 	@Transient
 	private RemoteShareStatusType statusType;
@@ -54,14 +53,6 @@ public class RemoteShare implements Serializable {
 	public void setStatusType(RemoteShareStatusType remoteShareStatusType) {
 		this.statusType = remoteShareStatusType;
 		this.status = remoteShareStatusType.toString();
-	}
-
-	public String getRemoteMashupMediaVersion() {
-		return remoteMashupMediaVersion;
-	}
-
-	public void setRemoteMashupMediaVersion(String remoteMashupMediaVersion) {
-		this.remoteMashupMediaVersion = remoteMashupMediaVersion;
 	}
 
 	public RemoteShare() {
@@ -169,8 +160,6 @@ public class RemoteShare implements Serializable {
 		builder.append(lastAccessed);
 		builder.append(", totalPlayedMediaItems=");
 		builder.append(totalPlayedMediaItems);
-		builder.append(", remoteMashupMediaVersion=");
-		builder.append(remoteMashupMediaVersion);
 		builder.append(", status=");
 		builder.append(status);
 		builder.append("]");

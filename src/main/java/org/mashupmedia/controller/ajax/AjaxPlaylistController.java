@@ -19,7 +19,7 @@ import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.SecurityHelper;
 import org.mashupmedia.util.WebHelper;
-import org.mashupmedia.util.WebHelper.WebFormatType;
+import org.mashupmedia.util.WebHelper.WebContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -298,8 +298,8 @@ public class AjaxPlaylistController extends AjaxBaseController {
 		boolean canSavePlaylist = PlaylistHelper.canSavePlaylist(playlist);
 		model.addAttribute("canSavePlaylist", canSavePlaylist);
 
-		WebFormatType webFormatType = WebHelper.getWebFormatType(webFormatTypeValue);
-		if (webFormatType == WebFormatType.JSON) {
+		WebContentType webFormatType = WebHelper.getWebFormatType(webFormatTypeValue);
+		if (webFormatType == WebContentType.JSON) {
 			return "ajax/json/playlist";
 		}
 

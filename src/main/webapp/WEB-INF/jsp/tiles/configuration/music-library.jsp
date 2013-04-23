@@ -127,7 +127,6 @@
    			    remoteShareHtml += "<td><input type=\"checkbox\" /></td>";
    			    remoteShareHtml += "<td>" + getHostUrl() + "app/remote-library/" + remoteShare.uniqueName + "</td>";
    			    remoteShareHtml += "<td>" + remoteShare.remoteUrl + "</td>";
-   			    remoteShareHtml += "<td>" + remoteShare.remoteMashupMediaVersion + "</td>";
    			    remoteShareHtml += "<td>" + remoteShare.createdOn + "</td>";
    			    remoteShareHtml += "<td>" + remoteShare.lastAccessed + "</td>";
    			    remoteShareHtml += "<td>" + remoteShare.totalPlayedMediaItems + "</td>";
@@ -214,7 +213,6 @@
 							<th>&nbsp;</th>
 							<th><spring:message code="library.remote.connection.url" /></th>
 							<th><spring:message code="library.remote.connection.server" /></th>
-							<th><spring:message code="library.remote.connection.version" /></th>
 							<th><spring:message code="library.remote.connection.created" /></th>
 							<th><spring:message code="library.remote.connection.last-connected" /></th>
 							<th><spring:message code="library.remote.connection.played-items" /></th>

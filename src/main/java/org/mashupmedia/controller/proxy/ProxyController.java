@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.service.ProxyManager;
 import org.mashupmedia.service.ProxyManager.ProxyType;
 import org.mashupmedia.util.WebHelper;
+import org.mashupmedia.util.WebHelper.WebContentType;
 import org.mashupmedia.web.proxy.ProxyFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,20 +30,6 @@ public class ProxyController {
 	private Map<String, ProxyFile> proxyCache = new HashMap<String, ProxyFile>();
 	public static int DEFAULT_CACHE_SECONDS = 86400;
 
-	public enum ContentType {
-		FLASH("application/x-shockwave-flash"), JPG("image/jpeg");
-
-		private String value;
-
-		private ContentType(String value) {
-			this.value = value;
-		}
-
-		public String getValue() {
-			return value;
-		}
-
-	}
 
 	private static String JPLAYER_VERSION = "2.2.0";
 
@@ -54,7 +41,7 @@ public class ProxyController {
 		String contextUrl = WebHelper.getContextUrl(request);
 		String url = contextUrl + "/jquery-plugins/jquery.jplayer/" + JPLAYER_VERSION + "/Jplayer.swf";
 		ProxyFile proxyFile = getProxyFile(url);
-		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile, ContentType.FLASH);
+		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile, WebContentType.FLASH);
 		return modelAndView;
 
 	}
@@ -63,11 +50,11 @@ public class ProxyController {
 	public ModelAndView getDiscogsImage(@PathVariable("fileName") String fileName, HttpServletRequest request, Model model) throws Exception {				
 		String url = "http://api.discogs.com/image/" + fileName;
 		ProxyFile proxyFile = getProxyFile(url);
-		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile, ContentType.JPG);
+		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile, WebContentType.JPG);
 		return modelAndView;
 	}
 	
-	protected ModelAndView prepareProxyModelAndView(final ProxyFile proxyFile, final ContentType contentType) {
+	protected ModelAndView prepareProxyModelAndView(final ProxyFile proxyFile, final WebContentType contentType) {
 		ModelAndView modelAndView = new ModelAndView(new View() {
 			
 			@Override
@@ -80,7 +67,7 @@ public class ProxyController {
 			
 			@Override
 			public String getContentType() {
-				return contentType.getValue();
+				return contentType.getContentType();
 			}
 		});
 		

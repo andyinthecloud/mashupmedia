@@ -44,9 +44,28 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	@Override
 	public Library getLibrary(long id) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Library where id = :id");
-		query.setParameter("id", id);
+		query.setLong("id", id);
 		query.setCacheable(true);
 		Library library = (Library) query.uniqueResult();
+		return library;
+	}
+	
+	@Override
+	public Library getRemoteLibrary(String uniqueName) {
+		Query query = sessionFactory.getCurrentSession().createQuery("select l from Library l inner join l.remoteShares rs where rs.uniqueName = :uniqueName");
+		query.setString("uniqueName", uniqueName);		
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Library> libraries = query.list();
+		if (libraries == null || libraries.isEmpty()) {
+			return null;
+		}
+		
+		if (libraries.size() > 1) {
+			logger.error("More than one library found for uniqueName = " + uniqueName);
+		}
+				
+		Library library = libraries.get(0);
 		return library;
 	}
 	
