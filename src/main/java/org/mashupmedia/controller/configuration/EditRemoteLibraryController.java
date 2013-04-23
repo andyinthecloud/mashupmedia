@@ -20,6 +20,7 @@ package org.mashupmedia.controller.configuration;
 import java.util.List;
 
 import org.mashupmedia.controller.BaseController;
+import org.mashupmedia.editor.GroupEditor;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
@@ -33,6 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/configuration/edit-remote-library")
 public class EditRemoteLibraryController extends BaseController {
 
 	@Autowired
@@ -49,20 +51,20 @@ public class EditRemoteLibraryController extends BaseController {
 	@Autowired
 	private LibraryManager libraryManager;
 
-	public enum RemoteLibrariesActionType {
-		ADD, DELETE;
-	}
+	@Autowired
+	private GroupEditor groupEditor;
 
+	
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
 
-		Breadcrumb listRemoteLibrariesBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.remotelibraries",
-				"/app/configuration/list-remote-libraries"));
+		Breadcrumb listRemoteLibrariesBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.remotelibraries"),
+				"/app/configuration/list-remote-libraries");
 		breadcrumbs.add(listRemoteLibrariesBreadcrumb);
 
-		Breadcrumb remoteLibraryBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.editremotelibraries"));
+		Breadcrumb remoteLibraryBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.editremotelibrary"));
 		breadcrumbs.add(remoteLibraryBreadcrumb);
 	}
 
@@ -72,7 +74,7 @@ public class EditRemoteLibraryController extends BaseController {
 		return groups;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value = "/configuration/edit-remote-library",  method = RequestMethod.GET)
 	public String editUser(@RequestParam(value = "libraryId", required = false) Long libraryId, Model model) {
 		EditRemoteLibraryPage editRemoteLibraryPage = new EditRemoteLibraryPage();
 		
@@ -91,7 +93,15 @@ public class EditRemoteLibraryController extends BaseController {
 	}
 
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value = "/configuration/delete-remote-library",  method = RequestMethod.GET)
+	public String deleteRemoteLibrary(@RequestParam(value = "libraryId", required = true) Long libraryId, Model model) {		
+		Library library = libraryManager.getLibrary(libraryId);
+		libraryManager.deleteLibrary(library);		
+		return "redirect:/app/configuration/list-remote-libraries";
+	}
+	
+	
+	@RequestMapping(value = "/configuration/edit-remote-library", method = RequestMethod.POST)
 	public String postRemoteLibrary(EditRemoteLibraryPage listRemoteLibrariesPage, BindingResult result, RedirectAttributes redirectAttributes) {
 
 		new ListRemoteLibrariesValidator().validate(listRemoteLibrariesPage, result);
@@ -105,5 +115,11 @@ public class EditRemoteLibraryController extends BaseController {
 
 		return "redirect:/app/configuration/list-remote-libraries";
 	}
+	
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+		binder.registerCustomEditor(Group.class, groupEditor);
+	}
+
 
 }

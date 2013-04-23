@@ -37,6 +37,11 @@
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/list-remote-libraries.jsp" />
 	</definition>
 
+	<definition name="configuration/edit-remote-library" extends="home">
+		<put-attribute name="title" value="Mashup Media | Edit Remote Library" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/edit-remote-library.jsp" />
+	</definition>
+
 	<definition name="configuration/music-library" extends="home">
 		<put-attribute name="title" value="Mashup Media | Music Library" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/music-library.jsp" />

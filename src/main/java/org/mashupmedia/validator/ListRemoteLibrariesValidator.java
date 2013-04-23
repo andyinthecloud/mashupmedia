@@ -17,7 +17,10 @@
 
 package org.mashupmedia.validator;
 
+import java.util.Collection;
+
 import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.web.page.EditRemoteLibraryPage;
@@ -45,6 +48,12 @@ public class ListRemoteLibrariesValidator implements Validator {
 		if (StringUtils.isBlank(path)) {
 			errors.rejectValue("remoteLibrary.location.path", "configuration.edit-remote-library.errors.empty.url");
 		}
+		
+		Collection<Group> groups = remoteLibrary.getGroups();
+		if (groups == null || groups.isEmpty()) {
+			errors.rejectValue("remoteLibrary.groups", "configuration.edit-remote-library.errors.empty.groups");			
+		}
+		
 
 	}
 
