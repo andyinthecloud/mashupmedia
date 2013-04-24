@@ -48,7 +48,7 @@ public class RemoteLibraryController {
 
 	@Autowired
 	private LibraryManager libraryManager;
-
+	
 	@RequestMapping(value = "/connect/{uniqueName}", method = RequestMethod.GET)
 	public ModelAndView handleConnectRemoteLibrary(HttpServletRequest request, @PathVariable String uniqueName, Model model) throws IOException {
 

@@ -28,7 +28,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 public class ListRemoteLibrariesValidator implements Validator {
-
+	
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return clazz.isAssignableFrom(EditRemoteLibraryPage.class);
@@ -54,7 +54,6 @@ public class ListRemoteLibrariesValidator implements Validator {
 			errors.rejectValue("remoteLibrary.groups", "configuration.edit-remote-library.errors.empty.groups");			
 		}
 		
-
 	}
 
 }
