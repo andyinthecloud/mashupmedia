@@ -709,7 +709,9 @@ div.information div.discogs img{
 	border: 3px solid;	
 }
 
-
+div.textfield-with-button-panel input[type=text] {
+	width: 50%;
+}
 
 
 

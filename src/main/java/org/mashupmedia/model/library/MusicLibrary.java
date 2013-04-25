@@ -17,5 +17,5 @@ public class MusicLibrary extends Library {
 	public void setAlbumArtImagePattern(String albumArtImagePattern) {
 		this.albumArtImagePattern = albumArtImagePattern;
 	}
-
+	
 }

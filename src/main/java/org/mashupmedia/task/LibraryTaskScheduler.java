@@ -26,6 +26,9 @@ public class LibraryTaskScheduler {
 		List<MusicLibrary> musicLibraries = (List<MusicLibrary>)libraryManager.getLibraries(LibraryType.MUSIC);
 		for (MusicLibrary musicLibrary : musicLibraries) {
 			logger.info("About to update library: " + musicLibrary.getName());
+			if (musicLibrary.isRemote()) {
+				continue;
+			}
 			libraryUpdateManager.updateLibrary(musicLibrary);
 			logger.info("Library updated: " + musicLibrary.getName());
 		}

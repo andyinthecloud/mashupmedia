@@ -26,7 +26,6 @@ import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.exception.MashupMediaException;
-import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
@@ -35,6 +34,7 @@ import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
+import org.mashupmedia.remote.RemoteMusicLibrary;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
@@ -79,14 +79,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = RuntimeException.class)
-	public void updateLibrary(Library library) {
-		if (library instanceof MusicLibrary) {
-			MusicLibrary musicLibrary = (MusicLibrary) library;
-			updateMusicLibrary(musicLibrary);
-		}
-	}
-
-	public void updateMusicLibrary(MusicLibrary musicLibrary) {
+	public void updateLibrary(MusicLibrary musicLibrary) {
 		if (!musicLibrary.isEnabled()) {
 			logger.info("Library is disabled, will not update:" + musicLibrary.toString());
 			return;
@@ -96,6 +89,27 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			prepareMusicLibrary(musicLibrary);
 		} catch (Exception e) {
 			throw new MashupMediaException("Error updating the music library.", e);
+		}
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = RuntimeException.class)
+	public void updateRemoteLibrary(MusicLibrary musicLibrary) {
+		if (!musicLibrary.isEnabled()) {
+			logger.info("Remote library is disabled, will not update:" + musicLibrary.toString());
+			return;
+		}
+
+		Location location = musicLibrary.getLocation();
+		String remoteLibraryUrl = location.getPath();
+		String libraryXml = connectionManager.proceessRemoteLibraryConnection(remoteLibraryUrl);
+		RemoteMusicLibrary remoteMusicLibrary;
+		try {
+			remoteMusicLibrary = MediaItemHelper.convertXmltoRemoteMusicLibrary(libraryXml);
+			List<Song> songs = remoteMusicLibrary.getSongs();
+			saveSongs(musicLibrary, songs);
+		} catch (Exception e) {
+			throw new MashupMediaException("Error updating remote library", e);
 		}
 
 	}
@@ -238,7 +252,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		List<Song> songs = new ArrayList<Song>();
 		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
 		saveSongs(musicLibrary, songs);
-		MediaItemHelper.writeSongsToXml(musicLibrary.getId(), songs);
+		MediaItemHelper.convertSongsToXml(musicLibrary.getId(), songs);
 		deleteObsoleteSongs(musicLibrary.getId(), date);
 		// musicManager.saveSongs(musicLibrary, songs);
 

@@ -27,7 +27,7 @@ import org.mashupmedia.model.location.Location;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public class Library implements Serializable {
+public abstract class Library implements Serializable {
 
 	private static final long serialVersionUID = 4337414530802373218L;
 
@@ -52,6 +52,39 @@ public class Library implements Serializable {
 	@OrderBy("createdOn")
 	private List<RemoteShare> remoteShares;
 	private boolean remote;
+	private String status;
+	
+	public enum LibraryStatusType {
+		NONE, WORKING, ERROR, UNABLE_TO_CONNECT_TO_REMOTE_LIBRARY;
+	}
+	
+	public LibraryStatusType getLibraryStatusType() {
+		if (this.status == null) {
+			return LibraryStatusType.NONE;
+		}
+		
+		LibraryStatusType[] libraryStatusTypes = LibraryStatusType.values();
+		for (LibraryStatusType libraryStatusType : libraryStatusTypes) {
+			if (libraryStatusType.toString().equalsIgnoreCase(this.status)) {
+				return libraryStatusType;
+			}
+		}
+		
+		return LibraryStatusType.NONE;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(LibraryStatusType libraryStatusType) {
+		this.status = libraryStatusType.toString();
+	}
+
+	
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public boolean isRemote() {
 		return remote;

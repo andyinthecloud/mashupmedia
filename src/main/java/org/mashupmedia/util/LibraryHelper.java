@@ -18,6 +18,8 @@
 package org.mashupmedia.util;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.service.LibraryManager.LibraryType;
 
 public class LibraryHelper {
 
@@ -25,5 +27,24 @@ public class LibraryHelper {
 		String uniqueName = RandomStringUtils.randomAlphanumeric(14);
 		return uniqueName;
 	}
-	
+
+	public static LibraryType getRemoteLibraryType(String remoteLibraryUrl) {
+		if (StringUtils.isBlank(remoteLibraryUrl)) {
+			return null;
+		}
+
+		remoteLibraryUrl = remoteLibraryUrl.replaceFirst(".*/connect/", "");
+		remoteLibraryUrl = remoteLibraryUrl.replaceFirst("/.*", "");
+
+		LibraryType[] libraryTypes = LibraryType.values();
+		for (LibraryType libraryType : libraryTypes) {
+			if (libraryType.toString().toLowerCase().equals(remoteLibraryUrl)) {
+				return libraryType;
+			}
+		}
+
+		return null;
+
+	}
+
 }

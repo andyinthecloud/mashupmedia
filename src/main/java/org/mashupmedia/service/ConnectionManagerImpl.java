@@ -2,7 +2,9 @@ package org.mashupmedia.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -26,6 +28,7 @@ import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
 import org.mashupmedia.util.ImageHelper.ImageType;
+import org.mashupmedia.util.StringHelper.Encoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -171,6 +174,22 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		File file = new File(path);
 		long size = file.length();
 		return size;
+	}
+	
+	@Override
+	public String proceessRemoteLibraryConnection(String remoteLibraryUrl) {		
+		InputStream inputStream = connect(remoteLibraryUrl);
+		StringWriter stringWriter = new StringWriter();
+		try {
+			IOUtils.copy(inputStream, stringWriter, Encoding.UTF8.getEncodingString());
+		} catch (IOException e) {
+			logger.error(e);
+		} 
+		
+		IOUtils.closeQuietly(stringWriter);
+		IOUtils.closeQuietly(inputStream);
+		
+		return stringWriter.toString();
 	}
 
 }

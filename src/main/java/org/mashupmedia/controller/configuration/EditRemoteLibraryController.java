@@ -17,26 +17,21 @@
 
 package org.mashupmedia.controller.configuration;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.controller.BaseController;
-import org.mashupmedia.controller.remote.RemoteLibraryController;
 import org.mashupmedia.editor.GroupEditor;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.LibraryManager;
+import org.mashupmedia.service.LibraryManager.LibraryType;
+import org.mashupmedia.task.LibraryUpdateTaskManager;
+import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MessageHelper;
-import org.mashupmedia.util.StringHelper.Encoding;
 import org.mashupmedia.validator.ListRemoteLibrariesValidator;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.EditRemoteLibraryPage;
@@ -55,8 +50,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class EditRemoteLibraryController extends BaseController {
 	
-	private Logger logger = Logger.getLogger(getClass());
-
 	@Autowired
 	private AdminManager adminManager;
 
@@ -67,7 +60,13 @@ public class EditRemoteLibraryController extends BaseController {
 	private ConnectionManager connectionManager;
 
 	@Autowired
+	private LibraryUpdateTaskManager libraryUpdateTaskManager;
+	
+	@Autowired
 	private GroupEditor groupEditor;
+	
+	
+	
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
@@ -89,23 +88,42 @@ public class EditRemoteLibraryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/configuration/edit-remote-library", method = RequestMethod.GET)
-	public String editUser(@RequestParam(value = "libraryId", required = false) Long libraryId, Model model) {
+	public String handleEditRemoteLibrary(@RequestParam(value = "libraryId", required = true) Long libraryId, Model model) {
 		EditRemoteLibraryPage editRemoteLibraryPage = new EditRemoteLibraryPage();
-
-		Library library = new Library();
-		if (libraryId != null) {
-			library = libraryManager.getRemoteLibrary(libraryId);
-		} else {
-			Location location = new Location();
-			library.setLocation(location);
-		}
-
+		Library library = libraryManager.getRemoteLibrary(libraryId);
 		editRemoteLibraryPage.setRemoteLibrary(library);
 
 		model.addAttribute("editRemoteLibraryPage", editRemoteLibraryPage);
 		return "configuration/edit-remote-library";
 	}
 
+	@RequestMapping(value = "/configuration/new-remote-library", method = RequestMethod.GET)
+	public String handleNewRemoteLibrary(@RequestParam(value = "remoteLibraryUrl", required = true) String remoteLibraryUrl, Model model) {
+		EditRemoteLibraryPage editRemoteLibraryPage = new EditRemoteLibraryPage();
+		LibraryType libraryType = LibraryHelper.getRemoteLibraryType(remoteLibraryUrl);
+		if (libraryType == null) {
+			return "configuration/url-error-remote-library";
+		}
+		
+		Library library = null;
+		if (libraryType == LibraryType.MUSIC) {
+			library = new MusicLibrary();
+		} else {
+			library = new MusicLibrary();
+		}
+		
+		library.setEnabled(true);
+		Location location = new Location();
+		location.setPath(remoteLibraryUrl);
+		library.setLocation(location);
+		
+		editRemoteLibraryPage.setRemoteLibrary(library);
+
+		model.addAttribute("editRemoteLibraryPage", editRemoteLibraryPage);
+		return "configuration/edit-remote-library";
+	}
+
+	
 	@RequestMapping(value = "/configuration/delete-remote-library", method = RequestMethod.GET)
 	public String deleteRemoteLibrary(@RequestParam(value = "libraryId", required = true) Long libraryId, Model model) {
 		Library library = libraryManager.getLibrary(libraryId);
@@ -121,38 +139,13 @@ public class EditRemoteLibraryController extends BaseController {
 			return "configuration/edit-remote-library";
 		}
 		
-
 		Library remoteLibrary = editRemoteLibraryPage.getRemoteLibrary();
-		String songsXml = proceessRemoteLibraryConnection(remoteLibrary);
-		if (StringUtils.isBlank(songsXml)) {
-			result.rejectValue("remoteLibrary.location.path", "configuration.edit-remote-library.errors.invalid.url");
-			return "configuration/edit-remote-library";
-		}
-		
-		
-		
 		remoteLibrary.setRemote(true);
 		libraryManager.saveLibrary(remoteLibrary);
-
+		libraryUpdateTaskManager.updateRemoteLibrary(remoteLibrary);
 		return "redirect:/app/configuration/list-remote-libraries";
 	}
 	
-	protected String proceessRemoteLibraryConnection(Library remoteLibrary) {
-		// Connect to the remote library
-		Location location = remoteLibrary.getLocation();
-		InputStream inputStream = connectionManager.connect(location.getPath());
-		StringWriter stringWriter = new StringWriter();
-		try {
-			IOUtils.copy(inputStream, stringWriter, Encoding.UTF8.getEncodingString());
-		} catch (IOException e) {
-			logger.error(e);
-		} 
-		
-		IOUtils.closeQuietly(stringWriter);
-		IOUtils.closeQuietly(inputStream);
-		
-		return stringWriter.toString();
-	}
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {

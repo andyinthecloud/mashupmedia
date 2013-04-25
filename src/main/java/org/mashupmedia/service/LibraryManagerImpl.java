@@ -62,7 +62,6 @@ public class LibraryManagerImpl implements LibraryManager {
 		Date date = new Date();
 		long libraryId = library.getId();
 
-		
 		List<RemoteShare> remoteShares = new ArrayList<RemoteShare>();
 		if (libraryId == 0) {
 			library.setCreatedBy(user);
@@ -80,13 +79,13 @@ public class LibraryManagerImpl implements LibraryManager {
 			for (RemoteShare remoteShare : remoteShares) {
 				if (remoteShare.getId() == 0) {
 					remoteShare.setCreatedBy(user);
-					remoteShare.setCreatedOn(new Date());					
+					remoteShare.setCreatedOn(new Date());
 				}
 
 				String uniqueName = remoteShare.getUniqueName();
 				if (StringUtils.isBlank(uniqueName)) {
 					remoteShare.setUniqueName(LibraryHelper.createUniqueName());
-				}				
+				}
 			}
 		}
 
@@ -100,20 +99,19 @@ public class LibraryManagerImpl implements LibraryManager {
 		Hibernate.initialize(library.getRemoteShares());
 		return library;
 	}
-	
+
 	@Override
 	public Library getRemoteLibrary(String uniqueName) {
 		Library remoteLibrary = libraryDao.getRemoteLibrary(uniqueName);
 		Hibernate.initialize(remoteLibrary.getRemoteShares());
 		return remoteLibrary;
 	}
-	
+
 	@Override
 	public Library getRemoteLibrary(long libraryId) {
 		Library library = libraryDao.getRemoteLibrary(libraryId);
 		return library;
 	}
-	
 
 	@Override
 	public void deleteLibrary(Library library) {
@@ -151,14 +149,14 @@ public class LibraryManagerImpl implements LibraryManager {
 
 	@Override
 	public void saveRemoteShares(Long[] remoteShareIds, String remoteShareStatus) {
-		if (remoteShareIds == null){
-			return;		
-		}		
+		if (remoteShareIds == null) {
+			return;
+		}
 		for (Long remoteShareId : remoteShareIds) {
 			RemoteShare remoteShare = getRemoteShare(remoteShareId);
 			remoteShare.setStatusType(remoteShareStatus);
 			saveRemoteShare(remoteShare);
-		}		
+		}
 	}
 
 	private void saveRemoteShare(RemoteShare remoteShare) {
@@ -171,8 +169,9 @@ public class LibraryManagerImpl implements LibraryManager {
 	}
 
 	@Override
-	public List<Library> getRemoteLibraries() {		
+	public List<Library> getRemoteLibraries() {
 		List<Library> remoteLibraries = libraryDao.getRemoteLibraries();
 		return remoteLibraries;
 	}
+
 }
