@@ -17,18 +17,65 @@
 
 package org.mashupmedia.web.page;
 
-import org.mashupmedia.model.library.Library;
+import java.util.Set;
+
+import org.mashupmedia.model.Group;
 
 public class EditRemoteLibraryPage {
 
-	private Library remoteLibrary;
+	private String libraryTypeValue;
+	private long libraryId;
+	private boolean enabled;
+	private String name;
+	private String url;
+	private Set<Group> groups;
 
-	public Library getRemoteLibrary() {
-		return remoteLibrary;
+	public String getLibraryTypeValue() {
+		return libraryTypeValue;
 	}
 
-	public void setRemoteLibrary(Library remoteLibrary) {
-		this.remoteLibrary = remoteLibrary;
+	public void setLibraryTypeValue(String libraryTypeValue) {
+		this.libraryTypeValue = libraryTypeValue;
+	}
+
+	public long getLibraryId() {
+		return libraryId;
+	}
+
+	public void setLibraryId(long libraryId) {
+		this.libraryId = libraryId;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public Set<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(Set<Group> groups) {
+		this.groups = groups;
 	}
 
 }

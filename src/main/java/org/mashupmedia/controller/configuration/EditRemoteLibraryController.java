@@ -49,7 +49,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class EditRemoteLibraryController extends BaseController {
-	
+
 	@Autowired
 	private AdminManager adminManager;
 
@@ -61,12 +61,9 @@ public class EditRemoteLibraryController extends BaseController {
 
 	@Autowired
 	private LibraryUpdateTaskManager libraryUpdateTaskManager;
-	
+
 	@Autowired
 	private GroupEditor groupEditor;
-	
-	
-	
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
@@ -88,10 +85,22 @@ public class EditRemoteLibraryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/configuration/edit-remote-library", method = RequestMethod.GET)
-	public String handleEditRemoteLibrary(@RequestParam(value = "libraryId", required = true) Long libraryId, Model model) {
-		EditRemoteLibraryPage editRemoteLibraryPage = new EditRemoteLibraryPage();
+	public String handleEditRemoteLibrary(@RequestParam(value = "libraryId", required = true) Long libraryId, Model model) {		
 		Library library = libraryManager.getRemoteLibrary(libraryId);
-		editRemoteLibraryPage.setRemoteLibrary(library);
+		
+		EditRemoteLibraryPage editRemoteLibraryPage = new EditRemoteLibraryPage();
+		editRemoteLibraryPage.setLibraryId(library.getId());
+		editRemoteLibraryPage.setEnabled(library.isEnabled());
+		editRemoteLibraryPage.setGroups(library.getGroups());
+		editRemoteLibraryPage.setName(library.getName());
+		Location location = library.getLocation();
+		editRemoteLibraryPage.setUrl(location.getPath());
+		
+		if (library instanceof MusicLibrary) {
+			editRemoteLibraryPage.setLibraryTypeValue(LibraryType.MUSIC.toString());
+		} else {
+			editRemoteLibraryPage.setLibraryTypeValue(LibraryType.MUSIC.toString());
+		}
 
 		model.addAttribute("editRemoteLibraryPage", editRemoteLibraryPage);
 		return "configuration/edit-remote-library";
@@ -104,26 +113,15 @@ public class EditRemoteLibraryController extends BaseController {
 		if (libraryType == null) {
 			return "configuration/url-error-remote-library";
 		}
-		
-		Library library = null;
-		if (libraryType == LibraryType.MUSIC) {
-			library = new MusicLibrary();
-		} else {
-			library = new MusicLibrary();
-		}
-		
-		library.setEnabled(true);
-		Location location = new Location();
-		location.setPath(remoteLibraryUrl);
-		library.setLocation(location);
-		
-		editRemoteLibraryPage.setRemoteLibrary(library);
+
+		editRemoteLibraryPage.setUrl(remoteLibraryUrl);
+		editRemoteLibraryPage.setLibraryTypeValue(libraryType.toString());
+		editRemoteLibraryPage.setEnabled(true);
 
 		model.addAttribute("editRemoteLibraryPage", editRemoteLibraryPage);
 		return "configuration/edit-remote-library";
 	}
 
-	
 	@RequestMapping(value = "/configuration/delete-remote-library", method = RequestMethod.GET)
 	public String deleteRemoteLibrary(@RequestParam(value = "libraryId", required = true) Long libraryId, Model model) {
 		Library library = libraryManager.getLibrary(libraryId);
@@ -139,13 +137,25 @@ public class EditRemoteLibraryController extends BaseController {
 			return "configuration/edit-remote-library";
 		}
 		
-		Library remoteLibrary = editRemoteLibraryPage.getRemoteLibrary();
+		String libraryType = editRemoteLibraryPage.getLibraryTypeValue();				
+		Library remoteLibrary = null;
+		if (libraryType.equalsIgnoreCase(LibraryType.MUSIC.toString())) {
+			remoteLibrary = new MusicLibrary();
+		} else {
+			remoteLibrary = new MusicLibrary();
+		}
+		
+		remoteLibrary.setEnabled(editRemoteLibraryPage.isEnabled());
+		remoteLibrary.setName(editRemoteLibraryPage.getName());
+		remoteLibrary.setGroups(editRemoteLibraryPage.getGroups());		
+		Location location = new Location();
+		location.setPath(editRemoteLibraryPage.getUrl());
+		remoteLibrary.setLocation(location);
 		remoteLibrary.setRemote(true);
 		libraryManager.saveLibrary(remoteLibrary);
 		libraryUpdateTaskManager.updateRemoteLibrary(remoteLibrary);
 		return "redirect:/app/configuration/list-remote-libraries";
 	}
-	
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {

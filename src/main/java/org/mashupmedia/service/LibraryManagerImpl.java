@@ -115,30 +115,32 @@ public class LibraryManagerImpl implements LibraryManager {
 
 	@Override
 	public void deleteLibrary(Library library) {
-		long id = library.getId();
-
-		List<MediaItem> mediaItems = mediaManager.getMediaItemsForLibrary(id);
+		long libraryId = library.getId();
+		playlistManager.deleteLibrary(libraryId);
+		deleteLibraryMediaItems(libraryId);
+		libraryDao.deleteLibrary(library);
+		FileHelper.deleteLibrary(libraryId);
+	}
+	
+	private void deleteLibraryMediaItems(long libraryId) {
+		List<MediaItem> mediaItems = mediaManager.getMediaItemsForLibrary(libraryId);
 		if (mediaItems == null || mediaItems.isEmpty()) {
 			return;
 		}
-
+		
 		deleteVotes(mediaItems);
-		playlistManager.deleteLibrary(library.getId());
-
 		MediaType mediaType = mediaItems.get(0).getMediaType();
 		if (mediaType == MediaType.SONG) {
 			@SuppressWarnings({ "unchecked", "rawtypes" })
 			List<Song> songs = (List) mediaItems;
 			musicLibraryUpdateManager.deleteSongs(songs);
-			List<AlbumArtImage> albumArtImages = mediaManager.getAlbumArtImages(id);
+			List<AlbumArtImage> albumArtImages = mediaManager.getAlbumArtImages(libraryId);
 			mediaManager.deleteAlbumArtImages(albumArtImages);
 			musicLibraryUpdateManager.deleteEmpty();
 		} else {
 			mediaManager.deleteMediaItems(mediaItems);
 		}
 
-		libraryDao.deleteLibrary(library);
-		FileHelper.deleteLibrary(id);
 	}
 
 	private void deleteVotes(List<MediaItem> mediaItems) {
