@@ -15,7 +15,7 @@ public interface MusicLibraryUpdateManager {
 	
 	public void deleteEmpty();
 
-	public void updateRemoteLibrary(MusicLibrary musicLibrary);
+	public void updateRemoteLibrary(MusicLibrary musicLibrary) throws Exception;
 	
 	
 

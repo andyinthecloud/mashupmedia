@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.mashupmedia.exception.MashupMediaException;
+import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
@@ -67,7 +67,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		}
 
 		if (playlists.size() > 1) {
-			throw new MashupMediaException("Error, more than one default playlist found for user id: " + userId);
+			throw new MashupMediaRuntimeException("Error, more than one default playlist found for user id: " + userId);
 		}
 
 		return playlists.get(0);

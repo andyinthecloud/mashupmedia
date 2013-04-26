@@ -11,7 +11,7 @@ import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.dao.RoleDao;
 import org.mashupmedia.dao.UserDao;
-import org.mashupmedia.exception.MashupMediaException;
+import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
@@ -103,7 +103,7 @@ public class AdminManagerImpl implements AdminManager {
 	@Override
 	public void updateUser(User user) {
 		if (user.getId() == 0) {
-			throw new MashupMediaException("Can only update an existing user.");
+			throw new MashupMediaRuntimeException("Can only update an existing user.");
 		}
 		
 		
@@ -139,7 +139,7 @@ public class AdminManagerImpl implements AdminManager {
 	public void updatePassword(String username, String password) {
 		User user = getUser(username);
 		if (user == null) {
-			throw new MashupMediaException("Could not find user with username: " + username);
+			throw new MashupMediaRuntimeException("Could not find user with username: " + username);
 		}
 
 		String encodedPassword = EncryptionHelper.encodePassword(password);

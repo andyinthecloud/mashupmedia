@@ -17,7 +17,7 @@
 
 package org.mashupmedia.exception;
 
-public class UnauthorisedException extends MashupMediaException{
+public class UnauthorisedException extends MashupMediaRuntimeException{
 
 	private static final long serialVersionUID = 5707052548058153944L;
 

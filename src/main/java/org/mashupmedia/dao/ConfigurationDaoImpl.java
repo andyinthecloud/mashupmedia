@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
-import org.mashupmedia.exception.MashupMediaException;
+import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.Configuration;
 import org.springframework.stereotype.Repository;
 
@@ -34,7 +34,7 @@ public class ConfigurationDaoImpl extends BaseDaoImpl implements ConfigurationDa
 			fullTextSession.createIndexer().startAndWait();
 			logger.info("Indexation finished.");
 		} catch (InterruptedException e) {
-			throw new MashupMediaException("Error indexing content", e);
+			throw new MashupMediaRuntimeException("Error indexing content", e);
 		}
 	}
 

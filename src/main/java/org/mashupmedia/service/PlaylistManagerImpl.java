@@ -7,7 +7,7 @@ import java.util.List;
 import org.hibernate.Hibernate;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.PlaylistDao;
-import org.mashupmedia.exception.MashupMediaException;
+import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.exception.UnauthorisedException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
@@ -182,7 +182,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		}
 		
 		if (user.getId() == 0) {
-			throw new MashupMediaException("Can only update the playlistMediaItem for an existing user.");
+			throw new MashupMediaRuntimeException("Can only update the playlistMediaItem for an existing user.");
 		}
 		
 		user.setPlaylistMediaItem(playlistMediaItem);
