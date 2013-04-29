@@ -35,15 +35,20 @@ import org.mashupmedia.model.media.Song;
 import org.mashupmedia.remote.RemoteMusicLibrary;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TestMusicLibraryUpdateManager extends TestBaseService {
 
+	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 
+	@Autowired
 	private LibraryManager libraryManager;
 
+	@Autowired
 	public MusicManager musicManager;
 
+	@Autowired
 	private AdminManager adminManager;
 
 	@Test
