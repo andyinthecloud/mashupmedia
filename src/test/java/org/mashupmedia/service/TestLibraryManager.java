@@ -31,8 +31,8 @@ public class TestLibraryManager extends TestBaseService {
 		libraryManager.saveLibrary(musicLibrary);
 
 		Assert.assertTrue(musicLibrary.getId() > 0);
-
 	}
+	
 
 	
 //	@Test

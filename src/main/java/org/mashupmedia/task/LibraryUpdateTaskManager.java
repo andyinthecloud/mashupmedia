@@ -14,62 +14,62 @@ import org.springframework.stereotype.Component;
 public class LibraryUpdateTaskManager {
 	private Logger logger = Logger.getLogger(getClass());
 
-    @Autowired
-    private ThreadPoolTaskExecutor libraryUpdateThreadPoolTaskExecutor;
-    
-    @Autowired
-    private MusicLibraryUpdateManager musicLibraryUpdateManager;
-    
-    @Autowired
-    private LibraryManager libraryManager;
+	@Autowired
+	private ThreadPoolTaskExecutor libraryUpdateThreadPoolTaskExecutor;
 
+	@Autowired
+	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 
-    public void updateLibrary(Library library) {
-    	libraryUpdateThreadPoolTaskExecutor.execute(new LibraryUpdateTask(library));
-    }
+	@Autowired
+	private LibraryManager libraryManager;
 
-    private class LibraryUpdateTask implements Runnable {
+	public void updateLibrary(Library library) {
+		libraryUpdateThreadPoolTaskExecutor.execute(new LibraryUpdateTask(library));
+	}
 
-        private Library library;
+	private class LibraryUpdateTask implements Runnable {
 
-        public LibraryUpdateTask(Library library) {
-            this.library = library;
-        }
+		private Library library;
 
-        public void run() {
-        	if (library instanceof MusicLibrary) {
-        		MusicLibrary musicLibrary = (MusicLibrary) library;
-        		musicLibraryUpdateManager.updateLibrary(musicLibrary);	
-        	}
-        	
-        }
-    }
+		public LibraryUpdateTask(Library library) {
+			this.library = library;
+		}
+
+		public void run() {
+			if (library instanceof MusicLibrary) {
+				MusicLibrary musicLibrary = (MusicLibrary) library;
+				musicLibraryUpdateManager.updateLibrary(musicLibrary);
+			}
+
+		}
+	}
 
 	public void updateRemoteLibrary(Library remoteLibrary) {
 		libraryUpdateThreadPoolTaskExecutor.execute(new RemoteLibraryUpdateTask(remoteLibrary));
 	}
 
-	
-    private class RemoteLibraryUpdateTask implements Runnable {
+	private class RemoteLibraryUpdateTask implements Runnable {
 
-        private Library library;
+		private Library library;
 
-        public RemoteLibraryUpdateTask(Library library) {
-            this.library = library;
-        }
+		public RemoteLibraryUpdateTask(Library library) {
+			this.library = library;
+		}
 
-        public void run() {
-        	if (library instanceof MusicLibrary) {
-        		MusicLibrary musicLibrary = (MusicLibrary) library;
-            	try {
+		public void run() {
+			if (library instanceof MusicLibrary) {
+				MusicLibrary musicLibrary = (MusicLibrary) library;
+				LibraryStatusType libraryStatusType = LibraryStatusType.WORKING;
+				try {
 					musicLibraryUpdateManager.updateRemoteLibrary(musicLibrary);
 				} catch (Exception e) {
 					logger.error(e);
-					musicLibrary.setStatus(LibraryStatusType.ERROR);
-					libraryManager.saveLibrary(musicLibrary);
-				}        		
-        	}
-        }
-    }
+					libraryStatusType = LibraryStatusType.ERROR;
+				}
+				musicLibrary.setStatus(libraryStatusType);
+				libraryManager.saveLibrary(musicLibrary);
+			}
+		}
+	}
 
 }
