@@ -251,6 +251,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	}
 
+	
+
+	
 	protected void prepareSongs(Date date, List<Song> songs, File folder, MusicLibrary musicLibrary, String folderArtistName, String folderAlbumName)
 			throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
 		if (folder.isFile()) {
@@ -384,6 +387,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				}
 				artist.setName(tagArtistName);
 				artist.setFolderName(folderArtistName);
+				artist.setAlbums(new ArrayList<Album>());
 
 				// if (musicFileCount == 1) {
 				// try {

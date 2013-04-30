@@ -51,6 +51,7 @@
 		<field name="album" type="org.mashupmedia.model.media.Album">
 			<bind-xml name="album" node="element" />
 		</field>
+		
 		<field name="genre" type="org.mashupmedia.model.media.Genre">
 			<bind-xml name="genre" node="element" />
 		</field>
