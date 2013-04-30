@@ -38,6 +38,8 @@ import org.mashupmedia.util.MediaItemHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class TestMusicLibraryUpdateManager extends TestBaseService {
+	
+//	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
@@ -56,7 +58,7 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 
 		MusicLibrary musicLibrary = new MusicLibrary();
 		Location location = new Location();
-		File musicDirectory = new File("");
+		File musicDirectory = new File(testResourceBundle.getString("test.music.folder"));
 		location.setPath(musicDirectory.getAbsolutePath());
 		musicLibrary.setLocation(location);
 		musicLibrary.setEnabled(true);

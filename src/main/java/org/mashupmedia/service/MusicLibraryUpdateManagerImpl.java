@@ -40,7 +40,6 @@ import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -78,7 +77,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = RuntimeException.class)
 	public void updateLibrary(MusicLibrary musicLibrary) {
 		if (!musicLibrary.isEnabled()) {
 			logger.info("Library is disabled, will not update:" + musicLibrary.toString());
@@ -93,7 +91,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = RuntimeException.class)
 	public void updateRemoteLibrary(MusicLibrary musicLibrary) throws Exception {
 		if (!musicLibrary.isEnabled()) {
 			logger.info("Remote library is disabled, will not update:" + musicLibrary.toString());
@@ -110,7 +107,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	}
 
-	@Override
+	@Override	
 	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs) {
 		if (songs == null || songs.isEmpty()) {
 			return;

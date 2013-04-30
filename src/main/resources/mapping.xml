@@ -71,9 +71,22 @@
 		<field name="songs" transient="true" />
 	</class>
 
-	<class name="org.mashupmedia.model.media.Artist" auto-complete="true">
-		<field name="id" transient="true" />
-		<field name="albums" transient="true" />
+	<class name="org.mashupmedia.model.media.Artist" auto-complete="false">
+		<field name="name" type="String">
+			<bind-xml name="name" node="element" />
+		</field>
+		<field name="folderName" type="String">
+			<bind-xml name="folderName" node="element" />
+		</field>
+		<field name="indexText" type="String">
+			<bind-xml name="indexText" node="element" />
+		</field>
+		<field name="indexLetter" type="String">
+			<bind-xml name="indexLetter" node="element" />
+		</field>
+		<field name="remoteId" type="String">
+			<bind-xml name="remoteId" node="element" />
+		</field>
 	</class>
 
 	<class name="org.mashupmedia.model.media.Genre" auto-complete="true">

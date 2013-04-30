@@ -299,6 +299,10 @@
 				<directory>src/main/webapp</directory>
 				<filtering>true</filtering>
 			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>			
+			</testResource>
 		</testResources>
 
 		<plugins>
@@ -412,6 +416,7 @@
 				<log4j.focus.level>debug</log4j.focus.level>
 				<log4j.root.level>info</log4j.root.level>
 				<log.path>${env.CATALINA_HOME}/logs</log.path>
+				<test.music.folder>C:/andy/incoming/Hot</test.music.folder>
 			</properties>
 		</profile>
 		<profile>
@@ -430,6 +435,7 @@
 				<log4j.focus.level>error</log4j.focus.level>
 				<log4j.root.level>error</log4j.root.level>
 				<log.path>/var/log/tomcat6</log.path>
+				<test.music.folder>C:/andy/incoming/Hot</test.music.folder>
 			</properties>
 		</profile>
 	</profiles>
