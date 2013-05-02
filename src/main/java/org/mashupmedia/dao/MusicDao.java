@@ -7,7 +7,6 @@ import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
-import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 
@@ -59,6 +58,6 @@ public interface MusicDao {
 
 	public List<Genre> getGenres();
 	
-	public List<MediaItem> findSongs(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria);
+	public List<Song> findSongs(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria);
 	
 }

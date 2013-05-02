@@ -6,7 +6,6 @@ import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
-import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 
 public interface MusicManager {
@@ -35,7 +34,7 @@ public interface MusicManager {
 
 	public List<Genre> getGenres();
 
-	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria);
+	public List<Song> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria);
 
 	public void saveArtist(Artist artist);
 

@@ -11,7 +11,6 @@ import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
-import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -159,10 +158,10 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public List<MediaItem> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria) {
+	public List<Song> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria) {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		List<MediaItem> mediaItems = musicDao.findSongs(userGroupIds, mediaItemSearchCriteria);
-		return mediaItems;
+		List<Song> songs = musicDao.findSongs(userGroupIds, mediaItemSearchCriteria);
+		return songs;
 	}
 	
 	

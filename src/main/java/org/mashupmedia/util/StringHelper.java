@@ -122,16 +122,19 @@ public class StringHelper {
 		text = StringUtils.trimToEmpty(text).toLowerCase();
 		return text;
 	}
-	
+
 	public static String escapeXml(String text) {
 		text = StringUtils.trimToEmpty(text);
 		if (StringUtils.isEmpty(text)) {
 			return text;
 		}
+
+				
+		text = text.replaceAll("\\+", " ");
 		
 		text = StringEscapeUtils.escapeXml(text);
+		text = StringEscapeUtils.escapeJava(text);
 		return text;
 	}
-
 
 }

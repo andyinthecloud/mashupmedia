@@ -17,9 +17,16 @@ public class MediaItemSearchCriteria {
 	private MediaSortType mediaSortType;
 	boolean ascending;
 	boolean enabled;
-	
-	
-	
+	private long libraryId;
+
+	public long getLibraryId() {
+		return libraryId;
+	}
+
+	public void setLibraryId(long libraryId) {
+		this.libraryId = libraryId;
+	}
+
 	public boolean isEnabled() {
 		return enabled;
 	}

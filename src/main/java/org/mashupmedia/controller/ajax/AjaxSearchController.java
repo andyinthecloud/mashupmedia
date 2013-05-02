@@ -8,9 +8,10 @@ import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.exception.PageNotFoundException;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
@@ -80,17 +81,17 @@ public class AjaxSearchController extends AjaxBaseController {
 		MediaSortType mediaSortType = MediaItemHelper.getMediaSortType(orderBy);
 		mediaItemSearchCriteria.setMediaSortType(mediaSortType);
 
-		List<MediaItem> mediaItems = null;
+		List<? extends MediaItem> songs = null;
 
 		if (mediaType == MediaType.SONG) {
-			mediaItems = musicManager.findSongs(mediaItemSearchCriteria);
+			songs = musicManager.findSongs(mediaItemSearchCriteria);
 		} else {
-			mediaItems = mediaManager.findMediaItems(mediaItemSearchCriteria);
+			songs = mediaManager.findMediaItems(mediaItemSearchCriteria);
 		}
 
 		ActionType actionType = WebHelper.getActionType(action);
 		
-		String page = preparePage(model, actionType, pageNumber, mediaItems, mediaSortType, mediaType, isAscending);
+		String page = preparePage(model, actionType, pageNumber, songs, mediaSortType, mediaType, isAscending);
 		return page;
 //		
 //		
@@ -117,7 +118,7 @@ public class AjaxSearchController extends AjaxBaseController {
 
 	}
 	
-	private String preparePage(Model model, ActionType actionType, int pageNumber, List<MediaItem> mediaItems, MediaSortType mediaSortType, MediaType mediaType, boolean isAscending) {
+	private String preparePage(Model model, ActionType actionType, int pageNumber, List<? extends MediaItem> mediaItems, MediaSortType mediaSortType, MediaType mediaType, boolean isAscending) {
 		if (actionType == ActionType.NONE) {
 			if (pageNumber == 0 && mediaItems.isEmpty()) {
 				return "ajax/search/no-results";

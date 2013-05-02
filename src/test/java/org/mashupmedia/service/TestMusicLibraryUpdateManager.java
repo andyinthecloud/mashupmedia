@@ -52,6 +52,9 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 
 	@Autowired
 	private AdminManager adminManager;
+	
+	@Autowired
+	private MapperManager mapperManager;
 
 	@Test
 	public void testSaveRemoteLibrary() throws Exception {
@@ -72,7 +75,7 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 
 		MediaItemSearchCriteria criteria = new MediaItemSearchCriteria();
 		criteria.setMaximumResults(100);
-		List<MediaItem> mediaItems = musicManager.findSongs(criteria);
+		List<Song> mediaItems = musicManager.findSongs(criteria);
 
 		int maxSongs = mediaItems.size();
 
@@ -80,7 +83,7 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 
 		String libraryXml = FileUtils.readFileToString(file);
 		RemoteMusicLibrary remoteMusicLibrary;
-		remoteMusicLibrary = MediaItemHelper.convertXmltoRemoteMusicLibrary(libraryXml);
+		remoteMusicLibrary = mapperManager.convertXmltoRemoteMusicLibrary(libraryXml);
 		List<Song> songs = remoteMusicLibrary.getSongs();
 
 		MusicLibrary musicLibrary2 = new MusicLibrary();

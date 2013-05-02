@@ -22,7 +22,6 @@ import org.mashupmedia.model.Group;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
-import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
@@ -355,7 +354,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public List<MediaItem> findSongs(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria) {
+	public List<Song> findSongs(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria) {
 
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
@@ -365,9 +364,11 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
 
 		String searchWordsValue = mediaItemSearchCriteria.getSearchWords();
-		String[] searchWords = searchWordsValue.split("\\s");
-		for (String searchWord : searchWords) {
-			booleanJunction.must(queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord).createQuery());
+		if (StringUtils.isNotBlank(searchWordsValue)) {
+			String[] searchWords = searchWordsValue.split("\\s");
+			for (String searchWord : searchWords) {
+				booleanJunction.must(queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord).createQuery());
+			}
 		}
 
 		String mediaTypeValue = StringHelper.normaliseTextForDatabase(MediaType.SONG.toString());
@@ -375,6 +376,11 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		booleanJunction.must(queryBuilder.keyword().onField("enabled").matching(mediaItemSearchCriteria.isEnabled()).createQuery());
 		for (Long groupId : groupIds) {
 			booleanJunction.must(queryBuilder.keyword().onField("library.groups.id").matching(groupId).createQuery());
+		}
+
+		long libraryId = mediaItemSearchCriteria.getLibraryId();
+		if (libraryId > 0) {
+			booleanJunction.must(queryBuilder.keyword().onField("library.id").matching(libraryId).createQuery());
 		}
 
 		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
@@ -402,9 +408,9 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		query.setMaxResults(maximumResults);
 
 		@SuppressWarnings("unchecked")
-		List<MediaItem> mediaItems = query.list();
+		List<Song> songs = query.list();
 		// Collections.sort(mediaItems, new MediaItemComparator());
-		return mediaItems;
+		return songs;
 	}
 
 }

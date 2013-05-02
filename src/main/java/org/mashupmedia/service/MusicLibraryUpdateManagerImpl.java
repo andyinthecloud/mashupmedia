@@ -22,10 +22,12 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.mashupmedia.comparator.FileComparator;
+import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
@@ -36,7 +38,6 @@ import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.remote.RemoteMusicLibrary;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	private AlbumArtManager albumArtManager;
 
 	@Autowired
+	private MapperManager mapperManager;
+
+	@Autowired
 	private MusicDao musicDao;
 
 	@Autowired
@@ -63,6 +67,11 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Autowired
 	private GroupDao groupDao;
+	
+	@Autowired
+	private AdminManager adminManager;
+	
+	
 
 	private MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
@@ -100,14 +109,12 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		Location location = musicLibrary.getLocation();
 		String remoteLibraryUrl = location.getPath();
 		String libraryXml = connectionManager.proceessRemoteLibraryConnection(remoteLibraryUrl);
-		RemoteMusicLibrary remoteMusicLibrary;
-		remoteMusicLibrary = MediaItemHelper.convertXmltoRemoteMusicLibrary(libraryXml);
+		RemoteMusicLibrary remoteMusicLibrary = mapperManager.convertXmltoRemoteMusicLibrary(libraryXml);
 		List<Song> songs = remoteMusicLibrary.getSongs();
 		saveSongs(musicLibrary, songs);
-
 	}
 
-	@Override	
+	@Override
 	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs) {
 		if (songs == null || songs.isEmpty()) {
 			return;
@@ -197,6 +204,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			song.setSearchText(searchText);
 
 			musicDao.saveSong(song, isSessionFlush);
+			// Hibernate.initialize(artist.getAlbums());
+			// Hibernate.initialize(album.getSongs());
+			// Hibernate.initialize(song.getLibrary().getRemoteShares());
 			totalSongsSaved++;
 
 		}
@@ -244,16 +254,29 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		Date date = new Date();
 		List<Song> songs = new ArrayList<Song>();
 		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
-		saveSongs(musicLibrary, songs);
-		MediaItemHelper.convertSongsToXml(musicLibrary.getId(), songs);
+		// saveSongs(musicLibrary, songs);
+		Hibernate.initialize(musicLibrary.getRemoteShares());
+		
+		List<Long> groupIds = getGroupIds();
+		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
+		mediaItemSearchCriteria.setMaximumResults(10000);
+		mediaItemSearchCriteria.setLibraryId(musicLibrary.getId());		
 		deleteObsoleteSongs(musicLibrary.getId(), date);
-		// musicManager.saveSongs(musicLibrary, songs);
+
+		List<Song> savedSongs = musicDao.findSongs(groupIds, mediaItemSearchCriteria);		
+		mapperManager.convertSongsToXml(musicLibrary.getId(), savedSongs);
 
 	}
 
-	
+	private List<Long> getGroupIds() {
+		List<Long> groupIds = new ArrayList<Long>();
+		List<Group> groups = adminManager.getGroups();
+		for (Group group : groups) {
+			groupIds.add(group.getId());
+		}
+		return groupIds;
+	}
 
-	
 	protected void prepareSongs(Date date, List<Song> songs, File folder, MusicLibrary musicLibrary, String folderArtistName, String folderAlbumName)
 			throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
 		if (folder.isFile()) {
@@ -343,10 +366,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 					logger.debug("Found song title for music file: " + file.getAbsolutePath());
 					song.setReadableTag(true);
 				}
-
-				tagAlbumName = StringHelper.escapeXml(tagAlbumName);
-				tagArtistName = StringHelper.escapeXml(tagAlbumName);
-				tagSongTitle = StringHelper.escapeXml(tagSongTitle);
 
 				song.setTitle(tagSongTitle);
 				song.setFormat(format);

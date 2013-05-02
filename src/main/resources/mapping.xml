@@ -73,19 +73,19 @@
 	</class>
 
 	<class name="org.mashupmedia.model.media.Artist" auto-complete="false">
-		<field name="name" type="String">
+		<field name="name" type="string">
 			<bind-xml name="name" node="element" />
 		</field>
-		<field name="folderName" type="String">
+		<field name="folderName" type="string">
 			<bind-xml name="folderName" node="element" />
 		</field>
-		<field name="indexText" type="String">
+		<field name="indexText" type="string">
 			<bind-xml name="indexText" node="element" />
 		</field>
-		<field name="indexLetter" type="String">
+		<field name="indexLetter" type="string">
 			<bind-xml name="indexLetter" node="element" />
 		</field>
-		<field name="remoteId" type="String">
+		<field name="remoteId" type="string">
 			<bind-xml name="remoteId" node="element" />
 		</field>
 	</class>
