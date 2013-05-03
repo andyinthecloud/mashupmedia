@@ -223,7 +223,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		if (isSessionFlush) {
 			sessionFactory.getCurrentSession().flush();
-			sessionFactory.getCurrentSession().clear();
+			sessionFactory.getCurrentSession().clear();			
 			logger.debug("Flushed and cleared session.");
 		}
 

@@ -17,20 +17,22 @@
 
 package org.mashupmedia.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.util.List;
 
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.FileUtils;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.remote.RemoteMusicLibrary;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.StringHelper;
+import org.mashupmedia.util.StringHelper.Encoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
@@ -86,42 +88,29 @@ public class MapperManagerImpl implements MapperManager {
 		RemoteMusicLibrary remoteMusicLibrary = new RemoteMusicLibrary();
 		remoteMusicLibrary.setSongs(songs);
 
-		File file = FileHelper.getLibraryXmlFile(libraryId);
-		FileOutputStream fileOutputStream = null;
+		ByteArrayOutputStream outputStream = null;
 		try {
-			fileOutputStream = new FileOutputStream(file);
-			marshaller.marshal(remoteMusicLibrary, new StreamResult(fileOutputStream));
-			fileOutputStream.flush();
+			outputStream = new ByteArrayOutputStream();
+			marshaller.marshal(remoteMusicLibrary, new StreamResult(outputStream));
+			String xml = outputStream.toString(Encoding.UTF8.getEncodingString());
+			File file = FileHelper.getLibraryXmlFile(libraryId);
+			FileUtils.writeStringToFile(file, xml);
 		} finally {
-			fileOutputStream.close();
-
+			outputStream.close();
 		}
-
-		// StringWriter writer = new StringWriter();
-
-		// marshaller.
-
-		// Marshaller marshaller = new Marshaller(writer);
-		// marshaller.setEncoding(Encoding.UTF8.getEncodingString());
-		// marshaller.setProperty("jaxb.encoding", "Unicode");
-		// marshaller.marshal(remoteMusicLibrary);
-		//
-		// FileUtils.writeStringToFile(file, writer.toString(),
-		// Encoding.UTF8.getEncodingString());
 	}
 
 	@Override
 	public RemoteMusicLibrary convertXmltoRemoteMusicLibrary(String xml) throws Exception {
 		StringReader stringReader = new StringReader(xml);
-		StreamSource streamSource = new StreamSource(stringReader);
-		RemoteMusicLibrary remoteMusicLibrary = null;
-		try {
-			remoteMusicLibrary = (RemoteMusicLibrary) unmarshaller.unmarshal(streamSource);
-		} finally {
-			stringReader.close();
-		}
+//		StreamSource streamSource = new StreamSource(stringReader);
+//		RemoteMusicLibrary remoteMusicLibrary = null;
+//		try {
+			RemoteMusicLibrary remoteMusicLibrary = (RemoteMusicLibrary) unmarshaller.unmarshal(new StreamSource(stringReader));
+//		} finally {
+//			stringReader.close();
+//		}
 		return remoteMusicLibrary;
-
 	}
 
 }

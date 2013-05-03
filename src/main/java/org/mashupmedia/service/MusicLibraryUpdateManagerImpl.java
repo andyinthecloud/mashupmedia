@@ -254,18 +254,21 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		Date date = new Date();
 		List<Song> songs = new ArrayList<Song>();
 		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
-		// saveSongs(musicLibrary, songs);
-		Hibernate.initialize(musicLibrary.getRemoteShares());
 		
+		long libraryId = musicLibrary.getId();
+		
+		deleteObsoleteSongs(libraryId, date);
+		convertSongsToXml(libraryId);
+	}
+	
+	protected void convertSongsToXml(long libraryId) throws Exception {
 		List<Long> groupIds = getGroupIds();
 		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
 		mediaItemSearchCriteria.setMaximumResults(10000);
-		mediaItemSearchCriteria.setLibraryId(musicLibrary.getId());		
-		deleteObsoleteSongs(musicLibrary.getId(), date);
+		mediaItemSearchCriteria.setLibraryId(libraryId);		
 
 		List<Song> savedSongs = musicDao.findSongs(groupIds, mediaItemSearchCriteria);		
-		mapperManager.convertSongsToXml(musicLibrary.getId(), savedSongs);
-
+		mapperManager.convertSongsToXml(libraryId, savedSongs);
 	}
 
 	private List<Long> getGroupIds() {

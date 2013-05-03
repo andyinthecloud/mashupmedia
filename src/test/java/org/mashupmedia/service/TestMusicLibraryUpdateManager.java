@@ -30,16 +30,14 @@ import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
-import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.remote.RemoteMusicLibrary;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.MediaItemHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class TestMusicLibraryUpdateManager extends TestBaseService {
-	
-//	private Logger logger = Logger.getLogger(getClass());
+
+	// private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
@@ -52,7 +50,7 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 
 	@Autowired
 	private AdminManager adminManager;
-	
+
 	@Autowired
 	private MapperManager mapperManager;
 
@@ -75,11 +73,11 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 
 		MediaItemSearchCriteria criteria = new MediaItemSearchCriteria();
 		criteria.setMaximumResults(100);
+		criteria.setLibraryId(musicLibrary.getId());
+		
 		List<Song> mediaItems = musicManager.findSongs(criteria);
 
 		int maxSongs = mediaItems.size();
-
-		libraryManager.deleteLibrary(musicLibrary);
 
 		String libraryXml = FileUtils.readFileToString(file);
 		RemoteMusicLibrary remoteMusicLibrary;
@@ -87,6 +85,9 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 		List<Song> songs = remoteMusicLibrary.getSongs();
 
 		MusicLibrary musicLibrary2 = new MusicLibrary();
+
+		libraryManager.deleteLibrary(musicLibrary);
+
 		musicLibraryUpdateManager.saveSongs(musicLibrary2, songs);
 		mediaItems = musicManager.findSongs(criteria);
 
