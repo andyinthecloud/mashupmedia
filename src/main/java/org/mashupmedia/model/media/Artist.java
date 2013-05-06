@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
@@ -26,6 +27,7 @@ public class Artist implements Serializable {
 	private String folderName;
 	@OneToMany(mappedBy = "artist")
 	@OrderBy("name")
+	@XmlTransient
 	private List<Album> albums;
 	private String indexText;
 	private String indexLetter;

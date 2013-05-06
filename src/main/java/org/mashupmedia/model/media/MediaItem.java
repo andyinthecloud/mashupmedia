@@ -15,6 +15,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
@@ -63,6 +64,7 @@ public class MediaItem implements Serializable {
 	private String path;
 	@IndexedEmbedded
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@XmlTransient
 	private Library library;
 	private long sizeInBytes;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -75,6 +77,7 @@ public class MediaItem implements Serializable {
 	@DateBridge(resolution = Resolution.SECOND)
 	private Date lastAccessed;
 	@ManyToOne(cascade = { CascadeType.PERSIST })
+	@XmlTransient
 	private User lastAccessedBy;
 	@Field
 	@Column(length = 1000)

@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
@@ -27,11 +28,13 @@ public class Album implements Serializable {
 	private String name;
 	private String folderName;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@XmlTransient
 	private Artist artist;
 	@ManyToOne(cascade = { CascadeType.ALL })
 	private AlbumArtImage albumArtImage;
 	@OneToMany(mappedBy = "album")
 	@OrderBy("trackNumber")
+	@XmlTransient
 	private List<Song> songs;
 	private String indexText;
 	private String indexLetter;

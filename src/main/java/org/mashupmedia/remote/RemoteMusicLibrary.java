@@ -19,10 +19,15 @@ package org.mashupmedia.remote;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.mashupmedia.model.media.Song;
 
+@XmlRootElement
 public class RemoteMusicLibrary {
 
+	@XmlElement(name = "song")
 	private List<Song> songs;
 
 	public List<Song> getSongs() {
