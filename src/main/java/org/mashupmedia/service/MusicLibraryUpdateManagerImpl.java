@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.LogManager;
 
-import net.sf.ehcache.hibernate.HibernateUtil;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -72,14 +70,13 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	
 	@Autowired
 	private AdminManager adminManager;
-	
-	
+		
 
 	private MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
 		LogManager.getLogManager().reset();
 		java.util.logging.Logger globalLogger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
-		globalLogger.setLevel(java.util.logging.Level.OFF);
+		globalLogger.setLevel(java.util.logging.Level.OFF);			
 	}
 
 	protected void deleteObsoleteSongs(long libraryId, Date date) {
@@ -204,11 +201,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			searchText = searchText.replaceAll("\\s*\\b", " ");
 			searchText = StringHelper.normaliseTextForDatabase(searchText);
 			song.setSearchText(searchText);
-
+			
 			musicDao.saveSong(song, isSessionFlush);
-			// Hibernate.initialize(artist.getAlbums());
-			// Hibernate.initialize(album.getSongs());
-			// Hibernate.initialize(song.getLibrary().getRemoteShares());
 			totalSongsSaved++;
 
 		}
@@ -216,6 +210,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		logger.info("Saved " + totalSongsSaved + " songs.");
 
 	}
+	
 
 	private Genre prepareGenre(Genre genre) {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
@@ -260,19 +255,19 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		long libraryId = musicLibrary.getId();
 		
 		deleteObsoleteSongs(libraryId, date);
-		convertSongsToXml(libraryId);
+		mapperManager.convertSongsToXml(libraryId, songs);
+		
+//		convertSongsToXml(libraryId);
 	}
 	
-	protected void convertSongsToXml(long libraryId) throws Exception {
-		List<Long> groupIds = getGroupIds();
-		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
-		mediaItemSearchCriteria.setMaximumResults(10000);
-		mediaItemSearchCriteria.setLibraryId(libraryId);		
-
-		
-		List<Song> savedSongs = musicDao.findSongs(groupIds, mediaItemSearchCriteria);		
-		mapperManager.convertSongsToXml(libraryId, savedSongs);
-	}
+//	protected void convertSongsToXml(long libraryId, List<Song> songs) throws Exception {
+//		List<Long> groupIds = getGroupIds();
+//		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
+//		mediaItemSearchCriteria.setMaximumResults(10000);
+//		mediaItemSearchCriteria.setLibraryId(libraryId);				
+//		List<Song> savedSongs = musicDao.findSongs(groupIds, mediaItemSearchCriteria);		
+//		mapperManager.convertSongsToXml(libraryId, songs);
+//	}
 
 	private List<Long> getGroupIds() {
 		List<Long> groupIds = new ArrayList<Long>();
@@ -302,10 +297,15 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 				if (StringUtils.isEmpty(folderArtistName)) {
 					folderArtistName = fileName;
-					prepareSongs(date, songs, file, musicLibrary, folderArtistName, folderAlbumName);
-
-					saveSongs(musicLibrary, songs);
-					songs = new ArrayList<Song>();
+					List<Song> artistSongs = new ArrayList<Song>();
+					prepareSongs(date, artistSongs, file, musicLibrary, folderArtistName, folderAlbumName);
+					saveSongs(musicLibrary, artistSongs);
+					
+					songs.addAll(artistSongs);
+					
+//					prepareSongs(date, songs, file, musicLibrary, folderArtistName, folderAlbumName);
+//					saveSongs(musicLibrary, songs);
+//					songs = new ArrayList<Song>();
 					// songs.clear();
 
 					folderArtistName = "";
