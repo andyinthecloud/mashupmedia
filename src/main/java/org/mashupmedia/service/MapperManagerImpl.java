@@ -20,12 +20,14 @@ package org.mashupmedia.service;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
@@ -55,38 +57,50 @@ public class MapperManagerImpl implements MapperManager {
 			return;
 		}
 
+		List<Song> clonedSongs = new ArrayList<Song>();
+		
 		for (Song song : songs) {
-			String fileName = song.getFileName();
-			song.setFileName(StringHelper.escapeXml(fileName));
+			
+			Song clonedSong = SerializationUtils.clone(song);
+			
+			String fileName = clonedSong.getFileName();
+			clonedSong.setFileName(StringHelper.escapeXml(fileName));
 
-			String path = song.getPath();
-			song.setPath(StringHelper.escapeXml(path));
+			String path = clonedSong.getPath();
+			clonedSong.setPath(StringHelper.escapeXml(path));
 
-			String songTitle = song.getTitle();
-			song.setTitle(StringHelper.escapeXml(songTitle));
+			String songTitle = clonedSong.getTitle();
+			clonedSong.setTitle(StringHelper.escapeXml(songTitle));
+			
+			String songSearchText = clonedSong.getSearchText();
+			clonedSong.setSearchText(StringHelper.escapeXml(songSearchText));
 
-			String songSearchText = song.getSearchText();
-			song.setSearchText(StringHelper.escapeXml(songSearchText));
+			String summary = clonedSong.getSummary();
+			clonedSong.setSummary(StringHelper.escapeXml(summary));
 
-			String summary = song.getSummary();
-			song.setSummary(StringHelper.escapeXml(summary));
+			String displayTitle = clonedSong.getDisplayTitle();
+			clonedSong.setDisplayTitle(StringHelper.escapeXml(displayTitle));
 
-			String displayTitle = song.getDisplayTitle();
-			song.setDisplayTitle(StringHelper.escapeXml(displayTitle));
+			Artist clonedArtist =  SerializationUtils.clone(song.getArtist());
+			String artistName = clonedArtist.getName();
+			clonedArtist.setName(StringHelper.escapeXml(artistName));			
+			String artistIndexText = clonedArtist.getIndexText();
+			clonedArtist.setIndexText(StringHelper.escapeXml(artistIndexText));
+			clonedSong.setArtist(clonedArtist);
 
-			Artist artist = song.getArtist();
-			String artistName = artist.getName();
-			artist.setName(StringHelper.escapeXml(artistName));
-
-			Album album = song.getAlbum();
-			String albumName = album.getName();
-			album.setName(StringHelper.escapeXml(albumName));
-			String albumFolderName = album.getFolderName();
-			album.setFolderName(StringHelper.escapeXml(albumFolderName));
+			
+			Album clonedAlbum = SerializationUtils.clone(song.getAlbum());
+			String albumName = clonedAlbum.getName();
+			clonedAlbum.setName(StringHelper.escapeXml(albumName));
+			String albumFolderName = clonedAlbum.getFolderName();
+			clonedAlbum.setFolderName(StringHelper.escapeXml(albumFolderName));
+			clonedSong.setAlbum(clonedAlbum);
+			
+			clonedSongs.add(clonedSong);
 		}
 
 		RemoteMusicLibrary remoteMusicLibrary = new RemoteMusicLibrary();
-		remoteMusicLibrary.setSongs(songs);
+		remoteMusicLibrary.setSongs(clonedSongs);
 
 		ByteArrayOutputStream outputStream = null;
 		try {

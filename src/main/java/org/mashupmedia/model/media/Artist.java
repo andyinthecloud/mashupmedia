@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.search.annotations.Analyze;
@@ -17,6 +19,7 @@ import org.hibernate.search.annotations.Field;
 
 @Entity
 @Cacheable
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Artist implements Serializable {
 	private static final long serialVersionUID = -5361832134097788033L;
 	@Id
@@ -123,8 +126,6 @@ public class Artist implements Serializable {
 		builder.append(name);
 		builder.append(", folderName=");
 		builder.append(folderName);
-		builder.append(", albums=");
-		builder.append(albums);
 		builder.append(", indexText=");
 		builder.append(indexText);
 		builder.append(", indexLetter=");

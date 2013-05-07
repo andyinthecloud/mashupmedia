@@ -47,6 +47,11 @@ public class Song extends MediaItem {
 	public Song() {
 		setMediaType(MediaType.SONG);
 	}
+	
+	public Song(Song song) {
+		
+	}
+	
 
 	public boolean isReadableTag() {
 		return readableTag;
@@ -159,7 +164,7 @@ public class Song extends MediaItem {
 		builder.append(", title=");
 		builder.append(title);
 		builder.append(", album=");
-		builder.append(album);
+		builder.append(album.getName());
 		builder.append(", genre=");
 		builder.append(genre);
 		builder.append(", year=");

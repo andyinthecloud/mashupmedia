@@ -410,6 +410,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		@SuppressWarnings("unchecked")
 		List<Song> songs = query.list();
 		// Collections.sort(mediaItems, new MediaItemComparator());
+				
 		return songs;
 	}
 

@@ -130,7 +130,7 @@ public class StringHelper {
 		}
 
 				
-		text = text.replaceAll("\\+", " ");
+//		text = text.replaceAll("\\\\+", " ");
 		
 		text = StringEscapeUtils.escapeXml(text);
 		text = StringEscapeUtils.escapeJava(text);

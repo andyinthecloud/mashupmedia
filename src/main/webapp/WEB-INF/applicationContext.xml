@@ -111,7 +111,6 @@
                 <value>org.mashupmedia.remote.RemoteMusicLibrary</value>
             </list>
         </property>
-        <property name="schema" value="classpath:org/springframework/oxm/schema.xsd"/>
     </bean>	
 	
 

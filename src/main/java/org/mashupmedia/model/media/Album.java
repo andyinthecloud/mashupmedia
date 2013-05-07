@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.search.annotations.Analyze;
@@ -19,6 +21,7 @@ import org.hibernate.search.annotations.Field;
 
 @Entity
 @Cacheable
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Album implements Serializable {
 	private static final long serialVersionUID = -6293786232429408277L;
 	@Id
@@ -144,7 +147,9 @@ public class Album implements Serializable {
 		builder.append(", folderName=");
 		builder.append(folderName);
 		builder.append(", artist=");
-		builder.append(artist);
+		if (artist != null) {
+			builder.append(artist.getName());
+		}
 		builder.append(", albumArtImage=");
 		builder.append(albumArtImage);
 		builder.append(", songs=");

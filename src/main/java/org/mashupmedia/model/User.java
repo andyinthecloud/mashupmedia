@@ -41,6 +41,13 @@ public class User implements UserDetails, Serializable {
 	@Transient
 	private PlaylistMediaItem playlistMediaItem;
 
+	public User() {
+		
+	}
+	
+	public User(User user) {
+		
+	}
 	
 	
 	public long getPlaylistMediaItemId() {

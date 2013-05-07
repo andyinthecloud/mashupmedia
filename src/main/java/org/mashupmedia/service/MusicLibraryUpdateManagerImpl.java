@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.LogManager;
 
+import net.sf.ehcache.hibernate.HibernateUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -267,6 +269,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		mediaItemSearchCriteria.setMaximumResults(10000);
 		mediaItemSearchCriteria.setLibraryId(libraryId);		
 
+		
 		List<Song> savedSongs = musicDao.findSongs(groupIds, mediaItemSearchCriteria);		
 		mapperManager.convertSongsToXml(libraryId, savedSongs);
 	}

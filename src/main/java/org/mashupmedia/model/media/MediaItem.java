@@ -15,8 +15,11 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
@@ -34,6 +37,7 @@ import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
 
@@ -44,7 +48,8 @@ import org.mashupmedia.util.StringHelper;
 		@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = { @Parameter(name = "language", value = "English") }) })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-public class MediaItem implements Serializable {
+@XmlAccessorType(XmlAccessType.FIELD)
+public class MediaItem implements Serializable{
 	private static final long serialVersionUID = -6694717782091959485L;
 
 	public final static String TITLE_SEPERATOR = " - ";
@@ -96,6 +101,35 @@ public class MediaItem implements Serializable {
 	public MediaItem() {
 		this.enabled = true;
 	}
+	
+//	@Override
+//	protected Object clone() throws CloneNotSupportedException {
+//		
+//		SerializationUtils.
+//		
+//		MediaItem copyMediaItem = new MediaItem();
+//		copyMediaItem.displayTitle = displayTitle;
+//		copyMediaItem.enabled = enabled;
+//		copyMediaItem.encodeStatus = encodeStatus;
+//		copyMediaItem.fileName = fileName;
+//		copyMediaItem.format = format;
+//		copyMediaItem.id = id;
+//		copyMediaItem.lastAccessed = lastAccessed;
+//		copyMediaItem.lastAccessedBy = lastAccessedBy.clone();
+//		copyMediaItem.library = library.clone();		
+//		copyMediaItem.mediaTypeValue = mediaTypeValue;
+//		copyMediaItem.path = path;
+//		copyMediaItem.searchText = searchText;
+//		copyMediaItem.sizeInBytes = sizeInBytes;
+//		copyMediaItem.summary = summary;
+//		copyMediaItem.updatedOn = updatedOn;
+//		copyMediaItem.vote = vote;
+//		return copyMediaItem;
+//	}
+	
+	
+	
+	
 
 	public boolean isEnabled() {
 		return enabled;
