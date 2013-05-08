@@ -26,7 +26,6 @@ import junit.framework.Assert;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
@@ -70,28 +69,29 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 		musicLibraryUpdateManager.updateLibrary(musicLibrary);
 
 		File file = FileHelper.getLibraryXmlFile(musicLibrary.getId());
-
-		MediaItemSearchCriteria criteria = new MediaItemSearchCriteria();
-		criteria.setMaximumResults(100);
-		criteria.setLibraryId(musicLibrary.getId());
 		
-		List<Song> mediaItems = musicManager.findSongs(criteria);
-
-		int maxSongs = mediaItems.size();
+		int totalSavedSongs = musicManager.getTotalSongsFromLibrary(musicLibrary.getId());
 
 		String libraryXml = FileUtils.readFileToString(file);
 		RemoteMusicLibrary remoteMusicLibrary;
 		remoteMusicLibrary = mapperManager.convertXmltoRemoteMusicLibrary(libraryXml);
 		List<Song> songs = remoteMusicLibrary.getSongs();
 
+		Location location2 = new Location();
+		location2.setPath("http://remote");
 		MusicLibrary musicLibrary2 = new MusicLibrary();
+		musicLibrary2.setLocation(location2);
+		musicLibrary2.setEnabled(true);
+		musicLibrary2.setRemote(true);
 
 		libraryManager.deleteLibrary(musicLibrary);
 
+		libraryManager.saveLibrary(musicLibrary2);
 		musicLibraryUpdateManager.saveSongs(musicLibrary2, songs);
-		mediaItems = musicManager.findSongs(criteria);
+		
+		int totalRemoteSongs = musicManager.getTotalSongsFromLibrary(musicLibrary2.getId());
 
-		Assert.assertEquals(maxSongs, mediaItems.size());
+		Assert.assertEquals(totalSavedSongs, totalRemoteSongs);
 	}
 
 }

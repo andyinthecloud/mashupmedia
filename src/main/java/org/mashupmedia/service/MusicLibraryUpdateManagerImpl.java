@@ -22,12 +22,10 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.mashupmedia.comparator.FileComparator;
-import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
@@ -255,29 +253,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		long libraryId = musicLibrary.getId();
 		
 		deleteObsoleteSongs(libraryId, date);
-		mapperManager.convertSongsToXml(libraryId, songs);
-		
-//		convertSongsToXml(libraryId);
+		mapperManager.convertSongsToXml(libraryId, songs);		
 	}
 	
-//	protected void convertSongsToXml(long libraryId, List<Song> songs) throws Exception {
-//		List<Long> groupIds = getGroupIds();
-//		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
-//		mediaItemSearchCriteria.setMaximumResults(10000);
-//		mediaItemSearchCriteria.setLibraryId(libraryId);				
-//		List<Song> savedSongs = musicDao.findSongs(groupIds, mediaItemSearchCriteria);		
-//		mapperManager.convertSongsToXml(libraryId, songs);
-//	}
-
-	private List<Long> getGroupIds() {
-		List<Long> groupIds = new ArrayList<Long>();
-		List<Group> groups = adminManager.getGroups();
-		for (Group group : groups) {
-			groupIds.add(group.getId());
-		}
-		return groupIds;
-	}
-
 	protected void prepareSongs(Date date, List<Song> songs, File folder, MusicLibrary musicLibrary, String folderArtistName, String folderAlbumName)
 			throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
 		if (folder.isFile()) {

@@ -59,5 +59,7 @@ public interface MusicDao {
 	public List<Genre> getGenres();
 	
 	public List<Song> findSongs(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria);
+
+	public int getTotalSongsFromLibrary(long libraryId);
 	
 }

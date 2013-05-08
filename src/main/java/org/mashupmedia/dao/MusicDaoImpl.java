@@ -211,19 +211,19 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	@Override
 	public void saveSong(Song song, boolean isSessionFlush) {
 		Artist artist = song.getArtist();
-		saveOrUpdate(artist);
+		saveOrMerge(artist);
 
 		Album album = song.getAlbum();
-		saveOrUpdate(album);
+		saveOrMerge(album);
 		song.setAlbum(album);
 
-		saveOrUpdate(song.getYear());
-		saveOrUpdate(song.getGenre());
+		saveOrMerge(song.getYear());
+		saveOrMerge(song.getGenre());
 		saveOrUpdate(song);
 
 		if (isSessionFlush) {
 			sessionFactory.getCurrentSession().flush();
-			sessionFactory.getCurrentSession().clear();			
+			sessionFactory.getCurrentSession().clear();
 			logger.debug("Flushed and cleared session.");
 		}
 
@@ -378,10 +378,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 			booleanJunction.must(queryBuilder.keyword().onField("library.groups.id").matching(groupId).createQuery());
 		}
 
-		long libraryId = mediaItemSearchCriteria.getLibraryId();
-		if (libraryId > 0) {
-			booleanJunction.must(queryBuilder.keyword().onField("library.id").matching(libraryId).createQuery());
-		}
+		// long libraryId = mediaItemSearchCriteria.getLibraryId();
+		// if (libraryId > 0) {
+		// booleanJunction.must(queryBuilder.keyword().onField("library.id").matching(libraryId).createQuery());
+		// }
 
 		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
 		org.hibernate.search.FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, Song.class);
@@ -410,8 +410,18 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		@SuppressWarnings("unchecked")
 		List<Song> songs = query.list();
 		// Collections.sort(mediaItems, new MediaItemComparator());
-				
+
 		return songs;
+	}
+
+	@Override
+	public int getTotalSongsFromLibrary(long libraryId) {
+		StringBuilder queryBuilder = new StringBuilder("select count(s.id) from Song s where s.library.id = :libraryId ");
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		query.setCacheable(true);
+		query.setLong("libraryId", libraryId);
+		Integer totalSongs = (Integer) query.uniqueResult();
+		return totalSongs;
 	}
 
 }

@@ -163,6 +163,12 @@ public class MusicManagerImpl implements MusicManager {
 		List<Song> songs = musicDao.findSongs(userGroupIds, mediaItemSearchCriteria);
 		return songs;
 	}
+
+	@Override
+	public int getTotalSongsFromLibrary(long libraryId) {
+		int totalSongsFromLibrary = musicDao.getTotalSongsFromLibrary(libraryId);
+		return totalSongsFromLibrary;
+	}
 	
 	
 }

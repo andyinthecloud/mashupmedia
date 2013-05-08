@@ -38,4 +38,6 @@ public interface MusicManager {
 
 	public void saveArtist(Artist artist);
 
+	public int getTotalSongsFromLibrary(long libraryId);
+	
 }
