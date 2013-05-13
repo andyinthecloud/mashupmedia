@@ -70,7 +70,7 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 
 		File file = FileHelper.getLibraryXmlFile(musicLibrary.getId());
 		
-		int totalSavedSongs = musicManager.getTotalSongsFromLibrary(musicLibrary.getId());
+		long totalSavedSongs = musicManager.getTotalSongsFromLibrary(musicLibrary.getId());
 
 		String libraryXml = FileUtils.readFileToString(file);
 		RemoteMusicLibrary remoteMusicLibrary;
@@ -89,7 +89,7 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 		libraryManager.saveLibrary(musicLibrary2);
 		musicLibraryUpdateManager.saveSongs(musicLibrary2, songs);
 		
-		int totalRemoteSongs = musicManager.getTotalSongsFromLibrary(musicLibrary2.getId());
+		long totalRemoteSongs = musicManager.getTotalSongsFromLibrary(musicLibrary2.getId());
 
 		Assert.assertEquals(totalSavedSongs, totalRemoteSongs);
 	}

@@ -9,15 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.mashupmedia.model.library.Library;
 
 @Entity
 @Cacheable
-@XmlAccessorType(XmlAccessType.FIELD)
 public class AlbumArtImage implements Serializable {
 	private static final long serialVersionUID = -1853946902325001789L;
 	@Id
@@ -27,10 +23,8 @@ public class AlbumArtImage implements Serializable {
 	private String url;
 	private String thumbnailUrl;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@XmlTransient
 	private Library library;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@XmlTransient	
 	private Album album;
 	private String contentType;
 

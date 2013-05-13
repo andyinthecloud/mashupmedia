@@ -39,6 +39,11 @@ public class ListUsersController extends BaseController {
 	private AdminManager adminManager;
 
 	@Override
+	public String getPageTitleMessageKey() {
+		return "configuration.administration.list-users.title";
+	}
+	
+	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);

@@ -58,20 +58,22 @@ public class MapperManagerImpl implements MapperManager {
 		}
 
 		List<Song> clonedSongs = new ArrayList<Song>();
-		
+
 		for (Song song : songs) {
-			
+
 			Song clonedSong = SerializationUtils.clone(song);
-			
+			clonedSong.setId(0);
+			clonedSong.setPath(String.valueOf(song.getId()));
+
 			String fileName = clonedSong.getFileName();
 			clonedSong.setFileName(StringHelper.escapeXml(fileName));
 
-			String path = clonedSong.getPath();
-			clonedSong.setPath(StringHelper.escapeXml(path));
+			// String path = clonedSong.getPath();
+			// clonedSong.setPath(StringHelper.escapeXml(path));
 
 			String songTitle = clonedSong.getTitle();
 			clonedSong.setTitle(StringHelper.escapeXml(songTitle));
-			
+
 			String songSearchText = clonedSong.getSearchText();
 			clonedSong.setSearchText(StringHelper.escapeXml(songSearchText));
 
@@ -81,21 +83,20 @@ public class MapperManagerImpl implements MapperManager {
 			String displayTitle = clonedSong.getDisplayTitle();
 			clonedSong.setDisplayTitle(StringHelper.escapeXml(displayTitle));
 
-			Artist clonedArtist =  SerializationUtils.clone(song.getArtist());
+			Artist clonedArtist = SerializationUtils.clone(song.getArtist());
 			String artistName = clonedArtist.getName();
-			clonedArtist.setName(StringHelper.escapeXml(artistName));			
+			clonedArtist.setName(StringHelper.escapeXml(artistName));
 			String artistIndexText = clonedArtist.getIndexText();
 			clonedArtist.setIndexText(StringHelper.escapeXml(artistIndexText));
 			clonedSong.setArtist(clonedArtist);
 
-			
 			Album clonedAlbum = SerializationUtils.clone(song.getAlbum());
 			String albumName = clonedAlbum.getName();
 			clonedAlbum.setName(StringHelper.escapeXml(albumName));
 			String albumFolderName = clonedAlbum.getFolderName();
 			clonedAlbum.setFolderName(StringHelper.escapeXml(albumFolderName));
 			clonedSong.setAlbum(clonedAlbum);
-			
+
 			clonedSongs.add(clonedSong);
 		}
 
@@ -117,13 +118,15 @@ public class MapperManagerImpl implements MapperManager {
 	@Override
 	public RemoteMusicLibrary convertXmltoRemoteMusicLibrary(String xml) throws Exception {
 		StringReader stringReader = new StringReader(xml);
-//		StreamSource streamSource = new StreamSource(stringReader);
-//		RemoteMusicLibrary remoteMusicLibrary = null;
-//		try {
-			RemoteMusicLibrary remoteMusicLibrary = (RemoteMusicLibrary) unmarshaller.unmarshal(new StreamSource(stringReader));
-//		} finally {
-//			stringReader.close();
-//		}
+		RemoteMusicLibrary remoteMusicLibrary = (RemoteMusicLibrary) unmarshaller.unmarshal(new StreamSource(stringReader));
+		List<Song> songs = remoteMusicLibrary.getSongs();
+		for (Song song : songs) {
+			Album album = song.getAlbum();
+			Artist artist = song.getArtist();
+			album.setArtist(artist);
+			song.setAlbum(album);
+		}
+
 		return remoteMusicLibrary;
 	}
 

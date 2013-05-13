@@ -19,7 +19,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
@@ -37,7 +36,6 @@ import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
 
@@ -64,6 +62,7 @@ public class MediaItem implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@XmlTransient
 	private long id;
 	private String fileName;
 	private String path;

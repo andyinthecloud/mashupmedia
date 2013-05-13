@@ -415,12 +415,12 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public int getTotalSongsFromLibrary(long libraryId) {
+	public long getTotalSongsFromLibrary(long libraryId) {
 		StringBuilder queryBuilder = new StringBuilder("select count(s.id) from Song s where s.library.id = :libraryId ");
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		query.setCacheable(true);
 		query.setLong("libraryId", libraryId);
-		Integer totalSongs = (Integer) query.uniqueResult();
+		Long totalSongs = (Long) query.uniqueResult();
 		return totalSongs;
 	}
 

@@ -14,6 +14,11 @@ public class HomeController extends BaseController {
 	public String getHome() {
 		return "home";
 	}
+	
+	@Override
+	public String getPageTitleMessageKey() {
+		return "home.title";
+	}
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {

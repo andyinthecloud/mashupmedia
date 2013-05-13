@@ -65,7 +65,7 @@
 
 				<prop key="hibernate.search.default.directory_provider">filesystem</prop>
 				<prop key="hibernate.search.default.indexBase">${application.folder}/lucene/indexes</prop>
-				<prop key="hibernate.connection.autocommit">true</prop>
+				<!-- prop key="hibernate.connection.autocommit">true</prop -->
 
 			</props>
 		</property>

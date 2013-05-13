@@ -5,14 +5,14 @@
 <html lang="en">
 <head>
 
-<c:set var="jQueryUIVersion" value="1.10.1"/>
+<c:set var="jQueryUIVersion" value="1.10.3"/>
 <c:set var="jQueryVersion" value="1.9.1"/>
 <c:set var="jQueryAddress" value="1.6"/>
-<c:set var="jPlayer" value="2.2.0"/>
-<c:set var="dataTables" value="1.9.1"/>
+<c:set var="jPlayer" value="2.3.0"/>
+<c:set var="dataTables" value="1.9.4"/>
 
 
-<link type="text/css" href="<c:url value="/jquery-ui/${jQueryUIVersion}/css/smoothness/jquery-ui-${jQueryUIVersion}.custom.css" />" rel="stylesheet" />
+<link type="text/css" href="<c:url value="/jquery-ui/${jQueryUIVersion}/css/smoothness/jquery-ui-${jQueryUIVersion}.custom.min.css" />" rel="stylesheet" />
 <script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-${jQueryVersion}.min.js" />"></script>
 
 <!-- 
@@ -49,7 +49,7 @@
 
 
 
-<title><tiles:getAsString name="title" /></title>
+<title>$pageTitle</title>
 
 </head>
 

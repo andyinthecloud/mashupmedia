@@ -75,6 +75,10 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 	}
 
 	private AlbumArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
+		
+		if (musicLibrary.isRemote()) {
+			return null;
+		}
 
 		File musicFile = new File(song.getPath());
 		String imagePath = null;

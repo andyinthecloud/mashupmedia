@@ -165,8 +165,8 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public int getTotalSongsFromLibrary(long libraryId) {
-		int totalSongsFromLibrary = musicDao.getTotalSongsFromLibrary(libraryId);
+	public long getTotalSongsFromLibrary(long libraryId) {
+		long totalSongsFromLibrary = musicDao.getTotalSongsFromLibrary(libraryId);
 		return totalSongsFromLibrary;
 	}
 	

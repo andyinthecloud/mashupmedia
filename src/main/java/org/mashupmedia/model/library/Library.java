@@ -18,6 +18,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.Group;
@@ -33,6 +34,7 @@ public abstract class Library implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@XmlTransient
 	private long id;
 	private String name;
 	@ManyToOne(cascade = CascadeType.ALL)

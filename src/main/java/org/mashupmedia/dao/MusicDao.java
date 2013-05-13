@@ -60,6 +60,6 @@ public interface MusicDao {
 	
 	public List<Song> findSongs(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria);
 
-	public int getTotalSongsFromLibrary(long libraryId);
+	public long getTotalSongsFromLibrary(long libraryId);
 	
 }

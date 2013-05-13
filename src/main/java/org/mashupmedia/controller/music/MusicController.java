@@ -40,6 +40,11 @@ public class MusicController extends BaseController {
 	private PlaylistManager playlistManager;
 
 	@Override
+	public String getPageTitleMessageKey() {
+		return "music.title";
+	}
+	
+	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music");
 		breadcrumbs.add(breadcrumb);

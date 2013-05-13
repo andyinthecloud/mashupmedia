@@ -39,6 +39,10 @@ public class ListRemoteLibrariesController extends BaseController {
 	@Autowired
 	private LibraryManager libraryManager;
 	
+	@Override
+	public String getPageTitleMessageKey() {
+		return "configuration.list-remote-libraries.title";
+	}
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {

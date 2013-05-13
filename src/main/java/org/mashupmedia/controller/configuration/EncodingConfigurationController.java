@@ -50,6 +50,11 @@ public class EncodingConfigurationController extends BaseController{
 	private ConfigurationManager configurationManager;
 	
 	@Override
+	public String getPageTitleMessageKey() {
+		return "encoding.title";
+	}
+	
+	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);

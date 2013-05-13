@@ -24,21 +24,24 @@ public class NetworkConfigurationController extends BaseController {
 	private final static String PAGE_NAME = "network";
 	private final static String PAGE_PATH = "configuration/" + PAGE_NAME;
 	private final static String PAGE_URL = "/" + PAGE_PATH;
-	
-	
+
 	@Autowired
 	private ConfigurationManager configurationManager;
+
+	@Override
+	public String getPageTitleMessageKey() {
+		return "network.title";
+	}
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
-		
+
 		Breadcrumb networkBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.network"));
 		breadcrumbs.add(networkBreadcrumb);
 	}
-	
-	
+
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.GET)
 	public String getNetwork(Model model) {
 
@@ -52,13 +55,12 @@ public class NetworkConfigurationController extends BaseController {
 
 		String proxyUrl = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_URL);
 		networkPage.setProxyUrl(proxyUrl);
-		
+
 		String proxyPort = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_PORT);
 		networkPage.setProxyPort(proxyPort);
-		
+
 		String proxyUsername = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_USERNAME);
 		networkPage.setProxyUsername(proxyUsername);
-		
 
 		model.addAttribute(networkPage);
 		return PAGE_PATH;
@@ -66,29 +68,28 @@ public class NetworkConfigurationController extends BaseController {
 
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.POST)
 	public String processNetwork(@ModelAttribute("networkPage") NetworkPage networkPage, Model model, BindingResult result) {
-		
+
 		new NetworkPageValidator().validate(networkPage, result);
 		if (result.hasErrors()) {
 			return PAGE_PATH;
 		}
-		
+
 		String proxyEnabled = networkPage.getProxyEnabled();
-		configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_ENABLED, proxyEnabled);		
-		
+		configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_ENABLED, proxyEnabled);
+
 		String proxyUrl = networkPage.getProxyUrl();
 		configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_URL, proxyUrl);
-		
+
 		String proxyPort = networkPage.getProxyPort();
 		configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_PORT, String.valueOf(proxyPort));
 
 		String proxyUsername = networkPage.getProxyUsername();
 		configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_USERNAME, proxyUsername);
-		
+
 		String proxyPassword = networkPage.getProxyPassword();
 		configurationManager.saveEncryptedConfiguration(MashUpMediaConstants.PROXY_PASSWORD, proxyPassword);
-		
+
 		return "redirect:/app/configuration";
 	}
-
 
 }

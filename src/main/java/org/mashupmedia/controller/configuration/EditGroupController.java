@@ -61,6 +61,11 @@ public class EditGroupController extends BaseController {
 	private LibraryEditor libraryEditor;
 
 	@Override
+	public String getPageTitleMessageKey() {
+		return "configuration.administration.edit-group.title";
+	}
+	
+	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration"));
 		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.groups"), "/app/configuration/administration/list-groups"));

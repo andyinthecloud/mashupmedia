@@ -33,16 +33,16 @@
 
 
 
-	<http pattern="/stylesheets/**" security="none" />
+	<http pattern="/themes/**" security="none" />
 	<http pattern="/jquery/**" security="none" />
 	<http pattern="/jquery-plugins/**" security="none" />
 	<http pattern="/images/**" security="none" />
-	<http pattern="/login.jsp*" security="none" />
+	<http pattern="/app/login*" security="none" />
 
 	<http auto-config='true'>
 		<intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/**" access="ROLE_USER" />
-		<form-login login-page='/login.jsp' />
+		<form-login login-page="/app/login" />
 	</http>
 
 

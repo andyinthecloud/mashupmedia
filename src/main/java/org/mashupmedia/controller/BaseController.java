@@ -39,6 +39,17 @@ public abstract class BaseController {
 	}
 
 	public abstract void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs);
+	
+	public abstract String getPageTitleMessageKey();
+	
+	@ModelAttribute("pageTitle")
+	public String populatePageTitle() {
+		StringBuilder titleBuilder = new StringBuilder(MessageHelper.getMessage("page.default.title.prefix"));
+		titleBuilder.append(" ");
+		titleBuilder.append(MessageHelper.getMessage(getPageTitleMessageKey()));
+		return titleBuilder.toString();
+	}
+	
 
 	@ModelAttribute("musicPlaylists")
 	public List<Playlist> populatePlaylists() {

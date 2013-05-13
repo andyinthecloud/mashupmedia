@@ -1,13 +1,25 @@
+<%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
+
 <html>
 <head>
-<title>Login Page</title>
+<link href="<c:url value="${themePath}/stylesheets/site.css"/>" rel="stylesheet" type="text/css" />
+
+
+<title><spring:message code="page.title.prefix" /> <spring:message code="login.title" /></title>
+
+
+
 <!-- @LOGGED-OUT@ -->
 
 </head>
 <body>
 	<input type="hidden" id="logged-out" value="true" />
 	
-	<h1>Login with Username and Password</h1>
+	<div class="login-panel panel">	
+	
+	<img alt="Mashup Media" src="<c:url value="/images/mashupmedia-logo.png"/>">
+	
+	
 	<form method="POST" action="<%=request.getContextPath()%>/j_spring_security_check" name="f">
 		<table>
 			<tbody>
@@ -25,5 +37,6 @@
 			</tbody>
 		</table>
 	</form>
+	</div>
 </body>
 </html>

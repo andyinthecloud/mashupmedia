@@ -7,15 +7,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.search.annotations.Field;
 
 @Entity
 @Cacheable
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Genre implements Serializable {
 	private static final long serialVersionUID = 6276317371160122830L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@XmlTransient
 	private long id;
 	@Field
 	private String name;

@@ -5,7 +5,6 @@
 <tiles-definitions>
 
 	<definition name="home" template="/WEB-INF/jsp/layouts/default.jsp">
-		<put-attribute name="title" value="Mashup Media | Home" />
 		<put-attribute name="bodyClass" value="default" />
 		<put-attribute name="topBar" value="/WEB-INF/jsp/tiles/top-bar.jsp" />
 		<put-attribute name="backgroundImageType" value="default" />
@@ -13,67 +12,54 @@
 	</definition>
 
 	<definition name="configuration" extends="home">
-		<put-attribute name="title" value="Mashup Media | Configuration" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration.jsp" />
 	</definition>
 
 	<definition name="configuration/network" extends="home">
-		<put-attribute name="title" value="Mashup Media | Configuration - Network" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/network.jsp" />
 	</definition>
 
 	<definition name="configuration/encoding" extends="home">
-		<put-attribute name="title" value="Mashup Media| Configuration - Encoding" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/encoding.jsp" />
 	</definition>
 
 	<definition name="configuration/music-configuration" extends="home">
-		<put-attribute name="title" value="Mashup Media | Music Configuration" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/music-configuration.jsp" />
 	</definition>
 
 	<definition name="configuration/list-remote-libraries" extends="home">
-		<put-attribute name="title" value="Mashup Media | Remote Libraries" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/list-remote-libraries.jsp" />
 	</definition>
 
 	<definition name="configuration/edit-remote-library" extends="home">
-		<put-attribute name="title" value="Mashup Media | Edit Remote Library" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/edit-remote-library.jsp" />
 	</definition>
 
 	<definition name="configuration/url-error-remote-library" extends="home">
-		<put-attribute name="title" value="Mashup Media | Edit Remote Library" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/url-error-remote-library.jsp" />
 	</definition>
 
 	<definition name="configuration/music-library" extends="home">
-		<put-attribute name="title" value="Mashup Media | Music Library" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/music-library.jsp" />
 	</definition>
 
 	<definition name="configuration/administration/list-users" extends="home">
-		<put-attribute name="title" value="Mashup Media | List Users" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/list-users.jsp" />
 	</definition>
 
 	<definition name="configuration/administration/edit-user" extends="home">
-		<put-attribute name="title" value="Mashup Media | Edit user" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
 	</definition>
 
 	<definition name="configuration/administration/list-groups" extends="home">
-		<put-attribute name="title" value="Mashup Media | List Groups" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/list-groups.jsp" />
 	</definition>
 
 	<definition name="configuration/administration/edit-group" extends="home">
-		<put-attribute name="title" value="Mashup Media | Edit Group" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/edit-group.jsp" />
 	</definition>
 
 	<definition name="configuration/administration/new-user" extends="home">
-		<put-attribute name="title" value="Mashup Media | New user" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
 	</definition>
 
@@ -82,7 +68,6 @@
 	</definition>
 
 	<definition name="music" extends="home">
-		<put-attribute name="title" value="Mashup Media | Music" />
 		<put-attribute name="bodyClass" value="music" />
 		<put-attribute name="topBar" value="/WEB-INF/jsp/tiles/music/music-player.jsp" />
 		<put-attribute name="backgroundImageType" value="music" />

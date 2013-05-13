@@ -26,6 +26,11 @@ public class MusicConfigurationController extends BaseController {
 	private LibraryManager libraryManager;
 
 	@Override
+	public String getPageTitleMessageKey() {
+		return "musicconfiguration.title";
+	}
+	
+	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);

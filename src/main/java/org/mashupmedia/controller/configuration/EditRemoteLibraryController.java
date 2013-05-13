@@ -64,6 +64,11 @@ public class EditRemoteLibraryController extends BaseController {
 
 	@Autowired
 	private GroupEditor groupEditor;
+	
+	@Override
+	public String getPageTitleMessageKey() {
+		return "library.remote.title";
+	}
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {

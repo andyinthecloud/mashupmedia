@@ -25,6 +25,11 @@ public class ConfigurationController extends BaseController {
 	private final static String PAGE_PATH = "/configuration";
 
 	@Override
+	public String getPageTitleMessageKey() {
+		return "configuration.title";
+	}
+	
+	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"));
 		breadcrumbs.add(breadcrumb);

@@ -24,6 +24,7 @@ public class Artist implements Serializable {
 	private static final long serialVersionUID = -5361832134097788033L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@XmlTransient
 	private long id;
 	@Field(analyze = Analyze.NO)
 	private String name;

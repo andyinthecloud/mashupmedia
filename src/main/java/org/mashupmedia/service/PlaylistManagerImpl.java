@@ -150,6 +150,10 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	@Override
 	public List<Playlist> getPlaylistsForCurrentUser(PlaylistType playlistType) {
 		User user = SecurityHelper.getLoggedInUser();
+		if (user == null) {
+			return null;
+		}
+		
 		long userId = user.getId();
 		List<Playlist> playlists = playlistDao.getPlaylists(userId, playlistType);
 		return playlists;
