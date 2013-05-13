@@ -20,6 +20,8 @@ public interface MashUpMediaConstants {
 	public static final String UNKNOWN_NAME = "unknown";
 	
 	public static final String MODEL_KEY_THEME_PATH = "themePath";
+	public static final String MODEL_KEY_VERSION = "version";	
+	public static final String MODEL_KEY_CURRENT_YEAR = "currentYear";	
 	public static final String MODEL_KEY_IS_PLAYLIST_OWNER = "isPlaylistOwner";
 	public static final String PROXY_CACHE_SECONDS = "proxy.cache.seconds";
 	public static final String VOTE_USER_WAIT_SECONDS = "vote.user.wait.seconds";

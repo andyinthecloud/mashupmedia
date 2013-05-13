@@ -1,14 +1,17 @@
-http: //css-tricks.com /perfect-full-page-background-image/
-
 html,body {
 	font-size: 100%;
-	background-color: black;
 	margin: 0;
 	padding: 0;
+	color: #606060;	
+	background-color: white;
 }
 
 .clear {
 	clear: both;
+}
+
+a, a:ACTIVE, a:VISITED {
+	color: #E579E9;'
 }
 
 .no-wrap {
@@ -86,22 +89,50 @@ img {
 	padding-left: 10px;
 }
 
-div.panel {
-	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
-	font-size: 0.8em;
-	background-image: url("../images/transparent-background.png");
-	background-repeat: repeat;
-	background-position: left top;
-	-moz-border-radius: 20px;
-	-webkit-border-radius: 20px;
-	-khtml-border-radius: 20px;
-	border-radius: 20px;
-	padding: 10px;
-	margin-top: 10px;
-	-moz-border-radius: 20px
+#footer {
+	font-size: 0.7em;
+	padding: 0 10px;
+	text-align: center;
+	margin: 10px 0;
+}
+
+#footer div.meta{
+	display: inline;	
 }
 
 
+div.panel {
+	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+	font-size: 0.8em;
+	border-radius: 20px;
+	padding: 10px;
+	margin-top: 10px;
+	-moz-border-radius: 20px;
+	border: 3px solid #A0A0A0;
+}
+
+#login-panel {
+	padding: 30px;
+	width: 400px;
+	margin: 50px auto;
+	text-align: center;
+}
+
+#login-panel table {
+	padding-top: 20px;
+	width: 90%;
+	margin: 0 auto;
+}
+
+
+#login-panel table td {
+	padding-bottom: 5px;
+}
+
+#login-panel table td.buttons {
+	padding-top: 10px;
+	text-align: right;
+}
 
 
 .status-message {
@@ -136,10 +167,6 @@ div.panel h1 {
 
 div.panel .horizontal-gap {
 	margin-left: 10px;
-}
-
-div.panel {
-	color: #E3DEDE;
 }
 
 div.panel a,div.panel a:VISITED {
@@ -207,10 +234,8 @@ div.panel a.button:HOVER {
 
 .button {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
-	/*border: 1px solid #E579E9;	
-	color: #E579E9;*/
 	border: 2px solid #E579E9;
-	color: #E3DEDE;
+	color: #E579E9;
 	padding: 3px 15px;
 	font-size: 1.1em;
 	cursor: default;
@@ -224,6 +249,7 @@ div.panel a.button:HOVER {
 
 .button:HOVER,.hover { /*background-color: #0E850C;*/
 	background-color: #E579E9;
+	color: white;
 }
 
 .sub-rounded-corners {
@@ -657,12 +683,14 @@ ul.items div.index-letter {
 
 
 input[type="text"], input[type="password"] {
-	padding: 2px;
+	font-size: 1em;
+	padding: 3px;
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	-khtml-border-radius: 5px;
 	border-radius: 5px;
-	border: none;
+	border: 2px solid #A0A0A0;
+	color: #606060;
 } 
 
 input[type="text"].disabled, input[type="password"].disabled {

@@ -1,6 +1,7 @@
 package org.mashupmedia.controller;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.mashupmedia.constants.MashUpMediaConstants;
@@ -23,6 +24,19 @@ public abstract class BaseController {
 	protected Breadcrumb getHomeBreadcrumb() {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.home"), "/app/home");
 		return breadcrumb;
+	}
+
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_VERSION)
+	public String getVersion() {
+		String version = MessageHelper.getMessage("application.version");
+		return version;
+	}
+
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_CURRENT_YEAR)
+	public String getCurrentYear() {
+		Calendar calendar = Calendar.getInstance();
+		int year = calendar.get(Calendar.YEAR);		
+		return String.valueOf(year);
 	}
 
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_THEME_PATH)
