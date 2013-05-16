@@ -49,7 +49,7 @@
 
 
 
-<title>$pageTitle</title>
+<title>${pageTitle}</title>
 
 </head>
 
@@ -84,6 +84,9 @@
 
 		</div>
 
+	<div id="footer" class="transparent">
+	<div class="meta"><spring:message code="application.meta" arguments="${version},${currentYear}"/></div>
+	</div>
 
 </body>
 

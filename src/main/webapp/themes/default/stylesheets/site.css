@@ -3,7 +3,7 @@ html,body {
 	margin: 0;
 	padding: 0;
 	color: #606060;	
-	background-color: white;
+	background-color: transparent;
 }
 
 .clear {
@@ -42,11 +42,14 @@ img {
 	top: 0;
 	left: 0;
 	z-index: -1;
-	filter: alpha(opacity =       70);
+}
+
+div.transparent {
+	filter: alpha(opacity =       80);
 	/* for IE */
-	-khtml-opacity: 0.7; /* khtml, old safari */
-	-moz-opacity: 0.7; /* old mozilla, netscape */
-	opacity: 0.7; /* good browsers: FF, safari, opera */
+	-khtml-opacity: 0.8; /* khtml, old safari */
+	-moz-opacity: 0.8; /* old mozilla, netscape */
+	opacity: 0.8; /* good browsers: FF, safari, opera */
 }
 
 #background-image.full-width {
@@ -75,13 +78,22 @@ img {
 	padding: 5px;
 }
 
+
 .top-bar ul.main-menu {
 	padding: 0;
 	margin: 0;
 	margin-right: 10px;
 	float: right;
 	font-size: 90%;
+
 }
+
+.top-bar ul.main-menu img{
+	vertical-align: middle;
+	width: 30px;
+	height: auto; 
+}
+
 
 .top-bar ul li {
 	list-style: none;
@@ -93,11 +105,15 @@ img {
 	font-size: 0.7em;
 	padding: 0 10px;
 	text-align: center;
-	margin: 10px 0;
+	margin: 20px 0 10px 0;	
 }
 
 #footer div.meta{
-	display: inline;	
+	display: inline;
+	background-color: white;	
+	padding: 3px 10px;
+	-moz-border-radius: 5px;	
+	border-radius: 5px;
 }
 
 
@@ -107,8 +123,14 @@ div.panel {
 	border-radius: 20px;
 	padding: 10px;
 	margin-top: 10px;
-	-moz-border-radius: 20px;
+	-moz-border-radius: 20px;	
+	margin-left: auto;
+	margin-right: auto;
+	width: 95%;	
 	border: 3px solid #A0A0A0;
+	background-color: white;
+	opacity:0.8;
+	filter:alpha(opacity=80); /* For IE8 and earlier */	
 }
 
 #login-panel {
@@ -225,11 +247,12 @@ div.button-panel {
 }
 
 div.panel a.button,div.panel a.button:VISITED {
-	color: #E3DEDE;
+	color: #E579E9;
 }
 
 div.panel a.button:HOVER {
 	text-decoration: none;
+	color: white;
 }
 
 .button {
@@ -283,14 +306,15 @@ div.panel ul.main-menu li {
 
 div.panel ul.main-menu li a {
 	display: block;
-	padding: 3px;
-	font-size: 1.2em;
-	color: #E3DEDE;
+	padding: 5px 10px;
+	font-size: 1.3em;
+	color: #606060;
 }
 
 div.panel ul.main-menu a:HOVER {
 	background-color: #E579E9;
 	text-decoration: none;
+	color: white;
 }
 
 div.albums div.album {
