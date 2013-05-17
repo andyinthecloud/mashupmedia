@@ -2,7 +2,7 @@ html,body {
 	font-size: 100%;
 	margin: 0;
 	padding: 0;
-	color: #606060;	
+	color: #606060;
 	background-color: transparent;
 }
 
@@ -10,8 +10,8 @@ html,body {
 	clear: both;
 }
 
-a, a:ACTIVE, a:VISITED {
-	color: #E579E9;'
+a,a:ACTIVE,a:VISITED {
+	color: #E579E9;
 }
 
 .no-wrap {
@@ -45,7 +45,7 @@ img {
 }
 
 div.transparent {
-	filter: alpha(opacity =       80);
+	filter: alpha(opacity =         80);
 	/* for IE */
 	-khtml-opacity: 0.8; /* khtml, old safari */
 	-moz-opacity: 0.8; /* old mozilla, netscape */
@@ -68,6 +68,22 @@ div.transparent {
 	padding: 5px 0;
 }
 
+#top-bar .home {
+	float: left;
+	margin-top: 3px;
+}
+
+#top-bar .main-menu {
+	display: block;
+	text-align: right;
+	margin: 0;
+	padding: 0;
+}
+
+#top-bar .main-menu li {
+	text-align: right;
+}
+
 .top-bar a,.top-bar a:VISITED {
 	color: #e579e9;
 	text-decoration: none;
@@ -78,22 +94,11 @@ div.transparent {
 	padding: 5px;
 }
 
-
-.top-bar ul.main-menu {
-	padding: 0;
-	margin: 0;
-	margin-right: 10px;
-	float: right;
-	font-size: 90%;
-
-}
-
-.top-bar ul.main-menu img{
+.top-bar ul.main-menu img {
 	vertical-align: middle;
 	width: 30px;
-	height: auto; 
+	height: auto;
 }
-
 
 .top-bar ul li {
 	list-style: none;
@@ -105,32 +110,36 @@ div.transparent {
 	font-size: 0.7em;
 	padding: 0 10px;
 	text-align: center;
-	margin: 20px 0 10px 0;	
+	margin: 20px 0 10px 0;
 }
 
-#footer div.meta{
+#footer div.meta {
 	display: inline;
-	background-color: white;	
-	padding: 3px 10px;
+	background-color: white;
+	padding: 3px 10px;	
 	-moz-border-radius: 5px;	
-	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;		
 }
-
 
 div.panel {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
 	font-size: 0.8em;
-	border-radius: 20px;
 	padding: 10px;
 	margin-top: 10px;
-	-moz-border-radius: 20px;	
 	margin-left: auto;
 	margin-right: auto;
-	width: 95%;	
+	width: 95%;
 	border: 3px solid #A0A0A0;
 	background-color: white;
-	opacity:0.8;
-	filter:alpha(opacity=80); /* For IE8 and earlier */	
+	opacity: 0.8;
+	filter: alpha(opacity = 80); /* For IE8 and earlier */
+	-moz-border-radius: 20px;	
+	-webkit-border-radius: 20px;
+	-khtml-border-radius: 20px;
+	border-radius: 20px;		
+	
 }
 
 #login-panel {
@@ -146,7 +155,6 @@ div.panel {
 	margin: 0 auto;
 }
 
-
 #login-panel table td {
 	padding-bottom: 5px;
 }
@@ -155,7 +163,6 @@ div.panel {
 	padding-top: 10px;
 	text-align: right;
 }
-
 
 .status-message {
 	font-style: italic;
@@ -200,16 +207,17 @@ div.panel a:HOVER {
 }
 
 div.panel fieldset {
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-khtml-border-radius: 10px;
-	border-radius: 10px;
 	border: 1px solid #E3DEDE;
 	padding: 10px;
 	margin-top: 10px;
 	font-size: 1em;
 	padding: 10px;
 	line-height: 2em;
+	-moz-border-radius: 10px;	
+	-webkit-border-radius: 10px;
+	-khtml-border-radius: 10px;
+	border-radius: 10px;		
+	
 }
 
 label {
@@ -221,14 +229,10 @@ label.date-to {
 	padding-left: 10px;
 }
 
-
 .new-line {
 	display: block;
 	padding-top: 10px;
 }
-
-
-
 
 div.panel input[type='text'],div.panel input[type='password'] {
 	width: 99%;
@@ -239,7 +243,6 @@ div.panel input.date {
 	width: 100px;
 }
 
-
 div.button-panel {
 	margin-top: 20px;
 	margin-bottom: 10px;
@@ -247,39 +250,29 @@ div.button-panel {
 }
 
 div.panel a.button,div.panel a.button:VISITED {
-	color: #E579E9;
-}
-
-div.panel a.button:HOVER {
-	text-decoration: none;
 	color: white;
 }
+
+div.panel a.button:HOVER{
+	text-decoration: none;
+}
+
 
 .button {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
 	border: 2px solid #E579E9;
-	color: #E579E9;
+	color: white;
 	padding: 3px 15px;
 	font-size: 1.1em;
 	cursor: default;
-	background-color: transparent;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-khtml-border-radius: 10px;
-	border-radius: 10px;
-	margin-left: 10px;
-}
-
-.button:HOVER,.hover { /*background-color: #0E850C;*/
 	background-color: #E579E9;
-	color: white;
-}
-
-.sub-rounded-corners {
-	-moz-border-radius: 10px;
+	margin-left: 10px;
+	font-weight: bold;
+	-moz-border-radius: 10px;	
 	-webkit-border-radius: 10px;
 	-khtml-border-radius: 10px;
-	border-radius: 10px;
+	border-radius: 10px;		
+	
 }
 
 div.panel div.breadcrumbs a:HOVER,#top-bar ul.main-menu a:HOVER,#top-bar a.home:HOVER,#top-bar-music-player .main-menu a:hover,#top-bar-music-player div.top-home-link a:HOVER
@@ -307,7 +300,7 @@ div.panel ul.main-menu li {
 div.panel ul.main-menu li a {
 	display: block;
 	padding: 5px 10px;
-	font-size: 1.3em;
+	font-size: 1.2em;
 	color: #606060;
 }
 
@@ -324,18 +317,18 @@ div.albums div.album {
 	height: 150px;
 }
 
-div.albums div.album img, ul.items li a.album-cover img{
+div.albums div.album img,ul.items li a.album-cover img {
 	width: 100%;
 	height: 100%;
-	filter: alpha(opacity =                     60); /* for IE */
+	filter: alpha(opacity =                       60); /* for IE */
 	-khtml-opacity: 0.60; /* khtml, old safari */
 	-moz-opacity: 0.60; /* old mozilla, netscape */
 	opacity: 0.60; /* good browsers: FF, safari, opera */
 }
 
-div.albums div.highlight img, ul.items li a.highlight img {
+div.albums div.highlight img,ul.items li a.highlight img {
 	background-color: gray;
-	filter: alpha(opacity =               100); /* for IE */
+	filter: alpha(opacity =                 100); /* for IE */
 	-khtml-opacity: 1; /* khtml, old safari */
 	-moz-opacity: 1; /* old mozilla, netscape */
 	opacity: 1; /* good browsers: FF, safari, opera */
@@ -404,21 +397,19 @@ div.sub-panel div.album-art img {
 	font-size: 90%;
 }
 
-
 #quick-search {
 	position: absolute;
 	top: 40px;
 	right: 10px;
 }
 
-
-#quick-search input[type=text]{
+#quick-search input[type=text] {
 	width: 300px;
 	padding: 2px 5px;
 	color: #3A2A45;
 }
 
-#quick-search input[type=image]{
+#quick-search input[type=image] {
 	width: 15px;
 	height: auto;
 	vertical-align: middle;
@@ -432,11 +423,9 @@ ul.ui-autocomplete {
 	font-size: 80%;
 }
 
-
 #current-song table {
 	border-collapse: collapse;
 }
-
 
 #current-song img {
 	vertical-align: middle;
@@ -459,12 +448,12 @@ ul.ui-autocomplete {
 #current-song .vote img {
 	background-color: #C8C0CE;
 	padding: 2px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-khtml-border-radius: 5px;
-	border-radius: 5px;
 	width: 16px;
 	height: auto;
+	-moz-border-radius: 5px;	
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;			
 }
 
 #current-song .album-art img {
@@ -485,7 +474,6 @@ ul.ui-autocomplete {
 	margin-top: 10px;
 	font-size: 80%;
 }
-
 
 #top-bar-music-player div.jp-audio ul.jp-toggles {
 	height: 15px;
@@ -541,8 +529,7 @@ ul.ui-autocomplete {
 	padding-left: 0px;
 }
 
-#playlist table td, #playlist table th
-	{
+#playlist table td,#playlist table th {
 	padding-left: 10px;
 	padding-top: 3px;
 	padding-bottom: 3px;
@@ -574,7 +561,7 @@ ul.ui-autocomplete {
 
 .controls .ui-icon {
 	background-color: white;
-	filter: alpha(opacity =                     60); /* for IE */
+	filter: alpha(opacity =                       60); /* for IE */
 	-khtml-opacity: 0.60; /* khtml, old safari */
 	-moz-opacity: 0.60; /* old mozilla, netscape */
 	opacity: 0.60; /* good browsers: FF, safari, opera */
@@ -616,7 +603,7 @@ ul.index-letters li {
 	padding: 0 5px;
 }
 
-.hide, div.dialog{
+.hide,div.dialog {
 	display: none;
 }
 
@@ -625,7 +612,7 @@ div.ui-dialog {
 	z-index: 1000;
 }
 
-div.ui-dialog input.search-field{
+div.ui-dialog input.search-field {
 	border-color: #383838;
 	border: 1px solid;
 	background-color: #E8E8E8;
@@ -649,16 +636,16 @@ ul.items li a.album-cover {
 	float: left;
 }
 
-ul.items li, ul.items li a.album-cover img {
+ul.items li,ul.items li a.album-cover img {
 	height: 110px;
 }
-
 
 ul.items li a.album-cover img {
 	width: auto;
 }
 
-ul.items li div.artist, ul.items li div.album, ul.items ul.control-menu, ul.items li div.song, ul.items li div.artist-and-album, ul.items div.controls, ul.items li div.meta{
+ul.items li div.artist,ul.items li div.album,ul.items ul.control-menu,ul.items li div.song,ul.items li div.artist-and-album,ul.items div.controls,ul.items li div.meta
+	{
 	margin-left: 200px;
 }
 
@@ -667,7 +654,6 @@ ul.items li div.song {
 	margin-bottom: 15px;
 	font-size: 120%;
 }
-
 
 ul.items li div.album {
 	margin-top: 10px;
@@ -688,16 +674,14 @@ ul.items li div.controls {
 	margin-top: 10px;
 }
 
-ul.items ul.control-menu li{
+ul.items ul.control-menu li {
 	border-bottom: none !important;
 	padding: 0 0 0 5px !important;
 }
 
-ul.items ul.control-menu li.first{
+ul.items ul.control-menu li.first {
 	padding: 0 5px 0 0 !important;
 }
-
-
 
 ul.items div.index-letter {
 	float: right;
@@ -705,19 +689,19 @@ ul.items div.index-letter {
 	font-size: 120%;
 }
 
-
-input[type="text"], input[type="password"] {
+input[type="text"],input[type="password"] {
 	font-size: 1em;
 	padding: 3px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-khtml-border-radius: 5px;
-	border-radius: 5px;
 	border: 2px solid #A0A0A0;
 	color: #606060;
-} 
+	-moz-border-radius: 5px;	
+	-webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	border-radius: 5px;		
+	
+}
 
-input[type="text"].disabled, input[type="password"].disabled {
+input[type="text"].disabled,input[type="password"].disabled {
 	background-color: #D3D3D3;
 }
 
@@ -739,12 +723,11 @@ input.cancel {
 	margin-left: 30px;
 }
 
-div.information{
-	margin: 10px 0;	
+div.information {
+	margin: 10px 0;
 }
 
-
-div.information div.images img{
+div.information div.images img {
 	float: left;
 	height: 90px;
 	max-height: 90px;
@@ -753,20 +736,17 @@ div.information div.images img{
 	margin-top: 10px;
 }
 
-div.information div.discogs{
+div.information div.discogs {
 	padding-top: 10px;
-	clear: both; 		
+	clear: both;
 }
 
-div.information div.discogs img{
+div.information div.discogs img {
 	vertical-align: middle;
 	background-color: white;
-	border: 3px solid;	
+	border: 3px solid;
 }
 
 div.textfield-with-button-panel input[type=text] {
 	width: 50%;
 }
-
-
-

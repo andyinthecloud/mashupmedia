@@ -83,11 +83,11 @@ $(document).ready(function() {
 			mashupMedia.filterPageNumber = 0;
 						
 			/*
-			$("input[name=orderBy]").val(getURLParameter("orderBy"));
-			$("input[name=isAscending]").val(getURLParameter("isAscending"));
-			$("input[name=mediaType]").val(getURLParameter("mediaType"));
-			$("input[name=searchWords]").val(getURLParameter("searchWords"));
-			*/
+			 * $("input[name=orderBy]").val(getURLParameter("orderBy"));
+			 * $("input[name=isAscending]").val(getURLParameter("isAscending"));
+			 * $("input[name=mediaType]").val(getURLParameter("mediaType"));
+			 * $("input[name=searchWords]").val(getURLParameter("searchWords"));
+			 */
 			
 			loadSongSearchResults(false);			
 			isScrollToTop = true;

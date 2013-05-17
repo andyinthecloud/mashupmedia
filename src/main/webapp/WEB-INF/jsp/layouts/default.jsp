@@ -1,7 +1,7 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html lang="en">
 <head>
 
@@ -11,17 +11,12 @@
 <c:set var="jPlayer" value="2.3.0"/>
 <c:set var="dataTables" value="1.9.4"/>
 
-
 <link type="text/css" href="<c:url value="/jquery-ui/${jQueryUIVersion}/css/smoothness/jquery-ui-${jQueryUIVersion}.custom.min.css" />" rel="stylesheet" />
-<script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-${jQueryVersion}.min.js" />"></script>
-
-<!-- 
-<script src="http://code.jquery.com/jquery-migrate-1.1.0.js"></script>
- -->
-   
+<script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-${jQueryVersion}.min.js" />"></script>   
 <script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-ui-${jQueryUIVersion}.custom.min.js" />"></script>
 
 <script type="text/javascript" src="<c:url value="/scripts/mashupmedia.jsp" />"></script>
+
 <script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.address/${jQueryAddress}/jquery.address-${jQueryAddress}.min.js" />"></script>
 
 <script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayer}/jquery.jplayer.min.js" />"></script>
@@ -59,7 +54,7 @@
 	
 		<input type="hidden" id="contextUrl" /> <img id="background-image" style="display: none;" />
 
-		<div class="panel">
+		<div class="panel big-rounded-corners">
 			<c:if test="${fn:length(breadcrumbs) > 1}">
 				<div class="breadcrumbs">
 					<c:forEach items="${breadcrumbs}" var="breadcrumb" varStatus="status">
@@ -85,7 +80,7 @@
 		</div>
 
 	<div id="footer" class="transparent">
-	<div class="meta"><spring:message code="application.meta" arguments="${version},${currentYear}"/></div>
+	<div class="meta small-rounded-corners"><spring:message code="application.meta" arguments="${version},${currentYear}"/></div>
 	</div>
 
 </body>
