@@ -42,7 +42,7 @@
 					${streamingFormat} : "${streamingUrl}"
 				}).jPlayer(jPlayerStatus);				
 			},
-			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/2.2.0" />",
+			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/2.3.0" />",
 			supplied: "${streamingFormat}",
 			solution: "html, flash",
 			wmode: "window",

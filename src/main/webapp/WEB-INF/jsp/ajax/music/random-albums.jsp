@@ -10,7 +10,7 @@
 		});
 
 		$("div.albums div.album a").click(function() {
-			 $.address.value($(this).attr('rel')); 
+			$.address.value($(this).attr('rel'));
 		});
 
 		$(window).scroll(function() {
@@ -40,6 +40,18 @@
 				title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />"
 				alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 			</a>
+			<div class="album-control">
+			
+				<a class="play" href="javascript:;"
+					title="<spring:message code="action.play" />"><span
+					class="ui-icon ui-icon-play"></span></a>
+				<c:if test="${isPlaylistOwner}">
+					<a class="add" href="javascript:;"
+						title="<spring:message code="action.add" />"><span
+						class="ui-icon ui-icon-plus"></span></a>
+				</c:if>			
+			
+			</div>
 		</div>
 	</c:forEach>
 </div>

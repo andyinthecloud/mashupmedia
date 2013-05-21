@@ -33,9 +33,11 @@
 <script type="text/javascript">
 	$(document).ready(
 			function() {
+				<c:if test="${isTransparentBackground}">
 				$("#contextUrl").val("<c:url value="/" />");
 				processBackground("<c:url value="${themePath}/"/>",
 						"<tiles:getAsString name="backgroundImageType"/>");
+				</c:if>
 			});
 </script>
 

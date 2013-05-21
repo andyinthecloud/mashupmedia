@@ -24,5 +24,7 @@ public class HomeController extends BaseController {
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		// Nothing to do - this is the home page
 	}
+	
+	
 
 }
