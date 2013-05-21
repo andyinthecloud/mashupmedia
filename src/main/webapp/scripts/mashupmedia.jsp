@@ -306,8 +306,12 @@ var mashupMedia = new function() {
 		}
 		
 		
+		songTitle = unescape(songTitle);
+		artistName = unescape(artistName);
+		playlistName = unescape(playlistName);
+		
 		$("#current-song td.song-title .title").text(songTitle);	
-		$("#current-song td.song-title .artist-name").text(artistName);
+		$("#current-song td.song-title .artist-name").html("<a href=\"javascript:;\">" + artistName + "</a>");
 		if (isShowVoteButtons) {
 			$("#current-song .vote").show();	
 		} else {
@@ -588,4 +592,5 @@ function getHostUrl() {
 	hostUrl += mashupMedia.contextUrl;
 	return hostUrl;
 }
+
 

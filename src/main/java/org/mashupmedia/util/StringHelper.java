@@ -137,4 +137,15 @@ public class StringHelper {
 		return text;
 	}
 
+	public static String escapeJavascript(String text) {
+		text = StringUtils.trimToEmpty(text);
+		if (StringUtils.isEmpty(text)) {
+			return text;
+		}
+
+		text = StringEscapeUtils.escapeJava(text);
+		return text;
+	}
+	
+	
 }

@@ -3,6 +3,7 @@ package org.mashupmedia.controller.ajax;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.Album;
@@ -20,6 +21,7 @@ import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.SecurityHelper;
+import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.mashupmedia.web.page.AlbumPage;
@@ -142,7 +144,23 @@ public class AjaxMusicController extends AjaxBaseController {
 		MediaType mediaType = mediaItem.getMediaType();
 		if (mediaType == MediaType.SONG) {
 			Song song = (Song) mediaItem;
+			
 			playlist = updatePlayingSong(playlist, song);
+			
+			song = SerializationUtils.clone(song);
+			song.setDisplayTitle(StringHelper.escapeJavascript(song.getDisplayTitle()));
+			
+			Artist artist = song.getArtist();
+			artist.setName(StringHelper.escapeJavascript(artist.getName()));
+			song.setArtist(artist);
+			
+			Album album = song.getAlbum();
+			song.setAlbum(album);
+			album.setName(StringHelper.escapeJavascript(album.getName()));
+			
+			playlist = SerializationUtils.clone(playlist);
+			playlist.setName(StringHelper.escapeJavascript(playlist.getName()));
+
 			MediaContentType mediaContentType = WebHelper.getMediaContentType(mediaItem.getFormat(), MediaContentType.MP3);
 			model.addAttribute("format", mediaContentType.getjPlayerContentType());
 			model.addAttribute("song", song);

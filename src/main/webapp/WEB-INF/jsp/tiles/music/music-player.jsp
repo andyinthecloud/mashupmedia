@@ -30,37 +30,34 @@
 	});
 
 	$("#current-song div.encode").on("click", "a", function(event) {
-	    
+
 	    var className = $(this).attr("class");
 	    var mediaItemId = $("#current-song-id").val();
-	    
-		if (className == "play-original-file") {
-		    $.get(mashupMedia.contextUrl + "app/ajax/media/format-unprocessed/" + mediaItemId,
-			function(data) {
-				mashupMedia.playSong(mediaItemId);
-		    });		    
-		} else if (className == "play-encoded-file") {
-		    $.get(mashupMedia.contextUrl + "app/ajax/media/format-encoded/" + mediaItemId,
-				function(data) {
-					mashupMedia.playSong(mediaItemId);
-			    });		    
-			    
-		} else if (className == "encode-file") {
-		    $("#current-song .encode").html("<spring:message code="music.playlist.encode.processing" />");
-		    
-			$.get(mashupMedia.contextUrl + "app/ajax/media/encode/" + mediaItemId,
-			function(data) {
-				var encodeStatus = "ERROR";
-				if (data.response.isSuccessful) {
-				    encodeStatus = "PROCESSING";									
-				} 
-				
-				var encodeMessage = getAudioEncodeStatus(encodeStatus);
-			    $("#current-song .encode").html(encodeMessage);
-			    mashupMedia.playSong(mediaItemId);
-			});
-		    
-		}
+
+	    if (className == "play-original-file") {
+		$.get(mashupMedia.contextUrl + "app/ajax/media/format-unprocessed/" + mediaItemId, function(data) {
+		    mashupMedia.playSong(mediaItemId);
+		});
+	    } else if (className == "play-encoded-file") {
+		$.get(mashupMedia.contextUrl + "app/ajax/media/format-encoded/" + mediaItemId, function(data) {
+		    mashupMedia.playSong(mediaItemId);
+		});
+
+	    } else if (className == "encode-file") {
+		$("#current-song .encode").html("<spring:message code="music.playlist.encode.processing" />");
+
+		$.get(mashupMedia.contextUrl + "app/ajax/media/encode/" + mediaItemId, function(data) {
+		    var encodeStatus = "ERROR";
+		    if (data.response.isSuccessful) {
+			encodeStatus = "PROCESSING";
+		    }
+
+		    var encodeMessage = getAudioEncodeStatus(encodeStatus);
+		    $("#current-song .encode").html(encodeMessage);
+		    mashupMedia.playSong(mediaItemId);
+		});
+
+	    }
 
 	});
 
@@ -118,33 +115,36 @@
 	return false;
 	});
 	 */
-	 
+
 	$("#current-song a").click(function() {
 	    fireRelLink(this);
 	});
-	
+
     });
 </script>
 
 
 <div id="top-bar-music-player" class="top-bar">
 
-	<ul class="main-menu group">
-		<li><a href="javascript:;" rel="address:/address-random-albums"><spring:message code="top-bar.random-albums" /></a></li>
-		<li><a href="javascript:;" rel="address:/address-list-artists"><spring:message code="top-bar.artists" /></a></li>
-		<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message code="top-bar.albums" /></a></li>
-		<li><a href="javascript:;" rel="address:/address-list-playlists"><spring:message code="top-bar.playlists" /></a></li>
-		<li><a href="javascript:;" rel="address:/address-search"><spring:message code="top-bar.search" /></a></li>
-		<li><a href="javascript:;"><spring:message code="top-bar.my-account" /></a></li>
-		<li><a href="javascript:;"><spring:message code="top-bar.log-out" /></a></li>
-	</ul>
-	<div class="top-home-link">
-		<a href="<c:url value="/" />"><spring:message code="top-bar.home" /></a>
-	</div>
+	<table class="top-bar-menu">
+		<tr>
+			<td class="top-home-link"><a href="<c:url value="/" />"><spring:message code="top-bar.home" /></a></td>
+			<td>
+				<ul class="main-menu group">
+					<li><a href="javascript:;" rel="address:/address-random-albums"><spring:message code="top-bar.random-albums" /></a></li>
+					<li><a href="javascript:;" rel="address:/address-list-artists"><spring:message code="top-bar.artists" /></a></li>
+					<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message code="top-bar.albums" /></a></li>
+					<li><a href="javascript:;" rel="address:/address-list-playlists"><spring:message code="top-bar.playlists" /></a></li>
+					<li><a href="javascript:;" rel="address:/address-search"><spring:message code="top-bar.search" /></a></li>
+					<li><a href="javascript:;"><spring:message code="top-bar.my-account" /></a></li>
+					<li><a href="javascript:;"><spring:message code="top-bar.log-out" /></a></li>
+					<li><a href="http://www.mashupmedia.org;" target="_blank"><img title="Mashup Media" src="<c:url value="/images/mashupmedia-logo-inline.png" />" /></a></li>
+				</ul>
+			</td>
+		</tr>
 
-	<!-- 	
-	<form action="<c:url value="/app/ajax/search/media-items" />" id="quick-search">
- -->
+	</table>
+
 	<form action="address-quick-search-media-items" id="quick-search">
 		<input type="hidden" name="orderBy" value="${orderBy}" /> <input type="hidden" name="isAscending" value="${isAscending}" /> <input type="hidden" name="mediaType" value="${mediaType}" /> <input type="text" name="searchWords" value="${searchWords}" /><input type="image"
 			src="<c:url value="${themePath}/images/controls/search.png"/>" />
@@ -206,8 +206,7 @@
 						<div class="playlist">
 							<input type="hidden" id="current-playlist-id" value="" /> <a href="javascript:;"></a>
 						</div>
-						<div class="encode">&nbsp;</div>
-						</td>
+						<div class="encode">&nbsp;</div></td>
 					<td><span class="vote"> <a class="like" href="javascript:;" title="<spring:message code="music.playlist.current-song.vote.love" />"><img src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a class="dislike" href="javascript:;"><img
 								src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>" title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
 					</span></td>

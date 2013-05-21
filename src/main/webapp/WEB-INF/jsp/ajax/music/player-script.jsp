@@ -25,6 +25,7 @@
 	    	    
 		$(mashupMedia.jPlayerId).jPlayer("destroy");		
 		var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";
+
 		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, "${song.encodeStatusTypeValue}");
 		
 		
