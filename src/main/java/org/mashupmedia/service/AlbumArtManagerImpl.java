@@ -24,25 +24,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class AlbumArtManagerImpl implements AlbumArtManager{
+public class AlbumArtManagerImpl implements AlbumArtManager {
 	public static final String DEFAULT_MIME_TYPE = "jpg";
 
 	@Autowired
 	private ConnectionManager connectionManager;
-	
+
 	@Autowired
 	MusicManager musicManager;
 
-	
 	@Override
-	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {		
+	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
 		AlbumArtImage savedAlbumArtImage = getAlbumArtImage(song);
 		if (savedAlbumArtImage != null) {
 			return savedAlbumArtImage;
 		}
-		
+
 		AlbumArtImage albumArtImage = getLocalAlbumArtImage(musicLibrary, song);
-		
+
 		if (albumArtImage == null) {
 			return null;
 		}
@@ -56,26 +55,26 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 		if (artist == null) {
 			return null;
 		}
-		
+
 		Album album = song.getAlbum();
 		if (album == null) {
 			return null;
 		}
-		
+
 		String artistName = artist.getName();
 		String albumName = album.getName();
-		
+
 		album = musicManager.getAlbum(artistName, albumName);
 		if (album == null) {
 			return null;
 		}
-		
+
 		AlbumArtImage albumArtImage = album.getAlbumArtImage();
-		return albumArtImage;		
+		return albumArtImage;
 	}
 
 	private AlbumArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
-		
+
 		if (musicLibrary.isRemote()) {
 			return null;
 		}
@@ -83,9 +82,12 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 		File musicFile = new File(song.getPath());
 		String imagePath = null;
 		String albumArtFileName = MashUpMediaConstants.COVER_ART_DEFAULT_NAME;
-		AudioFile audioFile = AudioFileIO.read(musicFile);
-		Tag tag = audioFile.getTag();
-		Artwork artwork = tag.getFirstArtwork();
+		Artwork artwork = getArtwork(musicFile);
+
+		// AudioFile audioFile = AudioFileIO.read(musicFile);
+		// Tag tag = audioFile.getTag();
+		//
+		// Artwork artwork = tag.getFirstArtwork();
 		final String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
 		String contentType = null;
 		if (artwork != null) {
@@ -123,14 +125,23 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 			contentType = FileHelper.getFileExtension(albumArtFileName);
 		}
 
-		AlbumArtImage albumArtImage = new AlbumArtImage();				
+		AlbumArtImage albumArtImage = new AlbumArtImage();
 		albumArtImage.setName(albumArtFileName);
 		albumArtImage.setUrl(imagePath);
 		albumArtImage.setContentType(contentType);
 		return albumArtImage;
 	}
 
+	protected Artwork getArtwork(File musicFile) throws Exception {
+		AudioFile audioFile = AudioFileIO.read(musicFile);
+		Tag tag = audioFile.getTag();
+		if (tag == null) {
+			return null;
+		}
 
+		Artwork artwork = tag.getFirstArtwork();
+		return artwork;
+	}
 
 	private String prepareMimeType(String mimeType) {
 		mimeType = StringUtils.trimToEmpty(mimeType);
@@ -141,6 +152,5 @@ public class AlbumArtManagerImpl implements AlbumArtManager{
 		}
 		return mimeType;
 	}
-	
 
 }

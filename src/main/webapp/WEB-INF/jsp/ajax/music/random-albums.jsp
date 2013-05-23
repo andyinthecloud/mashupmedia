@@ -37,9 +37,14 @@
 			<a href="javascript:;" rel="address:/address-load-album-${album.id}">
 				<img
 				src="<c:url value="/app/music/album-art-thumbnail/${album.id}" />"
-				title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />"
+				title="${album.artist.name} - ${album.name}"
 				alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 			</a>
+			
+			<div><a href="javascript:;">${album.artist.name}</a></div>
+			<div><a href="javascript:;">${album.name}</a></div>
+			
+			
 			<div class="album-control">
 			
 				<a class="play" href="javascript:;"
