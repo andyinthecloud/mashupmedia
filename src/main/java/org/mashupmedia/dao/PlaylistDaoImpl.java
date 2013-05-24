@@ -102,7 +102,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		@SuppressWarnings("unchecked")
 		List<Long> playlistMediaItemIds = playlistMediaItemQuery.list();		
 		for (Long playlistMediaItemId : playlistMediaItemIds) {
-			Query updateUserQuery = sessionFactory.getCurrentSession().createQuery("update User u set u.playlistMediaItem = null where u.playlistMediaItemId = :playlistMediaItemId");
+			Query updateUserQuery = sessionFactory.getCurrentSession().createQuery("update User u set u.playlistMediaItemId = 0 where u.playlistMediaItemId = :playlistMediaItemId");
 			updateUserQuery.setLong("playlistMediaItemId", playlistMediaItemId);
 			updateUserQuery.executeUpdate();						
 		}

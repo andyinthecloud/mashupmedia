@@ -20,6 +20,18 @@
 
 			appendContentsOnScroll();
 		});
+		
+		$("div.albums div.album-control a.play").click(function() {
+		    var albumId = $(this).closest("div.album").attr("id");
+		    albumId = parseId(albumId, "album-id");
+		    mashupMedia.playAlbum(albumId);
+		});
+
+		$("div.albums div.album-control a.add").click(function() {
+		    var albumId = $(this).closest("div.album").attr("id");
+		    albumId = parseId(albumId, "album-id");
+		    mashupMedia.appendAlbum(albumId);
+		});
 
 	});
 </script>
@@ -33,7 +45,7 @@
 
 <div class="random-album-art albums">
 	<c:forEach items="${albums}" var="album">
-		<div class="album">
+		<div class="album" id="album-id-${album.id}">
 			<a href="javascript:;" rel="address:/address-load-album-${album.id}">
 				<img
 				src="<c:url value="/app/music/album-art-thumbnail/${album.id}" />"
@@ -41,9 +53,8 @@
 				alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 			</a>
 			
-			<div><a href="javascript:;">${album.artist.name}</a></div>
-			<div><a href="javascript:;">${album.name}</a></div>
-			
+			<div><a href="javascript:;" rel="address:/address-artist-${album.artist.id}" >${album.artist.name}</a></div>
+			<div><a href="javascript:;" rel="address:/address-load-album-${album.id}">${album.name}</a></div>
 			
 			<div class="album-control">
 			

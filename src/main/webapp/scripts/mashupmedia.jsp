@@ -45,7 +45,6 @@ $(document).ready(function() {
 			closeSongPlaylist();	
 		}
 		
-		var isScrollToTop = false;
 		var address = event.value;
 		address = address.replace("/", "");
 		address = $.trim(address);
@@ -54,31 +53,25 @@ $(document).ready(function() {
 		if (textStartsWith(address, addressAlbum)) {
 			var albumId = getNumberFromText(address);
 			mashupMedia.showAlbum(albumId);
-			isScrollToTop = true;
 		} else if (textStartsWith(address, addressListArtists)) {
 			loadArtists();
-			isScrollToTop = true;
 		} else if (textStartsWith(address, addressListAlbums)) {
 			mashupMedia.filterAlbumsSearchLetter = "";
 			mashupMedia.filterPageNumber = 0;
 			loadAlbums(false);
-			isScrollToTop = true;
 		} else if (textStartsWith(address, addressFilterAlbumsByLetter)) {
 			var searchLetter = address.replace(addressFilterAlbumsByLetter, "");
 			mashupMedia.filterAlbumsSearchLetter = searchLetter;
 			mashupMedia.filterPageNumber = 0;
 			loadAlbums(false);			
-			isScrollToTop = true;
 		} else if (textStartsWith(address, addressRandomAlbums) || address == "") {
 			loadRandomAlbums(false);
-			isScrollToTop = true;
 		} else if (textStartsWith(address, addressArtist)) {
 			var artistId = parseId(address, addressArtist);
 			if (isNaN(artistId)) {
 				return;
 			}
 			loadArtist(artistId)
-			isScrollToTop = true;
 		} else if (textStartsWith(address, addressQuickSearchMediaItems)) {		    	
 			mashupMedia.filterPageNumber = 0;
 						
@@ -90,23 +83,16 @@ $(document).ready(function() {
 			 */
 			
 			loadSongSearchResults(false);			
-			isScrollToTop = true;
 		} else if (textStartsWith(address, addressListPlaylists)) {			
 			loadPlaylists();
-			isScrollToTop = true;
 		}  else if (textStartsWith(address, addressPlaylist)) {
     			var playlistId = parseId(address, addressPlaylist);
     			if (isNaN(playlistId)) {
     			    return;
     			}
     			loadPlaylist(playlistId);
-    			isScrollToTop = true;
 		} 
 		
-		
-		if (isScrollToTop) {
-			window.scrollTo(0, 0);
-		}
 		
 	});
 
@@ -592,5 +578,6 @@ function getHostUrl() {
 	hostUrl += mashupMedia.contextUrl;
 	return hostUrl;
 }
+
 
 

@@ -2,6 +2,8 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+	    window.scrollTo(0, 0);
+	    
 		$("#play-all").click(function() {
 			var albumId = $(this).closest("ul").attr("id");
 			albumId = albumId.replace("albumId-", "");
