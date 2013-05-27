@@ -78,9 +78,12 @@ public class AjaxMusicController extends AjaxBaseController {
 	public String getAlbum(@PathVariable("albumId") Long albumId, Model model) throws Exception {
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs = album.getSongs();
+		Artist artist = album.getArtist();
+		RemoteMediaMetaItem remoteMediaMeta = discogsWebService.getArtistInformation(artist);
 		AlbumPage albumPage = new AlbumPage();
 		albumPage.setAlbum(album);
 		albumPage.setSongs(songs);
+		albumPage.setRemoteMediaMetaItem(remoteMediaMeta);
 		model.addAttribute(albumPage);
 		return "ajax/music/album";
 	}

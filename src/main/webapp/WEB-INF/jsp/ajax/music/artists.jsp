@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-
+	    window.scrollTo(0, 0);
 	});
 </script>
 

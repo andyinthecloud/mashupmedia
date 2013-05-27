@@ -107,14 +107,6 @@
 	    }
 	});
 
-	/*
-	$("#quick-search").submit(function() {
-	serialisedSearchForm = $(this).serialize();
-	window.location = "#"
-	loadSongSearchResults(false);
-	return false;
-	});
-	 */
 
 	$("#current-song a").click(function() {
 	    fireRelLink(this);
@@ -207,7 +199,7 @@
 							<input type="hidden" id="current-playlist-id" value="" /> <a href="javascript:;"></a>
 						</div>
 						<div class="encode">&nbsp;</div></td>
-					<td><span class="vote"> <a class="like" href="javascript:;" title="<spring:message code="music.playlist.current-song.vote.love" />"><img src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a class="dislike" href="javascript:;"><img
+					<td class="vote"><span class="vote"> <a class="like" href="javascript:;" title="<spring:message code="music.playlist.current-song.vote.love" />"><img src="<c:url value="${themePath}/images/controls/thumbs-up.png"/>" /></a> <a class="dislike" href="javascript:;"><img
 								src="<c:url value="${themePath}/images/controls/thumbs-down.png"/>" title="<spring:message code="music.playlist.current-song.vote.hate" />" /></a>
 					</span></td>
 				</tr>

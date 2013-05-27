@@ -45,7 +45,7 @@ img {
 }
 
 div.transparent {
-	filter: alpha(opacity =           80);
+	filter: alpha(opacity =             80);
 	/* for IE */
 	-khtml-opacity: 0.8; /* khtml, old safari */
 	-moz-opacity: 0.8; /* old mozilla, netscape */
@@ -133,15 +133,22 @@ div.panel {
 	width: 95%;
 	border: 3px solid #A0A0A0;
 	background-color: white;
-	filter: alpha(opacity =   80); /* For IE8 and earlier */
-	-khtml-opacity: 0.8; /* khtml, old safari */
-	-moz-opacity: 0.8; /* old mozilla, netscape */
-	opacity: 0.8; /* good browsers: FF, safari, opera */
 	-moz-border-radius: 20px;
 	-webkit-border-radius: 20px;
 	-khtml-border-radius: 20px;
 	border-radius: 20px;
 }
+
+body.default div.panel {
+	filter: alpha(opacity =     80); /* For IE8 and earlier */
+	-khtml-opacity: 0.8; /* khtml, old safari */
+	-moz-opacity: 0.8; /* old mozilla, netscape */
+	opacity: 0.8; /* good browsers: FF, safari, opera */
+}
+
+body.music div.panel {
+}
+
 
 #login-panel {
 	padding: 30px;
@@ -180,7 +187,7 @@ div.sub-panel {
 div.music-sub-panel {
 	margin-top: 120px;
 	padding: 10px;
-	filter: alpha(opacity =   100); /* For IE8 and earlier */
+	filter: alpha(opacity =     100); /* For IE8 and earlier */
 	-khtml-opacity: 1.0; /* khtml, old safari */
 	-moz-opacity: 1.0; /* old mozilla, netscape */
 	opacity: 1.0; /* good browsers: FF, safari, opera */
@@ -203,7 +210,7 @@ div.panel .horizontal-gap {
 	margin-left: 10px;
 }
 
-div.panel a, div.panel a:VISITED {
+div.panel a,div.panel a:VISITED {
 	color: #E579E9;
 }
 
@@ -381,7 +388,7 @@ div.sub-panel .album-menu li {
 	list-style: none;
 	padding: 5px 0;
 	margin: 0;
-	margin-left: 260px;
+	margin-left: 40%;
 }
 
 div.sub-panel .album-menu li div.controls {
@@ -397,8 +404,8 @@ div.sub-panel .album-menu li div.meta {
 
 div.sub-panel div.album-art {
 	float: left;
-	width: 250px;
-	margin-top: 20px;
+	width: 40%;
+	margin-top: 10px;
 }
 
 div.sub-panel div.album-art img {
@@ -479,7 +486,6 @@ ul.ui-autocomplete {
 
 #current-song {
 	padding-left: 20px;
-	margin-top: 10px;
 }
 
 #current-song .vote {
@@ -503,22 +509,31 @@ ul.ui-autocomplete {
 }
 
 #current-song .album-art img {
-	width: 100px;
-	height: auto;
+	width: auto;
+	height: 120px;
 	margin-left: 10px;
 }
 
 #current-song td.song-title {
-	padding: 0 20px;
+	padding: 0 20px 10px 20px;
+	vertical-align: bottom;
 }
 
-#current-song td.song-title .artist-name {
+#current-song td.song-title .artist-name,  #current-song td.song-title .playlist, #current-song td.song-title .encode{
 	font-size: 80%;
 }
 
-#current-song td.song-title .playlist {
+#current-song td.song-title .playlist, #current-song td.song-title .encode {
 	margin-top: 10px;
-	font-size: 80%;
+}
+
+.ui-autocomplete {
+	z-index: 1000;
+}
+
+#current-song td.vote {
+	padding-top: 40px;
+	vertical-align: top;
 }
 
 #top-bar-music-player div.jp-audio ul.jp-toggles {
@@ -593,8 +608,8 @@ ul.ui-autocomplete {
 }
 
 #playlist table tbody tr.playing td {
-	color: white;
 	font-style: italic;
+	font-weight: bold;
 }
 
 #playlist table tbody td.text {
@@ -607,7 +622,7 @@ ul.ui-autocomplete {
 
 .controls .ui-icon {
 	background-color: white;
-	filter: alpha(opacity =                         60); /* for IE */
+	filter: alpha(opacity =                           60); /* for IE */
 	-khtml-opacity: 0.60; /* khtml, old safari */
 	-moz-opacity: 0.60; /* old mozilla, netscape */
 	opacity: 0.60; /* good browsers: FF, safari, opera */
@@ -729,10 +744,11 @@ ul.items ul.control-menu li.first {
 	padding: 0 5px 0 0 !important;
 }
 
-ul.items div.index-letter {
-	float: right;
+div.index-letter {
+	clear: both;
 	text-transform: uppercase;
 	font-size: 120%;
+	padding-top: 10px;
 }
 
 input[type="text"],input[type="password"] {

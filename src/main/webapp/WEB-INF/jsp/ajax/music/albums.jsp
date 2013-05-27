@@ -2,53 +2,54 @@
 
 
 <script type="text/javascript">
-	var pageNumber = 0;
-	var searchLetter = "";
-	$(document).ready(function() {
-		$("ul.items div.controls a.play").click(function() {
-			var albumId = $(this).closest("li.item").attr("id");
-			albumId = parseId(albumId, "album-id");
-			mashupMedia.playAlbum(albumId);
-		});
+    var pageNumber = 0;
+    var searchLetter = "";
+    $(document).ready(function() {
+	window.scrollTo(0, 0);
 
-		$("ul.items div.controls a.add").click(function() {
-			var albumId = $(this).closest("li.item").attr("id");
-			albumId = parseId(albumId, "album-id");
-			mashupMedia.appendAlbum(albumId);
-		});
-
-		prepareShowIndexLetters();
-
-		$("ul.items li a").click(function() {
-			fireRelLink(this);
-		});
-
-		
-		$("ul.items li").hover(function() {
-			$(this).find("a.album-cover").addClass("highlight");
-		}, function() {
-			$(this).find("a.album-cover").removeClass("highlight");
-		});
-
-		$(window).scroll(function() {
-			if ($("ul.items li").length == 0) {
-				return;
-			}
-			appendContentsOnScroll();
-		});
-		
-		$("ul.index-letters a").click(function() {
-		    fireRelLink(this);
-		});
-
+	$("div.albums div.album").hover(function() {
+	    $(this).addClass("highlight");
+	}, function() {
+	    $(this).removeClass("highlight");
 	});
 
-	function prepareShowIndexLetters() {
-		var selector = "ul.index-letters";
-		if ($(selector).length == 1) {
-			$(selector).show();
-		}
+	$("div.albums div.album a").click(function() {
+	    fireRelLink(this);
+	});
+
+	prepareShowIndexLetters();
+
+	$("div.albums div.album-control a.play").click(function() {
+	    var albumId = $(this).closest("div.album").attr("id");
+	    albumId = parseId(albumId, "album-id");
+	    mashupMedia.playAlbum(albumId);
+	});
+
+	$("div.albums div.album-control a.add").click(function() {
+	    var albumId = $(this).closest("div.album").attr("id");
+	    albumId = parseId(albumId, "album-id");
+	    mashupMedia.appendAlbum(albumId);
+	});
+
+	$(window).scroll(function() {
+	    if ($("ul.items li").length == 0) {
+		return;
+	    }
+	    appendContentsOnScroll();
+	});
+
+	$("ul.index-letters a").click(function() {
+	    fireRelLink(this);
+	});
+
+    });
+
+    function prepareShowIndexLetters() {
+	var selector = "ul.index-letters";
+	if ($(selector).length == 1) {
+	    $(selector).show();
 	}
+    }
 </script>
 
 <h1>
@@ -56,50 +57,48 @@
 </h1>
 
 <ul class="hide index-letters">
-	<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message
-				code="action.all" /></a></li>
+	<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message code="action.all" /></a></li>
 	<c:forEach items="${albumsPage.albumIndexLetters}" var="letter">
-		<li><a href="javascript:;"
-			rel="address:/address-filter-albums-letter-${letter}"><c:out
-					value="${letter}" /></a></li>
+		<li><a href="javascript:;" rel="address:/address-filter-albums-letter-${letter}"><c:out value="${letter}" /></a></li>
 	</c:forEach>
 </ul>
 
 
 <c:set var="indexLetter" value="" />
-<ul id="albums" class="items">
+
+
+
+
+<div class="albums">
 	<c:forEach items="${albumsPage.albums}" var="album">
-		<li id="album-id-${album.id}" class="item"><c:if
-				test="${indexLetter != album.indexLetter}">
-				<div class="index-letter" id="index-letter-${album.indexLetter}">${album.indexLetter}</div>
-				<c:set var="indexLetter" value="${album.indexLetter}" />
-			</c:if> <a class="album-cover" href="javascript:;"
-			rel="address:/address-load-album-${album.id}"> <img
-				src="<c:url value="/app/music/album-art-thumbnail/${album.id}" />"
-				title="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />"
-				alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
-		</a>
-			<div class="album">
-				<a href="javascript:;" rel="address:/address-load-album-${album.id}"><c:out
-						value="${album.name}" /></a>
+
+		<c:if test="${indexLetter != album.indexLetter}">
+			<div class="index-letter" id="index-letter-${album.indexLetter}">${album.indexLetter}</div>
+			<c:set var="indexLetter" value="${album.indexLetter}" />
+		</c:if>
+
+		<div class="album" id="album-id-${album.id}">
+			<a href="javascript:;" rel="address:/address-load-album-${album.id}"> <img src="<c:url value="/app/music/album-art-thumbnail/${album.id}" />" title="${album.artist.name} - ${album.name}" alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
+			</a>
+
+			<div>
+				<a href="javascript:;" rel="address:/address-artist-${album.artist.id}">${album.artist.name}</a>
 			</div>
-			<div class="artist">
-				<a href="javascript:;"
-					rel="address:/address-artist-${album.artist.id}"><c:out
-						value="${album.artist.name}" /></a>
+			<div>
+				<a href="javascript:;" rel="address:/address-load-album-${album.id}">${album.name}</a>
 			</div>
 
+			<div class="album-control">
 
-			<div class="controls">
-				<a class="play" href="javascript:;"
-					title="<spring:message code="action.play" />"><span
-					class="ui-icon ui-icon-play"></span></a> <a class="add"
-					href="javascript:;" title="<spring:message code="action.add" />"><span
-					class="ui-icon ui-icon-plus"></span></a>
-			</div></li>
+				<a class="play" href="javascript:;" title="<spring:message code="action.play" />"><span class="ui-icon ui-icon-play"></span></a>
+				<c:if test="${isPlaylistOwner}">
+					<a class="add" href="javascript:;" title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus"></span></a>
+				</c:if>
 
+			</div>
+		</div>
 	</c:forEach>
-</ul>
+</div>
 
 
 

@@ -35,34 +35,45 @@
 	});
 </script>
 
+<jsp:include page="/WEB-INF/jsp/inc/discogs-js.jsp" />
 
-
-<h1>
-	<a href="javascript:;"
+<div class="title-with-player-control">
+	<h1><a href="javascript:;"
 		rel="address:/address-artist-${albumPage.album.artist.id}"><c:out
 			value="${albumPage.album.artist.name}" /></a> -
-	<c:out value="${albumPage.album.name}" />
-</h1>
+	<c:out value="${albumPage.album.name}" /></h1>
+
+	<div class="control-menu" id="artist-id-<c:out value="${artistPage.artist.id}" />">
+		<a id="play-all" class="play" href="javascript:;" title="<spring:message code="action.play" />"><span class="ui-icon ui-icon-play">&nbsp;</span></a>
+		<c:if test="${isPlaylistOwner}">
+			<a id="add-all" class="add" href="javascript:;" title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus">&nbsp;</span></a>
+		</c:if>
+	</div>
+
+</div>
 
 
+<div class="information">
+	<div class="profile">
+		<c:out value="${albumPage.remoteMediaMetaItem.profile}" escapeXml="false" />
+	</div>
 
+	<div class="images">
+		<c:forEach items="${albumPage.remoteMediaMetaItem.remoteImages}" var="remoteImage">
+			<a class="fancybox" rel="artist-images" href="<c:url value="${remoteImage.imageUrl}" />"><img src="<c:url value="${remoteImage.thumbUrl}" />" /></a>
+		</c:forEach>
+	</div>
 
-<ul class="control-menu"
-	id="albumId-<c:out value="${albumPage.album.id}" />">
-	<li class="first"><a href="javascript:;" id="play-all"> <spring:message
-				code="action.play-all" />
-	</a></li>
+	<div class="discogs">
+		<spring:message code="music.artists.discogs" />
+		<a href="http://www.discogs.com" target="_blank"><img src="<c:url value="/images/discogs.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message code="music.artists.discogs.correct" /></a>
 
-	<c:if test="${isPlaylistOwner}">
-		<li><a href="javascript:;" id="add-all"> <spring:message
-					code="action.add-all" /></a></li>
-	</c:if>
-</ul>
-
+	</div>
+</div>
 
 
 <div class="album-art">
-	<img src="<c:url value="/app/music/album-art/${albumPage.album.id}" />"
+	<img src="<c:url value="/app/music/album-art/${albumPage.album.id}?thumb" />"
 		title="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />"
 		alt="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />" />
 </div>
