@@ -13,7 +13,7 @@
 	    $(this).removeClass("highlight");
 	});
 
-	$("div.albums div.album a").click(function() {
+	$("div.albums div.album a, ul.index-letters a").click(function() {
 	    fireRelLink(this);
 	});
 
@@ -38,9 +38,6 @@
 	    appendContentsOnScroll();
 	});
 
-	$("ul.index-letters a").click(function() {
-	    fireRelLink(this);
-	});
 
     });
 

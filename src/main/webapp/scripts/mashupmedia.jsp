@@ -60,7 +60,8 @@ $(document).ready(function() {
 			mashupMedia.filterPageNumber = 0;
 			loadAlbums(false);
 		} else if (textStartsWith(address, addressFilterAlbumsByLetter)) {
-			var searchLetter = address.replace(addressFilterAlbumsByLetter, "");
+		    	address = address.replace("address:/", "");
+			var searchLetter = address.replace("" + addressFilterAlbumsByLetter, "");
 			mashupMedia.filterAlbumsSearchLetter = searchLetter;
 			mashupMedia.filterPageNumber = 0;
 			loadAlbums(false);			
