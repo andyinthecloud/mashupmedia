@@ -129,9 +129,8 @@ public class StringHelper {
 			return text;
 		}
 
-				
-//		text = text.replaceAll("\\\\+", " ");
-		
+		// text = text.replaceAll("\\\\+", " ");
+
 		text = StringEscapeUtils.escapeXml(text);
 		text = StringEscapeUtils.escapeJava(text);
 		return text;
@@ -146,6 +145,13 @@ public class StringHelper {
 		text = StringEscapeUtils.escapeJava(text);
 		return text;
 	}
-	
-	
+
+	public static String formatFirstLetterToLowercase(String text) {
+		if (StringUtils.isBlank(text)) {
+			return text;
+		}
+
+		text = Character.toLowerCase(text.charAt(0)) + (text.length() > 1 ? text.substring(1) : "");
+		return text;
+	}
 }

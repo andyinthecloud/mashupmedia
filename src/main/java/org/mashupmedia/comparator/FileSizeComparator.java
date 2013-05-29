@@ -15,18 +15,18 @@
  *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mashupmedia.service;
+package org.mashupmedia.comparator;
 
-import org.mashupmedia.model.media.Song;
-import org.mashupmedia.remote.RemoteMusicLibrary;
+import java.io.File;
+import java.util.Comparator;
 
-public interface MapperManager {
+public class FileSizeComparator implements Comparator<File> {
 
-	public void writeStartRemoteMusicLibraryXml(long libraryId) throws Exception;
-	public void writeEndRemoteMusicLibraryXml(long libraryId) throws Exception;
-	public void writeSongToXml(long libraryId, Song song) throws Exception;
-	
-	public RemoteMusicLibrary convertXmltoRemoteMusicLibrary(String xml) throws Exception;
-	
-	
+	@Override
+	public int compare(File o1, File o2) {
+		Long o1Length = o1.length();
+		Long o2Length = o2.length();
+		return o1Length.compareTo(o2Length);
+	}
+
 }

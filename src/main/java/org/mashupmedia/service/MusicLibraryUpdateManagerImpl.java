@@ -201,6 +201,13 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			song.setSearchText(searchText);
 			
 			musicDao.saveSong(song, isSessionFlush);
+			
+			try {
+				mapperManager.writeSongToXml(musicLibrary.getId(), song);
+			} catch (Exception e) {
+				logger.error("Error writing song to xml", e);
+			}
+			
 			totalSongsSaved++;
 
 		}
@@ -248,12 +255,13 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		Date date = new Date();
 		List<Song> songs = new ArrayList<Song>();
-		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
-		
 		long libraryId = musicLibrary.getId();
+		mapperManager.writeStartRemoteMusicLibraryXml(libraryId);
+		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);		
+		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
 		
 		deleteObsoleteSongs(libraryId, date);
-		mapperManager.convertSongsToXml(libraryId, songs);		
+//		mapperManager.convertSongsToXml(libraryId, songs);		
 	}
 	
 	protected void prepareSongs(Date date, List<Song> songs, File folder, MusicLibrary musicLibrary, String folderArtistName, String folderAlbumName)
@@ -279,12 +287,12 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 					prepareSongs(date, artistSongs, file, musicLibrary, folderArtistName, folderAlbumName);
 					saveSongs(musicLibrary, artistSongs);
 					
-					songs.addAll(artistSongs);
+//					songs.addAll(artistSongs);
 					
 //					prepareSongs(date, songs, file, musicLibrary, folderArtistName, folderAlbumName);
 //					saveSongs(musicLibrary, songs);
 //					songs = new ArrayList<Song>();
-					// songs.clear();
+					songs.clear();
 
 					folderArtistName = "";
 				} else {

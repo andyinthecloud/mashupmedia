@@ -29,7 +29,16 @@ public class RemoteMediaMetaItem implements Serializable {
 	private Date date;
 	private List<RemoteImage> remoteImages;
 	private boolean isComplete;
+	private String introduction;
 	
+	public String getIntroduction() {
+		return introduction;
+	}
+
+	public void setIntroduction(String introduction) {
+		this.introduction = introduction;
+	}
+
 	public boolean isComplete() {
 		return isComplete;
 	}

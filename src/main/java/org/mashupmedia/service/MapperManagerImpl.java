@@ -17,16 +17,15 @@
 
 package org.mashupmedia.service;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.FileWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
@@ -34,7 +33,6 @@ import org.mashupmedia.model.media.Song;
 import org.mashupmedia.remote.RemoteMusicLibrary;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.StringHelper;
-import org.mashupmedia.util.StringHelper.Encoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
@@ -45,21 +43,71 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MapperManagerImpl implements MapperManager {
 
+	javax.xml.bind.Marshaller jaxbMarshaller;
+	
 	@Autowired
 	private Marshaller marshaller;
 
 	@Autowired
 	private Unmarshaller unmarshaller;
+	
+//	private Marshaller marshaller;
+//	
+//	protected Marshaller getPartialMarshaller() throws JAXBException {
+//		if (marshaller != null) {
+//			return marshaller;
+//		}
+//		
+//		JAXBContext jaxbContext = JAXBContext.newInstance(RemoteMusicLibrary.class, Song.class);		
+//		javax.xml.bind.Marshaller marshaller = jaxbContext.createMarshaller();
+//		this.marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FRAGMENT, true);
+//		return marshaller;
+//	}
+	
+	
+	
 
 	@Override
-	public void convertSongsToXml(long libraryId, List<Song> songs) throws Exception {
-		if (songs == null || songs.isEmpty()) {
+	public void writeStartRemoteMusicLibraryXml(long libraryId) throws Exception {
+		File file = FileHelper.getLibraryXmlFile(libraryId);
+		XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
+		FileWriter writer = new  FileWriter(file, false);		
+		XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(writer);
+		streamWriter.writeStartDocument();
+		String startElement = StringHelper.formatFirstLetterToLowercase(RemoteMusicLibrary.class.getSimpleName());
+		streamWriter.writeStartElement(startElement);
+		writer.close();
+	}
+	
+	@Override
+	public void writeEndRemoteMusicLibraryXml(long libraryId) throws Exception {
+		File file = FileHelper.getLibraryXmlFile(libraryId);
+		XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
+		FileWriter writer = new  FileWriter(file, true);		
+		XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(writer);
+		streamWriter.writeEndElement();
+		streamWriter.writeEndDocument();		
+		writer.close();
+	}
+	
+	@Override
+	public void writeSongToXml(long libraryId, Song song) throws Exception {
+		if (song == null) {
 			return;
 		}
 
-		List<Song> clonedSongs = new ArrayList<Song>();
+//		List<Song> clonedSongs = new ArrayList<Song>();
 
-		for (Song song : songs) {
+		
+		
+		
+//		XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
+		
+//        XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(new FileOutputStream(file));
+        
+//        Marshaller marshaller = getPartialMarshaller();
+
+		
 
 			Song clonedSong = SerializationUtils.clone(song);
 			clonedSong.setId(0);
@@ -96,38 +144,63 @@ public class MapperManagerImpl implements MapperManager {
 			String albumFolderName = clonedAlbum.getFolderName();
 			clonedAlbum.setFolderName(StringHelper.escapeXml(albumFolderName));
 			clonedSong.setAlbum(clonedAlbum);
-
-			clonedSongs.add(clonedSong);
-		}
-
-		RemoteMusicLibrary remoteMusicLibrary = new RemoteMusicLibrary();
-		remoteMusicLibrary.setSongs(clonedSongs);
-
-		ByteArrayOutputStream outputStream = null;
-		try {
-			outputStream = new ByteArrayOutputStream();
-			marshaller.marshal(remoteMusicLibrary, new StreamResult(outputStream));
-			String xml = outputStream.toString(Encoding.UTF8.getEncodingString());
+			
+			
 			File file = FileHelper.getLibraryXmlFile(libraryId);
-			FileUtils.writeStringToFile(file, xml);
-		} finally {
-			outputStream.close();
-		}
+			
+			FileWriter writer = new FileWriter(file, true);
+			marshaller.marshal(clonedSong, new StreamResult(writer));
+			
+			
+//			FileWriter writer = new  FileWriter(file, true);
+			
+//			IOUtils.w
+
+//			clonedSongs.add(clonedSong);
+//		}
+		
+			
+			
+		writer.close();
+
+//		RemoteMusicLibrary remoteMusicLibrary = new RemoteMusicLibrary();
+//		remoteMusicLibrary.setSongs(clonedSongs);
+
+//		ByteArrayOutputStream outputStream = null;
+//		try {
+//			outputStream = new ByteArrayOutputStream();
+//			marshaller.marshal(remoteMusicLibrary, new StreamResult(outputStream));
+//			
+//			
+//			String xml = outputStream.toString(Encoding.UTF8.getEncodingString());
+//			File file = FileHelper.getLibraryXmlFile(libraryId);
+//			FileUtils.writeStringToFile(file, xml);
+//		} finally {
+//			outputStream.close();
+//		}
+		
+        
+		
+		
+		
 	}
 
+	
+	
 	@Override
 	public RemoteMusicLibrary convertXmltoRemoteMusicLibrary(String xml) throws Exception {
-		StringReader stringReader = new StringReader(xml);
-		RemoteMusicLibrary remoteMusicLibrary = (RemoteMusicLibrary) unmarshaller.unmarshal(new StreamSource(stringReader));
-		List<Song> songs = remoteMusicLibrary.getSongs();
-		for (Song song : songs) {
-			Album album = song.getAlbum();
-			Artist artist = song.getArtist();
-			album.setArtist(artist);
-			song.setAlbum(album);
-		}
-
-		return remoteMusicLibrary;
+		return null;
+//		StringReader stringReader = new StringReader(xml);
+//		RemoteMusicLibrary remoteMusicLibrary = (RemoteMusicLibrary) unmarshaller.unmarshal(new StreamSource(stringReader));
+//		List<Song> songs = remoteMusicLibrary.getSongs();
+//		for (Song song : songs) {
+//			Album album = song.getAlbum();
+//			Artist artist = song.getArtist();
+//			album.setArtist(artist);
+//			song.setAlbum(album);
+//		}
+//
+//		return remoteMusicLibrary;
 	}
 
 }

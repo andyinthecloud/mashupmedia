@@ -2,6 +2,7 @@ package org.mashupmedia.service;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -9,6 +10,7 @@ import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.datatype.Artwork;
+import org.mashupmedia.comparator.FileSizeComparator;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Album;
@@ -105,15 +107,28 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		} else {
 			File albumFolder = musicFile.getParentFile();
 			File[] imageFiles = albumFolder.listFiles(new FilenameFilter() {
-
 				@Override
-				public boolean accept(File file, String fileName) {
-					if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
+				public boolean accept(File dir, String name) {
+					FileHelper.getFileExtension(name);
+					if (FileHelper.isSupportedImage(name)) {
 						return true;
 					}
 					return false;
 				}
 			});
+			
+			Arrays.sort(imageFiles, new FileSizeComparator());
+			
+//			File[] imageFiles = albumFolder.listFiles(new FilenameFilter() {
+//
+//				@Override
+//				public boolean accept(File file, String fileName) {
+//					if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
+//						return true;
+//					}
+//					return false;
+//				}
+//			});
 
 			if (imageFiles == null || imageFiles.length == 0) {
 				return null;

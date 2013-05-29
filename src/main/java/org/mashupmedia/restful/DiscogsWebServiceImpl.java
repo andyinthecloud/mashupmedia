@@ -28,6 +28,7 @@ import org.springframework.web.util.UriUtils;
 @Service
 public class DiscogsWebServiceImpl implements DiscogsWebService {
 	private static final String PREPEND_CACHE_KEY_ARTIST = "artist_";
+	private static final int INTRODUCTION_MAX_LENGTH = 500;
 
 	private Logger logger = Logger.getLogger(getClass());
 
@@ -77,10 +78,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 		if (cachedRemoteMediaMetaItem != null) {
 			long seconds = (date.getTime() - cachedRemoteMediaMetaItem.getDate().getTime()) / 1000;
 			if (DEFAULT_CACHE_SECONDS > seconds) {
-//				remoteMediaMetaItems.add(cachedRemoteMediaMetaItem);
 				return cachedRemoteMediaMetaItem;
-//				remoteMediaMetaItems.set(i, cachedRemoteMediaMetaItem);
-//				continue;
 			}
 
 			remoteMediaCache.remove(cachedRemoteMediaMetaItem);
@@ -112,8 +110,6 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 	
 	protected void populateRemoteMediaMetaItems(List<RemoteMediaMetaItem> remoteMediaMetaItems) throws IOException {
 
-//		List<RemoteMediaMetaItem> remoteMediaMetaItems = new ArrayList<RemoteMediaMetaItem>();
-
 		for (int i = 0; i < remoteMediaMetaItems.size(); i++) {
 			RemoteMediaMetaItem remoteMediaMetaItem = remoteMediaMetaItems.get(i);
 			String discogsArtistId = remoteMediaMetaItem.getId();
@@ -127,27 +123,10 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 			
 			RemoteMediaMetaItem cachedRemoteMediaMetaItem = getRemoteMediaItemFromCache(cacheArtistKey, date);
 			if (cachedRemoteMediaMetaItem != null && cachedRemoteMediaMetaItem.isComplete()) {
-//				remoteMediaMetaItem = cachedRemoteMediaMetaItem;
 				remoteMediaMetaItems.set(i, cachedRemoteMediaMetaItem);
 				continue;
 			}
 			
-//			copyRemoteMediaItem(cachedRemoteMediaMetaItem, remoteMediaMetaItem);
-			
-			
-//			RemoteMediaMetaItem cachedRemoteMediaMetaItem = remoteMediaCache.get(cacheArtistKey);
-//			if (cachedRemoteMediaMetaItem != null) {
-//				long seconds = (date.getTime() - cachedRemoteMediaMetaItem.getDate().getTime()) / 1000;
-//				if (DEFAULT_CACHE_SECONDS > seconds) {
-////					remoteMediaMetaItems.add(cachedRemoteMediaMetaItem);
-//					remoteMediaMetaItems.set(i, cachedRemoteMediaMetaItem);
-//					continue;
-//				}
-//
-//				remoteMediaCache.remove(cachedRemoteMediaMetaItem);
-//
-//			}
-
 			String artistUrl = "http://api.discogs.com/artists/" + discogsArtistId;
 			logger.debug("Searching Discogs for artist information using url: " + artistUrl);
 			InputStream inputStream = connectionManager.connect(artistUrl);
@@ -174,11 +153,15 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 				profile = profile.replaceAll("(\r\n|\n\r|\r|\n)", "<br />");
 			}
 
-//			cachedRemoteMediaMetaItem = new RemoteMediaMeta();
-//			cachedRemoteMediaMetaItem.setId(discogsArtistId);
-			
-			
 			remoteMediaMetaItem.setProfile(profile);
+			
+			String introduction = profile.replaceAll("\\..*", "");
+			introduction += ".";
+			if (introduction.length() > INTRODUCTION_MAX_LENGTH) {
+				introduction = introduction.substring(0, INTRODUCTION_MAX_LENGTH) + "...";
+			}
+			remoteMediaMetaItem.setIntroduction(introduction);
+			
 			
 			List<RemoteImage> remoteImages = new ArrayList<RemoteImage>();
 			String imagesKey = "images";
