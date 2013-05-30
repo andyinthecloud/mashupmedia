@@ -34,7 +34,6 @@ import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
-import org.mashupmedia.remote.RemoteMusicLibrary;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,8 +105,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		Location location = musicLibrary.getLocation();
 		String remoteLibraryUrl = location.getPath();
 		String libraryXml = connectionManager.proceessRemoteLibraryConnection(remoteLibraryUrl);
-		RemoteMusicLibrary remoteMusicLibrary = mapperManager.convertXmltoRemoteMusicLibrary(libraryXml);
-		List<Song> songs = remoteMusicLibrary.getSongs();
+		List<Song> songs = mapperManager.convertXmltoSongs(libraryXml);
 		saveSongs(musicLibrary, songs);
 	}
 
@@ -123,6 +121,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		for (int i = 0; i < songs.size(); i++) {
 			Song song = songs.get(i);
+			
+			
 			song.setLibrary(musicLibrary);
 
 			String songPath = song.getPath();
@@ -135,6 +135,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				savedSong.setUpdatedOn(song.getUpdatedOn());
 				musicDao.saveSong(savedSong);
 				logger.info("Song is already in database, updated song date.");
+				writeSongToXml(libraryId, song);
 				continue;
 			}
 
@@ -201,12 +202,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			song.setSearchText(searchText);
 			
 			musicDao.saveSong(song, isSessionFlush);
-			
-			try {
-				mapperManager.writeSongToXml(musicLibrary.getId(), song);
-			} catch (Exception e) {
-				logger.error("Error writing song to xml", e);
-			}
+			writeSongToXml(libraryId, song);
+
+
 			
 			totalSongsSaved++;
 
@@ -217,6 +215,15 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 	
 
+	protected void writeSongToXml(long libraryId, Song song) {
+		try {
+			mapperManager.writeSongToXml(libraryId, song);
+		} catch (Exception e) {
+			logger.error("Error writing song to xml", e);
+		}
+
+	}
+	
 	private Genre prepareGenre(Genre genre) {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
 			return null;

@@ -15,25 +15,22 @@
  *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mashupmedia.remote;
+package org.mashupmedia.util;
 
+import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
-import org.mashupmedia.model.media.Song;
-
-@XmlRootElement
-public class RemoteMusicLibrary {
-
-	private List<Song> songs;
-
-	public List<Song> getSongs() {
-		return songs;
-	}
-
-	public void setSongs(List<Song> songs) {
-		this.songs = songs;
-	}
+public class XmlHelper {
+	
+	 public static void skipElements(XMLStreamReader reader, Integer... elements) throws XMLStreamException {
+	        int eventType = reader.getEventType();
+	        List<Integer> types =  Arrays.asList(elements);
+	        while (types.contains(eventType)) {
+	            eventType = reader.next();
+	        }
+	    }
 
 }

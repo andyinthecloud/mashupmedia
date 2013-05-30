@@ -106,35 +106,11 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 
 		} else {
 			File albumFolder = musicFile.getParentFile();
-			File[] imageFiles = albumFolder.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					FileHelper.getFileExtension(name);
-					if (FileHelper.isSupportedImage(name)) {
-						return true;
-					}
-					return false;
-				}
-			});
-			
-			Arrays.sort(imageFiles, new FileSizeComparator());
-			
-//			File[] imageFiles = albumFolder.listFiles(new FilenameFilter() {
-//
-//				@Override
-//				public boolean accept(File file, String fileName) {
-//					if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
-//						return true;
-//					}
-//					return false;
-//				}
-//			});
-
-			if (imageFiles == null || imageFiles.length == 0) {
+			File albumArtFile = getAlbumArtImageFile(albumFolder, albumArtImagePattern);
+			if (albumArtFile == null) {
 				return null;
 			}
 
-			File albumArtFile = imageFiles[0];
 			imagePath = albumArtFile.getAbsolutePath();
 			albumArtFileName = albumArtFile.getName();
 			contentType = FileHelper.getFileExtension(albumArtFileName);
@@ -145,6 +121,43 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		albumArtImage.setUrl(imagePath);
 		albumArtImage.setContentType(contentType);
 		return albumArtImage;
+	}
+
+	protected File getAlbumArtImageFile(File albumFolder, final String albumArtImagePattern) {
+		File[] imageFiles = albumFolder.listFiles(new FilenameFilter() {
+
+			@Override
+			public boolean accept(File file, String fileName) {
+				if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
+					return true;
+				}
+				return false;
+			}
+		});
+
+		if (imageFiles != null && imageFiles.length > 0) {
+			Arrays.sort(imageFiles, new FileSizeComparator());
+			return imageFiles[0];
+		}
+
+		imageFiles = albumFolder.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				FileHelper.getFileExtension(name);
+				if (FileHelper.isSupportedImage(name)) {
+					return true;
+				}
+				return false;
+			}
+		});
+
+		if (imageFiles != null && imageFiles.length > 0) {
+			Arrays.sort(imageFiles, new FileSizeComparator());
+			return imageFiles[0];
+		}
+
+		return null;
+
 	}
 
 	protected Artwork getArtwork(File musicFile) throws Exception {

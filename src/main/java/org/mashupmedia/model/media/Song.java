@@ -5,6 +5,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.search.annotations.Analyze;
@@ -19,6 +20,7 @@ import org.mashupmedia.util.WebHelper.MediaContentType;
 @Entity
 @Indexed
 @Cacheable
+@XmlRootElement
 public class Song extends MediaItem {
 
 	private static final long serialVersionUID = -8767965461920368852L;
