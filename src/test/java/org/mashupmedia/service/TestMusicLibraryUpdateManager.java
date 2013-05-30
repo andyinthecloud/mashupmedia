@@ -30,7 +30,6 @@ import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Song;
-import org.mashupmedia.remote.RemoteMusicLibrary;
 import org.mashupmedia.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -73,9 +72,7 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 		long totalSavedSongs = musicManager.getTotalSongsFromLibrary(musicLibrary.getId());
 
 		String libraryXml = FileUtils.readFileToString(file);
-		RemoteMusicLibrary remoteMusicLibrary;
-		remoteMusicLibrary = mapperManager.convertXmltoRemoteMusicLibrary(libraryXml);
-		List<Song> songs = remoteMusicLibrary.getSongs();
+		List<Song> songs = mapperManager.convertXmltoSongs(libraryXml);
 
 		Location location2 = new Location();
 		location2.setPath("http://remote");

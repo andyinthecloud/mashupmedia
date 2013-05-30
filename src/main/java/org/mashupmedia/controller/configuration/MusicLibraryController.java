@@ -59,8 +59,8 @@ public class MusicLibraryController extends BaseController {
 		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
 
-		Breadcrumb musicConfigurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.music"),
-				"/app/configuration/music-configuration");
+		Breadcrumb musicConfigurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.libraries"),
+				"/app/configuration/list-libraries");
 		breadcrumbs.add(musicConfigurationBreadcrumb);
 
 		Breadcrumb musicLibraryBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.musiclibrary"));
@@ -116,7 +116,7 @@ public class MusicLibraryController extends BaseController {
 
 		}
 
-		return "redirect:music-configuration";
+		return "redirect:list-libraries";
 	}
 
 	private void processSaveAction(MusicLibraryPage musicLibraryPage) {

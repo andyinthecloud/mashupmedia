@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.mashupmedia.model.library.MusicLibrary;
 
-public class MusicConfigurationPage {
+public class ListLibrariesPage {
 	private List<MusicLibrary> musicLibraries;
 
 	public List<MusicLibrary> getMusicLibraries() {
