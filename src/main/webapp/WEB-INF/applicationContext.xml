@@ -29,7 +29,7 @@
 		<property name="queueCapacity" value="50" />
 	</bean>
 
-	<tx:annotation-driven transaction-manager="transactionManager" />
+	<tx:annotation-driven transaction-manager="transactionManager" mode="aspectj" />
 
 	<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"> <property name="driverClassName" value="org.hsqldb.jdbcDriver" 
 		/> <property name="url" value="jdbc:hsqldb:file:${application.folder}/db" /> <property name="username" value="sa" /> <property name="password" value="" 
