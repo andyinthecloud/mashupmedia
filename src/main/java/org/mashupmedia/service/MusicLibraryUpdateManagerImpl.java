@@ -41,7 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager {
 	private final int BATCH_INSERT_ITEMS = 20;
 
@@ -79,7 +79,11 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	@Transactional (readOnly = true)
 	protected void deleteObsoleteSongs(long libraryId, Date date) {
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
-		deleteSongs(songsToDelete);
+		playlistDao.deletePlaylistMediaItems(songsToDelete);
+		musicDao.deleteObsoleteSongs(songsToDelete);
+		logger.info("Deleted or disabled " + songsToDelete.size() + " out of date songs.");
+		deleteEmpty();
+		logger.info("Cleaned library.");
 	}
 
 	@Override
@@ -111,7 +115,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs) {
 		if (songs == null || songs.isEmpty()) {
 			return;

@@ -17,7 +17,7 @@
 		<tiles.version>3.0.1</tiles.version>
 		<slf4j.version>1.7.5</slf4j.version>
 		<hsqldb.version>2.2.9</hsqldb.version>
-		<aspectj.version>1.7.2</aspectj.version>
+		<!--  aspectj.version>1.7.2</aspectj.version -->
 	</properties>
 
 	<dependencies>
@@ -110,11 +110,11 @@
 			<version>${spring.version}</version>
 		</dependency>
 
-		<dependency>
+		<!--   dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aspects</artifactId>
 			<version>${spring.version}</version>
-		</dependency>
+		</dependency -->
 
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -272,7 +272,7 @@
 			<classifier>jdk15</classifier>
 		</dependency>
 
-		<dependency>
+		<!--  dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 			<version>${aspectj.version}</version>
@@ -281,7 +281,7 @@
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 			<version>${aspectj.version}</version>
-		</dependency>
+		</dependency -->
 
 	</dependencies>
 

@@ -40,19 +40,23 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	private GroupDao groupDao;
 
 	@Override
-	public List<Album> getAlbums(List<Long> groupIds, String searchLetter, int pageNumber, int totalItems) {
+	public List<Album> getAlbums(List<Long> groupIds, String searchLetter,
+			int pageNumber, int totalItems) {
 
 		int firstResult = pageNumber * totalItems;
-		StringBuilder queryBuilder = new StringBuilder("select distinct a from Album a join a.songs s join s.library.groups g");
+		StringBuilder queryBuilder = new StringBuilder(
+				"select distinct a from Album a join a.songs s join s.library.groups g");
 		searchLetter = StringUtils.trimToEmpty(searchLetter);
 		if (StringUtils.isNotEmpty(searchLetter)) {
-			queryBuilder.append(" where a.indexLetter = '" + searchLetter.toLowerCase() + "'");
+			queryBuilder.append(" where a.indexLetter = '"
+					+ searchLetter.toLowerCase() + "'");
 		}
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 
 		queryBuilder.append(" order by indexText");
 
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setFirstResult(firstResult);
 		query.setMaxResults(totalItems);
 		query.setCacheable(true);
@@ -63,10 +67,12 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<String> getAlbumIndexLetters(List<Long> groupIds) {
-		StringBuilder queryBuilder = new StringBuilder("select distinct a.indexLetter from Album a join a.songs s join s.library.groups g");
+		StringBuilder queryBuilder = new StringBuilder(
+				"select distinct a.indexLetter from Album a join a.songs s join s.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by a.indexLetter");
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<String> indexLetters = query.list();
@@ -79,7 +85,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 				"select distinct a from Artist a join a.albums album join album.songs s join s.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by a.indexText");
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Artist> artists = (List<Artist>) query.list();
@@ -93,7 +100,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 				"select a from Artist a join a.albums as album join album.songs as s join s.library.groups as g where lower(a.name) = :name");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		query.setString("name", name.toLowerCase());
 		Artist artist = (Artist) query.uniqueResult();
@@ -101,15 +109,16 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public void deleteSongs(List<Song> songs) {
+	public void deleteObsoleteSongs(List<Song> songsToDelete) {
 		Set<Genre> genres = new HashSet<Genre>();
-		Date deleteDate = DateUtils.addDays(new Date(), -NUMBER_OF_DAYS_TO_KEEP_DISABLED_SONGS);
+		Date deleteDate = DateUtils.addDays(new Date(),
+				-NUMBER_OF_DAYS_TO_KEEP_DISABLED_SONGS);
 
-		for (Song song : songs) {
+		for (Song song : songsToDelete) {
 
 			Date updatedOn = song.getUpdatedOn();
 			if (deleteDate.after(updatedOn)) {
-				song.setEnabled(true);
+				song.setEnabled(false);
 				sessionFactory.getCurrentSession().merge(song);
 			} else {
 				Genre genre = song.getGenre();
@@ -124,13 +133,30 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		deleteEmptyGenres(genres);
 	}
 
+	@Override
+	public void deleteSongs(List<Song> songs) {
+		Set<Genre> genres = new HashSet<Genre>();
+		for (Song song : songs) {
+			Genre genre = song.getGenre();
+			if (genre != null) {
+				genres.add(genre);
+			}
+			sessionFactory.getCurrentSession().delete(song);
+		}
+
+		deleteEmptyGenres(genres);
+	}
+
 	private void deleteEmptyGenres(Set<Genre> genres) {
 		if (genres == null || genres.isEmpty()) {
 			return;
 		}
 
 		for (Genre genre : genres) {
-			Query query = sessionFactory.getCurrentSession().createQuery("select count(s.id) from Song s where s.genre.id = :genreId");
+			Query query = sessionFactory
+					.getCurrentSession()
+					.createQuery(
+							"select count(s.id) from Song s where s.genre.id = :genreId");
 			query.setCacheable(true);
 			query.setLong("genreId", genre.getId());
 			Long numberOfSongs = (Long) query.uniqueResult();
@@ -144,11 +170,13 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public Album getAlbum(List<Long> groupIds, String artistName, String albumName) {
+	public Album getAlbum(List<Long> groupIds, String artistName,
+			String albumName) {
 		StringBuilder queryBuilder = new StringBuilder(
 				"select a from Album a join a.songs s join s.library.groups g where lower(a.artist.name) = :artistName and lower(a.name) = :albumName");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		query.setString("artistName", artistName.toLowerCase());
 		query.setString("albumName", albumName.toLowerCase());
@@ -158,9 +186,11 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public Album getAlbum(List<Long> groupIds, long albumId) {
-		StringBuilder queryBuilder = new StringBuilder("select a from Album a join a.songs s join s.library.groups g where id = :id");
+		StringBuilder queryBuilder = new StringBuilder(
+				"select a from Album a join a.songs s join s.library.groups g where id = :id");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		query.setLong("id", albumId);
 		Album album = (Album) query.uniqueResult();
@@ -168,11 +198,13 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public Song getSong(List<Long> groupIds, long libraryId, String songPath, long songSizeInBytes) {
+	public Song getSong(List<Long> groupIds, long libraryId, String songPath,
+			long songSizeInBytes) {
 		StringBuilder queryBuilder = new StringBuilder(
 				"select distinct s from Song s inner join s.library.groups g where s.library.id = :libraryId and s.path = :path and s.sizeInBytes = :sizeInBytes");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		query.setLong("libraryId", libraryId);
 		query.setString("path", songPath);
@@ -193,7 +225,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<Song> getSongsToDelete(long libraryId, Date date) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Song where library.id = :libraryId and updatedOn < :updatedOn");
+		Query query = sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"from Song where library.id = :libraryId and updatedOn < :updatedOn");
 		query.setCacheable(true);
 		query.setLong("libraryId", libraryId);
 		query.setDate("updatedOn", date);
@@ -227,7 +262,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 			logger.debug("Flushed and cleared session.");
 		}
 
-		logger.debug("Saved song: " + artist.getName() + " - " + album.getName() + " - " + song.getTitle());
+		logger.debug("Saved song: " + artist.getName() + " - "
+				+ album.getName() + " - " + song.getTitle());
 	}
 
 	@Override
@@ -242,10 +278,12 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<Album> getRandomAlbums(List<Long> groupIds, int numberOfAlbums) {
-		StringBuilder queryBuilder = new StringBuilder("select a from Album a join a.songs s join s.library.groups g");
+		StringBuilder queryBuilder = new StringBuilder(
+				"select a from Album a join a.songs s join s.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by rand()");
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		@SuppressWarnings("unchecked")
 		List<Album> albums = query.setMaxResults(numberOfAlbums).list();
 		return albums;
@@ -253,7 +291,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public Year getYear(int year) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Year where year = :year");
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from Year where year = :year");
 		query.setCacheable(true);
 		query.setInteger("year", year);
 		Year album = (Year) query.uniqueResult();
@@ -262,7 +301,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public Genre getGenre(String name) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Genre where name = :name");
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from Genre where name = :name");
 		query.setCacheable(true);
 		query.setString("name", name);
 		Genre genre = (Genre) query.uniqueResult();
@@ -271,10 +311,12 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<Song> getSongs(List<Long> groupIds, Long albumId) {
-		StringBuilder queryBuilder = new StringBuilder("select s from Song s inner join s.library.groups g where s.album.id = :albumId ");
+		StringBuilder queryBuilder = new StringBuilder(
+				"select s from Song s inner join s.library.groups g where s.album.id = :albumId ");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by trackNumber");
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		query.setLong("albumId", albumId);
 
@@ -307,11 +349,13 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<Album> getAlbumsByArtist(List<Long> groupIds, long artistId) {
-		StringBuilder queryBuilder = new StringBuilder("select a from Album a join a.songs s join s.library.groups g where a.artist.id = :artistId ");
+		StringBuilder queryBuilder = new StringBuilder(
+				"select a from Album a join a.songs s join s.library.groups g where a.artist.id = :artistId ");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by a.name");
 
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		query.setLong("artistId", artistId);
 		@SuppressWarnings("unchecked")
@@ -325,7 +369,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 				"select distinct a.indexLetter from Artist a join a.albums album join album.songs s join s.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by indexLetter");
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<String> indexLetters = query.list();
@@ -337,7 +382,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		StringBuilder queryBuilder = new StringBuilder(
 				"select a from Artist a join a.albums album join album.songs s join s.library.groups g where id = :artistId");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		query.setLong("artistId", artistId);
 		Artist artist = (Artist) query.uniqueResult();
@@ -346,7 +392,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<Genre> getGenres() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Genre order by name");
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from Genre order by name");
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Genre> genres = query.list();
@@ -354,12 +401,14 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public List<Song> findSongs(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria) {
+	public List<Song> findSongs(List<Long> groupIds,
+			MediaItemSearchCriteria mediaItemSearchCriteria) {
 
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
 
-		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(Song.class).get();
+		QueryBuilder queryBuilder = fullTextSession.getSearchFactory()
+				.buildQueryBuilder().forEntity(Song.class).get();
 		@SuppressWarnings("rawtypes")
 		BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
 
@@ -367,15 +416,22 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		if (StringUtils.isNotBlank(searchWordsValue)) {
 			String[] searchWords = searchWordsValue.split("\\s");
 			for (String searchWord : searchWords) {
-				booleanJunction.must(queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord).createQuery());
+				booleanJunction.must(queryBuilder.keyword().wildcard()
+						.onField("searchText").matching(searchWord)
+						.createQuery());
 			}
 		}
 
-		String mediaTypeValue = StringHelper.normaliseTextForDatabase(MediaType.SONG.toString());
-		booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());
-		booleanJunction.must(queryBuilder.keyword().onField("enabled").matching(mediaItemSearchCriteria.isEnabled()).createQuery());
+		String mediaTypeValue = StringHelper
+				.normaliseTextForDatabase(MediaType.SONG.toString());
+		booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue")
+				.matching(mediaTypeValue).createQuery());
+		booleanJunction.must(queryBuilder.keyword().onField("enabled")
+				.matching(mediaItemSearchCriteria.isEnabled()).createQuery());
 		for (Long groupId : groupIds) {
-			booleanJunction.must(queryBuilder.keyword().onField("library.groups.id").matching(groupId).createQuery());
+			booleanJunction.must(queryBuilder.keyword()
+					.onField("library.groups.id").matching(groupId)
+					.createQuery());
 		}
 
 		// long libraryId = mediaItemSearchCriteria.getLibraryId();
@@ -383,27 +439,35 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		// booleanJunction.must(queryBuilder.keyword().onField("library.id").matching(libraryId).createQuery());
 		// }
 
-		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
-		org.hibernate.search.FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, Song.class);
+		org.apache.lucene.search.Query luceneQuery = booleanJunction
+				.createQuery();
+		org.hibernate.search.FullTextQuery query = fullTextSession
+				.createFullTextQuery(luceneQuery, Song.class);
 
 		boolean isReverse = !mediaItemSearchCriteria.isAscending();
 
-		Sort sort = new Sort(new SortField("displayTitle", SortField.STRING, isReverse));
-		MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaSortType();
+		Sort sort = new Sort(new SortField("displayTitle", SortField.STRING,
+				isReverse));
+		MediaSortType mediaSortType = mediaItemSearchCriteria
+				.getMediaSortType();
 		if (mediaSortType == MediaSortType.FAVOURITES) {
 			sort = new Sort(new SortField("vote", SortField.INT, isReverse));
 		} else if (mediaSortType == MediaSortType.LAST_PLAYED) {
-			sort = new Sort(new SortField("lastAccessed", SortField.LONG, isReverse));
+			sort = new Sort(new SortField("lastAccessed", SortField.LONG,
+					isReverse));
 		} else if (mediaSortType == MediaSortType.ALBUM_NAME) {
-			sort = new Sort(new SortField("album.indexText", SortField.STRING, isReverse));
+			sort = new Sort(new SortField("album.indexText", SortField.STRING,
+					isReverse));
 		} else if (mediaSortType == MediaSortType.ARTIST_NAME) {
-			sort = new Sort(new SortField("artist.indexText", SortField.STRING, isReverse));
+			sort = new Sort(new SortField("artist.indexText", SortField.STRING,
+					isReverse));
 		}
 
 		query.setSort(sort);
 
 		int maximumResults = mediaItemSearchCriteria.getMaximumResults();
-		int firstResult = mediaItemSearchCriteria.getPageNumber() * maximumResults;
+		int firstResult = mediaItemSearchCriteria.getPageNumber()
+				* maximumResults;
 		query.setFirstResult(firstResult);
 		query.setMaxResults(maximumResults);
 
@@ -416,8 +480,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public long getTotalSongsFromLibrary(long libraryId) {
-		StringBuilder queryBuilder = new StringBuilder("select count(s.id) from Song s where s.library.id = :libraryId ");
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		StringBuilder queryBuilder = new StringBuilder(
+				"select count(s.id) from Song s where s.library.id = :libraryId ");
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		query.setLong("libraryId", libraryId);
 		Long totalSongs = (Long) query.uniqueResult();

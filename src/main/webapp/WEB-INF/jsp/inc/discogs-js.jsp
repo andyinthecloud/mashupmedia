@@ -70,6 +70,17 @@
 	    });
 
 	});
+	
+	$("a.information-more").click(function() {
+		$("div.information div.introduction").hide();
+		$("div.information div.content").show();
+	});
+
+	$("a.information-less").click(function() {
+		$("div.information div.content").hide();
+		$("div.information div.introduction").show();
+	});	
+	
     });
 </script>
 

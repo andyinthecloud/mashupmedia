@@ -1,44 +1,39 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
-    $(document).ready(function() {
-	window.scrollTo(0, 0);
+	$(document).ready(function() {
+		window.scrollTo(0, 0);
 
-	$("#play-all").click(function() {
-	    var albumId = $(this).closest("ul").attr("id");
-	    albumId = albumId.replace("albumId-", "");
-	    mashupMedia.playAlbum(albumId);
-	});
+		$("#play-all").click(function() {
+			var albumId = $(this).closest("ul").attr("id");
+			albumId = albumId.replace("albumId-", "");
+			mashupMedia.playAlbum(albumId);
+		});
 
-	$("#add-all").click(function() {
-	    var albumId = $(this).closest("ul").attr("id");
-	    albumId = albumId.replace("albumId-", "");
-	    mashupMedia.appendAlbum(albumId);
-	});
+		$("#add-all").click(function() {
+			var albumId = $(this).closest("ul").attr("id");
+			albumId = albumId.replace("albumId-", "");
+			mashupMedia.appendAlbum(albumId);
+		});
 
-	$("ul.album-menu a.play").click(function() {
-	    var songId = $(this).closest("li").attr("id");
-	    songId = parseId(songId, "song-id");
-	    mashupMedia.playSong(songId);
-	});
+		$("ul.album-menu a.play").click(function() {
+			var songId = $(this).closest("li").attr("id");
+			songId = parseId(songId, "song-id");
+			mashupMedia.playSong(songId);
+		});
 
-	$("ul.album-menu a.add").click(function() {
-	    var songId = $(this).closest("li").attr("id");
-	    songId = parseId(songId, "song-id");
-	    mashupMedia.appendSong(songId);
-	});
+		$("ul.album-menu a.add").click(function() {
+			var songId = $(this).closest("li").attr("id");
+			songId = parseId(songId, "song-id");
+			mashupMedia.appendSong(songId);
+		});
 
-	$("h1 a").click(function() {
-	    fireRelLink(this);
-	});
-	
-	$("a.information-more").click(function() {
-	    var remoteHtml =  $("div.information .hide").html();
-	    $("div.information").html(remoteHtml);
-	});
-	
+		$("h1 a").click(function() {
+			fireRelLink(this);
+		});
 
-    });
+		
+	});
 </script>
 
 <jsp:include page="/WEB-INF/jsp/inc/discogs-js.jsp" />
@@ -62,10 +57,10 @@
 <div class="information">
 	<div class="introduction">
 		<c:out value="${albumPage.remoteMediaMetaItem.introduction}" escapeXml="false" />
-		<a href="javascript:;" class="information-more"><spring:message code="more" /></a>
+		<a href="javascript:;" class="information-more"> <spring:message code="more" /></a>
 	</div>
 
-	<div class="hide">
+	<div class="content hide">
 		<div class="profile">
 			<c:out value="${albumPage.remoteMediaMetaItem.profile}" escapeXml="false" />
 		</div>
@@ -78,15 +73,18 @@
 
 		<div class="discogs">
 			<spring:message code="music.artists.discogs" />
-			<a href="http://www.discogs.com" target="_blank"><img src="<c:url value="/images/discogs.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message code="music.artists.discogs.correct" /></a>
-
+			<a href="http://www.discogs.com" target="_blank"><img src="<c:url value="/images/discogs.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message
+					code="music.artists.discogs.correct" /></a>
+			<a href="javascript:;" class="information-less"> <spring:message code="less" /></a>
 		</div>
 	</div>
 </div>
 
 
 <div class="album-art">
-	<img src="<c:url value="/app/music/album-art/${albumPage.album.id}?thumb" />" title="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />" alt="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />" />
+	<img src="<c:url value="/app/music/album-art/${albumPage.album.id}?thumb" />"
+		title="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />"
+		alt="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />" />
 </div>
 
 <ul class="album-menu">

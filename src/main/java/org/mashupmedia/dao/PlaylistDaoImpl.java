@@ -157,7 +157,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			
 			for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
 				long playlistMediaItemId = playlistMediaItem.getId();				
-				Query userQuery = sessionFactory.getCurrentSession().createQuery("update User set playlistMediaItemId = null where playlistMediaItemId = :playlistMediaItemId");
+				Query userQuery = sessionFactory.getCurrentSession().createQuery("update User set playlistMediaItemId = 0 where playlistMediaItemId = :playlistMediaItemId");
 				userQuery.setLong("playlistMediaItemId", playlistMediaItemId);
 				userQuery.executeUpdate();
 				
@@ -180,7 +180,8 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		@SuppressWarnings("unchecked")
 		List<PlaylistMediaItem> playlistMediaItems = query.list();
 		int deletedItems = playlistMediaItems.size();
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {			
+			sessionFactory.getCurrentSession().delete(playlistMediaItem.getMediaItem());
 			sessionFactory.getCurrentSession().delete(playlistMediaItem);
 		}
 		logger.info("Deleted " + deletedItems + " playlistMediaItems");

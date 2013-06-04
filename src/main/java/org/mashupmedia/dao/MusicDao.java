@@ -61,5 +61,7 @@ public interface MusicDao {
 	public List<Song> findSongs(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria);
 
 	public long getTotalSongsFromLibrary(long libraryId);
+
+	public void deleteObsoleteSongs(List<Song> songsToDelete);
 	
 }
