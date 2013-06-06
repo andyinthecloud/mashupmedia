@@ -89,7 +89,7 @@
 		<property name="globalRollbackOnParticipationFailure" value="false" />
 	</bean>
 
-	<tx:annotation-driven />
+
 
 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames">
