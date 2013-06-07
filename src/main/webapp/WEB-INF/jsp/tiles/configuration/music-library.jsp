@@ -9,6 +9,12 @@
 	    var locationType = $(this).attr("value");
 	    showLocation(locationType);
 	});
+	
+	$("#remote-share-panel").on("click", "input.link", function() {
+		$(this).select();
+	});
+	
+	
 
 	$("#location div.check-location a").click(function() {
 	    var path = $("#folderLocation-path").val();
@@ -125,7 +131,8 @@
    		    	var remoteShare = item.remoteShare;
    			    remoteShareHtml += "<tr id=\"remote-share-" + remoteShare.id + "\">";
    			    remoteShareHtml += "<td><input type=\"checkbox\" /></td>";
-   			    remoteShareHtml += "<td>" + getHostUrl() + "app/remote-library/" + remoteShare.uniqueName + "</td>";
+   			    var link = getHostUrl() + "app/remote-library/" + remoteShare.uniqueName;
+   			    remoteShareHtml += "<td><input class=\"link\" type=\"text\" value=\"" + link + "\" /></td>";
    			    remoteShareHtml += "<td>" + remoteShare.remoteUrl + "</td>";
    			    remoteShareHtml += "<td>" + remoteShare.createdOn + "</td>";
    			    remoteShareHtml += "<td>" + remoteShare.lastAccessed + "</td>";
@@ -133,7 +140,7 @@
    			    remoteShareHtml += "<td>" + remoteShare.status + "</td>";			    
    			    remoteShareHtml += "</tr>";			    
    		    });
-   		       		    
+   		    
    		    $("#remote-share-panel table tbody").html(remoteShareHtml);
    		    
    		}
@@ -148,6 +155,7 @@
 	<form:errors path="*" cssClass="error-box" />
 	<form:hidden path="action" />
 	<form:hidden path="musicLibrary.id" />
+	<form:hidden path="musicLibrary.scanMinutesInterval" />
 
 	<label for="musicLibrary-name"><spring:message code="musiclibrary.name" /></label>
 	<form:input path="musicLibrary.name" id="musicLibrary-name" cssStyle="margin-bottom: 10px;" />
@@ -182,15 +190,13 @@
 	<form:checkboxes path="musicLibrary.groups" items="${groups}" itemLabel="name" itemValue="id" cssClass="checkboxes" delimiter="<br/>" />
 	<br />
 
-	<label class="new-line" for="musicLibrary-scanMinutesInterval"><spring:message code="musiclibrary.scanminutesinterval" /></label>
-	<form:input path="musicLibrary.scanMinutesInterval" />
 
 
 	<br />
 	<c:if test="${musicLibraryPage.isExists}">
 		<div class="new-line">
 
-			<input type="checkbox" id="remote-share" value="1"/> <label for="remote-share"><spring:message code="library.remote.enable" /></label> <br />
+			<input type="checkbox" id="remote-share" value="1" /> <label for="remote-share"><spring:message code="library.remote.enable" /></label> <br />
 			<fieldset id="remote-share-panel">
 				<legend>
 					<spring:message code="library.remote.title" />
@@ -224,7 +230,7 @@
 						<tr>
 							<td></td>
 							<td></td>
-							<td></td>name
+							<td></td>
 							<td></td>
 							<td></td>
 							<td></td>
@@ -240,10 +246,16 @@
 						<option value="">
 							<spring:message code="library.remote.connection.select-status" />
 						</option>
-						<option value="enabled"><spring:message code="library.remote.connection.status.enable"/></option>
-						<option value="disabled"><spring:message code="library.remote.connection.status.disable"/></option>
-						<option value="delete"><spring:message code="library.remote.connection.status.delete"/></option>
-						
+						<option value="enabled">
+							<spring:message code="library.remote.connection.status.enable" />
+						</option>
+						<option value="disabled">
+							<spring:message code="library.remote.connection.status.disable" />
+						</option>
+						<option value="delete">
+							<spring:message code="library.remote.connection.status.delete" />
+						</option>
+
 					</select> <input id="save-library-remote-connections" type="button" class="button" value="<spring:message code="library.remote.connection.button.save" />" />
 				</div>
 
@@ -255,7 +267,8 @@
 
 
 	<div class="button-panel">
-		<input class="button" name="save" type="submit" value="<spring:message code="action.save" />" /> <input class="button" name="delete" type="submit" value="<spring:message code="action.delete" />" />
+		<input class="button" name="save" type="submit" value="<spring:message code="action.save" />" /> <input class="button" name="delete" type="submit"
+			value="<spring:message code="action.delete" />" />
 	</div>
 </form:form>
 

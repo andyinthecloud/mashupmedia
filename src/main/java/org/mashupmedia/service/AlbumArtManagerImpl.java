@@ -137,7 +137,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 
 		if (imageFiles != null && imageFiles.length > 0) {
 			Arrays.sort(imageFiles, new FileSizeComparator());
-			return imageFiles[0];
+			return imageFiles[imageFiles.length - 1];
 		}
 
 		imageFiles = albumFolder.listFiles(new FilenameFilter() {

@@ -62,15 +62,15 @@ public class LibraryManagerImpl implements LibraryManager {
 		Date date = new Date();
 		long libraryId = library.getId();
 
-		List<RemoteShare> remoteShares = new ArrayList<RemoteShare>();
+		List<RemoteShare> remoteShares = library.getRemoteShares();
+		if (remoteShares == null) {
+			remoteShares = new ArrayList<RemoteShare>();
+		}
+		
 		if (libraryId == 0) {
 			library.setCreatedBy(user);
 			library.setCreatedOn(date);
-		} else {
-			Library savedLibrary = getLibrary(libraryId);
-			remoteShares = savedLibrary.getRemoteShares();
-		}
-		library.setRemoteShares(remoteShares);
+		} 
 
 		library.setUpdatedBy(user);
 		library.setUpdatedOn(date);
@@ -88,6 +88,7 @@ public class LibraryManagerImpl implements LibraryManager {
 				}
 			}
 		}
+		library.setRemoteShares(remoteShares);
 
 		libraryDao.saveLibrary(library);
 
