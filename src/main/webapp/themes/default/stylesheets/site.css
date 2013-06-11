@@ -815,3 +815,7 @@ div.textfield-with-button-panel input[type=text] {
 	width: 50%;
 }
 
+a.arrow-show-hide {
+	float: right; 	
+}
+

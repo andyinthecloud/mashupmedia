@@ -89,7 +89,6 @@
 		<spring:message code="music.artists.discogs" />
 		<a href="http://www.discogs.com" target="_blank"><img src="<c:url value="/images/discogs.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message
 				code="music.artists.discogs.correct" /></a>
-		<a href="javascript:;" class="information-less"> <spring:message code="less" /></a>
 	</div>	
 </div>
 

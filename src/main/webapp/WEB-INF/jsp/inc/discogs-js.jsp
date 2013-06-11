@@ -71,15 +71,19 @@
 
 	});
 	
-	$("a.information-more").click(function() {
-		$("div.information div.introduction").hide();
-		$("div.information div.content").show();
+	$("a.arrow-show-hide").click(function() {
+		
+		if ($("div.information div.introduction").is(":visible")) {
+			$("div.information div.introduction").hide();
+			$("div.information div.content").show();
+			
+		} else {
+			$("div.information div.introduction").show();
+			$("div.information div.content").hide();			
+		}
+		
 	});
-
-	$("a.information-less").click(function() {
-		$("div.information div.content").hide();
-		$("div.information div.introduction").show();
-	});	
+	
 	
     });
 </script>

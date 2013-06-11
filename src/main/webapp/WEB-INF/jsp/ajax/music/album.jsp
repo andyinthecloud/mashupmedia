@@ -56,11 +56,12 @@
 
 <div class="information">
 	<div class="introduction">
+		<a class="arrow-show-hide" href="javascript:;"><img src="<c:url value="${themePath}/images/controls/down.png"/>" /></a>
 		<c:out value="${albumPage.remoteMediaMetaItem.introduction}" escapeXml="false" />
-		<a href="javascript:;" class="information-more"> <spring:message code="more" /></a>
 	</div>
 
 	<div class="content hide">
+		<a class="arrow-show-hide" href="javascript:;"><img src="<c:url value="${themePath}/images/controls/up.png"/>" /></a>
 		<div class="profile">
 			<c:out value="${albumPage.remoteMediaMetaItem.profile}" escapeXml="false" />
 		</div>
@@ -74,8 +75,7 @@
 		<div class="discogs">
 			<spring:message code="music.artists.discogs" />
 			<a href="http://www.discogs.com" target="_blank"><img src="<c:url value="/images/discogs.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message
-					code="music.artists.discogs.correct" /></a>
-			<a href="javascript:;" class="information-less"> <spring:message code="less" /></a>
+					code="music.artists.discogs.correct" /></a>			
 		</div>
 	</div>
 </div>
