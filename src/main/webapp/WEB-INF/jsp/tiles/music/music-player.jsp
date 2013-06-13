@@ -57,6 +57,8 @@
 		    mashupMedia.playSong(mediaItemId);
 		});
 
+	    } else if (className == "no-encoder-found") {
+	    	window.location.href = "<c:url value="/app/configuration/encoding" />";
 	    }
 
 	});

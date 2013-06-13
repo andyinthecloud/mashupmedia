@@ -1,5 +1,7 @@
 package org.mashupmedia.dao;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.search.FullTextSession;
@@ -16,8 +18,14 @@ public class ConfigurationDaoImpl extends BaseDaoImpl implements ConfigurationDa
 	public Configuration getConfiguration(String key) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Configuration where key = :key");
 		query.setString("key", key);
-		query.setCacheable(true);
-		Configuration configuration = (Configuration) query.uniqueResult();
+		query.setCacheable(true);		
+		@SuppressWarnings("unchecked")
+		List<Configuration> configurations = query.list();
+		if (configurations == null || configurations.isEmpty()) {
+			return null;
+		}
+		
+		Configuration configuration = configurations.get(0);
 		return configuration;
 	}
 

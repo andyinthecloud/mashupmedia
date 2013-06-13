@@ -5,14 +5,14 @@
 		window.scrollTo(0, 0);
 
 		$("#play-all").click(function() {
-			var albumId = $(this).closest("ul").attr("id");
-			albumId = albumId.replace("albumId-", "");
+			var albumId = $(this).closest("div").attr("id");
+			albumId = albumId.replace("album-id-", "");
 			mashupMedia.playAlbum(albumId);
 		});
 
 		$("#add-all").click(function() {
-			var albumId = $(this).closest("ul").attr("id");
-			albumId = albumId.replace("albumId-", "");
+			var albumId = $(this).closest("div").attr("id");
+			albumId = albumId.replace("album-id-", "");
 			mashupMedia.appendAlbum(albumId);
 		});
 
@@ -32,7 +32,6 @@
 			fireRelLink(this);
 		});
 
-		
 	});
 </script>
 
@@ -44,7 +43,7 @@
 		<c:out value="${albumPage.album.name}" />
 	</h1>
 
-	<div class="control-menu" id="artist-id-<c:out value="${artistPage.artist.id}" />">
+	<div class="control-menu" id="album-id-<c:out value="${albumPage.album.id}" />">
 		<a id="play-all" class="play" href="javascript:;" title="<spring:message code="action.play" />"><span class="ui-icon ui-icon-play">&nbsp;</span></a>
 		<c:if test="${isPlaylistOwner}">
 			<a id="add-all" class="add" href="javascript:;" title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus">&nbsp;</span></a>
@@ -56,12 +55,12 @@
 
 <div class="information">
 	<div class="introduction">
-		<a class="arrow-show-hide" href="javascript:;"><img src="<c:url value="${themePath}/images/controls/down.png"/>" /></a>
+		<a class="arrow-show-hide" href="javascript:;"><img src="<c:url value="/images/arrow-down.png"/>" /></a>
 		<c:out value="${albumPage.remoteMediaMetaItem.introduction}" escapeXml="false" />
 	</div>
 
 	<div class="content hide">
-		<a class="arrow-show-hide" href="javascript:;"><img src="<c:url value="${themePath}/images/controls/up.png"/>" /></a>
+		<a class="arrow-show-hide" href="javascript:;"><img src="<c:url value="/images/arrow-up.png"/>" /></a>
 		<div class="profile">
 			<c:out value="${albumPage.remoteMediaMetaItem.profile}" escapeXml="false" />
 		</div>

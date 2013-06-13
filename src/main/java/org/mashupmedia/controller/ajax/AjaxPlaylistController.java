@@ -203,6 +203,7 @@ public class AjaxPlaylistController extends AjaxBaseController {
 		}
 
 		PlaylistHelper.replacePlaylist(playlist, mediaItems);
+		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
 
 		playlistName = StringUtils.trimToEmpty(playlistName);
 		if (StringUtils.isNotEmpty(playlistName)) {

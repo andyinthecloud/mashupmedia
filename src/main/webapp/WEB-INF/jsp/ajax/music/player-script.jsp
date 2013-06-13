@@ -25,8 +25,13 @@
 	    	    
 		$(mashupMedia.jPlayerId).jPlayer("destroy");		
 		var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";
+		
+		var songEncodeStatusType = "NOT-INSTALLED";
+		<c:if test="${isEncoderInstalled}" >
+			songEncodeStatusType = "${song.encodeStatusTypeValue}";
+		</c:if>
 
-		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, "${song.encodeStatusTypeValue}");
+		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, songEncodeStatusType);
 		
 		
 		var jPlayerStatus = "load";

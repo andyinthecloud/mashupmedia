@@ -116,11 +116,11 @@ public class PlaylistHelper {
 
 		User user = SecurityHelper.getLoggedInUser();
 		PlaylistMediaItem currentPlaylistMediaItem = user.getPlaylistMediaItem();
-		
+
 		int playingIndex = 0;
 		for (int i = 0; i < playlistMediaItems.size(); i++) {
 			PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(i);
-			if (playlistMediaItem.equals(currentPlaylistMediaItem) ) {
+			if (playlistMediaItem.equals(currentPlaylistMediaItem)) {
 				playingIndex = i;
 			}
 			playlistMediaItem.setPlaying(false);
@@ -131,7 +131,7 @@ public class PlaylistHelper {
 			playlistMediaItems.get(playingIndex).setPlaying(true);
 			return emptyPlaylistMediaItem;
 		}
-		
+
 		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(newPlayingIndex);
 		playlistMediaItem.setPlaying(true);
 		return playlistMediaItem;
@@ -141,19 +141,19 @@ public class PlaylistHelper {
 		if (playlist == null) {
 			return null;
 		}
-		
+
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
 			return null;
 		}
-				
+
 		return playlistMediaItems.get(0);
 	}
 
 	public static boolean canSavePlaylist(Playlist playlist) {
 		if (playlist == null) {
 			return false;
-		}				
+		}
 
 		User createdBy = playlist.getCreatedBy();
 		if (createdBy == null) {
@@ -163,11 +163,11 @@ public class PlaylistHelper {
 
 		User user = SecurityHelper.getLoggedInUser();
 		long userId = user.getId();
-		
+
 		if (createdById == userId) {
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -175,27 +175,27 @@ public class PlaylistHelper {
 		if (playlist == null) {
 			return;
 		}
-		
+
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
 			return;
 		}
-		
+
 		User user = SecurityHelper.getLoggedInUser();
 		if (user == null) {
 			return;
 		}
-		
-		PlaylistMediaItem userPlaylistMediaItem = user.getPlaylistMediaItem();		
+
+		PlaylistMediaItem userPlaylistMediaItem = user.getPlaylistMediaItem();
+		long userPlaylistMediaItemId = userPlaylistMediaItem.getMediaItem().getId();
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			if (playlistMediaItem.equals(userPlaylistMediaItem)) {
+			long playlistMediaItemId = playlistMediaItem.getMediaItem().getId();
+			if (playlistMediaItemId == userPlaylistMediaItemId) {
 				playlistMediaItem.setPlaying(true);
 				return;
 			}
 		}
-		
-		
-	}
 
+	}
 
 }

@@ -3,6 +3,7 @@ package org.mashupmedia.controller.ajax;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
@@ -16,6 +17,7 @@ import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.restful.DiscogsWebServiceImpl;
 import org.mashupmedia.service.AdminManager;
+import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
@@ -58,6 +60,8 @@ public class AjaxMusicController extends AjaxBaseController {
 
 	@Autowired
 	private DiscogsWebServiceImpl discogsWebService;
+	
+	private ConfigurationManager configurationManager;
 
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
 	public String getMusic(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
@@ -143,7 +147,11 @@ public class AjaxMusicController extends AjaxBaseController {
 		PlaylistMediaItem playlistMediaItem = new PlaylistMediaItem();
 		playlistMediaItem.setPlaylist(playlist);
 		playlistMediaItem.setMediaItem(mediaItem);
-
+		
+		boolean isEncoderInstalled = BooleanUtils.toBoolean(configurationManager
+				.getConfigurationValue(MashUpMediaConstants.IS_ENCODER_INSTALLED));
+		model.addAttribute(MashUpMediaConstants.IS_ENCODER_INSTALLED, isEncoderInstalled);
+		
 		MediaType mediaType = mediaItem.getMediaType();
 		if (mediaType == MediaType.SONG) {
 			Song song = (Song) mediaItem;

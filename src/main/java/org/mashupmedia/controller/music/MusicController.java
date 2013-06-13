@@ -12,12 +12,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
+import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.WebHelper;
-import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.web.Breadcrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,22 +36,27 @@ public class MusicController extends BaseController {
 
 	@Autowired
 	private MusicManager musicManager;
+
 	@Autowired
 	private ConnectionManager connectionManager;
+
 	@Autowired
 	private PlaylistManager playlistManager;
+
+	@Autowired
+	private ConfigurationManager configurationManager;
 
 	@Override
 	public String getPageTitleMessageKey() {
 		return "music.title";
 	}
-	
+
 	@Override
 	@ModelAttribute("isTransparentBackground")
 	public boolean isTransparentBackground() {
 		return false;
 	}
-	
+
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music");
@@ -63,6 +69,7 @@ public class MusicController extends BaseController {
 		model.addAttribute("ascending", true);
 		model.addAttribute("mediaType", "song");
 		model.addAttribute("searchWords", "");
+
 		return "music";
 	}
 
@@ -95,7 +102,8 @@ public class MusicController extends BaseController {
 		ModelAndView modelAndView = new ModelAndView(new View() {
 
 			@Override
-			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
+					throws Exception {
 				if (imageBytes == null || imageBytes.length == 0) {
 					response.sendRedirect(request.getContextPath() + "/images/no-album-art.png");
 					return;

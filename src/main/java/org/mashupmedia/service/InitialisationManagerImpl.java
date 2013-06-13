@@ -1,5 +1,7 @@
 package org.mashupmedia.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +13,7 @@ import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.util.AdminHelper;
+import org.mashupmedia.util.EncodeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +25,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 
 	@Autowired
 	private AdminManager adminManager;
-	
+
 	@Autowired
 	private ConfigurationManager configurationManager;
 
@@ -33,14 +36,38 @@ public class InitialisationManagerImpl implements InitialisationManager {
 			logger.info("Database has already been initialised. Exiting....");
 			return;
 		}
-		
+
 		initialiseUniqueInstallationName();
 		initialiseGroups();
 		initialiseAdminUserAndRoles();
+		initialiseEncoder();
+	}
+
+	private void initialiseEncoder() {
+		File ffMpegFile = EncodeHelper.findFFMpegExecutable();
+		if (ffMpegFile == null) {
+			configurationManager.saveConfiguration(MashUpMediaConstants.IS_ENCODER_INSTALLED,
+					Boolean.FALSE.toString());
+			return;
+		}
+
+		try {
+			boolean isValid = EncodeHelper.isValidFfMpeg(ffMpegFile);
+			if (isValid) {
+				configurationManager.saveConfiguration(MashUpMediaConstants.IS_ENCODER_INSTALLED,
+						Boolean.TRUE.toString());
+				return;
+			}
+		} catch (IOException e) {
+			logger.info("Error validating ffmpeg", e);
+		}
+
+		configurationManager.saveConfiguration(MashUpMediaConstants.IS_ENCODER_INSTALLED,
+				Boolean.FALSE.toString());
 	}
 
 	private void initialiseUniqueInstallationName() {
-		
+
 		StringBuilder uniqueNameBuilder = new StringBuilder();
 		uniqueNameBuilder.append(System.getenv("os.arch"));
 		uniqueNameBuilder.append(System.getenv("os.name"));
@@ -49,9 +76,10 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		uniqueNameBuilder.append(System.getenv("user.dir"));
 		uniqueNameBuilder.append(System.getenv("user.home"));
 		uniqueNameBuilder.append(System.getenv("user.name"));
-		
+
 		Date date = new Date();
-		String uniqueInstallationName = String.valueOf(date.getTime()) + String.valueOf(uniqueNameBuilder.toString().hashCode());
+		String uniqueInstallationName = String.valueOf(date.getTime())
+				+ String.valueOf(uniqueNameBuilder.toString().hashCode());
 		configurationManager.saveConfiguration(MashUpMediaConstants.UNIQUE_INSTALLATION_NAME, uniqueInstallationName);
 	}
 
@@ -73,15 +101,15 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		user.setName(DEFAULT_NAME);
 		user.setUsername(DEFAULT_USERNAME);
 		user.setPassword(DEFAULT_PASSWORD);
-		
+
 		user.setEnabled(true);
 		user.setEditable(false);
 		user.setRoles(roles);
-		
+
 		List<Group> groups = adminManager.getGroups();
-		user.setGroups(new HashSet<Group>(groups));		
+		user.setGroups(new HashSet<Group>(groups));
 		adminManager.saveUser(user);
-//		adminManager.updatePassword(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+		// adminManager.updatePassword(DEFAULT_USERNAME, DEFAULT_PASSWORD);
 	}
 
 	protected Set<Role> initialiseFirstRoles() {

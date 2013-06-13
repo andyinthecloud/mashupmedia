@@ -327,7 +327,9 @@ function getAudioEncodeStatus(encodeStatus) {
     
     var encodeMessage = "";
 		
-    if (encodeStatus == "PROCESSING") {
+	if (encodeStatus == "NOT-INSTALLED") {
+		encodeMessage = "<spring:message code="music.playlist.encode.not-installed" />";
+	} else if (encodeStatus == "PROCESSING") {
 	encodeMessage = "<spring:message code="music.playlist.encode.processing" />";			
     } else if (encodeStatus == "ENCODED") {
 	encodeMessage = "<spring:message code="music.playlist.encode.processed" />";
