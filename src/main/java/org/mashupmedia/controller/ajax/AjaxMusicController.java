@@ -61,6 +61,7 @@ public class AjaxMusicController extends AjaxBaseController {
 	@Autowired
 	private DiscogsWebServiceImpl discogsWebService;
 	
+	@Autowired
 	private ConfigurationManager configurationManager;
 
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)

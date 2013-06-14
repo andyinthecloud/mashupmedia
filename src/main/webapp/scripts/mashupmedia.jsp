@@ -298,7 +298,7 @@ var mashupMedia = new function() {
 		playlistName = unescape(playlistName);
 		
 		$("#current-song td.song-title .title").text(songTitle);	
-		$("#current-song td.song-title .artist-name").html("<a href=\"javascript:;\">" + artistName + "</a>");
+		$("#current-song td.song-title .artist-name").html("<a href=\"javascript:;\"  rel=\"address:address-artist-\" >" + artistName + "</a>");
 		if (isShowVoteButtons) {
 			$("#current-song .vote").show();	
 		} else {

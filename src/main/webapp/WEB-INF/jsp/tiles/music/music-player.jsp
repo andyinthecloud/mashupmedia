@@ -115,6 +115,13 @@
 	});
 
     });
+    
+    function getAlbumId() {
+    	var albumId = $("#current-song td.album-art img").attr("src");
+    	albumId = albumId.replace(/.*album-art-thumbnail\//, "");
+    	return albumId;
+    }
+    
 </script>
 
 
@@ -130,7 +137,7 @@
 					<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message code="top-bar.albums" /></a></li>
 					<li><a href="javascript:;" rel="address:/address-list-playlists"><spring:message code="top-bar.playlists" /></a></li>
 					<li><a href="javascript:;"><spring:message code="top-bar.my-account" /></a></li>
-					<li><a href="javascript:;"><spring:message code="top-bar.log-out" /></a></li>
+					<li><a href="<c:url value="/j_spring_security_logout" />"><spring:message code="top-bar.log-out" /></a></li>
 					<li><a href="http://www.mashupmedia.org;" target="_blank"><img title="Mashup Media" src="<c:url value="/images/mashupmedia-logo-inline.png" />" /></a></li>
 				</ul>
 			</td>
