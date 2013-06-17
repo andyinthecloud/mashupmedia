@@ -110,10 +110,12 @@
 	});
 
 
-	$("#current-song a").click(function() {
+	$("#current-song").on("click", "a", function() {
 	    fireRelLink(this);
 	});
 
+		
+	
     });
     
     function getAlbumId() {

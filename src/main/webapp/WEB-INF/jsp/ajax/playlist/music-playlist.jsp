@@ -4,144 +4,140 @@
 	var playlistSelectName = $("#playlist input[name=playlistSelectName]")
 			.val();
 
-	$(document)
-			.ready(
-					function() {
+	$(document).ready(function() {
 
-						$("#playlist table.songs tbody").sortable({
-							stop : function(event, ui) {
-							}
-						});
-						var playlistTable = $("#playlist table.songs")
-								.dataTable(
-										{
-											"bFilter" : false,
-											"oLanguage" : {
-												"sEmptyTable" : "<spring:message code="music.playlist.empty" />"
-											},
-											"aoColumnDefs" : [ {
-												"bSortable" : false,
-												"aTargets" : [ 0 ]
-											} ],
-											"bPaginate" : false,
-											"bAutoWidth" : false,
-											"bInfo" : false
-										});
+		$("#playlist table.songs tbody").sortable({
+			stop : function(event, ui) {
+			}
+		});
+		
+		var playlistTable = $("#playlist table.songs").dataTable({
+			"bFilter" : false,
+			"oLanguage" : {
+				"sEmptyTable" : "<spring:message code="music.playlist.empty" />"
+			},
+			"aoColumnDefs" : [ {
+				"bSortable" : false,
+				"aTargets" : [ 0 ]
+			} ],
+			"bPaginate" : false,
+			"bAutoWidth" : false,
+			"bInfo" : false
+		});
+	
+		$("#playlist table.songs td.controls a.delete").click(function() {
+			var songRow = $(this).closest("tr");
+			if ($(songRow).hasClass(
+					mashupMedia.playingClass)) {
+				mashupMedia.destroyPlayer();
+			}
+			$(this).closest("tr").remove();
+		});
+	
+		$("#playlist table.songs td.controls a.play").click(
+				function() {
+					$("table.songs tbody tr").removeClass(
+							mashupMedia.playingClass);
+					var songRow = $(this).closest("tr");
+					$(songRow).addClass(
+							mashupMedia.playingClass);
+					var mediaItemId = $(songRow).attr("id");
+					var mediaItemId = parseId(mediaItemId,
+							"playlist-media-id");
+					var playlistId = $(
+							"#playlist input[name=playlistId]")
+							.val();
+					mashupMedia.loadSongFromPlaylist(
+							playlistId, mediaItemId, true);
+				});
+	
+		$("#playlist-actions").change(
+				function() {
+					var action = $(this).val();
+					if (action == "") {
+						return;
+					}
+	
+					var isHidePlaylistFeatures = false;
+	
+					var playlistName = "${playlist.name}";
+					var playlistAction = "save";
+					if (action == "clear") {
+						mashupMedia.clearPlayer();
+						$("#playlist table.songs tbody tr")
+								.remove();
+					} else if (action == "change-name") {
+						$("#playlist h1").hide();
+						$("#playlist div.change-name").show();
+						playlistAction = "save";
+					} else if (action == "new") {
+						$("#playlist h1").hide();
+						$("#playlist div.change-name").show();
+						$("#playlist table.songs tbody tr")
+								.remove();
+						playlistName = playlistSelectName;
+						isHidePlaylistFeatures = true;
+						playlistAction = "new";
+					} else if (action == "save-as") {
+						$("#playlist h1").hide();
+						$("#playlist div.change-name").show();
+						playlistName = playlistSelectName;
+						playlistAction = "save-as";
+					} else if (action == "delete") {
+						playlistAction = "delete";
+					}
+	
+					$("#playlist input[name=playlistName]")
+							.val(playlistName);
+					$("#playlist input[name=playlistAction]")
+							.val(playlistAction);
+	
+					if (isHidePlaylistFeatures) {
+						$("#playlist table.songs").hide();
+						$("#play-playlist").hide();
+					} else {
+						$("#playlist table.songs").show();
+						$("#play-playlist").show();
+					}
+	
+				});
+	
+		$("#save-current-playlist").click(function() {
+			savePlaylist();
+		});
+	
+		$("#play-playlist").click(
+				function() {
+					var playlistId = $(
+							"#playlist input[name=playlistId]")
+							.val();
+					mashupMedia.loadPlaylist(playlistId);
+					mashupMedia.playNextSong();
+				});
+	
+		$("#playlist input[name=playlistName]").blur(
+				function() {
+					var playlistName = $.trim($(this).val());
+					if (playlistName.length == 0) {
+						$(this).val(playlistSelectName);
+					}
+				});
+	
+		$("#playlist input[name=playlistName]").focus(
+				function() {
+					var playlistName = $.trim($(this).val());
+					if (playlistName == playlistSelectName) {
+						$(this).val("");
+					}
+				});
+	
+		var playlistId = "${playlist.id}";
+		if (playlistId.length == 0 || isNaN(playlistId)) {
+			$("#playlist-actions").val("new")
+			$("#playlist-actions").trigger("change");
+		}
 
-						$("#playlist table.songs td.controls a.delete").click(
-								function() {
-									var songRow = $(this).closest("tr");
-									if ($(songRow).hasClass(
-											mashupMedia.playingClass)) {
-										mashupMedia.destroyPlayer();
-									}
-									$(this).closest("tr").remove();
-								});
-
-						$("#playlist table.songs td.controls a.play").click(
-								function() {
-									$("table.songs tbody tr").removeClass(
-											mashupMedia.playingClass);
-									var songRow = $(this).closest("tr");
-									$(songRow).addClass(
-											mashupMedia.playingClass);
-									var mediaItemId = $(songRow).attr("id");
-									var mediaItemId = parseId(mediaItemId,
-											"playlist-media-id");
-									var playlistId = $(
-											"#playlist input[name=playlistId]")
-											.val();
-									mashupMedia.loadSongFromPlaylist(
-											playlistId, mediaItemId, true);
-								});
-
-						$("#playlist-actions").change(
-								function() {
-									var action = $(this).val();
-									if (action == "") {
-										return;
-									}
-
-									var isHidePlaylistFeatures = false;
-
-									var playlistName = "${playlist.name}";
-									var playlistAction = "save";
-									if (action == "clear") {
-										mashupMedia.clearPlayer();
-										$("#playlist table.songs tbody tr")
-												.remove();
-									} else if (action == "change-name") {
-										$("#playlist h1").hide();
-										$("#playlist div.change-name").show();
-										playlistAction = "save";
-									} else if (action == "new") {
-										$("#playlist h1").hide();
-										$("#playlist div.change-name").show();
-										$("#playlist table.songs tbody tr")
-												.remove();
-										playlistName = playlistSelectName;
-										isHidePlaylistFeatures = true;
-										playlistAction = "new";
-									} else if (action == "save-as") {
-										$("#playlist h1").hide();
-										$("#playlist div.change-name").show();
-										playlistName = playlistSelectName;
-										playlistAction = "save-as";
-									} else if (action == "delete") {
-										playlistAction = "delete";
-									}
-
-									$("#playlist input[name=playlistName]")
-											.val(playlistName);
-									$("#playlist input[name=playlistAction]")
-											.val(playlistAction);
-
-									if (isHidePlaylistFeatures) {
-										$("#playlist table.songs").hide();
-										$("#play-playlist").hide();
-									} else {
-										$("#playlist table.songs").show();
-										$("#play-playlist").show();
-									}
-
-								});
-
-						$("#save-current-playlist").click(function() {
-							savePlaylist();
-						});
-
-						$("#play-playlist").click(
-								function() {
-									var playlistId = $(
-											"#playlist input[name=playlistId]")
-											.val();
-									mashupMedia.loadPlaylist(playlistId);
-									mashupMedia.playNextSong();
-								});
-
-						$("#playlist input[name=playlistName]").blur(
-								function() {
-									var playlistName = $.trim($(this).val());
-									if (playlistName.length == 0) {
-										$(this).val(playlistSelectName);
-									}
-								});
-
-						$("#playlist input[name=playlistName]").focus(
-								function() {
-									var playlistName = $.trim($(this).val());
-									if (playlistName == playlistSelectName) {
-										$(this).val("");
-									}
-								});
-
-						var playlistId = "${playlist.id}";
-						if (playlistId.length == 0 || isNaN(playlistId)) {
-							$("#playlist-actions").val("new")
-							$("#playlist-actions").trigger("change");
-						}
-
-					});
+	});
 
 	function savePlaylist() {
 

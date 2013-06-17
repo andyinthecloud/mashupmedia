@@ -31,7 +31,7 @@
 			songEncodeStatusType = "${song.encodeStatusTypeValue}";
 		</c:if>
 
-		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, songEncodeStatusType);
+		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, songEncodeStatusType, ${song.artist.id});
 		
 		
 		var jPlayerStatus = "load";

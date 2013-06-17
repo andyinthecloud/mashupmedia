@@ -139,7 +139,7 @@ var mashupMedia = new function() {
 			}, function(data) {
 				var playlistId = data.playlist.id;
 				var playlistName = data.playlist.name;				
-				mashupMedia.showSongInfo("", "", false, 0, 0, playlistName, playlistId, "");
+				mashupMedia.showSongInfo("", "", false, 0, 0, playlistName, playlistId, "", 0);
 			});
 			return;
 		}
@@ -279,10 +279,10 @@ var mashupMedia = new function() {
 	};
 	
 	this.showEmptySongInfo = function() {		
-		mashupMedia.showSongInfo("", "", false, 0, 0, "", 0, "");
+		mashupMedia.showSongInfo("", "", false, 0, 0, "", 0, "", 0);
 	};
 	
-	this.showSongInfo = function(songTitle, artistName, isShowVoteButtons, albumId, mediaItemId, playlistName, playlistId, encodeStatus) {		
+	this.showSongInfo = function(songTitle, artistName, isShowVoteButtons, albumId, mediaItemId, playlistName, playlistId, encodeStatus, artistId) {		
 		if (songTitle == "") {
 			songTitle = "<spring:message code="music.playlist.current-song.empty" />";
 		}
@@ -298,7 +298,7 @@ var mashupMedia = new function() {
 		playlistName = unescape(playlistName);
 		
 		$("#current-song td.song-title .title").text(songTitle);	
-		$("#current-song td.song-title .artist-name").html("<a href=\"javascript:;\"  rel=\"address:address-artist-\" >" + artistName + "</a>");
+		$("#current-song td.song-title .artist-name").html("<a href=\"javascript:;\"  rel=\"address:address-artist-" + artistId + "\" >" + artistName + "</a>");
 		if (isShowVoteButtons) {
 			$("#current-song .vote").show();	
 		} else {

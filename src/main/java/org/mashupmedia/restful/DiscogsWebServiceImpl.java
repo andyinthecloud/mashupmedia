@@ -88,21 +88,6 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 		return null;
 	}
 	
-//	protected void copyRemoteMediaItem(RemoteMediaMetaItem fromRemoteMediaMetaItem, RemoteMediaMetaItem toRemoteMediaMetaItem) {
-//		if (fromRemoteMediaMetaItem == null) {
-//			return;
-//		}
-//				
-//		String toName = toRemoteMediaMetaItem.getName();
-//		if (StringUtils.isNotBlank(toName)) {
-//			return;
-//		}
-//		
-//		String fromName = fromRemoteMediaMetaItem.getName();
-//		toRemoteMediaMetaItem.setName(fromName);
-//		
-//	}
-	
 	protected String prepareRemoteCacheKey(String discogsId) {
 		String cacheKey = PREPEND_CACHE_KEY_ARTIST + discogsId;
 		return cacheKey;
@@ -148,8 +133,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 			String profile = "";
 			if (jsonArtist.containsKey(profileKey)) {
 				profile = StringUtils.trimToEmpty(jsonArtist.getString(profileKey));
-				profile = profile.replaceAll("\\[.=", "");
-				profile = profile.replaceAll("\\]", "");
+				profile = profile.replaceAll("\\[.*?\\]", "");
 				profile = profile.replaceAll("(\r\n|\n\r|\r|\n)", "<br />");
 			}
 

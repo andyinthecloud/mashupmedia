@@ -151,7 +151,7 @@ public class PlaylistHelper {
 	}
 
 	public static boolean canSavePlaylist(Playlist playlist) {
-		if (playlist == null) {
+		if (playlist == null) {			
 			return false;
 		}
 

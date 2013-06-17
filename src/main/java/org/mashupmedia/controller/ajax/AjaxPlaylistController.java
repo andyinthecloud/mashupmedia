@@ -258,6 +258,7 @@ public class AjaxPlaylistController extends AjaxBaseController {
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, playlist.getId());
+
 		return "ajax/json/response";
 	}
 
@@ -297,6 +298,10 @@ public class AjaxPlaylistController extends AjaxBaseController {
 		model.addAttribute("playlist", playlist);
 
 		boolean canSavePlaylist = PlaylistHelper.canSavePlaylist(playlist);
+		if (playlistId == 0) {
+			canSavePlaylist = true;
+		}
+		
 		model.addAttribute("canSavePlaylist", canSavePlaylist);
 
 		WebContentType webFormatType = WebHelper.getWebFormatType(webFormatTypeValue);

@@ -5,7 +5,7 @@
 	$(document).ready(function() {
 		window.scrollTo(0, 0);
 
-		$("ul.main-menu a").click(function() {
+		$("div.action-buttons a, ul.main-menu li a").click(function() {
 			fireRelLink(this);
 		});
 
