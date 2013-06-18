@@ -112,10 +112,13 @@ public class AjaxPlaylistController extends AjaxBaseController {
 
 		PlaylistHelper.appendPlaylist(playlist, songs);
 		savePlaylist(playlist);
+		
 
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
-		return "ajax/json/response";
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		MediaItem mediaItem = playlistMediaItem.getMediaItem();
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
+		return "ajax/json/media-item";
 	}
 
 	@RequestMapping(value = "/play-album", method = RequestMethod.POST)
@@ -143,9 +146,11 @@ public class AjaxPlaylistController extends AjaxBaseController {
 		PlaylistHelper.appendPlaylist(playlist, songs);
 		savePlaylist(playlist);
 
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
-		return "ajax/json/response";
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		MediaItem mediaItem = playlistMediaItem.getMediaItem();
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
+		return "ajax/json/media-item";
 	}
 
 	@RequestMapping(value = "/play-song", method = RequestMethod.POST)
@@ -180,9 +185,11 @@ public class AjaxPlaylistController extends AjaxBaseController {
 		PlaylistHelper.appendPlaylist(playlist, song);
 		savePlaylist(playlist);
 
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_CODE, MashUpMediaConstants.MODEL_KEY_JSON_MESSAGE_SUCCESS);
-		return "ajax/json/response";
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		mediaItem = playlistMediaItem.getMediaItem();
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
+		return "ajax/json/media-item";
 	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)

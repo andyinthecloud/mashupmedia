@@ -10,9 +10,15 @@
 <title><spring:message code="page.title.prefix" /> <spring:message code="login.title" /></title>
 <!-- @LOGGED-OUT@ -->
 
+<script type="text/javascript">
+	function focusUsername() {
+		document.getElementById("j_username").focus();
+	}
+</script>
+
 
 </head>
-<body>
+<body onload="focusUsername()">
 	<input type="hidden" id="logged-out" value="true" />
 
 	<div id="login-panel" class="panel big-rounded-corners">
@@ -25,7 +31,7 @@
 				<tbody>
 					<tr>
 						<td><label><spring:message code="login.username" /></label></td>
-						<td><input type="text" value="" name="j_username"></td>
+						<td><input type="text" value="" name="j_username" id="j_username"></td>
 					</tr>
 					<tr>
 						<td><label><spring:message code="login.password" /></label></td>

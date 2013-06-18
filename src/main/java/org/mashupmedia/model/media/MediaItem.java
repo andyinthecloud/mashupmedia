@@ -100,35 +100,6 @@ public class MediaItem implements Serializable{
 	public MediaItem() {
 		this.enabled = true;
 	}
-	
-//	@Override
-//	protected Object clone() throws CloneNotSupportedException {
-//		
-//		SerializationUtils.
-//		
-//		MediaItem copyMediaItem = new MediaItem();
-//		copyMediaItem.displayTitle = displayTitle;
-//		copyMediaItem.enabled = enabled;
-//		copyMediaItem.encodeStatus = encodeStatus;
-//		copyMediaItem.fileName = fileName;
-//		copyMediaItem.format = format;
-//		copyMediaItem.id = id;
-//		copyMediaItem.lastAccessed = lastAccessed;
-//		copyMediaItem.lastAccessedBy = lastAccessedBy.clone();
-//		copyMediaItem.library = library.clone();		
-//		copyMediaItem.mediaTypeValue = mediaTypeValue;
-//		copyMediaItem.path = path;
-//		copyMediaItem.searchText = searchText;
-//		copyMediaItem.sizeInBytes = sizeInBytes;
-//		copyMediaItem.summary = summary;
-//		copyMediaItem.updatedOn = updatedOn;
-//		copyMediaItem.vote = vote;
-//		return copyMediaItem;
-//	}
-	
-	
-	
-	
 
 	public boolean isEnabled() {
 		return enabled;

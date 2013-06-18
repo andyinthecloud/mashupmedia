@@ -37,21 +37,6 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 	}
 
 	@Override
-	public void deleteMediaList(List<MediaItem> mediaItems) {
-
-//		 Query query =
-//		 sessionFactory.getCurrentSession().createQuery("delete MediaItem where library.id = :libraryId");
-//		 query.setLong("libraryId", libraryId);
-////		 query.setCacheable(true);
-//		 query.executeUpdate();
-
-		for (MediaItem mediaItem : mediaItems) {
-			sessionFactory.getCurrentSession().delete(mediaItem);
-		}
-
-	}
-
-	@Override
 	public void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages) {
 
 		for (AlbumArtImage albumArtImage : albumArtImages) {

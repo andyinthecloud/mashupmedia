@@ -34,7 +34,7 @@ public class Album implements Serializable {
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@XmlTransient
 	private Artist artist;
-	@ManyToOne(cascade = { CascadeType.ALL })
+	@ManyToOne(cascade = { CascadeType.ALL })	
 	@XmlTransient
 	private AlbumArtImage albumArtImage;
 	@OneToMany(mappedBy = "album")

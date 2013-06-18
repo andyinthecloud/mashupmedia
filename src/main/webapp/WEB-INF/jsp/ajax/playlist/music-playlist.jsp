@@ -51,58 +51,61 @@
 							playlistId, mediaItemId, true);
 				});
 	
-		$("#playlist-actions").change(
-				function() {
-					var action = $(this).val();
-					if (action == "") {
-						return;
-					}
+		$("#playlist-actions").change(function() {
+			var action = $(this).val();
+			if (action == "") {
+				return;
+			}
 	
-					var isHidePlaylistFeatures = false;
+			var isHidePlaylistFeatures = false;
 	
-					var playlistName = "${playlist.name}";
-					var playlistAction = "save";
-					if (action == "clear") {
-						mashupMedia.clearPlayer();
-						$("#playlist table.songs tbody tr")
-								.remove();
-					} else if (action == "change-name") {
-						$("#playlist h1").hide();
-						$("#playlist div.change-name").show();
-						playlistAction = "save";
-					} else if (action == "new") {
-						$("#playlist h1").hide();
-						$("#playlist div.change-name").show();
-						$("#playlist table.songs tbody tr")
-								.remove();
-						playlistName = playlistSelectName;
-						isHidePlaylistFeatures = true;
-						playlistAction = "new";
-					} else if (action == "save-as") {
-						$("#playlist h1").hide();
-						$("#playlist div.change-name").show();
-						playlistName = playlistSelectName;
-						playlistAction = "save-as";
-					} else if (action == "delete") {
-						playlistAction = "delete";
-					}
+			var playlistName = "${playlist.name}";
+			var playlistAction = "save";
+			if (action == "clear") {
+				$("#playlist table.songs tbody tr")
+						.remove();
+			} else if (action == "change-name") {
+				$("#playlist h1").hide();
+				$("#playlist div.change-name").show();
+				playlistAction = "save";
+			} else if (action == "new") {
+				$("#playlist h1").hide();
+				$("#playlist div.change-name").show();
+				$("#playlist table.songs tbody tr")
+						.remove();
+				playlistName = playlistSelectName;
+				isHidePlaylistFeatures = true;
+				playlistAction = "new";
+			} else if (action == "save-as") {
+				$("#playlist h1").hide();
+				$("#playlist div.change-name").show();
+				playlistName = playlistSelectName;
+				playlistAction = "save-as";
+			} else if (action == "delete") {
+				playlistAction = "delete";
+			}
 	
-					$("#playlist input[name=playlistName]")
-							.val(playlistName);
-					$("#playlist input[name=playlistAction]")
-							.val(playlistAction);
+			$("#playlist input[name=playlistName]")
+					.val(playlistName);
+			$("#playlist input[name=playlistAction]")
+					.val(playlistAction);
 	
-					if (isHidePlaylistFeatures) {
-						$("#playlist table.songs").hide();
-						$("#play-playlist").hide();
-					} else {
-						$("#playlist table.songs").show();
-						$("#play-playlist").show();
-					}
+			if (isHidePlaylistFeatures) {
+				$("#playlist table.songs").hide();
+				$("#play-playlist").hide();
+			} else {
+				$("#playlist table.songs").show();
+				$("#play-playlist").show();
+			}
 	
-				});
+		});
 	
 		$("#save-current-playlist").click(function() {
+			var action = $("#playlist-actions").val();
+			if (action == "clear") {
+				mashupMedia.clearPlayer();
+			}
+			
 			savePlaylist();
 		});
 	

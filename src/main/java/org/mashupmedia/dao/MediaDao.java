@@ -10,8 +10,6 @@ public interface MediaDao {
 
 	public List<MediaItem> getMedia(long libraryId);
 
-	public void deleteMediaList(List<MediaItem> mediaList);
-
 	public void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages);
 
 	public List<AlbumArtImage> getAlbumArtImages(long libraryId);

@@ -68,12 +68,9 @@ public class AjaxMusicController extends AjaxBaseController {
 	public String getMusic(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
 		List<Album> albums = musicManager.getRandomAlbums(TOTAL_RANDOM_ALBUMS);
 
-		boolean isShowTitle = true;
-		if (isAppend != null && isAppend) {
-			isShowTitle = false;
-		}
-
-		model.addAttribute("isShowTitle", isShowTitle);
+		
+		isAppend = BooleanUtils.toBoolean(isAppend);
+		model.addAttribute("isAppend", isAppend);
 		model.addAttribute("albums", albums);
 		return "ajax/music/random-albums";
 

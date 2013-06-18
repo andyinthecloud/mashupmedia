@@ -12,9 +12,6 @@ public interface MediaManager {
 
 	public MediaItem getMediaItem(long mediaItemId);
 
-	public void deleteMediaItems(List<MediaItem> mediaList);
-
-
 	public void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages);
 
 	public List<AlbumArtImage> getAlbumArtImages(long libraryId);

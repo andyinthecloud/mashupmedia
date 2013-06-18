@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class MediaManagerImpl implements MediaManager{
-	
+public class MediaManagerImpl implements MediaManager {
+
 	@Autowired
 	private MediaDao mediaDao;
-	
+
 	@Autowired
 	private SecurityManager securityManager;
 
@@ -26,7 +26,7 @@ public class MediaManagerImpl implements MediaManager{
 		List<MediaItem> mediaList = mediaDao.getMedia(libraryId);
 		return mediaList;
 	}
-	
+
 	@Override
 	public MediaItem getMediaItem(long mediaItemId) {
 		MediaItem mediaItem = mediaDao.getMediaItem(mediaItemId);
@@ -34,49 +34,39 @@ public class MediaManagerImpl implements MediaManager{
 	}
 
 	@Override
-	public void deleteMediaItems(List<MediaItem> mediaList) {
-		mediaDao.deleteMediaList(mediaList);		
-	}
-
-	@Override
 	public void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages) {
 		mediaDao.deleteAlbumArtImages(albumArtImages);
-		
+
 	}
-	
+
 	@Override
 	public List<AlbumArtImage> getAlbumArtImages(long libraryId) {
 		List<AlbumArtImage> albumArtImages = mediaDao.getAlbumArtImages(libraryId);
 		return albumArtImages;
 	}
-	
+
 	@Override
 	public void updateMediaItem(MediaItem mediaItem) {
 		mediaItem.setUpdatedOn(new Date());
 		mediaDao.updateMediaItem(mediaItem);
 	}
-	
+
 	@Override
 	public List<String> findAutoCompleteMediaItems(String searchWords) {
 		List<String> suggestionWords = mediaDao.findAutoCompleteMediaItems(searchWords);
 		return suggestionWords;
 	}
-	
+
 	@Override
 	public List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria) {
 		List<MediaItem> mediaItems = mediaDao.findMediaItems(mediaItemSearchCriteria);
 		return mediaItems;
 	}
-	
+
 	@Override
 	public void saveMediaItem(MediaItem mediaItem) {
-//		if (!securityManager.canAccessMediaItem(mediaItem)) {
-//			throw new UnauthorisedException("Logged in user unable to access media item: " + mediaItem.getId());
-//		}
-		
 		mediaItem.setUpdatedOn(new Date());
-		mediaDao.saveMediaItem(mediaItem);				
+		mediaDao.saveMediaItem(mediaItem);
 	}
-	
-	
+
 }

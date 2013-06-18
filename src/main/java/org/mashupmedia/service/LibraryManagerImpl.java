@@ -10,11 +10,8 @@ import org.hibernate.Hibernate;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.RemoteShare;
-import org.mashupmedia.model.media.AlbumArtImage;
-import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MediaType;
-import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.SecurityHelper;
@@ -66,11 +63,11 @@ public class LibraryManagerImpl implements LibraryManager {
 		if (remoteShares == null) {
 			remoteShares = new ArrayList<RemoteShare>();
 		}
-		
+
 		if (libraryId == 0) {
 			library.setCreatedBy(user);
 			library.setCreatedOn(date);
-		} 
+		}
 
 		library.setUpdatedBy(user);
 		library.setUpdatedOn(date);
@@ -116,38 +113,13 @@ public class LibraryManagerImpl implements LibraryManager {
 
 	@Override
 	public void deleteLibrary(Library library) {
-		long libraryId = library.getId();
-		playlistManager.deleteLibrary(libraryId);
-		deleteLibraryMediaItems(libraryId);
 		libraryDao.deleteLibrary(library);
-		FileHelper.deleteLibrary(libraryId);
-	}
-	
-	private void deleteLibraryMediaItems(long libraryId) {
-		List<MediaItem> mediaItems = mediaManager.getMediaItemsForLibrary(libraryId);
-		if (mediaItems == null || mediaItems.isEmpty()) {
-			return;
-		}
-		
-		deleteVotes(mediaItems);
-		MediaType mediaType = mediaItems.get(0).getMediaType();
-		if (mediaType == MediaType.SONG) {
-			@SuppressWarnings({ "unchecked", "rawtypes" })
-			List<Song> songs = (List) mediaItems;
-			musicLibraryUpdateManager.deleteSongs(songs);
-			List<AlbumArtImage> albumArtImages = mediaManager.getAlbumArtImages(libraryId);
-			mediaManager.deleteAlbumArtImages(albumArtImages);
+		if (library instanceof MusicLibrary) {
 			musicLibraryUpdateManager.deleteEmpty();
-		} else {
-			mediaManager.deleteMediaItems(mediaItems);
 		}
 
-	}
-
-	private void deleteVotes(List<MediaItem> mediaItems) {
-		for (MediaItem mediaItem : mediaItems) {
-			voteManager.deleteVotesForMediaItem(mediaItem.getId());
-		}
+		long libraryId = library.getId();
+		FileHelper.deleteLibrary(libraryId);
 	}
 
 	@Override
