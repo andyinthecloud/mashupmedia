@@ -1,6 +1,5 @@
 package org.mashupmedia.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -59,19 +58,15 @@ public class LibraryManagerImpl implements LibraryManager {
 		Date date = new Date();
 		long libraryId = library.getId();
 
-		List<RemoteShare> remoteShares = library.getRemoteShares();
-		if (remoteShares == null) {
-			remoteShares = new ArrayList<RemoteShare>();
-		}
-
 		if (libraryId == 0) {
 			library.setCreatedBy(user);
 			library.setCreatedOn(date);
-		}
+		} 
 
 		library.setUpdatedBy(user);
 		library.setUpdatedOn(date);
 
+		List<RemoteShare> remoteShares = library.getRemoteShares();
 		if (remoteShares != null) {
 			for (RemoteShare remoteShare : remoteShares) {
 				if (remoteShare.getId() == 0) {
@@ -85,7 +80,6 @@ public class LibraryManagerImpl implements LibraryManager {
 				}
 			}
 		}
-		library.setRemoteShares(remoteShares);
 
 		libraryDao.saveLibrary(library);
 

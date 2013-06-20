@@ -31,6 +31,7 @@ import org.mashupmedia.model.User;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MessageHelper;
+import org.mashupmedia.util.SecurityHelper;
 import org.mashupmedia.validator.EditUserPageValidator;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.EditUserPage;
@@ -89,6 +90,14 @@ public class EditUserController extends BaseController {
 		model.addAttribute("editUserPage", editUserPage);
 		return "configuration/administration/edit-user";
 	}
+	
+	@RequestMapping(value = "/account", method = RequestMethod.GET)
+	public String editAccount(Model model) {
+		User user = SecurityHelper.getLoggedInUser();
+		EditUserPage editUserPage = prepareEditUserPage(user);
+		model.addAttribute("editUserPage", editUserPage);
+		return "configuration/administration/edit-user";
+	}
 
 	@RequestMapping(value = "/add-user", method = RequestMethod.GET)
 	public String addUser(Model model) {
@@ -116,7 +125,14 @@ public class EditUserController extends BaseController {
 		String action = StringUtils.trimToEmpty(editUserPage.getAction());
 
 		if (action.equalsIgnoreCase("delete")) {
-			adminManager.deleteUser(user.getId());
+			long userId = user.getId();
+			adminManager.deleteUser(userId);
+			
+			long currentUserId = SecurityHelper.getLoggedInUser().getId();
+			if (userId == currentUserId) {
+				return "/j_spring_security_logout";
+			}
+			
 		} else {
 			adminManager.saveUser(user);
 		}
@@ -146,8 +162,11 @@ public class EditUserController extends BaseController {
 	protected EditUserPage prepareEditUserPage(User user) {
 		EditUserPage editUserPage = new EditUserPage();
 		editUserPage.setUser(user);
-		boolean isAdministrator = AdminHelper.isAdministrator(user);
+		
+		User currentUser = SecurityHelper.getLoggedInUser();
+		boolean isAdministrator = AdminHelper.isAdministrator(currentUser);
 		editUserPage.setAdministrator(isAdministrator);
+		
 		return editUserPage;
 	}
 

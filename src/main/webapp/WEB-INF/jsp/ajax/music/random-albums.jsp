@@ -18,7 +18,7 @@
 
 		
 		$("div.music-sub-panel").on("click", "div.albums div.album a", function() {
-			$.address.value($(this).attr('rel'));
+			fireRelLink(this);
 		});
 
 		$(window).scroll(function() {

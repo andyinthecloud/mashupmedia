@@ -8,7 +8,9 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.editor.GroupEditor;
 import org.mashupmedia.model.Group;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.MusicLibrary;
+import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.LibraryManager;
@@ -125,6 +127,14 @@ public class MusicLibraryController extends BaseController {
 		List<Group> groups = musicLibraryPage.getGroups();
 		if (groups != null) {
 			musicLibrary.setGroups(new HashSet<Group>(groups));							
+		}
+		
+		long libraryId = musicLibrary.getId();
+		if (libraryId > 0) {
+			// link the remote shares
+			Library savedLibrary = libraryManager.getLibrary(libraryId);
+			List<RemoteShare> remoteShares = savedLibrary.getRemoteShares();
+			musicLibrary.setRemoteShares(remoteShares);
 		}
 		
 		libraryManager.saveLibrary(musicLibrary);

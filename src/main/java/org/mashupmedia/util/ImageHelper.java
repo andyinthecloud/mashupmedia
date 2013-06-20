@@ -54,6 +54,7 @@ public class ImageHelper {
 
 		FileInputStream imageFileInputStream = new FileInputStream(imageFile);
 		Image image = ImageIO.read(imageFileInputStream);
+		
 		IOUtils.closeQuietly(imageFileInputStream);
 		
 		BufferedImage thumbnailImage = createThumbnail(image);
@@ -63,5 +64,5 @@ public class ImageHelper {
 		IOUtils.closeQuietly(thumbnailFileOutputStream);
 		return thumbnailFile.getAbsolutePath();
 	}
-
+	
 }

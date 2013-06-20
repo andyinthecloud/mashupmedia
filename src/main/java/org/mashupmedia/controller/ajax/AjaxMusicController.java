@@ -44,7 +44,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AjaxMusicController extends AjaxBaseController {
 
 	private final static int TOTAL_RANDOM_ALBUMS = 60;
-	private final static int TOTAL_ALBUMS = 30;
+//	private final static int TOTAL_ALBUMS = 30;
+	private final static int TOTAL_ALBUMS = 10;
 
 	@Autowired
 	private MusicManager musicManager;
@@ -67,13 +68,10 @@ public class AjaxMusicController extends AjaxBaseController {
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
 	public String getMusic(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
 		List<Album> albums = musicManager.getRandomAlbums(TOTAL_RANDOM_ALBUMS);
-
-		
 		isAppend = BooleanUtils.toBoolean(isAppend);
 		model.addAttribute("isAppend", isAppend);
 		model.addAttribute("albums", albums);
-		return "ajax/music/random-albums";
-
+		return "ajax/music/random-albums";		
 	}
 
 	@RequestMapping(value = "/album/{albumId}", method = RequestMethod.GET)
@@ -105,7 +103,7 @@ public class AjaxMusicController extends AjaxBaseController {
 
 	@RequestMapping(value = "/albums", method = RequestMethod.GET)
 	public String getAlbums(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-			@RequestParam(value = "searchLetter", required = false) String searchLetter, Model model) {
+			@RequestParam(value = "searchLetter", required = false) String searchLetter, @RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
 		AlbumsPage albumsPage = new AlbumsPage();
 		List<String> albumIndexLetters = musicManager.getAlbumIndexLetters();
 		albumsPage.setAlbumIndexLetters(albumIndexLetters);
@@ -116,6 +114,8 @@ public class AjaxMusicController extends AjaxBaseController {
 		List<Album> albums = musicManager.getAlbums(searchLetter, pageNumber, TOTAL_ALBUMS);
 		albumsPage.setAlbums(albums);
 		model.addAttribute(albumsPage);
+		model.addAttribute("isAppend", BooleanUtils.toBoolean(isAppend));
+		
 		return "ajax/music/albums";
 	}
 

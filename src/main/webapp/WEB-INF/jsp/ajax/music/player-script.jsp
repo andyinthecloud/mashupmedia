@@ -11,6 +11,10 @@
 
 
 <script type="text/javascript">
+
+
+
+
 	$(document).ready(function() {		
 	    $('#current-song .album-art a').address(function() {
 			var albumImageSrc = $(this).find("img").attr("src");
@@ -33,13 +37,10 @@
 
 		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, songEncodeStatusType, ${song.artist.id});
 		
-		
 		var jPlayerStatus = "load";
 		if (isAutoPlay) {
 			jPlayerStatus = "play";
 		}
-		
-		
 		
 		$(mashupMedia.jPlayerId).jPlayer({
 			ready: function (event) {
@@ -55,13 +56,6 @@
 				mashupMedia.playNextSong();				
 			},
 			preload: "auto"
-//			errorAlerts: true
-/*
-			error: function (event) {
-		        console.log(event.jPlayer.error);
-		        console.log(event.jPlayer.error.type);
-			}			
-*/			
 		});	
 		
 		

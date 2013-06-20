@@ -209,10 +209,6 @@
 					<a id="create-remote-link" class="button" href="javascript:;"><spring:message code="library.remote.button.create-link" /></a>
 				</div>
 
-				<div>
-					<spring:message code="library.remote.connections.title" />
-				</div>
-
 				<table>
 					<thead>
 						<tr>

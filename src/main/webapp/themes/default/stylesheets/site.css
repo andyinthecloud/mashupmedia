@@ -819,3 +819,20 @@ a.arrow-show-hide {
 	float: right; 	
 }
 
+div.panel fieldset table {
+	border-collapse: collapse;
+	margin: 5px 0;
+}
+
+
+div.panel fieldset table thead th{
+	text-align: left;
+	padding-right: 10px;
+	border-bottom:  2px solid #E3DEDE;
+}
+
+div.panel fieldset table tbody td{
+	padding: 5px 0;
+	border-bottom:  1px solid #E3DEDE;
+}
+

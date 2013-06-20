@@ -5,7 +5,7 @@
     var searchLetter = "";
     $(document).ready(function() {
 
-	//window.scrollTo(0, 0);
+	window.scrollTo(0, 0);
 
 	$("ul.items a").click(function() {
 	    fireRelLink(this);
@@ -62,11 +62,11 @@
 	var isAscending = "${isAscending}";
 	$("#order-ascending").val(isAscending);
 
-	$("#play-all").click(function() {
+	$("#songs-play-all").click(function() {
 	    mashupMedia.playSongSearchResults();
 	});
 
-	$("#add-all").click(function() {
+	$("#songs-add-all").click(function() {
 	    mashupMedia.appendSongSearchResults();
 	});
 
@@ -110,9 +110,9 @@
 		</h1>
 
 		<div class="control-menu" id="play-all">
-			<a id="play-all" class="play" href="javascript:;" title="<spring:message code="action.play" />"><span class="ui-icon ui-icon-play">&nbsp;</span></a>
+			<a id="songs-play-all" class="play" href="javascript:;" title="<spring:message code="action.play" />"><span class="ui-icon ui-icon-play">&nbsp;</span></a>
 			<c:if test="${isPlaylistOwner}">
-				<a id="add-all" class="add" href="javascript:;" title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus">&nbsp;</span></a>
+				<a id="songs-add-all" class="add" href="javascript:;" title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus">&nbsp;</span></a>
 			</c:if>
 		</div>
 

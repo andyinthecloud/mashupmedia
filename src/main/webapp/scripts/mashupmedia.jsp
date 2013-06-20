@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+
 var isLoadingContent = false;
 var currentPage = "";
 
@@ -12,6 +13,10 @@ var addressAlbum = "address-load-album";
 var addressArtist = "address-artist-";
 var addressListPlaylists = "address-list-playlists";
 var addressPlaylist = "address-playlist-";
+
+
+
+
 
 
 $(document).ready(function() {
@@ -487,7 +492,8 @@ function loadAlbums(isAppend) {
 	
 	$.get("<c:url value="/app/ajax/music/albums" />", {
 		"pageNumber" : mashupMedia.filterPageNumber,
-		"searchLetter": mashupMedia.filterAlbumsSearchLetter
+		"searchLetter": mashupMedia.filterAlbumsSearchLetter,
+		"isAppend": isAppend
 	}, function(data) {
 		if (isAppend) {
 			$("div.panel div.content").append(data);	
