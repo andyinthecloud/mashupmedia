@@ -44,8 +44,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AjaxMusicController extends AjaxBaseController {
 
 	private final static int TOTAL_RANDOM_ALBUMS = 60;
-//	private final static int TOTAL_ALBUMS = 30;
-	private final static int TOTAL_ALBUMS = 10;
+	private final static int TOTAL_ALBUMS = 60;
 
 	@Autowired
 	private MusicManager musicManager;
