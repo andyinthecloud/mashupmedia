@@ -8,16 +8,12 @@ var addressRandomAlbums = "address-random-albums";
 var addressQuickSearchMediaItems = "address-quick-search-media-items";
 var addressListArtists = "address-list-artists";
 var addressListAlbums = "address-list-albums";
+var addressListFilterAlbums = "address-filter-albums";
 var addressFilterAlbumsByLetter = "address-filter-albums-letter-";
 var addressAlbum = "address-load-album";
 var addressArtist = "address-artist-";
 var addressListPlaylists = "address-list-playlists";
 var addressPlaylist = "address-playlist-";
-
-
-
-
-
 
 $(document).ready(function() {
     
@@ -80,14 +76,7 @@ $(document).ready(function() {
 			loadArtist(artistId)
 		} else if (textStartsWith(address, addressQuickSearchMediaItems)) {		    	
 			mashupMedia.filterPageNumber = 0;
-						
-			/*
-			 * $("input[name=orderBy]").val(getURLParameter("orderBy"));
-			 * $("input[name=isAscending]").val(getURLParameter("isAscending"));
-			 * $("input[name=mediaType]").val(getURLParameter("mediaType"));
-			 * $("input[name=searchWords]").val(getURLParameter("searchWords"));
-			 */
-			
+			$("#quick-search input[name=genreId]").val("");
 			loadSongSearchResults(false);			
 		} else if (textStartsWith(address, addressListPlaylists)) {			
 			loadPlaylists();
@@ -469,9 +458,11 @@ function loadSongSearchResults(isAppend) {
 	isLoadingContent = true;
 
 	var serialisedSearchForm = $("#quick-search").serialize();
-
+	alert(serialisedSearchForm);
+	
 	$.post(mashupMedia.contextUrl + "app/ajax/search/media-items?" + serialisedSearchForm, {
-		"pageNumber" : mashupMedia.filterPageNumber
+		"pageNumber" : mashupMedia.filterPageNumber,
+		"isAppend" : isAppend
 	},	function(data) {
 		if (isAppend) {
 			$("div.panel div.content").append(data);	
@@ -573,7 +564,7 @@ function appendContentsOnScroll() {
 	
 	if (textStartsWith(currentPage, addressRandomAlbums) || currentPage == "") {
 	    loadRandomAlbums(true);
-	} else if (textStartsWith(currentPage, addressListAlbums)) {
+	} else if (textStartsWith(currentPage, addressListAlbums) || textStartsWith(currentPage, addressListFilterAlbums)) {
 	    loadAlbums(true);
 	} else if (textStartsWith(currentPage, addressQuickSearchMediaItems)) {
 	    loadSongSearchResults(true);    

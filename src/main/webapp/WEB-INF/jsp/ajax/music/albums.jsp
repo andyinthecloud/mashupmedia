@@ -38,10 +38,10 @@
 				mashupMedia.appendAlbum(albumId);
 			});
 			
-			$(window).scroll(function() {
+			$(window).scroll(function() {				
 				if ($("div.albums div.album").length == 0) {
 					return;
-				}
+				}				
 				appendContentsOnScroll();
 			});
 

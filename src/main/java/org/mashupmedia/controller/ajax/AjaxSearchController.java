@@ -2,6 +2,9 @@ package org.mashupmedia.controller.ajax;
 
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
@@ -49,9 +52,12 @@ public class AjaxSearchController extends AjaxBaseController {
 			@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
 			@RequestParam("searchWords") String searchWords,
 			@RequestParam(value = "orderBy", required = false) String orderBy,
-			@RequestParam(value = "ascending", required = false) Boolean isAscending,
+			@RequestParam(value = "isAscending", required = false) String isAscendingValue,
 			@RequestParam(value = "action", required = false) String action,
-			@RequestParam(value = "maximumResults", required = false) Integer maximumResults, Model model) {
+			@RequestParam(value = "maximumResults", required = false) Integer maximumResults, 
+			@RequestParam(value = "isAppend", required = false) String isAppendValue,			
+			@RequestParam(value = "genreId", required = false) String genreIdValue,
+			Model model) {
 
 		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
 
@@ -70,12 +76,16 @@ public class AjaxSearchController extends AjaxBaseController {
 		}
 		mediaItemSearchCriteria.setPageNumber(pageNumber);
 		mediaItemSearchCriteria.setSearchWords(searchWords);
-
-		if (isAscending == null) {
+		long genreId = NumberUtils.toLong(genreIdValue);
+		mediaItemSearchCriteria.setGenreId(genreId);
+		
+		boolean isAscending = BooleanUtils.toBoolean(isAscendingValue);
+		if (StringUtils.isBlank(isAscendingValue)) {
 			isAscending = true;
 		}
-
 		mediaItemSearchCriteria.setAscending(isAscending);
+		
+		
 
 		MediaSortType mediaSortType = MediaItemHelper.getMediaSortType(orderBy);
 		mediaItemSearchCriteria.setMediaSortType(mediaSortType);
@@ -89,13 +99,15 @@ public class AjaxSearchController extends AjaxBaseController {
 		}
 
 		ActionType actionType = WebHelper.getActionType(action);
-
-		String page = preparePage(model, actionType, pageNumber, songs, mediaSortType, mediaType, isAscending);
+		
+		boolean isAppend = BooleanUtils.toBoolean(isAppendValue); 
+		String page = preparePage(model, actionType, pageNumber, songs, mediaSortType, mediaType, isAscending, isAppend);
 		return page;
 	}
 
 	private String preparePage(Model model, ActionType actionType, int pageNumber,
-			List<? extends MediaItem> mediaItems, MediaSortType mediaSortType, MediaType mediaType, boolean isAscending) {
+			List<? extends MediaItem> mediaItems, MediaSortType mediaSortType, MediaType mediaType, boolean isAscending, boolean isAppend) {
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, isAppend);
 		if (actionType == ActionType.NONE) {
 			if (pageNumber == 0 && mediaItems.isEmpty()) {
 				return "ajax/search/no-results";
@@ -128,6 +140,7 @@ public class AjaxSearchController extends AjaxBaseController {
 		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
+		
 		return "ajax/json/media-item";
 	}
 }

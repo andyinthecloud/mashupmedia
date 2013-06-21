@@ -379,6 +379,9 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
+//		org.hibernate.Query fullTextQuery = fullTextSession.createFullTextQuery( luceneQuery );
+//		fullTextQuery = fullTextSession
+//			    .createFullTextQuery( luceneQuery, Item.class, Actor.class );
 
 		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(Song.class).get();
 		@SuppressWarnings("rawtypes")
@@ -397,6 +400,13 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());
 		booleanJunction.must(queryBuilder.keyword().onField("enabled").matching(mediaItemSearchCriteria.isEnabled())
 				.createQuery());
+
+		long genreId = mediaItemSearchCriteria.getGenreId();
+		if (genreId > 0) {
+			booleanJunction.must(queryBuilder.keyword().onField("genre.id").matching(genreId).createQuery());
+		}
+
+		
 		for (Long groupId : groupIds) {
 			booleanJunction.must(queryBuilder.keyword().onField("library.groups.id").matching(groupId).createQuery());
 		}
@@ -411,8 +421,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		boolean isReverse = !mediaItemSearchCriteria.isAscending();
 
-		Sort sort = new Sort(new SortField("displayTitle", SortField.STRING, isReverse));
+//		Sort sort = new Sort(new SortField("displayTitle", SortField.STRING, isReverse));
+		Sort sort = new Sort(new SortField("vote", SortField.INT, isReverse));
 		MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaSortType();
+		/*
 		if (mediaSortType == MediaSortType.FAVOURITES) {
 			sort = new Sort(new SortField("vote", SortField.INT, isReverse));
 		} else if (mediaSortType == MediaSortType.LAST_PLAYED) {
@@ -422,7 +434,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		} else if (mediaSortType == MediaSortType.ARTIST_NAME) {
 			sort = new Sort(new SortField("artist.indexText", SortField.STRING, isReverse));
 		}
-
+*/
 		query.setSort(sort);
 
 		int maximumResults = mediaItemSearchCriteria.getMaximumResults();
