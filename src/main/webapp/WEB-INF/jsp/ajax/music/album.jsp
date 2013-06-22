@@ -37,6 +37,8 @@
 
 <jsp:include page="/WEB-INF/jsp/inc/discogs-js.jsp" />
 
+<input type="hidden" id="discogs-artist-id" name="discogs-artist-id" value="${albumPage.album.artist.id}" />
+
 <div class="title-with-player-control">
 	<h1>
 		<a href="javascript:;" rel="address:/address-artist-${albumPage.album.artist.id}"><c:out value="${albumPage.album.artist.name}" /></a> -

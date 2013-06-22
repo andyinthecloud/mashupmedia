@@ -22,6 +22,7 @@ import org.mashupmedia.model.Group;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
@@ -406,10 +407,12 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 			booleanJunction.must(queryBuilder.keyword().onField("genre.id").matching(genreId).createQuery());
 		}
 
-		
+		@SuppressWarnings("rawtypes")
+		BooleanJunction<BooleanJunction> groupJunction = queryBuilder.bool();
 		for (Long groupId : groupIds) {
-			booleanJunction.must(queryBuilder.keyword().onField("library.groups.id").matching(groupId).createQuery());
+			groupJunction.should(queryBuilder.keyword().onField("library.groups.id").matching(groupId).createQuery());
 		}
+		booleanJunction.must(groupJunction.createQuery());
 
 		// long libraryId = mediaItemSearchCriteria.getLibraryId();
 		// if (libraryId > 0) {
@@ -417,14 +420,14 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		// }
 
 		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
-		org.hibernate.search.FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, Song.class);
+		org.hibernate.search.FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, Song.class, MediaItem.class);
 
 		boolean isReverse = !mediaItemSearchCriteria.isAscending();
 
-//		Sort sort = new Sort(new SortField("displayTitle", SortField.STRING, isReverse));
-		Sort sort = new Sort(new SortField("vote", SortField.INT, isReverse));
+		Sort sort = new Sort(new SortField("displayTitle", SortField.STRING, isReverse));
+//		Sort sort = new Sort(new SortField("lastAccessed", SortField.LONG, isReverse));
 		MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaSortType();
-		/*
+		
 		if (mediaSortType == MediaSortType.FAVOURITES) {
 			sort = new Sort(new SortField("vote", SortField.INT, isReverse));
 		} else if (mediaSortType == MediaSortType.LAST_PLAYED) {
@@ -434,7 +437,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		} else if (mediaSortType == MediaSortType.ARTIST_NAME) {
 			sort = new Sort(new SortField("artist.indexText", SortField.STRING, isReverse));
 		}
-*/
+
 		query.setSort(sort);
 
 		int maximumResults = mediaItemSearchCriteria.getMaximumResults();
@@ -444,7 +447,6 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		@SuppressWarnings("unchecked")
 		List<Song> songs = query.list();
-		// Collections.sort(mediaItems, new MediaItemComparator());
 
 		return songs;
 	}

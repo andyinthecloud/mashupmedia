@@ -5,7 +5,7 @@
 
 	$("div.information div.images .fancybox").fancybox();
 
-	$("div.information div.discogs a.incorrect").click(function() {
+	$("div.music-sub-panel").on("click", "div.information div.discogs a.incorrect", function() {
 	    $("#discogs-dialog").dialog();
 	    $("#discogs-dialog input[type=text]").blur();
 	});
@@ -46,8 +46,7 @@
 	$("#discogs-dialog ul.search-results").on("click", "li a", function(event) {
 	    var discogsId = $(this).attr("id");
 	    discogsId = parseId(discogsId, "search-results-discogs-id");
-	    var artistId = $(this).closest("ul").attr("id");
-	    artistId = parseId(artistId, "search-results-artist-id");
+	    var artistId = $("#discogs-artist-id").val();
 	    $.post("<c:url value="/app/ajax/discogs/save-artist" />", {
 		discogsId : discogsId,
 		artistId : artistId
@@ -86,12 +85,27 @@
 	
 	
     });
+    
+    function prepareImageUrl(imageUrl) {
+    	imageUrl = $.trim(imageUrl);
+    	if (imageUrl.length == 0) {
+    	    return "";
+    	}
+
+    	if (imageUrl.indexOf("/") == 0) {
+    	    imageUrl = imageUrl.substring(1);
+    	}
+
+    	imageUrl = "<c:url value="/" />" + imageUrl;
+    	return imageUrl;
+
+	}
 </script>
 
 <div id="discogs-dialog" class="dialog" title="Search Discogs for artist information">
 	<p>
 		<input type="text" name="name" class="search-field" value="<spring:message code="music.artists.discogs.search" />" /><input type="button" value="Search" />
-	<ul class="search-results" id="search-results-artist-id-${artistPage.artist.id}">
+	<ul class="search-results">
 
 	</ul>
 

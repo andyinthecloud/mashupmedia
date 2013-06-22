@@ -42,23 +42,12 @@
 
     });
 
-    function prepareImageUrl(imageUrl) {
-	imageUrl = $.trim(imageUrl);
-	if (imageUrl.length == 0) {
-	    return "";
-	}
 
-	if (imageUrl.indexOf("/") == 0) {
-	    imageUrl = imageUrl.substring(1);
-	}
-
-	imageUrl = "<c:url value="/" />" + imageUrl;
-	return imageUrl;
-
-    }
 </script>
 
 <jsp:include page="/WEB-INF/jsp/inc/discogs-js.jsp" />
+
+<input type="hidden" id="discogs-artist-id" name="discogs-artist-id" value="${artistPage.artist.id}" />
 
 <div class="title-with-player-control">
 	<h1>${artistPage.artist.name}</h1>

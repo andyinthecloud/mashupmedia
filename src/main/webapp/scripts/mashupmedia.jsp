@@ -458,7 +458,6 @@ function loadSongSearchResults(isAppend) {
 	isLoadingContent = true;
 
 	var serialisedSearchForm = $("#quick-search").serialize();
-	alert(serialisedSearchForm);
 	
 	$.post(mashupMedia.contextUrl + "app/ajax/search/media-items?" + serialisedSearchForm, {
 		"pageNumber" : mashupMedia.filterPageNumber,
