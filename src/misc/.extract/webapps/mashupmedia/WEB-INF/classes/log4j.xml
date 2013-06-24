@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{ISO8601}] %5p [%t]%x(%C:%L) - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="C:\\andy\\development\\servers\\apache-tomcat-7.0.22/logs/mashupmedia.log" />
+		<param name="MaxBackupIndex" value="10" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="5120KB" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{ISO8601}] %5p [%t]%x(%C:%L) - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="hibernateFileAppender" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="C:\\andy\\development\\servers\\apache-tomcat-7.0.22/logs/mashupmedia_hbm.log" />
+		<param name="MaxBackupIndex" value="10" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="5120KB" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{ISO8601}] %5p [%t]%x(%C:%L) - %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="org.hibernate" additivity="false">
+		<level value="error" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+
+	<logger name="org.mashupmedia" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+
+	<logger name="org.jaudiotagger" additivity="false">
+		<level value="error" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+	
+	
+	<logger name="org.hibernate.SQL">
+		<level value="info" />
+		<appender-ref ref="hibernateFileAppender" />
+	</logger>
+
+
+	<logger name="org.hibernate.type">
+		<level value="info" />
+		<appender-ref ref="hibernateFileAppender" />
+	</logger>
+	
+
+	<logger name="org.hsqldb" additivity="false">
+		<level value="info" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+
+ 	
+	<logger name="org.springframework.context.support.ResourceBundleMessageSource" additivity="false">
+		<level value="error" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+
+
+	<root>
+		<priority value="info" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</root>
+
+</log4j:configuration>

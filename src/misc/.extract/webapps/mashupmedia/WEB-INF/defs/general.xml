@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+       
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+       
+<tiles-definitions>
+
+	<definition name="home" template="/WEB-INF/jsp/layouts/default.jsp">
+		<put-attribute name="bodyClass" value="default" />
+		<put-attribute name="topBar" value="/WEB-INF/jsp/tiles/top-bar.jsp" />
+		<put-attribute name="backgroundImageType" value="default" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/home.jsp" />
+	</definition>
+
+	<definition name="configuration" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration.jsp" />
+	</definition>
+
+	<definition name="configuration/network" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/network.jsp" />
+	</definition>
+
+	<definition name="configuration/encoding" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/encoding.jsp" />
+	</definition>
+
+	<definition name="configuration/list-libraries" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/list-libraries.jsp" />
+	</definition>
+
+	<definition name="configuration/list-remote-libraries" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/list-remote-libraries.jsp" />
+	</definition>
+
+	<definition name="configuration/edit-remote-library" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/edit-remote-library.jsp" />
+	</definition>
+
+	<definition name="configuration/url-error-remote-library" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/url-error-remote-library.jsp" />
+	</definition>
+
+	<definition name="configuration/music-library" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/music-library.jsp" />
+	</definition>
+
+	<definition name="configuration/administration/list-users" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/list-users.jsp" />
+	</definition>
+
+	<definition name="configuration/administration/edit-user" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
+	</definition>
+
+	<definition name="configuration/administration/list-groups" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/list-groups.jsp" />
+	</definition>
+
+	<definition name="configuration/administration/edit-group" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/edit-group.jsp" />
+	</definition>
+
+	<definition name="configuration/administration/new-user" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
+	</definition>
+
+	<definition name="music.panel" template="/WEB-INF/jsp/layouts/music-panel.jsp">
+		<put-attribute name="body" value="" />
+	</definition>
+
+	<definition name="music" extends="home">
+		<put-attribute name="bodyClass" value="music" />
+		<put-attribute name="topBar" value="/WEB-INF/jsp/tiles/music/music-player.jsp" />
+		<put-attribute name="backgroundImageType" value="music" />
+		<put-attribute name="body">
+			<definition extends="music.panel">
+				<put-attribute name="body" value="/WEB-INF/jsp/tiles/music/music.jsp" />
+			</definition>
+		</put-attribute>
+	</definition>
+
+	<!-- <definition name="music/artists" extends="home"> <put-attribute name="title" value="Mashup Media | Music | Artists" /> <put-attribute name="body"> <definition 
+		extends="music.panel"> <put-attribute name="body" value="/WEB-INF/jsp/tiles/music/artists.jsp" /> </definition> </put-attribute> </definition> <definition 
+		name="music/albums" extends="home"> <put-attribute name="title" value="Mashup Media | Music | Albums" /> <put-attribute name="body"> <definition extends="music.panel"> 
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/music/albums.jsp" /> </definition> </put-attribute> </definition> <definition name="music/album" extends="home"> 
+		<put-attribute name="title" value="Mashup Media | Music | Albums" /> <put-attribute name="body"> <definition extends="music.panel"> <put-attribute name="body" 
+		value="/WEB-INF/jsp/tiles/music/album.jsp" /> </definition> </put-attribute> </definition> -->
+
+</tiles-definitions>

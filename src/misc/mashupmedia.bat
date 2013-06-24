@@ -1,0 +1,1 @@
+java -jar ../../target/mashupmedia.jar -httpPort 8081
