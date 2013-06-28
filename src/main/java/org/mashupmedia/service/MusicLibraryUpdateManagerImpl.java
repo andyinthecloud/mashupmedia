@@ -64,19 +64,19 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Autowired
 	private GroupDao groupDao;
-	
+
 	@Autowired
 	private AdminManager adminManager;
-		
 
 	private MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
 		LogManager.getLogManager().reset();
-		java.util.logging.Logger globalLogger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
-		globalLogger.setLevel(java.util.logging.Level.OFF);			
+		java.util.logging.Logger globalLogger = java.util.logging.Logger
+				.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
+		globalLogger.setLevel(java.util.logging.Level.OFF);
 	}
 
-	@Transactional (readOnly = true)
+	@Transactional(readOnly = true)
 	protected void deleteObsoleteSongs(long libraryId, Date date) {
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
 		playlistDao.deletePlaylistMediaItems(songsToDelete);
@@ -127,13 +127,14 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		for (int i = 0; i < songs.size(); i++) {
 			Song song = songs.get(i);
-			
-			
+
 			song.setLibrary(musicLibrary);
 
 			String songPath = song.getPath();
-			long songSizeInBytes = song.getSizeInBytes();
-			Song savedSong = musicDao.getSong(groupIds, libraryId, songPath, songSizeInBytes);
+			File file = new File(songPath);
+			long fileLastModifiedOn = file.lastModified();
+			song.setFileLastModifiedOn(fileLastModifiedOn);
+			Song savedSong = musicDao.getSong(groupIds, libraryId, songPath, fileLastModifiedOn);
 
 			if (savedSong != null) {
 				long savedSongId = savedSong.getId();
@@ -206,12 +207,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			searchText = searchText.replaceAll("\\s*\\b", " ");
 			searchText = StringHelper.normaliseTextForDatabase(searchText);
 			song.setSearchText(searchText);
-			
+
 			musicDao.saveSong(song, isSessionFlush);
 			writeSongToXml(libraryId, song);
 
-
-			
 			totalSongsSaved++;
 
 		}
@@ -219,7 +218,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		logger.info("Saved " + totalSongsSaved + " songs.");
 
 	}
-	
 
 	protected void writeSongToXml(long libraryId, Song song) {
 		try {
@@ -229,7 +227,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 
 	}
-	
+
 	@Transactional(readOnly = true)
 	private Genre prepareGenre(Genre genre) {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
@@ -272,15 +270,16 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		List<Song> songs = new ArrayList<Song>();
 		long libraryId = musicLibrary.getId();
 		mapperManager.writeStartRemoteMusicLibraryXml(libraryId);
-		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);		
+		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
 		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
-		
+
 		deleteObsoleteSongs(libraryId, date);
-//		mapperManager.convertSongsToXml(libraryId, songs);		
+		// mapperManager.convertSongsToXml(libraryId, songs);
 	}
-	
-	protected void prepareSongs(Date date, List<Song> songs, File folder, MusicLibrary musicLibrary, String folderArtistName, String folderAlbumName)
-			throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
+
+	protected void prepareSongs(Date date, List<Song> songs, File folder, MusicLibrary musicLibrary,
+			String folderArtistName, String folderAlbumName) throws CannotReadException, IOException, TagException,
+			ReadOnlyFileException, InvalidAudioFrameException {
 		if (folder.isFile()) {
 			return;
 		}
@@ -301,12 +300,13 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 					List<Song> artistSongs = new ArrayList<Song>();
 					prepareSongs(date, artistSongs, file, musicLibrary, folderArtistName, folderAlbumName);
 					saveSongs(musicLibrary, artistSongs);
-					
-//					songs.addAll(artistSongs);
-					
-//					prepareSongs(date, songs, file, musicLibrary, folderArtistName, folderAlbumName);
-//					saveSongs(musicLibrary, songs);
-//					songs = new ArrayList<Song>();
+
+					// songs.addAll(artistSongs);
+
+					// prepareSongs(date, songs, file, musicLibrary,
+					// folderArtistName, folderAlbumName);
+					// saveSongs(musicLibrary, songs);
+					// songs = new ArrayList<Song>();
 					songs.clear();
 
 					folderArtistName = "";
@@ -400,8 +400,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 					tagAlbumName = folderAlbumName;
 				}
 				if (StringUtils.isBlank(folderAlbumName)) {
-					logger.info("Unable to add song to the library. No album found for artist = " + folderArtistName + ", song title = "
-							+ tagSongTitle);
+					logger.info("Unable to add song to the library. No album found for artist = " + folderArtistName
+							+ ", song title = " + tagSongTitle);
 				}
 				album.setName(tagAlbumName);
 				album.setFolderName(folderAlbumName);

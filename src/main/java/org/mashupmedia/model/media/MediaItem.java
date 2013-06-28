@@ -96,10 +96,25 @@ public class MediaItem implements Serializable{
 	private String encodeStatus;
 	@Field(analyze = Analyze.NO)
 	private boolean enabled;
-
+	private long fileLastModifiedOn;
+	
 	public MediaItem() {
 		this.enabled = true;
 	}
+
+	
+	
+	public long getFileLastModifiedOn() {
+		return fileLastModifiedOn;
+	}
+
+
+
+	public void setFileLastModifiedOn(long fileLastModifiedOn) {
+		this.fileLastModifiedOn = fileLastModifiedOn;
+	}
+
+
 
 	public boolean isEnabled() {
 		return enabled;
@@ -323,6 +338,8 @@ public class MediaItem implements Serializable{
 		builder.append(encodeStatus);
 		builder.append(", enabled=");
 		builder.append(enabled);
+		builder.append(", fileLastModifiedOn=");
+		builder.append(fileLastModifiedOn);
 		builder.append("]");
 		return builder.toString();
 	}
