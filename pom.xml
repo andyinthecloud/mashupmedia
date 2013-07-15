@@ -430,7 +430,6 @@
 			</activation>
 			<properties>
 				<exploded.war.path>${env.CATALINA_HOME}/webapps/mashupmedia/</exploded.war.path>
-				<application.folder>C:/andy/development/data/mashupmedia/</application.folder>
 				<message.cache.seconds>1</message.cache.seconds>
 				<log4j.mashupmedia.level>debug</log4j.mashupmedia.level>
 				<log4j.focus.level>debug</log4j.focus.level>
@@ -449,7 +448,6 @@
 			</activation>
 			<properties>
 				<exploded.war.path>${project.build.directory}/webapp</exploded.war.path>
-				<application.folder>/var/mashupmedia</application.folder>
 				<message.cache.seconds>1</message.cache.seconds>
 				<log4j.mashupmedia.level>error</log4j.mashupmedia.level>
 				<log4j.focus.level>error</log4j.focus.level>

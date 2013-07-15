@@ -274,7 +274,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
 
 		deleteObsoleteSongs(libraryId, date);
-		// mapperManager.convertSongsToXml(libraryId, songs);
 	}
 
 	protected void prepareSongs(Date date, List<Song> songs, File folder, MusicLibrary musicLibrary,
@@ -300,15 +299,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 					List<Song> artistSongs = new ArrayList<Song>();
 					prepareSongs(date, artistSongs, file, musicLibrary, folderArtistName, folderAlbumName);
 					saveSongs(musicLibrary, artistSongs);
-
-					// songs.addAll(artistSongs);
-
-					// prepareSongs(date, songs, file, musicLibrary,
-					// folderArtistName, folderAlbumName);
-					// saveSongs(musicLibrary, songs);
-					// songs = new ArrayList<Song>();
 					songs.clear();
-
 					folderArtistName = "";
 				} else {
 					if (StringUtils.isBlank(folderAlbumName)) {
@@ -414,17 +405,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				artist.setName(tagArtistName);
 				artist.setFolderName(folderArtistName);
 				artist.setAlbums(new ArrayList<Album>());
-
-				// if (musicFileCount == 1) {
-				// try {
-				// AlbumArtImage albumArtImage =
-				// processAlbumArtImage(musicLibrary, file, folderAlbumName);
-				// album.setAlbumArtImage(albumArtImage);
-				// } catch (Exception e) {
-				// logger.info("Unable to read the album art...", e);
-				// }
-				// }
-
 				album.setArtist(artist);
 				song.setArtist(artist);
 

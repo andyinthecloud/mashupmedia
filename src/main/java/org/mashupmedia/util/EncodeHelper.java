@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.mashupmedia.constants.MashUpMediaConstants;
 
 public class EncodeHelper {
 
@@ -34,7 +33,7 @@ public class EncodeHelper {
 	private static Logger logger = Logger.getLogger(EncodeHelper.class);
 
 	public static String getFFMpegFolderPath() {
-		File ffMpegFolder = new File(MessageHelper.getMessage(MashUpMediaConstants.APPLICATION_FOLDER), FFMPEG_FOLDER_NAME);
+		File ffMpegFolder = new File(FileHelper.getApplicationFolder(), FFMPEG_FOLDER_NAME);
 		return ffMpegFolder.getAbsolutePath();
 	}
 

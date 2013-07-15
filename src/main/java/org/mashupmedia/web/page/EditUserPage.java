@@ -30,6 +30,10 @@ public class EditUserPage {
 	public boolean isAdministrator() {
 		return administrator;
 	}
+	
+	public boolean getIsAdministrator() {
+		return isAdministrator();
+	}
 
 	public void setAdministrator(boolean isAdministrator) {
 		this.administrator = isAdministrator;

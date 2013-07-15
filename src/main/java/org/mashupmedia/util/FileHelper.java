@@ -13,6 +13,7 @@ public class FileHelper {
 	private static Logger logger = Logger.getLogger(FileHelper.class);
 
 	public final static String ALBUM_ART_FOLDER = "cover-art";
+	private static File applicationHomeFolder = null;
 
 	public enum FileType {
 		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM_UNPROCESSED("media-item-stream"), MEDIA_ITEM_STREAM_ENCODED(
@@ -116,9 +117,25 @@ public class FileHelper {
 		return extension;
 
 	}
+	
+	public static File getApplicationFolder() {
+		if (applicationHomeFolder != null) {
+			return applicationHomeFolder;
+		}
+		
+		String applicationHomePath = System.getenv("MASHUP_MEDIA_HOME");
+		if (StringUtils.isNotBlank(applicationHomePath)) {
+			applicationHomeFolder = new File(applicationHomePath);
+		} else {
+			applicationHomePath = System.getProperty("user.home");
+			applicationHomeFolder = new File(applicationHomePath, ".mashup_media");
+		}
+		applicationHomeFolder.mkdirs();
+		return applicationHomeFolder;
+	}
 
 	private static File getLibraryFolder(long libraryId) {
-		File libraryFolder = new File(MessageHelper.getMessage(MashUpMediaConstants.APPLICATION_FOLDER), "libraries/" + libraryId);
+		File libraryFolder = new File(getApplicationFolder(), "libraries/" + libraryId);
 		libraryFolder.mkdirs();
 		return libraryFolder;
 	}
