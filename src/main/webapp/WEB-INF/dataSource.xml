@@ -12,9 +12,10 @@
        http://www.springframework.org/schema/aop 
        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-<!-- 
+ <!-- 
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
 		<property name="driverClass" value="org.hsqldb.jdbcDriver" />
+		
 		<property name="jdbcUrl" value="jdbc:hsqldb:file:${application.folder}/db;shutdown=true;hsqldb.write_delay_millis=0;hsqldb.tx=mvcc" />
 		<property name="user" value="sa" />
 		<property name="password" value="" />
@@ -23,5 +24,10 @@
 		<property name="maxIdleTime" value="600" />
 	</bean>
  -->
+ 
+ 
+ <bean id="dataSource" factory-bean="serviceLocator" factory-method="createDataSource"></bean>
+ 
+ 
  
 </beans>
