@@ -86,20 +86,30 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		logger.info("Cleaned library.");
 	}
 
-	@Override
-	public void updateLibrary(MusicLibrary musicLibrary) {
-		if (!musicLibrary.isEnabled()) {
-			logger.info("Library is disabled, will not update:" + musicLibrary.toString());
-			return;
-		}
+//	@Override
+//	public void updateLibrary(MusicLibrary musicLibrary) {
+//		if (!musicLibrary.isEnabled()) {
+//			logger.info("Library is disabled, will not update:" + musicLibrary.toString());
+//			return;
+//		}
+//
+//		try {
+//			prepareMusicLibrary(musicLibrary);
+//		} catch (Exception e) {
+//			throw new MashupMediaRuntimeException("Error updating the music library.", e);
+//		}
+//	}
 
+	
+	@Override
+	public void updateLibrary(MusicLibrary library, File folder) {
 		try {
-			prepareMusicLibrary(musicLibrary);
+		prepareMusicLibrary(library, folder);
 		} catch (Exception e) {
 			throw new MashupMediaRuntimeException("Error updating the music library.", e);
 		}
 	}
-
+	
 	@Override
 	public void updateRemoteLibrary(MusicLibrary musicLibrary) throws Exception {
 		if (!musicLibrary.isEnabled()) {
@@ -258,37 +268,40 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return savedYear;
 	}
 
-	private void prepareMusicLibrary(MusicLibrary musicLibrary) throws Exception {
-		Location location = musicLibrary.getLocation();
-		File musicFolder = new File(location.getPath());
-		if (!musicFolder.isDirectory()) {
-			logger.error("Media library points to a file not a directory, exiting...");
-			return;
-		}
+	private void prepareMusicLibrary(MusicLibrary musicLibrary, File folder) throws Exception {
+//		Location location = musicLibrary.getLocation();
+//		File musicFolder = new File(location.getPath());
+//		if (!musicFolder.isDirectory()) {
+//			logger.error("Media library points to a file not a directory, exiting...");
+//			return;
+//		}
 
 		Date date = new Date();
 		List<Song> songs = new ArrayList<Song>();
 		long libraryId = musicLibrary.getId();
-		mapperManager.writeStartRemoteMusicLibraryXml(libraryId);
-		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
-		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
+//		mapperManager.writeStartRemoteMusicLibraryXml(libraryId);
+		prepareSongs(date, songs, folder, musicLibrary, null, null);
+//		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
 
 		deleteObsoleteSongs(libraryId, date);
 	}
 
-	protected void prepareSongs(Date date, List<Song> songs, File folder, MusicLibrary musicLibrary,
+	protected void prepareSongs(Date date, List<Song> songs, File file, MusicLibrary musicLibrary,
 			String folderArtistName, String folderAlbumName) throws CannotReadException, IOException, TagException,
 			ReadOnlyFileException, InvalidAudioFrameException {
-		if (folder.isFile()) {
+		if (file.isFile()) {
 			return;
 		}
+		
+		
+		
 
-		File[] files = folder.listFiles();
-		Arrays.sort(files, new FileComparator());
+//		File[] files = folder.listFiles();
+//		Arrays.sort(files, new FileComparator());
 
 		int musicFileCount = 0;
 
-		for (File file : files) {
+//		for (File file : files) {
 			String fileName = StringUtils.trimToEmpty(file.getName());
 
 			if (file.isDirectory()) {
@@ -314,7 +327,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			}
 
 			if (FileHelper.isSupportedSong(fileName)) {
-				musicFileCount++;
+//				musicFileCount++;
 
 				Tag tag = null;
 				long bitRate = 0;
@@ -419,7 +432,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				songs.add(song);
 
 			}
-		}
+//		}
 	}
 
 	private String prepareDisplayTitle(Song song) {

@@ -7,10 +7,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.exception.MashupMediaRuntimeException;
 
 public class FileHelper {
 
 	private static Logger logger = Logger.getLogger(FileHelper.class);
+	private static String MASHUP_MEDIA_HOME = "MASHUP_MEDIA_HOME";
 
 	public final static String ALBUM_ART_FOLDER = "cover-art";
 	private static File applicationHomeFolder = null;
@@ -123,14 +125,30 @@ public class FileHelper {
 			return applicationHomeFolder;
 		}
 		
-		String applicationHomePath = System.getenv("MASHUP_MEDIA_HOME");
+		String applicationHomePath = System.getenv(MASHUP_MEDIA_HOME);
+		if(StringUtils.isBlank(applicationHomePath)) {
+			applicationHomePath = System.getProperty(MASHUP_MEDIA_HOME);
+		}
+		
 		if (StringUtils.isNotBlank(applicationHomePath)) {
 			applicationHomeFolder = new File(applicationHomePath);
 		} else {
 			applicationHomePath = System.getProperty("user.home");
-			applicationHomeFolder = new File(applicationHomePath, ".mashup_media");
+			applicationHomeFolder = new File(applicationHomePath, "mashup_media");
+			applicationHomeFolder.mkdirs();
+			if (!applicationHomeFolder.isDirectory()) {
+				logger.error("Unable to create Mashup Media folder in the user home: " + applicationHomeFolder.getAbsolutePath());
+				logger.error("Will default to temp directory but please set the system property MASHUP_MEDIA_HOME variable as files inside this folder are deleted regualary by the system.");
+				applicationHomePath = System.getProperty("java.io.tmpdir");
+				applicationHomeFolder = new File(applicationHomePath, "mashup_media");
+			}
+			
 		}
 		applicationHomeFolder.mkdirs();
+		if (!applicationHomeFolder.isDirectory()) {
+			throw new MashupMediaRuntimeException("Cannot proceed, unable to create the folder MASHUP_MEDIA_HOME: " + applicationHomeFolder.getAbsolutePath());
+		}
+		
 		return applicationHomeFolder;
 	}
 

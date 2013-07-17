@@ -27,5 +27,7 @@ public interface LibraryManager {
 	public Library getRemoteLibrary(long libraryId);
 
 	public Library getRemoteLibrary(String uniqueName);
+	
+	
 
 }

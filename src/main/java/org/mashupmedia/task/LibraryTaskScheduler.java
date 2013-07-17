@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryManager.LibraryType;
-import org.mashupmedia.service.MusicLibraryUpdateManager;
+import org.mashupmedia.service.LibraryUpdateManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ public class LibraryTaskScheduler {
 	private LibraryManager libraryManager;
 	
 	@Autowired
-	private MusicLibraryUpdateManager libraryUpdateManager;
+	private LibraryUpdateManager libraryUpdateManager;
 	
 	
 	public void updateLibraries() {
