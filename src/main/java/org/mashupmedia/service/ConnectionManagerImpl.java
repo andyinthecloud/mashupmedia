@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -178,6 +179,18 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	
 	@Override
 	public String proceessRemoteLibraryConnection(String remoteLibraryUrl) {		
+		
+		File file = new File(remoteLibraryUrl);
+		if (file.exists()) {
+			try {
+				String xml = FileUtils.readFileToString(file);
+				return xml;	
+			} catch (IOException e) {
+				logger.error("Error reading remoteLibraryFile at: " + file.getAbsolutePath(), e);
+			}			
+		}
+		
+		
 		InputStream inputStream = connect(remoteLibraryUrl);
 		StringWriter stringWriter = new StringWriter();
 		try {

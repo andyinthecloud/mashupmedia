@@ -18,12 +18,11 @@
 package org.mashupmedia.service;
 
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.library.MusicLibrary;
 
 public interface LibraryUpdateManager {
 	
 	public void updateLibrary(Library library);
 
-	public void updateRemoteLibrary(MusicLibrary musicLibrary);
+	public void updateRemoteLibrary(Library library);
 
 }

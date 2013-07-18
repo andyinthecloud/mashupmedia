@@ -17,16 +17,17 @@
 
 package org.mashupmedia.service;
 
-import java.util.List;
-
+import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Song;
 
 public interface MapperManager {
 
 	public void writeStartRemoteMusicLibraryXml(long libraryId) throws Exception;
+
 	public void writeEndRemoteMusicLibraryXml(long libraryId) throws Exception;
-	public void writeSongToXml(long libraryId, Song song) throws Exception;	
-	public List<Song> convertXmltoSongs(String xml) throws Exception;
-	
-	
+
+	public void writeSongToXml(long libraryId, Song song) throws Exception;
+
+	public void saveXmltoSongs(MusicLibrary musicLibrary, String xml) throws Exception;
+
 }

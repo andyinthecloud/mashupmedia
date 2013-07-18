@@ -20,16 +20,13 @@ package org.mashupmedia.service;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 import junit.framework.Assert;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
-import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -71,11 +68,8 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 		
 		long totalSavedSongs = musicManager.getTotalSongsFromLibrary(musicLibrary.getId());
 
-		String libraryXml = FileUtils.readFileToString(file);
-		List<Song> songs = mapperManager.convertXmltoSongs(libraryXml);
-
 		Location location2 = new Location();
-		location2.setPath("http://remote");
+		location2.setPath(file.getAbsolutePath());
 		MusicLibrary musicLibrary2 = new MusicLibrary();
 		musicLibrary2.setLocation(location2);
 		musicLibrary2.setEnabled(true);
@@ -84,8 +78,9 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 		libraryManager.deleteLibrary(musicLibrary);
 
 		libraryManager.saveLibrary(musicLibrary2);
-//		musicLibraryUpdateManager.saveSongs(musicLibrary2, songs);
 		
+		libraryUpdateManager.updateRemoteLibrary(musicLibrary2);
+				
 		long totalRemoteSongs = musicManager.getTotalSongsFromLibrary(musicLibrary2.getId());
 
 		Assert.assertEquals(totalSavedSongs, totalRemoteSongs);

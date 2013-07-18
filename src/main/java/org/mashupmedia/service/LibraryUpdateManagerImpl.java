@@ -18,6 +18,7 @@
 package org.mashupmedia.service;
 
 import java.io.File;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
@@ -28,74 +29,69 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LibraryUpdateManagerImpl implements LibraryUpdateManager{
-	
+public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
+
 	private Logger logger = Logger.getLogger(getClass());
-	
+
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
-	
+
 	@Autowired
 	private MapperManager mapperManager;
 
 	@Override
 	public void updateLibrary(Library library) {
-		
+
 		if (!library.isEnabled()) {
 			logger.info("Library is disabled, will not update:" + library.toString());
 			return;
 		}
-		
+
 		Location location = library.getLocation();
 		File folder = new File(location.getPath());
 		if (!folder.isDirectory()) {
 			logger.error("Media library points to a file not a directory, exiting...");
 			return;
 		}
-		
-		if (library instanceof MusicLibrary) {			
+
+		if (library instanceof MusicLibrary) {
 			try {
 				updateMusicLibrary((MusicLibrary) library);
 			} catch (Exception e) {
 				throw new MashupMediaRuntimeException("Error updating library", e);
 			}
 		}
-		
-		
+
 	}
 
 	protected void updateMusicLibrary(MusicLibrary library) throws Exception {
+		Date date = new Date();
 		long libraryId = library.getId();
 		mapperManager.writeStartRemoteMusicLibraryXml(libraryId);
-
 		Location location = library.getLocation();
-		
-		
-//		prepareSongs(date, songs, musicFolder, musicLibrary, null, null);
-		
-		
-		
 		File locationFolder = new File(location.getPath());
 		File[] files = locationFolder.listFiles();
 		for (File file : files) {
 			if (!file.isDirectory()) {
 				continue;
 			}
-			musicLibraryUpdateManager.updateLibrary(library, file);
-			
+			musicLibraryUpdateManager.updateLibrary(library, file, date);
+
 		}
-		
+
 		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
-		
+
 	}
-	
+
 	@Override
-	public void updateRemoteLibrary(MusicLibrary musicLibrary) {		
+	public void updateRemoteLibrary(Library library) {
 		try {
-			musicLibraryUpdateManager.updateRemoteLibrary(musicLibrary);
+			if (library instanceof MusicLibrary) {
+				musicLibraryUpdateManager.updateRemoteLibrary((MusicLibrary) library);
+			}
 		} catch (Exception e) {
 			throw new MashupMediaRuntimeException("Error updating remote library", e);
-		}		
+		}
 	}
 
 }

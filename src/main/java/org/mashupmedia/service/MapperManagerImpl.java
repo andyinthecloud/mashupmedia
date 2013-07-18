@@ -32,12 +32,14 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.util.XmlHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +49,10 @@ public class MapperManagerImpl implements MapperManager {
 
 	private Marshaller marshaller;
 	private Unmarshaller unmarshaller;
+	
+	@Autowired
+	private MusicLibraryUpdateManager musicLibraryUpdateManager;
+	
 
 	protected Marshaller getMarshaller() throws JAXBException {
 		if (marshaller != null) {
@@ -132,7 +138,7 @@ public class MapperManagerImpl implements MapperManager {
 	}
 
 	@Override
-	public List<Song> convertXmltoSongs(String xml) throws Exception {
+	public void saveXmltoSongs(MusicLibrary musicLibrary, String xml) throws Exception {
 
 		List<Song> songs = new ArrayList<Song>();
 
@@ -144,6 +150,11 @@ public class MapperManagerImpl implements MapperManager {
 			Song song = (Song) getUnmarshaller().unmarshal(xmlReader);
 			songs.add(song);
 
+			if (songs.size() == 10) {
+				musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
+				songs.clear();
+			}
+			
 			if (xmlReader.nextTag() != XMLStreamReader.START_ELEMENT) {
 				break;
 			}
@@ -152,7 +163,8 @@ public class MapperManagerImpl implements MapperManager {
 
 		reader.close();
 		xmlReader.close();
-		return songs;
+		
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
 	}
 
 }
