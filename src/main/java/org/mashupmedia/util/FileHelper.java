@@ -144,9 +144,12 @@ public class FileHelper {
 			}
 			
 		}
+		
 		applicationHomeFolder.mkdirs();
+		
 		if (!applicationHomeFolder.isDirectory()) {
-			throw new MashupMediaRuntimeException("Cannot proceed, unable to create the folder MASHUP_MEDIA_HOME: " + applicationHomeFolder.getAbsolutePath());
+			logger.error("Error creating application folder: " + applicationHomeFolder.getAbsolutePath());
+			throw new MashupMediaRuntimeException("Cannot proceed, unable to create the folder MASHUP_MEDIA_HOME: " + applicationHomeFolder.getAbsolutePath());			
 		}
 		
 		return applicationHomeFolder;
