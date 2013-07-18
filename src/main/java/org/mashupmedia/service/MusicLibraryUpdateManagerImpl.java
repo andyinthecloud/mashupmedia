@@ -199,8 +199,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			searchText = StringHelper.normaliseTextForDatabase(searchText);
 			song.setSearchText(searchText);
 
-			musicDao.saveSong(song, isSessionFlush);
 			writeSongToXml(libraryId, song);
+			musicDao.saveSong(song, isSessionFlush);			
 
 			totalSongsSaved++;
 

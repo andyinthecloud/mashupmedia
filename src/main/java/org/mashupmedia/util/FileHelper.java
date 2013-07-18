@@ -134,13 +134,13 @@ public class FileHelper {
 			applicationHomeFolder = new File(applicationHomePath);
 		} else {
 			applicationHomePath = System.getProperty("user.home");
-			applicationHomeFolder = new File(applicationHomePath, "mashup_media");
+			applicationHomeFolder = new File(applicationHomePath, ".mashup_media");
 			applicationHomeFolder.mkdirs();
 			if (!applicationHomeFolder.isDirectory()) {
 				logger.error("Unable to create Mashup Media folder in the user home: " + applicationHomeFolder.getAbsolutePath());
 				logger.error("Will default to temp directory but please set the system property MASHUP_MEDIA_HOME variable as files inside this folder are deleted regualary by the system.");
 				applicationHomePath = System.getProperty("java.io.tmpdir");
-				applicationHomeFolder = new File(applicationHomePath, "mashup_media");
+				applicationHomeFolder = new File(applicationHomePath, ".mashup_media");
 			}
 			
 		}
