@@ -39,6 +39,9 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	@Autowired
 	private MapperManager mapperManager;
 
+	@Autowired
+	private LibraryManager libraryManager;
+
 	@Override
 	public void updateLibrary(Library library) {
 
@@ -47,19 +50,34 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			return;
 		}
 
-		Location location = library.getLocation();
-		File folder = new File(location.getPath());
-		if (!folder.isDirectory()) {
-			logger.error("Media library points to a file not a directory, exiting...");
+		if (library.isUpdating()) {
+			logger.info("Library is already updating, exiting:" + library.toString());
 			return;
 		}
 
-		if (library instanceof MusicLibrary) {
-			try {
-				updateMusicLibrary((MusicLibrary) library);
-			} catch (Exception e) {
-				throw new MashupMediaRuntimeException("Error updating library", e);
+		try {
+			library.setUpdating(true);
+			libraryManager.saveLibrary(library);
+
+			Location location = library.getLocation();
+			File folder = new File(location.getPath());
+			if (!folder.isDirectory()) {
+				logger.error("Media library points to a file not a directory, exiting...");
+				return;
 			}
+
+			if (library instanceof MusicLibrary) {
+				try {
+					updateMusicLibrary((MusicLibrary) library);
+				} catch (Exception e) {
+					throw new MashupMediaRuntimeException("Error updating library", e);
+				}
+			}
+
+		} finally {
+			library.setUpdating(false);
+			libraryManager.saveLibrary(library);
+
 		}
 
 	}
@@ -79,7 +97,11 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 		}
 
+		
 		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
+		
+		musicLibraryUpdateManager.deleteObsoleteSongs(libraryId, date);
+
 
 	}
 

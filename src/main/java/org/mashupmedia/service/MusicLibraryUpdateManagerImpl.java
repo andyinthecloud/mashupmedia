@@ -73,8 +73,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		globalLogger.setLevel(java.util.logging.Level.OFF);
 	}
 
-	@Transactional(readOnly = true)
-	protected void deleteObsoleteSongs(long libraryId, Date date) {
+	@Override
+	public void deleteObsoleteSongs(long libraryId, Date date) {
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
 		playlistDao.deletePlaylistMediaItems(songsToDelete);
 		musicDao.deleteObsoleteSongs(songsToDelete);
@@ -106,7 +106,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs) {
 		if (songs == null || songs.isEmpty()) {
 			return;
@@ -200,7 +199,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			song.setSearchText(searchText);
 
 			writeSongToXml(libraryId, song);
-			musicDao.saveSong(song, isSessionFlush);			
+			musicDao.saveSong(song, isSessionFlush);
 
 			totalSongsSaved++;
 
@@ -219,7 +218,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	}
 
-	@Transactional(readOnly = true)
 	private Genre prepareGenre(Genre genre) {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
 			return null;
@@ -235,7 +233,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return genre;
 	}
 
-	@Transactional(readOnly = true)
 	private Year prepareYear(Year year) {
 		if (year == null || year.getYear() == 0) {
 			return null;
@@ -251,9 +248,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	private void prepareMusicLibrary(MusicLibrary musicLibrary, File folder, Date date) throws Exception {
 		List<Song> songs = new ArrayList<Song>();
-		long libraryId = musicLibrary.getId();
 		prepareSongs(date, songs, folder, musicLibrary, null, null);
-		deleteObsoleteSongs(libraryId, date);
 	}
 
 	protected void prepareSongs(Date date, List<Song> songs, File file, MusicLibrary musicLibrary, String folderArtistName, String folderAlbumName)
@@ -418,7 +413,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
-	@Transactional
 	public void deleteSongs(List<Song> songs) {
 
 		playlistDao.deletePlaylistMediaItems(songs);
@@ -430,7 +424,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		logger.info("Cleaned library.");
 	}
 
-	@Transactional(readOnly = true)
 	private Artist prepareArtist(List<Long> userGroupIds, Artist artist) {
 		Artist savedArtist = musicDao.getArtist(userGroupIds, artist.getName());
 		if (savedArtist != null) {
@@ -445,7 +438,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return artist;
 	}
 
-	@Transactional(readOnly = true)
 	private Album prepareAlbum(List<Long> userGroupIds, Album album) {
 		Artist artist = album.getArtist();
 		String albumName = album.getName();
@@ -468,7 +460,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
-	@Transactional
 	public void deleteEmpty() {
 		List<Long> groupIds = groupDao.getGroupIds();
 
@@ -489,7 +480,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 	}
 
-	@Transactional(readOnly = true)
 	private List<Artist> getArtists() {
 		List<Long> groupIds = groupDao.getGroupIds();
 		List<Artist> artists = musicDao.getArtists(groupIds);

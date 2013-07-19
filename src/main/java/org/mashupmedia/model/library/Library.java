@@ -55,26 +55,35 @@ public abstract class Library implements Serializable {
 	private List<RemoteShare> remoteShares;
 	private boolean remote;
 	private String status;
-	
+	private boolean updating;
+
+	public boolean isUpdating() {
+		return updating;
+	}
+
+	public void setUpdating(boolean updating) {
+		this.updating = updating;
+	}
+
 	public enum LibraryStatusType {
 		NONE, WORKING, ERROR, UNABLE_TO_CONNECT_TO_REMOTE_LIBRARY;
 	}
-	
+
 	public LibraryStatusType getLibraryStatusType() {
 		if (this.status == null) {
 			return LibraryStatusType.NONE;
 		}
-		
+
 		LibraryStatusType[] libraryStatusTypes = LibraryStatusType.values();
 		for (LibraryStatusType libraryStatusType : libraryStatusTypes) {
 			if (libraryStatusType.toString().equalsIgnoreCase(this.status)) {
 				return libraryStatusType;
 			}
 		}
-		
+
 		return LibraryStatusType.NONE;
 	}
-	
+
 	public String getStatus() {
 		return status;
 	}
@@ -83,7 +92,6 @@ public abstract class Library implements Serializable {
 		this.status = libraryStatusType.toString();
 	}
 
-	
 	public void setStatus(String status) {
 		this.status = status;
 	}

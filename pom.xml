@@ -328,7 +328,7 @@
 						<goals>
 							<goal>exec-war-only</goal>
 						</goals>
-						<phase>deploy</phase>
+						<phase>install</phase>
 						<configuration>
 							<path>/${project.name}</path>
 							<finalName>${project.name}.jar</finalName>
@@ -431,7 +431,6 @@
 				<log4j.mashupmedia.level>debug</log4j.mashupmedia.level>
 				<log4j.focus.level>debug</log4j.focus.level>
 				<log4j.root.level>info</log4j.root.level>
-				<log.path>${env.CATALINA_HOME}/logs</log.path>
 				<test.music.folder>C:/andy/incoming/Hot</test.music.folder>
 			</properties>
 		</profile>
@@ -445,11 +444,10 @@
 			</activation>
 			<properties>
 				<exploded.war.path>${project.build.directory}/webapp</exploded.war.path>
-				<message.cache.seconds>1</message.cache.seconds>
+				<message.cache.seconds>1800</message.cache.seconds>
 				<log4j.mashupmedia.level>error</log4j.mashupmedia.level>
 				<log4j.focus.level>error</log4j.focus.level>
 				<log4j.root.level>error</log4j.root.level>
-				<log.path>/var/log/tomcat6</log.path>
 				<test.music.folder>C:/andy/incoming/Hot</test.music.folder>
 			</properties>
 		</profile>

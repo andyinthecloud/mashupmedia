@@ -19,4 +19,6 @@ public interface MusicLibraryUpdateManager {
 
 	public void updateLibrary(MusicLibrary library, File folder, Date date);
 
+	public void deleteObsoleteSongs(long libraryId, Date date);
+
 }

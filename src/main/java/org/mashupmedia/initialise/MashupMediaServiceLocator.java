@@ -33,6 +33,12 @@ public class MashupMediaServiceLocator {
 
 	private DataSource dataSource;
 
+	
+	public MashupMediaServiceLocator() {
+		File logFolder = new File(FileHelper.getApplicationFolder(), "log");		
+		System.setProperty("log.path", logFolder.getAbsolutePath());
+	}
+	
 	public DataSource getDataSource() {
 		return dataSource;
 	}
@@ -49,7 +55,8 @@ public class MashupMediaServiceLocator {
 			throw new MashupMediaRuntimeException(e.getMessage());
 		}
 		String applicationFolderPath = FileHelper.getApplicationFolder().getAbsolutePath();
-		dataSource.setJdbcUrl("jdbc:hsqldb:file:" + applicationFolderPath + "/db;shutdown=true;hsqldb.write_delay_millis=0;hsqldb.tx=mvcc");
+//		dataSource.setJdbcUrl("jdbc:hsqldb:file:" + applicationFolderPath + "/db;shutdown=true;hsqldb.write_delay_millis=0;hsqldb.tx=mvcc");
+		dataSource.setJdbcUrl("jdbc:hsqldb:file:" + applicationFolderPath + "/db;shutdown=true;hsqldb.write_delay_millis=0");
 		dataSource.setUser("sa");
 		dataSource.setPassword("");
 		dataSource.setMinPoolSize(2);
