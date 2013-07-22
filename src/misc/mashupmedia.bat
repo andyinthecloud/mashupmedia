@@ -1,1 +1,1 @@
-java -jar ../../target/mashupmedia.jar -httpPort 8081
+java -DMASHUP_MEDIA_HOME=mashupmedia_home -jar mashupmedia.jar -httpPort 8081

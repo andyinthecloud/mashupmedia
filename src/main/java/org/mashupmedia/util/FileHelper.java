@@ -125,9 +125,9 @@ public class FileHelper {
 			return applicationHomeFolder;
 		}
 		
-		String applicationHomePath = System.getenv(MASHUP_MEDIA_HOME);
+		String applicationHomePath = System.getProperty(MASHUP_MEDIA_HOME);
 		if(StringUtils.isBlank(applicationHomePath)) {
-			applicationHomePath = System.getProperty(MASHUP_MEDIA_HOME);
+			applicationHomePath = System.getenv(MASHUP_MEDIA_HOME);
 		}
 		
 		if (StringUtils.isNotBlank(applicationHomePath)) {
