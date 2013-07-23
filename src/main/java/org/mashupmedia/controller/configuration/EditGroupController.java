@@ -75,7 +75,7 @@ public class EditGroupController extends BaseController {
 	@ModelAttribute("libraries")
 	public List<WebOption> getLibraries() {
 		@SuppressWarnings("unchecked")
-		List<Library> libraries = (List<Library>) libraryManager.getLibraries(LibraryType.ALL);
+		List<Library> libraries = (List<Library>) libraryManager.getLocalLibraries(LibraryType.ALL);
 		List<WebOption> webOptions = generateWebOptions(libraries);
 		return webOptions;
 	}
@@ -145,7 +145,7 @@ public class EditGroupController extends BaseController {
 
 		
 		@SuppressWarnings("unchecked")
-		List<Library> libraries = (List<Library>) libraryManager.getLibraries(LibraryType.ALL);
+		List<Library> libraries = (List<Library>) libraryManager.getLocalLibraries(LibraryType.ALL);
 		
 		for (WebOption webOption : webOptions) {
 			long libraryId = NumberUtils.toLong(webOption.getValue());

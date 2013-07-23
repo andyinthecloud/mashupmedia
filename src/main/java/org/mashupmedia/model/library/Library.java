@@ -24,6 +24,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.location.Location;
+import org.mashupmedia.service.LibraryManager.LibraryType;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -255,4 +256,12 @@ public abstract class Library implements Serializable {
 		return builder.toString();
 	}
 
+	public String getLibraryTypeValue() {
+		LibraryType libraryType = LibraryType.ALL;
+		if (this instanceof MusicLibrary) {
+			libraryType = LibraryType.MUSIC;
+		}
+
+		return libraryType.toString().toLowerCase();
+	}
 }

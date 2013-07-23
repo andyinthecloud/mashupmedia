@@ -23,7 +23,7 @@ public class LibraryTaskScheduler {
 	
 	public void updateLibraries() {
 		@SuppressWarnings("unchecked")
-		List<MusicLibrary> musicLibraries = (List<MusicLibrary>)libraryManager.getLibraries(LibraryType.MUSIC);
+		List<MusicLibrary> musicLibraries = (List<MusicLibrary>)libraryManager.getLocalLibraries(LibraryType.MUSIC);
 		for (MusicLibrary musicLibrary : musicLibraries) {
 			logger.info("About to update library: " + musicLibrary.getName());
 			if (musicLibrary.isRemote()) {

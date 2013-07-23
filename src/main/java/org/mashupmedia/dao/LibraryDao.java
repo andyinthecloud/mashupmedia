@@ -8,7 +8,7 @@ import org.mashupmedia.service.LibraryManager.LibraryType;
 
 public interface LibraryDao {
 
-	public List<Library> getLibraries(LibraryType libraryType);
+	public List<Library> getLocalLibraries(LibraryType libraryType);
 
 	public void saveLibrary(Library musicLibrary);
 

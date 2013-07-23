@@ -10,7 +10,7 @@ public interface LibraryManager {
 		ALL, MUSIC
 	}
 
-	public List<? extends Library> getLibraries(LibraryType libraryType);
+	public List<? extends Library> getLocalLibraries(LibraryType libraryType);
 
 	public Library getLibrary(long id);
 

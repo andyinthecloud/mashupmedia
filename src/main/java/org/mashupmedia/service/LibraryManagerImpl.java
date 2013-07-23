@@ -36,8 +36,8 @@ public class LibraryManagerImpl implements LibraryManager {
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 
 	@Override
-	public List<Library> getLibraries(LibraryType libraryType) {
-		List<Library> musicLibraries = libraryDao.getLibraries(libraryType);
+	public List<Library> getLocalLibraries(LibraryType libraryType) {
+		List<Library> musicLibraries = libraryDao.getLocalLibraries(libraryType);
 		return musicLibraries;
 	}
 

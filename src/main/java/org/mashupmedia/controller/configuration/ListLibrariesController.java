@@ -46,7 +46,7 @@ public class ListLibrariesController extends BaseController {
 		model.addAttribute(listLibrariesPage);
 		
 		@SuppressWarnings("unchecked")
-		List<MusicLibrary> musicLibraries = (List<MusicLibrary>) libraryManager.getLibraries(LibraryType.MUSIC);
+		List<MusicLibrary> musicLibraries = (List<MusicLibrary>) libraryManager.getLocalLibraries(LibraryType.MUSIC);
 		listLibrariesPage.setMusicLibraries(musicLibraries);
 		
 		return PAGE_PATH;

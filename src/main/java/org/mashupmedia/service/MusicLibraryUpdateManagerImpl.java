@@ -132,7 +132,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				savedSong.setUpdatedOn(song.getUpdatedOn());
 				musicDao.saveSong(savedSong);
 				logger.info("Song is already in database, updated song date.");
-				writeSongToXml(libraryId, song);
+				writeSongToXml(libraryId, savedSong);
 				continue;
 			}
 
@@ -198,8 +198,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			searchText = StringHelper.normaliseTextForDatabase(searchText);
 			song.setSearchText(searchText);
 
-			writeSongToXml(libraryId, song);
 			musicDao.saveSong(song, isSessionFlush);
+			writeSongToXml(libraryId, song);
 
 			totalSongsSaved++;
 

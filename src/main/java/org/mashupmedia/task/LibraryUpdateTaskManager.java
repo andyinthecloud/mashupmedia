@@ -37,11 +37,6 @@ public class LibraryUpdateTaskManager {
 
 		public void run() {
 			libraryUpdateManager.updateLibrary(library);
-//			if (library instanceof MusicLibrary) {
-//				MusicLibrary musicLibrary = (MusicLibrary) library;
-//				musicLibraryUpdateManager.updateLibrary(musicLibrary);
-//			}
-
 		}
 	}
 

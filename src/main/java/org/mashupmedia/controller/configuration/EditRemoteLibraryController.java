@@ -64,7 +64,7 @@ public class EditRemoteLibraryController extends BaseController {
 
 	@Autowired
 	private GroupEditor groupEditor;
-	
+
 	@Override
 	public String getPageTitleMessageKey() {
 		return "library.remote.title";
@@ -90,9 +90,9 @@ public class EditRemoteLibraryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/configuration/edit-remote-library", method = RequestMethod.GET)
-	public String handleEditRemoteLibrary(@RequestParam(value = "libraryId", required = true) Long libraryId, Model model) {		
+	public String handleEditRemoteLibrary(@RequestParam(value = "libraryId", required = true) Long libraryId, Model model) {
 		Library library = libraryManager.getRemoteLibrary(libraryId);
-		
+
 		EditRemoteLibraryPage editRemoteLibraryPage = new EditRemoteLibraryPage();
 		editRemoteLibraryPage.setLibraryId(library.getId());
 		editRemoteLibraryPage.setEnabled(library.isEnabled());
@@ -100,7 +100,7 @@ public class EditRemoteLibraryController extends BaseController {
 		editRemoteLibraryPage.setName(library.getName());
 		Location location = library.getLocation();
 		editRemoteLibraryPage.setUrl(location.getPath());
-		
+
 		if (library instanceof MusicLibrary) {
 			editRemoteLibraryPage.setLibraryTypeValue(LibraryType.MUSIC.toString());
 		} else {
@@ -141,19 +141,28 @@ public class EditRemoteLibraryController extends BaseController {
 		if (result.hasErrors()) {
 			return "configuration/edit-remote-library";
 		}
-		
-		String libraryType = editRemoteLibraryPage.getLibraryTypeValue();				
+
+		String libraryType = editRemoteLibraryPage.getLibraryTypeValue();
 		Library remoteLibrary = null;
+		Location location = new Location();
 		if (libraryType.equalsIgnoreCase(LibraryType.MUSIC.toString())) {
 			remoteLibrary = new MusicLibrary();
 		} else {
 			remoteLibrary = new MusicLibrary();
 		}
-		
+
+		long libraryId = editRemoteLibraryPage.getLibraryId();
+
+		if (libraryId > 0) {
+			remoteLibrary = libraryManager.getLibrary(libraryId);
+			location = remoteLibrary.getLocation();
+		}
+
+		remoteLibrary.setId(libraryId);
 		remoteLibrary.setEnabled(editRemoteLibraryPage.isEnabled());
 		remoteLibrary.setName(editRemoteLibraryPage.getName());
-		remoteLibrary.setGroups(editRemoteLibraryPage.getGroups());		
-		Location location = new Location();
+		remoteLibrary.setGroups(editRemoteLibraryPage.getGroups());
+
 		location.setPath(editRemoteLibraryPage.getUrl());
 		remoteLibrary.setLocation(location);
 		remoteLibrary.setRemote(true);

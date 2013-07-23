@@ -14,7 +14,16 @@ import org.springframework.stereotype.Repository;
 public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 	@Override
-	public List<Library> getLibraries(LibraryType libraryType) {
+	public List<Library> getRemoteLibraries() {
+		Query query = sessionFactory.getCurrentSession().createQuery("from Library where remote = true order by name");
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Library> libraries = (List<Library>) query.list();
+		return libraries;
+	}
+
+	@Override
+	public List<Library> getLocalLibraries(LibraryType libraryType) {
 		String libraryClassName = null;
 
 		if (libraryType == LibraryType.MUSIC) {
@@ -23,7 +32,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 			libraryClassName = Library.class.getName();
 		}
 
-		Query query = sessionFactory.getCurrentSession().createQuery("from " + libraryClassName + " order by name");
+		Query query = sessionFactory.getCurrentSession().createQuery("from " + libraryClassName + " where remote = false order by name");
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Library> libraries = (List<Library>) query.list();
@@ -135,13 +144,5 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		sessionFactory.getCurrentSession().merge(remoteShare);
 	}
 
-	@Override
-	public List<Library> getRemoteLibraries() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Library where remote = true order by name");
-		query.setCacheable(true);
-		@SuppressWarnings("unchecked")
-		List<Library> libraries = (List<Library>) query.list();
-		return libraries;
-	}
 
 }

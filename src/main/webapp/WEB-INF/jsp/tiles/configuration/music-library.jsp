@@ -131,7 +131,7 @@
    		    	var remoteShare = item.remoteShare;
    			    remoteShareHtml += "<tr id=\"remote-share-" + remoteShare.id + "\">";
    			    remoteShareHtml += "<td><input type=\"checkbox\" /></td>";
-   			    var link = getHostUrl() + "app/remote-library/" + remoteShare.uniqueName;
+   			    var link = getHostUrl() + "app/remote/connect/${musicLibraryPage.musicLibrary.libraryTypeValue}/" + remoteShare.uniqueName;
    			    remoteShareHtml += "<td><input class=\"link\" type=\"text\" value=\"" + link + "\" /></td>";
    			    remoteShareHtml += "<td>" + remoteShare.remoteUrl + "</td>";
    			    remoteShareHtml += "<td>" + remoteShare.createdOn + "</td>";
