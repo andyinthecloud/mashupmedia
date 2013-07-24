@@ -21,8 +21,8 @@ import java.io.File;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.Library.LibraryStatusType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +50,13 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			return;
 		}
 
-		if (library.isUpdating()) {
+		if (library.getLibraryStatusType() == LibraryStatusType.WORKING) {
 			logger.info("Library is already updating, exiting:" + library.toString());
 			return;
 		}
 
 		try {
-			library.setUpdating(true);
+			library.setLibraryStatusType(LibraryStatusType.WORKING);
 			libraryManager.saveLibrary(library);
 
 			Location location = library.getLocation();
@@ -67,17 +67,16 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			}
 
 			if (library instanceof MusicLibrary) {
-				try {
-					updateMusicLibrary((MusicLibrary) library);
-				} catch (Exception e) {
-					throw new MashupMediaRuntimeException("Error updating library", e);
-				}
+				updateMusicLibrary((MusicLibrary) library);
 			}
 
-		} finally {
-			library.setUpdating(false);
-			libraryManager.saveLibrary(library);
+			library.setLibraryStatusType(LibraryStatusType.OK);
 
+		} catch (Exception e) {
+			logger.error("Error updating library", e);
+			library.setLibraryStatusType(LibraryStatusType.ERROR);
+		} finally {
+			libraryManager.saveLibrary(library);
 		}
 
 	}
@@ -97,23 +96,40 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 		}
 
-		
 		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
-		
-		musicLibraryUpdateManager.deleteObsoleteSongs(libraryId, date);
 
+		musicLibraryUpdateManager.deleteObsoleteSongs(libraryId, date);
 
 	}
 
 	@Override
 	public void updateRemoteLibrary(Library library) {
+		if (!library.isEnabled()) {
+			logger.info("Library is disabled, exiting..");
+			return;
+		}
+
+		if (library.getLibraryStatusType() == LibraryStatusType.WORKING) {
+			logger.info("Library is already updating, exiting:" + library.toString());
+			return;
+		}
+
 		try {
+			library.setLibraryStatusType(LibraryStatusType.WORKING);
+			libraryManager.saveLibrary(library);
+
 			if (library instanceof MusicLibrary) {
 				musicLibraryUpdateManager.updateRemoteLibrary((MusicLibrary) library);
 			}
+			library.setLibraryStatusType(LibraryStatusType.OK);
+
 		} catch (Exception e) {
-			throw new MashupMediaRuntimeException("Error updating remote library", e);
+			logger.error("Error updating remote library", e);
+			library.setLibraryStatusType(LibraryStatusType.ERROR);
+		} finally {
+			libraryManager.saveLibrary(library);
 		}
+
 	}
 
 }

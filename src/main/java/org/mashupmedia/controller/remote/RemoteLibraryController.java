@@ -80,6 +80,10 @@ public class RemoteLibraryController {
 	}
 
 	private boolean isValidRemoteLibrary(Library remoteLibrary, String connectingUniqueName, String connectingHostName) {
+		if (remoteLibrary == null) {
+			return false;
+		}
+		
 		List<RemoteShare> remoteShares = remoteLibrary.getRemoteShares();
 		if (remoteShares == null || remoteShares.isEmpty()) {
 			return false;

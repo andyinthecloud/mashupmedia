@@ -139,13 +139,6 @@ var mashupMedia = new function() {
 		}
 		
 		
-		
-/*		
-		if (mediaItemId < 1) {
-		    return;
-		}
-*/		
-		
 		$.get(mashupMedia.contextUrl + "app/ajax/music/play/media-item/" + mediaItemId, {
 			"playlistId" : playlistId
 		}, function(data) {		    

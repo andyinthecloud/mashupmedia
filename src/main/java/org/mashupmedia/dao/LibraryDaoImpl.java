@@ -58,26 +58,41 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		Library library = (Library) query.uniqueResult();
 		return library;
 	}
-	
+
 	@Override
 	public Library getRemoteLibrary(String uniqueName) {
-		Query query = sessionFactory.getCurrentSession().createQuery("select l from Library l inner join l.remoteShares rs where rs.uniqueName = :uniqueName");
-		query.setString("uniqueName", uniqueName);		
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"select l from Library l inner join l.remoteShares rs where rs.uniqueName = :uniqueName");
+		query.setString("uniqueName", uniqueName);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Library> libraries = query.list();
 		if (libraries == null || libraries.isEmpty()) {
 			return null;
 		}
-		
+
 		if (libraries.size() > 1) {
 			logger.error("More than one library found for uniqueName = " + uniqueName);
 		}
-				
+
 		Library library = libraries.get(0);
 		return library;
 	}
-	
+
+	@Override
+	public boolean hasRemoteLibrary(String path) {
+		Query query = sessionFactory.getCurrentSession().createQuery("select l from Library l where l.location.path = :path");
+		query.setString("path", path);
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Library> libraries = query.list();
+		if (libraries == null || libraries.isEmpty()) {
+			return false;
+		}
+
+		return true;
+	}
+
 	@Override
 	public Library getRemoteLibrary(long libraryId) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Library where id = :id and remote = true");
@@ -86,26 +101,29 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		Library library = (Library) query.uniqueResult();
 		return library;
 	}
-	
+
 	@Override
 	public void deleteLibrary(Library library) {
-		
+
 		long libraryId = library.getId();
-		
-		Query deleteVotesQuery = sessionFactory.getCurrentSession().createQuery("delete Vote v where id in (select id from Vote v where v.mediaItem.library.id = :libraryId)");
+
+		Query deleteVotesQuery = sessionFactory.getCurrentSession().createQuery(
+				"delete Vote v where id in (select id from Vote v where v.mediaItem.library.id = :libraryId)");
 		deleteVotesQuery.setLong("libraryId", libraryId);
 		deleteVotesQuery.executeUpdate();
-		
-		Query deletePlaylistMediaQuery = sessionFactory.getCurrentSession().createQuery("delete PlaylistMediaItem where id in (select pmi.id from PlaylistMediaItem pmi where pmi.mediaItem.library.id = :libraryId)");
+
+		Query deletePlaylistMediaQuery = sessionFactory.getCurrentSession().createQuery(
+				"delete PlaylistMediaItem where id in (select pmi.id from PlaylistMediaItem pmi where pmi.mediaItem.library.id = :libraryId)");
 		deletePlaylistMediaQuery.setLong("libraryId", libraryId);
 		deletePlaylistMediaQuery.executeUpdate();
-		
-		if (library instanceof MusicLibrary) {			
-			Query deleteSongsQuery = sessionFactory.getCurrentSession().createQuery("delete Song where id in (select s.id from Song s where s.library.id = :libraryId)");
+
+		if (library instanceof MusicLibrary) {
+			Query deleteSongsQuery = sessionFactory.getCurrentSession().createQuery(
+					"delete Song where id in (select s.id from Song s where s.library.id = :libraryId)");
 			deleteSongsQuery.setLong("libraryId", libraryId);
 			deleteSongsQuery.executeUpdate();
 		}
-		
+
 		sessionFactory.getCurrentSession().evict(library);
 		library = getLibrary(libraryId);
 		sessionFactory.getCurrentSession().delete(library);
@@ -143,6 +161,5 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 		sessionFactory.getCurrentSession().merge(remoteShare);
 	}
-
 
 }

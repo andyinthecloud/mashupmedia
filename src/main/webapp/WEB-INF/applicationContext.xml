@@ -23,6 +23,8 @@
 	<context:component-scan base-package="org.mashupmedia.editor" />
 	<context:component-scan base-package="org.mashupmedia.interceptor" />
 	<context:component-scan base-package="org.mashupmedia.restful" />
+	<context:component-scan base-package="org.mashupmedia.validator" />
+	
 
 	<bean id="localDownloadTaskExecutor"
 		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">

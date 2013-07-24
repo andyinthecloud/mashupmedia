@@ -28,4 +28,6 @@ public interface LibraryDao {
 
 	public Library getRemoteLibrary(String uniqueName);
 
+	boolean hasRemoteLibrary(String url);
+
 }

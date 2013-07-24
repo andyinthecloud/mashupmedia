@@ -56,18 +56,9 @@ public abstract class Library implements Serializable {
 	private List<RemoteShare> remoteShares;
 	private boolean remote;
 	private String status;
-	private boolean updating;
-
-	public boolean isUpdating() {
-		return updating;
-	}
-
-	public void setUpdating(boolean updating) {
-		this.updating = updating;
-	}
 
 	public enum LibraryStatusType {
-		NONE, WORKING, ERROR, UNABLE_TO_CONNECT_TO_REMOTE_LIBRARY;
+		NONE, WORKING, ERROR, UNABLE_TO_CONNECT_TO_REMOTE_LIBRARY, OK;
 	}
 
 	public LibraryStatusType getLibraryStatusType() {
@@ -89,7 +80,7 @@ public abstract class Library implements Serializable {
 		return status;
 	}
 
-	public void setStatus(LibraryStatusType libraryStatusType) {
+	public void setLibraryStatusType(LibraryStatusType libraryStatusType) {
 		this.status = libraryStatusType.toString();
 	}
 

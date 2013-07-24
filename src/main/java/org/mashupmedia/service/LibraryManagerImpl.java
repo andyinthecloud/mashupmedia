@@ -95,9 +95,20 @@ public class LibraryManagerImpl implements LibraryManager {
 	@Override
 	public Library getRemoteLibrary(String uniqueName) {
 		Library remoteLibrary = libraryDao.getRemoteLibrary(uniqueName);
+		if (remoteLibrary == null) {
+			return null;
+		}
+		
 		Hibernate.initialize(remoteLibrary.getRemoteShares());
 		return remoteLibrary;
 	}
+	
+	@Override
+	public boolean hasRemoteLibrary(String url) {
+		boolean hasRemoteLibrary = libraryDao.hasRemoteLibrary(url);
+		return hasRemoteLibrary;
+	}
+	
 
 	@Override
 	public Library getRemoteLibrary(long libraryId) {

@@ -3,7 +3,6 @@ package org.mashupmedia.task;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryStatusType;
-import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,18 +52,18 @@ public class LibraryUpdateTaskManager {
 		}
 
 		public void run() {
-			if (library instanceof MusicLibrary) {
-				MusicLibrary musicLibrary = (MusicLibrary) library;
-				LibraryStatusType libraryStatusType = LibraryStatusType.WORKING;
-				try {
-					libraryUpdateManager.updateRemoteLibrary(musicLibrary);
-				} catch (Exception e) {
-					logger.error(e);
-					libraryStatusType = LibraryStatusType.ERROR;
-				}
-				musicLibrary.setStatus(libraryStatusType);
-				libraryManager.saveLibrary(musicLibrary);
+			try {
+				library.setLibraryStatusType(LibraryStatusType.WORKING);
+				libraryManager.saveLibrary(library);
+				libraryUpdateManager.updateRemoteLibrary(library);
+				library.setLibraryStatusType(LibraryStatusType.OK);
+			} catch (Exception e) {
+				logger.error("Error updating remote library", e);
+				library.setLibraryStatusType(LibraryStatusType.ERROR);
+			} finally {
+				libraryManager.saveLibrary(library);
 			}
+
 		}
 	}
 

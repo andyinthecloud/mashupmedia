@@ -21,11 +21,18 @@ import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.Group;
+import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.web.page.EditRemoteLibraryPage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-public class ListRemoteLibrariesValidator implements Validator {
+@Component
+public class EditRemoteLibraryPageValidator implements Validator {
+	
+	@Autowired
+	private LibraryManager libraryManager;
 	
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -34,18 +41,24 @@ public class ListRemoteLibrariesValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		EditRemoteLibraryPage listRemoteLibrariesPage = (EditRemoteLibraryPage) target;
-		String name = listRemoteLibrariesPage.getName();
+		EditRemoteLibraryPage editRemoteLibraryPage = (EditRemoteLibraryPage) target;
+		String name = editRemoteLibraryPage.getName();
+		
 		if (StringUtils.isBlank(name)) {
 			errors.rejectValue("name", "configuration.edit-remote-library.errors.empty.name");
 		}
 
-		String url = listRemoteLibrariesPage.getUrl();
+		String url = editRemoteLibraryPage.getUrl();
 		if (StringUtils.isBlank(url)) {
 			errors.rejectValue("url", "configuration.edit-remote-library.errors.empty.url");
+		} else {
+			
+			if (editRemoteLibraryPage.getLibraryId() == 0 && libraryManager.hasRemoteLibrary(url)) {
+				errors.rejectValue("url", "configuration.edit-remote-library.errors.existing.url");
+			}			
 		}
 		
-		Collection<Group> groups = listRemoteLibrariesPage.getGroups();
+		Collection<Group> groups = editRemoteLibraryPage.getGroups();
 		if (groups == null || groups.isEmpty()) {
 			errors.rejectValue("groups", "configuration.edit-remote-library.errors.empty.groups");			
 		}

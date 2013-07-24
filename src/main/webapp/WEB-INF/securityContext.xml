@@ -39,7 +39,7 @@
 	<http pattern="/jquery-plugins/**" security="none" />
 	<http pattern="/images/**" security="none" />
 	<http pattern="/app/login*" security="none" />
-	<http pattern="/app/remote*" security="none" />	
+	<http pattern="/app/remote/**" security="none" />	
 
 	<http auto-config='true'>
 		<remember-me />

@@ -17,28 +17,29 @@
 
 package org.mashupmedia.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.StringReader;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.StringHelper;
-import org.mashupmedia.util.XmlHelper;
+import org.mashupmedia.xml.PartialUnmarshaller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,9 +47,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class MapperManagerImpl implements MapperManager {
+	
+	private Logger logger = Logger.getLogger(getClass());
 
 	private Marshaller marshaller;
-	private Unmarshaller unmarshaller;
 	
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
@@ -63,15 +65,6 @@ public class MapperManagerImpl implements MapperManager {
 		marshaller = jaxbContext.createMarshaller();
 		marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FRAGMENT, true);
 		return marshaller;
-	}
-
-	protected Unmarshaller getUnmarshaller() throws JAXBException {
-		if (unmarshaller != null) {
-			return unmarshaller;
-		}
-
-		unmarshaller = JAXBContext.newInstance(Song.class).createUnmarshaller();
-		return unmarshaller;
 	}
 
 	@Override
@@ -141,30 +134,32 @@ public class MapperManagerImpl implements MapperManager {
 	public void saveXmltoSongs(MusicLibrary musicLibrary, String xml) throws Exception {
 
 		List<Song> songs = new ArrayList<Song>();
+		
+		if (StringUtils.isBlank(xml)) {
+			logger.error("Unable to save remote songs, xml is empty");
+			return;
+		}
+		
+		InputStream inputStream = new ByteArrayInputStream(xml.getBytes());		
+		
+		PartialUnmarshaller< Song> partialUnmarshaller = new PartialUnmarshaller<Song>(inputStream, Song.class);
 
-		StringReader reader = new StringReader(xml);
-		XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(reader);
-		XmlHelper.skipElements(xmlReader, XMLStreamReader.START_DOCUMENT, XMLStreamReader.DTD);
-		xmlReader.nextTag();
-		while (xmlReader.hasNext()) {
-			Song song = (Song) getUnmarshaller().unmarshal(xmlReader);
+		while(partialUnmarshaller.hasNext()) {
+			Song song = partialUnmarshaller.next();
+			String title = StringEscapeUtils.unescapeXml(song.getTitle());
+			song.setTitle(title);			
+			
 			songs.add(song);
-
+			
 			if (songs.size() == 10) {
 				musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
 				songs.clear();
 			}
-			
-			if (xmlReader.nextTag() != XMLStreamReader.START_ELEMENT) {
-				break;
-			}
-
 		}
-
-		reader.close();
-		xmlReader.close();
 		
+		partialUnmarshaller.close();
 		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
+		
 	}
 
 }

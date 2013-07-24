@@ -65,6 +65,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Autowired
 	private AdminManager adminManager;
+	
+	@Autowired
+	private LibraryManager libraryManager;
 
 	private MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
@@ -94,11 +97,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Override
 	public void updateRemoteLibrary(MusicLibrary musicLibrary) throws Exception {
-		if (!musicLibrary.isEnabled()) {
-			logger.info("Remote library is disabled, will not update:" + musicLibrary.toString());
-			return;
-		}
-
 		Location location = musicLibrary.getLocation();
 		String remoteLibraryUrl = location.getPath();
 		String libraryXml = connectionManager.proceessRemoteLibraryConnection(remoteLibraryUrl);

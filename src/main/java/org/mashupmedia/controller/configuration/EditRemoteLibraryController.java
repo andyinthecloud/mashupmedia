@@ -32,7 +32,7 @@ import org.mashupmedia.service.LibraryManager.LibraryType;
 import org.mashupmedia.task.LibraryUpdateTaskManager;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MessageHelper;
-import org.mashupmedia.validator.ListRemoteLibrariesValidator;
+import org.mashupmedia.validator.EditRemoteLibraryPageValidator;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.EditRemoteLibraryPage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +64,9 @@ public class EditRemoteLibraryController extends BaseController {
 
 	@Autowired
 	private GroupEditor groupEditor;
+	
+	@Autowired
+	private EditRemoteLibraryPageValidator editRemoteLibraryPageValidator;
 
 	@Override
 	public String getPageTitleMessageKey() {
@@ -137,7 +140,8 @@ public class EditRemoteLibraryController extends BaseController {
 	@RequestMapping(value = "/configuration/edit-remote-library", method = RequestMethod.POST)
 	public String postRemoteLibrary(EditRemoteLibraryPage editRemoteLibraryPage, BindingResult result, RedirectAttributes redirectAttributes) {
 
-		new ListRemoteLibrariesValidator().validate(editRemoteLibraryPage, result);
+		editRemoteLibraryPageValidator.validate(editRemoteLibraryPage, result);
+		
 		if (result.hasErrors()) {
 			return "configuration/edit-remote-library";
 		}

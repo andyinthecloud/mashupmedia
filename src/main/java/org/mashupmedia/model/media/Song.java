@@ -218,14 +218,20 @@ public class Song extends MediaItem {
 		}
 
 		metaBuilder.append(" | ");
-		metaBuilder.append(getMediaContentType());
+		metaBuilder.append(getMediaContentType().getDisplayText());
 
 		return metaBuilder.toString();
 
 	}
 
-	public String getMediaContentType() {
+	
+	public MediaContentType getMediaContentType() {
 		MediaContentType mediaContentType = WebHelper.getMediaContentType(getFormat(), MediaContentType.MP3);
+		return mediaContentType;
+	}
+	
+	public String getJPlayerContentType() {
+		MediaContentType mediaContentType = getMediaContentType();
 		return mediaContentType.getDisplayText();
 	}
 

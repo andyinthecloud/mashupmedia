@@ -5,11 +5,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
+import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
@@ -46,6 +50,9 @@ public class AjaxMusicController extends AjaxBaseController {
 	private final static int TOTAL_RANDOM_ALBUMS = 60;
 	private final static int TOTAL_ALBUMS = 60;
 
+	public static final String MODEL_KEY_STREAMING_FORMAT = "streamingFormat";
+	public static final String MODEL_KEY_STREAMING_URL = "streamingUrl";
+
 	@Autowired
 	private MusicManager musicManager;
 
@@ -60,7 +67,7 @@ public class AjaxMusicController extends AjaxBaseController {
 
 	@Autowired
 	private DiscogsWebServiceImpl discogsWebService;
-	
+
 	@Autowired
 	private ConfigurationManager configurationManager;
 
@@ -70,7 +77,7 @@ public class AjaxMusicController extends AjaxBaseController {
 		isAppend = BooleanUtils.toBoolean(isAppend);
 		model.addAttribute("isAppend", isAppend);
 		model.addAttribute("albums", albums);
-		return "ajax/music/random-albums";		
+		return "ajax/music/random-albums";
 	}
 
 	@RequestMapping(value = "/album/{albumId}", method = RequestMethod.GET)
@@ -102,7 +109,8 @@ public class AjaxMusicController extends AjaxBaseController {
 
 	@RequestMapping(value = "/albums", method = RequestMethod.GET)
 	public String getAlbums(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-			@RequestParam(value = "searchLetter", required = false) String searchLetter, @RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
+			@RequestParam(value = "searchLetter", required = false) String searchLetter,
+			@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
 		AlbumsPage albumsPage = new AlbumsPage();
 		List<String> albumIndexLetters = musicManager.getAlbumIndexLetters();
 		albumsPage.setAlbumIndexLetters(albumIndexLetters);
@@ -114,7 +122,7 @@ public class AjaxMusicController extends AjaxBaseController {
 		albumsPage.setAlbums(albums);
 		model.addAttribute(albumsPage);
 		model.addAttribute("isAppend", BooleanUtils.toBoolean(isAppend));
-		
+
 		return "ajax/music/albums";
 	}
 
@@ -144,28 +152,27 @@ public class AjaxMusicController extends AjaxBaseController {
 		PlaylistMediaItem playlistMediaItem = new PlaylistMediaItem();
 		playlistMediaItem.setPlaylist(playlist);
 		playlistMediaItem.setMediaItem(mediaItem);
-		
-		boolean isEncoderInstalled = BooleanUtils.toBoolean(configurationManager
-				.getConfigurationValue(MashUpMediaConstants.IS_ENCODER_INSTALLED));
+
+		boolean isEncoderInstalled = BooleanUtils.toBoolean(configurationManager.getConfigurationValue(MashUpMediaConstants.IS_ENCODER_INSTALLED));
 		model.addAttribute(MashUpMediaConstants.IS_ENCODER_INSTALLED, isEncoderInstalled);
-		
+
 		MediaType mediaType = mediaItem.getMediaType();
 		if (mediaType == MediaType.SONG) {
 			Song song = (Song) mediaItem;
-			
+
 			playlist = updatePlayingSong(playlist, song);
-			
+
 			song = SerializationUtils.clone(song);
 			song.setDisplayTitle(StringHelper.escapeJavascript(song.getDisplayTitle()));
-			
+
 			Artist artist = song.getArtist();
 			artist.setName(StringHelper.escapeJavascript(artist.getName()));
 			song.setArtist(artist);
-			
+
 			Album album = song.getAlbum();
 			song.setAlbum(album);
 			album.setName(StringHelper.escapeJavascript(album.getName()));
-			
+
 			playlist = SerializationUtils.clone(playlist);
 			playlist.setName(StringHelper.escapeJavascript(playlist.getName()));
 
@@ -173,10 +180,39 @@ public class AjaxMusicController extends AjaxBaseController {
 			model.addAttribute("format", mediaContentType.getjPlayerContentType());
 			model.addAttribute("song", song);
 			model.addAttribute("playlist", playlist);
+
+			prepareStreamingUrl(song, model);
+
 			return "ajax/music/player-script";
 		}
 
 		return "";
+	}
+
+	private void prepareStreamingUrl(Song song, Model model) {
+		String streamingUrl = "";
+		Library library = song.getLibrary();
+		long songId = song.getId();
+		if (library.isRemote()) {
+			Location location = library.getLocation();
+			String path = location.getPath();
+			streamingUrl = path.replaceFirst("/app/.*", "");
+			songId = NumberUtils.toLong(song.getPath());
+		}
+
+		MediaContentType mediaContentType = song.getMediaContentType();
+		EncodeStatusType encodeStatusType = song.getEncodeStatusType();
+
+		if ((encodeStatusType == EncodeStatusType.PROCESSING) || (encodeStatusType == EncodeStatusType.ENCODED)) {
+			streamingUrl += "/app/streaming/media/encoded/" + songId;
+			mediaContentType = MediaContentType.OGA;
+		} else {
+			streamingUrl += "/app/streaming/media/unprocessed/" + songId;
+		}
+
+		model.addAttribute(MODEL_KEY_STREAMING_FORMAT, mediaContentType.getjPlayerContentType());
+		model.addAttribute(MODEL_KEY_STREAMING_URL, streamingUrl);
+
 	}
 
 	@RequestMapping(value = "/play/next", method = RequestMethod.GET)

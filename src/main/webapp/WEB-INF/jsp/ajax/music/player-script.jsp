@@ -1,15 +1,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 
-
-<c:url var="streamingUrl" value="/app/streaming/media/unprocessed/${song.id}"/>
-<c:set var="streamingFormat" value="${song.mediaContentType}"/>
-<c:if test="${song.encodeStatusTypeValue == 'PROCESSING' || song.encodeStatusTypeValue == 'ENCODED'}">
-	<c:url var="streamingUrl" value="/app/streaming/media/encoded/${song.id}"/>
-	<c:set var="streamingFormat" value="oga"/>
-</c:if>
-
-
 <script type="text/javascript">
 
 
@@ -45,7 +36,7 @@
 		$(mashupMedia.jPlayerId).jPlayer({
 			ready: function (event) {
 				$(this).jPlayer("setMedia", {
-					${streamingFormat} : "${streamingUrl}"
+					${streamingFormat} : "<c:url value="${streamingUrl}" />"
 				}).jPlayer(jPlayerStatus);				
 			},
 			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/2.3.0" />",
