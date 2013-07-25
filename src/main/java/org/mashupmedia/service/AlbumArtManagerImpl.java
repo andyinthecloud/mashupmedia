@@ -37,18 +37,12 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 
 	@Override
 	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
-		AlbumArtImage savedAlbumArtImage = getAlbumArtImage(song);
-		if (savedAlbumArtImage != null) {
-			return savedAlbumArtImage;
+		AlbumArtImage albumArtImage = getAlbumArtImage(song);		
+		if (!isAlbumArtImageEmpty(albumArtImage) && !isAlbumArtImageRemote(albumArtImage)) {
+			return albumArtImage;
 		}
 
-		AlbumArtImage albumArtImage = getLocalAlbumArtImage(musicLibrary, song);
-
-		if (albumArtImage == null) {
-			return null;
-		}
-		String thumbnailUrl = ImageHelper.generateAndSaveThumbnail(musicLibrary.getId(), albumArtImage.getUrl());
-		albumArtImage.setThumbnailUrl(thumbnailUrl);
+		albumArtImage = getLocalAlbumArtImage(musicLibrary, song);
 		return albumArtImage;
 	}
 
@@ -66,13 +60,49 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		String artistName = artist.getName();
 		String albumName = album.getName();
 
-		album = musicManager.getAlbum(artistName, albumName);
-		if (album == null) {
-			return null;
+		AlbumArtImage albumArtImage = null;
+
+		Album savedAlbum = musicManager.getAlbum(artistName, albumName);
+		if (savedAlbum != null) {
+			albumArtImage = savedAlbum.getAlbumArtImage();
+			if (!isAlbumArtImageEmpty(albumArtImage)) {
+				return albumArtImage;
+			}
 		}
 
-		AlbumArtImage albumArtImage = album.getAlbumArtImage();
+		albumArtImage = album.getAlbumArtImage();
 		return albumArtImage;
+	}
+	
+	private boolean isAlbumArtImageEmpty(AlbumArtImage albumArtImage) {
+		if (albumArtImage == null) {
+			return true;
+		}
+		
+		if (StringUtils.isBlank(albumArtImage.getUrl())) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+	private boolean isAlbumArtImageRemote(AlbumArtImage albumArtImage) {
+		if (isAlbumArtImageEmpty(albumArtImage)) {
+			return false;
+		}
+		
+		String url = StringUtils.trimToEmpty(albumArtImage.getUrl()).toLowerCase();
+		if (StringUtils.isEmpty(url)) {
+			return false;
+		}
+		
+		if (url.startsWith("http://") || url.startsWith("https://")) {
+			return true;
+		}
+		
+		return false;
+		
 	}
 
 	private AlbumArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
@@ -120,6 +150,10 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		albumArtImage.setName(albumArtFileName);
 		albumArtImage.setUrl(imagePath);
 		albumArtImage.setContentType(contentType);
+
+		String thumbnailUrl = ImageHelper.generateAndSaveThumbnail(musicLibrary.getId(), imagePath);
+		albumArtImage.setThumbnailUrl(thumbnailUrl);
+
 		return albumArtImage;
 	}
 

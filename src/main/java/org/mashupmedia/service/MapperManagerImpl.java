@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Album;
+import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.FileHelper;
@@ -42,19 +43,18 @@ import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.xml.PartialUnmarshaller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class MapperManagerImpl implements MapperManager {
-	
+
 	private Logger logger = Logger.getLogger(getClass());
 
 	private Marshaller marshaller;
-	
+
+	private static final String ALBUM_ART_RELATIVE_PATH = "/app/music";
+
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
-	
 
 	protected Marshaller getMarshaller() throws JAXBException {
 		if (marshaller != null) {
@@ -133,33 +133,43 @@ public class MapperManagerImpl implements MapperManager {
 	@Override
 	public void saveXmltoSongs(MusicLibrary musicLibrary, String xml) throws Exception {
 
+		String libraryPath = StringUtils.trimToEmpty(musicLibrary.getLocation().getPath());
+		libraryPath = libraryPath.replaceFirst("/app/.*", "");
+
 		List<Song> songs = new ArrayList<Song>();
-		
+
 		if (StringUtils.isBlank(xml)) {
 			logger.error("Unable to save remote songs, xml is empty");
 			return;
 		}
-		
-		InputStream inputStream = new ByteArrayInputStream(xml.getBytes());		
-		
-		PartialUnmarshaller< Song> partialUnmarshaller = new PartialUnmarshaller<Song>(inputStream, Song.class);
 
-		while(partialUnmarshaller.hasNext()) {
+		InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
+
+		PartialUnmarshaller<Song> partialUnmarshaller = new PartialUnmarshaller<Song>(inputStream, Song.class);
+
+		while (partialUnmarshaller.hasNext()) {
 			Song song = partialUnmarshaller.next();
 			String title = StringEscapeUtils.unescapeXml(song.getTitle());
-			song.setTitle(title);			
-			
+			song.setTitle(title);
+			Album album = song.getAlbum();
+			long albumId = album.getId();
+			album.setId(0);
+			AlbumArtImage albumArtImage = new AlbumArtImage();
+			albumArtImage.setUrl(libraryPath + ALBUM_ART_RELATIVE_PATH + "/album-art/" + albumId);
+			albumArtImage.setThumbnailUrl(libraryPath + ALBUM_ART_RELATIVE_PATH + "/album-art-thumbnail/" + albumId);
+			album.setAlbumArtImage(albumArtImage);
+
 			songs.add(song);
-			
+
 			if (songs.size() == 10) {
 				musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
 				songs.clear();
 			}
 		}
-		
+
 		partialUnmarshaller.close();
 		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
-		
+
 	}
 
 }

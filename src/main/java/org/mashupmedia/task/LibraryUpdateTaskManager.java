@@ -1,8 +1,6 @@
 package org.mashupmedia.task;
 
-import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.library.Library.LibraryStatusType;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LibraryUpdateTaskManager {
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private ThreadPoolTaskExecutor libraryUpdateThreadPoolTaskExecutor;
@@ -52,18 +49,7 @@ public class LibraryUpdateTaskManager {
 		}
 
 		public void run() {
-			try {
-				library.setLibraryStatusType(LibraryStatusType.WORKING);
-				libraryManager.saveLibrary(library);
-				libraryUpdateManager.updateRemoteLibrary(library);
-				library.setLibraryStatusType(LibraryStatusType.OK);
-			} catch (Exception e) {
-				logger.error("Error updating remote library", e);
-				library.setLibraryStatusType(LibraryStatusType.ERROR);
-			} finally {
-				libraryManager.saveLibrary(library);
-			}
-
+			libraryUpdateManager.updateRemoteLibrary(library);
 		}
 	}
 

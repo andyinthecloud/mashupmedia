@@ -443,8 +443,28 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			return null;
 		}
 
+		
+		String url = null;
+		String thumbnailUrl = null;
+		AlbumArtImage albumArtImage = album.getAlbumArtImage();
+		if (albumArtImage != null) {
+			url = albumArtImage.getUrl();
+			thumbnailUrl = albumArtImage.getThumbnailUrl();			
+		}
+		
+		
 		Album savedAlbum = musicDao.getAlbum(userGroupIds, artist.getName(), albumName);
 		if (savedAlbum != null) {
+			AlbumArtImage savedAlbumArtImage = savedAlbum.getAlbumArtImage();
+			if (savedAlbumArtImage == null) {
+				savedAlbum.setAlbumArtImage(albumArtImage);
+			} else {
+				if (StringUtils.isBlank(savedAlbumArtImage.getUrl())) {
+					savedAlbumArtImage.setUrl(url);
+					savedAlbumArtImage.setThumbnailUrl(thumbnailUrl);
+				}
+			}
+			
 			return savedAlbum;
 		}
 
@@ -452,6 +472,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		album.setIndexLetter(albumIndexLetter);
 		String albumIndexText = StringHelper.getSearchIndexText(albumName);
 		album.setIndexText(albumIndexText);
+		album.setAlbumArtImage(albumArtImage);
 
 		return album;
 

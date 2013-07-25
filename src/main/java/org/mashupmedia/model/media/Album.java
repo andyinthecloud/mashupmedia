@@ -26,7 +26,6 @@ public class Album implements Serializable {
 	private static final long serialVersionUID = -6293786232429408277L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@XmlTransient
 	private long id;
 	@Field(analyze = Analyze.NO)
 	private String name;
