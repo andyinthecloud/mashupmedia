@@ -3,6 +3,7 @@ package org.mashupmedia.service;
 import java.util.List;
 
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.service.LibraryManager.LibraryType;
 
 public interface LibraryManager {
 
@@ -29,6 +30,8 @@ public interface LibraryManager {
 	public Library getRemoteLibrary(String uniqueName);
 
 	public boolean hasRemoteLibrary(String url);
+
+	public List<Library> getLibraries(LibraryType libraryType);
 	
 	
 

@@ -40,6 +40,12 @@ public class LibraryManagerImpl implements LibraryManager {
 		List<Library> musicLibraries = libraryDao.getLocalLibraries(libraryType);
 		return musicLibraries;
 	}
+	
+	@Override
+	public List<Library> getLibraries(LibraryType libraryType) {
+		List<Library> musicLibraries = libraryDao.getLibraries(libraryType);
+		return musicLibraries;
+	}
 
 	@Override
 	public List<Library> getLibrariesForGroup(long groupId) {
@@ -89,6 +95,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	public Library getLibrary(long id) {
 		Library library = libraryDao.getLibrary(id);
 		Hibernate.initialize(library.getRemoteShares());
+		Hibernate.initialize(library.getGroups());		
 		return library;
 	}
 

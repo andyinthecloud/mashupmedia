@@ -73,21 +73,19 @@ public class EditGroupController extends BaseController {
 	}
 
 	@ModelAttribute("libraries")
-	public List<WebOption> getLibraries() {
-		@SuppressWarnings("unchecked")
-		List<Library> libraries = (List<Library>) libraryManager.getLocalLibraries(LibraryType.ALL);
-		List<WebOption> webOptions = generateWebOptions(libraries);
-		return webOptions;
+	public List<Library> getLibraries() {
+		List<Library> libraries = (List<Library>) libraryManager.getLibraries(LibraryType.ALL);
+		return libraries;
 	}
 	
-	protected List<WebOption> generateWebOptions(List<Library> libraries) {
-		List<WebOption> webOptions = new ArrayList<WebOption>();
-		for (Library library : libraries) {
-			WebOption webOption = new WebOption(library.getName(), String.valueOf(library.getId()));
-			webOptions.add(webOption);
-		}
-		return webOptions;
-	}
+//	protected List<WebOption> generateWebOptions(List<Library> libraries) {
+//		List<WebOption> webOptions = new ArrayList<WebOption>();
+//		for (Library library : libraries) {
+//			WebOption webOption = new WebOption(library.getName(), String.valueOf(library.getId()));
+//			webOptions.add(webOption);
+//		}
+//		return webOptions;
+//	}
 
 	@RequestMapping(value = "/edit-group/{groupId}", method = RequestMethod.GET)
 	public String editUser(@PathVariable("groupId") Long groupId, Model model) {
@@ -101,8 +99,11 @@ public class EditGroupController extends BaseController {
 		EditGroupPage editGroupPage = new EditGroupPage();
 		editGroupPage.setGroup(group);
 		List<Library> selectedLibraries = libraryManager.getLibrariesForGroup(group.getId());
-		List<WebOption> selectedLibraryWebOptions = generateWebOptions(selectedLibraries);		
-		editGroupPage.setSelectedLibraries(selectedLibraryWebOptions);
+		editGroupPage.setSelectedLibraries(selectedLibraries);
+		
+		
+//		List<WebOption> selectedLibraryWebOptions = generateWebOptions(selectedLibraries);		
+//		editGroupPage.setSelectedLibraries(selectedLibraryWebOptions);
 		return editGroupPage;
 	}
 
@@ -129,40 +130,70 @@ public class EditGroupController extends BaseController {
 		if (action.equalsIgnoreCase("delete")) {
 			adminManager.deleteGroup(group.getId());
 		} else {
-			List<WebOption> selectedLibraryWebOptions = editGroupPage.getSelectedLibraries();
-			processSaveLibraries(selectedLibraryWebOptions, group);
+			
+			
+//			List<WebOption> selectedLibraryWebOptions = editGroupPage.getSelectedLibraries();
+//			processSaveLibraries(selectedLibraryWebOptions, group);
 
+			List<Library> selectedLibraries = editGroupPage.getSelectedLibraries();
+			processSaveLibraries(selectedLibraries, group);
+			
 			adminManager.saveGroup(group);
 		}
 
 		return "redirect:/app/configuration/administration/list-groups";
 	}
 
-	protected void processSaveLibraries(List<WebOption> webOptions, Group group) {
-		if (webOptions == null || webOptions.isEmpty()) {
+	protected void processSaveLibraries(List<Library> selectedLibraries, Group group) {
+		
+		if (selectedLibraries == null || selectedLibraries.isEmpty()) {
 			return;
 		}
+		
+//		if (webOptions == null || webOptions.isEmpty()) {
+//			return;
+//		}
 
 		
-		@SuppressWarnings("unchecked")
-		List<Library> libraries = (List<Library>) libraryManager.getLocalLibraries(LibraryType.ALL);
 		
-		for (WebOption webOption : webOptions) {
-			long libraryId = NumberUtils.toLong(webOption.getValue());
-			if (libraryId == 0) {
+//		@SuppressWarnings("unchecked")
+		List<Library> libraries = (List<Library>) libraryManager.getLibraries(LibraryType.ALL);
+		
+		for (Library selectedLibrary : selectedLibraries) {
+			
+			long selectedLibraryId = selectedLibrary.getId();
+			if (selectedLibraryId == 0) {
 				continue;
 			}
-			Library library = libraryManager.getLibrary(libraryId);
-			Set<Group> groups = library.getGroups();
+			selectedLibrary = libraryManager.getLibrary(selectedLibraryId);			
+			Set<Group> groups = selectedLibrary.getGroups();
 			if (groups == null) {
 				groups = new HashSet<Group>();
 			}
 			groups.add(group);
-			library.setGroups(groups);
+			selectedLibrary.setGroups(groups);
 			adminManager.saveGroup(group);
-			
-			removeLibrary(libraries, libraryId);
+			libraries.remove(selectedLibrary);
 		}
+
+		
+		
+//		for (WebOption webOption : webOptions) {
+//			long libraryId = NumberUtils.toLong(webOption.getValue());
+//			if (libraryId == 0) {
+//				continue;
+//			}
+//			Library library = libraryManager.getLibrary(libraryId);
+//			Set<Group> groups = library.getGroups();
+//			if (groups == null) {
+//				groups = new HashSet<Group>();
+//			}
+//			groups.add(group);
+//			library.setGroups(groups);
+//			adminManager.saveGroup(group);
+//			
+//			removeLibrary(libraries, libraryId);
+//		}
 
 		for (Library library : libraries) {
 			Set<Group> groups = library.getGroups();

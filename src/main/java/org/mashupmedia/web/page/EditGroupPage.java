@@ -20,19 +20,32 @@ package org.mashupmedia.web.page;
 import java.util.List;
 
 import org.mashupmedia.model.Group;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.web.WebOption;
 
 public class EditGroupPage {
 	private String action;
 	private Group group;
-	private List<WebOption> selectedLibraries;
+	private List<Library> selectedLibraries;
+	
+	
+	
+//	private List<WebOption> selectedLibraries;
+//
+//	public List<WebOption> getSelectedLibraries() {
+//		return selectedLibraries;
+//	}
+//
+//	public void setSelectedLibraries(List<WebOption> selectedLibraries) {
+//		this.selectedLibraries = selectedLibraries;
+//	}
 
-	public List<WebOption> getSelectedLibraries() {
+	public List<Library> getSelectedLibraries() {
 		return selectedLibraries;
 	}
 
-	public void setSelectedLibraries(List<WebOption> selectedLibraries) {
-		this.selectedLibraries = selectedLibraries;
+	public void setSelectedLibraries(List<Library> libraries) {
+		this.selectedLibraries = libraries;
 	}
 
 	public String getAction() {
