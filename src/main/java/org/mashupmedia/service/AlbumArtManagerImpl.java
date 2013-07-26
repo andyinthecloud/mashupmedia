@@ -2,10 +2,12 @@ package org.mashupmedia.service;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.Tag;
@@ -27,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class AlbumArtManagerImpl implements AlbumArtManager {
+	private Logger logger = Logger.getLogger(getClass());
+
 	public static final String DEFAULT_MIME_TYPE = "jpg";
 
 	@Autowired
@@ -37,7 +41,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 
 	@Override
 	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
-		AlbumArtImage albumArtImage = getAlbumArtImage(song);		
+		AlbumArtImage albumArtImage = getAlbumArtImage(song);
 		if (!isAlbumArtImageEmpty(albumArtImage) && !isAlbumArtImageRemote(albumArtImage)) {
 			return albumArtImage;
 		}
@@ -73,36 +77,35 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		albumArtImage = album.getAlbumArtImage();
 		return albumArtImage;
 	}
-	
+
 	private boolean isAlbumArtImageEmpty(AlbumArtImage albumArtImage) {
 		if (albumArtImage == null) {
 			return true;
 		}
-		
+
 		if (StringUtils.isBlank(albumArtImage.getUrl())) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	
+
 	private boolean isAlbumArtImageRemote(AlbumArtImage albumArtImage) {
 		if (isAlbumArtImageEmpty(albumArtImage)) {
 			return false;
 		}
-		
+
 		String url = StringUtils.trimToEmpty(albumArtImage.getUrl()).toLowerCase();
 		if (StringUtils.isEmpty(url)) {
 			return false;
 		}
-		
+
 		if (url.startsWith("http://") || url.startsWith("https://")) {
 			return true;
 		}
-		
+
 		return false;
-		
+
 	}
 
 	private AlbumArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
@@ -151,7 +154,13 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		albumArtImage.setUrl(imagePath);
 		albumArtImage.setContentType(contentType);
 
-		String thumbnailUrl = ImageHelper.generateAndSaveThumbnail(musicLibrary.getId(), imagePath);
+		String thumbnailUrl = imagePath;
+		try {
+			thumbnailUrl = ImageHelper.generateAndSaveThumbnail(musicLibrary.getId(), imagePath);
+		} catch (Exception e) {
+			logger.error("Error converting album art image to thumbnail, using original image.", e);
+		}
+
 		albumArtImage.setThumbnailUrl(thumbnailUrl);
 
 		return albumArtImage;
