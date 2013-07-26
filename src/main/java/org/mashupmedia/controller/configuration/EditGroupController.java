@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.editor.LibraryEditor;
 import org.mashupmedia.model.Group;
@@ -34,7 +33,6 @@ import org.mashupmedia.service.LibraryManager.LibraryType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.validator.EditGroupPageValidator;
 import org.mashupmedia.web.Breadcrumb;
-import org.mashupmedia.web.WebOption;
 import org.mashupmedia.web.page.EditGroupPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -64,7 +62,7 @@ public class EditGroupController extends BaseController {
 	public String getPageTitleMessageKey() {
 		return "configuration.administration.edit-group.title";
 	}
-	
+
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration"));
@@ -77,15 +75,6 @@ public class EditGroupController extends BaseController {
 		List<Library> libraries = (List<Library>) libraryManager.getLibraries(LibraryType.ALL);
 		return libraries;
 	}
-	
-//	protected List<WebOption> generateWebOptions(List<Library> libraries) {
-//		List<WebOption> webOptions = new ArrayList<WebOption>();
-//		for (Library library : libraries) {
-//			WebOption webOption = new WebOption(library.getName(), String.valueOf(library.getId()));
-//			webOptions.add(webOption);
-//		}
-//		return webOptions;
-//	}
 
 	@RequestMapping(value = "/edit-group/{groupId}", method = RequestMethod.GET)
 	public String editUser(@PathVariable("groupId") Long groupId, Model model) {
@@ -100,10 +89,6 @@ public class EditGroupController extends BaseController {
 		editGroupPage.setGroup(group);
 		List<Library> selectedLibraries = libraryManager.getLibrariesForGroup(group.getId());
 		editGroupPage.setSelectedLibraries(selectedLibraries);
-		
-		
-//		List<WebOption> selectedLibraryWebOptions = generateWebOptions(selectedLibraries);		
-//		editGroupPage.setSelectedLibraries(selectedLibraryWebOptions);
 		return editGroupPage;
 	}
 
@@ -130,14 +115,10 @@ public class EditGroupController extends BaseController {
 		if (action.equalsIgnoreCase("delete")) {
 			adminManager.deleteGroup(group.getId());
 		} else {
-			
-			
-//			List<WebOption> selectedLibraryWebOptions = editGroupPage.getSelectedLibraries();
-//			processSaveLibraries(selectedLibraryWebOptions, group);
 
 			List<Library> selectedLibraries = editGroupPage.getSelectedLibraries();
 			processSaveLibraries(selectedLibraries, group);
-			
+
 			adminManager.saveGroup(group);
 		}
 
@@ -145,27 +126,20 @@ public class EditGroupController extends BaseController {
 	}
 
 	protected void processSaveLibraries(List<Library> selectedLibraries, Group group) {
-		
-		if (selectedLibraries == null || selectedLibraries.isEmpty()) {
-			return;
-		}
-		
-//		if (webOptions == null || webOptions.isEmpty()) {
-//			return;
-//		}
 
-		
-		
-//		@SuppressWarnings("unchecked")
+		if (selectedLibraries == null) {
+			selectedLibraries = new ArrayList<Library>();
+		}
+
 		List<Library> libraries = (List<Library>) libraryManager.getLibraries(LibraryType.ALL);
-		
+
 		for (Library selectedLibrary : selectedLibraries) {
-			
+
 			long selectedLibraryId = selectedLibrary.getId();
 			if (selectedLibraryId == 0) {
 				continue;
 			}
-			selectedLibrary = libraryManager.getLibrary(selectedLibraryId);			
+			selectedLibrary = libraryManager.getLibrary(selectedLibraryId);
 			Set<Group> groups = selectedLibrary.getGroups();
 			if (groups == null) {
 				groups = new HashSet<Group>();
@@ -173,33 +147,21 @@ public class EditGroupController extends BaseController {
 			groups.add(group);
 			selectedLibrary.setGroups(groups);
 			adminManager.saveGroup(group);
-			libraries.remove(selectedLibrary);
-		}
+			libraryManager.saveLibrary(selectedLibrary);
+			removeLibrary(libraries, selectedLibraryId);
 
-		
-		
-//		for (WebOption webOption : webOptions) {
-//			long libraryId = NumberUtils.toLong(webOption.getValue());
-//			if (libraryId == 0) {
-//				continue;
-//			}
-//			Library library = libraryManager.getLibrary(libraryId);
-//			Set<Group> groups = library.getGroups();
-//			if (groups == null) {
-//				groups = new HashSet<Group>();
-//			}
-//			groups.add(group);
-//			library.setGroups(groups);
-//			adminManager.saveGroup(group);
-//			
-//			removeLibrary(libraries, libraryId);
-//		}
+		}
 
 		for (Library library : libraries) {
 			Set<Group> groups = library.getGroups();
 			if (groups == null || groups.isEmpty()) {
 				continue;
 			}
+			long libraryId = library.getId();
+			if (libraryId > 0) {
+				library = libraryManager.getLibrary(libraryId);
+			}
+
 			groups.remove(group);
 			library.setGroups(groups);
 			libraryManager.saveLibrary(library);
@@ -207,7 +169,7 @@ public class EditGroupController extends BaseController {
 	}
 
 	protected void removeLibrary(List<Library> libraries, long libraryId) {
-		
+
 		Library libraryToRemove = null;
 		for (Library library : libraries) {
 			if (library.getId() == libraryId) {
@@ -215,11 +177,11 @@ public class EditGroupController extends BaseController {
 				break;
 			}
 		}
-		
+
 		if (libraryToRemove == null) {
 			return;
 		}
-		
+
 		libraries.remove(libraryToRemove);
 	}
 

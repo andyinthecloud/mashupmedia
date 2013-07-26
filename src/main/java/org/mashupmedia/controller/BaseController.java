@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 public abstract class BaseController {
+	
+	protected final static String MODEL_KEY_HAS_ERRORS = "hasErrors";
 
 	@Autowired
 	private PlaylistManager playlistManager;

@@ -1,7 +1,10 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+
+
 <script type="text/javascript">
     $(document).ready(function() {
+    	$("form input").attr('autocomplete','off');
 		
 		<c:if test="${!editUserPage.hasPassword}">
 		showPasswordFields();
@@ -19,6 +22,10 @@
 		$("#button-change-password").click(function() {
 		    showPasswordFields();
 		});
+		
+		<c:if test="${!empty hasErrors}">
+	    	showPasswordFields();		
+		</c:if>
 
     });
     
@@ -33,11 +40,10 @@
 
 
 <c:url var="actionUrl" value="/app/configuration/administration/submit-user" />
-<form:form commandName="editUserPage" action="${actionUrl}">
+<form:form commandName="editUserPage" action="${actionUrl}" autocomplete="false">
 
 	<form:hidden path="action" />
 	<form:hidden path="user.id" />
-
 	<form:errors path="*" cssClass="error-box" />
 
 	<c:choose>
@@ -56,11 +62,11 @@
 	</c:choose>
 
 	<label class="new-line"><spring:message code="configuration.administration.edit-user.username" /></label>
-	<form:input path="user.username" />
+	<form:input path="user.username" autocomplete="false"/>
 	<br />
 
 	<label class="new-line"><spring:message code="configuration.administration.edit-user.name" /></label>
-	<form:input path="user.name" />
+	<form:input path="user.name" autocomplete="false"/>
 	<br />
 
 
@@ -73,9 +79,9 @@
 			<spring:message code="configuration.administration.edit-user.change-password" />
 		</legend>
 		<label class="new-line"><spring:message code="configuration.administration.edit-user.password" /></label>
-		<form:password path="user.password" />
+		<form:password path="user.password" autocomplete="false"/>
 		<br /> <label class="new-line"><spring:message code="configuration.administration.edit-user.repeat-password" /></label>
-		<form:password path="repeatPassword" />
+		<form:password path="repeatPassword" autocomplete="false"/>
 	</fieldset>
 
 

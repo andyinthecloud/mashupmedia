@@ -241,8 +241,6 @@ public abstract class Library implements Serializable {
 		builder.append(scanMinutesInterval);
 		builder.append(", groups=");
 		builder.append(groups);
-		builder.append(", remoteShares=");
-		builder.append(remoteShares);
 		builder.append("]");
 		return builder.toString();
 	}

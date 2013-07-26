@@ -116,7 +116,8 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		}
 
 		playlist = new Playlist();
-		playlist.setName(MessageHelper.getMessage("music.playlist.default.name"));
+		String name = user.getName();
+		playlist.setName(name + "'s " + MessageHelper.getMessage("music.playlist.default.name"));
 		playlist.setUserDefault(true);
 		playlist.setCreatedBy(user);
 		playlist.setPlaylistType(PlaylistType.MUSIC);

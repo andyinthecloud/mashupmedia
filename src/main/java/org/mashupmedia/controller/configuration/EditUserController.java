@@ -114,6 +114,7 @@ public class EditUserController extends BaseController {
 
 		new EditUserPageValidator().validate(editUserPage, bindingResult);
 		if (bindingResult.hasErrors()) {
+			model.addAttribute(MODEL_KEY_HAS_ERRORS, Boolean.TRUE.toString());
 			return "configuration/administration/edit-user";
 		}
 

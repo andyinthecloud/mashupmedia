@@ -40,7 +40,7 @@ public class EditUserPageValidator implements Validator {
 		}
 
 		if (StringUtils.isBlank(user.getUsername())) {
-			errors.rejectValue("user.name", "configuration.administration.edit-user.error.username");
+			errors.rejectValue("user.username", "configuration.administration.edit-user.error.username");
 		}
 
 		validateChangePassword(editUserPage, errors);
