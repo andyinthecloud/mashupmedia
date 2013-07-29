@@ -141,7 +141,7 @@
 
 	<c:forEach items="${songs}" var="song" varStatus="status">
 		<li id="song-id-${song.id}" class="item"><a class="album-cover" href="javascript:;" rel="address:/address-load-album-${song.album.id}"> <img
-				src="<c:url value="/app/music/album-art-thumbnail/${song.album.id}" />"
+				src="<c:url value="/app/music/album-art/thumbnail/${song.album.id}" />"
 				title="<c:out value="${song.album.artist.name}" /> - <c:out value="${song.album.name}" />"
 				alt="<c:out value="${song.album.artist.name}" /> - <c:out value="${song.album.name}" />" />
 		</a>

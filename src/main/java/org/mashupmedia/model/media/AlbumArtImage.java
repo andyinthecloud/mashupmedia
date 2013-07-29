@@ -10,8 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import org.mashupmedia.model.library.Library;
-
 @Entity
 @Cacheable
 public class AlbumArtImage implements Serializable {
@@ -22,8 +20,6 @@ public class AlbumArtImage implements Serializable {
 	private String name;
 	private String url;
 	private String thumbnailUrl;
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	private Library library;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
 	private String contentType;
@@ -42,14 +38,6 @@ public class AlbumArtImage implements Serializable {
 
 	public void setAlbum(Album album) {
 		this.album = album;
-	}
-
-	public Library getLibrary() {
-		return library;
-	}
-
-	public void setLibrary(Library library) {
-		this.library = library;
 	}
 
 	public long getId() {
@@ -126,12 +114,8 @@ public class AlbumArtImage implements Serializable {
 		builder.append(url);
 		builder.append(", thumbnailUrl=");
 		builder.append(thumbnailUrl);
-		builder.append(", library=");
-		builder.append(library);
 		builder.append(", album=");
-		if (album != null) {		
-			builder.append(album.getName());	
-		}		
+		builder.append(album);
 		builder.append(", contentType=");
 		builder.append(contentType);
 		builder.append("]");

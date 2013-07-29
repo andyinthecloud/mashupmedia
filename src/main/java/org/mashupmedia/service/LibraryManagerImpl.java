@@ -6,14 +6,15 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.RemoteShare;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
-import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,13 +35,15 @@ public class LibraryManagerImpl implements LibraryManager {
 	private VoteManager voteManager;
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
+	@Autowired
+	private AdminManager adminManager;
 
 	@Override
 	public List<Library> getLocalLibraries(LibraryType libraryType) {
 		List<Library> musicLibraries = libraryDao.getLocalLibraries(libraryType);
 		return musicLibraries;
 	}
-	
+
 	@Override
 	public List<Library> getLibraries(LibraryType libraryType) {
 		List<Library> musicLibraries = libraryDao.getLibraries(libraryType);
@@ -55,10 +58,10 @@ public class LibraryManagerImpl implements LibraryManager {
 
 	@Override
 	public void saveLibrary(Library library) {
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		if (user == null) {
-			logger.error("No user found in session, exiting...");
-			return;
+			logger.error("No user found in session, using system user...");
+			user = adminManager.getUser(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME);
 		}
 
 		Date date = new Date();
@@ -67,7 +70,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		if (libraryId == 0) {
 			library.setCreatedBy(user);
 			library.setCreatedOn(date);
-		} 
+		}
 
 		library.setUpdatedBy(user);
 		library.setUpdatedOn(date);
@@ -95,7 +98,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	public Library getLibrary(long id) {
 		Library library = libraryDao.getLibrary(id);
 		Hibernate.initialize(library.getRemoteShares());
-		Hibernate.initialize(library.getGroups());		
+		Hibernate.initialize(library.getGroups());
 		return library;
 	}
 
@@ -105,17 +108,16 @@ public class LibraryManagerImpl implements LibraryManager {
 		if (remoteLibrary == null) {
 			return null;
 		}
-		
+
 		Hibernate.initialize(remoteLibrary.getRemoteShares());
 		return remoteLibrary;
 	}
-	
+
 	@Override
 	public boolean hasRemoteLibrary(String url) {
 		boolean hasRemoteLibrary = libraryDao.hasRemoteLibrary(url);
 		return hasRemoteLibrary;
 	}
-	
 
 	@Override
 	public Library getRemoteLibrary(long libraryId) {

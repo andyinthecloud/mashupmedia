@@ -2,7 +2,6 @@ package org.mashupmedia.service;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
@@ -42,7 +41,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 	@Override
 	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
 		AlbumArtImage albumArtImage = getAlbumArtImage(song);
-		if (!isAlbumArtImageEmpty(albumArtImage) && !isAlbumArtImageRemote(albumArtImage)) {
+		if (!isAlbumArtImageEmpty(albumArtImage)) {
 			return albumArtImage;
 		}
 
@@ -88,24 +87,6 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		}
 
 		return false;
-	}
-
-	private boolean isAlbumArtImageRemote(AlbumArtImage albumArtImage) {
-		if (isAlbumArtImageEmpty(albumArtImage)) {
-			return false;
-		}
-
-		String url = StringUtils.trimToEmpty(albumArtImage.getUrl()).toLowerCase();
-		if (StringUtils.isEmpty(url)) {
-			return false;
-		}
-
-		if (url.startsWith("http://") || url.startsWith("https://")) {
-			return true;
-		}
-
-		return false;
-
 	}
 
 	private AlbumArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {

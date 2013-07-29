@@ -31,7 +31,7 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Autowired
 	private GroupDao groupDao;
-	
+
 	@Autowired
 	private SecurityManager securityManager;
 
@@ -84,7 +84,7 @@ public class MusicManagerImpl implements MusicManager {
 		if (album == null) {
 			return null;
 		}
-		
+
 		Hibernate.initialize(album.getSongs());
 		return album;
 	}
@@ -143,6 +143,7 @@ public class MusicManagerImpl implements MusicManager {
 		return songs;
 	}
 
+
 	@Override
 	public Artist getArtist(Long artistId) {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
@@ -169,6 +170,5 @@ public class MusicManagerImpl implements MusicManager {
 		long totalSongsFromLibrary = musicDao.getTotalSongsFromLibrary(libraryId);
 		return totalSongsFromLibrary;
 	}
-	
-	
+
 }

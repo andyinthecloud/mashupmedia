@@ -27,7 +27,7 @@ import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
-import org.mashupmedia.util.SecurityHelper;
+import org.mashupmedia.util.AdminHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,7 @@ public class SecurityManagerImpl implements SecurityManager {
 	
 	@Override
 	public List<Long> getLoggedInUserGroupIds() {
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		if (user == null) {
 			return null;
 		}

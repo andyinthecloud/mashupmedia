@@ -22,7 +22,7 @@
 
 <ul class="main-menu">
 	<c:forEach items="${playlists}" var="playlist">
-		<li><a href="javascript:;" rel="address:/address-playlist-${playlist.id}">${playlist.name} <c:if test="${playlist.isUserDefault}">
+		<li><a href="javascript:;" rel="address:/address-playlist-${playlist.id}">${playlist.name} <c:if test="${playlist.userDefault}">
 				</c:if>
 		</a></li>
 	</c:forEach>

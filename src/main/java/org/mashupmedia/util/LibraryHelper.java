@@ -47,4 +47,28 @@ public class LibraryHelper {
 
 	}
 
+	private static String getRemotePath(String remotePath, String contextPath) {
+		remotePath = StringUtils.trimToEmpty(remotePath);
+		if (StringUtils.isEmpty(remotePath)) {
+			return null;
+		}
+
+		if (!remotePath.contains("/connect/")) {
+			return null;
+		}
+
+		remotePath = remotePath.replaceFirst("/connect/.*", "/" + contextPath);
+		return remotePath;
+	}
+
+	public static String getRemoteStreamingPath(String remotePath) {
+		remotePath = getRemotePath(remotePath, "stream");
+		return remotePath;
+	}
+
+	public static String getRemoteAlbumArtPath(String remotePath) {
+		remotePath = getRemotePath(remotePath, "album-art");
+		return null;
+	}
+
 }

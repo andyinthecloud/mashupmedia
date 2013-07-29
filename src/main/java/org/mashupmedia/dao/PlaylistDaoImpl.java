@@ -56,7 +56,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	@Override
 	public Playlist getDefaultPlaylistForUser(long userId, PlaylistType playlistType) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from Playlist where createdBy.id = :userId and isUserDefault = true and playlistTypeValue = :playlistTypeValue");
+				"from Playlist where createdBy.id = :userId and userDefault = true and playlistTypeValue = :playlistTypeValue");
 		query.setCacheable(true);
 		query.setLong("userId", userId);
 		query.setString("playlistTypeValue", PlaylistType.MUSIC.getValue());

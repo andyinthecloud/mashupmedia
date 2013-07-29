@@ -38,5 +38,12 @@ public interface MashUpMediaConstants {
 	public static final String UNIQUE_INSTALLATION_NAME = "uniqueInstallationName";		
 	public static final String IS_ENCODER_INSTALLED = "isEncoderInstalled";
 	
-	
+	public final static String ADMIN_USER_DEFAULT_NAME = "Administrator";
+	public final static String ADMIN_USER_DEFAULT_USERNAME = "admin";
+	public final static String ADMIN_USER_DEFAULT_PASSWORD = "admin";
+		
+	public final static String SYSTEM_USER_DEFAULT_NAME = "System";
+	public final static String SYSTEM_USER_DEFAULT_USERNAME = "system";
+	public final static String SYSTEM_USER_DEFAULT_PASSWORD = "system";
+
 }

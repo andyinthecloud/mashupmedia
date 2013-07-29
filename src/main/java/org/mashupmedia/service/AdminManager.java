@@ -37,6 +37,10 @@ public interface AdminManager {
 	public void deleteGroup(long groupId);
 
 	public void updateUser(User user);
+
+	public void initialiseAdminUser();
+
+	public void initialiseSystemUser();
 	
 	
 

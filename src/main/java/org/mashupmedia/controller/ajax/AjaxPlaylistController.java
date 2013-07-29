@@ -16,8 +16,8 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.PlaylistHelper;
-import org.mashupmedia.util.SecurityHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.WebContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -246,7 +246,7 @@ public class AjaxPlaylistController extends AjaxBaseController {
 		PlaylistHelper.replacePlaylist(playlist, mediaItems);
 		playlistManager.savePlaylist(playlist);
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getFirstPlayListMediaItem(playlist);
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL, true);

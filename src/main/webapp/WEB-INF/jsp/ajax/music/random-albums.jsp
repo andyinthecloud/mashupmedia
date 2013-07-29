@@ -50,7 +50,7 @@
 <div class="random-album-art albums">
 	<c:forEach items="${albums}" var="album">
 		<div class="album" id="album-id-${album.id}">
-			<a href="javascript:;" rel="address:/address-load-album-${album.id}"> <img src="<c:url value="/app/music/album-art-thumbnail/${album.id}" />"
+			<a href="javascript:;" rel="address:/address-load-album-${album.id}"> <img src="<c:url value="/app/music/album-art/thumbnail/${album.id}" />"
 				title="${album.artist.name} - ${album.name}" alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 			</a>
 

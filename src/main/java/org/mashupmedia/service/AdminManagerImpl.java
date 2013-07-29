@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.dao.RoleDao;
@@ -29,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminManagerImpl implements AdminManager {
 	private Logger logger = Logger.getLogger(getClass());
 
+	
+	
 	@Autowired
 	private UserDao userDao;
 
@@ -202,4 +205,40 @@ public class AdminManagerImpl implements AdminManager {
 		groupDao.deleteGroup(group);
 	}
 
+	@Override
+	public void  initialiseAdminUser() {
+		User user = new User();
+		user.setName(MashUpMediaConstants.ADMIN_USER_DEFAULT_NAME);
+		user.setUsername(MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME);
+		user.setPassword(MashUpMediaConstants.ADMIN_USER_DEFAULT_PASSWORD);
+
+		user.setEnabled(true);
+		user.setEditable(false);
+		
+		Set<Role> roles = new HashSet<Role>(getRoles());
+		user.setRoles(roles);
+
+		List<Group> groups = getGroups();
+		user.setGroups(new HashSet<Group>(groups));
+		saveUser(user);
+	}
+	
+	@Override
+	public void initialiseSystemUser() {
+		User user = new User();
+		user.setName(MashUpMediaConstants.SYSTEM_USER_DEFAULT_NAME);
+		user.setUsername(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME);
+		user.setPassword(MashUpMediaConstants.SYSTEM_USER_DEFAULT_PASSWORD);
+
+		user.setEnabled(true);
+		user.setEditable(false);
+		user.setSystem(true);
+		
+		Set<Role> roles = new HashSet<Role>(getRoles());
+		user.setRoles(roles);
+
+		List<Group> groups = getGroups();
+		user.setGroups(new HashSet<Group>(groups));
+		saveUser(user);		
+	}
 }

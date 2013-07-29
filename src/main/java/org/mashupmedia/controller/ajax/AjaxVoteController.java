@@ -2,7 +2,7 @@ package org.mashupmedia.controller.ajax;
 
 import org.mashupmedia.model.User;
 import org.mashupmedia.service.VoteManager;
-import org.mashupmedia.util.SecurityHelper;
+import org.mashupmedia.util.AdminHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +21,7 @@ public class AjaxVoteController extends AjaxBaseController {
 
 	@RequestMapping(value = "/like", method = RequestMethod.POST)
 	public String handleLikeVote(@RequestParam("mediaItemId") Long mediaItemId, Model model) {
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		long userId = user.getId();
 
 		boolean isSuccessful = voteManager.voteLike(mediaItemId, userId);
@@ -31,7 +31,7 @@ public class AjaxVoteController extends AjaxBaseController {
 
 	@RequestMapping(value = "/dislike", method = RequestMethod.POST)
 	public String handleDislikeVote(@RequestParam("mediaItemId") Long mediaItemId, Model model) {
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		long userId = user.getId();
 
 		boolean isSuccessful = voteManager.voteDislike(mediaItemId, userId);

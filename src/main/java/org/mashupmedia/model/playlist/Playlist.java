@@ -42,7 +42,7 @@ public class Playlist implements Serializable {
 	@OneToMany(mappedBy = "playlist")
 	@OrderBy("ranking")
 	private List<PlaylistMediaItem> playlistMediaItems;
-	
+
 	@Transient
 	private List<PlaylistMediaItem> accessiblePlaylistMediaItems;
 
@@ -58,9 +58,27 @@ public class Playlist implements Serializable {
 	@ManyToOne
 	private User updatedBy;
 
-	private boolean isUserDefault;
+	private boolean userDefault;
 
 	private String playlistTypeValue;
+
+	private boolean privatePlaylist;
+
+	public boolean isUserDefault() {
+		return userDefault;
+	}
+
+	public void setUserDefault(boolean userDefault) {
+		this.userDefault = userDefault;
+	}
+
+	public boolean isPrivatePlaylist() {
+		return privatePlaylist;
+	}
+
+	public void setPrivatePlaylist(boolean privatePlaylist) {
+		this.privatePlaylist = privatePlaylist;
+	}
 
 	public String getPlaylistTypeValue() {
 		return playlistTypeValue;
@@ -73,7 +91,7 @@ public class Playlist implements Serializable {
 	public void setPlaylistType(PlaylistType playlistType) {
 		this.playlistTypeValue = playlistType.getValue();
 	}
-	
+
 	public PlaylistType getPlaylistType() {
 		PlaylistType[] playlistTypes = PlaylistType.values();
 		for (PlaylistType playlistType : playlistTypes) {
@@ -82,18 +100,6 @@ public class Playlist implements Serializable {
 			}
 		}
 		return PlaylistType.MUSIC;
-	}
-
-	public boolean isUserDefault() {
-		return isUserDefault;
-	}
-
-	public boolean getIsUserDefault() {
-		return isUserDefault();
-	}
-
-	public void setUserDefault(boolean isUserDefault) {
-		this.isUserDefault = isUserDefault;
 	}
 
 	public long getId() {
@@ -108,7 +114,6 @@ public class Playlist implements Serializable {
 		return playlistMediaItems;
 	}
 
-	
 	public List<PlaylistMediaItem> getAccessiblePlaylistMediaItems() {
 		return accessiblePlaylistMediaItems;
 	}
@@ -160,7 +165,6 @@ public class Playlist implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
 
 	@Override
 	public int hashCode() {
@@ -217,7 +221,9 @@ public class Playlist implements Serializable {
 		builder.append(name);
 		builder.append(", playlistMediaItems=");
 		builder.append(playlistMediaItems);
-		builder.append(", owner=");
+		builder.append(", accessiblePlaylistMediaItems=");
+		builder.append(accessiblePlaylistMediaItems);
+		builder.append(", createdBy=");
 		builder.append(createdBy);
 		builder.append(", createdOn=");
 		builder.append(createdOn);
@@ -225,10 +231,12 @@ public class Playlist implements Serializable {
 		builder.append(updatedOn);
 		builder.append(", updatedBy=");
 		builder.append(updatedBy);
-		builder.append(", isDefault=");
-		builder.append(isUserDefault);
-		builder.append(", playlistType=");
+		builder.append(", userDefault=");
+		builder.append(userDefault);
+		builder.append(", playlistTypeValue=");
 		builder.append(playlistTypeValue);
+		builder.append(", privatePlaylist=");
+		builder.append(privatePlaylist);
 		builder.append("]");
 		return builder.toString();
 	}

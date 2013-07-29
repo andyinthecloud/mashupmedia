@@ -12,6 +12,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class ImageHelper {
 
@@ -65,4 +66,19 @@ public class ImageHelper {
 		return thumbnailFile.getAbsolutePath();
 	}
 	
+	public static ImageType getImageType(String imageTypeValue) {
+		imageTypeValue = StringUtils.trimToEmpty(imageTypeValue).toLowerCase();
+		if (StringUtils.isEmpty(imageTypeValue)) {
+			return ImageType.ORIGINAL;
+		}
+		
+		ImageType[] imageTypes = ImageType.values();
+		for (ImageType imageType : imageTypes) {
+			if (imageType.toString().toLowerCase().equals(imageTypeValue)) {
+				return imageType;
+			}
+		}
+
+		return ImageType.ORIGINAL;
+	}
 }

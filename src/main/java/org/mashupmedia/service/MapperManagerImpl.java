@@ -35,7 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Album;
-import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.util.FileHelper;
@@ -50,8 +49,6 @@ public class MapperManagerImpl implements MapperManager {
 	private Logger logger = Logger.getLogger(getClass());
 
 	private Marshaller marshaller;
-
-	private static final String ALBUM_ART_RELATIVE_PATH = "/app/music";
 
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
@@ -152,12 +149,7 @@ public class MapperManagerImpl implements MapperManager {
 			String title = StringEscapeUtils.unescapeXml(song.getTitle());
 			song.setTitle(title);
 			Album album = song.getAlbum();
-			long albumId = album.getId();
 			album.setId(0);
-			AlbumArtImage albumArtImage = new AlbumArtImage();
-			albumArtImage.setUrl(libraryPath + ALBUM_ART_RELATIVE_PATH + "/album-art/" + albumId);
-			albumArtImage.setThumbnailUrl(libraryPath + ALBUM_ART_RELATIVE_PATH + "/album-art-thumbnail/" + albumId);
-			album.setAlbumArtImage(albumArtImage);
 
 			songs.add(song);
 

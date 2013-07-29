@@ -5,11 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
-import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.MediaItem;
@@ -25,8 +22,8 @@ import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.PlaylistHelper;
-import org.mashupmedia.util.SecurityHelper;
 import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.MediaContentType;
@@ -88,7 +85,7 @@ public class AjaxMusicController extends AjaxBaseController {
 		RemoteMediaMetaItem remoteMediaMeta = discogsWebService.getArtistInformation(artist);
 		AlbumPage albumPage = new AlbumPage();
 		albumPage.setAlbum(album);
-		albumPage.setSongs(songs);
+		albumPage.setSongs(songs);		
 		albumPage.setRemoteMediaMetaItem(remoteMediaMeta);
 		model.addAttribute(albumPage);
 		return "ajax/music/album";
@@ -191,14 +188,7 @@ public class AjaxMusicController extends AjaxBaseController {
 
 	private void prepareStreamingUrl(Song song, Model model) {
 		String streamingUrl = "";
-		Library library = song.getLibrary();
 		long songId = song.getId();
-		if (library.isRemote()) {
-			Location location = library.getLocation();
-			String path = location.getPath();
-			streamingUrl = path.replaceFirst("/app/.*", "");
-			songId = NumberUtils.toLong(song.getPath());
-		}
 
 		MediaContentType mediaContentType = song.getMediaContentType();
 		EncodeStatusType encodeStatusType = song.getEncodeStatusType();
@@ -228,7 +218,7 @@ public class AjaxMusicController extends AjaxBaseController {
 	}
 
 	private void playRelativeSong(Model model, int relativeOffset) {
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, relativeOffset);
 		if (playlistMediaItem.getId() > 0) {
@@ -254,7 +244,7 @@ public class AjaxMusicController extends AjaxBaseController {
 			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 		}
 
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 
 		boolean isFound = false;
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {

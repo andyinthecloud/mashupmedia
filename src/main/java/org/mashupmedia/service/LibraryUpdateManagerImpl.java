@@ -44,6 +44,9 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	@Override
 	public void updateLibrary(Library library) {
+		
+
+		library = libraryManager.getLibrary(library.getId());
 
 		if (!library.isEnabled()) {
 			logger.info("Library is disabled, will not update:" + library.toString());
@@ -104,6 +107,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	@Override
 	public void updateRemoteLibrary(Library library) {
+		library = libraryManager.getLibrary(library.getId());
+
 		if (!library.isEnabled()) {
 			logger.info("Library is disabled, exiting..");
 			return;

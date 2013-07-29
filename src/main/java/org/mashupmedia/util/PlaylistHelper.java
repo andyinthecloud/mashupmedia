@@ -114,7 +114,7 @@ public class PlaylistHelper {
 			return emptyPlaylistMediaItem;
 		}
 
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		PlaylistMediaItem currentPlaylistMediaItem = user.getPlaylistMediaItem();
 
 		int playingIndex = 0;
@@ -161,7 +161,7 @@ public class PlaylistHelper {
 		}
 		long createdById = createdBy.getId();
 
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		long userId = user.getId();
 
 		if (createdById == userId) {
@@ -181,7 +181,7 @@ public class PlaylistHelper {
 			return;
 		}
 
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		if (user == null) {
 			return;
 		}

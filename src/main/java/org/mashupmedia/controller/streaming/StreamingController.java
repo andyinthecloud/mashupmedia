@@ -14,14 +14,18 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.ConnectionManager.EncodeType;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.FileHelper.FileType;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.MediaContentType;
@@ -79,20 +83,32 @@ public class StreamingController {
 	protected ModelAndView prepareModelAndView(final long mediaItemId, final boolean content, final EncodeType encodeType) throws Exception {
 
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		Library library = mediaItem.getLibrary();		
+		Library library = mediaItem.getLibrary();
+
+		if (library.isRemote()) {
+			Location location = library.getLocation();
+			String path = location.getPath();
+			path = LibraryHelper.getRemoteStreamingPath(path);
+			long remoteMediaItemId = NumberUtils.toLong(mediaItem.getPath());
+			
+			if (StringUtils.isNotBlank(path) && remoteMediaItemId > 0) {
+				return new ModelAndView("forward:" + path + "/" + remoteMediaItemId);
+			}
+		}
+
 		String format = mediaItem.getFormat();
 		MediaContentType mediaContentType = WebHelper.getMediaContentType(format, MediaContentType.MP3);
 		FileType fileType = FileType.MEDIA_ITEM_STREAM_UNPROCESSED;
-		File tempFile = new File(mediaItem.getPath()); 
-		
+		File tempFile = new File(mediaItem.getPath());
+
 		if (encodeType == EncodeType.ENCODED || encodeType == EncodeType.BEST) {
 			if (mediaItem.getEncodeStatusType() == EncodeStatusType.ENCODED || mediaItem.getEncodeStatusType() == EncodeStatusType.PROCESSING) {
 				mediaContentType = MediaContentType.OGA;
 				fileType = FileType.MEDIA_ITEM_STREAM_ENCODED;
 				tempFile = FileHelper.createMediaFile(library.getId(), mediaItemId, fileType);
 			}
-		} 
-				
+		}
+
 		final String contentType = mediaContentType.getMimeContentType();
 		final File file = tempFile;
 

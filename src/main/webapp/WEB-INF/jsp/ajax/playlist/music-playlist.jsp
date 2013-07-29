@@ -231,7 +231,7 @@
 				<spring:message code="action.saveas" />
 			</option>
 
-			<c:if test="${!playlist.isUserDefault}">
+			<c:if test="${!playlist.userDefault}">
 				<option value="delete">
 					<spring:message code="action.delete" />
 				</option>
@@ -270,7 +270,7 @@
 					<c:set var="playingClass" value="playing" />
 				</c:if>
 
-				<tr id="playlist-media-id-<c:out value="${song.id}"/>-media-format-${song.jPlayerContentType}-album-id-${song.album.id}"
+				<tr id="playlist-media-id-<c:out value="${song.id}"/>-media-format-${song.jplayerContentType}-album-id-${song.album.id}"
 					class="<c:out value="${playingClass}"/>">
 
 					<td class="controls"><span class="ui-icon ui-icon-carat-2-n-s"></span> <a class="delete" href="javascript:;"

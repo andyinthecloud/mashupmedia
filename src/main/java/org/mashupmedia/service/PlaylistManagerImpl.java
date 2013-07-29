@@ -14,8 +14,8 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MessageHelper;
-import org.mashupmedia.util.SecurityHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +42,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		return playlists;
 	}
 	
-	protected void initialisePlaylist(Playlist playlist) {
+	protected synchronized void initialisePlaylist(Playlist playlist) {
 		
 		if (playlist == null) {
 			return;
@@ -95,7 +95,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 	@Override
 	public Playlist getLastAccessedPlaylistForCurrentUser(PlaylistType playlistType) {
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		Playlist playlist = playlistDao.getLastAccessedPlaylist(user.getId(), playlistType);
 		if (playlist == null) {
 			playlist = getDefaultPlaylistForCurrentUser(playlistType);
@@ -108,7 +108,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 	@Override
 	public Playlist getDefaultPlaylistForCurrentUser(PlaylistType playlistType) {
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		Playlist playlist = playlistDao.getDefaultPlaylistForUser(user.getId(), playlistType);
 		if (playlist != null) {
 			initialisePlaylist(playlist);
@@ -129,7 +129,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	@Override
 	public void savePlaylist(Playlist playlist) {
 		User createdbyUser = playlist.getCreatedBy();
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		
 		if (createdbyUser != null && !user.equals(createdbyUser)) {
 			throw new UnauthorisedException("Unable to save user playlist");
@@ -150,7 +150,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 	@Override
 	public List<Playlist> getPlaylistsForCurrentUser(PlaylistType playlistType) {
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		if (user == null) {
 			return null;
 		}
@@ -165,7 +165,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		Playlist playlist = getPlaylist(id);
 
 		User createdbyUser = playlist.getCreatedBy();
-		User user = SecurityHelper.getLoggedInUser();
+		User user = AdminHelper.getLoggedInUser();
 		
 		if (!user.equals(createdbyUser)) {
 			throw new UnauthorisedException("Unable to delete user playlist");

@@ -9,14 +9,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.log4j.Logger;
 import org.mashupmedia.controller.BaseController;
+import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
+import org.mashupmedia.model.media.Song;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
+import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.web.Breadcrumb;
@@ -33,6 +40,8 @@ import org.springframework.web.servlet.View;
 @Controller
 @RequestMapping("/music")
 public class MusicController extends BaseController {
+
+	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private MusicManager musicManager;
@@ -81,30 +90,47 @@ public class MusicController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "/album-art/{albumId}", method = RequestMethod.GET)
-	public ModelAndView getAlbumArt(@PathVariable("albumId") Long albumId, Model model) throws Exception {
-		ModelAndView modelAndView = getAlbumArtModelAndView(albumId, ImageType.ORIGINAL);
-		return modelAndView;
-	}
-
-	@RequestMapping(value = "/album-art-thumbnail/{albumId}", method = RequestMethod.GET)
-	public ModelAndView getAlbumArtThumbnail(@PathVariable("albumId") Long albumId, Model model) throws Exception {
-		ModelAndView modelAndView = getAlbumArtModelAndView(albumId, ImageType.THUMBNAIL);
+	@RequestMapping(value = "/album-art/{imageType}/{albumId}", method = RequestMethod.GET)
+	public ModelAndView getAlbumArt(@PathVariable("imageType") String imageTypeValue, @PathVariable("albumId") Long albumId, Model model)
+			throws Exception {
+		ImageType imageType = ImageHelper.getImageType(imageTypeValue);
+		ModelAndView modelAndView = getAlbumArtModelAndView(albumId, imageType);
 		return modelAndView;
 	}
 
 	protected ModelAndView getAlbumArtModelAndView(Long albumId, ImageType imageType) throws Exception {
+
 		Album album = musicManager.getAlbum(albumId);
+		if (album == null) {
+			logger.error("Unable to find album id: " + albumId);
+			return null;
+		}
+
 		AlbumArtImage albumArtImage = album.getAlbumArtImage();
 
 		final byte[] imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage, imageType);
+
+		Song remoteSong = getFirstRemoteSongInAlbum(album);
+
+		if (remoteSong != null && isEmptyBytes(imageBytes)) {
+			Library library = remoteSong.getLibrary();
+			Location location = library.getLocation();
+			String path = location.getPath();
+			path = LibraryHelper.getRemoteAlbumArtPath(path);
+			long remoteMediaItemId = NumberUtils.toLong(remoteSong.getPath());
+
+			if (StringUtils.isNotBlank(path) && remoteMediaItemId > 0) {
+				String imageTypeValue = imageType.toString().toLowerCase();
+				return new ModelAndView("forward:" + path + "/" + imageTypeValue + "/" + remoteMediaItemId);
+			}
+		}
+
 		final String contentType = WebHelper.getImageContentType(albumArtImage);
 		ModelAndView modelAndView = new ModelAndView(new View() {
 
 			@Override
-			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
-					throws Exception {
-				if (imageBytes == null || imageBytes.length == 0) {
+			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+				if (isEmptyBytes(imageBytes)) {
 					response.sendRedirect(request.getContextPath() + "/images/no-album-art.png");
 					return;
 				}
@@ -127,6 +153,29 @@ public class MusicController extends BaseController {
 			}
 		});
 		return modelAndView;
+	}
+
+	private Song getFirstRemoteSongInAlbum(Album album) {
+		List<Song> songs = album.getSongs();
+		if (songs == null || songs.isEmpty()) {
+			return null;
+		}
+
+		for (Song song : songs) {
+			Library library = song.getLibrary();
+			if (library.isRemote()) {
+				return song;
+			}
+		}
+
+		return null;
+	}
+
+	private boolean isEmptyBytes(byte[] bytes) {
+		if (bytes == null || bytes.length == 0) {
+			return true;
+		}
+		return false;
 	}
 
 }

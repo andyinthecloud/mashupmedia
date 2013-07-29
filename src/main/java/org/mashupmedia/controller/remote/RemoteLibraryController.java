@@ -29,8 +29,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.RemoteShare;
+import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.service.LibraryManager;
+import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.ImageHelper;
+import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.StringHelper.Encoding;
 import org.mashupmedia.util.WebHelper.WebContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +53,37 @@ public class RemoteLibraryController {
 
 	@Autowired
 	private LibraryManager libraryManager;
+
+	@Autowired
+	private MediaManager mediaManager;
+
+	@RequestMapping(value = "/stream/{mediaItemId}", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public ModelAndView handleStreamMediaItem(HttpServletRequest request, @PathVariable Long mediaItemId, Model model) throws IOException {
+
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+
+		String encodedPath = "unprocessed";
+		EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
+		if (encodeStatusType == EncodeStatusType.ENCODED) {
+			encodedPath = "encoded";
+		}
+
+		String servletPath = request.getServletPath();
+		servletPath = servletPath.replaceFirst("/remote/.*", "/streaming");		
+		String path = servletPath  + "/" + encodedPath + "/" + mediaItemId;
+		return new ModelAndView("forward:" + path);
+	}
+
+
+	@RequestMapping(value = "/album-art/{imageType}/{songId}", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public ModelAndView handleAlbumArt(HttpServletRequest request, @PathVariable String imageTypeValue, @PathVariable Long songId, Model model) throws IOException {
+		ImageType imageType = ImageHelper.getImageType(imageTypeValue);
+		String servletPath = request.getServletPath();
+		servletPath = servletPath.replaceFirst("/remote/.*", "/music/album-art");		
+		String path = servletPath  + "/" + imageType.toString().toLowerCase() + "/" + songId;
+		return new ModelAndView("forward:" + path);
+	}
+
 
 	@RequestMapping(value = "/connect/{libraryType}/{uniqueName}", method = RequestMethod.GET)
 	public ModelAndView handleConnectRemoteLibrary(HttpServletRequest request, @PathVariable String libraryType, @PathVariable String uniqueName,
@@ -83,7 +119,7 @@ public class RemoteLibraryController {
 		if (remoteLibrary == null) {
 			return false;
 		}
-		
+
 		List<RemoteShare> remoteShares = remoteLibrary.getRemoteShares();
 		if (remoteShares == null || remoteShares.isEmpty()) {
 			return false;

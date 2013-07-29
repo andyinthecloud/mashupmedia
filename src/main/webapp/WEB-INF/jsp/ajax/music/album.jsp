@@ -83,7 +83,7 @@
 
 
 <div class="album-art">
-	<img src="<c:url value="/app/music/album-art/${albumPage.album.id}?thumb" />"
+	<img src="<c:url value="/app/music/album-art/original/${albumPage.album.id}" />"
 		title="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />"
 		alt="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />" />
 </div>

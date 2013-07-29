@@ -25,7 +25,6 @@ public class Song extends MediaItem {
 
 	private static final long serialVersionUID = -8767965461920368852L;
 
-
 	private int trackNumber;
 	@Field(analyze = Analyze.NO)
 	@Column(length = 1000)
@@ -49,11 +48,10 @@ public class Song extends MediaItem {
 	public Song() {
 		setMediaType(MediaType.SONG);
 	}
-	
+
 	public Song(Song song) {
-		
+
 	}
-	
 
 	public boolean isReadableTag() {
 		return readableTag;
@@ -224,13 +222,12 @@ public class Song extends MediaItem {
 
 	}
 
-	
 	public MediaContentType getMediaContentType() {
 		MediaContentType mediaContentType = WebHelper.getMediaContentType(getFormat(), MediaContentType.MP3);
 		return mediaContentType;
 	}
-	
-	public String getJPlayerContentType() {
+
+	public String getJplayerContentType() {
 		MediaContentType mediaContentType = getMediaContentType();
 		return mediaContentType.getDisplayText();
 	}

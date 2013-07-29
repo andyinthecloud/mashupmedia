@@ -31,6 +31,7 @@ public class User implements UserDetails, Serializable {
 	private String name;
 	private boolean enabled;
 	private boolean editable;
+	private boolean system;
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	private Set<Role> roles;
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
@@ -41,15 +42,14 @@ public class User implements UserDetails, Serializable {
 	@Transient
 	private PlaylistMediaItem playlistMediaItem;
 
-	public User() {
-		
+	public boolean isSystem() {
+		return system;
 	}
-	
-	public User(User user) {
-		
+
+	public void setSystem(boolean system) {
+		this.system = system;
 	}
-	
-	
+
 	public long getPlaylistMediaItemId() {
 		return playlistMediaItemId;
 	}
@@ -206,6 +206,8 @@ public class User implements UserDetails, Serializable {
 		builder.append(enabled);
 		builder.append(", editable=");
 		builder.append(editable);
+		builder.append(", system=");
+		builder.append(system);
 		builder.append(", roles=");
 		builder.append(roles);
 		builder.append(", groups=");
@@ -216,6 +218,8 @@ public class User implements UserDetails, Serializable {
 		builder.append(updatedOn);
 		builder.append(", playlistMediaItemId=");
 		builder.append(playlistMediaItemId);
+		builder.append(", playlistMediaItem=");
+		builder.append(playlistMediaItem);
 		builder.append("]");
 		return builder.toString();
 	}

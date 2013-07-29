@@ -296,7 +296,7 @@ var mashupMedia = new function() {
 		
 		var albumArtImageSrc = "<c:url value="/images/no-album-art.png" />";
 		if (albumId > 0) {
-			albumArtImageSrc = mashupMedia.contextUrl + "app/music/album-art-thumbnail/" + albumId;
+			albumArtImageSrc = mashupMedia.contextUrl + "app/music/album-art/thumbnail/" + albumId;
 		}
 		
 		
@@ -438,7 +438,7 @@ function loadRandomAlbums(isAppend) {
 			} else {
 				$("div.panel div.content").html(data);
 			}
-			pauseScrollLoadMore();						
+			pauseScrollLoadMore();	
 	});
 }
 
