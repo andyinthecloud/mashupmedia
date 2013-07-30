@@ -241,4 +241,10 @@ public class AdminManagerImpl implements AdminManager {
 		user.setGroups(new HashSet<Group>(groups));
 		saveUser(user);		
 	}
+	
+	@Override
+	public User getSystemUser() {
+		User systemUser = getUser(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME);		
+		return systemUser;
+	}
 }

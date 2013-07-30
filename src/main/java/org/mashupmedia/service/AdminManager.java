@@ -41,6 +41,8 @@ public interface AdminManager {
 	public void initialiseAdminUser();
 
 	public void initialiseSystemUser();
+
+	public User getSystemUser();
 	
 	
 

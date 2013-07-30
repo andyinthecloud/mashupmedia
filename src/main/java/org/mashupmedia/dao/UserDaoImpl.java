@@ -55,7 +55,7 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 
 	@Override
 	public List<User> getUsers() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from User order by name");
+		Query query = sessionFactory.getCurrentSession().createQuery("from User where system = false order by name");
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<User> users = query.list();
@@ -72,11 +72,6 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 				"update MediaItem set lastAccessedBy = null where lastAccessedBy.id = :userId");
 		updateMediaItemQuery.setLong("userId", userId);
 		updateMediaItemQuery.executeUpdate();
-
-		// Query updatePlaylistCreatedByQuery =
-		// sessionFactory.getCurrentSession().createQuery("update Playlist set createdBy = null where createdBy.id = :userId");
-		// updatePlaylistCreatedByQuery.setLong("userId", userId);
-		// updatePlaylistCreatedByQuery.executeUpdate();
 
 		Query updatePlaylistUpdatedByQuery = sessionFactory.getCurrentSession().createQuery(
 				"update Playlist set updatedBy = null where updatedBy.id = :userId");

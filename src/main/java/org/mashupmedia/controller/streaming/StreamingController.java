@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 @RequestMapping("/streaming")
@@ -92,7 +93,7 @@ public class StreamingController {
 			long remoteMediaItemId = NumberUtils.toLong(mediaItem.getPath());
 			
 			if (StringUtils.isNotBlank(path) && remoteMediaItemId > 0) {
-				return new ModelAndView("forward:" + path + "/" + remoteMediaItemId);
+				return new ModelAndView(new RedirectView(path + "/" + remoteMediaItemId));
 			}
 		}
 

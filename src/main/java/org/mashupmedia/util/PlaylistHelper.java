@@ -187,6 +187,10 @@ public class PlaylistHelper {
 		}
 
 		PlaylistMediaItem userPlaylistMediaItem = user.getPlaylistMediaItem();
+		if (userPlaylistMediaItem == null) {
+			return;
+		}
+		
 		long userPlaylistMediaItemId = userPlaylistMediaItem.getMediaItem().getId();
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
 			long playlistMediaItemId = playlistMediaItem.getMediaItem().getId();

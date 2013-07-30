@@ -19,6 +19,7 @@ package org.mashupmedia.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +48,12 @@ public class SecurityManagerImpl implements SecurityManager {
 		}
 		
 		user = adminManager.getUser(user.getId());
+		
 		Set<Group> groups = user.getGroups();
+		if (user.isSystem()) {
+			groups = new HashSet<Group>(adminManager.getGroups());
+		}
+		
 		if (groups == null || groups.isEmpty()) {
 			return null;
 		}

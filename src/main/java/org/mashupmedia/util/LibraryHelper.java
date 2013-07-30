@@ -48,6 +48,7 @@ public class LibraryHelper {
 	}
 
 	private static String getRemotePath(String remotePath, String contextPath) {
+
 		remotePath = StringUtils.trimToEmpty(remotePath);
 		if (StringUtils.isEmpty(remotePath)) {
 			return null;
@@ -57,8 +58,12 @@ public class LibraryHelper {
 			return null;
 		}
 
-		remotePath = remotePath.replaceFirst("/connect/.*", "/" + contextPath);
-		return remotePath;
+		String uniqueName = remotePath.replaceFirst(".*/", "");
+
+		StringBuilder remoteUrlBuilder = new StringBuilder(remotePath.replaceFirst("/connect/.*", ""));
+		remoteUrlBuilder.append("/" + contextPath);
+		remoteUrlBuilder.append("/" + uniqueName);
+		return remoteUrlBuilder.toString();
 	}
 
 	public static String getRemoteStreamingPath(String remotePath) {
@@ -68,7 +73,7 @@ public class LibraryHelper {
 
 	public static String getRemoteAlbumArtPath(String remotePath) {
 		remotePath = getRemotePath(remotePath, "album-art");
-		return null;
+		return remotePath;
 	}
 
 }

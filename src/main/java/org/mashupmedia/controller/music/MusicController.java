@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 @RequestMapping("/music")
@@ -121,7 +122,8 @@ public class MusicController extends BaseController {
 
 			if (StringUtils.isNotBlank(path) && remoteMediaItemId > 0) {
 				String imageTypeValue = imageType.toString().toLowerCase();
-				return new ModelAndView("forward:" + path + "/" + imageTypeValue + "/" + remoteMediaItemId);
+				String redirectUrl = path + "/" + imageTypeValue + "/" + remoteMediaItemId;
+				return new ModelAndView(new RedirectView(redirectUrl));
 			}
 		}
 

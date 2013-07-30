@@ -142,7 +142,7 @@ public class AjaxLibraryController {
 			String lastAccessedValue = "";
 			Date lastAccessed = remoteShare.getLastAccessed();
 			if (lastAccessed != null) {
-				lastAccessedValue = DateHelper.parseToText(remoteShare.getCreatedOn(), DateFormatType.SHORT_DISPLAY_WITH_TIME);
+				lastAccessedValue = DateHelper.parseToText(remoteShare.getLastAccessed(), DateFormatType.SHORT_DISPLAY_WITH_TIME);
 			}
 
 			remoteSharePropertiesJson.put("lastAccessed", lastAccessedValue);

@@ -216,24 +216,24 @@
 			</option>
 
 			<option value="clear">
-				<spring:message code="action.clear" />
+				<spring:message code="music.playlist.action.clear" />
 			</option>
 
 			<option value="new">
-				<spring:message code="action.new" />
+				<spring:message code="music.playlist.action.new" />
 			</option>
 
 			<option value="change-name">
-				<spring:message code="action.change-name" />
+				<spring:message code="music.playlist.action.change-name" />
 			</option>
 
 			<option value="save-as">
-				<spring:message code="action.saveas" />
+				<spring:message code="music.playlist.action.copy-to" />
 			</option>
 
 			<c:if test="${!playlist.userDefault}">
 				<option value="delete">
-					<spring:message code="action.delete" />
+					<spring:message code="music.playlist.action.delete" />
 				</option>
 			</c:if>
 
