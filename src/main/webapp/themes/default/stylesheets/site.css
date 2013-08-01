@@ -85,6 +85,13 @@ div.transparent {
 	text-align: right;
 }
 
+li.update-available {
+	display: inline-block !important;
+	background-color: #E579E9;
+	padding: 0 !important;
+	margin-left: 5px;
+}
+
 .top-bar a,.top-bar a:VISITED {
 	color: #e579e9;
 	text-decoration: none;
