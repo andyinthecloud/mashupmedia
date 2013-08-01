@@ -63,6 +63,15 @@ public class Playlist implements Serializable {
 	private String playlistTypeValue;
 
 	private boolean privatePlaylist;
+	private boolean editOnlyByOwner;
+	
+	public boolean isEditOnlyByOwner() {
+		return editOnlyByOwner;
+	}
+
+	public void setEditOnlyByOwner(boolean editOnlyByOwner) {
+		this.editOnlyByOwner = editOnlyByOwner;
+	}
 
 	public boolean isUserDefault() {
 		return userDefault;
@@ -237,6 +246,8 @@ public class Playlist implements Serializable {
 		builder.append(playlistTypeValue);
 		builder.append(", privatePlaylist=");
 		builder.append(privatePlaylist);
+		builder.append(", editOnlyByOwner=");
+		builder.append(editOnlyByOwner);
 		builder.append("]");
 		return builder.toString();
 	}

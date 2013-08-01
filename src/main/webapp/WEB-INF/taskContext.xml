@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -11,16 +10,14 @@
 
 	<context:component-scan base-package="org.mashupmedia.task" />
 
-	<task:executor id="encodeMediaItemThreadPoolTaskExecutor"
-		pool-size="3" />
+	<task:executor id="encodeMediaItemThreadPoolTaskExecutor" pool-size="3" />
 
-	<task:executor id="libraryUpdateThreadPoolTaskExecutor"
-		pool-size="3" />
- 
+	<task:executor id="libraryUpdateThreadPoolTaskExecutor" pool-size="3" />
+
 	<task:scheduler id="taskScheduler" pool-size="3" />
 	<task:scheduled-tasks scheduler="taskScheduler">
-		<task:scheduled ref="libraryTaskScheduler" method="updateLibraries"
-			cron="0 * */30 * * *" />
+		<task:scheduled ref="libraryTaskScheduler" method="updateLibraries" fixed-delay="18000000" />
+		<task:scheduled ref="metaTaskScheduler" method="getMashupMediaLatestReleaseInformation" fixed-delay="36000000" />
 	</task:scheduled-tasks>
 
 </beans>

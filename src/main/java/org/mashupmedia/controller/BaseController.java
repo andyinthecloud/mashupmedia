@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
@@ -22,6 +24,9 @@ public abstract class BaseController {
 
 	@Autowired
 	private PlaylistManager playlistManager;
+	
+	@Autowired
+	private ConfigurationManager configurationManager;
 
 	protected Breadcrumb getHomeBreadcrumb() {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.home"), "/app/home");
@@ -51,6 +56,23 @@ public abstract class BaseController {
 		return "/themes/default";
 	}
 
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_IS_NEW_MASHUP_MEDIA_AVAILABLE)
+	public boolean isNewMashupMediaVersionAvailable() {		
+		String latestVersionValue = configurationManager.getConfigurationValue(MashUpMediaConstants.LATEST_RELEASE_FINAL_VERSION);
+		double latestVersion = NumberUtils.toDouble(latestVersionValue);
+		if (latestVersion == 0) {
+			return false;
+		}
+		
+		double currentVersion =  NumberUtils.toDouble(MessageHelper.getMessage(MashUpMediaConstants.APPLICATION_VERSION));
+		
+		if (latestVersion > currentVersion) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	@ModelAttribute("breadcrumbs")
 	public List<Breadcrumb> populateBreadcrumbs() {
 		List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();
