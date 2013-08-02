@@ -37,8 +37,13 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	private AdminManager adminManager;
 
 	@Override
-	public List<Playlist> getPlaylists() {
-		List<Playlist> playlists = playlistDao.getPlaylists();
+	public List<Playlist> getPlaylists(PlaylistType playlistType) {
+		
+		User user = AdminHelper.getLoggedInUser();
+		long userId = user.getId();
+		boolean isAdministrator = AdminHelper.isAdministrator(user); 
+		
+		List<Playlist> playlists = playlistDao.getPlaylists(userId, isAdministrator, playlistType);
 		return playlists;
 	}
 	
@@ -156,7 +161,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		}
 		
 		long userId = user.getId();
-		List<Playlist> playlists = playlistDao.getPlaylists(userId, playlistType);
+		List<Playlist> playlists = playlistDao.getPlaylistsForCurrentUser(userId, playlistType);
 		return playlists;
 	}
 

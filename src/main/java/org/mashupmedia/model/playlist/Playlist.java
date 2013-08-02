@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.mashupmedia.model.User;
+import org.mashupmedia.util.PlaylistHelper;
 
 @Entity
 @Cacheable
@@ -102,13 +103,8 @@ public class Playlist implements Serializable {
 	}
 
 	public PlaylistType getPlaylistType() {
-		PlaylistType[] playlistTypes = PlaylistType.values();
-		for (PlaylistType playlistType : playlistTypes) {
-			if (playlistType.getValue().equalsIgnoreCase(getPlaylistTypeValue())) {
-				return playlistType;
-			}
-		}
-		return PlaylistType.MUSIC;
+		PlaylistType playlistType = PlaylistHelper.getPlaylistType(getPlaylistTypeValue());
+		return playlistType;
 	}
 
 	public long getId() {

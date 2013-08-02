@@ -5,6 +5,8 @@
 			.val();
 
 	$(document).ready(function() {
+		$("div.music-sub-panel").unbind();
+		window.scrollTo(0, 0);
 
 		$("#playlist table.songs tbody").sortable({
 			stop : function(event, ui) {
@@ -114,8 +116,10 @@
 					var playlistId = $(
 							"#playlist input[name=playlistId]")
 							.val();
-					mashupMedia.loadPlaylist(playlistId);
-					mashupMedia.playNextSong();
+					mashupMedia.playPlaylist(playlistId);
+					
+					$("table.songs tbody tr").removeClass(mashupMedia.playingClass);
+					$("table.songs tbody tr:first").addClass(mashupMedia.playingClass);
 				});
 	
 		$("#playlist input[name=playlistName]").blur(

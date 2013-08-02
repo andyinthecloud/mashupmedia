@@ -9,7 +9,8 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public interface PlaylistDao {
 
-	public List<Playlist> getPlaylists();
+//	public List<Playlist> getPlaylists();
+	public List<Playlist> getPlaylists(long userId, boolean isAdministrator, PlaylistType playlistType);
 
 	public Playlist getPlaylist(long id);
 
@@ -17,7 +18,7 @@ public interface PlaylistDao {
 
 	public void savePlaylist(Playlist playlist);
 
-	public List<Playlist> getPlaylists(long userId, PlaylistType playlistType);
+	public List<Playlist> getPlaylistsForCurrentUser(long userId, PlaylistType playlistType);
 
 	public void deletePlaylist(Playlist playlist);
 

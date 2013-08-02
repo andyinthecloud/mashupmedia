@@ -191,7 +191,7 @@ public class AdminManagerImpl implements AdminManager {
 	@Override
 	public void deleteUser(long userId) {
 		User user = getUser(userId);
-		List<Playlist> playlists = playlistDao.getPlaylists(userId, PlaylistType.ALL);
+		List<Playlist> playlists = playlistDao.getPlaylistsForCurrentUser(userId, PlaylistType.ALL);
 		for (Playlist playlist : playlists) {
 			playlistDao.deletePlaylist(playlist);
 		}

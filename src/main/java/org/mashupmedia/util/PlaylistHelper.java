@@ -3,10 +3,12 @@ package org.mashupmedia.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public class PlaylistHelper {
@@ -151,7 +153,7 @@ public class PlaylistHelper {
 	}
 
 	public static boolean canSavePlaylist(Playlist playlist) {
-		if (playlist == null) {			
+		if (playlist == null) {
 			return false;
 		}
 
@@ -190,7 +192,7 @@ public class PlaylistHelper {
 		if (userPlaylistMediaItem == null) {
 			return;
 		}
-		
+
 		long userPlaylistMediaItemId = userPlaylistMediaItem.getMediaItem().getId();
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
 			long playlistMediaItemId = playlistMediaItem.getMediaItem().getId();
@@ -199,6 +201,22 @@ public class PlaylistHelper {
 				return;
 			}
 		}
+
+	}
+
+	public static PlaylistType getPlaylistType(String playlistTypeValue) {
+		playlistTypeValue = StringUtils.trimToEmpty(playlistTypeValue);
+		if (StringUtils.isEmpty(playlistTypeValue)) {
+			return PlaylistType.MUSIC;
+		}
+
+		PlaylistType[] playlistTypes = PlaylistType.values();
+		for (PlaylistType playlistType : playlistTypes) {
+			if (playlistType.getValue().equalsIgnoreCase(playlistTypeValue)) {
+				return playlistType;
+			}
+		}
+		return PlaylistType.MUSIC;
 
 	}
 

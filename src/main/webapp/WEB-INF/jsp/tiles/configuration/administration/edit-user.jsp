@@ -47,11 +47,11 @@
 	<form:errors path="*" cssClass="error-box" />
 
 	<c:choose>
-		<c:when test="${editUserPage.user.editable && editUserPage.isAdministrator}">
+		<c:when test="${editUserPage.user.editable && editUserPage.isShowAdministrator}">
 			<form:checkbox path="user.enabled" value="true" id="user_enabled" />
 			<label for="user_enabled"><spring:message code="configuration.administration.edit-user.enabled" /></label>
 
-			<form:checkbox path="administrator" value="true" />
+			<form:checkbox path="administrator" />
 			<label for="administrator1"><spring:message code="configuration.administration.edit-user.administrator" /></label>
 		</c:when>
 

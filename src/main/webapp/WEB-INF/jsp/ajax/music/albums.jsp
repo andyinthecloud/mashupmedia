@@ -5,6 +5,7 @@
 		var pageNumber = 0;
 		var searchLetter = "";
 		$(document).ready(function() {
+			$("div.music-sub-panel").unbind();
 			window.scrollTo(0, 0);
 
 			$("div.music-sub-panel").on("mouseover", "div.albums div.album", function() {

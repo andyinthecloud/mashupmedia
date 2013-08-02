@@ -26,6 +26,15 @@ public class EditUserPage {
 	private User user;
 	private String repeatPassword;
 	private boolean administrator;
+	private boolean showAdministrator;
+	
+	public boolean isShowAdministrator() {
+		return showAdministrator;
+	}
+
+	public void setShowAdministrator(boolean showAdministrator) {
+		this.showAdministrator = showAdministrator;
+	}
 
 	public boolean isAdministrator() {
 		return administrator;

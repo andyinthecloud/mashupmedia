@@ -3,9 +3,10 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		$("div.music-sub-panel").unbind();
 		window.scrollTo(0, 0);
 
-		$("div.action-buttons a, ul.main-menu li a").click(function() {
+		$("div.music-sub-panel").on("click", "div.action-buttons a, ul.main-menu li a", function() {
 			fireRelLink(this);
 		});
 

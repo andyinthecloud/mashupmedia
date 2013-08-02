@@ -1,6 +1,5 @@
 package org.mashupmedia.restful;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 	private ConnectionManager connectionManager;
 
 	@Override
-	public RemoteMediaMetaItem getArtistInformation(Artist artist) throws IOException {
+	public RemoteMediaMetaItem getArtistInformation(Artist artist) throws Exception {
 
 		if (artist == null) {
 			return null;
@@ -58,7 +57,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 	}
 
 	@Override
-	public RemoteMediaMetaItem getDiscogsArtistMeta(String discogsArtistId) throws IOException {
+	public RemoteMediaMetaItem getDiscogsArtistMeta(String discogsArtistId) throws Exception {
 		List<RemoteMediaMetaItem> remoteMediaMetaItems = new ArrayList<RemoteMediaMetaItem>();
 		
 		RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
@@ -93,7 +92,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 		return cacheKey;
 	}
 	
-	protected void populateRemoteMediaMetaItems(List<RemoteMediaMetaItem> remoteMediaMetaItems) throws IOException {
+	protected void populateRemoteMediaMetaItems(List<RemoteMediaMetaItem> remoteMediaMetaItems) throws Exception {
 
 		for (int i = 0; i < remoteMediaMetaItems.size(); i++) {
 			RemoteMediaMetaItem remoteMediaMetaItem = remoteMediaMetaItems.get(i);
@@ -191,7 +190,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 		return url;
 	}
 
-	protected String getDiscogArtistId(Artist artist, boolean isThrottle) throws IOException {
+	protected String getDiscogArtistId(Artist artist, boolean isThrottle) throws Exception {
 		String remoteId = StringUtils.trimToEmpty(artist.getRemoteId());
 		if (StringUtils.isNotEmpty(remoteId)) {
 			return remoteId;
@@ -208,7 +207,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 		return remoteId;
 	}
 
-	protected List<RemoteMediaMetaItem> findRemoteMediaMetaItems(String name, boolean isThrottle, int numberOfArtistIds) throws IOException {
+	protected List<RemoteMediaMetaItem> findRemoteMediaMetaItems(String name, boolean isThrottle, int numberOfArtistIds) throws Exception {
 
 		List<RemoteMediaMetaItem> remoteMediaMetaItems = new ArrayList<RemoteMediaMetaItem>();
 
@@ -224,7 +223,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 			logger.error("Could not connect to Discogs web service.");
 			return remoteMediaMetaItems;
 		}
-		String jsonSearchResults = IOUtils.toString(inputStream, Encoding.UTF8.getEncodingString());
+		String jsonSearchResults = IOUtils.toString(inputStream, Encoding.UTF8.getEncodingString());		
 		JSONObject jsonObject = JSONObject.fromObject(jsonSearchResults);
 		JSONArray jsonArray = jsonObject.getJSONArray("results");
 		if (jsonArray == null) {
@@ -270,7 +269,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 	}
 
 	@Override
-	public List<RemoteMediaMetaItem> searchArtist(String artistName) throws IOException {
+	public List<RemoteMediaMetaItem> searchArtist(String artistName) throws Exception {
 		List<RemoteMediaMetaItem> remoteMediaMetaItems = findRemoteMediaMetaItems(artistName, true, 5);
 		return remoteMediaMetaItems;
 	}

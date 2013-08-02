@@ -9,7 +9,7 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public interface PlaylistManager {
 
-	public List<Playlist> getPlaylists();
+	public List<Playlist> getPlaylists(PlaylistType playlistType);
 
 	public Playlist getPlaylist(long id);
 

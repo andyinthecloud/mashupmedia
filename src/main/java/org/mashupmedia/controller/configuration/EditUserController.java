@@ -162,10 +162,12 @@ public class EditUserController extends BaseController {
 	protected EditUserPage prepareEditUserPage(User user) {
 		EditUserPage editUserPage = new EditUserPage();
 		editUserPage.setUser(user);
+		boolean isUserAdministrator = AdminHelper.isAdministrator(user);
+		editUserPage.setAdministrator(isUserAdministrator);
 		
 		User currentUser = AdminHelper.getLoggedInUser();
-		boolean isAdministrator = AdminHelper.isAdministrator(currentUser);
-		editUserPage.setAdministrator(isAdministrator);
+		boolean isAdministratorRights = AdminHelper.isAdministrator(currentUser);
+		editUserPage.setShowAdministrator(isAdministratorRights);
 		
 		return editUserPage;
 	}

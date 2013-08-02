@@ -121,6 +121,14 @@ var mashupMedia = new function() {
 		});
 	};
 	
+	this.playPlaylist = function(playlistId) {
+		$.get(mashupMedia.contextUrl + "app/ajax/playlist/play/id/" + playlistId, function(data) {
+			var playlistId = data.mediaItem.playlistId;
+			var mediaItemId = data.mediaItem.id;
+			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
+		});
+	};
+
 	this.loadSongFromPlaylist = function(playlistId, mediaItemId, isAutoPlay) {
 		if (playlistId.length == 0 || isNaN(playlistId) || playlistId < 1) {
 			return;
@@ -576,7 +584,7 @@ function fireRelLink(element) {
 	if (rel === undefined) {
 		return;
 	}
-	
+		
 	if (rel.length > 0) {
 		$.address.value(rel); 
 	}

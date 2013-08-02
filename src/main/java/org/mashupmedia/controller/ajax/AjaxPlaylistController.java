@@ -285,8 +285,10 @@ public class AjaxPlaylistController extends AjaxBaseController {
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public String handleListPlaylists(@RequestParam("playlistType") String playlistType, Model model) {
-		List<Playlist> playlists = playlistManager.getPlaylists();
+	public String handleListPlaylists(@RequestParam("playlistType") String playlistTypeValue, Model model) {
+		
+		PlaylistType playlistType = PlaylistHelper.getPlaylistType(playlistTypeValue);		
+		List<Playlist> playlists = playlistManager.getPlaylists(playlistType);
 		model.addAttribute("playlists", playlists);
 		return "ajax/playlist/list-playlists";
 	}

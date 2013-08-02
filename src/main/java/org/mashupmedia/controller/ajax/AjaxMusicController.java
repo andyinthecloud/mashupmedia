@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.Album;
@@ -44,6 +45,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/ajax/music")
 public class AjaxMusicController extends AjaxBaseController {
 
+	private Logger logger = Logger.getLogger(getClass());
+
 	private final static int TOTAL_RANDOM_ALBUMS = 60;
 	private final static int TOTAL_ALBUMS = 60;
 
@@ -82,19 +85,32 @@ public class AjaxMusicController extends AjaxBaseController {
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs = album.getSongs();
 		Artist artist = album.getArtist();
-		RemoteMediaMetaItem remoteMediaMeta = discogsWebService.getArtistInformation(artist);
+
+		RemoteMediaMetaItem remoteMediaMeta = null;
+		try {
+			remoteMediaMeta = discogsWebService.getArtistInformation(artist);
+		} catch (Exception e) {
+			logger.error("Error getting artist from Discogs", e);
+		}
+
 		AlbumPage albumPage = new AlbumPage();
 		albumPage.setAlbum(album);
-		albumPage.setSongs(songs);		
+		albumPage.setSongs(songs);
 		albumPage.setRemoteMediaMetaItem(remoteMediaMeta);
 		model.addAttribute(albumPage);
 		return "ajax/music/album";
 	}
 
 	@RequestMapping(value = "/artist/{artistId}", method = RequestMethod.GET)
-	public String getArtist(@PathVariable("artistId") Long artistId, Model model) throws Exception {
+	public String getArtist(@PathVariable("artistId") Long artistId, Model model) {
 		Artist artist = musicManager.getArtist(artistId);
-		RemoteMediaMetaItem remoteMediaMeta = discogsWebService.getArtistInformation(artist);
+
+		RemoteMediaMetaItem remoteMediaMeta = null;
+		try {
+			remoteMediaMeta = discogsWebService.getArtistInformation(artist);
+		} catch (Exception e) {
+			logger.error("Error getting artist from Discogs", e);
+		}
 
 		ArtistPage artistPage = new ArtistPage();
 		artistPage.setArtist(artist);

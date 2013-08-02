@@ -4,6 +4,8 @@
 <c:if test="${!isAppend}">
 <script type="text/javascript">
 	$(document).ready(function() {
+		$("div.music-sub-panel").unbind();
+
 		<c:if test="${!isAppend}">
 		window.scrollTo(0, 0);
 		</c:if>

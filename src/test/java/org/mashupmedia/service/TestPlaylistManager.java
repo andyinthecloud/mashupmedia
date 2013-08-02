@@ -70,8 +70,6 @@ public class TestPlaylistManager extends TestBaseService {
 		
 		playlist = playlistManager.getPlaylist(playlistId);
 		Assert.assertNull(playlist);
-		
-		
 	}
 	
 	
