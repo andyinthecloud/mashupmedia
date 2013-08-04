@@ -47,7 +47,7 @@ import org.mashupmedia.util.StringHelper;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MediaItem implements Serializable{
+public class MediaItem implements Serializable {
 	private static final long serialVersionUID = -6694717782091959485L;
 
 	public final static String TITLE_SEPERATOR = " - ";
@@ -58,7 +58,7 @@ public class MediaItem implements Serializable{
 
 	public enum EncodeStatusType {
 		UNPROCESSED, PROCESSING, ENCODED, ERROR, OVERRIDE
-		
+
 	}
 
 	@Id
@@ -98,24 +98,38 @@ public class MediaItem implements Serializable{
 	@Field(analyze = Analyze.NO)
 	private boolean enabled;
 	private long fileLastModifiedOn;
-	
+	@Field(analyze = Analyze.NO)
+	private boolean publicAccess;
+	@Field(analyze = Analyze.NO)
+	private String uniqueName;
+
 	public MediaItem() {
 		this.enabled = true;
 	}
 
-	
-	
+	public boolean isPublicAccess() {
+		return publicAccess;
+	}
+
+	public void setPublicAccess(boolean publicAccess) {
+		this.publicAccess = publicAccess;
+	}
+
+	public String getUniqueName() {
+		return uniqueName;
+	}
+
+	public void setUniqueName(String uniqueName) {
+		this.uniqueName = uniqueName;
+	}
+
 	public long getFileLastModifiedOn() {
 		return fileLastModifiedOn;
 	}
 
-
-
 	public void setFileLastModifiedOn(long fileLastModifiedOn) {
 		this.fileLastModifiedOn = fileLastModifiedOn;
 	}
-
-
 
 	public boolean isEnabled() {
 		return enabled;
@@ -341,6 +355,10 @@ public class MediaItem implements Serializable{
 		builder.append(enabled);
 		builder.append(", fileLastModifiedOn=");
 		builder.append(fileLastModifiedOn);
+		builder.append(", publicAccess=");
+		builder.append(publicAccess);
+		builder.append(", uniqueName=");
+		builder.append(uniqueName);
 		builder.append("]");
 		return builder.toString();
 	}
