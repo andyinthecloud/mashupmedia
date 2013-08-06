@@ -6,6 +6,12 @@ html,body {
 	background-color: transparent;
 }
 
+
+.cursor-progress {
+	cursor: progress;
+}
+
+
 .clear {
 	clear: both;
 }

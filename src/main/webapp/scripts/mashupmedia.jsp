@@ -87,8 +87,7 @@ $(document).ready(function() {
     			}
     			loadPlaylist(playlistId);
 		} 
-		
-		
+				
 	});
 
 });
@@ -580,14 +579,19 @@ function getURLParameter(name) {
 }
 
 function fireRelLink(element) {	
+    	$(element).addClass("cursor-progress");
 	var rel = $(element).attr("rel");
 	if (rel === undefined) {
-		return;
+	    $(element).removeClass("cursor-progress");
+	    return;
 	}
 		
 	if (rel.length > 0) {
 		$.address.value(rel); 
 	}
+
+
+
 }
 
 function getHostUrl() {

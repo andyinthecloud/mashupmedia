@@ -31,7 +31,7 @@
 			appendContentsOnScroll();
 		});
 
-		$("div.music-sub-panel").on("click", "div.albums div.album-control a.play", function() {
+		$("div.music-sub-panel").on("click", "div.albums div.album-control a.play", function() {					    
 			var albumId = $(this).closest("div.album").attr("id");
 			albumId = parseId(albumId, "album-id");
 			mashupMedia.playAlbum(albumId);
@@ -42,6 +42,8 @@
 			albumId = parseId(albumId, "album-id");
 			mashupMedia.appendAlbum(albumId);
 		});
+		
+		
 
 	});
 </script>

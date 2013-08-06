@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("div.music-sub-panel").unbind();
+//		$("div.music-sub-panel").unbind();
 		window.scrollTo(0, 0);
 
 		$("#play-all").click(function() {
