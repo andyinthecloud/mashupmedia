@@ -6,8 +6,9 @@
 	$("div.music-sub-panel").unbind();
 	window.scrollTo(0, 0);
 
+	
 	$("div.albums div.album a").click(function() {
-		$.address.value($(this).attr('rel'));
+		fireRelLink(this);
 	});
 	
 	$("div.albums div.album").hover(function() {
@@ -39,6 +40,9 @@
 	    albumId = parseId(albumId, "album-id");
 	    mashupMedia.appendAlbum(albumId);
 	});
+
+	
+
 
 
     });
