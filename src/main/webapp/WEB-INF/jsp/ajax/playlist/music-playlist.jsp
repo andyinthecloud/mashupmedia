@@ -5,7 +5,6 @@
 			.val();
 
 	$(document).ready(function() {
-		$("div.music-sub-panel").unbind();
 		window.scrollTo(0, 0);
 
 		$("#playlist table.songs tbody").sortable({

@@ -17,6 +17,8 @@ var addressPlaylist = "address-playlist-";
 
 $(document).ready(function() {
     
+	$("body").removeClass("cursor-progress");
+    
 	$(document).ajaxComplete(function(e, xhr, settings) {
 		var responseHtml = xhr.responseText;
 		if (responseHtml.indexOf("@LOGGED-OUT@") >= 0) {
@@ -90,6 +92,11 @@ $(document).ready(function() {
 				
 	});
 
+});
+
+
+$( document ).ajaxComplete(function() {
+	$("body").removeClass("cursor-progress");
 });
 
 
@@ -579,16 +586,22 @@ function getURLParameter(name) {
 }
 
 function fireRelLink(element) {	
-    	$(element).addClass("cursor-progress");
 	var rel = $(element).attr("rel");
 	if (rel === undefined) {
-	    $(element).removeClass("cursor-progress");
 	    return;
 	}
-		
-	if (rel.length > 0) {
-		$.address.value(rel); 
+
+	if (rel.length == 0) {
+		return;
 	}
+	
+	if (endsWith(window.location.href, rel)) {
+		return;
+	}
+
+   	$(element).addClass("cursor-progress");
+	$("body").addClass("cursor-progress");	
+	$.address.value(rel); 
 
 
 
