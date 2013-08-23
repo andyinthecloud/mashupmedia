@@ -8,7 +8,7 @@
 <c:set var="jQueryUIVersion" value="1.10.3" />
 <c:set var="jQueryVersion" value="1.9.1" />
 <c:set var="jQueryAddress" value="1.6" />
-<c:set var="jPlayer" value="2.3.0" />
+<c:set var="jPlayer" value="2.4.0" />
 <c:set var="dataTables" value="1.9.4" />
 
 <link type="text/css" href="<c:url value="/jquery-ui/${jQueryUIVersion}/css/smoothness/jquery-ui-${jQueryUIVersion}.custom.min.css" />"
@@ -29,6 +29,7 @@
 
 
 <link href="<c:url value="${themePath}/stylesheets/site.css"/>" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<c:url value="/scripts/jplayer-android-fix.js" />"></script>
 <script type="text/javascript" src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 
 <script type="text/javascript">

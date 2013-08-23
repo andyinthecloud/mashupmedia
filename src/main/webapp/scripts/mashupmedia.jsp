@@ -17,7 +17,21 @@ var addressPlaylist = "address-playlist-";
 
 $(document).ready(function() {
     
-	$("body").removeClass("cursor-progress");
+	$("body, a").removeClass("cursor-progress");
+	
+	
+	$("div.music-sub-panel").on("click", "div.albums div.album-control a.play", function() {					    
+		var albumId = $(this).closest("div.album").attr("id");
+		albumId = parseId(albumId, "album-id");
+		mashupMedia.playAlbum(albumId);
+	});
+
+	$("div.music-sub-panel").on("click", "div.albums div.album-control a.add", function() {
+		var albumId = $(this).closest("div.album").attr("id");
+		albumId = parseId(albumId, "album-id");
+		mashupMedia.appendAlbum(albumId);
+	});
+	
     
 	$(document).ajaxComplete(function(e, xhr, settings) {
 		var responseHtml = xhr.responseText;
@@ -96,7 +110,7 @@ $(document).ready(function() {
 
 
 $( document ).ajaxComplete(function() {
-	$("body").removeClass("cursor-progress");
+	$("body, a").removeClass("cursor-progress");
 });
 
 

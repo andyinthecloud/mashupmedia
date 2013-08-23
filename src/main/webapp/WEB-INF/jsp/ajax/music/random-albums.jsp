@@ -30,19 +30,6 @@
 			appendContentsOnScroll();
 		});
 
-		$("div.music-sub-panel").on("click", "div.albums div.album-control a.play", function() {					    
-			var albumId = $(this).closest("div.album").attr("id");
-			albumId = parseId(albumId, "album-id");
-			mashupMedia.playAlbum(albumId);
-		});
-
-		$("div.music-sub-panel").on("click", "div.albums div.album-control a.add", function() {
-			var albumId = $(this).closest("div.album").attr("id");
-			albumId = parseId(albumId, "album-id");
-			mashupMedia.appendAlbum(albumId);
-		});
-		
-		
 
 	});
 </script>

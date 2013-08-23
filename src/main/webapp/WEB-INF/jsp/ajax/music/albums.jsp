@@ -26,18 +26,6 @@
 			});
 			
 			prepareShowIndexLetters();
-
-			$("div.music-sub-panel").on("click", "div.albums div.album-control a.play", function() {
-				var albumId = $(this).closest("div.album").attr("id");
-				albumId = parseId(albumId, "album-id");
-				mashupMedia.playAlbum(albumId);
-			});
-
-			$("div.music-sub-panel").on("click", "div.albums div.album-control a.add", function() {
-				var albumId = $(this).closest("div.album").attr("id");
-				albumId = parseId(albumId, "album-id");
-				mashupMedia.appendAlbum(albumId);
-			});
 			
 			$(window).scroll(function() {				
 				if ($("div.albums div.album").length == 0) {
