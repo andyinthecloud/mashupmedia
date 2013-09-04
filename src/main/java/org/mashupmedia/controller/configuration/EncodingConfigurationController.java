@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.controller.BaseController;
@@ -32,72 +33,62 @@ import org.mashupmedia.web.page.EncodingPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class EncodingConfigurationController extends BaseController{
+public class EncodingConfigurationController extends BaseController {
 
 	private final static String PAGE_NAME = "encoding";
 	private final static String PAGE_PATH = "configuration/" + PAGE_NAME;
 	private final static String PAGE_URL = "/" + PAGE_PATH;
-	
+
 	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private ConfigurationManager configurationManager;
-	
+
 	@Override
 	public String getPageTitleMessageKey() {
 		return "encoding.title";
 	}
-	
+
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
-		
+
 		Breadcrumb networkBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.encoding"));
-		breadcrumbs.add(networkBreadcrumb);		
+		breadcrumbs.add(networkBreadcrumb);
 	}
-	
-	
+
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.GET)
 	public String getNetwork(Model model) {
-		logger.debug("Called get...");
 		EncodingPage encodingPage = new EncodingPage();
 		String ffMpegFolderPath = EncodeHelper.getFFMpegFolderPath();
 		encodingPage.setFfmpegFolderPath(ffMpegFolderPath);
-		
+
 		String ffMpegFilePath = "";
 		File ffMpegFile = EncodeHelper.findFFMpegExecutable();
+		boolean isFfmpegValid = false;
 		if (ffMpegFile != null) {
 			try {
 				if (EncodeHelper.isValidFfMpeg(ffMpegFile)) {
 					ffMpegFilePath = ffMpegFile.getAbsolutePath();
-					encodingPage.setFfMpegFound(true);
+					isFfmpegValid = true;
 				}
 			} catch (IOException e) {
 				encodingPage.setAdditionalErrorMessage(e.getLocalizedMessage());
-				logger.error("Error running ffmpeg: " + ffMpegFilePath, e );
+				logger.error("Error running ffmpeg: " + ffMpegFilePath, e);
 			}
-				
-			
+
 		}
+		encodingPage.setFfMpegFound(isFfmpegValid);
+		configurationManager.saveConfiguration(MashUpMediaConstants.IS_ENCODER_INSTALLED, BooleanUtils.toStringTrueFalse(isFfmpegValid));
 		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegFilePath);
-		
+
 		model.addAttribute(encodingPage);
 		return PAGE_PATH;
 	}
-
-	@RequestMapping(value = PAGE_URL, method = RequestMethod.POST)
-	public String processNetwork(@ModelAttribute("encodingPage") EncodingPage encodingPage, Model model, BindingResult result) {				
-		
-		return "redirect:/app/configuration";
-	}
-	
-	
 
 }

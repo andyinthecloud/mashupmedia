@@ -28,7 +28,7 @@ public class EncodeHelper {
 
 	private static final String FFMPEG_FOLDER_NAME = "ffmpeg";
 	private static final String FFMPEG_EXECUTABLE_NAME = "ffmpeg";
-	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh" };
+	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh", "lnk" };
 	
 	private static Logger logger = Logger.getLogger(EncodeHelper.class);
 

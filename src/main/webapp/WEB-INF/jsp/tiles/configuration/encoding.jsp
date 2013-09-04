@@ -35,7 +35,7 @@
 
 
 	<div class="button-panel">
-		<input class="button" type="submit" value="<spring:message code="action.save"/>" />
+		<a class="button" href="<c:url value="/app/configuration/encoding" />"><spring:message code="action.refresh"/></a>
 	</div>
 
 </form:form>
