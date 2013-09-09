@@ -22,13 +22,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class EncodeHelper {
 
 	private static final String FFMPEG_FOLDER_NAME = "ffmpeg";
 	private static final String FFMPEG_EXECUTABLE_NAME = "ffmpeg";
-	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh", "lnk" };
+	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh"};
+	private static final String FFMPEG_EXECUTABLE_LINK = "ffmpeg.txt";
 	
 	private static Logger logger = Logger.getLogger(EncodeHelper.class);
 
@@ -58,33 +61,56 @@ public class EncodeHelper {
 					return ffMpegExecutable;
 				}
 			} else {
-				if (isFfmpegExceutable(file)) {
-					return file;
+				File ffmpegFile = getFfmpegExceutable(file);
+				if (ffmpegFile != null) {
+					return ffmpegFile;
 				}
 			}
 		}
 		return null;
 	}
 
-	private static boolean isFfmpegExceutable(File file) {
+	private static File getFfmpegExceutable(File file) {
 		String fileName = file.getName().toLowerCase();
 		if (!fileName.startsWith(FFMPEG_EXECUTABLE_NAME)) {
-			return false;
+			return null;
 		}
 
 		if (fileName.equals(FFMPEG_EXECUTABLE_NAME)) {
-			return true;
+			return file;
 		}
 
+		if (fileName.equalsIgnoreCase(FFMPEG_EXECUTABLE_LINK)) {
+			String link = null;
+			try {
+				link = StringUtils.trimToEmpty(FileUtils.readFileToString(file));				
+			} catch (IOException e) {
+				logger.error("Unable to read link file", e);
+				return null;
+			}
+			
+			if (StringUtils.isEmpty(link)) {
+				return null;
+			}
+			
+			file = new File(link);
+			if (file.exists()) {
+				return file;
+			}
+		}
+		
 		String fileExtension = FileHelper.getFileExtension(fileName);
 
 		for (String ffmpegExecutableFileExtension : FFMPEG_EXECUTABLE_EXTENSIONS) {
-			if (fileExtension.equals(ffmpegExecutableFileExtension)) {
-				return true;
+			if (fileExtension.equalsIgnoreCase(ffmpegExecutableFileExtension)) {
+				return file;
 			}
 		}
+		
 
-		return false;
+		
+
+		return null;
 	}
 	
 	public static boolean isValidFfMpeg(File ffMpegExecutableFile) throws IOException {
