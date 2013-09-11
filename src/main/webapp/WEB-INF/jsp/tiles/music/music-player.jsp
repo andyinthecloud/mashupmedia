@@ -49,12 +49,13 @@
 		$.get(mashupMedia.contextUrl + "app/ajax/media/encode/" + mediaItemId, function(data) {
 		    var encodeStatus = "ERROR";
 		    if (data.response.isSuccessful) {
-			encodeStatus = "PROCESSING";
+				encodeStatus = "PROCESSING";
 		    }
 
 		    var encodeMessage = getAudioEncodeStatus(encodeStatus);
 		    $("#current-song .encode").html(encodeMessage);
-		    mashupMedia.playSong(mediaItemId);
+		    setTimeout(function(){mashupMedia.playSong(mediaItemId)}, 5000);
+		    
 		});
 
 	    } else if (className == "no-encoder-found") {
