@@ -3,9 +3,10 @@ package org.mashupmedia.controller.configuration;
 import java.util.List;
 
 import org.mashupmedia.controller.BaseController;
+import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.service.LibraryManager;
-import org.mashupmedia.service.LibraryManager.LibraryType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.ListLibrariesPage;
@@ -46,8 +47,8 @@ public class ListLibrariesController extends BaseController {
 		model.addAttribute(listLibrariesPage);
 		
 		@SuppressWarnings("unchecked")
-		List<MusicLibrary> musicLibraries = (List<MusicLibrary>) libraryManager.getLocalLibraries(LibraryType.MUSIC);
-		listLibrariesPage.setMusicLibraries(musicLibraries);
+		List<Library> libraries = (List<Library>) libraryManager.getLocalLibraries(LibraryType.ALL);
+		listLibrariesPage.setLibraries(libraries);
 		
 		return PAGE_PATH;
 	}

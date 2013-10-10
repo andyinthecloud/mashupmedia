@@ -10,6 +10,7 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.util.AdminHelper;

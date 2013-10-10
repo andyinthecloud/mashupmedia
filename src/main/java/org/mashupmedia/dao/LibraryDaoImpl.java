@@ -5,9 +5,9 @@ import java.util.List;
 import org.hibernate.Query;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.RemoteShare;
-import org.mashupmedia.service.LibraryManager.LibraryType;
 import org.springframework.stereotype.Repository;
 
 @Repository

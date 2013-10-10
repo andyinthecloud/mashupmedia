@@ -2,19 +2,17 @@ package org.mashupmedia.web.page;
 
 import java.util.List;
 
-import org.mashupmedia.model.library.MusicLibrary;
+import org.mashupmedia.model.library.Library;
 
 public class ListLibrariesPage {
-	private List<MusicLibrary> musicLibraries;
+	private List<Library> libraries;
 
-	public List<MusicLibrary> getMusicLibraries() {
-		return musicLibraries;
+	public List<Library> getLibraries() {
+		return libraries;
 	}
 
-	public void setMusicLibraries(List<MusicLibrary> musicLibraries) {
-		this.musicLibraries = musicLibraries;
+	public void setLibraries(List<Library> libraries) {
+		this.libraries = libraries;
 	}
-	
-	
 
 }

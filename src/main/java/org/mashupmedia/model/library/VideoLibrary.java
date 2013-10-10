@@ -1,7 +1,11 @@
 package org.mashupmedia.model.library;
 
+import java.util.Set;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
+
+import org.mashupmedia.model.media.VideoResolution;
 
 @Entity
 @Cacheable
@@ -14,6 +18,20 @@ public class VideoLibrary extends Library {
 	}
 
 	private String videoScanMethod;
+	private Set<VideoResolution> videoResolutions;
+
+	public Set<VideoResolution> getVideoResolutions() {
+		return videoResolutions;
+	}
+
+	public void setVideoResolutions(Set<VideoResolution> videoResolutions) {
+		this.videoResolutions = videoResolutions;
+	}
+
+	@Override
+	public LibraryType getLibraryType() {
+		return LibraryType.VIDEO;
+	}
 
 	public String getVideoScanMethod() {
 		return videoScanMethod;

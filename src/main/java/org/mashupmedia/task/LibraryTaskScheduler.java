@@ -3,9 +3,9 @@ package org.mashupmedia.task;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.service.LibraryManager;
-import org.mashupmedia.service.LibraryManager.LibraryType;
 import org.mashupmedia.service.LibraryUpdateManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

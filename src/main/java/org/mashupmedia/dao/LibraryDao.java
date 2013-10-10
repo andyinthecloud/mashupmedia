@@ -3,8 +3,8 @@ package org.mashupmedia.dao;
 import java.util.List;
 
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.RemoteShare;
-import org.mashupmedia.service.LibraryManager.LibraryType;
 
 public interface LibraryDao {
 

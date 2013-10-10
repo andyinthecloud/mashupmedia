@@ -25,7 +25,10 @@ public class InitialisationManagerImpl implements InitialisationManager {
 
 	@Autowired
 	private ConfigurationManager configurationManager;
-
+	
+	@Autowired
+	private VideoManager videoManager; 
+	
 	@Override
 	public void initialiseApplication() {
 		User user = adminManager.getUser(MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME);
@@ -40,7 +43,9 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		adminManager.initialiseAdminUser();
 		adminManager.initialiseSystemUser();
 		initialiseEncoder();
+		videoManager.initialiseVideoResolutions();
 	}
+
 
 	private void initialiseEncoder() {
 		File ffMpegFile = EncodeHelper.findFFMpegExecutable();

@@ -24,7 +24,6 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.location.Location;
-import org.mashupmedia.service.LibraryManager.LibraryType;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -56,10 +55,15 @@ public abstract class Library implements Serializable {
 	private List<RemoteShare> remoteShares;
 	private boolean remote;
 	private String status;
-
+	
+	public enum LibraryType {
+		ALL, MUSIC, VIDEO
+	}
 	public enum LibraryStatusType {
 		NONE, WORKING, ERROR, UNABLE_TO_CONNECT_TO_REMOTE_LIBRARY, OK;
 	}
+	
+	public abstract LibraryType getLibraryType();
 
 	public LibraryStatusType getLibraryStatusType() {
 		if (this.status == null) {
@@ -246,11 +250,7 @@ public abstract class Library implements Serializable {
 	}
 
 	public String getLibraryTypeValue() {
-		LibraryType libraryType = LibraryType.ALL;
-		if (this instanceof MusicLibrary) {
-			libraryType = LibraryType.MUSIC;
-		}
-
+		LibraryType libraryType = getLibraryType();
 		return libraryType.toString().toLowerCase();
 	}
 }

@@ -19,7 +19,7 @@ package org.mashupmedia.util;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.service.LibraryManager.LibraryType;
+import org.mashupmedia.model.library.Library.LibraryType;
 
 public class LibraryHelper {
 

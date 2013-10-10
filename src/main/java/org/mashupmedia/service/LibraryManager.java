@@ -3,13 +3,11 @@ package org.mashupmedia.service;
 import java.util.List;
 
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.service.LibraryManager.LibraryType;
+import org.mashupmedia.model.library.Library.LibraryType;
 
 public interface LibraryManager {
 
-	public enum LibraryType {
-		ALL, MUSIC
-	}
+
 
 	public List<? extends Library> getLocalLibraries(LibraryType libraryType);
 

@@ -327,6 +327,19 @@ div.panel ul.main-menu li a {
 	color: #606060;
 }
 
+div.panel ul.main-menu li a.library-music {
+	padding-left: 20px;
+	background-image: url("../images/libray/music.png");
+	background-repeat: no-repeat;
+}
+
+div.panel ul.main-menu li a.library-video {
+	padding-left: 20px;
+	background-image: url("../images/libray/video.png");
+	background-repeat: no-repeat;
+}
+
+
 div.panel ul.main-menu a:HOVER {
 	background-color: #E579E9;
 	text-decoration: none;

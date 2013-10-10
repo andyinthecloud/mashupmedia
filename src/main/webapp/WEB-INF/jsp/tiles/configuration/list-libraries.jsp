@@ -4,16 +4,16 @@
 <div class="sub-panel">
 
 	<c:choose>
-		<c:when test="${fn:length(listLibrariesPage.musicLibraries) == 0}">
+		<c:when test="${fn:length(listLibrariesPage.libraries) == 0}">
 			<spring:message code="list-libraries.library.empty" />
 		</c:when>
 
 		<c:otherwise>
 			<ul class="main-menu">
-				<c:forEach items="${listLibrariesPage.musicLibraries}" var="musicLibrary">
-					<li><a
-						href="<c:url value="/app/configuration/music-library" />?id=<c:out value="${musicLibrary.id}" />"><c:out
-								value="${musicLibrary.name}" /></a></li>
+				<c:forEach items="${listLibrariesPage.libraries}" var="library">
+					<li><a class="library-${library.libraryTypeValue}"
+						href="<c:url value="/app/configuration/music-library" />?id=<c:out value="${library.id}" />"><c:out
+								value="${library.name}" /></a></li>
 				</c:forEach>
 			</ul>
 		</c:otherwise>

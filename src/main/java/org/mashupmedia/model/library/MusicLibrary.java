@@ -10,6 +10,11 @@ public class MusicLibrary extends Library {
 	
 	private String albumArtImagePattern;
 
+	@Override
+	public LibraryType getLibraryType() {
+		return LibraryType.MUSIC;
+	}
+	
 	public String getAlbumArtImagePattern() {
 		return albumArtImagePattern;
 	}
