@@ -39,6 +39,10 @@
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/url-error-remote-library.jsp" />
 	</definition>
 
+	<definition name="configuration/choose-library-type" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/choose-library-type.jsp" />
+	</definition>
+
 	<definition name="configuration/music-library" extends="home">
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/music-library.jsp" />
 	</definition>

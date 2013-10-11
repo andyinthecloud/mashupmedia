@@ -30,8 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminManagerImpl implements AdminManager {
 	private Logger logger = Logger.getLogger(getClass());
 
-	
-	
 	@Autowired
 	private UserDao userDao;
 

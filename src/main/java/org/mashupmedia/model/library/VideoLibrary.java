@@ -3,7 +3,9 @@ package org.mashupmedia.model.library;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 
 import org.mashupmedia.model.media.VideoResolution;
 
@@ -18,6 +20,8 @@ public class VideoLibrary extends Library {
 	}
 
 	private String videoScanMethod;
+
+	@ManyToMany(cascade = CascadeType.PERSIST)
 	private Set<VideoResolution> videoResolutions;
 
 	public Set<VideoResolution> getVideoResolutions() {

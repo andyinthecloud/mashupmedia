@@ -5,7 +5,6 @@ import java.util.List;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
-import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
@@ -19,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class ListLibrariesController extends BaseController {
 
-	private final static String PAGE_NAME = "list-libraries";
-	private final static String PAGE_PATH = "configuration/" + PAGE_NAME;
-	private final static String PAGE_URL = "/" + PAGE_PATH;
+//	private final static String PAGE_NAME = "list-libraries";
+//	private final static String PAGE_PATH = "configuration/" + PAGE_NAME;
+//	private final static String PAGE_URL = "/" + PAGE_PATH;
 	
 	@Autowired
 	private LibraryManager libraryManager;
@@ -40,7 +39,7 @@ public class ListLibrariesController extends BaseController {
 		breadcrumbs.add(networkBreadcrumb);
 	}
 
-	@RequestMapping(value = PAGE_URL, method = RequestMethod.GET)
+	@RequestMapping(value = "/configuration/list-libraries", method = RequestMethod.GET)
 	public String getListLibrariesPage(Model model) {
 		
 		ListLibrariesPage listLibrariesPage = new ListLibrariesPage();
@@ -50,7 +49,14 @@ public class ListLibrariesController extends BaseController {
 		List<Library> libraries = (List<Library>) libraryManager.getLocalLibraries(LibraryType.ALL);
 		listLibrariesPage.setLibraries(libraries);
 		
-		return PAGE_PATH;
+		return "configuration/list-libraries";
 	}
+	
+	@RequestMapping(value = "/configuration/choose-library-type", method = RequestMethod.GET)
+	public String handleChooseLibraryType(Model model) {
+		return "configuration/choose-library-type";
+	}
+	
+	
 
 }

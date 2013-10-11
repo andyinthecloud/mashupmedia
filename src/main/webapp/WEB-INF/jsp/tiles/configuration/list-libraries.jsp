@@ -12,8 +12,7 @@
 			<ul class="main-menu">
 				<c:forEach items="${listLibrariesPage.libraries}" var="library">
 					<li><a class="library-${library.libraryTypeValue}"
-						href="<c:url value="/app/configuration/music-library" />?id=<c:out value="${library.id}" />"><c:out
-								value="${library.name}" /></a></li>
+						href="<c:url value="/app/configuration/music-library" />?id=<c:out value="${library.id}" />"><c:out value="${library.name}" /></a></li>
 				</c:forEach>
 			</ul>
 		</c:otherwise>
@@ -21,6 +20,5 @@
 </div>
 
 <div class="button-panel">
-	<a class="button" href="<c:url value="/app/configuration/music-library" />"><spring:message
-			code="list-libraries.library.add" /></a>
+	<a class="button" href="<c:url value="/app/configuration/choose-library-type" />"><spring:message code="list-libraries.library.add" /></a>
 </div>
