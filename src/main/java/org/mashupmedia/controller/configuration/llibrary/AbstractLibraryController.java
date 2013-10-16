@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.configuration;
+package org.mashupmedia.controller.configuration.llibrary;
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,11 +16,10 @@ import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.task.LibraryUpdateTaskManager;
 import org.mashupmedia.util.MessageHelper;
-import org.mashupmedia.validator.MusicLibraryPageValidator;
+import org.mashupmedia.validator.LibraryPageValidator;
 import org.mashupmedia.web.Breadcrumb;
-import org.mashupmedia.web.page.MusicLibraryPage;
+import org.mashupmedia.web.page.LibraryPage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -31,12 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
-public class MusicLibraryController extends BaseController {
-
-	private final static String PAGE_NAME = "music-library";
-	private final static String PAGE_PATH = "configuration/" + PAGE_NAME;
-	private final static String PAGE_URL = "/" + PAGE_PATH;
+public abstract class AbstractLibraryController extends BaseController {
 
 	@Autowired
 	private AdminManager adminManager;
@@ -49,11 +43,6 @@ public class MusicLibraryController extends BaseController {
 
 	@Autowired
 	private LibraryUpdateTaskManager libraryUpdateTaskManager;
-
-	@Override
-	public String getPageTitleMessageKey() {
-		return "musiclibrary.title";
-	}
 	
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
@@ -64,10 +53,13 @@ public class MusicLibraryController extends BaseController {
 		Breadcrumb musicConfigurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.libraries"),
 				"/app/configuration/list-libraries");
 		breadcrumbs.add(musicConfigurationBreadcrumb);
-
-		Breadcrumb musicLibraryBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.musiclibrary"));
-		breadcrumbs.add(musicLibraryBreadcrumb);
+		
+		breadcrumbs.add(prepareFinalBreadcrumb());
+		
 	}
+	
+	protected abstract Breadcrumb prepareFinalBreadcrumb();
+	
 
 	@ModelAttribute("groups")
 	public List<Group> populateGroups() {
@@ -75,79 +67,80 @@ public class MusicLibraryController extends BaseController {
 		return groups;
 	}
 
-	protected MusicLibraryPage initialiseMusicLibraryPage(Long libraryId) {
-		MusicLibraryPage musicLibraryPage = new MusicLibraryPage();
+	protected LibraryPage initialiseMusicLibraryPage(Long libraryId) {
+		LibraryPage musicLibraryPage = new LibraryPage();
 		MusicLibrary musicLibrary = new MusicLibrary();
 		musicLibrary.setEnabled(true);
 		Location location = new Location();
 		musicLibrary.setLocation(location);
 
-		musicLibraryPage.setMusicLibrary(musicLibrary);
+		musicLibraryPage.setLibrary(musicLibrary);
 
 		if (libraryId == null) {
 			return musicLibraryPage;
 		}
 
 		musicLibrary = (MusicLibrary) libraryManager.getLibrary(libraryId);
-		musicLibraryPage.setMusicLibrary(musicLibrary);
+		musicLibraryPage.setLibrary(musicLibrary);
 		musicLibraryPage.setExists(true);
 		return musicLibraryPage;
 	}
+	
+	protected abstract String getPagePath();
 
-	@RequestMapping(value = PAGE_URL, method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	public String getMusicLibrary(@RequestParam(value = "id", required = false) Long libraryId, Model model) {
-		MusicLibraryPage musicLibraryPage = initialiseMusicLibraryPage(libraryId);
+		LibraryPage musicLibraryPage = initialiseMusicLibraryPage(libraryId);
 		model.addAttribute(musicLibraryPage);
-		return PAGE_PATH;
+		return getPagePath();
 	}
 
-	@RequestMapping(value = PAGE_URL, method = RequestMethod.POST)
-	public String processMusicLibrary(@ModelAttribute("musicLibraryPage") MusicLibraryPage musicLibraryPage, Model model, BindingResult result, RedirectAttributes redirectAttributes) {
+	@RequestMapping(method = RequestMethod.POST)
+	public String processMusicLibrary(@ModelAttribute("libraryPage") LibraryPage libraryPage, Model model, BindingResult result, RedirectAttributes redirectAttributes) {
 
-		new MusicLibraryPageValidator().validate(musicLibraryPage, result);
+		new LibraryPageValidator().validate(libraryPage, result);
 		if (result.hasErrors()) {
-			return PAGE_PATH;
+			return getPagePath();
 		}
 
-		String action = StringUtils.trimToEmpty(musicLibraryPage.getAction());
+		String action = StringUtils.trimToEmpty(libraryPage.getAction());
 		if (action.equalsIgnoreCase(MashUpMediaConstants.ACTION_DELETE)) {
-			processDeleteAction(musicLibraryPage);
+			processDeleteAction(libraryPage);
 		} else {
-			processSaveAction(musicLibraryPage);
-			libraryUpdateTaskManager.updateLibrary(musicLibraryPage.getMusicLibrary());
+			processSaveAction(libraryPage);
+			libraryUpdateTaskManager.updateLibrary(libraryPage.getLibrary());
 
 		}
 
 		return "redirect:list-libraries";
 	}
 
-	private void processSaveAction(MusicLibraryPage musicLibraryPage) {
-		MusicLibrary musicLibrary = musicLibraryPage.getMusicLibrary();
+	private void processSaveAction(LibraryPage libraryPage) {
+		Library library = libraryPage.getLibrary();
 		
-		List<Group> groups = musicLibraryPage.getGroups();
+		List<Group> groups = libraryPage.getGroups();
 		if (groups != null) {
-			musicLibrary.setGroups(new HashSet<Group>(groups));							
+			library.setGroups(new HashSet<Group>(groups));							
 		}
 		
-		long libraryId = musicLibrary.getId();
+		long libraryId = library.getId();
 		if (libraryId > 0) {
 			// link the remote shares
 			Library savedLibrary = libraryManager.getLibrary(libraryId);
 			List<RemoteShare> remoteShares = savedLibrary.getRemoteShares();
-			musicLibrary.setRemoteShares(remoteShares);
+			library.setRemoteShares(remoteShares);
 		}
 		
-		libraryManager.saveLibrary(musicLibrary);
+		libraryManager.saveLibrary(library);
 	}
 	
-	private void processDeleteAction(MusicLibraryPage musicLibraryPage) {
-		MusicLibrary musicLibrary = musicLibraryPage.getMusicLibrary();
-		libraryManager.deleteLibrary(musicLibrary);
+	private void processDeleteAction(LibraryPage libraryPage) {
+		Library library = libraryPage.getLibrary();
+		libraryManager.deleteLibrary(library);
 	}
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(Group.class, groupEditor);
 	}
-
 }
