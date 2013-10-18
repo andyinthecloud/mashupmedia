@@ -42,7 +42,7 @@
 
 	showRemoteShares();
 
-	$("#musicLibraryPage input:submit").click(function() {
+	$("#libraryPage input:submit").click(function() {
 	    var action = $(this).attr("name");
 	    $("#action").val(action);
 	});
@@ -58,7 +58,7 @@
 			url : "<c:url value="/app/ajax/library/add-remote-share"/>",
 			type : "post",
 			data : {
-			    libraryId : ${musicLibraryPage.musicLibrary.id}
+			    libraryId : ${libraryPage.library.id}
 			},
 			success : function(data) {
 			    showRemoteShares();
@@ -91,7 +91,7 @@
 			type : "post",
 			data : {
 				remoteShareIds : remoteShareIds,
-			    libraryId : ${musicLibraryPage.musicLibrary.id},
+			    libraryId : ${libraryPage.library.id},
 			    remoteShareStatus : remoteShareStatus
 			},
 			success : function(data) {
@@ -107,12 +107,12 @@
     });
     
     function showRemoteShares() {
-   	<c:if test="${musicLibraryPage.isExists}">
+   	<c:if test="${libraryPage.isExists}">
    	$.ajax({
    		url : "<c:url value="/app/ajax/library/get-remote-shares"/>",
    		type : "get",
    		data : {
-   		    libraryId : ${musicLibraryPage.musicLibrary.id}
+   		    libraryId : ${libraryPage.library.id}
    		},
    		success : function(data) {
    		       		    
@@ -131,7 +131,7 @@
    		    	var remoteShare = item.remoteShare;
    			    remoteShareHtml += "<tr id=\"remote-share-" + remoteShare.id + "\">";
    			    remoteShareHtml += "<td><input type=\"checkbox\" /></td>";
-   			    var link = getHostUrl() + "app/remote/connect/${musicLibraryPage.musicLibrary.libraryTypeValue}/" + remoteShare.uniqueName;
+   			    var link = getHostUrl() + "app/remote/connect/${libraryPage.library.libraryTypeValue}/" + remoteShare.uniqueName;
    			    remoteShareHtml += "<td><input class=\"link\" type=\"text\" value=\"" + link + "\" /></td>";
    			    remoteShareHtml += "<td>" + remoteShare.remoteUrl + "</td>";
    			    remoteShareHtml += "<td>" + remoteShare.createdOn + "</td>";
@@ -151,29 +151,29 @@
 </script>
 
 
-<form:form commandName="musicLibraryPage">
+<form:form commandName="libraryPage">
 	<form:errors path="*" cssClass="error-box" />
 	<form:hidden path="action" />
-	<form:hidden path="musicLibrary.id" />
-	<form:hidden path="musicLibrary.scanMinutesInterval" />
+	<form:hidden path="library.id" />
+	<form:hidden path="library.scanMinutesInterval" />
 
-	<label for="musicLibrary-name"><spring:message code="musiclibrary.name" /></label>
-	<form:input path="musicLibrary.name" id="musicLibrary-name" cssStyle="margin-bottom: 10px;" />
+	<label for="library-name"><spring:message code="library.name" /></label>
+	<form:input path="library.name" id="library-name" cssStyle="margin-bottom: 10px;" />
 	<br />
 
-	<form:checkbox path="musicLibrary.enabled" id="musicLibrary-enabled" cssStyle="vertical-align: middle;" />
-	<label for="musicLibrary-enabled"><spring:message code="musiclibrary.enabled" /></label>
+	<form:checkbox path="library.enabled" id="library-enabled" cssStyle="vertical-align: middle;" />
+	<label for="library-enabled"><spring:message code="library.enabled" /></label>
 	<br />
 
 	<fieldset id="location">
 		<legend>
-			<spring:message code="musiclibrary.location" />
+			<spring:message code="library.location" />
 		</legend>
 
 
 		<div class="folder">
-			<label class="new-line" for="folderLocation-path"><spring:message code="musiclibrary.location.path" /></label>
-			<form:input path="musicLibrary.location.path" id="folderLocation-path" />
+			<label class="new-line" for="folderLocation-path"><spring:message code="library.location.path" /></label>
+			<form:input path="library.location.path" id="folderLocation-path" />
 		</div>
 
 
@@ -186,14 +186,14 @@
 
 
 
-	<label class="new-line" for="groups"><spring:message code="musiclibrary.groups" /></label>
-	<form:checkboxes path="musicLibrary.groups" items="${groups}" itemLabel="name" itemValue="id" cssClass="checkboxes" delimiter="<br/>" />
+	<label class="new-line" for="groups"><spring:message code="library.groups" /></label>
+	<form:checkboxes path="library.groups" items="${groups}" itemLabel="name" itemValue="id" cssClass="checkboxes" delimiter="<br/>" />
 	<br />
 
 
 
 	<br />
-	<c:if test="${musicLibraryPage.isExists}">
+	<c:if test="${libraryPage.isExists}">
 		<div class="new-line">
 
 			<input type="checkbox" id="remote-share" value="1" /> <label for="remote-share"><spring:message code="library.remote.enable" /></label> <br />

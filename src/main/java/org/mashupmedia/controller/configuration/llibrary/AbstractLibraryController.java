@@ -20,6 +20,7 @@ import org.mashupmedia.validator.LibraryPageValidator;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.LibraryPage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@Controller
 public abstract class AbstractLibraryController extends BaseController {
 
 	@Autowired
@@ -67,7 +69,7 @@ public abstract class AbstractLibraryController extends BaseController {
 		return groups;
 	}
 
-	protected LibraryPage initialiseMusicLibraryPage(Long libraryId) {
+	protected LibraryPage initialiseLibraryPage(Long libraryId) {
 		LibraryPage musicLibraryPage = new LibraryPage();
 		MusicLibrary musicLibrary = new MusicLibrary();
 		musicLibrary.setEnabled(true);
@@ -89,14 +91,14 @@ public abstract class AbstractLibraryController extends BaseController {
 	protected abstract String getPagePath();
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getMusicLibrary(@RequestParam(value = "id", required = false) Long libraryId, Model model) {
-		LibraryPage musicLibraryPage = initialiseMusicLibraryPage(libraryId);
-		model.addAttribute(musicLibraryPage);
+	public String getLibrary(@RequestParam(value = "id", required = false) Long libraryId, Model model) {
+		LibraryPage libraryPage = initialiseLibraryPage(libraryId);
+		model.addAttribute(libraryPage);
 		return getPagePath();
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String processMusicLibrary(@ModelAttribute("libraryPage") LibraryPage libraryPage, Model model, BindingResult result, RedirectAttributes redirectAttributes) {
+	public String processLibrary(@ModelAttribute("libraryPage") LibraryPage libraryPage, Model model, BindingResult result, RedirectAttributes redirectAttributes) {
 
 		new LibraryPageValidator().validate(libraryPage, result);
 		if (result.hasErrors()) {

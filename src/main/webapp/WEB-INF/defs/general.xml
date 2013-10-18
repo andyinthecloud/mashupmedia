@@ -43,9 +43,13 @@
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/choose-library-type.jsp" />
 	</definition>
 
-	<definition name="configuration/music-library" extends="home">
-		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/music-library.jsp" />
+	<definition name="configuration/library" extends="home">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/library.jsp" />
 	</definition>
+	
+	<definition name="configuration/music-library" extends="configuration/library" />
+	
+	<definition name="configuration/video-library" extends="configuration/library" />
 
 	<definition name="configuration/administration/list-users" extends="home">
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/configuration/administration/list-users.jsp" />
@@ -81,12 +85,5 @@
 			</definition>
 		</put-attribute>
 	</definition>
-
-	<!-- <definition name="music/artists" extends="home"> <put-attribute name="title" value="Mashup Media | Music | Artists" /> <put-attribute name="body"> <definition 
-		extends="music.panel"> <put-attribute name="body" value="/WEB-INF/jsp/tiles/music/artists.jsp" /> </definition> </put-attribute> </definition> <definition 
-		name="music/albums" extends="home"> <put-attribute name="title" value="Mashup Media | Music | Albums" /> <put-attribute name="body"> <definition extends="music.panel"> 
-		<put-attribute name="body" value="/WEB-INF/jsp/tiles/music/albums.jsp" /> </definition> </put-attribute> </definition> <definition name="music/album" extends="home"> 
-		<put-attribute name="title" value="Mashup Media | Music | Albums" /> <put-attribute name="body"> <definition extends="music.panel"> <put-attribute name="body" 
-		value="/WEB-INF/jsp/tiles/music/album.jsp" /> </definition> </put-attribute> </definition> -->
 
 </tiles-definitions>
