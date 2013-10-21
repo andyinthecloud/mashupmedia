@@ -85,13 +85,19 @@ public abstract class BaseController {
 	
 	public abstract String getPageTitleMessageKey();
 	
-	@ModelAttribute("pageTitle")
-	public String populatePageTitle() {
+	@ModelAttribute("headPageTitle")
+	public String populateHeadPageTitle() {
 		StringBuilder titleBuilder = new StringBuilder(MessageHelper.getMessage("page.default.title.prefix"));
 		titleBuilder.append(" ");
 		titleBuilder.append(MessageHelper.getMessage(getPageTitleMessageKey()));
 		return titleBuilder.toString();
 	}
+	
+	@ModelAttribute("pageTitle")
+	public String populatePageTitle() {
+		return getPageTitleMessageKey();
+	}
+	
 	
 
 	@ModelAttribute("musicPlaylists")

@@ -26,9 +26,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -61,7 +58,7 @@ public abstract class AbstractLibraryController extends BaseController {
 	}
 	
 	protected abstract Breadcrumb prepareFinalBreadcrumb();
-	
+		
 
 	@ModelAttribute("groups")
 	public List<Group> populateGroups() {
@@ -70,41 +67,33 @@ public abstract class AbstractLibraryController extends BaseController {
 	}
 
 	protected LibraryPage initialiseLibraryPage(Long libraryId) {
-		LibraryPage musicLibraryPage = new LibraryPage();
+		LibraryPage libraryPage = new LibraryPage();
 		MusicLibrary musicLibrary = new MusicLibrary();
 		musicLibrary.setEnabled(true);
 		Location location = new Location();
 		musicLibrary.setLocation(location);
 
-		musicLibraryPage.setLibrary(musicLibrary);
+		libraryPage.setLibrary(musicLibrary);
 
 		if (libraryId == null) {
-			return musicLibraryPage;
+			return libraryPage;
 		}
 
 		musicLibrary = (MusicLibrary) libraryManager.getLibrary(libraryId);
-		musicLibraryPage.setLibrary(musicLibrary);
-		musicLibraryPage.setExists(true);
-		return musicLibraryPage;
+		libraryPage.setLibrary(musicLibrary);
+		libraryPage.setExists(true);
+		return libraryPage;
 	}
 	
 	protected abstract String getPagePath();
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getLibrary(@RequestParam(value = "id", required = false) Long libraryId, Model model) {
+	
+	protected void processGetLibrary(Long libraryId, Model model) {
 		LibraryPage libraryPage = initialiseLibraryPage(libraryId);
 		model.addAttribute(libraryPage);
-		return getPagePath();
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String processLibrary(@ModelAttribute("libraryPage") LibraryPage libraryPage, Model model, BindingResult result, RedirectAttributes redirectAttributes) {
-
-		new LibraryPageValidator().validate(libraryPage, result);
-		if (result.hasErrors()) {
-			return getPagePath();
-		}
-
+	public void  processPostLibrary(LibraryPage libraryPage, Model model, BindingResult result, RedirectAttributes redirectAttributes) {
 		String action = StringUtils.trimToEmpty(libraryPage.getAction());
 		if (action.equalsIgnoreCase(MashUpMediaConstants.ACTION_DELETE)) {
 			processDeleteAction(libraryPage);
@@ -113,10 +102,17 @@ public abstract class AbstractLibraryController extends BaseController {
 			libraryUpdateTaskManager.updateLibrary(libraryPage.getLibrary());
 
 		}
-
-		return "redirect:list-libraries";
+	}
+	
+	protected void validateLibraryPage(LibraryPage libraryPage, BindingResult result) {
+		new LibraryPageValidator().validate(libraryPage, result);
 	}
 
+	
+	protected String getRedirectListLibraryView() {
+		return "redirect:list-libraries";		
+	}
+	
 	private void processSaveAction(LibraryPage libraryPage) {
 		Library library = libraryPage.getLibrary();
 		

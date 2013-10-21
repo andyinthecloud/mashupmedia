@@ -157,7 +157,7 @@
 	<form:hidden path="library.id" />
 	<form:hidden path="library.scanMinutesInterval" />
 
-	<label for="library-name"><spring:message code="library.name" /></label>
+	<label for="library-name"><spring:message code="${pageTitle}" /></label>
 	<form:input path="library.name" id="library-name" cssStyle="margin-bottom: 10px;" />
 	<br />
 

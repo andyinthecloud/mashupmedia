@@ -48,7 +48,7 @@
 
 <link rel="icon" type="image/ico" href="<c:url value="${themePath}/images/favicon.ico"/>">
 
-<title>${pageTitle}</title>
+<title>${headPageTitle}</title>
 
 </head>
 
