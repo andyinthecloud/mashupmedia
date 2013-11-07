@@ -5,11 +5,10 @@
 	$(document).ready(function() {
 		$("#choose-library-type a.button" ).click(function() {
 			if ($("#choose-library-type input[name=libraryType]").is(":checked") ) {
-				var libraryType = $("#choose-library-type input[name=libraryType]").val();
-				window.location = "<c:url value="/app/configuration/" />" + libraryType "-library";
+				var libraryType = $("#choose-library-type input[name=libraryType]:checked").val();
+				window.location = "<c:url value="/app/configuration/library/" />" + libraryType;
 			}
 		});
-
 	});
 </script>
 

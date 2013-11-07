@@ -13,24 +13,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/configuration/library/music")
-public class MusicLibraryController extends AbstractLibraryController {
-
-	@Override
-	public String getPageTitleMessageKey() {
-		return "library.music.title";
-	}
+@RequestMapping("/configuration/library/video")
+public class VideoLibraryController extends AbstractLibraryController {
 
 	@Override
 	protected Breadcrumb prepareFinalBreadcrumb() {
 		Breadcrumb musicLibraryBreadcrumb = new Breadcrumb(
-				MessageHelper.getMessage("breadcrumb.configuration.library.music"));
+				MessageHelper.getMessage("breadcrumb.configuration.library.video"));
 		return musicLibraryBreadcrumb;
 	}
 
 	@Override
 	protected String getPagePath() {
-		return "configuration/library/music";
+		return "configuration/library/video";
+	}
+
+	@Override
+	public String getPageTitleMessageKey() {
+		return "library.video.title";
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -51,5 +51,6 @@ public class MusicLibraryController extends AbstractLibraryController {
 		processPostLibrary(libraryPage, model, result, redirectAttributes);
 		return getRedirectListLibraryView();
 	}
-
+	
+	
 }
