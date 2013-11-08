@@ -22,7 +22,15 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 	@Override
 	public void saveVideoResolution(VideoResolution videoResolution) {
 		saveOrUpdate(videoResolution);
-
+	}
+	
+	@Override
+	public VideoResolution getVideoResolution(long videoResolutionId) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from VideoResolution where id = :videoResolutionId");
+		query.setLong("videoResolutionId", videoResolutionId);
+		query.setCacheable(true);
+		VideoResolution videoResolution = (VideoResolution)query.uniqueResult();
+		return videoResolution;
 	}
 
 }

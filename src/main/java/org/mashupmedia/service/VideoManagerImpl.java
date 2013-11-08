@@ -21,7 +21,7 @@ public class VideoManagerImpl implements VideoManager {
 		if (videoResolutions == null || videoResolutions.isEmpty()) {
 			initialiseVideoResolutions();
 		}
-		videoResolutions = videoDao.getVideoResolutions();		
+		videoResolutions = videoDao.getVideoResolutions();
 		return videoResolutions;
 	}
 
@@ -50,5 +50,11 @@ public class VideoManagerImpl implements VideoManager {
 		videoResolution1080p.setHeight(1080);
 		saveVideoResolution(videoResolution1080p);
 	}
-	
+
+	@Override
+	public VideoResolution getVideoResolution(long videoResolutionId) {
+		VideoResolution videoResolution = videoDao.getVideoResolution(videoResolutionId);
+		return videoResolution;
+	}
+
 }

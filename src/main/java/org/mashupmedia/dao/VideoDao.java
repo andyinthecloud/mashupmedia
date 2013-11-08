@@ -10,4 +10,7 @@ public interface VideoDao {
 
 	public void saveVideoResolution(VideoResolution videoResolution);
 
+	public VideoResolution getVideoResolution(long videoResolutionId);
+	
+
 }

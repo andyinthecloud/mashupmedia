@@ -1,5 +1,7 @@
 package org.mashupmedia.controller.configuration.llibrary;
 
+import org.mashupmedia.model.library.MusicLibrary;
+import org.mashupmedia.model.location.Location;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.LibraryPage;
@@ -50,6 +52,26 @@ public class MusicLibraryController extends AbstractLibraryController {
 
 		processPostLibrary(libraryPage, model, result, redirectAttributes);
 		return getRedirectListLibraryView();
+	}
+	
+	@Override
+	protected LibraryPage initialiseLibraryPage(Long libraryId) {
+		LibraryPage libraryPage = new LibraryPage();
+		MusicLibrary musicLibrary = new MusicLibrary();
+		musicLibrary.setEnabled(true);
+		Location location = new Location();
+		musicLibrary.setLocation(location);
+
+		libraryPage.setLibrary(musicLibrary);
+
+		if (libraryId == null) {
+			return libraryPage;
+		}
+
+		musicLibrary = (MusicLibrary) libraryManager.getLibrary(libraryId);
+		libraryPage.setLibrary(musicLibrary);
+		libraryPage.setExists(true);
+		return libraryPage;
 	}
 
 }

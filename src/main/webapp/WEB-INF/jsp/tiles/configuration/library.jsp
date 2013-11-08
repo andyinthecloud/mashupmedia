@@ -184,7 +184,7 @@
 		</div>
 	</fieldset>
 
-
+	<tiles:insertAttribute name="additionalConfiguration" />
 
 	<label class="new-line" for="groups"><spring:message code="library.groups" /></label>
 	<form:checkboxes path="library.groups" items="${groups}" itemLabel="name" itemValue="id" cssClass="checkboxes" delimiter="<br/>" />

@@ -11,6 +11,8 @@ public interface VideoManager {
 	public void saveVideoResolution(VideoResolution videoResolution);
 
 	public void initialiseVideoResolutions();
+
+	public VideoResolution getVideoResolution(long videoResolutionId);
 	
 
 }

@@ -27,7 +27,7 @@ public class AjaxLocationController {
 	public String checkFolderLocation(@RequestParam("path") String path, Model model) {
 		File file = new File(path);
 		boolean isValid = false;
-		String messageCode = "musiclibrary.location.invalid";
+		String messageCode = "library.location.invalid";
 		if (file.isDirectory()) {
 			isValid = true;
 			messageCode = "musiclibrary.location.ok";

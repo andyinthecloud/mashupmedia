@@ -32,68 +32,70 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public abstract class AbstractLibraryController extends BaseController {
 
 	@Autowired
-	private AdminManager adminManager;
+	protected AdminManager adminManager;
 
 	@Autowired
-	private LibraryManager libraryManager;
+	protected LibraryManager libraryManager;
 
 	@Autowired
-	private GroupEditor groupEditor;
+	protected GroupEditor groupEditor;
 
 	@Autowired
-	private LibraryUpdateTaskManager libraryUpdateTaskManager;
-	
+	protected LibraryUpdateTaskManager libraryUpdateTaskManager;
+
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 
-		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
+		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"),
+				"/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
 
-		Breadcrumb musicConfigurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.libraries"),
-				"/app/configuration/list-libraries");
+		Breadcrumb musicConfigurationBreadcrumb = new Breadcrumb(
+				MessageHelper.getMessage("breadcrumb.configuration.libraries"), "/app/configuration/list-libraries");
 		breadcrumbs.add(musicConfigurationBreadcrumb);
-		
+
 		breadcrumbs.add(prepareFinalBreadcrumb());
-		
+
 	}
-	
+
 	protected abstract Breadcrumb prepareFinalBreadcrumb();
-		
 
 	@ModelAttribute("groups")
 	public List<Group> populateGroups() {
 		List<Group> groups = adminManager.getGroups();
 		return groups;
 	}
-
-	protected LibraryPage initialiseLibraryPage(Long libraryId) {
-		LibraryPage libraryPage = new LibraryPage();
-		MusicLibrary musicLibrary = new MusicLibrary();
-		musicLibrary.setEnabled(true);
-		Location location = new Location();
-		musicLibrary.setLocation(location);
-
-		libraryPage.setLibrary(musicLibrary);
-
-		if (libraryId == null) {
-			return libraryPage;
-		}
-
-		musicLibrary = (MusicLibrary) libraryManager.getLibrary(libraryId);
-		libraryPage.setLibrary(musicLibrary);
-		libraryPage.setExists(true);
-		return libraryPage;
-	}
 	
+	protected abstract LibraryPage initialiseLibraryPage(Long libraryId);
+
+//	protected LibraryPage initialiseLibraryPage(Long libraryId) {
+//		LibraryPage libraryPage = new LibraryPage();
+//		MusicLibrary musicLibrary = new MusicLibrary();
+//		musicLibrary.setEnabled(true);
+//		Location location = new Location();
+//		musicLibrary.setLocation(location);
+//
+//		libraryPage.setLibrary(musicLibrary);
+//
+//		if (libraryId == null) {
+//			return libraryPage;
+//		}
+//
+//		musicLibrary = (MusicLibrary) libraryManager.getLibrary(libraryId);
+//		libraryPage.setLibrary(musicLibrary);
+//		libraryPage.setExists(true);
+//		return libraryPage;
+//	}
+
 	protected abstract String getPagePath();
 
-	
 	protected void processGetLibrary(Long libraryId, Model model) {
 		LibraryPage libraryPage = initialiseLibraryPage(libraryId);
 		model.addAttribute(libraryPage);
 	}
 
-	public void  processPostLibrary(LibraryPage libraryPage, Model model, BindingResult result, RedirectAttributes redirectAttributes) {
+	public void processPostLibrary(LibraryPage libraryPage, Model model, BindingResult result,
+			RedirectAttributes redirectAttributes) {
 		String action = StringUtils.trimToEmpty(libraryPage.getAction());
 		if (action.equalsIgnoreCase(MashUpMediaConstants.ACTION_DELETE)) {
 			processDeleteAction(libraryPage);
@@ -103,24 +105,23 @@ public abstract class AbstractLibraryController extends BaseController {
 
 		}
 	}
-	
+
 	protected void validateLibraryPage(LibraryPage libraryPage, BindingResult result) {
 		new LibraryPageValidator().validate(libraryPage, result);
 	}
 
-	
 	protected String getRedirectListLibraryView() {
-		return "redirect:list-libraries";		
+		return "redirect:list-libraries";
 	}
-	
+
 	private void processSaveAction(LibraryPage libraryPage) {
 		Library library = libraryPage.getLibrary();
-		
+
 		List<Group> groups = libraryPage.getGroups();
 		if (groups != null) {
-			library.setGroups(new HashSet<Group>(groups));							
+			library.setGroups(new HashSet<Group>(groups));
 		}
-		
+
 		long libraryId = library.getId();
 		if (libraryId > 0) {
 			// link the remote shares
@@ -128,10 +129,10 @@ public abstract class AbstractLibraryController extends BaseController {
 			List<RemoteShare> remoteShares = savedLibrary.getRemoteShares();
 			library.setRemoteShares(remoteShares);
 		}
-		
+
 		libraryManager.saveLibrary(library);
 	}
-	
+
 	private void processDeleteAction(LibraryPage libraryPage) {
 		Library library = libraryPage.getLibrary();
 		libraryManager.deleteLibrary(library);
@@ -140,5 +141,10 @@ public abstract class AbstractLibraryController extends BaseController {
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(Group.class, groupEditor);
+		initExtraFieldsInBinder(binder);
+	}
+
+	protected void initExtraFieldsInBinder(WebDataBinder binder) {
+		// override if necessary
 	}
 }

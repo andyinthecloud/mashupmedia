@@ -15,11 +15,11 @@ public class VideoLibrary extends Library {
 
 	private static final long serialVersionUID = -7784201711543047031L;
 
-	public enum VideoScanMethodType {
-		USE_FOLDER_NAMES, USE_FILE_NAMES
+	public enum VideoDeriveTitleType {
+		USE_FOLDER_NAME, USE_FILE_NAME
 	}
 
-	private String videoScanMethod;
+	private String videoDeriveTitle;
 
 	@ManyToMany(cascade = CascadeType.PERSIST)
 	private Set<VideoResolution> videoResolutions;
@@ -37,12 +37,12 @@ public class VideoLibrary extends Library {
 		return LibraryType.VIDEO;
 	}
 
-	public String getVideoScanMethod() {
-		return videoScanMethod;
+	public String getVideoDeriveTitle() {
+		return videoDeriveTitle;
 	}
 
-	public void setVideoScanMethod(String videoScanMethod) {
-		this.videoScanMethod = videoScanMethod;
+	public void setVideoDeriveTitle(String videoDeriveTitle) {
+		this.videoDeriveTitle = videoDeriveTitle;
 	}
 
 }
