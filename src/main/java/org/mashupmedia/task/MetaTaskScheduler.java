@@ -46,6 +46,12 @@ public class MetaTaskScheduler {
 		String url = "http://www.mashupmedia.org/latest-release/final";
 		try {
 			ProxyTextFile proxyTextFile = (ProxyTextFile) proxyManager.loadProxyFile(url, ProxyType.TEXT_FILE);
+			
+			if (proxyTextFile == null) {
+				logger.info("Unable to find latest release from page: http://www.mashupmedia.org/latest-release/final");
+				return;
+			}
+			
 			Document document = Jsoup.parse(proxyTextFile.getText());
 			Elements elements = document.select("div.view-latest-final-release div.views-row");
 			String releaseType = elements.select("div.views-field-field-release-type").text();

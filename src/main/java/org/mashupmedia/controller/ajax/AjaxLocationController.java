@@ -30,7 +30,7 @@ public class AjaxLocationController {
 		String messageCode = "library.location.invalid";
 		if (file.isDirectory()) {
 			isValid = true;
-			messageCode = "musiclibrary.location.ok";
+			messageCode = "library.location.ok";
 		}
 		model.addAttribute("isValid", isValid);
 		model.addAttribute("messageCode", messageCode);

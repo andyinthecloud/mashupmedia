@@ -54,6 +54,10 @@ public class ProxyManagerImpl implements ProxyManager{
 		
 		InputStream inputStream = connectionManager.connect(url);
 		
+		if (inputStream == null) {
+			return null;
+		}
+		
 		byte[] bytes = IOUtils.toByteArray(inputStream);
 		
 		ProxyFile proxyFile = null;
