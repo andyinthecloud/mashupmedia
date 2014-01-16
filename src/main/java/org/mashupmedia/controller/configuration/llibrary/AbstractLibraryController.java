@@ -9,9 +9,7 @@ import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.editor.GroupEditor;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.RemoteShare;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.task.LibraryUpdateTaskManager;
@@ -23,12 +21,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@SessionAttributes("libraryPage")
 public abstract class AbstractLibraryController extends BaseController {
 
 	@Autowired
@@ -89,10 +93,29 @@ public abstract class AbstractLibraryController extends BaseController {
 
 	protected abstract String getPagePath();
 
-	protected void processGetLibrary(Long libraryId, Model model) {
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public String handleGetLibrary(@RequestParam(value = "id", required = false) Long libraryId, Model model) {
 		LibraryPage libraryPage = initialiseLibraryPage(libraryId);
-		model.addAttribute(libraryPage);
+		model.addAttribute(libraryPage);		
+		return getPagePath();
 	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public String handlePostLibrary(@ModelAttribute("libraryPage") LibraryPage libraryPage, Model model,
+			BindingResult result, RedirectAttributes redirectAttributes) {
+
+		getValidator().validate(libraryPage, result);		
+//		validateLibraryPage(libraryPage, result);
+		if (result.hasErrors()) {
+			return getPagePath();
+		}
+
+		processPostLibrary(libraryPage, model, result, redirectAttributes);
+		return getRedirectListLibraryView();
+	}
+
+
 
 	public void processPostLibrary(LibraryPage libraryPage, Model model, BindingResult result,
 			RedirectAttributes redirectAttributes) {
@@ -111,7 +134,7 @@ public abstract class AbstractLibraryController extends BaseController {
 	}
 
 	protected String getRedirectListLibraryView() {
-		return "redirect:list-libraries";
+		return "redirect:/app/configuration/list-libraries";
 	}
 
 	private void processSaveAction(LibraryPage libraryPage) {
@@ -140,8 +163,15 @@ public abstract class AbstractLibraryController extends BaseController {
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
+		
+//		binder.setAutoGrowNestedPaths(false);
 		binder.registerCustomEditor(Group.class, groupEditor);
+		
 		initExtraFieldsInBinder(binder);
+	}
+
+	protected Validator getValidator() {
+		return new LibraryPageValidator();
 	}
 
 	protected void initExtraFieldsInBinder(WebDataBinder binder) {
