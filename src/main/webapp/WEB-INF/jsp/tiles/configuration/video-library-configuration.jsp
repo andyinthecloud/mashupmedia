@@ -5,10 +5,12 @@
 <br />
 
 <label class="new-line" for="groups"><spring:message code="library.video.derive-title" /></label>
-<form:radiobutton path="library.videoDeriveTitle" id="library-videoDeriveTitle" value="USE_FOLDER_NAME" />
-<label for="library-videoDeriveTitle0"><spring:message code="library.video.derive-title.folder" /></label>
+<form:radiobutton path="library.videoDeriveTitle" id="library-videoDeriveTitle-folder" value="USE_FOLDER_NAME" />
+<label for="library-videoDeriveTitle-folder"><spring:message code="library.video.derive-title.folder" /></label>
 <br />
-<form:radiobutton path="library.videoDeriveTitle" id="library-videoDeriveTitle" value="USE_FILE_NAME" />
-<label for="library-videoDeriveTitle1"><spring:message code="library.video.derive-title.file" /></label>
+<form:radiobutton path="library.videoDeriveTitle" id="library-videoDeriveTitle-file" value="USE_FILE_NAME" />
+<label for="library-videoDeriveTitle-file"><spring:message code="library.video.derive-title.file" /></label>
 <br />
 <br />
+
+

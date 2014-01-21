@@ -18,11 +18,12 @@
 package org.mashupmedia.service;
 
 import org.mashupmedia.model.library.MusicLibrary;
+import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.media.Song;
 
 public interface MapperManager {
 
-	public void writeStartRemoteMusicLibraryXml(long libraryId) throws Exception;
+	public void writeStartRemoteMusicLibraryXml(long libraryId, LibraryType libraryType) throws Exception;
 
 	public void writeEndRemoteMusicLibraryXml(long libraryId) throws Exception;
 

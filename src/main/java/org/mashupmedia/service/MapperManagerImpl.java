@@ -33,6 +33,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
@@ -65,11 +66,12 @@ public class MapperManagerImpl implements MapperManager {
 	}
 
 	@Override
-	public void writeStartRemoteMusicLibraryXml(long libraryId) throws Exception {
+	public void writeStartRemoteMusicLibraryXml(long libraryId, LibraryType libraryType) throws Exception {
 		File file = FileHelper.getLibraryXmlFile(libraryId);
 		FileWriter writer = new FileWriter(file, false);
 		writer.write("<?xml version=\"1.0\" ?>");
-		writer.write("<library>");
+		
+		writer.write("<library type=\""+libraryType.name().toLowerCase()+"\">");
 		writer.close();
 	}
 

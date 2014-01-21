@@ -23,7 +23,9 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryStatusType;
+import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
+import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.location.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,9 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 
 	@Autowired
+	private VideoLibraryUpdateManager videoLibraryUpdateManager;
+
+	@Autowired
 	private MapperManager mapperManager;
 
 	@Autowired
@@ -44,7 +49,6 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	@Override
 	public void updateLibrary(Library library) {
-		
 
 		library = libraryManager.getLibrary(library.getId());
 
@@ -69,9 +73,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				return;
 			}
 
-			if (library instanceof MusicLibrary) {
-				updateMusicLibrary((MusicLibrary) library);
-			}
+			processLibrary(library);
 
 			library.setLibraryStatusType(LibraryStatusType.OK);
 
@@ -84,10 +86,11 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	}
 
-	protected void updateMusicLibrary(MusicLibrary library) throws Exception {
+	protected void processLibrary(Library library) throws Exception {
 		Date date = new Date();
 		long libraryId = library.getId();
-		mapperManager.writeStartRemoteMusicLibraryXml(libraryId);
+		LibraryType libraryType = library.getLibraryType();
+		mapperManager.writeStartRemoteMusicLibraryXml(libraryId, libraryType);
 		Location location = library.getLocation();
 		File locationFolder = new File(location.getPath());
 		File[] files = locationFolder.listFiles();
@@ -95,14 +98,19 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			if (!file.isDirectory()) {
 				continue;
 			}
-			musicLibraryUpdateManager.updateLibrary(library, file, date);
+			if (library instanceof MusicLibrary) {
+				MusicLibrary musicLibrary = (MusicLibrary) library;
+				musicLibraryUpdateManager.updateLibrary(musicLibrary, file, date);
+			} else if (library instanceof VideoLibrary) {
+				VideoLibrary videoLibrary = (VideoLibrary) library;
+				videoLibraryUpdateManager.updateLibrary(videoLibrary, file, date);
+			}
 
 		}
 
 		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
 
 		musicLibraryUpdateManager.deleteObsoleteSongs(libraryId, date);
-
 	}
 
 	@Override

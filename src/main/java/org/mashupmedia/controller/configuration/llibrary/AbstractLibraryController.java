@@ -69,44 +69,23 @@ public abstract class AbstractLibraryController extends BaseController {
 		List<Group> groups = adminManager.getGroups();
 		return groups;
 	}
-	
-	protected abstract LibraryPage initialiseLibraryPage(Long libraryId);
 
-//	protected LibraryPage initialiseLibraryPage(Long libraryId) {
-//		LibraryPage libraryPage = new LibraryPage();
-//		MusicLibrary musicLibrary = new MusicLibrary();
-//		musicLibrary.setEnabled(true);
-//		Location location = new Location();
-//		musicLibrary.setLocation(location);
-//
-//		libraryPage.setLibrary(musicLibrary);
-//
-//		if (libraryId == null) {
-//			return libraryPage;
-//		}
-//
-//		musicLibrary = (MusicLibrary) libraryManager.getLibrary(libraryId);
-//		libraryPage.setLibrary(musicLibrary);
-//		libraryPage.setExists(true);
-//		return libraryPage;
-//	}
+	protected abstract LibraryPage initialiseLibraryPage(Long libraryId);
 
 	protected abstract String getPagePath();
 
-	
 	@RequestMapping(method = RequestMethod.GET)
 	public String handleGetLibrary(@RequestParam(value = "id", required = false) Long libraryId, Model model) {
 		LibraryPage libraryPage = initialiseLibraryPage(libraryId);
-		model.addAttribute(libraryPage);		
+		model.addAttribute(libraryPage);
 		return getPagePath();
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	public String handlePostLibrary(@ModelAttribute("libraryPage") LibraryPage libraryPage, Model model,
 			BindingResult result, RedirectAttributes redirectAttributes) {
 
-		getValidator().validate(libraryPage, result);		
-//		validateLibraryPage(libraryPage, result);
+		getValidator().validate(libraryPage, result);
 		if (result.hasErrors()) {
 			return getPagePath();
 		}
@@ -114,8 +93,6 @@ public abstract class AbstractLibraryController extends BaseController {
 		processPostLibrary(libraryPage, model, result, redirectAttributes);
 		return getRedirectListLibraryView();
 	}
-
-
 
 	public void processPostLibrary(LibraryPage libraryPage, Model model, BindingResult result,
 			RedirectAttributes redirectAttributes) {
@@ -163,10 +140,7 @@ public abstract class AbstractLibraryController extends BaseController {
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
-		
-//		binder.setAutoGrowNestedPaths(false);
 		binder.registerCustomEditor(Group.class, groupEditor);
-		
 		initExtraFieldsInBinder(binder);
 	}
 

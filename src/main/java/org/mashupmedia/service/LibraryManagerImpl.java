@@ -13,6 +13,7 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.RemoteShare;
+import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
@@ -100,6 +101,11 @@ public class LibraryManagerImpl implements LibraryManager {
 		Library library = libraryDao.getLibrary(id);
 		Hibernate.initialize(library.getRemoteShares());
 		Hibernate.initialize(library.getGroups());
+		if (library instanceof VideoLibrary) {
+			VideoLibrary videoLibrary = (VideoLibrary) library;
+			Hibernate.initialize(videoLibrary.getVideoResolutions());
+		}		
+		
 		return library;
 	}
 
