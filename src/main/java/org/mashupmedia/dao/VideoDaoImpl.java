@@ -3,6 +3,7 @@ package org.mashupmedia.dao;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.mashupmedia.model.media.Video;
 import org.mashupmedia.model.media.VideoResolution;
 import org.springframework.stereotype.Repository;
 
@@ -16,21 +17,33 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 		@SuppressWarnings("unchecked")
 		List<VideoResolution> videoResolutions = query.list();
 		return videoResolutions;
-
 	}
 
 	@Override
 	public void saveVideoResolution(VideoResolution videoResolution) {
 		saveOrUpdate(videoResolution);
 	}
-	
+
 	@Override
 	public VideoResolution getVideoResolution(long videoResolutionId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from VideoResolution where id = :videoResolutionId");
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from VideoResolution where id = :videoResolutionId");
 		query.setLong("videoResolutionId", videoResolutionId);
 		query.setCacheable(true);
-		VideoResolution videoResolution = (VideoResolution)query.uniqueResult();
+		VideoResolution videoResolution = (VideoResolution) query.uniqueResult();
 		return videoResolution;
+	}
+
+	@Override
+	public void saveVideo(Video video, boolean isSessionFlush) {
+		saveOrUpdate(video);
+		flushSession(isSessionFlush);
+
+	}
+
+	@Override
+	public void saveVideo(Video video) {
+		saveVideo(video, false);
 	}
 
 }
