@@ -26,6 +26,24 @@
 	    artistId = parseId(artistId, "artist-id");
 	    mashupMedia.appendArtist(artistId);
 	});
+	
+	$.getJSON("<c:url value="/app/ajax/music/artist/discogs/${artistPage.artist.id}" />", function( data ) {
+		
+		$("#discogs div.profile").html(data.introduction);
+		/*
+		
+		var items = [];
+		$.each( data, function( key, val ) {
+		items.push( "<li id='" + key + "'>" + val + "</li>" );
+		});
+		$( "<ul/>", {
+		"class": "my-new-list",
+		html: items.join( "" )
+		}).appendTo( "body" );
+		*/
+		
+	});	
+	
 
     });
 
@@ -50,18 +68,11 @@
 
 
 
-<div class="information">
-	<div class="profile">
-		<c:out value="${artistPage.remoteMediaMeta.profile}" escapeXml="false" />
-	</div>
+<div id="discogs">
+	<div class="profile"></div>
 
-	<div class="images">
-		<c:forEach items="${artistPage.remoteMediaMeta.remoteImages}" var="remoteImage">
-			<a class="fancybox" rel="artist-images" href="<c:url value="${remoteImage.imageUrl}" />"><img src="<c:url value="${remoteImage.thumbUrl}" />" /></a>
-		</c:forEach>
-	</div>
 
-	<div class="discogs">
+	<div class="disclaimer">
 		<spring:message code="music.artists.discogs" />
 		<a href="http://www.discogs.com" target="_blank"><img src="<c:url value="/images/discogs.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message
 				code="music.artists.discogs.correct" /></a>

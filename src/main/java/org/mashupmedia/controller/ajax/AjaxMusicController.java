@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
@@ -24,6 +25,7 @@ import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.AdminHelper;
+import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.util.WebHelper;
@@ -40,6 +42,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/ajax/music")
@@ -86,17 +89,16 @@ public class AjaxMusicController extends AjaxBaseController {
 		List<Song> songs = album.getSongs();
 		Artist artist = album.getArtist();
 
-		RemoteMediaMetaItem remoteMediaMeta = null;
-		try {
-			remoteMediaMeta = discogsWebService.getArtistInformation(artist);
-		} catch (Exception e) {
-			logger.error("Error getting artist from Discogs", e);
-		}
+//		RemoteMediaMetaItem remoteMediaMeta = null;
+//		try {
+//			remoteMediaMeta = discogsWebService.getArtistInformation(artist);
+//		} catch (Exception e) {
+//			logger.error("Error getting artist from Discogs", e);
+//		}
 
 		AlbumPage albumPage = new AlbumPage();
 		albumPage.setAlbum(album);
 		albumPage.setSongs(songs);
-		albumPage.setRemoteMediaMetaItem(remoteMediaMeta);
 		model.addAttribute(albumPage);
 		return "ajax/music/album";
 	}
@@ -105,20 +107,38 @@ public class AjaxMusicController extends AjaxBaseController {
 	public String getArtist(@PathVariable("artistId") Long artistId, Model model) {
 		Artist artist = musicManager.getArtist(artistId);
 
-		RemoteMediaMetaItem remoteMediaMeta = null;
-		try {
-			remoteMediaMeta = discogsWebService.getArtistInformation(artist);
-		} catch (Exception e) {
-			logger.error("Error getting artist from Discogs", e);
-		}
+//		RemoteMediaMetaItem remoteMediaMeta = null;
+//		try {
+//			remoteMediaMeta = discogsWebService.getArtistInformation(artist);
+//		} catch (Exception e) {
+//			logger.error("Error getting artist from Discogs", e);
+//		}
 
 		ArtistPage artistPage = new ArtistPage();
 		artistPage.setArtist(artist);
-		artistPage.setRemoteMediaMeta(remoteMediaMeta);
 
 		model.addAttribute(artistPage);
 		return "ajax/music/artist";
 	}
+	
+	@RequestMapping(value = "/artist/discogs/{artistId}", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody RemoteMediaMetaItem getArtistInformation(@PathVariable("artistId") Long artistId) {
+		Artist artist = musicManager.getArtist(artistId);
+
+		RemoteMediaMetaItem remoteMediaMeta = null;
+		try {
+			remoteMediaMeta = discogsWebService.getArtistInformation(artist);
+		} catch (Exception e) {			
+			logger.error("Error getting artist from Discogs", e);
+		}
+		
+		if (StringUtils.isBlank(remoteMediaMeta.getId())) {
+			remoteMediaMeta.setIntroduction(MessageHelper.getMessage("discogs.error"));
+		}
+
+		return remoteMediaMeta;
+	}
+	
 
 	@RequestMapping(value = "/albums", method = RequestMethod.GET)
 	public String getAlbums(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
