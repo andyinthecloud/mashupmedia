@@ -9,11 +9,13 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
+import org.springframework.web.util.UriUtils;
 
 public class StringHelper {
 	private static Logger logger = Logger.getLogger(StringHelper.class);
 
 	public static String[] STOP_WORDS = new String[] { "the", "a" };
+	public static String[] ARTICLES = { "the", "a" };
 
 	public enum Encoding {
 		UTF8("UTF-8");
@@ -152,6 +154,25 @@ public class StringHelper {
 		}
 
 		text = Character.toLowerCase(text.charAt(0)) + (text.length() > 1 ? text.substring(1) : "");
+		return text;
+	}
+
+	public static String formatTextToUrlParameter(String text) throws UnsupportedEncodingException {
+		text = StringUtils.trimToEmpty(text).toLowerCase();
+		if (StringUtils.isEmpty(text)) {
+			return text;
+		}
+
+		for (String article : ARTICLES) {
+			article = article + " ";
+			if (text.startsWith(article)) {
+				text.replaceFirst(article, "");
+				text += ", " + article;
+				break;
+			}
+		}
+
+		text = UriUtils.encodeQueryParam(text, Encoding.UTF8.getEncodingString());
 		return text;
 	}
 }

@@ -37,6 +37,7 @@ public class MashupMediaServiceLocator {
 	public MashupMediaServiceLocator() {
 		File logFolder = new File(FileHelper.getApplicationFolder(), "log");		
 		System.setProperty("log.path", logFolder.getAbsolutePath());
+		
 	}
 	
 	public DataSource getDataSource() {

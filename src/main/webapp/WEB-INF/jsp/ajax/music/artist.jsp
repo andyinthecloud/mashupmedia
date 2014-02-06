@@ -28,8 +28,9 @@
 	});
 	
 	$.getJSON("<c:url value="/app/ajax/music/artist/discogs/${artistPage.artist.id}" />", function( data ) {
+		displayDiscogsArtistInformation(data);
 		
-		$("#discogs div.profile").html(data.introduction);
+		//$("#discogs div.profile").html(data.introduction);
 		/*
 		
 		var items = [];
@@ -70,7 +71,7 @@
 
 <div id="discogs">
 	<div class="profile"></div>
-
+	<div class="images"></div>
 
 	<div class="disclaimer">
 		<spring:message code="music.artists.discogs" />

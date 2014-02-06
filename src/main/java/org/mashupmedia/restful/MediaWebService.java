@@ -22,12 +22,11 @@ import java.util.List;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 
-public interface DiscogsWebService {
+public interface MediaWebService {
 
 	public RemoteMediaMetaItem getArtistInformation(Artist artist) throws Exception;
 
 	public List<RemoteMediaMetaItem> searchArtist(String artistName) throws Exception;
 
-	public RemoteMediaMetaItem getDiscogsArtistMeta(String discogsArtistId) throws Exception;
 
 }

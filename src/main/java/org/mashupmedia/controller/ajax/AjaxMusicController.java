@@ -1,11 +1,11 @@
 package org.mashupmedia.controller.ajax;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
@@ -87,15 +87,6 @@ public class AjaxMusicController extends AjaxBaseController {
 	public String getAlbum(@PathVariable("albumId") Long albumId, Model model) throws Exception {
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs = album.getSongs();
-		Artist artist = album.getArtist();
-
-//		RemoteMediaMetaItem remoteMediaMeta = null;
-//		try {
-//			remoteMediaMeta = discogsWebService.getArtistInformation(artist);
-//		} catch (Exception e) {
-//			logger.error("Error getting artist from Discogs", e);
-//		}
-
 		AlbumPage albumPage = new AlbumPage();
 		albumPage.setAlbum(album);
 		albumPage.setSongs(songs);
@@ -106,39 +97,33 @@ public class AjaxMusicController extends AjaxBaseController {
 	@RequestMapping(value = "/artist/{artistId}", method = RequestMethod.GET)
 	public String getArtist(@PathVariable("artistId") Long artistId, Model model) {
 		Artist artist = musicManager.getArtist(artistId);
-
-//		RemoteMediaMetaItem remoteMediaMeta = null;
-//		try {
-//			remoteMediaMeta = discogsWebService.getArtistInformation(artist);
-//		} catch (Exception e) {
-//			logger.error("Error getting artist from Discogs", e);
-//		}
-
 		ArtistPage artistPage = new ArtistPage();
 		artistPage.setArtist(artist);
 
 		model.addAttribute(artistPage);
 		return "ajax/music/artist";
 	}
-	
+
 	@RequestMapping(value = "/artist/discogs/{artistId}", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody RemoteMediaMetaItem getArtistInformation(@PathVariable("artistId") Long artistId) {
+	public @ResponseBody
+	RemoteMediaMetaItem getArtistInformation(@PathVariable("artistId") Long artistId) {
 		Artist artist = musicManager.getArtist(artistId);
 
-		RemoteMediaMetaItem remoteMediaMeta = null;
+		RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
 		try {
 			remoteMediaMeta = discogsWebService.getArtistInformation(artist);
-		} catch (Exception e) {			
+		} catch (ConnectException e) {
+			logger.error(
+					"Error connecting to the Discogs web service, site may be unavailable or check proxy are incorrect",
+					e);
+			remoteMediaMeta.setIntroduction(MessageHelper.getMessage("discogs.connection.error"));
+		} catch (Exception e) {
 			logger.error("Error getting artist from Discogs", e);
-		}
-		
-		if (StringUtils.isBlank(remoteMediaMeta.getId())) {
 			remoteMediaMeta.setIntroduction(MessageHelper.getMessage("discogs.error"));
 		}
 
 		return remoteMediaMeta;
 	}
-	
 
 	@RequestMapping(value = "/albums", method = RequestMethod.GET)
 	public String getAlbums(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
@@ -171,7 +156,8 @@ public class AjaxMusicController extends AjaxBaseController {
 	}
 
 	@RequestMapping(value = "/play/media-item/{mediaItemId}", method = RequestMethod.GET)
-	public String playSong(@PathVariable Long mediaItemId, @RequestParam(value = "playlistId", required = false) Long playlistId, Model model) {
+	public String playSong(@PathVariable Long mediaItemId,
+			@RequestParam(value = "playlistId", required = false) Long playlistId, Model model) {
 		Playlist playlist = null;
 
 		if (playlistId != null && playlistId > 0) {
@@ -186,7 +172,8 @@ public class AjaxMusicController extends AjaxBaseController {
 		playlistMediaItem.setPlaylist(playlist);
 		playlistMediaItem.setMediaItem(mediaItem);
 
-		boolean isEncoderInstalled = BooleanUtils.toBoolean(configurationManager.getConfigurationValue(MashUpMediaConstants.IS_ENCODER_INSTALLED));
+		boolean isEncoderInstalled = BooleanUtils.toBoolean(configurationManager
+				.getConfigurationValue(MashUpMediaConstants.IS_ENCODER_INSTALLED));
 		model.addAttribute(MashUpMediaConstants.IS_ENCODER_INSTALLED, isEncoderInstalled);
 
 		MediaType mediaType = mediaItem.getMediaType();
@@ -209,7 +196,8 @@ public class AjaxMusicController extends AjaxBaseController {
 			playlist = SerializationUtils.clone(playlist);
 			playlist.setName(StringHelper.escapeJavascript(playlist.getName()));
 
-			MediaContentType mediaContentType = WebHelper.getMediaContentType(mediaItem.getFormat(), MediaContentType.MP3);
+			MediaContentType mediaContentType = WebHelper.getMediaContentType(mediaItem.getFormat(),
+					MediaContentType.MP3);
 			model.addAttribute("format", mediaContentType.getjPlayerContentType());
 			model.addAttribute("song", song);
 			model.addAttribute("playlist", playlist);
@@ -256,7 +244,8 @@ public class AjaxMusicController extends AjaxBaseController {
 	private void playRelativeSong(Model model, int relativeOffset) {
 		User user = AdminHelper.getLoggedInUser();
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, relativeOffset);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist,
+				relativeOffset);
 		if (playlistMediaItem.getId() > 0) {
 			playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
 

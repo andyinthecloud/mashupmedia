@@ -1,7 +1,7 @@
 package org.mashupmedia.restful;
 
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,15 +17,15 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
+import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.util.StringHelper.Encoding;
 import org.mashupmedia.web.remote.RemoteImage;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriUtils;
 
-@Service
-public class DiscogsWebServiceImpl implements DiscogsWebService {
+@Service("discogs")
+public class DiscogsWebServiceImpl implements MediaWebService {
 	private static final String PREPEND_CACHE_KEY_ARTIST = "artist_";
 	private static final int INTRODUCTION_MAX_LENGTH = 500;
 
@@ -37,7 +37,6 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 	@Autowired
 	private MusicManager musicManager;
 
-	private static String[] ARTICLES = { "the", "a" };
 
 	@Autowired
 	private ConnectionManager connectionManager;
@@ -50,14 +49,13 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 		}
 
 		String discogsArtistId = getDiscogArtistId(artist, true);
-		RemoteMediaMetaItem remoteMediaMeta = getDiscogsArtistMeta(discogsArtistId);
+		RemoteMediaMetaItem remoteMediaMeta = getArtistInformation(discogsArtistId);
 		artist.setRemoteId(discogsArtistId);
 		musicManager.saveArtist(artist);
 		return remoteMediaMeta;
 	}
 
-	@Override
-	public RemoteMediaMetaItem getDiscogsArtistMeta(String discogsArtistId) throws Exception {
+	protected RemoteMediaMetaItem getArtistInformation(String discogsArtistId) throws Exception {
 		List<RemoteMediaMetaItem> remoteMediaMetaItems = new ArrayList<RemoteMediaMetaItem>();
 		
 		RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
@@ -93,7 +91,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 	}
 	
 	protected void populateRemoteMediaMetaItems(List<RemoteMediaMetaItem> remoteMediaMetaItems) throws Exception {
-
+		
 		for (int i = 0; i < remoteMediaMetaItems.size(); i++) {
 			RemoteMediaMetaItem remoteMediaMetaItem = remoteMediaMetaItems.get(i);
 			String discogsArtistId = remoteMediaMetaItem.getId();
@@ -186,7 +184,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 
 	protected String convertImageToProxyUrl(String url) {
 		url = StringUtils.trimToEmpty(url);
-		url = "/app/proxy/discogs-image/" + url.replaceFirst(".*/", "");
+		url = "app/proxy/discogs-image/" + url.replaceFirst(".*/", "");
 		return url;
 	}
 
@@ -211,7 +209,7 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 
 		List<RemoteMediaMetaItem> remoteMediaMetaItems = new ArrayList<RemoteMediaMetaItem>();
 
-		name = prepareSearchParameter(name);
+		name = StringHelper.formatTextToUrlParameter(name);
 		if (StringUtils.isEmpty(name)) {
 			return remoteMediaMetaItems;
 		}
@@ -221,7 +219,8 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 		InputStream inputStream = connectionManager.connect(searchUrl);
 		if (inputStream == null) {
 			logger.error("Could not connect to Discogs web service.");
-			return remoteMediaMetaItems;
+			throw new ConnectException("Could not connect to Discogs web service.");
+//			return remoteMediaMetaItems;
 		}
 		String jsonSearchResults = IOUtils.toString(inputStream, Encoding.UTF8.getEncodingString());		
 		JSONObject jsonObject = JSONObject.fromObject(jsonSearchResults);
@@ -286,25 +285,6 @@ public class DiscogsWebServiceImpl implements DiscogsWebService {
 			Thread.currentThread().interrupt();
 		}
 
-	}
-
-	protected String prepareSearchParameter(String artistName) throws UnsupportedEncodingException {
-		artistName = StringUtils.trimToEmpty(artistName).toLowerCase();
-		if (StringUtils.isEmpty(artistName)) {
-			return artistName;
-		}
-
-		for (String article : ARTICLES) {
-			article = article + " ";
-			if (artistName.startsWith(article)) {
-				artistName.replaceFirst(article, "");
-				artistName += ", " + article;
-				break;
-			}
-		}
-
-		artistName = UriUtils.encodeQueryParam(artistName, Encoding.UTF8.getEncodingString());
-		return artistName;
 	}
 
 }
