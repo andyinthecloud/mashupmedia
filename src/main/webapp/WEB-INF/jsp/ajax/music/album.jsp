@@ -36,7 +36,7 @@
 	});
 </script>
 
-<jsp:include page="/WEB-INF/jsp/inc/discogs-js.jsp" />
+<jsp:include page="/WEB-INF/jsp/inc/remote-music-info-js.jsp" />
 
 <input type="hidden" id="discogs-artist-id" name="discogs-artist-id" value="${albumPage.album.artist.id}" />
 
@@ -75,9 +75,9 @@
 		</div>
 
 		<div class="discogs">
-			<spring:message code="music.artists.discogs" />
+			<spring:message code="music.artists.remote" />
 			<a href="http://www.discogs.com" target="_blank"><img src="<c:url value="/images/discogs.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message
-					code="music.artists.discogs.correct" /></a>			
+					code="music.artists.remote.correct" /></a>			
 		</div>
 	</div>
 </div>

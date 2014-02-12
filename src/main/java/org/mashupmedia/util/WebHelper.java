@@ -9,7 +9,8 @@ public class WebHelper {
 
 	public enum WebContentType {
 		HTML("text/html; charset=utf-8"), JSON("application/json; charset=utf-8"), XML("text/xml; charset=utf-8"), FLASH(
-				"application/x-shockwave-flash"), JPG("image/jpeg");
+				"application/x-shockwave-flash"), JPG("image/jpeg"), JPEG("image/jpeg"), PNG("image/x-png"), GIF(
+				"image/gif"), ;
 
 		WebContentType(String contentType) {
 			this.contentType = contentType;
@@ -43,19 +44,19 @@ public class WebHelper {
 		return ActionType.NONE;
 	}
 
-	public static WebContentType getWebFormatType(String webFormatTypeValue) {
-		webFormatTypeValue = StringUtils.trimToEmpty(webFormatTypeValue);
-		if (StringUtils.isEmpty(webFormatTypeValue)) {
-			return WebContentType.HTML;
+	public static WebContentType getWebContentType(String webContentTypeValue, WebContentType defaultWebContentType) {
+		webContentTypeValue = StringUtils.trimToEmpty(webContentTypeValue);
+		if (StringUtils.isEmpty(webContentTypeValue)) {
+			return defaultWebContentType;
 		}
 
 		WebContentType[] webFormatTypes = WebContentType.values();
-		for (WebContentType webFormatType : webFormatTypes) {
-			if (webFormatTypeValue.equalsIgnoreCase(webFormatType.toString())) {
-				return webFormatType;
+		for (WebContentType webContentType : webFormatTypes) {
+			if (webContentTypeValue.equalsIgnoreCase(webContentType.name())) {
+				return webContentType;
 			}
 		}
-		return WebContentType.HTML;
+		return defaultWebContentType;
 	}
 
 	public enum FormatContentType {
@@ -63,7 +64,8 @@ public class WebHelper {
 	}
 
 	public enum MediaContentType {
-		MP3("audio/mpeg", "mp3", "mp3"), OGA("audio/ogg", "oga", "oga"), UNSUPPORTED("audio/unsupported", "unsupported", "unsupported");
+		MP3("audio/mpeg", "mp3", "mp3"), OGA("audio/ogg", "oga", "oga"), UNSUPPORTED("audio/unsupported",
+				"unsupported", "unsupported");
 
 		private String mimeContentType;
 		private String jPlayerContentType;

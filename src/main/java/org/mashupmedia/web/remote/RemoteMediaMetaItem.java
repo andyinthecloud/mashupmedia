@@ -23,28 +23,19 @@ import java.util.List;
 
 public class RemoteMediaMetaItem implements Serializable {
 	private static final long serialVersionUID = 2688532085007514994L;
-	private String id;
+	private String remoteId;
 	private String name;
 	private String profile;
 	private Date date;
 	private List<RemoteImage> remoteImages;
-	private boolean isComplete;
 	private String introduction;
-	
+
 	public String getIntroduction() {
 		return introduction;
 	}
 
 	public void setIntroduction(String introduction) {
 		this.introduction = introduction;
-	}
-
-	public boolean isComplete() {
-		return isComplete;
-	}
-
-	public void setComplete(boolean isComplete) {
-		this.isComplete = isComplete;
 	}
 
 	public String getName() {
@@ -63,12 +54,12 @@ public class RemoteMediaMetaItem implements Serializable {
 		this.date = date;
 	}
 
-	public String getId() {
-		return id;
+	public String getRemoteId() {
+		return remoteId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setRemoteId(String remoteId) {
+		this.remoteId = remoteId;
 	}
 
 	public String getProfile() {
@@ -95,7 +86,7 @@ public class RemoteMediaMetaItem implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((remoteId == null) ? 0 : remoteId.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((profile == null) ? 0 : profile.hashCode());
 		return result;
@@ -110,10 +101,10 @@ public class RemoteMediaMetaItem implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		RemoteMediaMetaItem other = (RemoteMediaMetaItem) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (remoteId == null) {
+			if (other.remoteId != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!remoteId.equals(other.remoteId))
 			return false;
 		if (name == null) {
 			if (other.name != null)
@@ -132,7 +123,7 @@ public class RemoteMediaMetaItem implements Serializable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("RemoteMediaMetaItem [id=");
-		builder.append(id);
+		builder.append(remoteId);
 		builder.append(", name=");
 		builder.append(name);
 		builder.append(", profile=");

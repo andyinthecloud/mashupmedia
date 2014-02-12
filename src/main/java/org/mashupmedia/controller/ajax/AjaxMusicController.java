@@ -18,7 +18,7 @@ import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
-import org.mashupmedia.restful.DiscogsWebServiceImpl;
+import org.mashupmedia.restful.MediaWebService;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.MediaManager;
@@ -36,6 +36,7 @@ import org.mashupmedia.web.page.ArtistPage;
 import org.mashupmedia.web.page.ArtistsPage;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,7 +70,8 @@ public class AjaxMusicController extends AjaxBaseController {
 	private AdminManager adminManager;
 
 	@Autowired
-	private DiscogsWebServiceImpl discogsWebService;
+	@Qualifier("lastFm")
+	private MediaWebService mediaWebService;
 
 	@Autowired
 	private ConfigurationManager configurationManager;
@@ -104,22 +106,22 @@ public class AjaxMusicController extends AjaxBaseController {
 		return "ajax/music/artist";
 	}
 
-	@RequestMapping(value = "/artist/discogs/{artistId}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/artist/remote/{artistId}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	RemoteMediaMetaItem getArtistInformation(@PathVariable("artistId") Long artistId) {
 		Artist artist = musicManager.getArtist(artistId);
 
 		RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
 		try {
-			remoteMediaMeta = discogsWebService.getArtistInformation(artist);
+			remoteMediaMeta = mediaWebService.getArtistInformation(artist);
 		} catch (ConnectException e) {
 			logger.error(
-					"Error connecting to the Discogs web service, site may be unavailable or check proxy are incorrect",
+					"Error connecting to the remote web service, site may be unavailable or check proxy are incorrect",
 					e);
-			remoteMediaMeta.setIntroduction(MessageHelper.getMessage("discogs.connection.error"));
+			remoteMediaMeta.setIntroduction(MessageHelper.getMessage("remote.connection.error"));
 		} catch (Exception e) {
 			logger.error("Error getting artist from Discogs", e);
-			remoteMediaMeta.setIntroduction(MessageHelper.getMessage("discogs.error"));
+			remoteMediaMeta.setIntroduction(MessageHelper.getMessage("remote.error"));
 		}
 
 		return remoteMediaMeta;

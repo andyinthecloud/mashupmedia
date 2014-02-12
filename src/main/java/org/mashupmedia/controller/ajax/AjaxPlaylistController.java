@@ -313,7 +313,7 @@ public class AjaxPlaylistController extends AjaxBaseController {
 		
 		model.addAttribute("canSavePlaylist", canSavePlaylist);
 
-		WebContentType webFormatType = WebHelper.getWebFormatType(webFormatTypeValue);
+		WebContentType webFormatType = WebHelper.getWebContentType(webFormatTypeValue, WebContentType.HTML);
 		if (webFormatType == WebContentType.JSON) {
 			return "ajax/json/playlist";
 		}

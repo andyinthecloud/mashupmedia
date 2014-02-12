@@ -27,8 +27,8 @@
 	    mashupMedia.appendArtist(artistId);
 	});
 	
-	$.getJSON("<c:url value="/app/ajax/music/artist/discogs/${artistPage.artist.id}" />", function( data ) {
-		displayDiscogsArtistInformation(data);
+	$.getJSON("<c:url value="/app/ajax/music/artist/remote/${artistPage.artist.id}" />", function( data ) {
+		displayRemoteArtistInformation(data);
 		
 		//$("#discogs div.profile").html(data.introduction);
 		/*
@@ -51,7 +51,7 @@
 
 </script>
 
-<jsp:include page="/WEB-INF/jsp/inc/discogs-js.jsp" />
+<jsp:include page="/WEB-INF/jsp/inc/remote-music-info-js.jsp" />
 
 <input type="hidden" id="discogs-artist-id" name="discogs-artist-id" value="${artistPage.artist.id}" />
 
@@ -69,14 +69,14 @@
 
 
 
-<div id="discogs">
+<div id="remote">
 	<div class="profile"></div>
 	<div class="images"></div>
 
 	<div class="disclaimer">
-		<spring:message code="music.artists.discogs" />
+		<spring:message code="music.artists.remote" />
 		<a href="http://www.discogs.com" target="_blank"><img src="<c:url value="/images/discogs.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message
-				code="music.artists.discogs.correct" /></a>
+				code="music.artists.remote.correct" /></a>
 	</div>	
 </div>
 

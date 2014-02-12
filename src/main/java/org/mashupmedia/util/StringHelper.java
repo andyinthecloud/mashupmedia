@@ -1,10 +1,14 @@
 package org.mashupmedia.util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -163,16 +167,14 @@ public class StringHelper {
 			return text;
 		}
 
-		for (String article : ARTICLES) {
-			article = article + " ";
-			if (text.startsWith(article)) {
-				text.replaceFirst(article, "");
-				text += ", " + article;
-				break;
-			}
-		}
-
 		text = UriUtils.encodeQueryParam(text, Encoding.UTF8.getEncodingString());
+		return text;
+	}
+
+	public static String convertToText(InputStream inputStream) throws IOException {
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(inputStream, writer, Encoding.UTF8.getEncodingString());
+		String text = writer.toString();
 		return text;
 	}
 }

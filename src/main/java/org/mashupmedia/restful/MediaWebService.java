@@ -23,6 +23,8 @@ import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 
 public interface MediaWebService {
+	public final static int IMAGE_MAX_WIDTH = 500;
+	public final static int MAX_IMAGES = 20;
 
 	public RemoteMediaMetaItem getArtistInformation(Artist artist) throws Exception;
 
