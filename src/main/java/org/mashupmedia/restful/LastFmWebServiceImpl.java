@@ -60,22 +60,24 @@ public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
 
 		String artistInfoUrl = urlBuilder.toString();
 
-		Document artistInfoDocument = XmlHelper.createDocument(connectionManager.connect(artistInfoUrl));
+		InputStream artistInfoInputStream = connectionManager.connect(artistInfoUrl);
+		Document artistInfoDocument = XmlHelper.createDocument(artistInfoInputStream);
+		artistInfoInputStream.close();
 
 		remoteMediaMetaItem = new RemoteMediaMetaItem();
 
 		remoteMediaMetaItem.setDate(new Date());
 
-		String remoteArtistName = XmlHelper.getTextFromElement(artistInfoDocument, "/artist/name/text()");
+		String remoteArtistName = XmlHelper.getTextFromElement(artistInfoDocument, "/lfm/artist/name/text()");
 		remoteMediaMetaItem.setName(remoteArtistName);
 
-		remoteId = XmlHelper.getTextFromElement(artistInfoDocument, "/artist/mbid/text()");
+		remoteId = XmlHelper.getTextFromElement(artistInfoDocument, "/lfm/artist/mbid/text()");
 		remoteMediaMetaItem.setRemoteId(remoteId);
 
-		String introduction = XmlHelper.getTextFromElement(artistInfoDocument, "/artist/bio/summary/text()");
+		String introduction = XmlHelper.getTextFromElement(artistInfoDocument, "/lfm/artist/bio/summary/text()");
 		remoteMediaMetaItem.setIntroduction(introduction);
 
-		String profile = XmlHelper.getTextFromElement(artistInfoDocument, "/artist/bio/profile/text()");
+		String profile = XmlHelper.getTextFromElement(artistInfoDocument, "/lfm/artist/bio/content/text()");
 		remoteMediaMetaItem.setProfile(profile);
 
 		List<RemoteImage> remoteImages = getRemoteImages(artistNameForUrl);

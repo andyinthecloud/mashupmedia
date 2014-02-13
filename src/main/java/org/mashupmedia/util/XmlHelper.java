@@ -35,8 +35,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class XmlHelper {
@@ -81,26 +79,9 @@ public class XmlHelper {
 	public static String getTextFromElement(Document document, String expression) throws XPathExpressionException {
 		XPath xPath = getxPathFactory().newXPath();
 		XPathExpression xPathExpression = xPath.compile(expression);
-		NodeList nodeList = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
-
-		StringBuilder textBuilder = new StringBuilder();
-
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node node = nodeList.item(i);
-
-			String text = StringUtils.trimToEmpty(node.getTextContent());
-			if (StringUtils.isEmpty(text)) {
-				continue;
-			}
-
-			if (textBuilder.length() > 0) {
-				textBuilder.append(" ");
-			}
-
-			textBuilder.append(text);
-		}
-
-		return textBuilder.toString();
+		String value = (String) xPathExpression.evaluate(document, XPathConstants.STRING);
+		value = StringUtils.trimToEmpty(value);
+		return value;
 	}
 
 }

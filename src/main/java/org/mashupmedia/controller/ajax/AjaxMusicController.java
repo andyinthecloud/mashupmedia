@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
@@ -114,6 +115,13 @@ public class AjaxMusicController extends AjaxBaseController {
 		RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
 		try {
 			remoteMediaMeta = mediaWebService.getArtistInformation(artist);
+			String remoteId = remoteMediaMeta.getRemoteId();
+			
+			if (StringUtils.isNotBlank(remoteId)) {
+				artist.setRemoteId(remoteId);
+				musicManager.saveArtist(artist);
+				
+			}
 		} catch (ConnectException e) {
 			logger.error(
 					"Error connecting to the remote web service, site may be unavailable or check proxy are incorrect",

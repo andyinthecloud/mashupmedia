@@ -88,7 +88,6 @@
     
 
     	
-    }
     
     
     function prepareImageUrl(imageUrl) {
@@ -117,7 +116,7 @@
     		
     	    
     	});
-    
+    }
 </script>
 
 <div id="remote-dialog" class="dialog" title="Search Discogs for artist information">
