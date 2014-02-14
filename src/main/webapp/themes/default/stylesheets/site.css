@@ -348,6 +348,10 @@ div.panel ul.main-menu a:HOVER {
 	color: white;
 }
 
+#albums {
+	clear: both;
+}
+
 div.albums div.album {
 	float: left;
 	position: relative;
@@ -820,7 +824,7 @@ div.information {
 	margin: 10px 0;
 }
 
-div.information div.images img {
+#remote div.images img {
 	float: left;
 	height: 90px;
 	max-height: 90px;
@@ -829,12 +833,17 @@ div.information div.images img {
 	margin-top: 10px;
 }
 
-div.information div.discogs {
-	padding-top: 10px;
+#remote {
+	padding: 10px 0;
 	clear: both;
 }
 
-div.information div.discogs img {
+#remote div.disclaimer {
+	clear: both;
+	padding-bottom: 10px;
+}
+
+#remote div.disclaimer img {
 	vertical-align: middle;
 	background-color: white;
 	padding: 0 5px;

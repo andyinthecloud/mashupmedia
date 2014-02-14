@@ -29,6 +29,4 @@ public interface MediaWebService {
 	public RemoteMediaMetaItem getArtistInformation(Artist artist) throws Exception;
 
 	public List<RemoteMediaMetaItem> searchArtist(String artistName) throws Exception;
-
-
 }

@@ -116,11 +116,11 @@ public class AjaxMusicController extends AjaxBaseController {
 		try {
 			remoteMediaMeta = mediaWebService.getArtistInformation(artist);
 			String remoteId = remoteMediaMeta.getRemoteId();
-			
+
 			if (StringUtils.isNotBlank(remoteId)) {
 				artist.setRemoteId(remoteId);
 				musicManager.saveArtist(artist);
-				
+
 			}
 		} catch (ConnectException e) {
 			logger.error(

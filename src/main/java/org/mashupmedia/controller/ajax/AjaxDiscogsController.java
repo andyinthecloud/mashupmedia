@@ -17,14 +17,8 @@
 
 package org.mashupmedia.controller.ajax;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.Artist;
@@ -38,11 +32,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-//@RequestMapping("/ajax/discogs")
 @RequestMapping("/ajax/remote")
 public class AjaxDiscogsController {
 
@@ -55,97 +47,35 @@ public class AjaxDiscogsController {
 	@Autowired
 	private MusicManager musicManager;
 
-	@RequestMapping(value = "/artist/get", method = RequestMethod.POST)
-	public ModelAndView handleSearchArtists(@RequestParam("name") String name, Model model) {
-
-		JSONArray jsonArray = new JSONArray();
+	@RequestMapping(value = "/artist/get", method = RequestMethod.POST, produces = "application/json")
+	public @ResponseBody
+	List<RemoteMediaMetaItem> handleSearchArtists(@RequestParam("name") String name, Model model) {
+		List<RemoteMediaMetaItem> remoteMediaMetasItems = new ArrayList<RemoteMediaMetaItem>();
 		try {
-			List<RemoteMediaMetaItem> remoteMediaMetas = mediaWebService.searchArtist(name);
-			jsonArray = JSONArray.fromObject(remoteMediaMetas);
+			remoteMediaMetasItems = mediaWebService.searchArtist(name);
 		} catch (Exception e) {
 			logger.error("Error getting remote artist.", e);
 		}
 
-		final JSONArray finalJsonArray = jsonArray;
-
-		ModelAndView modelAndView = new ModelAndView(new View() {
-
-			@Override
-			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-				response.setContentType(getContentType());
-				response.getWriter().print(finalJsonArray.toString());
-			}
-
-			@Override
-			public String getContentType() {
-				return "application/json; charset=utf-8";
-			}
-		});
-
-		return modelAndView;
+		return remoteMediaMetasItems;
 	}
 
-	@RequestMapping(value = "/artist/save", method = RequestMethod.POST)
-	public ModelAndView handleLinkArtistWithDiscogsId(@RequestParam("artistId") Long artistId, @RequestParam("remoteArtistId") String remoteArtistId,
-			Model model) {
+	@RequestMapping(value = "/artist/save", method = RequestMethod.POST, produces = "application/json")
+	public @ResponseBody
+	RemoteMediaMetaItem handleLinkArtistWithDiscogsId(@RequestParam("artistId") Long artistId,
+			@RequestParam("remoteArtistId") String remoteArtistId, Model model) {
 		Artist artist = musicManager.getArtist(artistId);
 		artist.setRemoteId(remoteArtistId);
 		musicManager.saveArtist(artist);
 
-		JSONObject jsonObject = new JSONObject();
+		RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
 		try {
-			RemoteMediaMetaItem remoteMediaMeta = mediaWebService.getArtistInformation(artist);
-			jsonObject = JSONObject.fromObject(remoteMediaMeta);
+			remoteMediaMeta = mediaWebService.getArtistInformation(artist);
 		} catch (Exception e) {
-			logger.error("Error saving Discogs artist.", e);
+			logger.error("Error saving artist.", e);
 		}
 
-		final JSONObject finalJsonObject = jsonObject;
-		ModelAndView modelAndView = new ModelAndView(new View() {
-
-			@Override
-			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-				response.setContentType(getContentType());
-				response.getWriter().print(finalJsonObject.toString());
-			}
-
-			@Override
-			public String getContentType() {
-				return "application/json; charset=utf-8";
-			}
-		});
-
-		return modelAndView;
+		return remoteMediaMeta;
 	}
-
-//	@RequestMapping(value = "/discogs-artist-id/{discogsArtistId}", method = RequestMethod.GET)
-//	public ModelAndView handleGetDiscogsId(@PathVariable String remoteArtistId, Model model) {
-//
-//		JSONObject jsonObject = new JSONObject();
-//		try {
-//			RemoteMediaMetaItem remoteMediaMeta = mediaWebService.getArtistInformation(remoteArtistId);
-//			jsonObject = JSONObject.fromObject(remoteMediaMeta);
-//		} catch (Exception e) {
-//			logger.error("Error getting Discogs artist.", e);
-//		}
-//
-//		final JSONObject finalJsonObject = jsonObject;
-//
-//		ModelAndView modelAndView = new ModelAndView(new View() {
-//
-//			@Override
-//			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-//				response.setContentType(getContentType());
-//				response.getWriter().print(finalJsonObject.toString());
-//			}
-//
-//			@Override
-//			public String getContentType() {
-//				return "application/json; charset=utf-8";
-//			}
-//		});
-//
-//		return modelAndView;
-//	}
 
 }

@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -21,6 +24,9 @@ import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 @Service("lastFm")
 public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
@@ -29,6 +35,9 @@ public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
 	private ConnectionManager connectionManager;
 
 	private final static String LASTFM_API_KEY = "lastfm.api.key";
+	private final static String LASTFM_API_ROOT_URL = "http://ws.audioscrobbler.com/2.0/";
+	private final static String LASTFM_API_ARTIST_INFO_URL = LASTFM_API_ROOT_URL + "?method=artist.getinfo";
+	private final static String LASTFM_API_ARTIST_SEARCH_URL = LASTFM_API_ROOT_URL + "?method=artist.search";
 
 	@Override
 	public RemoteMediaMetaItem getArtistInformation(Artist artist) throws Exception {
@@ -43,26 +52,18 @@ public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
 			return remoteMediaMetaItem;
 		}
 
-		StringBuilder urlBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/?method=artist.getinfo");
 		String artistName = artist.getName();
-		String artistNameForUrl = StringHelper.formatTextToUrlParameter(artistName);
 
+		Document artistInfoDocument = null;
 		if (StringUtils.isNotEmpty(remoteId)) {
-			urlBuilder.append("&mbid=");
-			urlBuilder.append(remoteId);
+			artistInfoDocument = getArtistInfoDocumentByRemoteId(remoteId);
+			String status = XmlHelper.getTextFromElement(artistInfoDocument, "/lfm/@status");
+			if (status.equalsIgnoreCase("failed")) {
+				artistInfoDocument = getArtistInfoDocumentByArtistName(artistName);
+			}
 		} else {
-			urlBuilder.append("&artist=");
-			urlBuilder.append(artistNameForUrl);
+			artistInfoDocument = getArtistInfoDocumentByArtistName(artistName);
 		}
-
-		urlBuilder.append("&api_key=");
-		urlBuilder.append(MessageHelper.getMessage(LASTFM_API_KEY));
-
-		String artistInfoUrl = urlBuilder.toString();
-
-		InputStream artistInfoInputStream = connectionManager.connect(artistInfoUrl);
-		Document artistInfoDocument = XmlHelper.createDocument(artistInfoInputStream);
-		artistInfoInputStream.close();
 
 		remoteMediaMetaItem = new RemoteMediaMetaItem();
 
@@ -75,20 +76,68 @@ public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
 		remoteMediaMetaItem.setRemoteId(remoteId);
 
 		String introduction = XmlHelper.getTextFromElement(artistInfoDocument, "/lfm/artist/bio/summary/text()");
+		introduction = processText(introduction);
 		remoteMediaMetaItem.setIntroduction(introduction);
 
 		String profile = XmlHelper.getTextFromElement(artistInfoDocument, "/lfm/artist/bio/content/text()");
+		profile = processText(profile);
 		remoteMediaMetaItem.setProfile(profile);
 
-		List<RemoteImage> remoteImages = getRemoteImages(artistNameForUrl);
+		List<RemoteImage> remoteImages = getRemoteImages(artistName);
 		remoteMediaMetaItem.setRemoteImages(remoteImages);
 
 		addRemoteMediaItemToCache(remoteMediaMetaItem);
 
 		return remoteMediaMetaItem;
 	}
+	
+	protected String processText(String text) {
+		String processedText = StringUtils.trimToEmpty(text);
+		processedText = processedText.replaceAll("<a\\s", "<a target=\"lastfm\" ");
+		processedText = processedText.replaceAll("\\r?\\n|\\r", " ");
+		processedText = processedText.replaceAll("\\s{2}?", " ");
+		return processedText;
+		
+	}
 
-	private List<RemoteImage> getRemoteImages(String artistNameForUrl) throws IOException {
+	protected Document getArtistInfoDocumentByArtistName(String artistName) throws ParserConfigurationException,
+			SAXException, IOException {
+		StringBuilder urlBuilder = new StringBuilder(LASTFM_API_ARTIST_INFO_URL);
+		String artistNameForUrl = StringHelper.formatTextToUrlParameter(artistName);
+		urlBuilder.append("&artist=");
+		urlBuilder.append(artistNameForUrl);
+
+		urlBuilder.append("&api_key=");
+		urlBuilder.append(MessageHelper.getMessage(LASTFM_API_KEY));
+
+		String artistInfoUrl = urlBuilder.toString();
+
+		InputStream artistInfoInputStream = connectionManager.connect(artistInfoUrl);
+		Document artistInfoDocument = XmlHelper.createDocument(artistInfoInputStream);
+		IOUtils.closeQuietly(artistInfoInputStream);
+		return artistInfoDocument;
+
+	}
+
+	protected Document getArtistInfoDocumentByRemoteId(String remoteId) throws ParserConfigurationException,
+			SAXException, IOException {
+		StringBuilder urlBuilder = new StringBuilder(LASTFM_API_ARTIST_INFO_URL);
+		urlBuilder.append("&mbid=");
+		urlBuilder.append(remoteId);
+		urlBuilder.append("&api_key=");
+		urlBuilder.append(MessageHelper.getMessage(LASTFM_API_KEY));
+
+		String artistInfoUrl = urlBuilder.toString();
+
+		InputStream artistInfoInputStream = connectionManager.connect(artistInfoUrl);
+		Document artistInfoDocument = XmlHelper.createDocument(artistInfoInputStream);
+		IOUtils.closeQuietly(artistInfoInputStream);
+		return artistInfoDocument;
+
+	}
+
+	private List<RemoteImage> getRemoteImages(String artistName) throws IOException {
+		String artistNameForUrl = StringHelper.formatTextToUrlParameter(artistName);
 		String remoteImageUrl = new String("http://www.last.fm/music/" + artistNameForUrl + "/+images");
 		InputStream inputStream = connectionManager.connect(remoteImageUrl);
 		String html = StringHelper.convertToText(inputStream);
@@ -122,9 +171,40 @@ public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
 	}
 
 	@Override
-	public List<RemoteMediaMetaItem> searchArtist(String artistName) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<RemoteMediaMetaItem> searchArtist(String text) throws Exception {
+		StringBuilder urlBuilder = new StringBuilder(LASTFM_API_ARTIST_SEARCH_URL);
+		urlBuilder.append("&artist=");
+		String artistNameForUrl = StringHelper.formatTextToUrlParameter(text);
+		urlBuilder.append(artistNameForUrl);
+		urlBuilder.append("&api_key=");
+		urlBuilder.append(MessageHelper.getMessage(LASTFM_API_KEY));
+
+		String artistInfoUrl = urlBuilder.toString();
+
+		InputStream artistSearchInputStream = connectionManager.connect(artistInfoUrl);
+		Document artistSearchDocument = XmlHelper.createDocument(artistSearchInputStream);
+		IOUtils.closeQuietly(artistSearchInputStream);
+		
+		List<RemoteMediaMetaItem> remoteMediaMetaItems = new ArrayList<RemoteMediaMetaItem>();
+		
+		NodeList nodeList = XmlHelper.getNodeListFromElement(artistSearchDocument, "/lfm/results/artistmatches/artist");
+		for(int i = 0; i < nodeList.getLength(); i++) {
+			Node node = nodeList.item(i);
+			NodeList artistNodeList = node.getChildNodes();
+			
+			
+			RemoteMediaMetaItem remoteMediaMetaItem = new RemoteMediaMetaItem();
+			String artistName = XmlHelper.getTextContentFromNodeName(artistNodeList, "name");
+			remoteMediaMetaItem.setName(artistName);
+			String remoteId = XmlHelper.getTextContentFromNodeName(artistNodeList, "mbid");
+			remoteMediaMetaItem.setRemoteId(remoteId);
+			
+			remoteMediaMetaItems.add(remoteMediaMetaItem);
+		}
+		
+		return remoteMediaMetaItems;
 	}
+
+
 
 }

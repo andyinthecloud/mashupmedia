@@ -75,7 +75,7 @@
 
 	<div class="disclaimer">
 		<spring:message code="music.artists.remote" />
-		<a href="http://www.discogs.com" target="_blank"><img src="<c:url value="/images/discogs.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message
+		<a href="http://www.last.fm" target="_blank" title=""><img title="last.fm" src="<c:url value="/images/lastfm.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message
 				code="music.artists.remote.correct" /></a>
 	</div>	
 </div>
