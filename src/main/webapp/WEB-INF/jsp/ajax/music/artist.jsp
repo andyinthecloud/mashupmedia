@@ -53,7 +53,7 @@
 
 <jsp:include page="/WEB-INF/jsp/inc/remote-music-info-js.jsp" />
 
-<input type="hidden" id="discogs-artist-id" name="discogs-artist-id" value="${artistPage.artist.id}" />
+<input type="hidden" id="artist-id" name="artist-id" value="${artistPage.artist.id}" />
 
 <div class="title-with-player-control">
 	<h1>${artistPage.artist.name}</h1>

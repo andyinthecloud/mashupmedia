@@ -32,26 +32,26 @@
 		return;
 	    }
 
-	    $.post("<c:url value="/app/ajax/discogs/search-artist" />", {
+	    $.post("<c:url value="/app/ajax/remote/artist/search" />", {
 		name : searchArtist
 	    }).done(function(data) {
 		var artistsHtml = "";
 		$.each(data, function(index) {
-		    artistsHtml += "<li><a id=\"search-results-discogs-id-" + data[index].id + "\" href=\"javascript:;\">" + data[index].name + "</a></li>"
+		    artistsHtml += "<li><a id=\"search-results-remote-id-" + data[index].remoteId + "\" href=\"javascript:;\">" + data[index].name + "</a></li>"
 		});
 		$("#remote-dialog ul.search-results").html(artistsHtml);
 	    });
 	});
 
 	$("#remote-dialog ul.search-results").on("click", "li a", function(event) {
-	    var discogsId = $(this).attr("id");
-	    discogsId = parseId(discogsId, "search-results-discogs-id");
-	    var artistId = $("#remote-artist-id").val();
-	    $.post("<c:url value="/app/ajax/discogs/save-artist" />", {
-		discogsId : discogsId,
+	    var remoteArtistId = $(this).attr("id");
+	    remoteArtistId = remoteArtistId.replace("search-results-remote-id-", "")	    
+	    var artistId = $("#artist-id").val();
+	    $.post("<c:url value="/app/ajax/remote/artist/save" />", {
+	    remoteArtistId : remoteArtistId,
 		artistId : artistId
 	    }).done(function(data) {
-		$.get("<c:url value="/app/ajax/discogs/discogs-artist-id/" />/" + discogsId).done(function(data) {
+		$.get("<c:url value="/app/ajax/music/artist/remote/" />" + artistId).done(function(data) {
 		    // console.log(data);
 		    $("div.music-sub-panel h1").html(data.name);
 		    $("div.music-sub-panel div.information div.profile").html(data.profile);
@@ -119,7 +119,7 @@
     }
 </script>
 
-<div id="remote-dialog" class="dialog" title="Search Discogs for artist information">
+<div id="remote-dialog" class="dialog" title="Find artist">
 	<p>
 		<input type="text" name="name" class="search-field" value="<spring:message code="music.artists.remote.search" />" /><input type="button"
 			value="Search" />

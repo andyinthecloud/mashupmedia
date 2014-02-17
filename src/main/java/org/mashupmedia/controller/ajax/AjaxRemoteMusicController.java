@@ -20,6 +20,7 @@ package org.mashupmedia.controller.ajax;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.restful.MediaWebService;
@@ -36,7 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/ajax/remote")
-public class AjaxDiscogsController {
+public class AjaxRemoteMusicController {
 
 	private Logger logger = Logger.getLogger(getClass());
 
@@ -47,7 +48,7 @@ public class AjaxDiscogsController {
 	@Autowired
 	private MusicManager musicManager;
 
-	@RequestMapping(value = "/artist/get", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(value = "/artist/search", method = RequestMethod.POST, produces = "application/json")
 	public @ResponseBody
 	List<RemoteMediaMetaItem> handleSearchArtists(@RequestParam("name") String name, Model model) {
 		List<RemoteMediaMetaItem> remoteMediaMetasItems = new ArrayList<RemoteMediaMetaItem>();
@@ -65,17 +66,27 @@ public class AjaxDiscogsController {
 	RemoteMediaMetaItem handleLinkArtistWithDiscogsId(@RequestParam("artistId") Long artistId,
 			@RequestParam("remoteArtistId") String remoteArtistId, Model model) {
 		Artist artist = musicManager.getArtist(artistId);
+
+		RemoteMediaMetaItem remoteMediaMetaItem = new RemoteMediaMetaItem();
+
+		try {
+			remoteMediaMetaItem = mediaWebService.getArtistInformation(artist);
+		} catch (Exception e) {
+			logger.error("Error finding remote artist.", e);
+			return remoteMediaMetaItem;
+		}
+
+		String name = StringUtils.trimToEmpty(remoteMediaMetaItem.getName());
+		if (StringUtils.isEmpty(name)) {
+			logger.info("Remote artist has no name.");
+			return remoteMediaMetaItem;
+		}
+
+		artist.setName(name);
 		artist.setRemoteId(remoteArtistId);
 		musicManager.saveArtist(artist);
 
-		RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
-		try {
-			remoteMediaMeta = mediaWebService.getArtistInformation(artist);
-		} catch (Exception e) {
-			logger.error("Error saving artist.", e);
-		}
-
-		return remoteMediaMeta;
+		return remoteMediaMetaItem;
 	}
 
 }
