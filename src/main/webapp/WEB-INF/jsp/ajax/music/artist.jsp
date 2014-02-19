@@ -29,20 +29,6 @@
 	
 	$.getJSON("<c:url value="/app/ajax/music/artist/remote/${artistPage.artist.id}" />", function( data ) {
 		displayRemoteArtistInformation(data);
-		
-		//$("#discogs div.profile").html(data.introduction);
-		/*
-		
-		var items = [];
-		$.each( data, function( key, val ) {
-		items.push( "<li id='" + key + "'>" + val + "</li>" );
-		});
-		$( "<ul/>", {
-		"class": "my-new-list",
-		html: items.join( "" )
-		}).appendTo( "body" );
-		*/
-		
 	});	
 	
 

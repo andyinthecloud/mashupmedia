@@ -32,13 +32,18 @@
 		$("h1 a").click(function() {
 			fireRelLink(this);
 		});
+		
+		$.getJSON("<c:url value="/app/ajax/music/artist/remote/${albumPage.album.artist.id}" />", function( data ) {
+			displayRemoteArtistInformation(data);
+		});			
 
 	});
 </script>
 
 <jsp:include page="/WEB-INF/jsp/inc/remote-music-info-js.jsp" />
 
-<input type="hidden" id="discogs-artist-id" name="discogs-artist-id" value="${albumPage.album.artist.id}" />
+<input type="hidden" id="artist-id" name="artist-id" value="${albumPage.album.artist.id}" />
+
 
 <div class="title-with-player-control">
 	<h1>
@@ -55,31 +60,15 @@
 
 </div>
 
+<div id="remote">
+	<div class="profile"></div>
+	<div class="images"></div>
 
-<div class="information">
-	<div class="introduction">
-		<a class="arrow-show-hide" href="javascript:;"><img src="<c:url value="/images/arrow-down.png"/>" /></a>
-		<c:out value="${albumPage.remoteMediaMetaItem.introduction}" escapeXml="false" />
-	</div>
-
-	<div class="content hide">
-		<a class="arrow-show-hide" href="javascript:;"><img src="<c:url value="/images/arrow-up.png"/>" /></a>
-		<div class="profile">
-			<c:out value="${albumPage.remoteMediaMetaItem.profile}" escapeXml="false" />
-		</div>
-
-		<div class="images">
-			<c:forEach items="${albumPage.remoteMediaMetaItem.remoteImages}" var="remoteImage">
-				<a class="fancybox" rel="artist-images" href="<c:url value="${remoteImage.imageUrl}" />"><img src="<c:url value="${remoteImage.thumbUrl}" />" /></a>
-			</c:forEach>
-		</div>
-
-		<div class="discogs">
-			<spring:message code="music.artists.remote" />
-			<a href="http://www.discogs.com" target="_blank"><img src="<c:url value="/images/discogs.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message
-					code="music.artists.remote.correct" /></a>			
-		</div>
-	</div>
+	<div class="disclaimer">
+		<spring:message code="music.artists.remote" />
+		<a href="http://www.last.fm" target="_blank" title=""><img title="last.fm" src="<c:url value="/images/lastfm.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message
+				code="music.artists.remote.correct" /></a>
+	</div>	
 </div>
 
 
