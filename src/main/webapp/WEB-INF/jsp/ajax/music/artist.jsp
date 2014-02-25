@@ -2,35 +2,33 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-	window.scrollTo(0, 0);
-
+		window.scrollTo(0, 0);
+		
+		$("div.albums div.album a").click(function() {
+			fireRelLink(this);
+		});
+		
+		$("div.albums div.album").hover(function() {
+		    $(this).addClass("highlight");
+		}, function() {
+		    $(this).removeClass("highlight");
+		});
 	
-	$("div.albums div.album a").click(function() {
-		fireRelLink(this);
-	});
+		$("#play-all").click(function() {
+		    var artistId = $(this).closest("div.control-menu").attr("id");
+		    artistId = parseId(artistId, "artist-id");
+		    mashupMedia.playArtist(artistId);
+		});
 	
-	$("div.albums div.album").hover(function() {
-	    $(this).addClass("highlight");
-	}, function() {
-	    $(this).removeClass("highlight");
-	});
-
-	$("#play-all").click(function() {
-	    var artistId = $(this).closest("div.control-menu").attr("id");
-	    artistId = parseId(artistId, "artist-id");
-	    mashupMedia.playArtist(artistId);
-	});
-
-	$("#add-all").click(function() {
-	    var artistId = $(this).closest("div.control-menu").attr("id");
-	    artistId = parseId(artistId, "artist-id");
-	    mashupMedia.appendArtist(artistId);
-	});
-	
-	$.getJSON("<c:url value="/app/ajax/music/artist/remote/${artistPage.artist.id}" />", function( data ) {
-		displayRemoteArtistInformation(data);
-	});	
-	
+		$("#add-all").click(function() {
+		    var artistId = $(this).closest("div.control-menu").attr("id");
+		    artistId = parseId(artistId, "artist-id");
+		    mashupMedia.appendArtist(artistId);
+		});
+		
+		$.getJSON("<c:url value="/app/ajax/music/artist/remote/${artistPage.artist.id}" />", function( data ) {
+			displayRemoteArtistInformation(data);
+		});	
 
     });
 
@@ -56,16 +54,16 @@
 
 
 <div id="remote">
+	<a class="arrow-show-hide" href="javascript:void(0)"> <img src="<c:url value="/images/arrow-down.png" />" /></a>		
 	<div class="profile"></div>
 	<div class="images"></div>
-
-	<div class="disclaimer">
+	<div class="disclaimer">	
 		<spring:message code="music.artists.remote" />
 		<a href="http://www.last.fm" target="_blank" title=""><img title="last.fm" src="<c:url value="/images/lastfm.png" />" /></a>. <a class="incorrect" href="javascript:;"><spring:message
 				code="music.artists.remote.correct" /></a>
 	</div>	
+	
 </div>
-
 
 <div id="albums" class="albums">
 

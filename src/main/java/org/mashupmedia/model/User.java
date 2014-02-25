@@ -22,6 +22,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Cacheable
 public class User implements UserDetails, Serializable {
+	
+	public static String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
+	
 	private static final long serialVersionUID = 8897344406027907607L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -165,6 +168,18 @@ public class User implements UserDetails, Serializable {
 	public boolean isCredentialsNonExpired() {
 		return isEnabled();
 	}
+	
+	public boolean isAdministrator() {
+		Collection<Role> roles =  getRoles();
+		for (Role role : roles) {
+			if (role.getAuthority().equalsIgnoreCase(User.ROLE_ADMINISTRATOR)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 
 	@Override
 	public int hashCode() {

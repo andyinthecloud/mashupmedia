@@ -36,6 +36,7 @@
 		$.getJSON("<c:url value="/app/ajax/music/artist/remote/${albumPage.album.artist.id}" />", function( data ) {
 			displayRemoteArtistInformation(data);
 		});			
+				
 
 	});
 </script>
@@ -61,6 +62,7 @@
 </div>
 
 <div id="remote">
+	<a class="arrow-show-hide" href="javascript:void(0)"> <img src="<c:url value="/images/arrow-down.png" />" /></a>		
 	<div class="profile"></div>
 	<div class="images"></div>
 

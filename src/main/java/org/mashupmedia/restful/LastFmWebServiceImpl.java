@@ -2,6 +2,7 @@ package org.mashupmedia.restful;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -30,14 +32,16 @@ import org.xml.sax.SAXException;
 
 @Service("lastFm")
 public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
-
-	@Autowired
-	private ConnectionManager connectionManager;
-
 	private final static String LASTFM_API_KEY = "lastfm.api.key";
 	private final static String LASTFM_API_ROOT_URL = "http://ws.audioscrobbler.com/2.0/";
 	private final static String LASTFM_API_ARTIST_INFO_URL = LASTFM_API_ROOT_URL + "?method=artist.getinfo";
 	private final static String LASTFM_API_ARTIST_SEARCH_URL = LASTFM_API_ROOT_URL + "?method=artist.search";
+
+	private Logger logger = Logger.getLogger(getClass());
+	
+	@Autowired
+	private ConnectionManager connectionManager;
+
 
 	@Override
 	public RemoteMediaMetaItem getArtistInformation(Artist artist) throws Exception {
@@ -113,6 +117,11 @@ public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
 		String artistInfoUrl = urlBuilder.toString();
 
 		InputStream artistInfoInputStream = connectionManager.connect(artistInfoUrl);
+		if (artistInfoInputStream == null) {
+			throw new ConnectException("Unable to connect to " + urlBuilder.toString());
+		}
+		
+		
 		Document artistInfoDocument = XmlHelper.createDocument(artistInfoInputStream);
 		IOUtils.closeQuietly(artistInfoInputStream);
 		return artistInfoDocument;
@@ -130,6 +139,11 @@ public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
 		String artistInfoUrl = urlBuilder.toString();
 
 		InputStream artistInfoInputStream = connectionManager.connect(artistInfoUrl);
+		if (artistInfoInputStream == null) {
+			logger.error("Unable to connect to " + urlBuilder.toString());
+			return null;
+		}
+		
 		Document artistInfoDocument = XmlHelper.createDocument(artistInfoInputStream);
 		IOUtils.closeQuietly(artistInfoInputStream);
 		return artistInfoDocument;
@@ -139,10 +153,15 @@ public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
 	private List<RemoteImage> getRemoteImages(String artistName) throws IOException {
 		String artistNameForUrl = StringHelper.formatTextToUrlParameter(artistName);
 		String remoteImageUrl = new String("http://www.last.fm/music/" + artistNameForUrl + "/+images");
+		
+		List<RemoteImage> remoteImages = new ArrayList<RemoteImage>();
 		InputStream inputStream = connectionManager.connect(remoteImageUrl);
+		if (inputStream == null) {
+			throw new ConnectException("Unable to connect to " + remoteImageUrl);
+		}
+		
 		String html = StringHelper.convertToText(inputStream);
 
-		List<RemoteImage> remoteImages = new ArrayList<RemoteImage>();
 
 		org.jsoup.nodes.Document document = Jsoup.parse(html);
 		Elements elements = document.select("#pictures li");
@@ -172,6 +191,7 @@ public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
 
 	@Override
 	public List<RemoteMediaMetaItem> searchArtist(String text) throws Exception {
+
 		StringBuilder urlBuilder = new StringBuilder(LASTFM_API_ARTIST_SEARCH_URL);
 		urlBuilder.append("&artist=");
 		String artistNameForUrl = StringHelper.formatTextToUrlParameter(text);
@@ -181,11 +201,15 @@ public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
 
 		String artistInfoUrl = urlBuilder.toString();
 
+		List<RemoteMediaMetaItem> remoteMediaMetaItems = new ArrayList<RemoteMediaMetaItem>();
 		InputStream artistSearchInputStream = connectionManager.connect(artistInfoUrl);
+		if (artistSearchInputStream == null) {
+			throw new ConnectException("Unable to connect to " + urlBuilder.toString());
+		}
+		
 		Document artistSearchDocument = XmlHelper.createDocument(artistSearchInputStream);
 		IOUtils.closeQuietly(artistSearchInputStream);
 		
-		List<RemoteMediaMetaItem> remoteMediaMetaItems = new ArrayList<RemoteMediaMetaItem>();
 		
 		NodeList nodeList = XmlHelper.getNodeListFromElement(artistSearchDocument, "/lfm/results/artistmatches/artist");
 		for(int i = 0; i < nodeList.getLength(); i++) {

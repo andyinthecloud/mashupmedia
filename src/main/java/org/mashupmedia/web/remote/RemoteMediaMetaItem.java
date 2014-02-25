@@ -29,6 +29,15 @@ public class RemoteMediaMetaItem implements Serializable {
 	private Date date;
 	private List<RemoteImage> remoteImages;
 	private String introduction;
+	private boolean error;
+
+	public boolean isError() {
+		return error;
+	}
+
+	public void setError(boolean error) {
+		this.error = error;
+	}
 
 	public String getIntroduction() {
 		return introduction;

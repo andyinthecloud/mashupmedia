@@ -224,6 +224,7 @@ div.panel .horizontal-gap {
 	margin-left: 10px;
 }
 
+
 div.panel a,div.panel a:VISITED {
 	color: #E579E9;
 }
@@ -825,7 +826,6 @@ div.information {
 }
 
 #remote div.images img {
-	float: left;
 	height: 90px;
 	max-height: 90px;
 	width: auto;
@@ -834,13 +834,17 @@ div.information {
 }
 
 #remote {
-	padding: 10px 0;
+	margin: 10px 0;
+	height: 50px;
+	overflow: hidden;
 	clear: both;
 }
 
+
 #remote div.disclaimer {
+	display: block;
 	clear: both;
-	padding-bottom: 10px;
+	padding-top: 10px;
 }
 
 #remote div.disclaimer img {

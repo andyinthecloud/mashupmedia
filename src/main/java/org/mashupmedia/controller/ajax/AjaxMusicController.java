@@ -127,9 +127,11 @@ public class AjaxMusicController extends AjaxBaseController {
 					"Error connecting to the remote web service, site may be unavailable or check proxy are incorrect",
 					e);
 			remoteMediaMeta.setIntroduction(MessageHelper.getMessage("remote.connection.error"));
+			remoteMediaMeta.setError(true);
 		} catch (Exception e) {
-			logger.error("Error getting artist from Discogs", e);
+			logger.error("Error getting remote artist information", e);
 			remoteMediaMeta.setIntroduction(MessageHelper.getMessage("remote.error"));
+			remoteMediaMeta.setError(true);
 		}
 
 		return remoteMediaMeta;

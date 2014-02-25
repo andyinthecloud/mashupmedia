@@ -70,17 +70,19 @@
 
 	});
 	
-	$("a.arrow-show-hide").click(function() {
-		
-		if ($("div.information div.introduction").is(":visible")) {
-			$("div.information div.introduction").hide();
-			$("div.information div.content").show();
-			
-		} else {
-			$("div.information div.introduction").show();
-			$("div.information div.content").hide();			
+	$("#remote a.arrow-show-hide").click(function() {		
+		var overflow = "hidden";
+		var arrowIimageSource = "<c:url value="/images/arrow-down.png" />";
+		var remoteHeight = "15px";
+		if ($("#remote").css("overflow") == "hidden") {
+			overflow = "visible";
+			arrowIimageSource = "<c:url value="/images/arrow-up.png" />";
+			remoteHeight = "auto";
 		}
 		
+		$("#remote").css("overflow", overflow);
+		$("#remote").css("height", remoteHeight);		
+		$(this).find("img").attr("src", arrowIimageSource);
 	});
 	
 	
@@ -108,14 +110,15 @@
 
     function displayRemoteArtistInformation(data) {
     	$("#remote div.profile").html(data.introduction);
+    	if (data.error) {
+    		return;
+    	} 
+    		
     	$.each(data.remoteImages, function(index, remoteImage){
-    	//	<a class="fancybox" rel="artist-images" href="<c:url value="${remoteImage.imageUrl}" />"><img src="<c:url value="${remoteImage.thumbUrl}" />" /></a>
-    		
-//    		$("#remote div.images").append("<a class=\"fancybox\" rel=\"artist-images\" href=\""+mashupMedia.contextUrl + remoteImage.imageUrl +"\"><img src=\"" + mashupMedia.contextUrl + remoteImage.thumbUrl + "/></a>");
-    		$("#remote div.images").append("<a class=\"fancybox\" rel=\"artist-images\" href=\""+mashupMedia.contextUrl + remoteImage.imageUrl +"\"><img src=\"" + mashupMedia.contextUrl + remoteImage.thumbUrl + "\"></a>");
-    		
-    	    
+    		$("#remote div.images").append("<a class=\"fancybox\" rel=\"artist-images\" href=\""+mashupMedia.contextUrl + remoteImage.imageUrl +"\"><img src=\"" + mashupMedia.contextUrl + remoteImage.thumbUrl + "\"></a>");   	    
     	});
+    	
+    	$("#remote div.disclaimer").show();
     }
 </script>
 
@@ -123,10 +126,8 @@
 	<p>
 		<input type="text" name="name" class="search-field" value="<spring:message code="music.artists.remote.search" />" /><input type="button"
 			value="Search" />
-	<ul class="search-results">
-
-	</ul>
-
-
+		<ul class="search-results">
+	
+		</ul>
 	</p>
 </div>
