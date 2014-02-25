@@ -16,7 +16,7 @@ public class VideoLibrary extends Library {
 	private static final long serialVersionUID = -7784201711543047031L;
 
 	public enum VideoDeriveTitleType {
-		USE_FOLDER_NAME, USE_FILE_NAME
+		USE_FOLDER_NAME, USE_FILE_NAME, USE_FOLDER_AND_FILE_NAME
 	}
 
 	private String videoDeriveTitle;

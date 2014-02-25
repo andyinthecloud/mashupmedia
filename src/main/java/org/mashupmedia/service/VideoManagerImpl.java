@@ -3,6 +3,7 @@ package org.mashupmedia.service;
 import java.util.List;
 
 import org.mashupmedia.dao.VideoDao;
+import org.mashupmedia.model.media.Video;
 import org.mashupmedia.model.media.VideoResolution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,9 @@ public class VideoManagerImpl implements VideoManager {
 
 	@Autowired
 	private VideoDao videoDao;
+	
+	@Autowired
+	private SecurityManager securityManager;
 
 	@Override
 	public List<VideoResolution> getVideoResolutions() {
@@ -55,6 +59,13 @@ public class VideoManagerImpl implements VideoManager {
 	public VideoResolution getVideoResolution(long videoResolutionId) {
 		VideoResolution videoResolution = videoDao.getVideoResolution(videoResolutionId);
 		return videoResolution;
+	}
+	
+	@Override
+	public List<Video> getVideos() {
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
+		List<Video> videos = videoDao.getVideos(userGroupIds);
+		return videos;
 	}
 
 }

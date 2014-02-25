@@ -36,22 +36,31 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			videoDeriveTitleType = VideoDeriveTitleType.USE_FILE_NAME;
 		}
 
-		processVideos(videos, folder, videoDeriveTitleType, date);
+		processVideos(videos, folder, videoDeriveTitleType, date, null);
 	}
 
-	protected void processVideos(List<Video> videos, File file, VideoDeriveTitleType videoDeriveTitleType, Date date) {
+	protected void processVideos(List<Video> videos, File file, VideoDeriveTitleType videoDeriveTitleType, Date date,
+			String videoName) {
 		if (file.isDirectory()) {
+			if (StringUtils.isEmpty(videoName)) {
+				videoName = file.getName();
+			} else {
+				videoName = videoName + "/" + file.getName();
+			}
+
 			File[] files = file.listFiles();
+
 			for (File childFile : files) {
-				processVideos(videos, childFile, videoDeriveTitleType, date);
+				processVideos(videos, childFile, videoDeriveTitleType, date, videoName);
 			}
 		}
 
-		String videoName = null;
 		if (videoDeriveTitleType == VideoDeriveTitleType.USE_FOLDER_NAME) {
 			videoName = file.getParentFile().getName();
-		} else {
+		} else if (videoDeriveTitleType == VideoDeriveTitleType.USE_FILE_NAME) {
 			videoName = file.getName();
+		} else {
+			videoName = videoName + "/" + file.getName();
 		}
 
 		Video video = new Video();

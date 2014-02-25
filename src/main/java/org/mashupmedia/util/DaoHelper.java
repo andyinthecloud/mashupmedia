@@ -18,11 +18,12 @@
 package org.mashupmedia.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class DaoHelper {
 
-	public static String convertToHqlParameters(List<? extends Number> numbers) {
+	public static String convertToHqlParameters(Collection<? extends Number> numbers) {
 		StringBuilder hqlBuilder = new StringBuilder();
 
 		for (Number number : numbers) {
@@ -41,7 +42,7 @@ public class DaoHelper {
 	 * @param queryBuilder
 	 * @param groupIds
 	 */
-	public static void appendGroupFilter(StringBuilder queryBuilder, List<? extends Number> groupIds) {
+	public static void appendGroupFilter(StringBuilder queryBuilder, Collection<? extends Number> groupIds) {
 		if (groupIds == null || groupIds.isEmpty()) {
 			List<Integer> emptyGroupIds = new ArrayList<Integer>();
 			emptyGroupIds.add(-1);

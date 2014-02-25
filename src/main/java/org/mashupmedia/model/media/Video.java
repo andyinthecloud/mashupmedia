@@ -11,5 +11,6 @@ import org.hibernate.search.annotations.Indexed;
 @Cacheable
 @XmlRootElement
 public class Video extends MediaItem{
+	private static final long serialVersionUID = 8105872585865313104L;
 
 }

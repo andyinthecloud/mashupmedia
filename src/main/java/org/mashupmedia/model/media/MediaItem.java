@@ -2,6 +2,7 @@ package org.mashupmedia.model.media;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -13,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -42,7 +45,8 @@ import org.mashupmedia.util.StringHelper;
 @Entity
 @Indexed
 @AnalyzerDef(name = "customanalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
-		@TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
+		@TokenFilterDef(factory = LowerCaseFilterFactory.class),
+		@TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
 		@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = { @Parameter(name = "language", value = "English") }) })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
@@ -102,9 +106,21 @@ public class MediaItem implements Serializable {
 	private boolean publicAccess;
 	@Field(analyze = Analyze.NO)
 	private String uniqueName;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("createdOn")
+	@XmlTransient
+	private List<Comment> comments;
 
 	public MediaItem() {
 		this.enabled = true;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
 	}
 
 	public boolean isPublicAccess() {
@@ -359,6 +375,8 @@ public class MediaItem implements Serializable {
 		builder.append(publicAccess);
 		builder.append(", uniqueName=");
 		builder.append(uniqueName);
+		builder.append(", comments=");
+		builder.append(comments);
 		builder.append("]");
 		return builder.toString();
 	}

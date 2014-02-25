@@ -1,5 +1,6 @@
 package org.mashupmedia.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.mashupmedia.model.media.Video;
@@ -16,6 +17,7 @@ public interface VideoDao {
 	public void saveVideo(Video video, boolean isSessionFlush);
 	
 	public void saveVideo(Video video);
-	
 
+	public List<Video> getVideos(Collection<Long> groupIds);
+	
 }

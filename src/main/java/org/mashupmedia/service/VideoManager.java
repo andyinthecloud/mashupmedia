@@ -2,6 +2,7 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
+import org.mashupmedia.model.media.Video;
 import org.mashupmedia.model.media.VideoResolution;
 
 public interface VideoManager {
@@ -13,6 +14,7 @@ public interface VideoManager {
 	public void initialiseVideoResolutions();
 
 	public VideoResolution getVideoResolution(long videoResolutionId);
-	
 
+	public List<Video> getVideos();
+	
 }

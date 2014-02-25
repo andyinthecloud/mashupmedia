@@ -2,7 +2,7 @@
 <div id="top-bar" class="top-bar">
 
 
-	<a class="home" href="<c:url value="/" />" target="_blank"><spring:message code="top-bar.home" /></a>
+	<a class="home" href="<c:url value="/" />"><spring:message code="top-bar.home" /></a>
 
 	<ul class="main-menu">
 		<li><a href="<c:url value="/app/configuration/administration/account" />"><spring:message code="top-bar.my-account" /></a></li>

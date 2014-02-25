@@ -11,6 +11,10 @@
 <form:radiobutton path="library.videoDeriveTitle" id="library-videoDeriveTitle-file" value="USE_FILE_NAME" />
 <label for="library-videoDeriveTitle-file"><spring:message code="library.video.derive-title.file" /></label>
 <br />
+
+<form:radiobutton path="library.videoDeriveTitle" id="library-videoDeriveTitle-file" value="USE_FOLDER_AND_FILE_NAME" />
+<label for="library-videoDeriveTitle-file"><spring:message code="library.video.derive-title.folders-and-file" /></label>
+<br />
 <br />
 
 
