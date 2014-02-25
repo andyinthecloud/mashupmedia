@@ -56,22 +56,25 @@
 	</definition>
 
 
-	<definition name="configuration.library.music.panel" template="/WEB-INF/jsp/tiles/configuration/library.jsp">
+	<definition name="configuration.library.music.panel"
+		template="/WEB-INF/jsp/tiles/configuration/library.jsp">
 		<put-attribute name="additionalConfiguration" value="" />
 	</definition>
 
-	<definition name="configuration/library/music" extends="home" >
+	<definition name="configuration/library/music" extends="home">
 		<put-attribute name="body" value="configuration.library.music.panel" />
 	</definition>
 
-	<definition name="configuration.library.video.panel" template="/WEB-INF/jsp/tiles/configuration/library.jsp">
-		<put-attribute name="additionalConfiguration" value="/WEB-INF/jsp/tiles/configuration/video-library-configuration.jsp" />
+	<definition name="configuration.library.video.panel"
+		template="/WEB-INF/jsp/tiles/configuration/library.jsp">
+		<put-attribute name="additionalConfiguration"
+			value="/WEB-INF/jsp/tiles/configuration/video-library-configuration.jsp" />
 	</definition>
 
 	<definition name="configuration/library/video" extends="home">
 		<put-attribute name="body" value="configuration.library.video.panel" />
 	</definition>
- 
+
 	<definition name="configuration/administration/list-users"
 		extends="home">
 		<put-attribute name="body"
@@ -118,5 +121,11 @@
 			</definition>
 		</put-attribute>
 	</definition>
+
+	<definition name="list-videos" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/video/list-videos.jsp" />
+	</definition>
+
 
 </tiles-definitions>

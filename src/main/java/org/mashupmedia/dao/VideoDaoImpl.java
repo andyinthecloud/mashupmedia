@@ -50,9 +50,9 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 
 	@Override
 	public List<Video> getVideos(Collection<Long> groupIds) {
-		StringBuilder queryBuilder = new StringBuilder("select v from Video v a join v.library.groups g");
+		StringBuilder queryBuilder = new StringBuilder("select v from Video v join v.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" order by v.name");
+		queryBuilder.append(" order by v.displayTitle");
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
