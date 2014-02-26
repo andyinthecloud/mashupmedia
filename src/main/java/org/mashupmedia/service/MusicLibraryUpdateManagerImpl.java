@@ -493,7 +493,13 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			for (Album album : albums) {
 				List<Song> songs = musicDao.getSongs(groupIds, album.getId());
 				if (songs == null || songs.isEmpty()) {
+//					long albumId = album.getId();
+//					long libraryId = album.get
+//					
+//					FileHelper.deleteAlbum(album.getId());
+
 					musicDao.deleteAlbum(album);
+
 				}
 			}
 		}

@@ -18,8 +18,8 @@ public class FileHelper {
 	private static File applicationHomeFolder = null;
 
 	public enum FileType {
-		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM_UNPROCESSED("media-item-stream"), MEDIA_ITEM_STREAM_ENCODED(
-				"media-item-encoded");
+		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM_UNPROCESSED(
+				"media-item-stream"), MEDIA_ITEM_STREAM_ENCODED("media-item-encoded");
 
 		private String folderName;
 
@@ -119,17 +119,17 @@ public class FileHelper {
 		return extension;
 
 	}
-	
+
 	public static File getApplicationFolder() {
 		if (applicationHomeFolder != null) {
 			return applicationHomeFolder;
 		}
-		
+
 		String applicationHomePath = System.getProperty(MASHUP_MEDIA_HOME);
-		if(StringUtils.isBlank(applicationHomePath)) {
+		if (StringUtils.isBlank(applicationHomePath)) {
 			applicationHomePath = System.getenv(MASHUP_MEDIA_HOME);
 		}
-		
+
 		if (StringUtils.isNotBlank(applicationHomePath)) {
 			applicationHomeFolder = new File(applicationHomePath);
 		} else {
@@ -137,21 +137,23 @@ public class FileHelper {
 			applicationHomeFolder = new File(applicationHomePath, ".mashup_media");
 			applicationHomeFolder.mkdirs();
 			if (!applicationHomeFolder.isDirectory()) {
-				logger.error("Unable to create Mashup Media folder in the user home: " + applicationHomeFolder.getAbsolutePath());
+				logger.error("Unable to create Mashup Media folder in the user home: "
+						+ applicationHomeFolder.getAbsolutePath());
 				logger.error("Will default to temp directory but please set the system property MASHUP_MEDIA_HOME variable as files inside this folder are deleted regualary by the system.");
 				applicationHomePath = System.getProperty("java.io.tmpdir");
 				applicationHomeFolder = new File(applicationHomePath, ".mashup_media");
 			}
-			
+
 		}
-		
+
 		applicationHomeFolder.mkdirs();
-		
+
 		if (!applicationHomeFolder.isDirectory()) {
 			logger.error("Error creating application folder: " + applicationHomeFolder.getAbsolutePath());
-			throw new MashupMediaRuntimeException("Cannot proceed, unable to create the folder MASHUP_MEDIA_HOME: " + applicationHomeFolder.getAbsolutePath());			
+			throw new MashupMediaRuntimeException("Cannot proceed, unable to create the folder MASHUP_MEDIA_HOME: "
+					+ applicationHomeFolder.getAbsolutePath());
 		}
-		
+
 		return applicationHomeFolder;
 	}
 
@@ -232,6 +234,28 @@ public class FileHelper {
 	public static File getLibraryXmlFile(long libraryId) {
 		File file = new File(getLibraryFolder(libraryId), String.valueOf(libraryId));
 		return file;
+	}
+
+	private static File getVideoFolder(long libraryId, long videoId) {
+		File libraryFolder = FileHelper.getLibraryFolder(libraryId);
+		File videoFolder = new File(libraryFolder, String.valueOf(videoId));
+		return videoFolder;
+	}
+
+	public static void deleteProcessedVideo(long libraryId, long videoId) {
+
+		if (libraryId == 0 || videoId == 0) {
+			logger.info("Unable to delete video files from libray, libraryId = " + libraryId + ", videoId = " + videoId);
+			return;
+		}
+
+		File videoFolder = getVideoFolder(libraryId, videoId);
+//		FileUtils.deleteQuietly(videoFolder);
+		try {
+			FileUtils.deleteDirectory(videoFolder);
+		} catch (IOException e) {
+			logger.error("Error deleting folder: " + videoFolder.getAbsolutePath(), e);
+		}
 	}
 
 }

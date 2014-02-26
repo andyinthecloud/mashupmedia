@@ -6,12 +6,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.mashupmedia.dao.VideoDao;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
 import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Video;
+import org.mashupmedia.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager {
 
 	private final int VIDEOS_SAVE_AMOUNT_MAX_SIZE = 20;
+	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private VideoDao videoDao;
@@ -36,47 +39,75 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			videoDeriveTitleType = VideoDeriveTitleType.USE_FILE_NAME;
 		}
 
-		processVideos(videos, folder, videoDeriveTitleType, date, null);
+		processVideos(videos, folder, videoDeriveTitleType, date, null, library);
+		
+		// remove obsolete videos
+		removeObsoleteVideos(library, date);
+		
+		
+	}
+
+	protected void removeObsoleteVideos(VideoLibrary library, Date date) {
+		List<Video> videos = videoDao.getObsoleteVideos(library.getId(), date);
+		int totalDeletedVideos = videoDao.removeObsoleteVideos(library.getId(), date);
+		
+		for (Video video : videos) {
+			FileHelper.deleteProcessedVideo(library.getId(), video.getId());
+		}
+		
+		logger.info(totalDeletedVideos + " obsolete videos deleted.");
+		
+		
+		
 	}
 
 	protected void processVideos(List<Video> videos, File file, VideoDeriveTitleType videoDeriveTitleType, Date date,
-			String videoName) {
+			String videoDisplayTitle, VideoLibrary library) {
 		if (file.isDirectory()) {
-			if (StringUtils.isEmpty(videoName)) {
-				videoName = file.getName();
+			if (StringUtils.isEmpty(videoDisplayTitle)) {
+				videoDisplayTitle = file.getName();
 			} else {
-				videoName = videoName + "/" + file.getName();
+				videoDisplayTitle = videoDisplayTitle + "/" + file.getName();
 			}
 
 			File[] files = file.listFiles();
 
 			for (File childFile : files) {
-				processVideos(videos, childFile, videoDeriveTitleType, date, videoName);
+				processVideos(videos, childFile, videoDeriveTitleType, date, videoDisplayTitle, library);
 			}
 		}
 
 		if (videoDeriveTitleType == VideoDeriveTitleType.USE_FOLDER_NAME) {
-			videoName = file.getParentFile().getName();
+			videoDisplayTitle = file.getParentFile().getName();
 		} else if (videoDeriveTitleType == VideoDeriveTitleType.USE_FILE_NAME) {
-			videoName = file.getName();
+			videoDisplayTitle = file.getName();
 		} else {
-			videoName = videoName + "/" + file.getName();
+			videoDisplayTitle = videoDisplayTitle + "/" + file.getName();
 		}
 
-		Video video = new Video();
-		video.setDisplayTitle(videoName);
-		video.setEnabled(true);
-		video.setEncodeStatusType(EncodeStatusType.UNPROCESSED);
+//		Video video = videoDao.getVideoByDisplayTitle()
+		
+		
+		String path = file.getAbsolutePath();
+		Video video = videoDao.getVideoByPath(path);
+		if (video == null) {
+			video = new Video();
+			video.setLibrary(library);
+			video.setDisplayTitle(videoDisplayTitle);
+			video.setEnabled(true);
+			video.setEncodeStatusType(EncodeStatusType.UNPROCESSED);
 
-		video.setFileLastModifiedOn(file.lastModified());
-		video.setFileName(file.getName());
-		// video.setFormat(format);
-		video.setMediaType(MediaType.VIDEO);
-		video.setPath(file.getAbsolutePath());
-		video.setSearchText(videoName);
-		video.setSizeInBytes(file.length());
-		// video.setUniqueName(uniqueName);
-		video.setUpdatedOn(date);
+			video.setFileLastModifiedOn(file.lastModified());
+			video.setFileName(file.getName());
+			// video.setFormat(format);
+			video.setMediaType(MediaType.VIDEO);
+			video.setPath(path);
+			video.setSearchText(videoDisplayTitle);
+			video.setSizeInBytes(file.length());
+			// video.setUniqueName(uniqueName);			
+		}
+		
+		video.setUpdatedOn(date);		
 		videos.add(video);
 
 		boolean isSessionFlush = false;

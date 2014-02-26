@@ -28,7 +28,6 @@ public class Comment implements Serializable {
 	private Date updatedOn;
 	@ManyToOne(cascade = { CascadeType.PERSIST })
 	private Comment replyToComment;
-	private int rating;
 
 	public long getId() {
 		return id;
@@ -76,14 +75,6 @@ public class Comment implements Serializable {
 
 	public void setReplyToComment(Comment replyToComment) {
 		this.replyToComment = replyToComment;
-	}
-
-	public int getRating() {
-		return rating;
-	}
-
-	public void setRating(int rating) {
-		this.rating = rating;
 	}
 
 	@Override
@@ -140,8 +131,6 @@ public class Comment implements Serializable {
 		builder.append(updatedOn);
 		builder.append(", replyToComment=");
 		builder.append(replyToComment);
-		builder.append(", rating=");
-		builder.append(rating);
 		builder.append("]");
 		return builder.toString();
 	}

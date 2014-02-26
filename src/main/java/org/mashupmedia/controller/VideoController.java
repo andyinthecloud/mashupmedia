@@ -35,6 +35,6 @@ public class VideoController extends BaseController {
 
 	@Override
 	public String getPageTitleMessageKey() {
-		return "video.title";
+		return "list-videos.title";
 	}
 }
