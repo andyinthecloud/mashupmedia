@@ -40,7 +40,7 @@ public class FileHelper {
 
 		String fileName = String.valueOf(mediaItemId);
 		if (fileType == FileType.MEDIA_ITEM_STREAM_ENCODED) {
-			fileName += ".ogg";
+			fileName += ".encoded";
 		}
 
 		File mediaFile = new File(mediaFolder, fileName);
@@ -107,6 +107,33 @@ public class FileHelper {
 
 		return false;
 
+	}
+
+	public static boolean isSupportedVideo(String fileName) {
+		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
+		if (StringUtils.isEmpty(fileName)) {
+			return false;
+		}
+
+		if (fileName.endsWith(".mpeg")) {
+			return true;
+		} else if (fileName.endsWith(".mpg")) {
+			return true;
+		} else if (fileName.endsWith(".mp4")) {
+			return true;
+		} else if (fileName.endsWith(".ogm")) {
+			return true;
+		} else if (fileName.endsWith(".mkv")) {
+			return true;
+		} else if (fileName.endsWith(".avi")) {
+			return true;
+		} else if (fileName.endsWith(".wmv")) {
+			return true;
+		} else if (fileName.endsWith(".mov")) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public static String getFileExtension(String fileName) {
@@ -250,7 +277,12 @@ public class FileHelper {
 		}
 
 		File videoFolder = getVideoFolder(libraryId, videoId);
-//		FileUtils.deleteQuietly(videoFolder);
+
+		if (!videoFolder.isDirectory()) {
+			logger.debug("Unable to delete video folder: " + videoFolder.getAbsolutePath() + ". Does not exist.");
+			return;
+		}
+
 		try {
 			FileUtils.deleteDirectory(videoFolder);
 		} catch (IOException e) {

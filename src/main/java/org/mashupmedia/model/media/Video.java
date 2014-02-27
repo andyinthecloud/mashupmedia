@@ -10,7 +10,17 @@ import org.hibernate.search.annotations.Indexed;
 @Indexed
 @Cacheable
 @XmlRootElement
-public class Video extends MediaItem{
+public class Video extends MediaItem {
 	private static final long serialVersionUID = 8105872585865313104L;
+
+	private String remoteId;
+
+	public String getRemoteId() {
+		return remoteId;
+	}
+
+	public void setRemoteId(String remoteId) {
+		this.remoteId = remoteId;
+	}
 
 }

@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.Artist;
-import org.mashupmedia.restful.MediaWebService;
+import org.mashupmedia.restful.MusicWebService;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class AjaxRemoteMusicController {
 
 	@Autowired
 	@Qualifier("lastFm")
-	private MediaWebService mediaWebService;
+	private MusicWebService mediaWebService;
 
 	@Autowired
 	private MusicManager musicManager;

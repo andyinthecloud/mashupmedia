@@ -1,6 +1,7 @@
 package org.mashupmedia.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
@@ -10,14 +11,23 @@ import javax.persistence.Id;
 
 @Entity
 @Cacheable
-public class Configuration implements Serializable{
-		
+public class Configuration implements Serializable {
+
 	private static final long serialVersionUID = 713342154279495594L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)	
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String key;
 	private String value;
+	private Date createdOn;
+
+	public Date getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
+	}
 
 	public long getId() {
 		return id;
@@ -80,7 +90,5 @@ public class Configuration implements Serializable{
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

@@ -16,5 +16,11 @@ public interface VideoManager {
 	public VideoResolution getVideoResolution(long videoResolutionId);
 
 	public List<Video> getVideos();
+
+	public VideoResolution getVideoResolution(String name);
+
+	public Video getVideo(long videoId);
+
+	public void saveVideo(Video video);
 	
 }

@@ -162,7 +162,7 @@ public class StringHelper {
 	}
 
 	public static String formatTextToUrlParameter(String text) throws UnsupportedEncodingException {
-		text = StringUtils.trimToEmpty(text).toLowerCase();
+		text = StringUtils.trimToEmpty(text);
 		if (StringUtils.isEmpty(text)) {
 			return text;
 		}

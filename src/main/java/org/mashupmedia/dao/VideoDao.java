@@ -26,6 +26,12 @@ public interface VideoDao {
 	public List<Video> getObsoleteVideos(long librayId, Date date);
 
 	public Video getVideoByPath(String path);
+
+	public VideoResolution getVideoResolution(String name);
+
+	public int getTotalVideosWithSameName(String videoDisplayTitle);
+
+	public Video getVideo(long videoId);
 	
 	
 }

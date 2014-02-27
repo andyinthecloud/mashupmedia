@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 
-public abstract class AbstractMediaWebServiceImpl implements MediaWebService {
+public abstract class AbstractCachingVideoWebServiceImpl implements VideoWebService {
 	private Logger logger = Logger.getLogger(getClass());
 	
 	private Map<String, RemoteMediaMetaItem> remoteMediaCache = new HashMap<String, RemoteMediaMetaItem>();
@@ -27,21 +27,9 @@ public abstract class AbstractMediaWebServiceImpl implements MediaWebService {
 				return cachedRemoteMediaMetaItem;
 			}
 			
-			
-			
-//			if (MAXIMUM_SECONDS_IN_CACHE > secondsInCache) {
-//				return cachedRemoteMediaMetaItem;
-//			}
-
 			remoteMediaCache.remove(cachedRemoteMediaMetaItem);
 
-		}
-		
-//		if (cachedRemoteMediaMetaItem != null && cachedRemoteMediaMetaItem.isComplete()) {
-//			remoteMediaMetaItems.set(i, cachedRemoteMediaMetaItem);
-//			continue;
-//		}
-		
+		}		
 
 		return null;
 	}

@@ -1,9 +1,12 @@
 package org.mashupmedia.controller.configuration.llibrary;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.mashupmedia.editor.VideoResolutionEditor;
 import org.mashupmedia.model.library.VideoLibrary;
+import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.VideoResolution;
 import org.mashupmedia.service.VideoManager;
@@ -61,6 +64,12 @@ public class VideoLibraryController extends AbstractLibraryController {
 		videoLibrary.setEnabled(true);
 		Location location = new Location();
 		videoLibrary.setLocation(location);
+		videoLibrary.setVideoDeriveTitle(VideoDeriveTitleType.USE_FOLDER_AND_FILE_NAME.name());
+		
+		Set<VideoResolution> videoResolutions = new HashSet<VideoResolution>();
+		videoResolutions.add(videoManager.getVideoResolution("720p"));
+		videoResolutions.add(videoManager.getVideoResolution("480p"));		
+		videoLibrary.setVideoResolutions(videoResolutions);
 
 		libraryPage.setLibrary(videoLibrary);
 
@@ -71,6 +80,7 @@ public class VideoLibraryController extends AbstractLibraryController {
 		videoLibrary = (VideoLibrary) libraryManager.getLibrary(libraryId);
 		libraryPage.setLibrary(videoLibrary);
 		libraryPage.setExists(true);
+		
 		return libraryPage;
 	}
 }

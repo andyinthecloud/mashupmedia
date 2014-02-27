@@ -9,7 +9,7 @@
 
 		<c:otherwise>
 			<ul class="main-menu">
-				<c:forEach items="${videos}" var="videos">
+				<c:forEach items="${videos}" var="video">
 					<li><a 
 						href="<c:url value="/app/video/show/${video.id}/" />"><c:out value="${video.displayTitle}" /></a></li>
 				</c:forEach>

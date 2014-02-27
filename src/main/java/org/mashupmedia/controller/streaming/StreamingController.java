@@ -21,12 +21,14 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
+import org.mashupmedia.model.media.Song;
+import org.mashupmedia.model.media.Video;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.ConnectionManager.EncodeType;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.FileHelper.FileType;
+import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +106,12 @@ public class StreamingController {
 
 		if (encodeType == EncodeType.ENCODED || encodeType == EncodeType.BEST) {
 			if (mediaItem.getEncodeStatusType() == EncodeStatusType.ENCODED || mediaItem.getEncodeStatusType() == EncodeStatusType.PROCESSING) {
-				mediaContentType = MediaContentType.OGA;
+				if (mediaItem instanceof Song) {
+					mediaContentType = MediaContentType.OGA;	
+				} else if (mediaItem instanceof Video) {
+					mediaContentType = MediaContentType.VIDEO_WEBM;
+				}								
+				
 				fileType = FileType.MEDIA_ITEM_STREAM_ENCODED;
 				tempFile = FileHelper.createMediaFile(library.getId(), mediaItemId, fileType);
 			}

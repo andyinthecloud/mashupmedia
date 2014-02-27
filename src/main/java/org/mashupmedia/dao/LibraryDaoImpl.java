@@ -134,13 +134,22 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		deletePlaylistMediaQuery.setLong("libraryId", libraryId);
 		deletePlaylistMediaQuery.executeUpdate();
 
-		if (library instanceof MusicLibrary) {
-			Query deleteSongsQuery = sessionFactory.getCurrentSession().createQuery(
-					"delete Song where id in (select s.id from Song s where s.library.id = :libraryId)");
-			deleteSongsQuery.setLong("libraryId", libraryId);
-			deleteSongsQuery.executeUpdate();
-		}
+//		if (library instanceof MusicLibrary) {
+//			Query deleteSongsQuery = sessionFactory.getCurrentSession().createQuery(
+//					"delete Song where id in (select s.id from Song s where s.library.id = :libraryId)");
+//			deleteSongsQuery.setLong("libraryId", libraryId);
+//			deleteSongsQuery.executeUpdate();
+//		} else if (library instanceof VideoLibrary) {
+//			
+//		}
 
+		
+		Query deleteMediaItemsQuery = sessionFactory.getCurrentSession().createQuery(
+				"delete MediaItem where id in (select mi.id from MediaItem mi where mi.library.id = :libraryId)");
+		deleteMediaItemsQuery.setLong("libraryId", libraryId);
+		deleteMediaItemsQuery.executeUpdate();
+
+		
 		sessionFactory.getCurrentSession().evict(library);
 		library = getLibrary(libraryId);
 		sessionFactory.getCurrentSession().delete(library);

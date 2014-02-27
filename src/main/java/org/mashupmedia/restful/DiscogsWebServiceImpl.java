@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("discogs")
-public class DiscogsWebServiceImpl extends AbstractMediaWebServiceImpl {
+public class DiscogsWebServiceImpl extends AbstractCachingMusicWebServiceImpl {
 	private static final String PREPEND_CACHE_KEY_ARTIST = "artist_";
 	private static final int INTRODUCTION_MAX_LENGTH = 500;
 

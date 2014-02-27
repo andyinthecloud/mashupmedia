@@ -1,5 +1,7 @@
 package org.mashupmedia.service;
 
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.dao.ConfigurationDao;
 import org.mashupmedia.model.Configuration;
@@ -23,6 +25,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 
 	@Override
 	public void saveConfiguration(Configuration configuration) {
+		configuration.setCreatedOn(new Date());
 		configurationDao.saveConfiguration(configuration);
 	}
 

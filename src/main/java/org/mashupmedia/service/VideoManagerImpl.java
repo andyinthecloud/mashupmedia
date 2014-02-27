@@ -67,5 +67,21 @@ public class VideoManagerImpl implements VideoManager {
 		List<Video> videos = videoDao.getVideos(userGroupIds);
 		return videos;
 	}
+	
+	@Override
+	public VideoResolution getVideoResolution(String name) {
+		VideoResolution videoResolution = videoDao.getVideoResolution(name);
+		return videoResolution;
+	}
+	
+	@Override
+	public Video getVideo(long videoId) {
+		Video video = videoDao.getVideo(videoId);
+		return video;
+	}
 
+	@Override
+	public void saveVideo(Video video) {
+		videoDao.saveVideo(video);		
+	}
 }

@@ -21,6 +21,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import org.mashupmedia.web.remote.RemoteImage.RemoteImageType;
+
 public class RemoteMediaMetaItem implements Serializable {
 	private static final long serialVersionUID = 2688532085007514994L;
 	private String remoteId;
@@ -143,6 +145,19 @@ public class RemoteMediaMetaItem implements Serializable {
 		builder.append(remoteImages);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public RemoteImage getRemoteImage(RemoteImageType remoteImageType) {
+		if (remoteImages == null || remoteImages.isEmpty()) {
+			return null;
+		}
+
+		for (RemoteImage remoteImage : remoteImages) {
+			if (remoteImage.getRemoteImageType() == remoteImageType) {
+				return remoteImage;
+			}
+		}
+		return null;
 	}
 
 }

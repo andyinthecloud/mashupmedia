@@ -19,7 +19,7 @@ import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
-import org.mashupmedia.restful.MediaWebService;
+import org.mashupmedia.restful.MusicWebService;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.MediaManager;
@@ -72,7 +72,7 @@ public class AjaxMusicController extends AjaxBaseController {
 
 	@Autowired
 	@Qualifier("lastFm")
-	private MediaWebService mediaWebService;
+	private MusicWebService musicWebService;
 
 	@Autowired
 	private ConfigurationManager configurationManager;
@@ -114,7 +114,7 @@ public class AjaxMusicController extends AjaxBaseController {
 
 		RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
 		try {
-			remoteMediaMeta = mediaWebService.getArtistInformation(artist);
+			remoteMediaMeta = musicWebService.getArtistInformation(artist);
 			String remoteId = remoteMediaMeta.getRemoteId();
 
 			if (StringUtils.isNotBlank(remoteId)) {

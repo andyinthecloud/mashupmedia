@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 @Service("lastFm")
-public class LastFmWebServiceImpl extends AbstractMediaWebServiceImpl {
+public class LastFmMusicWebServiceImpl extends AbstractCachingMusicWebServiceImpl {
 	private final static String LASTFM_API_KEY = "lastfm.api.key";
 	private final static String LASTFM_API_ROOT_URL = "http://ws.audioscrobbler.com/2.0/";
 	private final static String LASTFM_API_ARTIST_INFO_URL = LASTFM_API_ROOT_URL + "?method=artist.getinfo";

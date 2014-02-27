@@ -127,5 +127,9 @@
 			value="/WEB-INF/jsp/tiles/video/list-videos.jsp" />
 	</definition>
 
+	<definition name="video" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/video/video.jsp" />
+	</definition>
 
 </tiles-definitions>

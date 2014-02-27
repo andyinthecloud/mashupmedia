@@ -14,6 +14,7 @@ import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Video;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,25 +41,22 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		}
 
 		processVideos(videos, folder, videoDeriveTitleType, date, null, library);
-		
+
 		// remove obsolete videos
 		removeObsoleteVideos(library, date);
-		
-		
+
 	}
 
 	protected void removeObsoleteVideos(VideoLibrary library, Date date) {
 		List<Video> videos = videoDao.getObsoleteVideos(library.getId(), date);
 		int totalDeletedVideos = videoDao.removeObsoleteVideos(library.getId(), date);
-		
+
 		for (Video video : videos) {
 			FileHelper.deleteProcessedVideo(library.getId(), video.getId());
 		}
-		
+
 		logger.info(totalDeletedVideos + " obsolete videos deleted.");
-		
-		
-		
+
 	}
 
 	protected void processVideos(List<Video> videos, File file, VideoDeriveTitleType videoDeriveTitleType, Date date,
@@ -77,6 +75,10 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			}
 		}
 
+		if (!FileHelper.isSupportedVideo(file.getName())) {
+			return;
+		}
+
 		if (videoDeriveTitleType == VideoDeriveTitleType.USE_FOLDER_NAME) {
 			videoDisplayTitle = file.getParentFile().getName();
 		} else if (videoDeriveTitleType == VideoDeriveTitleType.USE_FILE_NAME) {
@@ -85,15 +87,11 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			videoDisplayTitle = videoDisplayTitle + "/" + file.getName();
 		}
 
-//		Video video = videoDao.getVideoByDisplayTitle()
-		
-		
 		String path = file.getAbsolutePath();
 		Video video = videoDao.getVideoByPath(path);
 		if (video == null) {
 			video = new Video();
-			video.setLibrary(library);
-			video.setDisplayTitle(videoDisplayTitle);
+			video.setFormat(MediaContentType.VIDEO_WEBM.getDisplayText());
 			video.setEnabled(true);
 			video.setEncodeStatusType(EncodeStatusType.UNPROCESSED);
 
@@ -102,12 +100,22 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			// video.setFormat(format);
 			video.setMediaType(MediaType.VIDEO);
 			video.setPath(path);
-			video.setSearchText(videoDisplayTitle);
 			video.setSizeInBytes(file.length());
-			// video.setUniqueName(uniqueName);			
+			// video.setUniqueName(uniqueName);
 		}
-		
-		video.setUpdatedOn(date);		
+
+		video.setLibrary(library);
+
+		String searchText = videoDisplayTitle;
+
+		int totalVideosWithSameName = videoDao.getTotalVideosWithSameName(videoDisplayTitle);
+		if (totalVideosWithSameName > 0) {
+			String incrementValue = String.valueOf(totalVideosWithSameName);
+			videoDisplayTitle = videoDisplayTitle + "(" + incrementValue + ")";
+		}
+		video.setDisplayTitle(videoDisplayTitle);
+		video.setSearchText(searchText);
+		video.setUpdatedOn(date);
 		videos.add(video);
 
 		boolean isSessionFlush = false;

@@ -22,10 +22,26 @@ import java.io.Serializable;
 public class RemoteImage implements Serializable {
 	private static final long serialVersionUID = 3184293979709410926L;
 
+	public enum RemoteImageType {
+		POSTER, BACKDROP, STANDARD
+	}
+
 	private String thumbUrl;
 	private String imageUrl;
 	private int width;
 	private int height;
+	private RemoteImageType remoteImageType;
+
+	public RemoteImageType getRemoteImageType() {
+		if (remoteImageType == null) {
+			return RemoteImageType.STANDARD;
+		}
+		return remoteImageType;
+	}
+
+	public void setRemoteImageType(RemoteImageType remoteImageType) {
+		this.remoteImageType = remoteImageType;
+	}
 
 	public int getWidth() {
 		return width;

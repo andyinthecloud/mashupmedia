@@ -256,8 +256,8 @@ public class MediaItem implements Serializable {
 		return updatedOn;
 	}
 
-	public void setUpdatedOn(Date lastModified) {
-		this.updatedOn = lastModified;
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 
 	public long getSizeInBytes() {

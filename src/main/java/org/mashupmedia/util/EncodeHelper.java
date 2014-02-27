@@ -121,12 +121,12 @@ public class EncodeHelper {
 		return false;
 	}
 
-	public static void encodeAudioToHtml5(String pathToFfMpeg, File inputAudioFile, File outputAudioFile) throws IOException {
+	public static void encodeAudioToHtml5(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
 		
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
 		commands.add("-i");
-		commands.add(inputAudioFile.getAbsolutePath());
+		commands.add(inputFile.getAbsolutePath());
 		commands.add("-y");
 		commands.add("-f");
 		commands.add("ogg");
@@ -134,10 +134,42 @@ public class EncodeHelper {
 		commands.add("libvorbis");
 		commands.add("-ab");
 		commands.add("128k");
-		commands.add(outputAudioFile.getAbsolutePath());
+		commands.add(outputFile.getAbsolutePath());
 		
 		String outputText = ProcessHelper.callProcess(commands);
 		logger.info(outputText);
+	}
+
+	public static void encodeVideoToHtml5(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
+//		ffmpeg -i input.mov \
+//		  -acodec libvorbis -ac 2 -ab 96k -ar 44100 \
+//		  -b 345k -s 640x360 output.webm
+		
+		
+//		ffmpeg -i "INPUTFILE"  -b 1500k -vcodec libvpx -acodec libvorbis -ab 160000 -f webm -g 30 "OUTPUTFILE.webm"
+
+
+		
+		List<String> commands = new ArrayList<String>();
+		commands.add(pathToFfMpeg);
+		commands.add("-i");
+		commands.add(inputFile.getAbsolutePath());
+		commands.add("-b");
+		commands.add("1500k");
+		commands.add("-vcodec");
+		commands.add("libvpx");
+		commands.add("-acodec");
+		commands.add("libvorbis");
+		commands.add("-ab");
+		commands.add("160000");
+		commands.add("-f");
+		commands.add("webm");
+		commands.add("-g");
+		commands.add("30");
+		commands.add(outputFile.getAbsolutePath());
+		
+		String outputText = ProcessHelper.callProcess(commands);
+		logger.info(outputText);		
 	}
 	
 	

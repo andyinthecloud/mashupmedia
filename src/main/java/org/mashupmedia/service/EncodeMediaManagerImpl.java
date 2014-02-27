@@ -25,16 +25,16 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
+import org.mashupmedia.model.media.Song;
+import org.mashupmedia.model.media.Video;
 import org.mashupmedia.service.ConnectionManager.EncodeType;
 import org.mashupmedia.util.EncodeHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class EncodeMediaManagerImpl implements EncodeMediaManager {
 	private Logger logger = Logger.getLogger(getClass());
 	
@@ -66,27 +66,33 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 			if (encodeStatusType == EncodeStatusType.PROCESSING) {
 				logger.info("Media file is being encoded, exiting...");
 				return;
-			}
+			} 
 
 			mediaItem.setEncodeStatusType(EncodeStatusType.PROCESSING);
 			mediaManager.saveMediaItem(mediaItem);
 
-			logger.info("Starting to decode media file to ogg format");
+			logger.info("Starting to encode media file to html5 format");
 
 			Library library = mediaItem.getLibrary();
 
-			File inputAudioFile = connectionManager.getMediaItemStreamFile(mediaItemId, EncodeType.UNPROCESSED);
-			File outputAudioFile = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_STREAM_ENCODED);
-			boolean isDeleted = FileHelper.deleteFile(outputAudioFile);
+			File inputFile = connectionManager.getMediaItemStreamFile(mediaItemId, EncodeType.UNPROCESSED);
+			File outputFile = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_STREAM_ENCODED);
+			boolean isDeleted = FileHelper.deleteFile(outputFile);
 			
 			if (!isDeleted) {
-				logger.info("Exiting, unable to delete encoded media file: " + outputAudioFile.getAbsolutePath());
+				logger.info("Exiting, unable to delete encoded media file: " + outputFile.getAbsolutePath());
 				return;
 			}
 			
-			EncodeHelper.encodeAudioToHtml5(pathToFfMpeg, inputAudioFile, outputAudioFile);
+			if (mediaItem instanceof Song) {
+				EncodeHelper.encodeAudioToHtml5(pathToFfMpeg, inputFile, outputFile);	
+			} else if (mediaItem instanceof Video) {
+				EncodeHelper.encodeVideoToHtml5(pathToFfMpeg, inputFile, outputFile);	
+			}
+			
+			
 
-			logger.info("Media file decoded to ogg format");
+			logger.info("Media file decoded to html5 format");
 
 			mediaItem.setEncodeStatusType(EncodeStatusType.ENCODED);
 			mediaManager.saveMediaItem(mediaItem);
