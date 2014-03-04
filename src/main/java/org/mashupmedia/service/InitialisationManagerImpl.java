@@ -10,7 +10,6 @@ import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.EncodeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +27,9 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	
 	@Autowired
 	private VideoManager videoManager; 
+	
+	@Autowired
+	private EncodeManager encodeManager;
 	
 	@Override
 	public void initialiseApplication() {
@@ -48,7 +50,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 
 
 	private void initialiseEncoder() {
-		File ffMpegFile = EncodeHelper.findFFMpegExecutable();
+		File ffMpegFile = encodeManager.findFFMpegExecutable();
 		if (ffMpegFile == null) {
 			configurationManager.saveConfiguration(MashUpMediaConstants.IS_ENCODER_INSTALLED,
 					Boolean.FALSE.toString());
@@ -56,7 +58,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		}
 
 		try {
-			boolean isValid = EncodeHelper.isValidFfMpeg(ffMpegFile);
+			boolean isValid = encodeManager.isValidFfMpeg(ffMpegFile);
 			if (isValid) {
 				configurationManager.saveConfiguration(MashUpMediaConstants.IS_ENCODER_INSTALLED,
 						Boolean.TRUE.toString());

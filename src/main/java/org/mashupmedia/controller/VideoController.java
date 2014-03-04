@@ -75,7 +75,7 @@ public class VideoController extends BaseController {
 		}
 
 		String posterUrl = "/images/no-video-poster.png";
-		RemoteImage remoteImage = remoteMediaMetaItem.getRemoteImage(RemoteImageType.POSTER);
+		RemoteImage remoteImage = remoteMediaMetaItem.getRemoteImage(RemoteImageType.BACKDROP);
 		if (remoteImage != null) {
 			posterUrl = remoteImage.getImageUrl();
 		}

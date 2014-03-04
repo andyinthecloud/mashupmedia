@@ -28,7 +28,6 @@ import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Video;
 import org.mashupmedia.service.ConnectionManager.EncodeType;
-import org.mashupmedia.util.EncodeHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,17 +47,23 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 
 	@Autowired
 	private ConfigurationManager configurationManager;
+	
+	@Autowired
+	private EncodeManager encodeManager;
 
 	@Override
 	public synchronized void encodeMedia(long mediaItemId) {
 
+
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+
 		String pathToFfMpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
 		if (StringUtils.isBlank(pathToFfMpeg)) {
 			logger.info("Unable to encode media, ffmpeg is not configured.");
+			mediaItem.setEncodeStatusType(EncodeStatusType.ERROR);
+			mediaManager.saveMediaItem(mediaItem);
 			return;
 		}
-
-		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 
 		try {
 			EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
@@ -84,17 +89,22 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 				return;
 			}
 			
+			boolean hasError = false;
+			
 			if (mediaItem instanceof Song) {
-				EncodeHelper.encodeAudioToHtml5(pathToFfMpeg, inputFile, outputFile);	
+				hasError = encodeManager.encodeAudioToHtml5(pathToFfMpeg, inputFile, outputFile);	
 			} else if (mediaItem instanceof Video) {
-				EncodeHelper.encodeVideoToHtml5(pathToFfMpeg, inputFile, outputFile);	
+				hasError = encodeManager.encodeVideoToHtml5(pathToFfMpeg, inputFile, outputFile);	
 			}
 			
-			
+			if (hasError) {
+				logger.info("FFMpeg reported an error saving media file to html5 format");
+				mediaItem.setEncodeStatusType(EncodeStatusType.ERROR);								
+			} else {
+				logger.info("Media file decoded to html5 format");
+				mediaItem.setEncodeStatusType(EncodeStatusType.ENCODED);				
+			}
 
-			logger.info("Media file decoded to html5 format");
-
-			mediaItem.setEncodeStatusType(EncodeStatusType.ENCODED);
 			mediaManager.saveMediaItem(mediaItem);
 		} catch (Exception e) {
 			logger.error("Error encoding media item: " + mediaItemId, e);

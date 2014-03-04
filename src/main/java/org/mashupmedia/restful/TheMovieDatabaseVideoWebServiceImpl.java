@@ -133,6 +133,7 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 		String baseImageUrl = getBaseImageUrl();
 		
 		
+		
 		List<RemoteImage> remoteImages = new ArrayList<RemoteImage>();
 		
 		String posterImageUrl = StringUtils.trimToEmpty( jsonVideo.getString("poster_path"));

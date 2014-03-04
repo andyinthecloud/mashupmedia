@@ -9,14 +9,14 @@ $(document).ready(function(){
 //				m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer.m4v",
 //				ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer.ogv",
 //				webmv: "http://www.jplayer.org/video/webm/Big_Buck_Bunny_Trailer.webm",
-				webmv: "<c:url value="/app/video/play/${videoPage.video.id}" />",
+				m4v: "<c:url value="/app/video/play/${videoPage.video.id}" />",
 //				poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
 				poster: "<c:url value="${videoPage.posterUrl}" />"				
 			});
 		},
-		swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/2.4.0" />",
+		swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}" />",
 //		supplied: "webmv, ogv, m4v",
-		supplied: "webmv",
+		supplied: "m4v",
 		size: {
 			width: "640px",
 			height: "360px",

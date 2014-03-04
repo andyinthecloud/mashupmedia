@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.service.ConfigurationManager;
-import org.mashupmedia.util.EncodeHelper;
+import org.mashupmedia.service.EncodeManager;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.EncodingPage;
@@ -47,6 +47,9 @@ public class EncodingConfigurationController extends BaseController {
 
 	@Autowired
 	private ConfigurationManager configurationManager;
+	
+	@Autowired
+	private EncodeManager encodeManager;
 
 	@Override
 	public String getPageTitleMessageKey() {
@@ -65,15 +68,15 @@ public class EncodingConfigurationController extends BaseController {
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.GET)
 	public String getNetwork(Model model) {
 		EncodingPage encodingPage = new EncodingPage();
-		String ffMpegFolderPath = EncodeHelper.getFFMpegFolderPath();
+		String ffMpegFolderPath = encodeManager.getFFMpegFolderPath();
 		encodingPage.setFfmpegFolderPath(ffMpegFolderPath);
 
 		String ffMpegFilePath = "";
-		File ffMpegFile = EncodeHelper.findFFMpegExecutable();
+		File ffMpegFile = encodeManager.findFFMpegExecutable();
 		boolean isFfmpegValid = false;
 		if (ffMpegFile != null) {
 			try {
-				if (EncodeHelper.isValidFfMpeg(ffMpegFile)) {
+				if (encodeManager.isValidFfMpeg(ffMpegFile)) {
 					ffMpegFilePath = ffMpegFile.getAbsolutePath();
 					isFfmpegValid = true;
 				}

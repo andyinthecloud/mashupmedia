@@ -65,7 +65,7 @@ public class WebHelper {
 
 	public enum MediaContentType {
 		MP3("audio/mpeg", "mp3", "mp3"), OGA("audio/ogg", "oga", "oga"), UNSUPPORTED("audio/unsupported",
-				"unsupported", "unsupported"), VIDEO_WEBM("video/webm", "webmv", "webm");
+				"unsupported", "unsupported"), WEBM("video/webm", "webmv", "webm"), MP4("video/mp4", "m4v", "mp4");
 
 		private String mimeContentType;
 		private String jPlayerContentType;
@@ -141,7 +141,7 @@ public class WebHelper {
 		} else if (mediaFormat.equalsIgnoreCase("Free Lossless Audio Codec")) {
 			return MediaContentType.MP3;
 		} else if (mediaFormat.equalsIgnoreCase("webm")) {
-			return MediaContentType.VIDEO_WEBM;
+			return MediaContentType.WEBM;
 		} 
 
 		return defaultMediaContentType;

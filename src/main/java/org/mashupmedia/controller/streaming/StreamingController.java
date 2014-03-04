@@ -60,30 +60,35 @@ public class StreamingController {
 	private ConnectionManager connectionManager;
 
 	@RequestMapping(value = "/media/encoded/{mediaItemId}", method = RequestMethod.HEAD)
-	public ModelAndView getEncodedMediaStreamHead(@PathVariable("mediaItemId") final Long mediaItemId, Model model) throws Exception {
+	public ModelAndView getEncodedMediaStreamHead(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
+			throws Exception {
 		ModelAndView modelAndView = prepareModelAndView(mediaItemId, false, EncodeType.ENCODED);
 		return modelAndView;
 	}
 
 	@RequestMapping(value = "/media/encoded/{mediaItemId}", method = RequestMethod.GET)
-	public ModelAndView getEncodedMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model) throws Exception {
+	public ModelAndView getEncodedMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
+			throws Exception {
 		ModelAndView modelAndView = prepareModelAndView(mediaItemId, true, EncodeType.ENCODED);
 		return modelAndView;
 	}
 
 	@RequestMapping(value = "/media/unprocessed/{mediaItemId}", method = RequestMethod.HEAD)
-	public ModelAndView getMediaStreamHead(@PathVariable("mediaItemId") final Long mediaItemId, Model model) throws Exception {
+	public ModelAndView getMediaStreamHead(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
+			throws Exception {
 		ModelAndView modelAndView = prepareModelAndView(mediaItemId, false, EncodeType.UNPROCESSED);
 		return modelAndView;
 	}
 
 	@RequestMapping(value = "/media/unprocessed/{mediaItemId}", method = RequestMethod.GET)
-	public ModelAndView getMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model) throws Exception {
+	public ModelAndView getMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
+			throws Exception {
 		ModelAndView modelAndView = prepareModelAndView(mediaItemId, true, EncodeType.UNPROCESSED);
 		return modelAndView;
 	}
 
-	protected ModelAndView prepareModelAndView(final long mediaItemId, final boolean content, final EncodeType encodeType) throws Exception {
+	protected ModelAndView prepareModelAndView(final long mediaItemId, final boolean content,
+			final EncodeType encodeType) throws Exception {
 
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		Library library = mediaItem.getLibrary();
@@ -93,7 +98,7 @@ public class StreamingController {
 			String path = location.getPath();
 			path = LibraryHelper.getRemoteStreamingPath(path);
 			long remoteMediaItemId = NumberUtils.toLong(mediaItem.getPath());
-			
+
 			if (StringUtils.isNotBlank(path) && remoteMediaItemId > 0) {
 				return new ModelAndView(new RedirectView(path + "/" + remoteMediaItemId));
 			}
@@ -105,13 +110,14 @@ public class StreamingController {
 		File tempFile = new File(mediaItem.getPath());
 
 		if (encodeType == EncodeType.ENCODED || encodeType == EncodeType.BEST) {
-			if (mediaItem.getEncodeStatusType() == EncodeStatusType.ENCODED || mediaItem.getEncodeStatusType() == EncodeStatusType.PROCESSING) {
+			if (mediaItem.getEncodeStatusType() == EncodeStatusType.ENCODED
+					|| mediaItem.getEncodeStatusType() == EncodeStatusType.PROCESSING) {
 				if (mediaItem instanceof Song) {
-					mediaContentType = MediaContentType.OGA;	
+					mediaContentType = MediaContentType.MP3;
 				} else if (mediaItem instanceof Video) {
-					mediaContentType = MediaContentType.VIDEO_WEBM;
-				}								
-				
+					mediaContentType = MediaContentType.MP4;
+				}
+
 				fileType = FileType.MEDIA_ITEM_STREAM_ENCODED;
 				tempFile = FileHelper.createMediaFile(library.getId(), mediaItemId, fileType);
 			}
@@ -123,7 +129,8 @@ public class StreamingController {
 		ModelAndView modelAndView = new ModelAndView(new View() {
 
 			@Override
-			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
+					throws Exception {
 
 				// Check if file actually exists in filesystem.
 				if (!file.exists()) {

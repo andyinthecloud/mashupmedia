@@ -15,7 +15,7 @@
  *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mashupmedia.util;
+package org.mashupmedia.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,24 +23,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.util.FileHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class EncodeHelper {
+@Component
+public class EncodeManager {
 
 	private static final String FFMPEG_FOLDER_NAME = "ffmpeg";
 	private static final String FFMPEG_EXECUTABLE_NAME = "ffmpeg";
 	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh"};
 	private static final String FFMPEG_EXECUTABLE_LINK = "ffmpeg.txt";
 	
-	private static Logger logger = Logger.getLogger(EncodeHelper.class);
+	private Logger logger = Logger.getLogger(EncodeManager.class);
+	
+	@Autowired
+	private ProcessManager processManager;
 
-	public static String getFFMpegFolderPath() {
+	public String getFFMpegFolderPath() {
 		File ffMpegFolder = new File(FileHelper.getApplicationFolder(), FFMPEG_FOLDER_NAME);
 		return ffMpegFolder.getAbsolutePath();
 	}
 
-	public static File findFFMpegExecutable() {
+	public File findFFMpegExecutable() {
 		File ffMpegFolder = new File(getFFMpegFolderPath());
 		ffMpegFolder.mkdirs();
 		File ffMpegExecutableFile = findFFMpegExecutable(ffMpegFolder);
@@ -51,7 +58,7 @@ public class EncodeHelper {
 		return ffMpegExecutableFile;
 	}
 
-	private static File findFFMpegExecutable(File folder) {
+	private File findFFMpegExecutable(File folder) {
 		File[] files = folder.listFiles();
 		for (File file : files) {
 
@@ -70,7 +77,7 @@ public class EncodeHelper {
 		return null;
 	}
 
-	private static File getFfmpegExceutable(File file) {
+	private File getFfmpegExceutable(File file) {
 		String fileName = file.getName().toLowerCase();
 		if (!fileName.startsWith(FFMPEG_EXECUTABLE_NAME)) {
 			return null;
@@ -113,64 +120,83 @@ public class EncodeHelper {
 		return null;
 	}
 	
-	public static boolean isValidFfMpeg(File ffMpegExecutableFile) throws IOException {
-		String outputText = ProcessHelper.callProcess(ffMpegExecutableFile.getAbsolutePath());
-		if (outputText.contains(FFMPEG_EXECUTABLE_NAME)) {
-			return true;
-		}
-		return false;
+	public  boolean isValidFfMpeg(File ffMpegExecutableFile) throws IOException {
+		boolean isSuccessful = processManager.callProcess(ffMpegExecutableFile.getAbsolutePath());
+//		if (outputText.contains(FFMPEG_EXECUTABLE_NAME)) {
+//			return true;
+//		}
+		return isSuccessful;
 	}
 
-	public static void encodeAudioToHtml5(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
+	public  boolean encodeAudioToHtml5(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
 		
+		// ffmpeg -i input.wav -codec:a libmp3lame -b:a 192k output.mp3
+		
+		List<String> commands = new ArrayList<String>();
+		commands.add(pathToFfMpeg);
+		commands.add("-y");
+		commands.add("-i");
+		commands.add(inputFile.getAbsolutePath());
+		commands.add("-acodec");
+		commands.add("libmp3lame");
+		commands.add("-b:a");
+		commands.add("192k");
+		commands.add("-f");
+		commands.add("mp3");		
+		commands.add(outputFile.getAbsolutePath());
+		
+		boolean isSuccessful = processManager.callProcess(commands);
+//		logger.info(outputText);
+	
+//		boolean hasError = hasError(outputText);
+		return isSuccessful;		
+
+	}
+
+	public boolean encodeVideoToHtml5(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
+		
+// ffmpeg -i video.mp4 -y -vcodec libx264 -r 25 -b:v 1024k -ab 128k -ac 2 -async 1 -f mp4 video.encoded
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
 		commands.add("-i");
 		commands.add(inputFile.getAbsolutePath());
 		commands.add("-y");
-		commands.add("-f");
-		commands.add("ogg");
-		commands.add("-acodec");
-		commands.add("libvorbis");
+		commands.add("-vcodec");
+		commands.add("libx264");
+		commands.add("-r");
+		commands.add("25");
+		commands.add("-b:v");
+		commands.add("1024k");
 		commands.add("-ab");
 		commands.add("128k");
-		commands.add(outputFile.getAbsolutePath());
-		
-		String outputText = ProcessHelper.callProcess(commands);
-		logger.info(outputText);
-	}
-
-	public static void encodeVideoToHtml5(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
-//		ffmpeg -i input.mov \
-//		  -acodec libvorbis -ac 2 -ab 96k -ar 44100 \
-//		  -b 345k -s 640x360 output.webm
-		
-		
-//		ffmpeg -i "INPUTFILE"  -b 1500k -vcodec libvpx -acodec libvorbis -ab 160000 -f webm -g 30 "OUTPUTFILE.webm"
-
-
-		
-		List<String> commands = new ArrayList<String>();
-		commands.add(pathToFfMpeg);
-		commands.add("-i");
-		commands.add(inputFile.getAbsolutePath());
-		commands.add("-b");
-		commands.add("1500k");
-		commands.add("-vcodec");
-		commands.add("libvpx");
-		commands.add("-acodec");
-		commands.add("libvorbis");
-		commands.add("-ab");
-		commands.add("160000");
+		commands.add("-ac");
+		commands.add("2");
+		commands.add("-async");
+		commands.add("1");
 		commands.add("-f");
-		commands.add("webm");
-		commands.add("-g");
-		commands.add("30");
+		commands.add("mp4");		
 		commands.add(outputFile.getAbsolutePath());
 		
-		String outputText = ProcessHelper.callProcess(commands);
-		logger.info(outputText);		
+		boolean isSuccessful = processManager.callProcess(commands);
+//		logger.info(outputText);		
+		
+//		boolean hasError = hasError(outputText);
+		return isSuccessful;		
 	}
+	
+//	protected  boolean hasError(String text) {
+//		text = StringUtils.trimToEmpty(text);
+//		if (StringUtils.isEmpty(text)) {
+//			return false;
+//		}
+//		
+//		if (text.matches("^Error")) {
+//			return true;
+//		}
+//		
+//		return false;
+//		
+//	}
 	
 	
 //	public static void encodeAudioToHtml5(String pathToFfMpeg, File inputAudioFile, File outputAudioFile) throws IOException {

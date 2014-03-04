@@ -5,7 +5,7 @@ import java.io.File;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.ConnectionManager;
-import org.mashupmedia.util.EncodeHelper;
+import org.mashupmedia.service.EncodeManager;
 import org.mashupmedia.util.MessageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +22,9 @@ public class AjaxLocationController {
 
 	@Autowired
 	private ConfigurationManager configurationManager;
+	
+	@Autowired
+	private EncodeManager encodeManager;
 
 	@RequestMapping(value = "/ajax/check-folder-location", method = RequestMethod.POST)
 	public String checkFolderLocation(@RequestParam("path") String path, Model model) {
@@ -44,7 +47,7 @@ public class AjaxLocationController {
 		boolean isValid = false;
 		String ffmpegStatusText = MessageHelper.getMessage("encoding.ffmpeg.path.invalid");
 		String ffMpegFilePath = "";
-		File ffMpegFile = EncodeHelper.findFFMpegExecutable();
+		File ffMpegFile = encodeManager.findFFMpegExecutable();
 		if (ffMpegFile != null) {
 			ffMpegFilePath = ffMpegFile.getAbsolutePath();
 			ffmpegStatusText = MessageHelper.getMessage("encoding.ffmpeg.path.valid");
