@@ -91,7 +91,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		Video video = videoDao.getVideoByPath(path);
 		if (video == null) {
 			video = new Video();
-			video.setFormat(MediaContentType.MP4.getDisplayText());
+			video.setFormat(MediaContentType.WEBM.getDisplayText());
 			video.setEnabled(true);
 			video.setEncodeStatusType(EncodeStatusType.UNPROCESSED);
 

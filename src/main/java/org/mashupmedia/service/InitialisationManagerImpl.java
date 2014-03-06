@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.encode.FfMpegManager;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
@@ -29,7 +30,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	private VideoManager videoManager; 
 	
 	@Autowired
-	private EncodeManager encodeManager;
+	private FfMpegManager encodeManager;
 	
 	@Override
 	public void initialiseApplication() {

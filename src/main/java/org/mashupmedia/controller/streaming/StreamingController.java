@@ -115,7 +115,7 @@ public class StreamingController {
 				if (mediaItem instanceof Song) {
 					mediaContentType = MediaContentType.MP3;
 				} else if (mediaItem instanceof Video) {
-					mediaContentType = MediaContentType.MP4;
+					mediaContentType = MediaContentType.WEBM;
 				}
 
 				fileType = FileType.MEDIA_ITEM_STREAM_ENCODED;

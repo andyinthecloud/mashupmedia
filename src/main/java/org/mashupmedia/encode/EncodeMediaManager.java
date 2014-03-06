@@ -15,7 +15,7 @@
  *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mashupmedia.service;
+package org.mashupmedia.encode;
 
 
 

@@ -3,9 +3,9 @@ package org.mashupmedia.controller.ajax;
 import java.io.File;
 
 import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.encode.FfMpegManager;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.ConnectionManager;
-import org.mashupmedia.service.EncodeManager;
 import org.mashupmedia.util.MessageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +24,7 @@ public class AjaxLocationController {
 	private ConfigurationManager configurationManager;
 	
 	@Autowired
-	private EncodeManager encodeManager;
+	private FfMpegManager encodeManager;
 
 	@RequestMapping(value = "/ajax/check-folder-location", method = RequestMethod.POST)
 	public String checkFolderLocation(@RequestParam("path") String path, Model model) {

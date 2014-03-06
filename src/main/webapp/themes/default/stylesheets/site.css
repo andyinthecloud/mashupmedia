@@ -160,6 +160,9 @@ body.default div.panel {
 	opacity: 0.8; /* good browsers: FF, safari, opera */
 }
 
+body.video div.panel {
+}
+
 body.music div.panel {
 }
 
@@ -196,6 +199,10 @@ div.panel form {
 
 div.sub-panel {
 	padding: 10px;
+}
+
+div.video {
+	
 }
 
 div.music-sub-panel {
@@ -598,6 +605,7 @@ ul.ui-autocomplete {
 	padding-top: 5px;
 	font-size: 80%;
 }
+
 
 #top-bar-music-player div.songs {
 	clear: both;

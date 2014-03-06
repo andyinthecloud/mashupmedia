@@ -15,7 +15,7 @@
  *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mashupmedia.service;
+package org.mashupmedia.encode;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,14 +30,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EncodeManager {
+public class FfMpegManager {
 
 	private static final String FFMPEG_FOLDER_NAME = "ffmpeg";
 	private static final String FFMPEG_EXECUTABLE_NAME = "ffmpeg";
 	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh"};
 	private static final String FFMPEG_EXECUTABLE_LINK = "ffmpeg.txt";
 	
-	private Logger logger = Logger.getLogger(EncodeManager.class);
+	private Logger logger = Logger.getLogger(FfMpegManager.class);
 	
 	@Autowired
 	private ProcessManager processManager;
@@ -113,31 +113,28 @@ public class EncodeManager {
 				return file;
 			}
 		}
-		
-
-		
 
 		return null;
 	}
 	
 	public  boolean isValidFfMpeg(File ffMpegExecutableFile) throws IOException {
-		boolean isSuccessful = processManager.callProcess(ffMpegExecutableFile.getAbsolutePath());
-//		if (outputText.contains(FFMPEG_EXECUTABLE_NAME)) {
-//			return true;
-//		}
-		return isSuccessful;
+		String outputText = processManager.callProcess(ffMpegExecutableFile.getAbsolutePath());
+		if (outputText.contains(FFMPEG_EXECUTABLE_NAME)) {
+			return true;
+		}
+		
+		return false;
 	}
 
-	public  boolean encodeAudioToHtml5(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
+	public String encodeAudioToMp3(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
 		
-		// ffmpeg -i input.wav -codec:a libmp3lame -b:a 192k output.mp3
 		
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
 		commands.add("-y");
 		commands.add("-i");
 		commands.add(inputFile.getAbsolutePath());
-		commands.add("-acodec");
+		commands.add("-codec:a");
 		commands.add("libmp3lame");
 		commands.add("-b:a");
 		commands.add("192k");
@@ -145,73 +142,61 @@ public class EncodeManager {
 		commands.add("mp3");		
 		commands.add(outputFile.getAbsolutePath());
 		
-		boolean isSuccessful = processManager.callProcess(commands);
-//		logger.info(outputText);
-	
-//		boolean hasError = hasError(outputText);
-		return isSuccessful;		
-
+		String outputText = processManager.callProcess(commands);
+		return outputText;
 	}
 
-	public boolean encodeVideoToHtml5(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
+	public String encodeVideoToMp4(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
 		
-// ffmpeg -i video.mp4 -y -vcodec libx264 -r 25 -b:v 1024k -ab 128k -ac 2 -async 1 -f mp4 video.encoded
+		// ffmpeg -y -i test.avi -c:v libx264 -preset:v veryfast -strict experimental -c:a aac -b:a 240k -f mp4 output.encoded
+		
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
+		commands.add("-y");
 		commands.add("-i");
 		commands.add(inputFile.getAbsolutePath());
-		commands.add("-y");
-		commands.add("-vcodec");
+		commands.add("-c:v");
 		commands.add("libx264");
-		commands.add("-r");
-		commands.add("25");
-		commands.add("-b:v");
-		commands.add("1024k");
-		commands.add("-ab");
-		commands.add("128k");
-		commands.add("-ac");
-		commands.add("2");
-		commands.add("-async");
-		commands.add("1");
+		commands.add("-preset:v");
+		commands.add("veryfast");
+		commands.add("-strict");
+		commands.add("experimental");
+		commands.add("-c:a");
+		commands.add("aac");
+		commands.add("-b:a");
+		commands.add("240k");
 		commands.add("-f");
 		commands.add("mp4");		
 		commands.add(outputFile.getAbsolutePath());
 		
-		boolean isSuccessful = processManager.callProcess(commands);
-//		logger.info(outputText);		
-		
-//		boolean hasError = hasError(outputText);
-		return isSuccessful;		
+		String outputText = processManager.callProcess(commands);
+		return outputText;
 	}
 	
-//	protected  boolean hasError(String text) {
-//		text = StringUtils.trimToEmpty(text);
-//		if (StringUtils.isEmpty(text)) {
-//			return false;
-//		}
-//		
-//		if (text.matches("^Error")) {
-//			return true;
-//		}
-//		
-//		return false;
-//		
-//	}
 	
+	public String encodeVideoToWebM(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
+		
+		// ffmpeg -i input.mp4 -c:v libvpx -b:v 1M -c:a libvorbis -qscale:a 5 output.webm
+		
+		List<String> commands = new ArrayList<String>();
+		commands.add(pathToFfMpeg);
+		commands.add("-y");
+		commands.add("-i");
+		commands.add(inputFile.getAbsolutePath());
+		commands.add("-c:v");
+		commands.add("libvpx");
+		commands.add("-b:v");
+		commands.add("1M");
+		commands.add("-c:a");
+		commands.add("libvorbis");
+		commands.add("-qscale:a");
+		commands.add("5");
+		commands.add("-f");
+		commands.add("webm");		
+		commands.add(outputFile.getAbsolutePath());
+		
+		String outputText = processManager.callProcess(commands);
+		return outputText;
+	}
 	
-//	public static void encodeAudioToHtml5(String pathToFfMpeg, File inputAudioFile, File outputAudioFile) throws IOException {
-//		
-//		List<String> commands = new ArrayList<String>();
-//		commands.add(pathToFfMpeg);
-//		commands.add("-i");
-//		commands.add(inputAudioFile.getAbsolutePath());
-//		commands.add("-b:a");
-//		commands.add("160k");
-//		commands.add(outputAudioFile.getAbsolutePath());
-//		
-//		String outputText = ProcessHelper.callProcess(commands);
-//		logger.info(outputText);
-//	}
-	
-
 }

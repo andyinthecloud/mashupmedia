@@ -25,8 +25,8 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.controller.BaseController;
+import org.mashupmedia.encode.FfMpegManager;
 import org.mashupmedia.service.ConfigurationManager;
-import org.mashupmedia.service.EncodeManager;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.EncodingPage;
@@ -49,7 +49,7 @@ public class EncodingConfigurationController extends BaseController {
 	private ConfigurationManager configurationManager;
 	
 	@Autowired
-	private EncodeManager encodeManager;
+	private FfMpegManager encodeManager;
 
 	@Override
 	public String getPageTitleMessageKey() {

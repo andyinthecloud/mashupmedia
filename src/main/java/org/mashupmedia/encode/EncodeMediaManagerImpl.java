@@ -15,7 +15,7 @@
  *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mashupmedia.service;
+package org.mashupmedia.encode;
 
 import java.io.File;
 
@@ -27,13 +27,16 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Video;
+import org.mashupmedia.service.ConfigurationManager;
+import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.ConnectionManager.EncodeType;
+import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class EncodeMediaManagerImpl implements EncodeMediaManager {
 	private Logger logger = Logger.getLogger(getClass());
 	
@@ -49,7 +52,7 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 	private ConfigurationManager configurationManager;
 	
 	@Autowired
-	private EncodeManager encodeManager;
+	private FfMpegManager encodeManager;
 
 	@Override
 	public synchronized void encodeMedia(long mediaItemId) {
@@ -89,12 +92,19 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 				return;
 			}
 			
-			boolean hasError = false;
+			String outputText = null;
 			
 			if (mediaItem instanceof Song) {
-				hasError = encodeManager.encodeAudioToHtml5(pathToFfMpeg, inputFile, outputFile);	
+				outputText = encodeManager.encodeAudioToMp3(pathToFfMpeg, inputFile, outputFile);	
 			} else if (mediaItem instanceof Video) {
-				hasError = encodeManager.encodeVideoToHtml5(pathToFfMpeg, inputFile, outputFile);	
+//				outputText = encodeManager.encodeVideoToMp4(pathToFfMpeg, inputFile, outputFile);	
+				outputText = encodeManager.encodeVideoToWebM(pathToFfMpeg, inputFile, outputFile);	
+			}
+			
+			outputText = StringUtils.trimToEmpty(outputText);
+			boolean hasError = false;
+			if (outputText.matches("^Error")) {
+				hasError = true;
 			}
 			
 			if (hasError) {

@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public abstract class BaseController {
 	
 	protected final static String MODEL_KEY_HAS_ERRORS = "hasErrors";
+	protected final static String MODEL_KEY_BREADCRUMBS = "breadcrumbs";
+	protected final static String MODEL_KEY_HEAD_PAGE_TITLE = "headPageTitle";
 
 	@Autowired
 	private PlaylistManager playlistManager;
@@ -73,7 +75,7 @@ public abstract class BaseController {
 		return false;
 	}
 	
-	@ModelAttribute("breadcrumbs")
+	@ModelAttribute(MODEL_KEY_BREADCRUMBS)
 	public List<Breadcrumb> populateBreadcrumbs() {
 		List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();
 		breadcrumbs.add(getHomeBreadcrumb());
@@ -85,7 +87,7 @@ public abstract class BaseController {
 	
 	public abstract String getPageTitleMessageKey();
 	
-	@ModelAttribute("headPageTitle")
+	@ModelAttribute(MODEL_KEY_HEAD_PAGE_TITLE)
 	public String populateHeadPageTitle() {
 		StringBuilder titleBuilder = new StringBuilder(MessageHelper.getMessage("page.default.title.prefix"));
 		titleBuilder.append(" ");

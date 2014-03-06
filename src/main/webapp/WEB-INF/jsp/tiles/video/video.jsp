@@ -6,17 +6,16 @@ $(document).ready(function(){
 	$("#jquery_jplayer_1").jPlayer({
 		ready: function () {
 			$(this).jPlayer("setMedia", {
-//				m4v: "http://www.jplayer.org/video/m4v/Big_Buck_Bunny_Trailer.m4v",
-//				ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer.ogv",
-//				webmv: "http://www.jplayer.org/video/webm/Big_Buck_Bunny_Trailer.webm",
-				m4v: "<c:url value="/app/video/play/${videoPage.video.id}" />",
-//				poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
+				
+				<c:forEach items="${videoPage.suppliedVideoFormats}" var="suppliedVideoFormat">
+				${suppliedVideoFormat}: "<c:url value="/app/video/play/${videoPage.video.id}?format=${suppliedVideoFormat}" />",
+				</c:forEach>
+				
 				poster: "<c:url value="${videoPage.posterUrl}" />"				
 			});
 		},
 		swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}" />",
-//		supplied: "webmv, ogv, m4v",
-		supplied: "m4v",
+		supplied: "${videoPage.suppliedVideoFormatsValue}",
 		size: {
 			width: "640px",
 			height: "360px",
@@ -25,17 +24,29 @@ $(document).ready(function(){
 		smoothPlayBar: true,
 		keyEnabled: true
 	});
-	
-	
-	
-
-
 });
 </script>
 
+<jsp:include page="/WEB-INF/jsp/inc/remote-video-info-js.jsp" />
 
 <div class="sub-panel">
 
+	<h1>
+		<c:out value="${videoPage.video.displayTitle}" />
+	</h1>
+
+	<div id="remote">
+		<a class="arrow-show-hide" href="javascript:void(0)"> <img src="<c:url value="/images/arrow-down.png" />" /></a>
+		<div class="profile">${videoPage.remoteMediaMetaItem.introduction}</div>
+		<div class="images"></div>
+
+		<div class="disclaimer">
+			<spring:message code="music.artists.remote" />
+			<a href="http://www.last.fm" target="_blank" title=""><img title="last.fm" src="<c:url value="/images/lastfm.png" />" /></a>. <a class="incorrect"
+				href="javascript:;"><spring:message code="music.artists.remote.correct" /></a> | <a
+				href="<c:url value="/app/video/show/${videoPage.video.id}?reencode=true" />"><spring:message code="video.re-encode" /></a>
+		</div>
+	</div>
 
 	<div id="jp_container_1" class="jp-video jp-video-360p">
 		<div class="jp-type-single">
@@ -54,7 +65,7 @@ $(document).ready(function(){
 					<div class="jp-duration"></div>
 					<div class="jp-title">
 						<ul>
-							<li>Big Buck Bunny Trailer</li>
+							<li>${videoPage.video.displayTitle}</li>
 						</ul>
 					</div>
 					<div class="jp-controls-holder">

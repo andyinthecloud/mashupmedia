@@ -5,12 +5,13 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.mashupmedia.model.media.Video;
 import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
+import org.mashupmedia.model.media.Video;
 import org.mashupmedia.restful.VideoWebService;
 import org.mashupmedia.service.VideoManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.MessageHelper;
+import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.VideoPage;
 import org.mashupmedia.web.remote.RemoteImage;
@@ -33,7 +34,7 @@ public class VideoController extends BaseController {
 
 	@Autowired
 	private VideoManager videoManager;
-	
+
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 
@@ -43,36 +44,48 @@ public class VideoController extends BaseController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.video"), "/app/video");
+		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.videos"), "/app/videos");
 		breadcrumbs.add(breadcrumb);
 
 	}
 
 	@Override
 	public String getPageTitleMessageKey() {
-		return "list-videos.title";
-	}
-
-	@RequestMapping(method = RequestMethod.GET)
-	public String handleGetVideoList(Model model) {
-		List<Video> videos = videoManager.getVideos();
-		model.addAttribute("videos", videos);
-		return "list-videos";
+		return "video.title";
 	}
 
 	@RequestMapping(value = "/show/{videoId}", method = RequestMethod.GET)
-	public String handleGetVideo(@PathVariable("videoId") Long videoId, Model model) {
-		VideoPage videoPage = new VideoPage();
+	public String handleGetVideo(@PathVariable("videoId") Long videoId, @RequestParam(value = "reencode", required = false) Boolean isForceReencode, Model model) {
 
 		Video video = videoManager.getVideo(videoId);
+		
+		if (isForceReencode == null) {
+			isForceReencode = false;
+		}
+
+		if (isForceReencode) {
+			video.setEncodeStatusType(EncodeStatusType.OVERRIDE);
+			videoManager.saveVideo(video);
+			encodeMediaItemTaskManager.encodeMediaItem(videoId);
+		}
+
+		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
+		Breadcrumb breadcrumb = new Breadcrumb(video.getDisplayTitle());
+		breadcrumbs.add(breadcrumb);
+		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
+		
+		String headPageTitle = populateHeadPageTitle() + " " + video.getDisplayTitle();
+		model.addAttribute(MODEL_KEY_HEAD_PAGE_TITLE, headPageTitle);
+		
+		VideoPage videoPage = new VideoPage();
+		videoPage.setSuppliedVideoFormats(new String[] { MediaContentType.WEBM.getjPlayerContentType() });
 		videoPage.setVideo(video);
 
 		RemoteMediaMetaItem remoteMediaMetaItem = getRemoteMediaMetaItem(videoId);
-		String summary = StringUtils.trimToEmpty(video.getSummary());
-		if (StringUtils.isEmpty(summary) && remoteMediaMetaItem != null) {
-			video.setSummary(summary);
-			videoManager.saveVideo(video);
-		}
+		if (remoteMediaMetaItem == null) {
+			remoteMediaMetaItem = new RemoteMediaMetaItem();
+		}		
+		videoPage.setRemoteMediaMetaItem(remoteMediaMetaItem);
 
 		String posterUrl = "/images/no-video-poster.png";
 		RemoteImage remoteImage = remoteMediaMetaItem.getRemoteImage(RemoteImageType.BACKDROP);
@@ -114,22 +127,17 @@ public class VideoController extends BaseController {
 
 	}
 
-	
 	@RequestMapping(value = "/play/{videoId}", method = RequestMethod.GET)
-	public String handlePlayVideo(@PathVariable("videoId") Long videoId, @RequestParam(value="resolution", required = false) String resolution, Model model) {
+	public String handlePlayVideo(@PathVariable("videoId") Long videoId,
+			 Model model) {
 		Video video = videoManager.getVideo(videoId);
+
 		EncodeStatusType encodeStatusType = video.getEncodeStatusType();
 		if (encodeStatusType != EncodeStatusType.ENCODED) {
 			encodeMediaItemTaskManager.encodeMediaItem(videoId);
 		}
-		
-//		video.setEncodeStatusType(EncodeStatusType.PROCESSING);
-//		videoManager.saveVideo(video);
-		
-		
-//		return "forward:/app/streaming/media/encoded/" + videoId;
+
 		return "redirect:/app/streaming/media/encoded/" + videoId;
-		
 	}
 
 }

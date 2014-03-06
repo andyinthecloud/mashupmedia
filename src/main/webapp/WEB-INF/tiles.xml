@@ -128,6 +128,7 @@
 	</definition>
 
 	<definition name="video" extends="home">
+		<put-attribute name="bodyClass" value="video" />	
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/video/video.jsp" />
 	</definition>
