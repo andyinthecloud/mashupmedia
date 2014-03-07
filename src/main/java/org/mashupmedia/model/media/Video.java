@@ -14,7 +14,34 @@ public class Video extends MediaItem {
 	private static final long serialVersionUID = 8105872585865313104L;
 
 	private String remoteId;
-	private boolean ignoreRemoteContent; 
+	private boolean ignoreRemoteContent;
+	private String tagline;
+	private float rating;
+	private double runtime;
+
+	public String getTagline() {
+		return tagline;
+	}
+
+	public void setTagline(String tagline) {
+		this.tagline = tagline;
+	}
+
+	public float getRating() {
+		return rating;
+	}
+
+	public void setRating(float rating) {
+		this.rating = rating;
+	}
+
+	public double getRuntime() {
+		return runtime;
+	}
+
+	public void setRuntime(double runtime) {
+		this.runtime = runtime;
+	}
 
 	public boolean isIgnoreRemoteContent() {
 		return ignoreRemoteContent;

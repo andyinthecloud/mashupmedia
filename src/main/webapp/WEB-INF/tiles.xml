@@ -122,12 +122,18 @@
 		</put-attribute>
 	</definition>
 
-	<definition name="list-videos" extends="home">
+
+	<definition name="video" extends="home">
+		<put-attribute name="topBar"
+			value="/WEB-INF/jsp/tiles/video/video-top-bar.jsp" />
+	</definition>
+
+	<definition name="list-videos" extends="video">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/video/list-videos.jsp" />
 	</definition>
 
-	<definition name="video" extends="home">
+	<definition name="show-video" extends="video">
 		<put-attribute name="bodyClass" value="video" />	
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/video/video.jsp" />

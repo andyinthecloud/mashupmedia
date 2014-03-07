@@ -160,12 +160,6 @@ body.default div.panel {
 	opacity: 0.8; /* good browsers: FF, safari, opera */
 }
 
-body.video div.panel {
-}
-
-body.music div.panel {
-}
-
 
 #login-panel {
 	padding: 30px;
@@ -199,10 +193,6 @@ div.panel form {
 
 div.sub-panel {
 	padding: 10px;
-}
-
-div.video {
-	
 }
 
 div.music-sub-panel {
