@@ -82,8 +82,8 @@ public class VideoController extends BaseController {
 		videoPage.setVideo(video);
 
 		RemoteMediaMetaItem remoteMediaMetaItem = getRemoteMediaMetaItem(videoId);
-		if (remoteMediaMetaItem == null) {
-			remoteMediaMetaItem = new RemoteMediaMetaItem();
+		if (remoteMediaMetaItem != null && !video.isIgnoreRemoteContent()) {
+			video.setSummary(remoteMediaMetaItem.getIntroduction());
 		}		
 		videoPage.setRemoteMediaMetaItem(remoteMediaMetaItem);
 

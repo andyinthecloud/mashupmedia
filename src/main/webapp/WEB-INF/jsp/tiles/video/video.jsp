@@ -37,7 +37,7 @@ $(document).ready(function(){
 
 	<div id="remote">
 		<a class="arrow-show-hide" href="javascript:void(0)"> <img src="<c:url value="/images/arrow-down.png" />" /></a>
-		<div class="profile">${videoPage.remoteMediaMetaItem.introduction}</div>
+		<div class="profile">${videoPage.video.summary}</div>
 		<div class="images"></div>
 
 		<div class="disclaimer">

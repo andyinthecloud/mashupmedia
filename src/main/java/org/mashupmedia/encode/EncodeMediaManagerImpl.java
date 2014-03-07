@@ -33,6 +33,7 @@ import org.mashupmedia.service.ConnectionManager.EncodeType;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
+import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -92,15 +93,15 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 				return;
 			}
 			
-			String outputText = null;
+			MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
 			
 			if (mediaItem instanceof Song) {
-				outputText = encodeManager.encodeAudioToMp3(pathToFfMpeg, inputFile, outputFile);	
+				mediaContentType = MediaContentType.MP3;
 			} else if (mediaItem instanceof Video) {
-//				outputText = encodeManager.encodeVideoToMp4(pathToFfMpeg, inputFile, outputFile);	
-				outputText = encodeManager.encodeVideoToWebM(pathToFfMpeg, inputFile, outputFile);	
+				mediaContentType = MediaContentType.WEBM;
 			}
 			
+			String outputText = encodeManager.encodeMediaItem(pathToFfMpeg, inputFile, outputFile, mediaItemId, mediaContentType);			
 			outputText = StringUtils.trimToEmpty(outputText);
 			boolean hasError = false;
 			if (outputText.matches("^Error")) {

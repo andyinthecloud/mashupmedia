@@ -26,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,11 +35,12 @@ public class FfMpegManager {
 
 	private static final String FFMPEG_FOLDER_NAME = "ffmpeg";
 	private static final String FFMPEG_EXECUTABLE_NAME = "ffmpeg";
-	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh"};
+	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh" };
 	private static final String FFMPEG_EXECUTABLE_LINK = "ffmpeg.txt";
-	
+	private static final long FAKE_MEDIA_ID = -1;
+
 	private Logger logger = Logger.getLogger(FfMpegManager.class);
-	
+
 	@Autowired
 	private ProcessManager processManager;
 
@@ -90,22 +92,22 @@ public class FfMpegManager {
 		if (fileName.equalsIgnoreCase(FFMPEG_EXECUTABLE_LINK)) {
 			String link = null;
 			try {
-				link = StringUtils.trimToEmpty(FileUtils.readFileToString(file));				
+				link = StringUtils.trimToEmpty(FileUtils.readFileToString(file));
 			} catch (IOException e) {
 				logger.error("Unable to read link file", e);
 				return null;
 			}
-			
+
 			if (StringUtils.isEmpty(link)) {
 				return null;
 			}
-			
+
 			file = new File(link);
 			if (file.exists()) {
 				return file;
 			}
 		}
-		
+
 		String fileExtension = FileHelper.getFileExtension(fileName);
 
 		for (String ffmpegExecutableFileExtension : FFMPEG_EXECUTABLE_EXTENSIONS) {
@@ -116,19 +118,38 @@ public class FfMpegManager {
 
 		return null;
 	}
-	
-	public  boolean isValidFfMpeg(File ffMpegExecutableFile) throws IOException {
-		String outputText = processManager.callProcess(ffMpegExecutableFile.getAbsolutePath());
+
+	public boolean isValidFfMpeg(File ffMpegExecutableFile) throws IOException {
+		String outputText = processManager.callProcess(ffMpegExecutableFile.getAbsolutePath(), FAKE_MEDIA_ID,
+				MediaContentType.UNSUPPORTED);
 		if (outputText.contains(FFMPEG_EXECUTABLE_NAME)) {
 			return true;
 		}
-		
+
 		return false;
 	}
 
-	public String encodeAudioToMp3(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
-		
-		
+	public String encodeMediaItem(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId,
+			MediaContentType mediaContentType) throws IOException {
+		String outputText = null;
+		if (mediaContentType == MediaContentType.MP3) {
+			outputText = encodeAudioToMp3(pathToFfMpeg, inputFile, outputFile, mediaItemId);
+		} else if (mediaContentType == MediaContentType.MP4) {
+			outputText = encodeVideoToMp4(pathToFfMpeg, inputFile, outputFile, mediaItemId);
+		} else if (mediaContentType == MediaContentType.WEBM) {
+			outputText = encodeVideoToWebM(pathToFfMpeg, inputFile, outputFile, mediaItemId);
+		} else {
+			outputText = mediaContentType.name() + " not supported";
+			logger.info(outputText);
+		}
+
+		return outputText;
+
+	}
+
+	private String encodeAudioToMp3(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
+			throws IOException {
+
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
 		commands.add("-y");
@@ -139,17 +160,19 @@ public class FfMpegManager {
 		commands.add("-b:a");
 		commands.add("192k");
 		commands.add("-f");
-		commands.add("mp3");		
+		commands.add("mp3");
 		commands.add(outputFile.getAbsolutePath());
-		
-		String outputText = processManager.callProcess(commands);
+
+		String outputText = processManager.callProcess(commands, mediaItemId, MediaContentType.MP3);
 		return outputText;
 	}
 
-	public String encodeVideoToMp4(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
-		
-		// ffmpeg -y -i test.avi -c:v libx264 -preset:v veryfast -strict experimental -c:a aac -b:a 240k -f mp4 output.encoded
-		
+	private String encodeVideoToMp4(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
+			throws IOException {
+
+		// ffmpeg -y -i test.avi -c:v libx264 -preset:v veryfast -strict
+		// experimental -c:a aac -b:a 240k -f mp4 output.encoded
+
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
 		commands.add("-y");
@@ -166,18 +189,19 @@ public class FfMpegManager {
 		commands.add("-b:a");
 		commands.add("240k");
 		commands.add("-f");
-		commands.add("mp4");		
+		commands.add("mp4");
 		commands.add(outputFile.getAbsolutePath());
-		
-		String outputText = processManager.callProcess(commands);
+
+		String outputText = processManager.callProcess(commands, mediaItemId, MediaContentType.MP4);
 		return outputText;
 	}
-	
-	
-	public String encodeVideoToWebM(String pathToFfMpeg, File inputFile, File outputFile) throws IOException {
-		
-		// ffmpeg -i input.mp4 -c:v libvpx -b:v 1M -c:a libvorbis -qscale:a 5 output.webm
-		
+
+	private String encodeVideoToWebM(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
+			throws IOException {
+
+		// ffmpeg -i input.mp4 -c:v libvpx -b:v 1M -c:a libvorbis -qscale:a 5
+		// output.webm
+
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
 		commands.add("-y");
@@ -192,11 +216,11 @@ public class FfMpegManager {
 		commands.add("-qscale:a");
 		commands.add("5");
 		commands.add("-f");
-		commands.add("webm");		
+		commands.add("webm");
 		commands.add(outputFile.getAbsolutePath());
-		
-		String outputText = processManager.callProcess(commands);
+
+		String outputText = processManager.callProcess(commands, mediaItemId, MediaContentType.WEBM);
 		return outputText;
 	}
-	
+
 }

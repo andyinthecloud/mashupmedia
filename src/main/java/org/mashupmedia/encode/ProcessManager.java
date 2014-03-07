@@ -22,45 +22,52 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProcessManager {
 	private static Logger logger = Logger.getLogger(ProcessManager.class);
 
-	private Map<String, Process> processCache = new HashMap<String, Process>();
+	private Map<ProcessKey, ProcessContainer> processCache = new HashMap<ProcessKey, ProcessContainer>();
+	
 
-	public String callProcess(String path) throws IOException {
+	public String callProcess(String path, long mediaItemId, MediaContentType mediaContentType) throws IOException {
 		List<String> commands = new ArrayList<String>();
 		commands.add(path);
 
-		String output = callProcess(commands);
+		String output = callProcess(commands, mediaItemId, mediaContentType);
 		return output;
 	}
 
-	public String callProcess(List<String> commands) throws IOException {
+	public String callProcess(List<String> commands, long mediaItemId, MediaContentType mediaContentType) throws IOException {
 
-		String processString = commands.toString();
+		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
+		
 		try {
 			
-			Process process = processCache.get(processString);
-			if (process != null) {
+			ProcessContainer processContainer = processCache.get(processKey);
+			if (processContainer != null) {
 				logger.info("Found ffmpeg process. Destroying.");
-				process.destroy();
+				processContainer.getProcess().destroy();
 			}
 						
 			logger.info("Starting process...");
-
+			Date startedOn = new Date();			
+			
 			ProcessBuilder processBuilder = new ProcessBuilder(commands);
 			processBuilder.redirectErrorStream(true);
-			process = processBuilder.start();
-			processCache.put(processString, process);
+			Process process = processBuilder.start();
+			
+			processContainer = new ProcessContainer(process, startedOn);			
+			processCache.put(processKey, processContainer);
 
 			InputStream inputStream = process.getInputStream();
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -86,9 +93,18 @@ public class ProcessManager {
 
 			return outputBuilder.toString();
 		} finally {
-			processCache.remove(processString);
+			processCache.remove(processKey);
 		}
 
+	}
+
+	private ProcessKey generateProcessKey(long mediaItemId, MediaContentType mediaContentType) {
+		if (mediaItemId == 0 || mediaContentType == null) {
+			return null;
+		}
+		
+		ProcessKey processKey = new ProcessKey(mediaItemId, mediaContentType);
+		return processKey;
 	}
 
 }
