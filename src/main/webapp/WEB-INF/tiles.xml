@@ -128,15 +128,20 @@
 			value="/WEB-INF/jsp/tiles/video/video-top-bar.jsp" />
 	</definition>
 
-	<definition name="list-videos" extends="video">
+	<definition name="videos" extends="video">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/video/list-videos.jsp" />
 	</definition>
 
-	<definition name="show-video" extends="video">
-		<put-attribute name="bodyClass" value="video" />	
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/video/video.jsp" />
+	<definition name="videos/show" extends="video">
+		<put-attribute name="bodyClass" value="video" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/video/video.jsp" />
 	</definition>
+
+	<definition name="encode/list-processes" extends="video">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/encode/processes.jsp" />
+	</definition>
+
 
 </tiles-definitions>

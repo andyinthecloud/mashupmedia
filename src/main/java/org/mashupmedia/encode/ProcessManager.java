@@ -38,6 +38,10 @@ public class ProcessManager {
 
 	private Map<ProcessKey, ProcessContainer> processCache = new HashMap<ProcessKey, ProcessContainer>();
 	
+	public Map<ProcessKey, ProcessContainer> getProcessCache() {
+		return processCache;
+	}
+	
 
 	public String callProcess(String path, long mediaItemId, MediaContentType mediaContentType) throws IOException {
 		List<String> commands = new ArrayList<String>();

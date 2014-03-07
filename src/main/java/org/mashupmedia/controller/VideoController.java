@@ -95,7 +95,7 @@ public class VideoController extends BaseController {
 		videoPage.setPosterUrl(posterUrl);
 
 		model.addAttribute("videoPage", videoPage);
-		return "show-video";
+		return "videos/show";
 	}
 
 	protected RemoteMediaMetaItem getRemoteMediaMetaItem(long videoId) {

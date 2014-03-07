@@ -34,6 +34,6 @@ public class ListVideosController extends BaseController {
 	public String handleGetVideoList(Model model) {
 		List<Video> videos = videoManager.getVideos();
 		model.addAttribute("videos", videos);
-		return "list-videos";
+		return "videos";
 	}
 }
