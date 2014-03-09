@@ -112,7 +112,7 @@
 	<definition name="music" extends="home">
 		<put-attribute name="bodyClass" value="music" />
 		<put-attribute name="topBar"
-			value="/WEB-INF/jsp/tiles/music/music-player.jsp" />
+			value="/WEB-INF/jsp/tiles/music/music-top-bar.jsp" />
 		<put-attribute name="backgroundImageType" value="music" />
 		<put-attribute name="body">
 			<definition extends="music.panel">
