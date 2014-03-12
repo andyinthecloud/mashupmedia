@@ -57,12 +57,7 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 
 		JSONObject jsonVideo = null;
 		if (StringUtils.isNotEmpty(remoteId)) {
-			jsonVideo = getVideoInfoDocumentByRemoteId(remoteId);
-//			String status = XmlHelper.getTextFromElement(videoInfoDocument, "/lfm/@status");
-//			if (status.equalsIgnoreCase("failed")) {
-//				videoInfoDocument = getVideoInfoDocumentByArtistName(title);
-//			}
-			
+			jsonVideo = getVideoInfoDocumentByRemoteId(remoteId);			
 		} else {
 			jsonVideo = getVideoInfoDocumentByTitle(title);
 		}
@@ -201,6 +196,7 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 		configuration.setValue(baseImageUrl + "original/");
 		configurationManager.saveConfiguration(configuration);
 		
+		baseImageUrl = configuration.getValue();		
 		return baseImageUrl;
 	}
 

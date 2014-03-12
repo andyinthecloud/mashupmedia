@@ -6,7 +6,9 @@ import java.util.List;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.model.media.AlbumArtImage;
+import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +69,17 @@ public class MediaManagerImpl implements MediaManager {
 	public void saveMediaItem(MediaItem mediaItem) {
 		mediaItem.setUpdatedOn(new Date());
 		mediaDao.saveMediaItem(mediaItem);
+	}
+	
+	@Override
+	public void saveMediaEncoding(MediaEncoding mediaEncoding) {
+		mediaDao.saveMediaEncoding(mediaEncoding);		
+	}
+	
+	@Override
+	public MediaEncoding getMediaEncoding(MediaContentType mediaContentType) {
+		MediaEncoding mediaEncoding = mediaDao.getMediaEncoding(mediaContentType);
+		return mediaEncoding;
 	}
 
 }

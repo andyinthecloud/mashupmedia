@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.AlbumArtImage;
+import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 public interface MediaDao {
 
@@ -23,5 +25,9 @@ public interface MediaDao {
 	public List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria);
 
 	public void saveMediaItem(MediaItem mediaItem);
+
+	public void saveMediaEncoding(MediaEncoding mediaEncoding);
+
+	public MediaEncoding getMediaEncoding(MediaContentType mediaContentType);
 
 }

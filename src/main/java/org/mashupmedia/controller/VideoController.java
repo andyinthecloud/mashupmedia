@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.model.media.Video;
 import org.mashupmedia.restful.VideoWebService;
 import org.mashupmedia.service.VideoManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
+import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
-import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.VideoPage;
 import org.mashupmedia.web.remote.RemoteImage;
@@ -55,19 +55,10 @@ public class VideoController extends BaseController {
 	}
 
 	@RequestMapping(value = "/show/{videoId}", method = RequestMethod.GET)
-	public String handleGetVideo(@PathVariable("videoId") Long videoId, @RequestParam(value = "reencode", required = false) Boolean isForceReencode, Model model) {
+	public String handleGetVideo(@PathVariable("videoId") Long videoId, Model model) {
 
 		Video video = videoManager.getVideo(videoId);
 		
-		if (isForceReencode == null) {
-			isForceReencode = false;
-		}
-
-		if (isForceReencode) {
-			video.setEncodeStatusType(EncodeStatusType.OVERRIDE);
-			videoManager.saveVideo(video);
-			encodeMediaItemTaskManager.encodeMediaItem(videoId);
-		}
 
 		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
 		Breadcrumb breadcrumb = new Breadcrumb(video.getDisplayTitle());
@@ -128,14 +119,16 @@ public class VideoController extends BaseController {
 	}
 
 	@RequestMapping(value = "/play/{videoId}", method = RequestMethod.GET)
-	public String handlePlayVideo(@PathVariable("videoId") Long videoId,
+	public String handlePlayVideo(@PathVariable("videoId") Long videoId, @RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue,
 			 Model model) {
-		Video video = videoManager.getVideo(videoId);
-
-		EncodeStatusType encodeStatusType = video.getEncodeStatusType();
-		if (encodeStatusType != EncodeStatusType.ENCODED) {
-			encodeMediaItemTaskManager.encodeMediaItem(videoId);
+//		Video video = videoManager.getVideo(videoId);
+//		encodeMediaItemTaskManager.encodeMediaItem(videoId, );
+		MediaContentType mediaContentType = MediaItemHelper.getEncodedMediaContentType(mediaContentTypeValue);
+		if (mediaContentType == MediaContentType.UNSUPPORTED) {
+			mediaContentType = MediaContentType.WEBM;
 		}
+		
+		encodeMediaItemTaskManager.encodeMediaItem(videoId, mediaContentType);
 
 		return "redirect:/app/streaming/media/encoded/" + videoId;
 	}

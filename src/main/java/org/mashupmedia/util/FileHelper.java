@@ -1,6 +1,7 @@
 package org.mashupmedia.util;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
@@ -8,6 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
+import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 public class FileHelper {
 
@@ -33,19 +37,70 @@ public class FileHelper {
 
 	}
 
+	public static File[] getEncodedFiles(long libraryId, long mediaItemId, FileType fileType) {
+		File libraryFolder = getLibraryFolder(libraryId);
+		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
+		mediaFolder.mkdirs();
+
+		final String filePrefix = mediaItemId + ".";
+
+		File[] files = mediaFolder.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				if (name.startsWith(filePrefix)) {
+					return true;
+				}
+				return false;
+			}
+		});
+
+		return files;
+	}
+
+
+	public static File createMediaFileStream(MediaItem mediaItem, MediaContentType mediaContentType) {
+		if (mediaContentType == MediaContentType.MP3_ORIGINAL) {			 
+			File file = new File(mediaItem.getPath());
+//			tempFile = FileHelper.createEncodedMediaFile(library.getId(), mediaItemId, mediaContentType);
+			return file;
+		}
+			
+			
+		Library library = mediaItem.getLibrary();
+		File libraryFolder = getLibraryFolder(library.getId());
+		File mediaFolder = new File(libraryFolder, FileType.MEDIA_ITEM_STREAM_ENCODED.getFolderName());
+		mediaFolder.mkdirs();
+
+		String fileName = String.valueOf(mediaItem.getId());
+		fileName += "." + mediaContentType.getName().toLowerCase();
+
+		File file = new File(mediaFolder, fileName);
+		return file;
+	}
+
+	
+	
 	public static File createMediaFile(long libraryId, long mediaItemId, FileType fileType) {
 		File libraryFolder = getLibraryFolder(libraryId);
 		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
 		mediaFolder.mkdirs();
 
 		String fileName = String.valueOf(mediaItemId);
-		if (fileType == FileType.MEDIA_ITEM_STREAM_ENCODED) {
-			fileName += ".encoded";
-		}
-
 		File mediaFile = new File(mediaFolder, fileName);
 		return mediaFile;
 	}
+
+//	public static File createEncodedMediaFile(long libraryId, long mediaItemId, MediaContentType mediaContentType) {
+//		File libraryFolder = getLibraryFolder(libraryId);
+//		File mediaFolder = new File(libraryFolder, FileType.MEDIA_ITEM_STREAM_ENCODED.getFolderName());
+//		mediaFolder.mkdirs();
+//
+//		String fileName = String.valueOf(mediaItemId);
+//		fileName += "." + mediaContentType.getDisplayText().toLowerCase();
+//
+//		File mediaFile = new File(mediaFolder, fileName);
+//		return mediaFile;
+//	}
 
 	public static File createAlbumArtFile(long libraryId) {
 		File libraryFolder = getLibraryFolder(libraryId);

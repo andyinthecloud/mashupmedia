@@ -18,6 +18,7 @@
 package org.mashupmedia.task;
 
 import org.mashupmedia.encode.EncodeMediaManager;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -31,20 +32,22 @@ public class EncodeMediaItemTaskManager {
 	@Autowired
 	private EncodeMediaManager encodeMediaManager;
 
-	public void encodeMediaItem(long mediaItemId) {
-		encodeMediaItemThreadPoolTaskExecutor.execute(new EncodeMediaItemTask(mediaItemId));
+	public void encodeMediaItem(long mediaItemId, MediaContentType mediaContentType) {
+		encodeMediaItemThreadPoolTaskExecutor.execute(new EncodeMediaItemTask(mediaItemId, mediaContentType));
 	}
 
 	private class EncodeMediaItemTask implements Runnable {
 
 		private long mediaItemId;
+		private MediaContentType mediaContentType;
 
-		public EncodeMediaItemTask(long mediaItemId) {
+		public EncodeMediaItemTask(long mediaItemId, MediaContentType mediaContentType) {
 			this.mediaItemId = mediaItemId;
+			this.mediaContentType = mediaContentType;
 		}
 
 		public void run() {
-			encodeMediaManager.encodeMedia(mediaItemId);
+			encodeMediaManager.encodeMedia(mediaItemId, mediaContentType);
 		}
 	}
 

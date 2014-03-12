@@ -1,6 +1,6 @@
 package org.mashupmedia.encode;
 
-import org.mashupmedia.util.WebHelper.MediaContentType;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 public class ProcessKey {
 	private long mediaItemId;

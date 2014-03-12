@@ -17,111 +17,83 @@
 
 package org.mashupmedia.encode;
 
-import java.io.File;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
-import org.mashupmedia.model.media.Song;
-import org.mashupmedia.model.media.Video;
-import org.mashupmedia.service.ConfigurationManager;
-import org.mashupmedia.service.ConnectionManager;
-import org.mashupmedia.service.ConnectionManager.EncodeType;
 import org.mashupmedia.service.MediaManager;
-import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.FileHelper.FileType;
-import org.mashupmedia.util.WebHelper.MediaContentType;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EncodeMediaManagerImpl implements EncodeMediaManager {
 	private Logger logger = Logger.getLogger(getClass());
-	
-	
-
-	@Autowired
-	private ConnectionManager connectionManager;
 
 	@Autowired
 	private MediaManager mediaManager;
 
 	@Autowired
-	private ConfigurationManager configurationManager;
+	private FfMpegManager encodeManager;
 	
 	@Autowired
-	private FfMpegManager encodeManager;
+	private ProcessManager processManager;
 
 	@Override
-	public synchronized void encodeMedia(long mediaItemId) {
-
+	public synchronized void encodeMedia(long mediaItemId, MediaContentType mediaContentType) {
 
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 
-		String pathToFfMpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
-		if (StringUtils.isBlank(pathToFfMpeg)) {
-			logger.info("Unable to encode media, ffmpeg is not configured.");
-			mediaItem.setEncodeStatusType(EncodeStatusType.ERROR);
-			mediaManager.saveMediaItem(mediaItem);
-			return;
-		}
-
 		try {
-			EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
+//			EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
+//
+//			if (encodeStatusType == EncodeStatusType.PROCESSING) {
+//				logger.info("Media file is being encoded, exiting...");
+//				return;
+//			}
+//
+//			mediaItem.setEncodeStatusType(EncodeStatusType.PROCESSING);
+//			mediaManager.saveMediaItem(mediaItem);
 
-			if (encodeStatusType == EncodeStatusType.PROCESSING) {
+			boolean isCurrentlyEncoding = processManager.isCurrentlyEncoding(mediaItemId, mediaContentType);
+			if (isCurrentlyEncoding) {
 				logger.info("Media file is being encoded, exiting...");
-				return;
-			} 
-
-			mediaItem.setEncodeStatusType(EncodeStatusType.PROCESSING);
-			mediaManager.saveMediaItem(mediaItem);
-
+				return;				
+			}
+						
 			logger.info("Starting to encode media file to html5 format");
 
-			Library library = mediaItem.getLibrary();
+//			MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
 
-			File inputFile = connectionManager.getMediaItemStreamFile(mediaItemId, EncodeType.UNPROCESSED);
-			File outputFile = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_STREAM_ENCODED);
-			boolean isDeleted = FileHelper.deleteFile(outputFile);
-			
-			if (!isDeleted) {
-				logger.info("Exiting, unable to delete encoded media file: " + outputFile.getAbsolutePath());
-				return;
-			}
-			
-			MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
-			
-			if (mediaItem instanceof Song) {
-				mediaContentType = MediaContentType.MP3;
-			} else if (mediaItem instanceof Video) {
-				mediaContentType = MediaContentType.WEBM;
-			}
-			
-			String outputText = encodeManager.encodeMediaItem(pathToFfMpeg, inputFile, outputFile, mediaItemId, mediaContentType);			
+//			if (mediaItem instanceof Song) {
+//				mediaContentType = MediaContentType.MP3;
+//			} else if (mediaItem instanceof Video) {
+//				mediaContentType = MediaContentType.WEBM;
+//			}
+
+			String outputText = encodeManager.encodeMediaItem(mediaItem, mediaContentType);
 			outputText = StringUtils.trimToEmpty(outputText);
 			boolean hasError = false;
 			if (outputText.matches("^Error")) {
 				hasError = true;
 			}
-			
+
 			if (hasError) {
-				logger.info("FFMpeg reported an error saving media file to html5 format");
-				mediaItem.setEncodeStatusType(EncodeStatusType.ERROR);								
+				logger.error("FFMpeg reported an error saving media file to html5 format, please view the log file to get more information.");
+//				mediaItem.setEncodeStatusType(EncodeStatusType.ERROR);
 			} else {
-				logger.info("Media file decoded to html5 format");
-				mediaItem.setEncodeStatusType(EncodeStatusType.ENCODED);				
+				logger.info("Media file decoded to " + mediaContentType.getName());
+//				mediaItem.setEncodeStatusType(EncodeStatusType.ENCODED);
+				MediaEncoding mediaEncoding = mediaManager.getMediaEncoding(mediaContentType);
+				mediaItem.addMediaEncoding(mediaEncoding);
 			}
 
 			mediaManager.saveMediaItem(mediaItem);
 		} catch (Exception e) {
 			logger.error("Error encoding media item: " + mediaItemId, e);
-			mediaItem.setEncodeStatusType(EncodeStatusType.ERROR);
-			mediaManager.saveMediaItem(mediaItem);
-		} 
+//			mediaItem.setEncodeStatusType(EncodeStatusType.ERROR);
+//			mediaManager.saveMediaItem(mediaItem);
+		}
 
 	}
 

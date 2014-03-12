@@ -184,8 +184,11 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			}
 
 			Library library = mediaItem.getLibrary();
-			File outputAudioFile = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_STREAM_ENCODED);
-			FileHelper.deleteFile(outputAudioFile);
+			File[] encodedMediaFiles = FileHelper.getEncodedFiles(library.getId(), mediaItemId, FileType.MEDIA_ITEM_STREAM_ENCODED);
+			for (File encodedMediaFile : encodedMediaFiles) {
+				FileHelper.deleteFile(encodedMediaFile);	
+			}
+			
 
 		}
 		logger.info("Deleted " + totalDeletedItems + " playlistMediaItems");

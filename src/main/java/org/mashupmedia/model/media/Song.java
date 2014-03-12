@@ -14,8 +14,8 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.WebHelper;
-import org.mashupmedia.util.WebHelper.MediaContentType;
+import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 @Entity
 @Indexed
@@ -216,21 +216,21 @@ public class Song extends MediaItem {
 		}
 
 		metaBuilder.append(" | ");
-		metaBuilder.append(getMediaContentType().getDisplayText());
-
+		
+		MediaContentType mediaContentType = null;
+		MediaEncoding mediaEncoding = getBestMediaEncoding();
+		if (mediaEncoding != null) {
+			mediaContentType = mediaEncoding.getMediaContentType();
+		} else {
+			String format = getFormat();
+			mediaContentType = MediaItemHelper.getEncodedMediaContentType(format);			
+		}
+				
+		metaBuilder.append(mediaContentType.getName());
 		return metaBuilder.toString();
 
 	}
 
-	public MediaContentType getMediaContentType() {
-		MediaContentType mediaContentType = WebHelper.getMediaContentType(getFormat(), MediaContentType.MP3);
-		return mediaContentType;
-	}
-
-	public String getJplayerContentType() {
-		MediaContentType mediaContentType = getMediaContentType();
-		return mediaContentType.getDisplayText();
-	}
 
 	public String getDisplayTrackNumber() {
 

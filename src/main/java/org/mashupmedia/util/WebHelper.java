@@ -63,34 +63,6 @@ public class WebHelper {
 		MIME, JPLAYER
 	}
 
-	public enum MediaContentType {
-		MP3("audio/mpeg", "mp3", "mp3"), OGA("audio/ogg", "oga", "oga"), UNSUPPORTED("audio/unsupported",
-				"unsupported", "unsupported"), WEBM("video/webm", "webmv", "webm"), MP4("video/mp4", "m4v", "mp4");
-
-		private String mimeContentType;
-		private String jPlayerContentType;
-		private String displayText;
-
-		private MediaContentType(String mimeContentType, String jPlayerContentType, String displayText) {
-			this.mimeContentType = mimeContentType;
-			this.jPlayerContentType = jPlayerContentType;
-			this.displayText = displayText;
-		}
-
-		public String getjPlayerContentType() {
-			return jPlayerContentType;
-		}
-
-		public String getMimeContentType() {
-			return mimeContentType;
-		}
-
-		public String getDisplayText() {
-			return displayText;
-		}
-
-	}
-
 	public static String getContextUrl(HttpServletRequest request) {
 		StringBuilder contextUrlBuilder = new StringBuilder();
 		contextUrlBuilder.append(request.getScheme());
@@ -128,23 +100,6 @@ public class WebHelper {
 	//
 	// }
 
-	public static MediaContentType getMediaContentType(String mediaFormat, MediaContentType defaultMediaContentType) {
-		mediaFormat = StringUtils.trimToEmpty(mediaFormat);
-		if (StringUtils.isEmpty(mediaFormat)) {
-			return defaultMediaContentType;
-		}
 
-		if (mediaFormat.equalsIgnoreCase("MPEG-1 Layer 3")) {
-			return MediaContentType.MP3;
-		} else if (mediaFormat.equalsIgnoreCase("Vorbis")) {
-			return MediaContentType.OGA;
-		} else if (mediaFormat.equalsIgnoreCase("Free Lossless Audio Codec")) {
-			return MediaContentType.MP3;
-		} else if (mediaFormat.equalsIgnoreCase("webm")) {
-			return MediaContentType.WEBM;
-		} 
-
-		return defaultMediaContentType;
-	}
 
 }

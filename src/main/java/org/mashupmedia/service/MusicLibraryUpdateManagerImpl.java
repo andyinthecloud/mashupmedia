@@ -289,7 +289,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 			Tag tag = null;
 			long bitRate = 0;
-			String format = null;
+			String format = FileHelper.getFileExtension(fileName);
 			int trackLength = 0;
 			String tagSongTitle = null;
 			int trackNumber = 0;

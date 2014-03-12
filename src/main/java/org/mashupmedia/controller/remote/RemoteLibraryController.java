@@ -35,7 +35,6 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.LibraryManager;
@@ -89,17 +88,8 @@ public class RemoteLibraryController {
 
 		logInAsSystemuser(request);
 
-		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-
-		String encodedPath = "unprocessed";
-		EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
-		if (encodeStatusType == EncodeStatusType.ENCODED) {
-			encodedPath = "encoded";
-		}
-
 		StringBuilder servletPathBuilder = new StringBuilder(request.getServletPath());
 		servletPathBuilder.append("/streaming/media");
-		servletPathBuilder.append("/" + encodedPath);
 		servletPathBuilder.append("/" + mediaItemId);
 		return new ModelAndView("forward:" + servletPathBuilder.toString());
 	}

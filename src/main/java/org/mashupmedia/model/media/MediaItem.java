@@ -1,6 +1,7 @@
 package org.mashupmedia.model.media;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,11 +9,13 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -22,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
 import org.apache.solr.analysis.SnowballPorterFilterFactory;
@@ -60,10 +62,6 @@ public class MediaItem implements Serializable {
 		SONG, VIDEO, IMAGE;
 	}
 
-	public enum EncodeStatusType {
-		UNPROCESSED, PROCESSING, ENCODED, ERROR, OVERRIDE
-
-	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -98,8 +96,6 @@ public class MediaItem implements Serializable {
 	@Field(analyze = Analyze.NO)
 	private String displayTitle;
 	@Field(analyze = Analyze.NO)
-	private String encodeStatus;
-	@Field(analyze = Analyze.NO)
 	private boolean enabled;
 	private long fileLastModifiedOn;
 	@Field(analyze = Analyze.NO)
@@ -110,9 +106,34 @@ public class MediaItem implements Serializable {
 	@OrderBy("createdOn")
 	@XmlTransient
 	private List<Comment> comments;
+	@XmlTransient
+	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+	@OrderBy("ranking")
+	private List<MediaEncoding> mediaEncodings;
 
 	public MediaItem() {
 		this.enabled = true;
+	}
+
+	public List<MediaEncoding> getMediaEncodings() {
+		return mediaEncodings;
+	}
+
+	public void setMediaEncodings(List<MediaEncoding> mediaEncodings) {
+		this.mediaEncodings = mediaEncodings;
+	}
+
+	public void addMediaEncoding(MediaEncoding mediaEncoding) {
+		mediaEncodings = getMediaEncodings();
+		if (mediaEncodings == null) {
+			mediaEncodings = new ArrayList<MediaEncoding>();
+		}
+
+		if (mediaEncodings.contains(mediaEncoding)) {
+			return;
+		}
+
+		mediaEncodings.add(mediaEncoding);
 	}
 
 	public List<Comment> getComments() {
@@ -153,30 +174,6 @@ public class MediaItem implements Serializable {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-
-	public EncodeStatusType getEncodeStatusType() {
-		if (StringUtils.isEmpty(this.encodeStatus)) {
-			return EncodeStatusType.UNPROCESSED;
-		}
-
-		EncodeStatusType[] encodeStatusTypes = EncodeStatusType.values();
-		for (EncodeStatusType encodeStatusType : encodeStatusTypes) {
-			if (this.encodeStatus.equals(encodeStatusType.toString())) {
-				return encodeStatusType;
-			}
-		}
-
-		return EncodeStatusType.UNPROCESSED;
-	}
-
-	public String getEncodeStatusTypeValue() {
-		EncodeStatusType encodeStatusType = getEncodeStatusType();
-		return encodeStatusType.toString();
-	}
-
-	public void setEncodeStatusType(EncodeStatusType encodeStatusType) {
-		this.encodeStatus = encodeStatusType.toString();
 	}
 
 	public String getDisplayTitle() {
@@ -300,6 +297,14 @@ public class MediaItem implements Serializable {
 		this.library = library;
 	}
 
+	public MediaEncoding getBestMediaEncoding() {
+		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
+			return null;
+		}
+		
+		return mediaEncodings.get(0);		
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -365,8 +370,6 @@ public class MediaItem implements Serializable {
 		builder.append(summary);
 		builder.append(", displayTitle=");
 		builder.append(displayTitle);
-		builder.append(", encodeStatus=");
-		builder.append(encodeStatus);
 		builder.append(", enabled=");
 		builder.append(enabled);
 		builder.append(", fileLastModifiedOn=");
@@ -380,5 +383,7 @@ public class MediaItem implements Serializable {
 		builder.append("]");
 		return builder.toString();
 	}
+
+
 
 }

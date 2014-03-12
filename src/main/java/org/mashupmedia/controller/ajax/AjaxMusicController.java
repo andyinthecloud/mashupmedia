@@ -13,8 +13,6 @@ import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
-import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
@@ -26,11 +24,11 @@ import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.AdminHelper;
+import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.StringHelper;
-import org.mashupmedia.util.WebHelper;
-import org.mashupmedia.util.WebHelper.MediaContentType;
 import org.mashupmedia.web.page.AlbumPage;
 import org.mashupmedia.web.page.AlbumsPage;
 import org.mashupmedia.web.page.ArtistPage;
@@ -178,19 +176,19 @@ public class AjaxMusicController extends AjaxBaseController {
 			playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 		}
 
-		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		Song song = (Song) mediaManager.getMediaItem(mediaItemId);
 
 		PlaylistMediaItem playlistMediaItem = new PlaylistMediaItem();
 		playlistMediaItem.setPlaylist(playlist);
-		playlistMediaItem.setMediaItem(mediaItem);
+		playlistMediaItem.setMediaItem(song);
 
 		boolean isEncoderInstalled = BooleanUtils.toBoolean(configurationManager
 				.getConfigurationValue(MashUpMediaConstants.IS_ENCODER_INSTALLED));
 		model.addAttribute(MashUpMediaConstants.IS_ENCODER_INSTALLED, isEncoderInstalled);
 
-		MediaType mediaType = mediaItem.getMediaType();
-		if (mediaType == MediaType.SONG) {
-			Song song = (Song) mediaItem;
+//		MediaType mediaType = song.getMediaType();
+//		if (mediaType == MediaType.SONG) {
+//			Song song = (Song) mediaItem;
 
 			playlist = updatePlayingSong(playlist, song);
 
@@ -208,38 +206,46 @@ public class AjaxMusicController extends AjaxBaseController {
 			playlist = SerializationUtils.clone(playlist);
 			playlist.setName(StringHelper.escapeJavascript(playlist.getName()));
 
-			MediaContentType mediaContentType = WebHelper.getMediaContentType(mediaItem.getFormat(),
-					MediaContentType.MP3);
+//			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(song.getFormat());
+			
+			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(song);
+			
 			model.addAttribute("format", mediaContentType.getjPlayerContentType());
 			model.addAttribute("song", song);
 			model.addAttribute("playlist", playlist);
+			
+			String streamingUrl = "/app/streaming/media/" + song.getId();
+			model.addAttribute(MODEL_KEY_STREAMING_FORMAT, mediaContentType.getjPlayerContentType());
+			model.addAttribute(MODEL_KEY_STREAMING_URL, streamingUrl);
 
-			prepareStreamingUrl(song, model);
+//			prepareStreamingUrl(song, model);
 
 			return "ajax/music/player-script";
-		}
+//		}
 
-		return "";
+//		return "";
 	}
 
-	private void prepareStreamingUrl(Song song, Model model) {
-		String streamingUrl = "";
-		long songId = song.getId();
-
-		MediaContentType mediaContentType = song.getMediaContentType();
-		EncodeStatusType encodeStatusType = song.getEncodeStatusType();
-
-		if ((encodeStatusType == EncodeStatusType.PROCESSING) || (encodeStatusType == EncodeStatusType.ENCODED)) {
-			streamingUrl += "/app/streaming/media/encoded/" + songId;
-			mediaContentType = MediaContentType.OGA;
-		} else {
-			streamingUrl += "/app/streaming/media/unprocessed/" + songId;
-		}
-
-		model.addAttribute(MODEL_KEY_STREAMING_FORMAT, mediaContentType.getjPlayerContentType());
-		model.addAttribute(MODEL_KEY_STREAMING_URL, streamingUrl);
-
-	}
+//	private void prepareStreamingUrl(Song song, MediaContentType mediaContentType, Model model) {
+//		long songId = song.getId();
+//		
+//		
+//		String streamingUrl = "/app/streaming/media/" + songId;
+//
+////		MediaContentType mediaContentType = song.getMediaContentType();
+////		EncodeStatusType encodeStatusType = song.getEncodeStatusType();
+//
+//		if ((encodeStatusType == EncodeStatusType.PROCESSING) || (encodeStatusType == EncodeStatusType.ENCODED)) {
+//			streamingUrl += "/app/streaming/media/encoded/" + songId;
+//			mediaContentType = MediaContentType.OGA;
+//		} else {
+//			streamingUrl += "/app/streaming/media/unprocessed/" + songId;
+//		}
+//
+//		model.addAttribute(MODEL_KEY_STREAMING_FORMAT, mediaContentType.getjPlayerContentType());
+//		model.addAttribute(MODEL_KEY_STREAMING_URL, streamingUrl);
+//
+//	}
 
 	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
 	public String playNextSonginLastAccessedPlaylist(Model model) {

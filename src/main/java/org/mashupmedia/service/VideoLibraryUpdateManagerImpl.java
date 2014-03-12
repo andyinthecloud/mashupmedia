@@ -10,11 +10,10 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.dao.VideoDao;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
-import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Video;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.WebHelper.MediaContentType;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,14 +88,16 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 
 		String path = file.getAbsolutePath();
 		Video video = videoDao.getVideoByPath(path);
+		String fileName = file.getName();
 		if (video == null) {
 			video = new Video();
-			video.setFormat(MediaContentType.WEBM.getDisplayText());
+			video.setFormat(MediaContentType.UNSUPPORTED.getName());
+						
 			video.setEnabled(true);
-			video.setEncodeStatusType(EncodeStatusType.UNPROCESSED);
+//			video.setEncodeStatusType(EncodeStatusType.UNPROCESSED);
 
 			video.setFileLastModifiedOn(file.lastModified());
-			video.setFileName(file.getName());
+			video.setFileName(fileName);
 			// video.setFormat(format);
 			video.setMediaType(MediaType.VIDEO);
 			video.setPath(path);

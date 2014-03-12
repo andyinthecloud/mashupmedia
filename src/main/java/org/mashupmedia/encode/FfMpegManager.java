@@ -25,8 +25,13 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.service.ConfigurationManager;
+import org.mashupmedia.service.ConnectionManager;
+import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.WebHelper.MediaContentType;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +48,16 @@ public class FfMpegManager {
 
 	@Autowired
 	private ProcessManager processManager;
+	
+	@Autowired
+	private ConnectionManager connectionManager;
+	
+	@Autowired
+	private ConfigurationManager configurationManager;
+	
+	@Autowired
+	private MediaManager mediaManager;
+	
 
 	public String getFFMpegFolderPath() {
 		File ffMpegFolder = new File(FileHelper.getApplicationFolder(), FFMPEG_FOLDER_NAME);
@@ -129,10 +144,36 @@ public class FfMpegManager {
 		return false;
 	}
 
-	public String encodeMediaItem(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId,
+	public String encodeMediaItem(MediaItem mediaItem,
 			MediaContentType mediaContentType) throws IOException {
+		
+
+		String pathToFfMpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
+		if (StringUtils.isBlank(pathToFfMpeg)) {
+			String errorText = "Unable to encode media, ffmpeg is not configured.";
+			logger.info(errorText);
+			return errorText;
+		}
+
+		long mediaItemId = mediaItem.getId();
+		
+//		Library library = mediaItem.getLibrary();
+		
+		File inputFile = new File(mediaItem.getPath());
+//		File outputFile = FileHelper.createEncodedMediaFile(library.getId(), mediaItemId, mediaContentType);
+		File outputFile = FileHelper.createMediaFileStream(mediaItem, mediaContentType);
+		boolean isDeleted = FileHelper.deleteFile(outputFile);
+		
+		if (!isDeleted) {
+			String errorText = "Exiting, unable to delete encoded media file: " + outputFile.getAbsolutePath();
+			logger.info(errorText);
+			return errorText;
+		}
+
+		
+		
 		String outputText = null;
-		if (mediaContentType == MediaContentType.MP3) {
+		if (mediaContentType == MediaContentType.MP3_ENCODED) {
 			outputText = encodeAudioToMp3(pathToFfMpeg, inputFile, outputFile, mediaItemId);
 		} else if (mediaContentType == MediaContentType.MP4) {
 			outputText = encodeVideoToMp4(pathToFfMpeg, inputFile, outputFile, mediaItemId);
@@ -163,7 +204,7 @@ public class FfMpegManager {
 		commands.add("mp3");
 		commands.add(outputFile.getAbsolutePath());
 
-		String outputText = processManager.callProcess(commands, mediaItemId, MediaContentType.MP3);
+		String outputText = processManager.callProcess(commands, mediaItemId, MediaContentType.MP3_ENCODED);
 		return outputText;
 	}
 

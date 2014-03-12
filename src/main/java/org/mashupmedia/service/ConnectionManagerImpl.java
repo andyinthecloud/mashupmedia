@@ -22,12 +22,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
-import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.FileHelper.FileType;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.StringHelper.Encoding;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,24 +140,6 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		return bytes;
 	}
 
-	@Override
-	public File getMediaItemStreamFile(long mediaItemId, EncodeType encodeType) {
-		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		Library library = mediaItem.getLibrary();
-		File file = null;
-
-		EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
-
-		if (encodeType == EncodeType.ENCODED && (encodeStatusType == EncodeStatusType.ENCODED || encodeStatusType == EncodeStatusType.PROCESSING)) {
-			file = FileHelper.createMediaFile(library.getId(), mediaItemId, FileType.MEDIA_ITEM_STREAM_ENCODED);
-			return file;
-		}
-
-		String path = mediaItem.getPath();
-		file = new File(path);
-
-		return file;
-	}
 
 	@Override
 	public long getMediaItemFileSize(long mediaItemId) {

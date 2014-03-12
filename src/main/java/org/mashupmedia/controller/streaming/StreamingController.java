@@ -20,17 +20,12 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.EncodeStatusType;
-import org.mashupmedia.model.media.Song;
-import org.mashupmedia.model.media.Video;
 import org.mashupmedia.service.ConnectionManager;
-import org.mashupmedia.service.ConnectionManager.EncodeType;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.FileHelper.FileType;
 import org.mashupmedia.util.LibraryHelper;
-import org.mashupmedia.util.WebHelper;
-import org.mashupmedia.util.WebHelper.MediaContentType;
+import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,38 +54,73 @@ public class StreamingController {
 	@Autowired
 	private ConnectionManager connectionManager;
 
-	@RequestMapping(value = "/media/encoded/{mediaItemId}", method = RequestMethod.HEAD)
-	public ModelAndView getEncodedMediaStreamHead(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
-			throws Exception {
-		ModelAndView modelAndView = prepareModelAndView(mediaItemId, false, EncodeType.ENCODED);
-		return modelAndView;
-	}
-
-	@RequestMapping(value = "/media/encoded/{mediaItemId}", method = RequestMethod.GET)
-	public ModelAndView getEncodedMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
-			throws Exception {
-		ModelAndView modelAndView = prepareModelAndView(mediaItemId, true, EncodeType.ENCODED);
-		return modelAndView;
-	}
-
-	@RequestMapping(value = "/media/unprocessed/{mediaItemId}", method = RequestMethod.HEAD)
+	@RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.HEAD)
 	public ModelAndView getMediaStreamHead(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
 			throws Exception {
-		ModelAndView modelAndView = prepareModelAndView(mediaItemId, false, EncodeType.UNPROCESSED);
+		ModelAndView modelAndView = prepareModelAndView(mediaItemId, false);
 		return modelAndView;
 	}
 
-	@RequestMapping(value = "/media/unprocessed/{mediaItemId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.GET)
 	public ModelAndView getMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
 			throws Exception {
-		ModelAndView modelAndView = prepareModelAndView(mediaItemId, true, EncodeType.UNPROCESSED);
+		ModelAndView modelAndView = prepareModelAndView(mediaItemId, true);
 		return modelAndView;
 	}
 
-	protected ModelAndView prepareModelAndView(final long mediaItemId, final boolean content,
-			final EncodeType encodeType) throws Exception {
+	
+	
+//	@RequestMapping(value = "/media/encoded/{mediaItemId}", method = RequestMethod.HEAD)
+//	public ModelAndView getEncodedMediaStreamHead(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
+//			throws Exception {
+//		ModelAndView modelAndView = prepareModelAndView(mediaItemId, false, EncodeType.ENCODED);
+//		return modelAndView;
+//	}
+//
+//	@RequestMapping(value = "/media/encoded/{mediaItemId}", method = RequestMethod.GET)
+//	public ModelAndView getEncodedMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
+//			throws Exception {
+//		ModelAndView modelAndView = prepareModelAndView(mediaItemId, true, EncodeType.ENCODED);
+//		return modelAndView;
+//	}
+//
+//	@RequestMapping(value = "/media/unprocessed/{mediaItemId}", method = RequestMethod.HEAD)
+//	public ModelAndView getMediaStreamHead(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
+//			throws Exception {
+//		ModelAndView modelAndView = prepareModelAndView(mediaItemId, false, EncodeType.UNPROCESSED);
+//		return modelAndView;
+//	}
+//
+//	@RequestMapping(value = "/media/unprocessed/{mediaItemId}", method = RequestMethod.GET)
+//	public ModelAndView getMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
+//			throws Exception {
+//		ModelAndView modelAndView = prepareModelAndView(mediaItemId, true, EncodeType.UNPROCESSED);
+//		return modelAndView;
+//	}
+	
+	
+
+	protected ModelAndView prepareModelAndView(final long mediaItemId, final boolean content) throws Exception {
 
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+//		mediaItem.getMediaType();
+//		mediaItem.getFormat();
+//		MediaContentType mediaContentType = null;
+//		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
+//		
+//		
+//		
+//		MediaContentType mediaContentType = null;
+//		List<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
+//		if (mediaEncodings != null && !mediaEncodings.isEmpty()) {
+//			MediaEncoding mediaEncoding = mediaEncodings.get(0);
+//			mediaContentType = mediaEncoding.getMediaContentType();
+//		}
+		
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaItem);
+		
+		
+		
 		Library library = mediaItem.getLibrary();
 
 		if (library.isRemote()) {
@@ -104,24 +134,30 @@ public class StreamingController {
 			}
 		}
 
-		String format = mediaItem.getFormat();
-		MediaContentType mediaContentType = WebHelper.getMediaContentType(format, MediaContentType.MP3);
-		FileType fileType = FileType.MEDIA_ITEM_STREAM_UNPROCESSED;
-		File tempFile = new File(mediaItem.getPath());
-
-		if (encodeType == EncodeType.ENCODED || encodeType == EncodeType.BEST) {
-			if (mediaItem.getEncodeStatusType() == EncodeStatusType.ENCODED
-					|| mediaItem.getEncodeStatusType() == EncodeStatusType.PROCESSING) {
-				if (mediaItem instanceof Song) {
-					mediaContentType = MediaContentType.MP3;
-				} else if (mediaItem instanceof Video) {
-					mediaContentType = MediaContentType.WEBM;
-				}
-
-				fileType = FileType.MEDIA_ITEM_STREAM_ENCODED;
-				tempFile = FileHelper.createMediaFile(library.getId(), mediaItemId, fileType);
-			}
-		}
+//		String format = mediaItem.getFormat();
+//		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
+//		FileType fileType = FileType.MEDIA_ITEM_STREAM_UNPROCESSED;
+				
+//		File tempFile = new File(mediaItem.getPath());
+		File tempFile = FileHelper.createMediaFileStream(mediaItem, mediaContentType);
+//		
+//		
+//		
+//		
+//
+//		if (encodeType == EncodeType.ENCODED || encodeType == EncodeType.BEST) {
+//			if (mediaItem.getEncodeStatusType() == EncodeStatusType.ENCODED
+//					|| mediaItem.getEncodeStatusType() == EncodeStatusType.PROCESSING) {
+//				if (mediaItem instanceof Song) {
+//					mediaContentType = MediaContentType.MP3;
+//				} else if (mediaItem instanceof Video) {
+//					mediaContentType = MediaContentType.WEBM;
+//				}
+//
+////				fileType = FileType.MEDIA_ITEM_STREAM_ENCODED;
+//				tempFile = FileHelper.createEncodedMediaFile(library.getId(), mediaItemId, mediaContentType);
+//			}
+//		}
 
 		final String contentType = mediaContentType.getMimeContentType();
 		final File file = tempFile;

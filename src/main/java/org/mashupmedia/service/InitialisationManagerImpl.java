@@ -10,7 +10,9 @@ import org.mashupmedia.encode.FfMpegManager;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
+import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.util.AdminHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +32,10 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	private VideoManager videoManager; 
 	
 	@Autowired
-	private FfMpegManager encodeManager;
+	private FfMpegManager ffMpegManager;
+	
+	@Autowired
+	private MediaManager mediaManager;
 	
 	@Override
 	public void initialiseApplication() {
@@ -39,7 +44,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 			logger.info("Database has already been initialised. Exiting....");
 			return;
 		}
-
+		
 		initialiseUniqueInstallationName();
 		initialiseGroups();
 		initialiseFirstRoles();
@@ -47,11 +52,31 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		adminManager.initialiseSystemUser();
 		initialiseEncoder();
 		videoManager.initialiseVideoResolutions();
+		initialiseMediaEncodings();
+	}
+
+
+	private void initialiseMediaEncodings() {
+		
+		// Audio encoding
+		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP3_ENCODED, 1));
+		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.OGA, 2));
+		
+		// Video encoding
+		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP4, 1));
+		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.WEBM, 2));
+	}
+	
+	private MediaEncoding createMediaEncoding(MediaContentType mediaContentType, int ranking) {
+		MediaEncoding mediaEncoding = new MediaEncoding();
+		mediaEncoding.setMediaContentType(MediaContentType.MP3_ENCODED);
+		mediaEncoding.setRanking(1);
+		return mediaEncoding;		
 	}
 
 
 	private void initialiseEncoder() {
-		File ffMpegFile = encodeManager.findFFMpegExecutable();
+		File ffMpegFile = ffMpegManager.findFFMpegExecutable();
 		if (ffMpegFile == null) {
 			configurationManager.saveConfiguration(MashUpMediaConstants.IS_ENCODER_INSTALLED,
 					Boolean.FALSE.toString());
@@ -59,7 +84,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		}
 
 		try {
-			boolean isValid = encodeManager.isValidFfMpeg(ffMpegFile);
+			boolean isValid = ffMpegManager.isValidFfMpeg(ffMpegFile);
 			if (isValid) {
 				configurationManager.saveConfiguration(MashUpMediaConstants.IS_ENCODER_INSTALLED,
 						Boolean.TRUE.toString());

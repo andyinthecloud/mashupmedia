@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.mashupmedia.util.WebHelper.MediaContentType;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,11 +37,10 @@ public class ProcessManager {
 	private static Logger logger = Logger.getLogger(ProcessManager.class);
 
 	private Map<ProcessKey, ProcessContainer> processCache = new HashMap<ProcessKey, ProcessContainer>();
-	
+
 	public Map<ProcessKey, ProcessContainer> getProcessCache() {
 		return processCache;
 	}
-	
 
 	public String callProcess(String path, long mediaItemId, MediaContentType mediaContentType) throws IOException {
 		List<String> commands = new ArrayList<String>();
@@ -51,26 +50,27 @@ public class ProcessManager {
 		return output;
 	}
 
-	public String callProcess(List<String> commands, long mediaItemId, MediaContentType mediaContentType) throws IOException {
+	public String callProcess(List<String> commands, long mediaItemId, MediaContentType mediaContentType)
+			throws IOException {
 
 		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
-		
+
 		try {
-			
+
 			ProcessContainer processContainer = processCache.get(processKey);
 			if (processContainer != null) {
 				logger.info("Found ffmpeg process. Destroying.");
 				processContainer.getProcess().destroy();
 			}
-						
+
 			logger.info("Starting process...");
-			Date startedOn = new Date();			
-			
+			Date startedOn = new Date();
+
 			ProcessBuilder processBuilder = new ProcessBuilder(commands);
 			processBuilder.redirectErrorStream(true);
 			Process process = processBuilder.start();
-			
-			processContainer = new ProcessContainer(process, startedOn);			
+
+			processContainer = new ProcessContainer(process, startedOn);
 			processCache.put(processKey, processContainer);
 
 			InputStream inputStream = process.getInputStream();
@@ -106,9 +106,18 @@ public class ProcessManager {
 		if (mediaItemId == 0 || mediaContentType == null) {
 			return null;
 		}
-		
+
 		ProcessKey processKey = new ProcessKey(mediaItemId, mediaContentType);
 		return processKey;
+	}
+
+	public boolean isCurrentlyEncoding(long mediaItemId, MediaContentType mediaContentType) {
+		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
+		if (processCache.containsKey(processKey)) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

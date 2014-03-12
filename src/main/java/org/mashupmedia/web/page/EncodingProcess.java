@@ -3,7 +3,7 @@ package org.mashupmedia.web.page;
 import java.util.Date;
 
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.util.WebHelper.MediaContentType;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 public class EncodingProcess {
 
