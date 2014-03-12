@@ -161,7 +161,7 @@ var mashupMedia = new function() {
 			}, function(data) {
 				var playlistId = data.playlist.id;
 				var playlistName = data.playlist.name;				
-				mashupMedia.showSongInfo("", "", false, 0, 0, playlistName, playlistId, "", 0);
+				mashupMedia.showSongInfo("", "", false, 0, 0, playlistName, playlistId, 0);
 			});
 			return;
 		}
@@ -314,10 +314,10 @@ var mashupMedia = new function() {
 	};
 	
 	this.showEmptySongInfo = function() {		
-		mashupMedia.showSongInfo("", "", false, 0, 0, "", 0, "", 0);
+		mashupMedia.showSongInfo("", "", false, 0, 0, "", 0, 0);
 	};
 	
-	this.showSongInfo = function(songTitle, artistName, isShowVoteButtons, albumId, mediaItemId, playlistName, playlistId, encodeStatus, artistId) {		
+	this.showSongInfo = function(songTitle, artistName, isShowVoteButtons, albumId, mediaItemId, playlistName, playlistId, artistId) {		
 		if (songTitle == "") {
 			songTitle = "<spring:message code="music.playlist.current-song.empty" />";
 		}
@@ -353,7 +353,11 @@ var mashupMedia = new function() {
 		$("#current-playlist-id").val(playlistId);
 		$("#current-song .playlist a").attr("rel", "address:/address-playlist-" + playlistId);
 		
-		var encodeMessage = getAudioEncodeStatus(encodeStatus);
+		 var encodeMessage = "<spring:message code="music.playlist.encode.not-installed" />";
+		<c:if test="${isFfMpegInstalled}" >
+			encodeMessage = "<spring:message code="music.playlist.encode.process" />";
+		</c:if>
+		
 		$("#current-song .encode").html(encodeMessage);
 	};
 }
@@ -368,29 +372,6 @@ function showtSongInPlaylistIfEmpty(playlistId, mediaItemId) {
 	mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, false);
 	
 } 
-
-
-function getAudioEncodeStatus(encodeStatus) {
-    
-    var encodeMessage = "";
-		
-	if (encodeStatus == "NOT-INSTALLED") {
-		encodeMessage = "<spring:message code="music.playlist.encode.not-installed" />";
-	} else if (encodeStatus == "PROCESSING") {
-	encodeMessage = "<spring:message code="music.playlist.encode.processing" />";			
-    } else if (encodeStatus == "ENCODED") {
-	encodeMessage = "<spring:message code="music.playlist.encode.processed" />";
-    } else if (encodeStatus == "ERROR") {
-	encodeMessage = "<spring:message code="music.playlist.encode.error" />";	
-    } else if (encodeStatus == "OVERRIDE") {
-	encodeMessage = "<spring:message code="music.playlist.encode.override" />";	
-    } else {
-	encodeMessage = "<spring:message code="music.playlist.encode.process" />";	    
-    }
-	
-    return encodeMessage;    
-}
-
 
 function updatePlaylistView(mediaItemId) {	
 	if ($("#playlist").length < 1) {

@@ -182,10 +182,6 @@ public class AjaxMusicController extends AjaxBaseController {
 		playlistMediaItem.setPlaylist(playlist);
 		playlistMediaItem.setMediaItem(song);
 
-		boolean isEncoderInstalled = BooleanUtils.toBoolean(configurationManager
-				.getConfigurationValue(MashUpMediaConstants.IS_ENCODER_INSTALLED));
-		model.addAttribute(MashUpMediaConstants.IS_ENCODER_INSTALLED, isEncoderInstalled);
-
 //		MediaType mediaType = song.getMediaType();
 //		if (mediaType == MediaType.SONG) {
 //			Song song = (Song) mediaItem;

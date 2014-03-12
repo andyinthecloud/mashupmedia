@@ -65,7 +65,7 @@ public class MusicController extends BaseController {
 	public boolean isTransparentBackground() {
 		return false;
 	}
-
+	
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music");

@@ -36,7 +36,7 @@ public interface MashUpMediaConstants {
 	public static final String MODEL_KEY_GENRES = "genres";
 	public static final String MODEL_KEY_IS_APPEND = "isAppend";
 	public static final String UNIQUE_INSTALLATION_NAME = "uniqueInstallationName";
-	public static final String IS_ENCODER_INSTALLED = "isEncoderInstalled";
+	public static final String IS_FFMPEG_INSTALLED = "isFfMpegInstalled";
 
 	public final static String ADMIN_USER_DEFAULT_NAME = "Administrator";
 	public final static String ADMIN_USER_DEFAULT_USERNAME = "admin";

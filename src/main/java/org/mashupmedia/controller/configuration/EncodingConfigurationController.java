@@ -87,7 +87,7 @@ public class EncodingConfigurationController extends BaseController {
 
 		}
 		encodingPage.setFfMpegFound(isFfmpegValid);
-		configurationManager.saveConfiguration(MashUpMediaConstants.IS_ENCODER_INSTALLED, BooleanUtils.toStringTrueFalse(isFfmpegValid));
+		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, BooleanUtils.toStringTrueFalse(isFfmpegValid));
 		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegFilePath);
 
 		model.addAttribute(encodingPage);

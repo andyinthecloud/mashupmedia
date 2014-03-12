@@ -108,7 +108,7 @@ public class MediaItem implements Serializable {
 	private List<Comment> comments;
 	@XmlTransient
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	@OrderBy("ranking")
+//	@OrderBy("ranking")
 	private List<MediaEncoding> mediaEncodings;
 
 	public MediaItem() {

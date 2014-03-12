@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.playlist.Playlist;
@@ -56,6 +57,13 @@ public abstract class BaseController {
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_THEME_PATH)
 	public String getThemePath() {
 		return "/themes/default";
+	}
+	
+	@ModelAttribute(MashUpMediaConstants.IS_FFMPEG_INSTALLED)
+	public boolean isFfMpegInstalled() {
+		boolean isFfMpegInstalled = BooleanUtils.toBoolean(configurationManager
+				.getConfigurationValue(MashUpMediaConstants.IS_FFMPEG_INSTALLED));
+		return isFfMpegInstalled;
 	}
 
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_IS_NEW_MASHUP_MEDIA_AVAILABLE)
