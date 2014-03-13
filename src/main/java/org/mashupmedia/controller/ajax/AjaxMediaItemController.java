@@ -17,10 +17,14 @@
 
 package org.mashupmedia.controller.ajax;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.model.Configuration;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.MediaItemHelper;
@@ -28,10 +32,12 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/ajax/media/")
@@ -45,10 +51,13 @@ public class AjaxMediaItemController {
 	@Autowired
 	private MediaManager mediaManager;
 
+	@Autowired
+	private ConfigurationManager configurationManager;
+
 	@RequestMapping(value = "/encode/{mediaItemId}", method = RequestMethod.GET)
 	public String handleEncodeHtml5(@PathVariable Long mediaItemId,
 			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model) {
-		
+
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 
 		MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
@@ -59,30 +68,30 @@ public class AjaxMediaItemController {
 
 		if (mediaContentType != MediaContentType.UNSUPPORTED) {
 			String page = prepareEncodeMediaModel(mediaItemId, mediaContentType, model);
-			return page;		
+			return page;
 		}
-		
+
 		mediaContentType = null;
 		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
 		if (mediaEncoding != null) {
 			mediaContentType = mediaEncoding.getMediaContentType();
 			String page = prepareEncodeMediaModel(mediaItemId, mediaContentType, model);
-			return page;		
-		}	
-		
+			return page;
+		}
+
 		mediaContentType = MediaContentType.MP3_ENCODED;
 		if (mediaItem.getMediaType() == MediaType.VIDEO) {
 			mediaContentType = MediaContentType.WEBM;
 		}
-		
+
 		String page = prepareEncodeMediaModel(mediaItemId, mediaContentType, model);
-		return page;		
+		return page;
 	}
-	
-	protected String prepareEncodeMediaModel (long mediaItemId, MediaContentType mediaContentType, Model model) {
+
+	protected String prepareEncodeMediaModel(long mediaItemId, MediaContentType mediaContentType, Model model) {
 		encodeMediaItemTaskManager.encodeMediaItem(mediaItemId, mediaContentType);
 		model.addAttribute(MODEL_KEY_IS_SUCCESSFUL, true);
-		return "ajax/message";	
+		return "ajax/message";
 	}
 
 	// @RequestMapping(value = "/format-unprocessed/{mediaItemId}", method =
@@ -120,6 +129,14 @@ public class AjaxMediaItemController {
 		MediaContentType mediaContentType = MediaItemHelper.getOriginalMediaContentType(format);
 		model.addAttribute("jPlayerFormat", mediaContentType.getjPlayerContentType());
 		return "ajax/media/media-item";
+	}
+
+	@RequestMapping(value = "/ffmpeg/status", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	boolean handleGetIsFfMpegInstalled() {
+		boolean isFfMpegInstalled = BooleanUtils.toBoolean(configurationManager
+				.getConfigurationValue(MashUpMediaConstants.IS_FFMPEG_INSTALLED));
+		return isFfMpegInstalled;
 	}
 
 }

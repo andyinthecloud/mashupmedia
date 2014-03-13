@@ -29,22 +29,7 @@
 	    });
 	});
 
-	$("#current-song div.encode").on("click", "a", function(event) {
-
-	    var className = $(this).attr("class");
-	    var mediaItemId = $("#current-song-id").val();
-
-	    if (className == "play-original-file") {
-		$.get(mashupMedia.contextUrl + "app/ajax/media/format-unprocessed/" + mediaItemId, function(data) {
-		    mashupMedia.playSong(mediaItemId);
-		});
-	    } else if (className == "play-encoded-file") {
-		$.get(mashupMedia.contextUrl + "app/ajax/media/format-encoded/" + mediaItemId, function(data) {
-		    mashupMedia.playSong(mediaItemId);
-		});
-
-	    } else if (className == "encode-file") {
-		$("#current-song .encode").html("<spring:message code="music.playlist.encode.processing" />");
+	$("#current-song div.encode").on("click", "a.encode-file", function(event) {
 
 		$.get(mashupMedia.contextUrl + "app/ajax/media/encode/" + mediaItemId, function(data) {
 		    var encodeStatus = "ERROR";
@@ -57,11 +42,13 @@
 		    setTimeout(function(){mashupMedia.playSong(mediaItemId)}, 5000);
 		    
 		});
+		
 
-	    } else if (className == "no-encoder-found") {
-	    	window.location.href = "<c:url value="/app/configuration/encoding" />";
-	    }
 
+	});
+	
+	$("#current-song div.encode").on("click", "a.no-encoder-found", function(event) {
+		window.location.href = "<c:url value="/app/configuration/encoding" />";
 	});
 
 	var defaultSearchText = "<spring:message code="search" />";

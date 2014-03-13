@@ -114,11 +114,25 @@ $( document ).ajaxComplete(function() {
 });
 
 
+
+
 var mashupMedia = new function() {
 	this.contextUrl = $("#contextUrl").val();
 	this.setContextUrl = function(contextUrl) {
 		this.contextUrl = contextUrl;
 	};
+	this.isFfMpegInstalled = function() {
+		var isInstalled = false;		
+		$.ajax({
+		  url: mashupMedia.contextUrl + "app/ajax/media/ffmpeg/status",
+		  async: false,
+		  dataType: "json",
+		  success: function (json) {
+		    isInstalled = json;
+		  }
+		});		
+		return isInstalled;
+	};	
 	this.playingClass = "playing";
 	this.jPlayerId = "#jquery_jplayer_1";
 	this.jPlayerContainerId = "#jp_container_1";
@@ -353,10 +367,12 @@ var mashupMedia = new function() {
 		$("#current-playlist-id").val(playlistId);
 		$("#current-song .playlist a").attr("rel", "address:/address-playlist-" + playlistId);
 		
-		 var encodeMessage = "<spring:message code="music.playlist.encode.not-installed" />";
-		<c:if test="${isFfMpegInstalled}" >
+		
+		
+		var encodeMessage = "<spring:message code="music.playlist.encode.not-installed" />";	
+		if (mashupMedia.isFfMpegInstalled()) {
 			encodeMessage = "<spring:message code="music.playlist.encode.process" />";
-		</c:if>
+		}
 		
 		$("#current-song .encode").html(encodeMessage);
 	};
