@@ -61,6 +61,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		// Audio encoding
 		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP3_ENCODED, 1));
 		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.OGA, 2));
+		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP3_ORIGINAL, 3));		
 		
 		// Video encoding
 		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP4, 1));
@@ -69,8 +70,8 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	
 	private MediaEncoding createMediaEncoding(MediaContentType mediaContentType, int ranking) {
 		MediaEncoding mediaEncoding = new MediaEncoding();
-		mediaEncoding.setMediaContentType(MediaContentType.MP3_ENCODED);
-		mediaEncoding.setRanking(1);
+		mediaEncoding.setMediaContentType(mediaContentType);
+		mediaEncoding.setRanking(ranking);
 		return mediaEncoding;		
 	}
 

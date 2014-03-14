@@ -30,21 +30,10 @@
 	});
 
 	$("#current-song div.encode").on("click", "a.encode-file", function(event) {
-
+		var mediaItemId = $("#current-song-id").val();
 		$.get(mashupMedia.contextUrl + "app/ajax/media/encode/" + mediaItemId, function(data) {
-		    var encodeStatus = "ERROR";
-		    if (data.response.isSuccessful) {
-				encodeStatus = "PROCESSING";
-		    }
-
-		    var encodeMessage = getAudioEncodeStatus(encodeStatus);
-		    $("#current-song .encode").html(encodeMessage);
-		    setTimeout(function(){mashupMedia.playSong(mediaItemId)}, 5000);
-		    
+		    setTimeout(function(){mashupMedia.playSong(mediaItemId)}, 5000);		    
 		});
-		
-
-
 	});
 	
 	$("#current-song div.encode").on("click", "a.no-encoder-found", function(event) {
