@@ -61,7 +61,6 @@ public class FileHelper {
 	public static File createMediaFileStream(MediaItem mediaItem, MediaContentType mediaContentType) {
 		if (mediaContentType == MediaContentType.MP3_ORIGINAL) {			 
 			File file = new File(mediaItem.getPath());
-//			tempFile = FileHelper.createEncodedMediaFile(library.getId(), mediaItemId, mediaContentType);
 			return file;
 		}
 			
@@ -164,32 +163,7 @@ public class FileHelper {
 
 	}
 
-	public static boolean isSupportedVideo(String fileName) {
-		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
-		if (StringUtils.isEmpty(fileName)) {
-			return false;
-		}
 
-		if (fileName.endsWith(".mpeg")) {
-			return true;
-		} else if (fileName.endsWith(".mpg")) {
-			return true;
-		} else if (fileName.endsWith(".mp4")) {
-			return true;
-		} else if (fileName.endsWith(".ogm")) {
-			return true;
-		} else if (fileName.endsWith(".mkv")) {
-			return true;
-		} else if (fileName.endsWith(".avi")) {
-			return true;
-		} else if (fileName.endsWith(".wmv")) {
-			return true;
-		} else if (fileName.endsWith(".mov")) {
-			return true;
-		}
-
-		return false;
-	}
 
 	public static String getFileExtension(String fileName) {
 		fileName = StringUtils.trimToEmpty(fileName);

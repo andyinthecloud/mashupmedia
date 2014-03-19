@@ -28,7 +28,8 @@ public class MediaItemHelper {
 	public enum MediaContentType {
 		MP3_ENCODED("audio/mpeg", "mp3", "mp3"), MP3_ORIGINAL("audio/mpeg", "mp3", "mp3"), OGA("audio/ogg", "oga",
 				"oga"), FLAC("audio/flac", "flac", "flac"), UNSUPPORTED("media/unsupported", "unsupported",
-				"unsupported"), WEBM("video/webm", "webmv", "webm"), MP4("video/mp4", "m4v", "mp4");
+				"unsupported"), WEBM("video/webm", "webmv", "webm"), MP4("video/mp4", "m4v", "mp4"), OGV("video/ogg",
+				"ogv", "ogv");
 
 		private String mimeContentType;
 		private String jPlayerContentType;
@@ -128,7 +129,7 @@ public class MediaItemHelper {
 	}
 
 	private static MediaContentType getMediaContentType(String mediaFormat) {
-		if (mediaFormat.equalsIgnoreCase("Vorbis") || mediaFormat.equalsIgnoreCase("ogg")) {
+		if (mediaFormat.equalsIgnoreCase("Vorbis") || mediaFormat.equalsIgnoreCase("ogg") || mediaFormat.equalsIgnoreCase("oga")) {
 			return MediaContentType.OGA;
 		} else if (mediaFormat.equalsIgnoreCase("Free Lossless Audio Codec") || mediaFormat.equalsIgnoreCase("flac")) {
 			return MediaContentType.FLAC;
@@ -136,12 +137,15 @@ public class MediaItemHelper {
 			return MediaContentType.WEBM;
 		} else if (mediaFormat.equalsIgnoreCase("mp4")) {
 			return MediaContentType.MP4;
+		} else if (mediaFormat.equalsIgnoreCase("ogv")) {
+			return MediaContentType.OGV;
 		}
 
 		return MediaContentType.UNSUPPORTED;
 
 	}
-
+	
+	
 	public static MediaContentType getMediaContentType(MediaItem mediaItem) {
 		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
 		if (mediaEncoding != null) {
@@ -157,15 +161,6 @@ public class MediaItemHelper {
 		if (mediaContentType != MediaContentType.UNSUPPORTED) {
 			return mediaContentType;
 		}
-
-		// MediaType mediaType = mediaItem.getMediaType();
-		// if (mediaType == MediaType.SONG) {
-		// return MediaContentType.MP3;
-		// }
-		//
-		// if (mediaType == MediaType.VIDEO) {
-		// return MediaContentType.WEBM;
-		// }
 
 		return MediaContentType.UNSUPPORTED;
 	}

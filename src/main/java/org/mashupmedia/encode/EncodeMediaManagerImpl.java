@@ -17,7 +17,6 @@
 
 package org.mashupmedia.encode;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
@@ -35,64 +34,32 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 
 	@Autowired
 	private FfMpegManager encodeManager;
-	
+
 	@Autowired
 	private ProcessManager processManager;
 
 	@Override
-	public synchronized void encodeMedia(long mediaItemId, MediaContentType mediaContentType) {
+	public void encodeMedia(long mediaItemId, MediaContentType mediaContentType) {
 
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 
 		try {
-//			EncodeStatusType encodeStatusType = mediaItem.getEncodeStatusType();
-//
-//			if (encodeStatusType == EncodeStatusType.PROCESSING) {
-//				logger.info("Media file is being encoded, exiting...");
-//				return;
-//			}
-//
-//			mediaItem.setEncodeStatusType(EncodeStatusType.PROCESSING);
-//			mediaManager.saveMediaItem(mediaItem);
-
 			boolean isCurrentlyEncoding = processManager.isCurrentlyEncoding(mediaItemId, mediaContentType);
 			if (isCurrentlyEncoding) {
 				logger.info("Media file is being encoded, exiting...");
-				return;				
+				return;
 			}
-						
+
 			logger.info("Starting to encode media file to html5 format");
 
-//			MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
+			encodeManager.encodeMediaItem(mediaItem, mediaContentType);
 
-//			if (mediaItem instanceof Song) {
-//				mediaContentType = MediaContentType.MP3;
-//			} else if (mediaItem instanceof Video) {
-//				mediaContentType = MediaContentType.WEBM;
-//			}
-
-			String outputText = encodeManager.encodeMediaItem(mediaItem, mediaContentType);
-			outputText = StringUtils.trimToEmpty(outputText);
-			boolean hasError = false;
-			if (outputText.matches("^Error")) {
-				hasError = true;
-			}
-
-			if (hasError) {
-				logger.error("FFMpeg reported an error saving media file to html5 format, please view the log file to get more information.");
-//				mediaItem.setEncodeStatusType(EncodeStatusType.ERROR);
-			} else {
-				logger.info("Media file decoded to " + mediaContentType.getName());
-//				mediaItem.setEncodeStatusType(EncodeStatusType.ENCODED);
-				MediaEncoding mediaEncoding = mediaManager.getMediaEncoding(mediaContentType);
-				mediaItem.addMediaEncoding(mediaEncoding);
-			}
-
+			logger.info("Media file decoded to " + mediaContentType.getName());
+			MediaEncoding mediaEncoding = mediaManager.getMediaEncoding(mediaContentType);
+			mediaItem.addMediaEncoding(mediaEncoding);
 			mediaManager.saveMediaItem(mediaItem);
 		} catch (Exception e) {
 			logger.error("Error encoding media item: " + mediaItemId, e);
-//			mediaItem.setEncodeStatusType(EncodeStatusType.ERROR);
-//			mediaManager.saveMediaItem(mediaItem);
 		}
 
 	}

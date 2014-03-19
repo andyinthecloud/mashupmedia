@@ -3,6 +3,7 @@ package org.mashupmedia.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,19 +27,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping("/encode/processes")
-public class ListEncodingProcessesController extends BaseController{
+public class ListEncodingProcessesController extends BaseController {
 
 	@Autowired
 	private ProcessManager processManager;
-	
+
 	@Autowired
 	private MediaManager mediaManager;
-	
+
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb videosBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.videos"), "/app/videos");
 		breadcrumbs.add(videosBreadcrumb);
-		
+
 		Breadcrumb processBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.encoding-processes"));
 		breadcrumbs.add(processBreadcrumb);
 	}
@@ -49,33 +50,42 @@ public class ListEncodingProcessesController extends BaseController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
+	public String handleGetEncodingProcessesPage(Model model) {
+		EncodingProcessesPage encodingProcessesPage = new EncodingProcessesPage();
+		encodingProcessesPage.setEncodingProcesses(new ArrayList<EncodingProcess>());
+		model.addAttribute("encodingProcessesPage", encodingProcessesPage);
+		return "encode/list-processes";
+	}
+
+	@RequestMapping(value = "/live-update", method = RequestMethod.GET)
 	public String handleGetEncodingProcesses(Model model) {
 		EncodingProcessesPage encodingProcessesPage = new EncodingProcessesPage();
 		List<EncodingProcess> encodingProcesses = new ArrayList<EncodingProcess>();
-		
-		Map<ProcessKey, ProcessContainer> processCache =  processManager.getProcessCache();
-		Set<ProcessKey> processkeys =  processCache.keySet();
-		for (ProcessKey processKey : processkeys) {
+
+		Map<ProcessKey, ProcessContainer> processCache = processManager.getProcessCache();
+		Set<ProcessKey> processkeys = processCache.keySet();
+
+		for (Iterator<ProcessKey> iterator = processkeys.iterator(); iterator.hasNext();) {
+			ProcessKey processKey = (ProcessKey) iterator.next();
 			ProcessContainer processContainer = processCache.get(processKey);
-			
+
 			EncodingProcess encodingProcess = new EncodingProcess();
-			
+
 			MediaItem mediaItem = mediaManager.getMediaItem(processKey.getMediaItemId());
 			encodingProcess.setMediaItem(mediaItem);
-			
+
 			MediaContentType mediaContentType = processKey.getMediaContentType();
 			encodingProcess.setMediaContentType(mediaContentType);
-			
+
 			Date startedOn = processContainer.getStartedOn();
-			encodingProcess.setStartedOn(startedOn);			
-			
+			encodingProcess.setStartedOn(startedOn);
+
 			encodingProcesses.add(encodingProcess);
-			
 		}
-		
-		Collections.sort(encodingProcesses, new EncodingProcessComparator());		
+
+		Collections.sort(encodingProcesses, new EncodingProcessComparator());
 		encodingProcessesPage.setEncodingProcesses(encodingProcesses);
-		
+
 		model.addAttribute("encodingProcessesPage", encodingProcessesPage);
 		return "encode/list-processes";
 	}

@@ -23,65 +23,117 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProcessManager {
 	private static Logger logger = Logger.getLogger(ProcessManager.class);
 
-	private Map<ProcessKey, ProcessContainer> processCache = new HashMap<ProcessKey, ProcessContainer>();
+	public final static String KEY_TOTAL_FFMPEG_PROCESSES = "totalFfMpegProcesses";
+	public final static int DEFAULT_TOTAL_FFMPEG_PROCESSES = 3;
+
+	@Autowired
+	private ConfigurationManager configurationManager;
+
+	private SortedMap<ProcessKey, ProcessContainer> processCache = new TreeMap<ProcessKey, ProcessContainer>();
 
 	public Map<ProcessKey, ProcessContainer> getProcessCache() {
 		return processCache;
 	}
 
-	public String callProcess(String path, long mediaItemId, MediaContentType mediaContentType) throws IOException {
+	public String callProcess(String path) throws IOException {
 		List<String> commands = new ArrayList<String>();
 		commands.add(path);
 
-		String output = callProcess(commands, mediaItemId, mediaContentType);
-		return output;
+		String textOutput = callProcess(commands);
+		return textOutput;
 	}
 
-	public String callProcess(List<String> commands, long mediaItemId, MediaContentType mediaContentType)
+	public void callProcess(List<String> commands, long mediaItemId, MediaContentType mediaContentType)
 			throws IOException {
 
 		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
+		ProcessContainer processContainer = processCache.get(processKey);
+		if (processContainer != null) {
+			logger.info("Found ffmpeg process. Destroying.");
+			processContainer.getProcess().destroy();
+		}
 
+		processContainer = new ProcessContainer(commands);
+
+		processCache.put(processKey, processContainer);
+
+		int totalFfMpegProcesses = NumberUtils.toInt(
+				configurationManager.getConfigurationValue(KEY_TOTAL_FFMPEG_PROCESSES), DEFAULT_TOTAL_FFMPEG_PROCESSES);
+		Set<ProcessKey> processKeys = processCache.keySet();
+		if (processKeys.size() <= totalFfMpegProcesses) {
+			startProcess(processKey, processContainer);
+		}
+
+		// ProcessKey nextProcessKey = processCache.firstKey();
+
+		//
+		// InputStream inputStream = process.getInputStream();
+		// BufferedReader bufferedReader = new BufferedReader(new
+		// InputStreamReader(inputStream));
+		// String line;
+		//
+		// StringBuilder outputBuilder = new StringBuilder();
+		//
+		// while ((line = bufferedReader.readLine()) != null) {
+		// logger.info(line);
+		// outputBuilder.append(line);
+		// }
+		// IOUtils.closeQuietly(inputStream);
+		//
+		// try {
+		// int waitForValue = process.waitFor();
+		// logger.info("Process waitFor value = " + waitForValue);
+		// } catch (InterruptedException e) {
+		// logger.error("Error waiting for waitFor.", e);
+		// }
+		//
+		// int exitValue = process.exitValue();
+		// logger.info("Process exit value = " + exitValue);
+		//
+		// return outputBuilder.toString();
+		// } finally {
+		// processCache.remove(processKey);
+		// }
+
+	}
+
+	protected void startProcess(ProcessKey processKey, ProcessContainer processContainer) throws IOException {
+		
 		try {
-
-			ProcessContainer processContainer = processCache.get(processKey);
-			if (processContainer != null) {
-				logger.info("Found ffmpeg process. Destroying.");
-				processContainer.getProcess().destroy();
-			}
-
 			logger.info("Starting process...");
-			Date startedOn = new Date();
+			List<String> commands = processContainer.getCommands();
 
 			ProcessBuilder processBuilder = new ProcessBuilder(commands);
 			processBuilder.redirectErrorStream(true);
 			Process process = processBuilder.start();
 
-			processContainer = new ProcessContainer(process, startedOn);
-			processCache.put(processKey, processContainer);
+			processContainer.setStartedOn(new Date());
+			processContainer.setProcess(process);
 
 			InputStream inputStream = process.getInputStream();
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 			String line;
 
-			StringBuilder outputBuilder = new StringBuilder();
-
 			while ((line = bufferedReader.readLine()) != null) {
 				logger.info(line);
-				outputBuilder.append(line);
 			}
 			IOUtils.closeQuietly(inputStream);
 
@@ -95,10 +147,58 @@ public class ProcessManager {
 			int exitValue = process.exitValue();
 			logger.info("Process exit value = " + exitValue);
 
-			return outputBuilder.toString();
 		} finally {
 			processCache.remove(processKey);
+
+			ProcessKey nextProcessKeyInQueue = getNextProcessKeyInQueue();
+			if (nextProcessKeyInQueue != null) {
+				ProcessContainer nextProcessContainerInQueue = processCache.get(nextProcessKeyInQueue);
+				startProcess(nextProcessKeyInQueue, nextProcessContainerInQueue);
+			}
 		}
+
+	}
+
+	protected ProcessKey getNextProcessKeyInQueue() {
+		if (processCache == null || processCache.isEmpty()) {
+			return null;
+		}
+
+		ProcessKey processKey = processCache.firstKey();
+		return processKey;
+	}
+
+	public String callProcess(List<String> commands) throws IOException {
+
+		logger.info("Starting process...");
+
+		ProcessBuilder processBuilder = new ProcessBuilder(commands);
+		processBuilder.redirectErrorStream(true);
+		Process process = processBuilder.start();
+
+		InputStream inputStream = process.getInputStream();
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+		String line;
+
+		StringBuilder outputBuilder = new StringBuilder();
+
+		while ((line = bufferedReader.readLine()) != null) {
+			logger.info(line);
+			outputBuilder.append(line);
+		}
+		IOUtils.closeQuietly(inputStream);
+
+		try {
+			int waitForValue = process.waitFor();
+			logger.info("Process waitFor value = " + waitForValue);
+		} catch (InterruptedException e) {
+			logger.error("Error waiting for waitFor.", e);
+		}
+
+		int exitValue = process.exitValue();
+		logger.info("Process exit value = " + exitValue);
+
+		return outputBuilder.toString();
 
 	}
 

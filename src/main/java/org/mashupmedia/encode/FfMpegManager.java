@@ -42,22 +42,20 @@ public class FfMpegManager {
 	private static final String FFMPEG_EXECUTABLE_NAME = "ffmpeg";
 	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh" };
 	private static final String FFMPEG_EXECUTABLE_LINK = "ffmpeg.txt";
-	private static final long FAKE_MEDIA_ID = -1;
 
 	private Logger logger = Logger.getLogger(FfMpegManager.class);
 
 	@Autowired
 	private ProcessManager processManager;
-	
+
 	@Autowired
 	private ConnectionManager connectionManager;
-	
+
 	@Autowired
 	private ConfigurationManager configurationManager;
-	
+
 	@Autowired
 	private MediaManager mediaManager;
-	
 
 	public String getFFMpegFolderPath() {
 		File ffMpegFolder = new File(FileHelper.getApplicationFolder(), FFMPEG_FOLDER_NAME);
@@ -135,8 +133,7 @@ public class FfMpegManager {
 	}
 
 	public boolean isValidFfMpeg(File ffMpegExecutableFile) throws IOException {
-		String outputText = processManager.callProcess(ffMpegExecutableFile.getAbsolutePath(), FAKE_MEDIA_ID,
-				MediaContentType.UNSUPPORTED);
+		String outputText = processManager.callProcess(ffMpegExecutableFile.getAbsolutePath());
 		if (outputText.contains(FFMPEG_EXECUTABLE_NAME)) {
 			return true;
 		}
@@ -144,51 +141,46 @@ public class FfMpegManager {
 		return false;
 	}
 
-	public String encodeMediaItem(MediaItem mediaItem,
-			MediaContentType mediaContentType) throws IOException {
-		
+	public void encodeMediaItem(MediaItem mediaItem, MediaContentType mediaContentType) throws IOException {
 
 		String pathToFfMpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
 		if (StringUtils.isBlank(pathToFfMpeg)) {
 			String errorText = "Unable to encode media, ffmpeg is not configured.";
 			logger.info(errorText);
-			return errorText;
+			return;
 		}
 
 		long mediaItemId = mediaItem.getId();
-		
-//		Library library = mediaItem.getLibrary();
-		
+
+		// Library library = mediaItem.getLibrary();
+
 		File inputFile = new File(mediaItem.getPath());
-//		File outputFile = FileHelper.createEncodedMediaFile(library.getId(), mediaItemId, mediaContentType);
+		// File outputFile = FileHelper.createEncodedMediaFile(library.getId(),
+		// mediaItemId, mediaContentType);
 		File outputFile = FileHelper.createMediaFileStream(mediaItem, mediaContentType);
 		boolean isDeleted = FileHelper.deleteFile(outputFile);
-		
+
 		if (!isDeleted) {
 			String errorText = "Exiting, unable to delete encoded media file: " + outputFile.getAbsolutePath();
 			logger.info(errorText);
-			return errorText;
+			return;
 		}
 
-		
-		
-		String outputText = null;
 		if (mediaContentType == MediaContentType.MP3_ENCODED) {
-			outputText = encodeAudioToMp3(pathToFfMpeg, inputFile, outputFile, mediaItemId);
+			encodeAudioToMp3(pathToFfMpeg, inputFile, outputFile, mediaItemId);
 		} else if (mediaContentType == MediaContentType.MP4) {
-			outputText = encodeVideoToMp4(pathToFfMpeg, inputFile, outputFile, mediaItemId);
+			encodeVideoToMp4(pathToFfMpeg, inputFile, outputFile, mediaItemId);
 		} else if (mediaContentType == MediaContentType.WEBM) {
-			outputText = encodeVideoToWebM(pathToFfMpeg, inputFile, outputFile, mediaItemId);
+			encodeVideoToWebM(pathToFfMpeg, inputFile, outputFile, mediaItemId);
+		} else if (mediaContentType == MediaContentType.OGV) {
+			encodeVideoToOGV(pathToFfMpeg, inputFile, outputFile, mediaItemId);
 		} else {
-			outputText = mediaContentType.name() + " not supported";
-			logger.info(outputText);
+			logger.info(mediaContentType.name() + " not supported");
 		}
-
-		return outputText;
 
 	}
 
-	private String encodeAudioToMp3(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
+	private void encodeAudioToMp3(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
 			throws IOException {
 
 		List<String> commands = new ArrayList<String>();
@@ -204,11 +196,10 @@ public class FfMpegManager {
 		commands.add("mp3");
 		commands.add(outputFile.getAbsolutePath());
 
-		String outputText = processManager.callProcess(commands, mediaItemId, MediaContentType.MP3_ENCODED);
-		return outputText;
+		processManager.callProcess(commands, mediaItemId, MediaContentType.MP3_ENCODED);
 	}
 
-	private String encodeVideoToMp4(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
+	private void encodeVideoToMp4(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
 			throws IOException {
 
 		// ffmpeg -y -i test.avi -c:v libx264 -preset:v veryfast -strict
@@ -219,6 +210,7 @@ public class FfMpegManager {
 		commands.add("-y");
 		commands.add("-i");
 		commands.add(inputFile.getAbsolutePath());
+		commands.add("-sn");
 		commands.add("-c:v");
 		commands.add("libx264");
 		commands.add("-preset:v");
@@ -233,11 +225,10 @@ public class FfMpegManager {
 		commands.add("mp4");
 		commands.add(outputFile.getAbsolutePath());
 
-		String outputText = processManager.callProcess(commands, mediaItemId, MediaContentType.MP4);
-		return outputText;
+		processManager.callProcess(commands, mediaItemId, MediaContentType.MP4);
 	}
 
-	private String encodeVideoToWebM(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
+	private void encodeVideoToWebM(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
 			throws IOException {
 
 		// ffmpeg -i input.mp4 -c:v libvpx -b:v 1M -c:a libvorbis -qscale:a 5
@@ -248,6 +239,7 @@ public class FfMpegManager {
 		commands.add("-y");
 		commands.add("-i");
 		commands.add(inputFile.getAbsolutePath());
+		commands.add("-sn");
 		commands.add("-c:v");
 		commands.add("libvpx");
 		commands.add("-b:v");
@@ -260,8 +252,33 @@ public class FfMpegManager {
 		commands.add("webm");
 		commands.add(outputFile.getAbsolutePath());
 
-		String outputText = processManager.callProcess(commands, mediaItemId, MediaContentType.WEBM);
-		return outputText;
+		processManager.callProcess(commands, mediaItemId, MediaContentType.WEBM);
+	}
+
+	private void encodeVideoToOGV(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
+			throws IOException {
+
+		// ffmpeg -y -i input.mp4 -sn -codec:v libtheora -qscale:v 7 -codec:a libvorbis -qscale:a 5 output.ogv
+		
+		List<String> commands = new ArrayList<String>();
+		commands.add(pathToFfMpeg);
+		commands.add("-y");
+		commands.add("-i");
+		commands.add(inputFile.getAbsolutePath());
+		commands.add("-sn");
+		commands.add("-codec:v");
+		commands.add("libtheora");
+		commands.add("-qscale:v");
+		commands.add("7");
+		commands.add("-codec:a");
+		commands.add("libvorbis");
+		commands.add("-qscale:a");
+		commands.add("5");
+		commands.add(outputFile.getAbsolutePath());
+		commands.add("-f");
+		commands.add("ogv");
+		
+		processManager.callProcess(commands, mediaItemId, MediaContentType.OGV);
 	}
 
 }

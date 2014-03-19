@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.media.Video;
 import org.mashupmedia.restful.VideoWebService;
 import org.mashupmedia.service.VideoManager;
@@ -34,10 +35,13 @@ public class VideoController extends BaseController {
 
 	@Autowired
 	private VideoManager videoManager;
+	
+	@Autowired
+	private ProcessManager processManager;
 
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
-
+	
 	@Autowired
 	@Qualifier("themoviedb")
 	private VideoWebService videoWebService;
@@ -46,7 +50,6 @@ public class VideoController extends BaseController {
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.videos"), "/app/videos");
 		breadcrumbs.add(breadcrumb);
-
 	}
 
 	@Override
@@ -58,24 +61,23 @@ public class VideoController extends BaseController {
 	public String handleGetVideo(@PathVariable("videoId") Long videoId, Model model) {
 
 		Video video = videoManager.getVideo(videoId);
-		
 
 		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
 		Breadcrumb breadcrumb = new Breadcrumb(video.getDisplayTitle());
 		breadcrumbs.add(breadcrumb);
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
-		
+
 		String headPageTitle = populateHeadPageTitle() + " " + video.getDisplayTitle();
 		model.addAttribute(MODEL_KEY_HEAD_PAGE_TITLE, headPageTitle);
-		
+
 		VideoPage videoPage = new VideoPage();
-		videoPage.setSuppliedVideoFormats(new String[] { MediaContentType.WEBM.getjPlayerContentType() });
+		videoPage.setSuppliedVideoFormats(new String[] { MediaContentType.OGV.getjPlayerContentType() });
 		videoPage.setVideo(video);
 
 		RemoteMediaMetaItem remoteMediaMetaItem = getRemoteMediaMetaItem(videoId);
 		if (remoteMediaMetaItem != null && !video.isIgnoreRemoteContent()) {
 			video.setSummary(remoteMediaMetaItem.getIntroduction());
-		}		
+		}
 		videoPage.setRemoteMediaMetaItem(remoteMediaMetaItem);
 
 		String posterUrl = "/images/no-video-poster.png";
@@ -119,18 +121,23 @@ public class VideoController extends BaseController {
 	}
 
 	@RequestMapping(value = "/play/{videoId}", method = RequestMethod.GET)
-	public String handlePlayVideo(@PathVariable("videoId") Long videoId, @RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue,
-			 Model model) {
-//		Video video = videoManager.getVideo(videoId);
-//		encodeMediaItemTaskManager.encodeMediaItem(videoId, );
+	public String handlePlayVideo(@PathVariable("videoId") Long videoId,
+			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model) {
 		MediaContentType mediaContentType = MediaItemHelper.getEncodedMediaContentType(mediaContentTypeValue);
 		if (mediaContentType == MediaContentType.UNSUPPORTED) {
-			mediaContentType = MediaContentType.WEBM;
+			mediaContentType = MediaContentType.OGV;
+			Video video = videoManager.getVideo(videoId);
+			video.setFormat(mediaContentType.getName());
+			videoManager.saveVideo(video);			
+		}
+		
+		StringBuilder urlBuilder = new StringBuilder("redirect:/app/streaming/media/" + videoId);
+		if (processManager.isCurrentlyEncoding(videoId, mediaContentType)) {
+			urlBuilder.append("?currentTime=" + System.currentTimeMillis());
 		}
 		
 		encodeMediaItemTaskManager.encodeMediaItem(videoId, mediaContentType);
-
-		return "redirect:/app/streaming/media/encoded/" + videoId;
+		return urlBuilder.toString();
 	}
 
 }

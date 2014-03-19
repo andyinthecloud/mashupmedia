@@ -27,16 +27,16 @@ public class InitialisationManagerImpl implements InitialisationManager {
 
 	@Autowired
 	private ConfigurationManager configurationManager;
-	
+
 	@Autowired
-	private VideoManager videoManager; 
-	
+	private VideoManager videoManager;
+
 	@Autowired
 	private FfMpegManager ffMpegManager;
-	
+
 	@Autowired
 	private MediaManager mediaManager;
-	
+
 	@Override
 	public void initialiseApplication() {
 		User user = adminManager.getUser(MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME);
@@ -44,7 +44,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 			logger.info("Database has already been initialised. Exiting....");
 			return;
 		}
-		
+
 		initialiseUniqueInstallationName();
 		initialiseGroups();
 		initialiseFirstRoles();
@@ -55,32 +55,29 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		initialiseMediaEncodings();
 	}
 
-
 	private void initialiseMediaEncodings() {
-		
 		// Audio encoding
 		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP3_ENCODED, 1));
 		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.OGA, 2));
-		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP3_ORIGINAL, 3));		
-		
+		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP3_ORIGINAL, 3));
+		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.FLAC, 4));
+
 		// Video encoding
 		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP4, 1));
 		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.WEBM, 2));
 	}
-	
+
 	private MediaEncoding createMediaEncoding(MediaContentType mediaContentType, int ranking) {
 		MediaEncoding mediaEncoding = new MediaEncoding();
 		mediaEncoding.setMediaContentType(mediaContentType);
 		mediaEncoding.setRanking(ranking);
-		return mediaEncoding;		
+		return mediaEncoding;
 	}
-
 
 	private void initialiseEncoder() {
 		File ffMpegFile = ffMpegManager.findFFMpegExecutable();
 		if (ffMpegFile == null) {
-			configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED,
-					Boolean.FALSE.toString());
+			configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, Boolean.FALSE.toString());
 			return;
 		}
 
@@ -95,8 +92,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 			logger.info("Error validating ffmpeg", e);
 		}
 
-		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED,
-				Boolean.FALSE.toString());
+		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, Boolean.FALSE.toString());
 	}
 
 	private void initialiseUniqueInstallationName() {
@@ -128,25 +124,25 @@ public class InitialisationManagerImpl implements InitialisationManager {
 
 	}
 
-//	protected void initialiseAdminUserAndRoles() {
-//		Set<Role> roles = initialiseFirstRoles();
-//		
-//		User administrator = adminManager.initialiseAdminUser();
-//		
-//		User user = new User();
-//		user.setName(DEFAULT_NAME);
-//		user.setUsername(DEFAULT_USERNAME);
-//		user.setPassword(DEFAULT_PASSWORD);
-//
-//		user.setEnabled(true);
-//		user.setEditable(false);
-//		user.setRoles(roles);
-//
-//		List<Group> groups = adminManager.getGroups();
-//		user.setGroups(new HashSet<Group>(groups));
-//		adminManager.saveUser(user);
-//		// adminManager.updatePassword(DEFAULT_USERNAME, DEFAULT_PASSWORD);
-//	}
+	// protected void initialiseAdminUserAndRoles() {
+	// Set<Role> roles = initialiseFirstRoles();
+	//
+	// User administrator = adminManager.initialiseAdminUser();
+	//
+	// User user = new User();
+	// user.setName(DEFAULT_NAME);
+	// user.setUsername(DEFAULT_USERNAME);
+	// user.setPassword(DEFAULT_PASSWORD);
+	//
+	// user.setEnabled(true);
+	// user.setEditable(false);
+	// user.setRoles(roles);
+	//
+	// List<Group> groups = adminManager.getGroups();
+	// user.setGroups(new HashSet<Group>(groups));
+	// adminManager.saveUser(user);
+	// // adminManager.updatePassword(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+	// }
 
 	protected void initialiseFirstRoles() {
 		saveRole(AdminHelper.ROLE_ADMIN_IDNAME, "Administrator", User.ROLE_ADMINISTRATOR);

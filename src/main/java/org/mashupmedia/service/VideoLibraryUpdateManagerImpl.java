@@ -12,7 +12,9 @@ import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Video;
+import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,9 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 
 	@Autowired
 	private VideoDao videoDao;
+	
+	@Autowired
+	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 
 	@Override
 	public void updateLibrary(VideoLibrary library, File folder, Date date) {
@@ -74,10 +79,6 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			}
 		}
 
-		if (!FileHelper.isSupportedVideo(file.getName())) {
-			return;
-		}
-
 		if (videoDeriveTitleType == VideoDeriveTitleType.USE_FOLDER_NAME) {
 			videoDisplayTitle = file.getParentFile().getName();
 		} else if (videoDeriveTitleType == VideoDeriveTitleType.USE_FILE_NAME) {
@@ -89,20 +90,23 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		String path = file.getAbsolutePath();
 		Video video = videoDao.getVideoByPath(path);
 		String fileName = file.getName();
+		long fileLastModified = file.lastModified();
+		long previouslyModified = System.currentTimeMillis();
+		
 		if (video == null) {
 			video = new Video();
-			video.setFormat(MediaContentType.UNSUPPORTED.getName());
-						
+			String fileExtension = FileHelper.getFileExtension(fileName);
+			MediaContentType mediaContentType = MediaItemHelper.getOriginalMediaContentType(fileExtension);
+			video.setFormat(mediaContentType.getName());
 			video.setEnabled(true);
-//			video.setEncodeStatusType(EncodeStatusType.UNPROCESSED);
-
-			video.setFileLastModifiedOn(file.lastModified());
+//			video.setFileLastModifiedOn(file.lastModified());
+			video.setFileLastModifiedOn(fileLastModified);
 			video.setFileName(fileName);
-			// video.setFormat(format);
 			video.setMediaType(MediaType.VIDEO);
 			video.setPath(path);
 			video.setSizeInBytes(file.length());
-			// video.setUniqueName(uniqueName);
+		} else {
+			previouslyModified = video.getFileLastModifiedOn();
 		}
 
 		video.setLibrary(library);
@@ -125,6 +129,11 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		}
 
 		videoDao.saveVideo(video, isSessionFlush);
+		
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(video);
+		if (fileLastModified > previouslyModified && mediaContentType == MediaContentType.UNSUPPORTED) {
+			encodeMediaItemTaskManager.encodeMediaItem(video.getId(), MediaContentType.MP4);
+		}
 	}
 
 }
