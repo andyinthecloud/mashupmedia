@@ -211,13 +211,62 @@ public class ProcessManager {
 		return processKey;
 	}
 
-	public boolean isCurrentlyEncoding(long mediaItemId, MediaContentType mediaContentType) {
+	public boolean isInProcessQueue(long mediaItemId, MediaContentType mediaContentType) {
 		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
 		if (processCache.containsKey(processKey)) {
 			return true;
 		}
 
 		return false;
+	}
+
+	public boolean killProcess(long mediaItemId, MediaContentType mediaContentType) {
+		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
+		if (processKey == null) {
+			return false;
+		}
+		
+		ProcessContainer processContainer = processCache.get(processKey);
+		if (processContainer == null) {
+			return false;
+		}
+		
+		Process process = processContainer.getProcess();
+		if (process != null) {
+			process.destroy();
+		}
+		
+		processCache.remove(processKey);
+		return true;
+	}
+
+	public boolean moveProcess(int index, long mediaItemId, MediaContentType mediaContentType) {
+		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
+		if (processKey == null) {
+			return false;
+		}
+		
+		ProcessContainer processContainer = processCache.get(processKey);
+		if (processContainer == null) {
+			return false;
+		}
+		
+		Process process = processContainer.getProcess();
+		if (process != null) {
+			return false;
+		}
+		
+		List<ProcessKey> processKeys = new ArrayList<ProcessKey>(processCache.keySet());
+		processKeys.remove(processKey);
+		processKeys.add(index, processKey);
+				
+		for (ProcessKey pk : processKeys) {
+			processContainer = processCache.get(pk);			
+			processCache.remove(pk);
+			processCache.put(pk, processContainer);
+		}
+		
+		return true;
 	}
 
 }

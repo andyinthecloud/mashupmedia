@@ -50,6 +50,7 @@
 			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}" />",
 			supplied: "${streamingFormat}",
 			wmode: "window",
+			solution: "html,flash",
 			smoothPlayBar: true,
 			keyEnabled: true,
 			ended: function() { 

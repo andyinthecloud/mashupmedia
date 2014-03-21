@@ -132,11 +132,11 @@ public class VideoController extends BaseController {
 		}
 		
 		StringBuilder urlBuilder = new StringBuilder("redirect:/app/streaming/media/" + videoId);
-		if (processManager.isCurrentlyEncoding(videoId, mediaContentType)) {
+		if (processManager.isInProcessQueue(videoId, mediaContentType)) {
 			urlBuilder.append("?currentTime=" + System.currentTimeMillis());
 		}
 		
-		encodeMediaItemTaskManager.encodeMediaItem(videoId, mediaContentType);
+		encodeMediaItemTaskManager.queueMediaItemForEncoding(videoId, mediaContentType);
 		return urlBuilder.toString();
 	}
 

@@ -32,7 +32,7 @@ public class EncodeMediaItemTaskManager {
 	@Autowired
 	private EncodeMediaManager encodeMediaManager;
 
-	public void encodeMediaItem(long mediaItemId, MediaContentType mediaContentType) {
+	public void queueMediaItemForEncoding(long mediaItemId, MediaContentType mediaContentType) {
 		encodeMediaItemThreadPoolTaskExecutor.execute(new EncodeMediaItemTask(mediaItemId, mediaContentType));
 	}
 

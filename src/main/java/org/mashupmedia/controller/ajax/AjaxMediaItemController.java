@@ -89,7 +89,7 @@ public class AjaxMediaItemController {
 	}
 
 	protected String prepareEncodeMediaModel(long mediaItemId, MediaContentType mediaContentType, Model model) {
-		encodeMediaItemTaskManager.encodeMediaItem(mediaItemId, mediaContentType);
+		encodeMediaItemTaskManager.queueMediaItemForEncoding(mediaItemId, mediaContentType);
 		model.addAttribute(MODEL_KEY_IS_SUCCESSFUL, true);
 		return "ajax/message";
 	}

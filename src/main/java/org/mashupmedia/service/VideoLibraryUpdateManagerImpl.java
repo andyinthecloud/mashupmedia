@@ -97,6 +97,10 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			video = new Video();
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getOriginalMediaContentType(fileExtension);
+			if (!MediaItemHelper.isCompatibleVideoFormat(mediaContentType)) {
+				mediaContentType = MediaContentType.UNSUPPORTED;
+			}
+			
 			video.setFormat(mediaContentType.getName());
 			video.setEnabled(true);
 //			video.setFileLastModifiedOn(file.lastModified());
@@ -132,7 +136,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(video);
 		if (fileLastModified > previouslyModified && mediaContentType == MediaContentType.UNSUPPORTED) {
-			encodeMediaItemTaskManager.encodeMediaItem(video.getId(), MediaContentType.MP4);
+			encodeMediaItemTaskManager.queueMediaItemForEncoding(video.getId(), MediaContentType.MP4);
 		}
 	}
 

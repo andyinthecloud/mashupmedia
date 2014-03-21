@@ -129,7 +129,8 @@ public class MediaItemHelper {
 	}
 
 	private static MediaContentType getMediaContentType(String mediaFormat) {
-		if (mediaFormat.equalsIgnoreCase("Vorbis") || mediaFormat.equalsIgnoreCase("ogg") || mediaFormat.equalsIgnoreCase("oga")) {
+		if (mediaFormat.equalsIgnoreCase("Vorbis") || mediaFormat.equalsIgnoreCase("ogg")
+				|| mediaFormat.equalsIgnoreCase("oga")) {
 			return MediaContentType.OGA;
 		} else if (mediaFormat.equalsIgnoreCase("Free Lossless Audio Codec") || mediaFormat.equalsIgnoreCase("flac")) {
 			return MediaContentType.FLAC;
@@ -142,10 +143,8 @@ public class MediaItemHelper {
 		}
 
 		return MediaContentType.UNSUPPORTED;
-
 	}
-	
-	
+
 	public static MediaContentType getMediaContentType(MediaItem mediaItem) {
 		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
 		if (mediaEncoding != null) {
@@ -163,6 +162,22 @@ public class MediaItemHelper {
 		}
 
 		return MediaContentType.UNSUPPORTED;
+	}
+
+	public static boolean isCompatibleVideoFormat(MediaContentType mediaContentType) {
+		if (mediaContentType == MediaContentType.MP4) {
+			return true;
+		}
+
+		if (mediaContentType == MediaContentType.WEBM) {
+			return true;
+		}
+
+		if (mediaContentType == MediaContentType.OGV) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

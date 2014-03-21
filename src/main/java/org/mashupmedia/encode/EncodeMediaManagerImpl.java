@@ -44,7 +44,7 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 
 		try {
-			boolean isCurrentlyEncoding = processManager.isCurrentlyEncoding(mediaItemId, mediaContentType);
+			boolean isCurrentlyEncoding = processManager.isInProcessQueue(mediaItemId, mediaContentType);
 			if (isCurrentlyEncoding) {
 				logger.info("Media file is being encoded, exiting...");
 				return;
