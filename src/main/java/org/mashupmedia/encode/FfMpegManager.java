@@ -152,11 +152,7 @@ public class FfMpegManager {
 
 		long mediaItemId = mediaItem.getId();
 
-		// Library library = mediaItem.getLibrary();
-
 		File inputFile = new File(mediaItem.getPath());
-		// File outputFile = FileHelper.createEncodedMediaFile(library.getId(),
-		// mediaItemId, mediaContentType);
 		File outputFile = FileHelper.createMediaFileStream(mediaItem, mediaContentType);
 		boolean isDeleted = FileHelper.deleteFile(outputFile);
 

@@ -81,42 +81,10 @@ public class ProcessManager {
 		if (processKeys.size() <= totalFfMpegProcesses) {
 			startProcess(processKey, processContainer);
 		}
-
-		// ProcessKey nextProcessKey = processCache.firstKey();
-
-		//
-		// InputStream inputStream = process.getInputStream();
-		// BufferedReader bufferedReader = new BufferedReader(new
-		// InputStreamReader(inputStream));
-		// String line;
-		//
-		// StringBuilder outputBuilder = new StringBuilder();
-		//
-		// while ((line = bufferedReader.readLine()) != null) {
-		// logger.info(line);
-		// outputBuilder.append(line);
-		// }
-		// IOUtils.closeQuietly(inputStream);
-		//
-		// try {
-		// int waitForValue = process.waitFor();
-		// logger.info("Process waitFor value = " + waitForValue);
-		// } catch (InterruptedException e) {
-		// logger.error("Error waiting for waitFor.", e);
-		// }
-		//
-		// int exitValue = process.exitValue();
-		// logger.info("Process exit value = " + exitValue);
-		//
-		// return outputBuilder.toString();
-		// } finally {
-		// processCache.remove(processKey);
-		// }
-
 	}
 
 	protected void startProcess(ProcessKey processKey, ProcessContainer processContainer) throws IOException {
-		
+
 		try {
 			logger.info("Starting process...");
 			List<String> commands = processContainer.getCommands();
@@ -225,17 +193,17 @@ public class ProcessManager {
 		if (processKey == null) {
 			return false;
 		}
-		
+
 		ProcessContainer processContainer = processCache.get(processKey);
 		if (processContainer == null) {
 			return false;
 		}
-		
+
 		Process process = processContainer.getProcess();
 		if (process != null) {
 			process.destroy();
 		}
-		
+
 		processCache.remove(processKey);
 		return true;
 	}
@@ -245,27 +213,27 @@ public class ProcessManager {
 		if (processKey == null) {
 			return false;
 		}
-		
+
 		ProcessContainer processContainer = processCache.get(processKey);
 		if (processContainer == null) {
 			return false;
 		}
-		
+
 		Process process = processContainer.getProcess();
 		if (process != null) {
 			return false;
 		}
-		
+
 		List<ProcessKey> processKeys = new ArrayList<ProcessKey>(processCache.keySet());
 		processKeys.remove(processKey);
 		processKeys.add(index, processKey);
-				
+
 		for (ProcessKey pk : processKeys) {
-			processContainer = processCache.get(pk);			
+			processContainer = processCache.get(pk);
 			processCache.remove(pk);
 			processCache.put(pk, processContainer);
 		}
-		
+
 		return true;
 	}
 

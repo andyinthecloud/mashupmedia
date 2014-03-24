@@ -89,7 +89,7 @@ public class ListEncodingProcessesController extends BaseController {
 		encodingProcessesPage.setEncodingProcesses(encodingProcesses);
 
 		model.addAttribute("encodingProcessesPage", encodingProcessesPage);
-		return "ajax/media/list-processes.jsp";
+		return "ajax/media/list-processes";
 	}
 	
 	@RequestMapping(value = "/kill-process/{mediaItemId}/{mediaContentType}", method = RequestMethod.GET,  produces="application/json")
