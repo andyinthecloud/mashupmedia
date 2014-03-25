@@ -73,10 +73,16 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			}
 
 			File[] files = file.listFiles();
+			
 
 			for (File childFile : files) {
 				processVideos(videos, childFile, videoDeriveTitleType, date, videoDisplayTitle, library);
 			}
+		}
+		
+		String fileName = file.getName();
+		if (!FileHelper.isSupportedVideo(fileName)) {
+			return;
 		}
 
 		if (videoDeriveTitleType == VideoDeriveTitleType.USE_FOLDER_NAME) {
@@ -87,11 +93,11 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			videoDisplayTitle = videoDisplayTitle + "/" + file.getName();
 		}
 
+		
 		String path = file.getAbsolutePath();
 		Video video = videoDao.getVideoByPath(path);
-		String fileName = file.getName();
 		long fileLastModified = file.lastModified();
-		long previouslyModified = System.currentTimeMillis();
+		long previouslyModified = 0;
 		
 		if (video == null) {
 			video = new Video();

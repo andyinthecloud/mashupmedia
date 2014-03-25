@@ -57,14 +57,12 @@ public class FileHelper {
 		return files;
 	}
 
-
 	public static File createMediaFileStream(MediaItem mediaItem, MediaContentType mediaContentType) {
-		if (mediaContentType == MediaContentType.MP3_ORIGINAL) {			 
+		if (mediaContentType == MediaContentType.MP3_ORIGINAL) {
 			File file = new File(mediaItem.getPath());
 			return file;
 		}
-			
-			
+
 		Library library = mediaItem.getLibrary();
 		File libraryFolder = getLibraryFolder(library.getId());
 		File mediaFolder = new File(libraryFolder, FileType.MEDIA_ITEM_STREAM_ENCODED.getFolderName());
@@ -77,8 +75,6 @@ public class FileHelper {
 		return file;
 	}
 
-	
-	
 	public static File createMediaFile(long libraryId, long mediaItemId, FileType fileType) {
 		File libraryFolder = getLibraryFolder(libraryId);
 		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
@@ -89,17 +85,19 @@ public class FileHelper {
 		return mediaFile;
 	}
 
-//	public static File createEncodedMediaFile(long libraryId, long mediaItemId, MediaContentType mediaContentType) {
-//		File libraryFolder = getLibraryFolder(libraryId);
-//		File mediaFolder = new File(libraryFolder, FileType.MEDIA_ITEM_STREAM_ENCODED.getFolderName());
-//		mediaFolder.mkdirs();
-//
-//		String fileName = String.valueOf(mediaItemId);
-//		fileName += "." + mediaContentType.getDisplayText().toLowerCase();
-//
-//		File mediaFile = new File(mediaFolder, fileName);
-//		return mediaFile;
-//	}
+	// public static File createEncodedMediaFile(long libraryId, long
+	// mediaItemId, MediaContentType mediaContentType) {
+	// File libraryFolder = getLibraryFolder(libraryId);
+	// File mediaFolder = new File(libraryFolder,
+	// FileType.MEDIA_ITEM_STREAM_ENCODED.getFolderName());
+	// mediaFolder.mkdirs();
+	//
+	// String fileName = String.valueOf(mediaItemId);
+	// fileName += "." + mediaContentType.getDisplayText().toLowerCase();
+	//
+	// File mediaFile = new File(mediaFolder, fileName);
+	// return mediaFile;
+	// }
 
 	public static File createAlbumArtFile(long libraryId) {
 		File libraryFolder = getLibraryFolder(libraryId);
@@ -163,7 +161,41 @@ public class FileHelper {
 
 	}
 
+	public static boolean isSupportedVideo(String fileName) {
+		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
+		if (StringUtils.isEmpty(fileName)) {
+			return false;
+		}
 
+		if (fileName.endsWith(".mp4")) {
+			return true;
+		} else if (fileName.endsWith(".avi")) {
+			return true;
+		} else if (fileName.endsWith(".mk4")) {
+			return true;
+		} else if (fileName.endsWith(".ogg")) {
+			return true;
+		} else if (fileName.endsWith(".ogv")) {
+			return true;
+		} else if (fileName.endsWith(".xvid")) {
+			return true;
+		} else if (fileName.endsWith(".divx")) {
+			return true;
+		} else if (fileName.endsWith(".webm")) {
+			return true;
+		} else if (fileName.endsWith(".mpg")) {
+			return true;
+		} else if (fileName.endsWith(".mpeg")) {
+			return true;
+		} else if (fileName.endsWith(".mov")) {
+			return true;
+		} else if (fileName.endsWith(".3gp")) {
+			return true;
+		}
+
+		return false;
+
+	}
 
 	public static String getFileExtension(String fileName) {
 		fileName = StringUtils.trimToEmpty(fileName);

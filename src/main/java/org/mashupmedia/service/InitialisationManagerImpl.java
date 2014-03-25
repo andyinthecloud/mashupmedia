@@ -76,23 +76,19 @@ public class InitialisationManagerImpl implements InitialisationManager {
 
 	private void initialiseEncoder() {
 		File ffMpegFile = ffMpegManager.findFFMpegExecutable();
-		if (ffMpegFile == null) {
-			configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, Boolean.FALSE.toString());
-			return;
-		}
-
+		Boolean isValidFfMpegConfiguration = false;
 		try {
-			boolean isValid = ffMpegManager.isValidFfMpeg(ffMpegFile);
-			if (isValid) {
-				configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED,
-						Boolean.TRUE.toString());
-				return;
-			}
+			isValidFfMpegConfiguration = ffMpegManager.isValidFfMpeg(ffMpegFile);
 		} catch (IOException e) {
 			logger.info("Error validating ffmpeg", e);
 		}
-
-		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, Boolean.FALSE.toString());
+		
+		if (!isValidFfMpegConfiguration) {
+			return;
+		}
+		
+		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, Boolean.TRUE.toString());
+		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegFile.getAbsolutePath());
 	}
 
 	private void initialiseUniqueInstallationName() {

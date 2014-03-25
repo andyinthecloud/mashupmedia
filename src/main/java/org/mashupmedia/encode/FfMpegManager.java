@@ -133,6 +133,10 @@ public class FfMpegManager {
 	}
 
 	public boolean isValidFfMpeg(File ffMpegExecutableFile) throws IOException {
+		if (ffMpegExecutableFile == null) {
+			return false;
+		}
+		
 		String outputText = processManager.callProcess(ffMpegExecutableFile.getAbsolutePath());
 		if (outputText.contains(FFMPEG_EXECUTABLE_NAME)) {
 			return true;
