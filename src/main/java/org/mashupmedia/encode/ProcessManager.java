@@ -42,7 +42,7 @@ public class ProcessManager {
 	private static Logger logger = Logger.getLogger(ProcessManager.class);
 
 	public final static String KEY_TOTAL_FFMPEG_PROCESSES = "totalFfMpegProcesses";
-	public final static int DEFAULT_TOTAL_FFMPEG_PROCESSES = 3;
+	public final static int DEFAULT_TOTAL_FFMPEG_PROCESSES = 0;
 
 	@Autowired
 	private ConfigurationManager configurationManager;
@@ -93,7 +93,7 @@ public class ProcessManager {
 			processBuilder.redirectErrorStream(true);
 			Process process = processBuilder.start();
 
-			processContainer.setStartedOn(new Date());
+			processContainer.setProcessStartedOn(new Date());
 			processContainer.setProcess(process);
 
 			InputStream inputStream = process.getInputStream();

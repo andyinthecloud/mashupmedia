@@ -23,9 +23,9 @@ import org.mashupmedia.web.page.EncodingProcessesPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/encode/processes")
@@ -79,30 +79,36 @@ public class ListEncodingProcessesController extends BaseController {
 			MediaContentType mediaContentType = processKey.getMediaContentType();
 			encodingProcess.setMediaContentType(mediaContentType);
 
-			Date startedOn = processContainer.getStartedOn();
-			encodingProcess.setStartedOn(startedOn);
+			Date createdOn = processContainer.getCreatedOn();
+			encodingProcess.setCreatedOn(createdOn);
+
+			Date startedOn = processContainer.getProcessStartedOn();
+			encodingProcess.setProcessStartedOn(startedOn);
 
 			encodingProcesses.add(encodingProcess);
 		}
-		
+
 		Collections.sort(encodingProcesses, new EncodingProcessComparator());
 		encodingProcessesPage.setEncodingProcesses(encodingProcesses);
 
 		model.addAttribute("encodingProcessesPage", encodingProcessesPage);
 		return "ajax/media/list-processes";
 	}
-	
-	@RequestMapping(value = "/kill-process/{mediaItemId}/{mediaContentType}", method = RequestMethod.GET,  produces="application/json")
-	public boolean handleGetKillEncodingProcesses(@PathVariable long mediaItemId, @PathVariable String mediaContentTypeValue, Model model) {		
+
+	@RequestMapping(value = "/kill-process", method = RequestMethod.GET, produces = "application/json")
+	public boolean handleGetKillEncodingProcesses(@RequestParam("mediaItemId") long mediaItemId,
+			@RequestParam("mediaContentType") String mediaContentTypeValue, Model model) {
 		MediaContentType mediaContentType = MediaItemHelper.getEncodedMediaContentType(mediaContentTypeValue);
 		boolean isKilled = processManager.killProcess(mediaItemId, mediaContentType);
 		return isKilled;
 	}
-		
-	@RequestMapping(value = "/move-process/{mediaItemId}/{mediaContentType}", method = RequestMethod.GET,  consumes="application/json", produces="application/json")
-	public boolean handleGetMoveProcess(@PathVariable int ranking, @PathVariable long mediaItemId, @PathVariable String mediaContentTypeValue, Model model) {		
+
+	@RequestMapping(value = "/move-process", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+	public boolean handleGetMoveProcess(@RequestParam("index") int index,
+			@RequestParam("mediaItemId") long mediaItemId,
+			@RequestParam("mediaContentType") String mediaContentTypeValue, Model model) {
 		MediaContentType mediaContentType = MediaItemHelper.getEncodedMediaContentType(mediaContentTypeValue);
-		boolean isMoved = processManager.moveProcess(ranking, mediaItemId, mediaContentType);
+		boolean isMoved = processManager.moveProcess(index, mediaItemId, mediaContentType);
 		return isMoved;
 	}
 

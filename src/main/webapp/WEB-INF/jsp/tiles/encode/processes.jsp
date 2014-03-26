@@ -12,7 +12,6 @@
 	}
 </script>
 
-
 <div class="sub-panel">
 
 </div>

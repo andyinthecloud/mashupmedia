@@ -39,8 +39,8 @@ public class ProcessKey implements Comparable<ProcessKey> {
 		if (compareMediaItemId != 0) {
 			return compareMediaItemId;
 		}
-		
-		int compareMediaContentType = getMediaContentType().getName().compareTo(processKey.getMediaContentType().name());
+				
+		int compareMediaContentType = getMediaContentType().name().compareTo(processKey.getMediaContentType().name());
 		return compareMediaContentType;
 	}
 	

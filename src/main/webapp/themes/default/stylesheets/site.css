@@ -11,6 +11,9 @@ html,body {
 	cursor: progress;
 }
 
+.cursor-move {
+	cursor: move;
+}
 
 .clear {
 	clear: both;
@@ -729,9 +732,11 @@ ul.items li a.album-cover {
 	float: left;
 }
 
-ul.items li,ul.items li a.album-cover img {
+ul.items li a.album-cover img {
 	height: 110px;
 }
+
+
 
 ul.items li a.album-cover img {
 	width: auto;
@@ -876,4 +881,15 @@ div.panel fieldset table tbody td{
 	padding: 5px 10px 5px;
 	border-bottom:  1px solid #E3DEDE;
 }
+
+
+
+ul.items a.ui-icon{
+	padding: 0 !important;
+	float: left;
+	width: 20px;
+	height: 20px;
+	margin-right: 10px; 
+}
+
 
