@@ -2,7 +2,7 @@ package org.mashupmedia.encode;
 
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
-public class ProcessKey implements Comparable<ProcessKey> {
+public class ProcessKey {
 	private long mediaItemId;
 	private MediaContentType mediaContentType;
 
@@ -26,25 +26,6 @@ public class ProcessKey implements Comparable<ProcessKey> {
 	public void setMediaContentType(MediaContentType mediaContentType) {
 		this.mediaContentType = mediaContentType;
 	}
-
-	
-	@Override
-	public int compareTo(ProcessKey processKey) {
-		
-		if (processKey == null) {
-			return -1;
-		}
-		
-		int compareMediaItemId = new Long(getMediaItemId()).compareTo(processKey.getMediaItemId());
-		if (compareMediaItemId != 0) {
-			return compareMediaItemId;
-		}
-				
-		int compareMediaContentType = getMediaContentType().name().compareTo(processKey.getMediaContentType().name());
-		return compareMediaContentType;
-	}
-	
-	
 	
 	@Override
 	public int hashCode() {

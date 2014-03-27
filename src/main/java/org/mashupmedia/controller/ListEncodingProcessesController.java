@@ -26,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/encode/processes")
@@ -103,9 +104,9 @@ public class ListEncodingProcessesController extends BaseController {
 		return isKilled;
 	}
 
-	@RequestMapping(value = "/move-process", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
-	public boolean handleGetMoveProcess(@RequestParam("index") int index,
-			@RequestParam("mediaItemId") long mediaItemId,
+	@RequestMapping(value = "/move-process", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	boolean handleGetMoveProcess(@RequestParam("index") int index, @RequestParam("mediaItemId") long mediaItemId,
 			@RequestParam("mediaContentType") String mediaContentTypeValue, Model model) {
 		MediaContentType mediaContentType = MediaItemHelper.getEncodedMediaContentType(mediaContentTypeValue);
 		boolean isMoved = processManager.moveProcess(index, mediaItemId, mediaContentType);

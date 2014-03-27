@@ -23,11 +23,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -47,7 +46,7 @@ public class ProcessManager {
 	@Autowired
 	private ConfigurationManager configurationManager;
 
-	private SortedMap<ProcessKey, ProcessContainer> processCache = new TreeMap<ProcessKey, ProcessContainer>();
+	private Map<ProcessKey, ProcessContainer> processCache = new LinkedHashMap<ProcessKey, ProcessContainer>();
 
 	public Map<ProcessKey, ProcessContainer> getProcessCache() {
 		return processCache;
@@ -132,8 +131,8 @@ public class ProcessManager {
 			return null;
 		}
 
-		ProcessKey processKey = processCache.firstKey();
-		return processKey;
+		Set<ProcessKey> processKeys = processCache.keySet();
+		return processKeys.iterator().next();
 	}
 
 	public String callProcess(List<String> commands) throws IOException {
