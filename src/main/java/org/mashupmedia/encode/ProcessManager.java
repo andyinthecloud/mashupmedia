@@ -23,10 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -46,10 +43,16 @@ public class ProcessManager {
 	@Autowired
 	private ConfigurationManager configurationManager;
 
-	private Map<ProcessKey, ProcessContainer> processCache = new LinkedHashMap<ProcessKey, ProcessContainer>();
+//	private Map<ProcessKey, ProcessContainer> processCache = new TreeMap<ProcessKey, ProcessContainer>();
+	
+	private List<ProcessQueueItem> processQueueItems = new ArrayList<ProcessQueueItem>();
 
-	public Map<ProcessKey, ProcessContainer> getProcessCache() {
-		return processCache;
+//	public Map<ProcessKey, ProcessContainer> getProcessCache() {
+//		return processCache;
+//	}
+	
+	public List<ProcessQueueItem> getProcessQueueItems() {
+		return processQueueItems;
 	}
 
 	public String callProcess(String path) throws IOException {
@@ -63,37 +66,67 @@ public class ProcessManager {
 	public void callProcess(List<String> commands, long mediaItemId, MediaContentType mediaContentType)
 			throws IOException {
 
-		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
-		ProcessContainer processContainer = processCache.get(processKey);
-		if (processContainer != null) {
-			logger.info("Found ffmpeg process. Destroying.");
-			processContainer.getProcess().destroy();
-		}
+//		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
+//		ProcessContainer processContainer = processCache.get(processKey);
+		ProcessQueueItem processQueueItem = generateProcessQueueItem(mediaItemId, mediaContentType, commands);
+		
+//		if (processContainers)
+		
+		
+		destroyProcessIfAlreadyStarted(processQueueItem);
+		
+		
+//		if (processQueueItem != null) {
+//			logger.info("Found ffmpeg process. Destroying.");
+//			processQueueItem.getProcess().destroy();
+//		}
 
-		processContainer = new ProcessContainer(commands);
+//		processQueueItem = new ProcessQueueItem(commands);
 
-		processCache.put(processKey, processContainer);
+//		int cacheSize = processCache.keySet().size();
+//		processKey.setIndex(cacheSize);		
+//		processCache.put(processKey, processQueueItem);
+		
+		processQueueItems.add(processQueueItem);
 
 		int totalFfMpegProcesses = NumberUtils.toInt(
 				configurationManager.getConfigurationValue(KEY_TOTAL_FFMPEG_PROCESSES), DEFAULT_TOTAL_FFMPEG_PROCESSES);
-		Set<ProcessKey> processKeys = processCache.keySet();
-		if (processKeys.size() <= totalFfMpegProcesses) {
-			startProcess(processKey, processContainer);
+//		Set<ProcessKey> processKeys = processCache.keySet();
+		if (processQueueItems.size() <= totalFfMpegProcesses) {
+			startProcess(processQueueItem);
 		}
 	}
 
-	protected void startProcess(ProcessKey processKey, ProcessContainer processContainer) throws IOException {
+	protected ProcessQueueItem generateProcessQueueItem(long mediaItemId, MediaContentType mediaContentType,
+			List<String> commands) {
+		
+		ProcessQueueItem processQueueItem = new ProcessQueueItem(mediaItemId, mediaContentType, commands);
+		return processQueueItem;
+	}
+
+	protected void destroyProcessIfAlreadyStarted(ProcessQueueItem processQueueItem) {
+		if (processQueueItems == null || processQueueItems.isEmpty()) {
+			return;
+		}
+		
+		
+		boolean isDeleted = processQueueItems.remove(processQueueItem);
+		logger.info("Process: " + processQueueItem.toString() + " deleted: " + isDeleted);
+		
+	}
+
+	protected void startProcess(ProcessQueueItem processQueueItem) throws IOException {
 
 		try {
 			logger.info("Starting process...");
-			List<String> commands = processContainer.getCommands();
+			List<String> commands = processQueueItem.getCommands();
 
 			ProcessBuilder processBuilder = new ProcessBuilder(commands);
 			processBuilder.redirectErrorStream(true);
 			Process process = processBuilder.start();
 
-			processContainer.setProcessStartedOn(new Date());
-			processContainer.setProcess(process);
+			processQueueItem.setProcessStartedOn(new Date());
+			processQueueItem.setProcess(process);
 
 			InputStream inputStream = process.getInputStream();
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -115,25 +148,35 @@ public class ProcessManager {
 			logger.info("Process exit value = " + exitValue);
 
 		} finally {
-			processCache.remove(processKey);
+			processQueueItems.remove(processQueueItem);
+//			processCache.remove(processKey);
 
-			ProcessKey nextProcessKeyInQueue = getNextProcessKeyInQueue();
-			if (nextProcessKeyInQueue != null) {
-				ProcessContainer nextProcessContainerInQueue = processCache.get(nextProcessKeyInQueue);
-				startProcess(nextProcessKeyInQueue, nextProcessContainerInQueue);
+			ProcessQueueItem nextProcessQueueItem = getNextProcessQueueItem();
+			if (nextProcessQueueItem != null) {
+//				ProcessQueueItem nextProcessContainerInQueue = processCache.get(nextProcessKeyInQueue);
+				startProcess(nextProcessQueueItem);
 			}
 		}
 
 	}
 
-	protected ProcessKey getNextProcessKeyInQueue() {
-		if (processCache == null || processCache.isEmpty()) {
-			return null;
-		}
-
-		Set<ProcessKey> processKeys = processCache.keySet();
-		return processKeys.iterator().next();
+protected ProcessQueueItem getNextProcessQueueItem() {
+	if (processQueueItems == null || processQueueItems.isEmpty()) {
+		return null;
 	}
+	
+	
+		return processQueueItems.get(0);
+	}
+
+//	protected ProcessKey getNextProcessKeyInQueue() {
+//		if (processCache == null || processCache.isEmpty()) {
+//			return null;
+//		}
+//
+//		Set<ProcessKey> processKeys = processCache.keySet();
+//		return processKeys.iterator().next();
+//	}
 
 	public String callProcess(List<String> commands) throws IOException {
 
@@ -169,70 +212,68 @@ public class ProcessManager {
 
 	}
 
-	private ProcessKey generateProcessKey(long mediaItemId, MediaContentType mediaContentType) {
-		if (mediaItemId == 0 || mediaContentType == null) {
-			return null;
-		}
-
-		ProcessKey processKey = new ProcessKey(mediaItemId, mediaContentType);
-		return processKey;
-	}
+//	private ProcessKey generateProcessKey(long mediaItemId, MediaContentType mediaContentType) {
+//		if (mediaItemId == 0 || mediaContentType == null) {
+//			return null;
+//		}
+//
+//		ProcessKey processKey = new ProcessKey(mediaItemId, mediaContentType);
+//		return processKey;
+//	}
 
 	public boolean isInProcessQueue(long mediaItemId, MediaContentType mediaContentType) {
-		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
-		if (processCache.containsKey(processKey)) {
+
+		ProcessQueueItem processQueueItem = getProcessQueueItem(mediaItemId, mediaContentType);
+		if (processQueueItem != null) {
 			return true;
 		}
-
+		
 		return false;
 	}
+	
+	
+	private ProcessQueueItem getProcessQueueItem(long mediaItemId, MediaContentType mediaContentType) {
+		if (processQueueItems == null || processQueueItems.isEmpty()) {
+			return null;
+		}
+		
+		for (ProcessQueueItem processQueueItem : processQueueItems) {
+			if (processQueueItem.getMediaItemId() == mediaItemId && processQueueItem.getMediaContentType() == mediaContentType) {
+				return processQueueItem;
+			}
+			
+		}
+		
+		return null;
+		
+	}
+	
 
 	public boolean killProcess(long mediaItemId, MediaContentType mediaContentType) {
-		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
-		if (processKey == null) {
+
+		ProcessQueueItem processQueueItem = getProcessQueueItem(mediaItemId, mediaContentType);
+		if (processQueueItem == null) {
 			return false;
 		}
+		
 
-		ProcessContainer processContainer = processCache.get(processKey);
-		if (processContainer == null) {
-			return false;
-		}
-
-		Process process = processContainer.getProcess();
+		Process process = processQueueItem.getProcess();
 		if (process != null) {
 			process.destroy();
 		}
 
-		processCache.remove(processKey);
+		processQueueItems.remove(processQueueItem);
 		return true;
 	}
 
 	public boolean moveProcess(int index, long mediaItemId, MediaContentType mediaContentType) {
-		ProcessKey processKey = generateProcessKey(mediaItemId, mediaContentType);
-		if (processKey == null) {
+		
+		ProcessQueueItem processQueueItem = getProcessQueueItem(mediaItemId, mediaContentType);
+		if (processQueueItem == null) {
 			return false;
 		}
-
-		ProcessContainer processContainer = processCache.get(processKey);
-		if (processContainer == null) {
-			return false;
-		}
-
-		Process process = processContainer.getProcess();
-		if (process != null) {
-			return false;
-		}
-
-		List<ProcessKey> processKeys = new ArrayList<ProcessKey>(processCache.keySet());
-		processKeys.remove(processKey);
-		processKeys.add(index, processKey);
-
-		for (ProcessKey pk : processKeys) {
-			processContainer = processCache.get(pk);
-			processCache.remove(pk);
-			processCache.put(pk, processContainer);
-		}
-
+		
+		processQueueItems.set(index, processQueueItem);		
 		return true;
 	}
 

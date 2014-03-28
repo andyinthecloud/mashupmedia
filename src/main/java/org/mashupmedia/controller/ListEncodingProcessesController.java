@@ -3,15 +3,11 @@ package org.mashupmedia.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.mashupmedia.comparator.EncodingProcessComparator;
-import org.mashupmedia.encode.ProcessContainer;
-import org.mashupmedia.encode.ProcessKey;
 import org.mashupmedia.encode.ProcessManager;
+import org.mashupmedia.encode.ProcessQueueItem;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.MediaItemHelper;
@@ -65,29 +61,50 @@ public class ListEncodingProcessesController extends BaseController {
 		EncodingProcessesPage encodingProcessesPage = new EncodingProcessesPage();
 		List<EncodingProcess> encodingProcesses = new ArrayList<EncodingProcess>();
 
-		Map<ProcessKey, ProcessContainer> processCache = processManager.getProcessCache();
-		Set<ProcessKey> processkeys = processCache.keySet();
-
-		for (Iterator<ProcessKey> iterator = processkeys.iterator(); iterator.hasNext();) {
-			ProcessKey processKey = (ProcessKey) iterator.next();
-			ProcessContainer processContainer = processCache.get(processKey);
-
+		
+		List<ProcessQueueItem> processQueueItems = processManager.getProcessQueueItems();
+		for (ProcessQueueItem processQueueItem : processQueueItems) {
 			EncodingProcess encodingProcess = new EncodingProcess();
 
-			MediaItem mediaItem = mediaManager.getMediaItem(processKey.getMediaItemId());
+			MediaItem mediaItem = mediaManager.getMediaItem(processQueueItem.getMediaItemId());
 			encodingProcess.setMediaItem(mediaItem);
 
-			MediaContentType mediaContentType = processKey.getMediaContentType();
+			MediaContentType mediaContentType = processQueueItem.getMediaContentType();
 			encodingProcess.setMediaContentType(mediaContentType);
 
-			Date createdOn = processContainer.getCreatedOn();
+			Date createdOn = processQueueItem.getCreatedOn();
 			encodingProcess.setCreatedOn(createdOn);
 
-			Date startedOn = processContainer.getProcessStartedOn();
+			Date startedOn = processQueueItem.getProcessStartedOn();
 			encodingProcess.setProcessStartedOn(startedOn);
 
 			encodingProcesses.add(encodingProcess);
+			
 		}
+		
+//		Map<ProcessKey, ProcessQueueItem> processCache = processManager.getProcessCache();
+//		Set<ProcessKey> processkeys = processCache.keySet();
+//
+//		for (Iterator<ProcessKey> iterator = processkeys.iterator(); iterator.hasNext();) {
+//			ProcessKey processKey = (ProcessKey) iterator.next();
+//			ProcessQueueItem processContainer = processCache.get(processKey);
+//
+//			EncodingProcess encodingProcess = new EncodingProcess();
+//
+//			MediaItem mediaItem = mediaManager.getMediaItem(processKey.getMediaItemId());
+//			encodingProcess.setMediaItem(mediaItem);
+//
+//			MediaContentType mediaContentType = processKey.getMediaContentType();
+//			encodingProcess.setMediaContentType(mediaContentType);
+//
+//			Date createdOn = processContainer.getCreatedOn();
+//			encodingProcess.setCreatedOn(createdOn);
+//
+//			Date startedOn = processContainer.getProcessStartedOn();
+//			encodingProcess.setProcessStartedOn(startedOn);
+//
+//			encodingProcesses.add(encodingProcess);
+//		}
 
 		Collections.sort(encodingProcesses, new EncodingProcessComparator());
 		encodingProcessesPage.setEncodingProcesses(encodingProcesses);
