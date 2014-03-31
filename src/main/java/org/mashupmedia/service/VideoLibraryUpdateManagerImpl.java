@@ -7,10 +7,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.VideoDao;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
 import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.Video;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.FileHelper;
@@ -29,9 +31,12 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 
 	@Autowired
 	private VideoDao videoDao;
-	
+
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
+
+	@Autowired
+	private MediaDao mediaDao;
 
 	@Override
 	public void updateLibrary(VideoLibrary library, File folder, Date date) {
@@ -73,13 +78,12 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			}
 
 			File[] files = file.listFiles();
-			
 
 			for (File childFile : files) {
 				processVideos(videos, childFile, videoDeriveTitleType, date, videoDisplayTitle, library);
 			}
 		}
-		
+
 		String fileName = file.getName();
 		if (!FileHelper.isSupportedVideo(fileName)) {
 			return;
@@ -93,23 +97,33 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			videoDisplayTitle = videoDisplayTitle + "/" + file.getName();
 		}
 
-		
 		String path = file.getAbsolutePath();
 		Video video = videoDao.getVideoByPath(path);
 		long fileLastModified = file.lastModified();
 		long previouslyModified = 0;
-		
+
 		if (video == null) {
 			video = new Video();
 			String fileExtension = FileHelper.getFileExtension(fileName);
-			MediaContentType mediaContentType = MediaItemHelper.getOriginalMediaContentType(fileExtension);
+			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
 			if (!MediaItemHelper.isCompatibleVideoFormat(mediaContentType)) {
 				mediaContentType = MediaContentType.UNSUPPORTED;
+			} else {
+				List<MediaEncoding> mediaEncodings = video.getMediaEncodings();
+				if (mediaEncodings == null) {
+					mediaEncodings = new ArrayList<MediaEncoding>();
+				}
+
+				MediaEncoding mediaEncoding = new MediaEncoding();
+				mediaEncoding.setMediaContentType(mediaContentType);
+				mediaEncoding.setOriginal(true);
+				mediaEncodings.add(mediaEncoding);
+				
+				video.setMediaEncodings(mediaEncodings);
 			}
-			
+
 			video.setFormat(mediaContentType.getName());
 			video.setEnabled(true);
-//			video.setFileLastModifiedOn(file.lastModified());
 			video.setFileLastModifiedOn(fileLastModified);
 			video.setFileName(fileName);
 			video.setMediaType(MediaType.VIDEO);
@@ -139,8 +153,15 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		}
 
 		videoDao.saveVideo(video, isSessionFlush);
+
+//		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(video);
 		
-		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(video);
+		MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
+		MediaEncoding mediaEncoding = video.getBestMediaEncoding();
+		if (mediaEncoding != null) {
+			mediaContentType = mediaEncoding.getMediaContentType();
+		}
+		
 		if (fileLastModified > previouslyModified && mediaContentType == MediaContentType.UNSUPPORTED) {
 			encodeMediaItemTaskManager.queueMediaItemForEncoding(video.getId(), MediaContentType.MP4);
 		}

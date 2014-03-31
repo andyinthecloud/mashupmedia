@@ -202,9 +202,10 @@ public class AjaxMusicController extends AjaxBaseController {
 			playlist = SerializationUtils.clone(playlist);
 			playlist.setName(StringHelper.escapeJavascript(playlist.getName()));
 
-//			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(song.getFormat());
+			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(song.getFormat());
 			
-			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(song);
+//			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(song);
+			
 			
 			model.addAttribute("format", mediaContentType.getjPlayerContentType());
 			model.addAttribute("song", song);

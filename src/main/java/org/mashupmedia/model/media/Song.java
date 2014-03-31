@@ -223,7 +223,7 @@ public class Song extends MediaItem {
 			mediaContentType = mediaEncoding.getMediaContentType();
 		} else {
 			String format = getFormat();
-			mediaContentType = MediaItemHelper.getEncodedMediaContentType(format);			
+			mediaContentType = MediaItemHelper.getMediaContentType(format);			
 		}
 				
 		metaBuilder.append(mediaContentType.getName());

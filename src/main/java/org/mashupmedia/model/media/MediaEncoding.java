@@ -18,7 +18,7 @@ public class MediaEncoding {
 	private long id;
 	@Enumerated(EnumType.STRING)
 	private MediaContentType mediaContentType;
-	private int ranking;
+	private boolean original;
 
 	public long getId() {
 		return id;
@@ -36,20 +36,20 @@ public class MediaEncoding {
 		this.mediaContentType = mediaContentType;
 	}
 
-	public int getRanking() {
-		return ranking;
+	public boolean isOriginal() {
+		return original;
 	}
 
-	public void setRanking(int ranking) {
-		this.ranking = ranking;
+	public void setOriginal(boolean original) {
+		this.original = original;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((mediaContentType == null) ? 0 : mediaContentType.hashCode());
+		result = prime * result + (original ? 1231 : 1237);
 		return result;
 	}
 
@@ -62,9 +62,9 @@ public class MediaEncoding {
 		if (getClass() != obj.getClass())
 			return false;
 		MediaEncoding other = (MediaEncoding) obj;
-		if (id != other.id)
-			return false;
 		if (mediaContentType != other.mediaContentType)
+			return false;
+		if (original != other.original)
 			return false;
 		return true;
 	}
@@ -76,8 +76,8 @@ public class MediaEncoding {
 		builder.append(id);
 		builder.append(", mediaContentType=");
 		builder.append(mediaContentType);
-		builder.append(", ranking=");
-		builder.append(ranking);
+		builder.append(", original=");
+		builder.append(original);
 		builder.append("]");
 		return builder.toString();
 	}

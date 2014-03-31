@@ -7,15 +7,23 @@ $(document).ready(function(){
 		ready: function () {
 			$(this).jPlayer("setMedia", {
 				
-				<c:forEach items="${videoPage.suppliedVideoFormats}" var="suppliedVideoFormat">
-				${suppliedVideoFormat}: "<c:url value="/app/video/play/${videoPage.video.id}?format=${suppliedVideoFormat}" />",
+				<c:set var="videoFormats" value="" />
+
+				<c:forEach items="${videoPage.video.mediaEncodings}" var="mediaEncoding">
+					<c:set var="videoFormat" value="${mediaEncoding.mediaContentType.jPlayerContentType}" />					
+					${videoFormat}: "<c:url value="/app/streaming/media/${videoPage.video.id}?mediaContentType=${videoFormat}" />",							
+					<c:if test="not empty videoFormats">
+						<c:set var="videoFormat" value=",${videoFormat}" />
+					</c:if>
+					<c:set var="videoFormats" value="${videoFormats}${videoFormat}" />
+							
 				</c:forEach>
 				
 				poster: "<c:url value="${videoPage.posterUrl}" />"				
 			});
 		},
 		swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}" />",
-		supplied: "${videoPage.suppliedVideoFormatsValue}",
+		supplied: "${videoFormats}",
 		size: {
 			width: "640px",
 			height: "360px",

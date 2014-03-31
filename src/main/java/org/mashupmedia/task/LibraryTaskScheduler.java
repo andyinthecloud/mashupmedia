@@ -3,8 +3,8 @@ package org.mashupmedia.task;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
-import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +22,14 @@ public class LibraryTaskScheduler {
 	
 	
 	public void updateLibraries() {
-		@SuppressWarnings("unchecked")
-		List<MusicLibrary> musicLibraries = (List<MusicLibrary>)libraryManager.getLocalLibraries(LibraryType.MUSIC);
-		for (MusicLibrary musicLibrary : musicLibraries) {
-			logger.info("About to update library: " + musicLibrary.getName());
-			if (musicLibrary.isRemote()) {
+		List<Library> libraries = libraryManager.getLocalLibraries(LibraryType.ALL);
+		for (Library library : libraries) {
+			logger.info("About to update library: " + library.getName());
+			if (library.isRemote()) {
 				continue;
 			}
-			libraryUpdateManager.updateLibrary(musicLibrary);
-			logger.info("Library updated: " + musicLibrary.getName());
+			libraryUpdateManager.updateLibrary(library);
+			logger.info("Library updated: " + library.getName());
 		}
 	}
 

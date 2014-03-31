@@ -5,13 +5,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.media.Video;
 import org.mashupmedia.restful.VideoWebService;
 import org.mashupmedia.service.VideoManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
-import org.mashupmedia.util.MediaItemHelper;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.VideoPage;
@@ -25,7 +22,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/video")
@@ -35,13 +31,10 @@ public class VideoController extends BaseController {
 
 	@Autowired
 	private VideoManager videoManager;
-	
-	@Autowired
-	private ProcessManager processManager;
 
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
-	
+
 	@Autowired
 	@Qualifier("themoviedb")
 	private VideoWebService videoWebService;
@@ -71,7 +64,7 @@ public class VideoController extends BaseController {
 		model.addAttribute(MODEL_KEY_HEAD_PAGE_TITLE, headPageTitle);
 
 		VideoPage videoPage = new VideoPage();
-		videoPage.setSuppliedVideoFormats(new String[] { MediaContentType.OGV.getjPlayerContentType() });
+
 		videoPage.setVideo(video);
 
 		RemoteMediaMetaItem remoteMediaMetaItem = getRemoteMediaMetaItem(videoId);
@@ -118,26 +111,6 @@ public class VideoController extends BaseController {
 
 		return remoteMediaMetaItem;
 
-	}
-
-	@RequestMapping(value = "/play/{videoId}", method = RequestMethod.GET)
-	public String handlePlayVideo(@PathVariable("videoId") Long videoId,
-			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model) {
-		MediaContentType mediaContentType = MediaItemHelper.getEncodedMediaContentType(mediaContentTypeValue);
-		if (mediaContentType == MediaContentType.UNSUPPORTED) {
-			mediaContentType = MediaContentType.OGV;
-			Video video = videoManager.getVideo(videoId);
-			video.setFormat(mediaContentType.getName());
-			videoManager.saveVideo(video);			
-		}
-		
-		StringBuilder urlBuilder = new StringBuilder("redirect:/app/streaming/media/" + videoId);
-		if (processManager.isInProcessQueue(videoId, mediaContentType)) {
-			urlBuilder.append("?currentTime=" + System.currentTimeMillis());
-		}
-		
-		encodeMediaItemTaskManager.queueMediaItemForEncoding(videoId, mediaContentType);
-		return urlBuilder.toString();
 	}
 
 }

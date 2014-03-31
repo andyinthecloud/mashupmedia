@@ -19,6 +19,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
+import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MediaManager;
@@ -32,6 +33,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
@@ -55,24 +57,43 @@ public class StreamingController {
 	private ConnectionManager connectionManager;
 
 	@RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.HEAD)
-	public ModelAndView getMediaStreamHead(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
+	public ModelAndView getMediaStreamHead(@PathVariable("mediaItemId") Long mediaItemId,
+			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model)
 			throws Exception {
-		ModelAndView modelAndView = prepareModelAndView(mediaItemId, false);
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		MediaContentType mediaContentType = getMediaContentType(mediaItem, mediaContentTypeValue);
+		ModelAndView modelAndView = prepareModelAndView(mediaItem, mediaContentType, false);
 		return modelAndView;
 	}
 
 	@RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.GET)
-	public ModelAndView getMediaStream(@PathVariable("mediaItemId") final Long mediaItemId, Model model)
+	public ModelAndView getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
+			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model)
 			throws Exception {
-		ModelAndView modelAndView = prepareModelAndView(mediaItemId, true);
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		MediaContentType mediaContentType = getMediaContentType(mediaItem, mediaContentTypeValue);
+		ModelAndView modelAndView = prepareModelAndView(mediaItem, mediaContentType, true);
 		return modelAndView;
 	}
 
-	protected ModelAndView prepareModelAndView(final long mediaItemId, final boolean content) throws Exception {
+	protected MediaContentType getMediaContentType(MediaItem mediaItem, String mediaContentTypeValue) {
+		mediaContentTypeValue = StringUtils.trimToEmpty(mediaContentTypeValue);
+		if (StringUtils.isNotEmpty(mediaContentTypeValue)) {
+			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
+			return mediaContentType;
+		}
 
-		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaItem);
-		
+		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
+		if (mediaEncoding == null) {
+			return MediaContentType.UNSUPPORTED;
+		}
+
+		return mediaEncoding.getMediaContentType();
+	}
+
+	protected ModelAndView prepareModelAndView(MediaItem mediaItem, MediaContentType mediaContentType,
+			final boolean content) throws Exception {
+
 		Library library = mediaItem.getLibrary();
 
 		if (library.isRemote()) {
@@ -86,7 +107,7 @@ public class StreamingController {
 			}
 		}
 
-		File tempFile = FileHelper.createMediaFileStream(mediaItem, mediaContentType);
+		File tempFile = FileHelper.createEncodedMediaFile(mediaItem, mediaContentType);
 		final String contentType = mediaContentType.getMimeContentType();
 		final File file = tempFile;
 

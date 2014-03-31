@@ -9,7 +9,7 @@ public interface LibraryManager {
 
 
 
-	public List<? extends Library> getLocalLibraries(LibraryType libraryType);
+	public List<Library> getLocalLibraries(LibraryType libraryType);
 
 	public Library getLibrary(long id);
 

@@ -26,8 +26,5 @@ public interface MediaManager {
 
 	public void saveMediaItem(MediaItem mediaItem);
 
-	public void saveMediaEncoding(MediaEncoding mediaEncoding);
-
-	public MediaEncoding getMediaEncoding(MediaContentType mediaContentType);
 
 }

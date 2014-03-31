@@ -18,10 +18,8 @@ import org.mashupmedia.comparator.MediaItemComparator;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
-import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
@@ -173,20 +171,5 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		} else {
 			sessionFactory.getCurrentSession().merge(mediaItem);
 		}
-	}
-
-	@Override
-	public void saveMediaEncoding(MediaEncoding mediaEncoding) {
-		saveOrUpdate(mediaEncoding);
-	}
-
-	@Override
-	public MediaEncoding getMediaEncoding(MediaContentType mediaContentType) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from MediaEncoding me where me.mediaContentType = :mediaContentType");
-		query.setString("mediaContentType", mediaContentType.name());
-		query.setCacheable(true);
-		MediaEncoding mediaEncoding = (MediaEncoding) query.uniqueResult();
-		return mediaEncoding;
 	}
 }

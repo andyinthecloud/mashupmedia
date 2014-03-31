@@ -15,7 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -106,9 +105,12 @@ public class MediaItem implements Serializable {
 	@OrderBy("createdOn")
 	@XmlTransient
 	private List<Comment> comments;
-	@XmlTransient
-	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+//	@XmlTransient
+//	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 //	@OrderBy("ranking")
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@OrderBy("mediaContentType.ranking")
+	@XmlTransient
 	private List<MediaEncoding> mediaEncodings;
 
 	public MediaItem() {

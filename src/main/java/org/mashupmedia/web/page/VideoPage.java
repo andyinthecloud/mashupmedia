@@ -7,7 +7,6 @@ public class VideoPage {
 
 	private Video video;
 	private String posterUrl;
-	private String[] suppliedVideoFormats;
 	private RemoteMediaMetaItem remoteMediaMetaItem;
 
 	public RemoteMediaMetaItem getRemoteMediaMetaItem() {
@@ -16,31 +15,6 @@ public class VideoPage {
 
 	public void setRemoteMediaMetaItem(RemoteMediaMetaItem remoteMediaMetaItem) {
 		this.remoteMediaMetaItem = remoteMediaMetaItem;
-	}
-
-	public String[] getSuppliedVideoFormats() {
-		return suppliedVideoFormats;
-	}
-
-	public void setSuppliedVideoFormats(String[] suppliedVideoFormats) {
-		this.suppliedVideoFormats = suppliedVideoFormats;
-	}
-
-	public String getSuppliedVideoFormatsValue() {
-		if (suppliedVideoFormats == null || suppliedVideoFormats.length == 0) {
-			return "";
-		}
-
-		StringBuilder builder = new StringBuilder();
-		for (String suppliedVideoFormat : suppliedVideoFormats) {
-			if (builder.length() > 0) {
-				builder.append(",");
-			}
-			builder.append(suppliedVideoFormat);
-		}
-
-		return builder.toString();
-
 	}
 
 	public String getPosterUrl() {

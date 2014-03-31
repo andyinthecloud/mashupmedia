@@ -3,6 +3,7 @@ package org.mashupmedia.util;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
@@ -57,12 +59,42 @@ public class FileHelper {
 		return files;
 	}
 
-	public static File createMediaFileStream(MediaItem mediaItem, MediaContentType mediaContentType) {
-		if (mediaContentType == MediaContentType.MP3_ORIGINAL) {
-			File file = new File(mediaItem.getPath());
-			return file;
+	public File getExistingMediaFile(MediaItem mediaItem, MediaContentType mediaContentType) {
+		List<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
+		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
+			return null;
 		}
-
+		
+		
+		File originalFile = null;
+		File encodedFile = null;
+		
+		for (MediaEncoding mediaEncoding : mediaEncodings) {
+			if (mediaEncoding.getMediaContentType() != mediaContentType) {
+				continue;
+			}
+			
+			if (mediaEncoding.isOriginal()) {
+				originalFile = new File(mediaItem.getPath());
+				continue;				
+			} else {
+				encodedFile = createEncodedMediaFile(mediaItem, mediaContentType); 
+			}
+			
+			
+		}
+		
+		if (encodedFile != null && encodedFile.length() > 0) {
+			return encodedFile;
+		}
+		
+		return originalFile;
+		
+	}
+	
+	
+	public static File createEncodedMediaFile(MediaItem mediaItem, MediaContentType mediaContentType) {
+		
 		Library library = mediaItem.getLibrary();
 		File libraryFolder = getLibraryFolder(library.getId());
 		File mediaFolder = new File(libraryFolder, FileType.MEDIA_ITEM_STREAM_ENCODED.getFolderName());
@@ -75,15 +107,15 @@ public class FileHelper {
 		return file;
 	}
 
-	public static File createMediaFile(long libraryId, long mediaItemId, FileType fileType) {
-		File libraryFolder = getLibraryFolder(libraryId);
-		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
-		mediaFolder.mkdirs();
-
-		String fileName = String.valueOf(mediaItemId);
-		File mediaFile = new File(mediaFolder, fileName);
-		return mediaFile;
-	}
+//	public static File createMediaFile(long libraryId, long mediaItemId, FileType fileType) {
+//		File libraryFolder = getLibraryFolder(libraryId);
+//		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
+//		mediaFolder.mkdirs();
+//
+//		String fileName = String.valueOf(mediaItemId);
+//		File mediaFile = new File(mediaFolder, fileName);
+//		return mediaFile;
+//	}
 
 	// public static File createEncodedMediaFile(long libraryId, long
 	// mediaItemId, MediaContentType mediaContentType) {

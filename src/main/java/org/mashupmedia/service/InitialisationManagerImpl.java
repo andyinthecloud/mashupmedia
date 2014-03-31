@@ -10,9 +10,7 @@ import org.mashupmedia.encode.FfMpegManager;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
-import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,26 +50,6 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		adminManager.initialiseSystemUser();
 		initialiseEncoder();
 		videoManager.initialiseVideoResolutions();
-		initialiseMediaEncodings();
-	}
-
-	private void initialiseMediaEncodings() {
-		// Audio encoding
-		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP3_ENCODED, 1));
-		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.OGA, 2));
-		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP3_ORIGINAL, 3));
-		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.FLAC, 4));
-
-		// Video encoding
-		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.MP4, 1));
-		mediaManager.saveMediaEncoding(createMediaEncoding(MediaContentType.WEBM, 2));
-	}
-
-	private MediaEncoding createMediaEncoding(MediaContentType mediaContentType, int ranking) {
-		MediaEncoding mediaEncoding = new MediaEncoding();
-		mediaEncoding.setMediaContentType(mediaContentType);
-		mediaEncoding.setRanking(ranking);
-		return mediaEncoding;
 	}
 
 	private void initialiseEncoder() {
@@ -82,11 +60,11 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		} catch (IOException e) {
 			logger.info("Error validating ffmpeg", e);
 		}
-		
+
 		if (!isValidFfMpegConfiguration) {
 			return;
 		}
-		
+
 		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, Boolean.TRUE.toString());
 		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegFile.getAbsolutePath());
 	}

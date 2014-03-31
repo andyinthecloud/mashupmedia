@@ -157,7 +157,7 @@ public class FfMpegManager {
 		long mediaItemId = mediaItem.getId();
 
 		File inputFile = new File(mediaItem.getPath());
-		File outputFile = FileHelper.createMediaFileStream(mediaItem, mediaContentType);
+		File outputFile = FileHelper.createEncodedMediaFile(mediaItem, mediaContentType);
 		boolean isDeleted = FileHelper.deleteFile(outputFile);
 
 		if (!isDeleted) {
@@ -166,7 +166,7 @@ public class FfMpegManager {
 			return;
 		}
 
-		if (mediaContentType == MediaContentType.MP3_ENCODED) {
+		if (mediaContentType == MediaContentType.MP3) {
 			encodeAudioToMp3(pathToFfMpeg, inputFile, outputFile, mediaItemId);
 		} else if (mediaContentType == MediaContentType.MP4) {
 			encodeVideoToMp4(pathToFfMpeg, inputFile, outputFile, mediaItemId);
@@ -196,7 +196,7 @@ public class FfMpegManager {
 		commands.add("mp3");
 		commands.add(outputFile.getAbsolutePath());
 
-		processManager.callProcess(commands, mediaItemId, MediaContentType.MP3_ENCODED);
+		processManager.callProcess(commands, mediaItemId, MediaContentType.MP3);
 	}
 
 	private void encodeVideoToMp4(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)

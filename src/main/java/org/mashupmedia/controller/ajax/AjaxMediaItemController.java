@@ -20,7 +20,6 @@ package org.mashupmedia.controller.ajax;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.model.Configuration;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
@@ -32,7 +31,6 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -63,7 +61,7 @@ public class AjaxMediaItemController {
 		MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
 		mediaContentTypeValue = StringUtils.trimToEmpty(mediaContentTypeValue);
 		if (StringUtils.isNotEmpty(mediaContentTypeValue)) {
-			mediaContentType = MediaItemHelper.getEncodedMediaContentType(mediaContentTypeValue);
+			mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
 		}
 
 		if (mediaContentType != MediaContentType.UNSUPPORTED) {
@@ -79,9 +77,9 @@ public class AjaxMediaItemController {
 			return page;
 		}
 
-		mediaContentType = MediaContentType.MP3_ENCODED;
+		mediaContentType = MediaContentType.MP3;
 		if (mediaItem.getMediaType() == MediaType.VIDEO) {
-			mediaContentType = MediaContentType.WEBM;
+			mediaContentType = MediaContentType.MP4;
 		}
 
 		String page = prepareEncodeMediaModel(mediaItemId, mediaContentType, model);
@@ -126,7 +124,7 @@ public class AjaxMediaItemController {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		model.addAttribute("mediaItem", mediaItem);
 		String format = mediaItem.getFormat();
-		MediaContentType mediaContentType = MediaItemHelper.getOriginalMediaContentType(format);
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
 		model.addAttribute("jPlayerFormat", mediaContentType.getjPlayerContentType());
 		return "ajax/media/media-item";
 	}

@@ -1,11 +1,9 @@
 package org.mashupmedia.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.mashupmedia.comparator.EncodingProcessComparator;
 import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.encode.ProcessQueueItem;
 import org.mashupmedia.model.media.MediaItem;
@@ -61,7 +59,6 @@ public class ListEncodingProcessesController extends BaseController {
 		EncodingProcessesPage encodingProcessesPage = new EncodingProcessesPage();
 		List<EncodingProcess> encodingProcesses = new ArrayList<EncodingProcess>();
 
-		
 		List<ProcessQueueItem> processQueueItems = processManager.getProcessQueueItems();
 		for (ProcessQueueItem processQueueItem : processQueueItems) {
 			EncodingProcess encodingProcess = new EncodingProcess();
@@ -79,34 +76,8 @@ public class ListEncodingProcessesController extends BaseController {
 			encodingProcess.setProcessStartedOn(startedOn);
 
 			encodingProcesses.add(encodingProcess);
-			
 		}
-		
-//		Map<ProcessKey, ProcessQueueItem> processCache = processManager.getProcessCache();
-//		Set<ProcessKey> processkeys = processCache.keySet();
-//
-//		for (Iterator<ProcessKey> iterator = processkeys.iterator(); iterator.hasNext();) {
-//			ProcessKey processKey = (ProcessKey) iterator.next();
-//			ProcessQueueItem processContainer = processCache.get(processKey);
-//
-//			EncodingProcess encodingProcess = new EncodingProcess();
-//
-//			MediaItem mediaItem = mediaManager.getMediaItem(processKey.getMediaItemId());
-//			encodingProcess.setMediaItem(mediaItem);
-//
-//			MediaContentType mediaContentType = processKey.getMediaContentType();
-//			encodingProcess.setMediaContentType(mediaContentType);
-//
-//			Date createdOn = processContainer.getCreatedOn();
-//			encodingProcess.setCreatedOn(createdOn);
-//
-//			Date startedOn = processContainer.getProcessStartedOn();
-//			encodingProcess.setProcessStartedOn(startedOn);
-//
-//			encodingProcesses.add(encodingProcess);
-//		}
 
-		Collections.sort(encodingProcesses, new EncodingProcessComparator());
 		encodingProcessesPage.setEncodingProcesses(encodingProcesses);
 
 		model.addAttribute("encodingProcessesPage", encodingProcessesPage);
@@ -116,7 +87,7 @@ public class ListEncodingProcessesController extends BaseController {
 	@RequestMapping(value = "/kill-process", method = RequestMethod.GET, produces = "application/json")
 	public boolean handleGetKillEncodingProcesses(@RequestParam("mediaItemId") long mediaItemId,
 			@RequestParam("mediaContentType") String mediaContentTypeValue, Model model) {
-		MediaContentType mediaContentType = MediaItemHelper.getEncodedMediaContentType(mediaContentTypeValue);
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
 		boolean isKilled = processManager.killProcess(mediaItemId, mediaContentType);
 		return isKilled;
 	}
@@ -125,7 +96,7 @@ public class ListEncodingProcessesController extends BaseController {
 	public @ResponseBody
 	boolean handleGetMoveProcess(@RequestParam("index") int index, @RequestParam("mediaItemId") long mediaItemId,
 			@RequestParam("mediaContentType") String mediaContentTypeValue, Model model) {
-		MediaContentType mediaContentType = MediaItemHelper.getEncodedMediaContentType(mediaContentTypeValue);
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
 		boolean isMoved = processManager.moveProcess(index, mediaItemId, mediaContentType);
 		return isMoved;
 	}

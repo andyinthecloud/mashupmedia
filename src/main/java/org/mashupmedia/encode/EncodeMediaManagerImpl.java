@@ -55,7 +55,9 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 			encodeManager.encodeMediaItem(mediaItem, mediaContentType);
 
 			logger.info("Media file decoded to " + mediaContentType.getName());
-			MediaEncoding mediaEncoding = mediaManager.getMediaEncoding(mediaContentType);
+			MediaEncoding mediaEncoding = new MediaEncoding();
+			mediaEncoding.setMediaContentType(mediaContentType);
+			mediaEncoding.setOriginal(false);			
 			mediaItem.addMediaEncoding(mediaEncoding);
 			mediaManager.saveMediaItem(mediaItem);
 		} catch (Exception e) {
