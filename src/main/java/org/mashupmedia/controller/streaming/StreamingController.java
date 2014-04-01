@@ -61,8 +61,8 @@ public class StreamingController {
 			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model)
 			throws Exception {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		MediaContentType mediaContentType = getMediaContentType(mediaItem, mediaContentTypeValue);
-		ModelAndView modelAndView = prepareModelAndView(mediaItem, mediaContentType, false);
+		MediaEncoding mediaEncoding = getMediaContentType(mediaItem, mediaContentTypeValue);
+		ModelAndView modelAndView = prepareModelAndView(mediaItem, mediaEncoding, false);
 		return modelAndView;
 	}
 
@@ -71,28 +71,35 @@ public class StreamingController {
 			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model)
 			throws Exception {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		MediaContentType mediaContentType = getMediaContentType(mediaItem, mediaContentTypeValue);
-		ModelAndView modelAndView = prepareModelAndView(mediaItem, mediaContentType, true);
+		MediaEncoding mediaEncoding = getMediaContentType(mediaItem, mediaContentTypeValue);
+		ModelAndView modelAndView = prepareModelAndView(mediaItem, mediaEncoding, true);
 		return modelAndView;
 	}
 
-	protected MediaContentType getMediaContentType(MediaItem mediaItem, String mediaContentTypeValue) {
-		mediaContentTypeValue = StringUtils.trimToEmpty(mediaContentTypeValue);
-		if (StringUtils.isNotEmpty(mediaContentTypeValue)) {
-			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
-			return mediaContentType;
+	protected MediaEncoding getMediaContentType(MediaItem mediaItem, String mediaContentTypeValue) {
+		
+		List<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
+		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
+			return null;
 		}
-
-		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
-		if (mediaEncoding == null) {
-			return MediaContentType.UNSUPPORTED;
+		
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
+		
+		for (MediaEncoding mediaEncoding : mediaEncodings) {
+			if (mediaEncoding.getMediaContentType() == mediaContentType) {
+				return mediaEncoding;
+			}
 		}
-
-		return mediaEncoding.getMediaContentType();
+		
+		return null;
 	}
 
-	protected ModelAndView prepareModelAndView(MediaItem mediaItem, MediaContentType mediaContentType,
+	protected ModelAndView prepareModelAndView(MediaItem mediaItem, MediaEncoding mediaEncoding,
 			final boolean content) throws Exception {
+		
+		if (mediaEncoding == null) {
+			return null;
+		}
 
 		Library library = mediaItem.getLibrary();
 
@@ -107,9 +114,13 @@ public class StreamingController {
 			}
 		}
 
-		File tempFile = FileHelper.createEncodedMediaFile(mediaItem, mediaContentType);
+		
+		
+//		File tempFile = FileHelper.createEncodedMediaFile(mediaItem, mediaContentType);
+		File mediaFile = FileHelper.getMediaFile(mediaItem, mediaEncoding);
+		MediaContentType mediaContentType = mediaEncoding.getMediaContentType();
 		final String contentType = mediaContentType.getMimeContentType();
-		final File file = tempFile;
+		final File file = mediaFile;
 
 		ModelAndView modelAndView = new ModelAndView(new View() {
 

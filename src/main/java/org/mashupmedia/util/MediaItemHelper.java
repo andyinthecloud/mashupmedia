@@ -19,10 +19,8 @@ package org.mashupmedia.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
-import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 public class MediaItemHelper {
 
@@ -105,63 +103,72 @@ public class MediaItemHelper {
 		return MediaSortType.SONG_TITLE;
 	}
 
-//	public static MediaContentType getEncodedMediaContentType(String mediaFormat) {
-//		mediaFormat = StringUtils.trimToEmpty(mediaFormat);
-//		if (StringUtils.isEmpty(mediaFormat)) {
-//			return MediaContentType.UNSUPPORTED;
-//		}
-//
-//		if (mediaFormat.equalsIgnoreCase("MPEG-1 Layer 3") || mediaFormat.equalsIgnoreCase("mp3")) {
-//			return MediaContentType.MP3_ENCODED;
-//		}
-//
-//		MediaContentType mediaContentType = getMediaContentType(mediaFormat);
-//		return mediaContentType;
-//
-//	}
-//
-//	public static MediaContentType getOriginalMediaContentType(String mediaFormat) {
-//		mediaFormat = StringUtils.trimToEmpty(mediaFormat);
-//		if (StringUtils.isEmpty(mediaFormat)) {
-//			return MediaContentType.UNSUPPORTED;
-//		}
-//
-//		if (mediaFormat.equalsIgnoreCase("MPEG-1 Layer 3") || mediaFormat.equalsIgnoreCase("mp3")) {
-//			return MediaContentType.MP3_ORIGINAL;
-//		}
-//
-//		MediaContentType mediaContentType = getMediaContentType(mediaFormat);
-//		return mediaContentType;
-//
-//	}
+	// public static MediaContentType getEncodedMediaContentType(String
+	// mediaFormat) {
+	// mediaFormat = StringUtils.trimToEmpty(mediaFormat);
+	// if (StringUtils.isEmpty(mediaFormat)) {
+	// return MediaContentType.UNSUPPORTED;
+	// }
+	//
+	// if (mediaFormat.equalsIgnoreCase("MPEG-1 Layer 3") ||
+	// mediaFormat.equalsIgnoreCase("mp3")) {
+	// return MediaContentType.MP3_ENCODED;
+	// }
+	//
+	// MediaContentType mediaContentType = getMediaContentType(mediaFormat);
+	// return mediaContentType;
+	//
+	// }
+	//
+	// public static MediaContentType getOriginalMediaContentType(String
+	// mediaFormat) {
+	// mediaFormat = StringUtils.trimToEmpty(mediaFormat);
+	// if (StringUtils.isEmpty(mediaFormat)) {
+	// return MediaContentType.UNSUPPORTED;
+	// }
+	//
+	// if (mediaFormat.equalsIgnoreCase("MPEG-1 Layer 3") ||
+	// mediaFormat.equalsIgnoreCase("mp3")) {
+	// return MediaContentType.MP3_ORIGINAL;
+	// }
+	//
+	// MediaContentType mediaContentType = getMediaContentType(mediaFormat);
+	// return mediaContentType;
+	//
+	// }
 
-	public static MediaContentType getMediaContentType(String mediaFormat) {
-		if (mediaFormat.equalsIgnoreCase("Vorbis") || mediaFormat.equalsIgnoreCase("ogg")
-				|| mediaFormat.equalsIgnoreCase("oga")) {
+	public static MediaContentType getMediaContentType(String format) {
+
+		format = StringUtils.trimToEmpty(format);
+
+		if (format.equalsIgnoreCase("MPEG-1 Layer 3") || format.equalsIgnoreCase("mp3")) {
+			return MediaContentType.MP3;
+		} else if (format.equalsIgnoreCase("Vorbis") || format.equalsIgnoreCase("ogg")
+				|| format.equalsIgnoreCase("oga")) {
 			return MediaContentType.OGA;
-		} else if (mediaFormat.equalsIgnoreCase("Free Lossless Audio Codec") || mediaFormat.equalsIgnoreCase("flac")) {
+		} else if (format.equalsIgnoreCase("Free Lossless Audio Codec") || format.equalsIgnoreCase("flac")) {
 			return MediaContentType.FLAC;
-		} else if (mediaFormat.equalsIgnoreCase("webm")) {
+		} else if (format.equalsIgnoreCase("webm")) {
 			return MediaContentType.WEBM;
-		} else if (mediaFormat.equalsIgnoreCase("mp4") || mediaFormat.equalsIgnoreCase("m4v")) {
+		} else if (format.equalsIgnoreCase("mp4") || format.equalsIgnoreCase("m4v")) {
 			return MediaContentType.MP4;
-		} else if (mediaFormat.equalsIgnoreCase("ogv")) {
+		} else if (format.equalsIgnoreCase("ogv")) {
 			return MediaContentType.OGV;
 		}
 
 		return MediaContentType.UNSUPPORTED;
 	}
 
-//	public static MediaContentType getMediaContentType(MediaItem mediaItem) {
-//		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
-//		if (mediaEncoding != null) {
-//			return mediaEncoding.getMediaContentType();
-//		}
-//
-//		String format = mediaItem.getFormat();
-//		MediaContentType mediaContentType = getMediaContentType(format);
-//		return mediaContentType;
-//	}
+	// public static MediaContentType getMediaContentType(MediaItem mediaItem) {
+	// MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
+	// if (mediaEncoding != null) {
+	// return mediaEncoding.getMediaContentType();
+	// }
+	//
+	// String format = mediaItem.getFormat();
+	// MediaContentType mediaContentType = getMediaContentType(format);
+	// return mediaContentType;
+	// }
 
 	public static boolean isCompatibleVideoFormat(MediaContentType mediaContentType) {
 		if (mediaContentType == MediaContentType.MP4) {

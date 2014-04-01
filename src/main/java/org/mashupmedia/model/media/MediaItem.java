@@ -28,6 +28,7 @@ import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
 import org.apache.solr.analysis.SnowballPorterFilterFactory;
 import org.apache.solr.analysis.StandardTokenizerFactory;
+import org.hibernate.annotations.SortComparator;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.AnalyzerDef;
 import org.hibernate.search.annotations.DateBridge;
@@ -38,6 +39,7 @@ import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.Resolution;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
+import org.mashupmedia.comparator.MediaEncodingComparator;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.util.MediaItemHelper;
@@ -105,11 +107,8 @@ public class MediaItem implements Serializable {
 	@OrderBy("createdOn")
 	@XmlTransient
 	private List<Comment> comments;
-//	@XmlTransient
-//	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-//	@OrderBy("ranking")
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	@OrderBy("mediaContentType.ranking")
+	@SortComparator(MediaEncodingComparator.class)
 	@XmlTransient
 	private List<MediaEncoding> mediaEncodings;
 

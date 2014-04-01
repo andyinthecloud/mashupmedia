@@ -30,10 +30,13 @@ import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
+import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,14 +68,15 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Autowired
 	private AdminManager adminManager;
-	
+
 	@Autowired
 	private LibraryManager libraryManager;
 
 	private MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
 		LogManager.getLogManager().reset();
-		java.util.logging.Logger globalLogger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
+		java.util.logging.Logger globalLogger = java.util.logging.Logger
+				.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
 		globalLogger.setLevel(java.util.logging.Level.OFF);
 	}
 
@@ -132,6 +136,16 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				logger.info("Song is already in database, updated song date.");
 				writeSongToXml(libraryId, savedSong);
 				continue;
+			}
+
+			String fileName = file.getName();
+			String fileExtension = FileHelper.getFileExtension(fileName);
+			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
+			if (mediaContentType != MediaContentType.UNSUPPORTED) {
+				MediaEncoding mediaEncoding = new MediaEncoding();
+				mediaEncoding.setOriginal(true);
+				mediaEncoding.setMediaContentType(mediaContentType);
+				song.addMediaEncoding(mediaEncoding);
 			}
 
 			Artist artist = song.getArtist();
@@ -249,8 +263,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		prepareSongs(date, songs, folder, musicLibrary, null, null);
 	}
 
-	protected void prepareSongs(Date date, List<Song> songs, File file, MusicLibrary musicLibrary, String folderArtistName, String folderAlbumName)
-			throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
+	protected void prepareSongs(Date date, List<Song> songs, File file, MusicLibrary musicLibrary,
+			String folderArtistName, String folderAlbumName) throws CannotReadException, IOException, TagException,
+			ReadOnlyFileException, InvalidAudioFrameException {
 
 		int musicFileCount = 0;
 
@@ -362,7 +377,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				tagAlbumName = folderAlbumName;
 			}
 			if (StringUtils.isBlank(folderAlbumName)) {
-				logger.info("Unable to add song to the library. No album found for artist = " + folderArtistName + ", song title = " + tagSongTitle);
+				logger.info("Unable to add song to the library. No album found for artist = " + folderArtistName
+						+ ", song title = " + tagSongTitle);
 			}
 			album.setName(tagAlbumName);
 			album.setFolderName(folderAlbumName);
@@ -443,16 +459,14 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			return null;
 		}
 
-		
 		String url = null;
 		String thumbnailUrl = null;
 		AlbumArtImage albumArtImage = album.getAlbumArtImage();
 		if (albumArtImage != null) {
 			url = albumArtImage.getUrl();
-			thumbnailUrl = albumArtImage.getThumbnailUrl();			
+			thumbnailUrl = albumArtImage.getThumbnailUrl();
 		}
-		
-		
+
 		Album savedAlbum = musicDao.getAlbum(userGroupIds, artist.getName(), albumName);
 		if (savedAlbum != null) {
 			AlbumArtImage savedAlbumArtImage = savedAlbum.getAlbumArtImage();
@@ -464,7 +478,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 					savedAlbumArtImage.setThumbnailUrl(thumbnailUrl);
 				}
 			}
-			
+
 			return savedAlbum;
 		}
 
@@ -493,10 +507,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			for (Album album : albums) {
 				List<Song> songs = musicDao.getSongs(groupIds, album.getId());
 				if (songs == null || songs.isEmpty()) {
-//					long albumId = album.getId();
-//					long libraryId = album.get
-//					
-//					FileHelper.deleteAlbum(album.getId());
+					// long albumId = album.getId();
+					// long libraryId = album.get
+					//
+					// FileHelper.deleteAlbum(album.getId());
 
 					musicDao.deleteAlbum(album);
 

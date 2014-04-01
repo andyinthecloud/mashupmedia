@@ -3,7 +3,6 @@ package org.mashupmedia.util;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,42 +58,19 @@ public class FileHelper {
 		return files;
 	}
 
-	public File getExistingMediaFile(MediaItem mediaItem, MediaContentType mediaContentType) {
-		List<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
-		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
-			return null;
+	public static File getMediaFile(MediaItem mediaItem, MediaEncoding mediaEncoding) {
+		if (mediaEncoding.isOriginal()) {
+			File mediaFile = new File(mediaItem.getPath());
+			return mediaFile;
 		}
-		
-		
-		File originalFile = null;
-		File encodedFile = null;
-		
-		for (MediaEncoding mediaEncoding : mediaEncodings) {
-			if (mediaEncoding.getMediaContentType() != mediaContentType) {
-				continue;
-			}
-			
-			if (mediaEncoding.isOriginal()) {
-				originalFile = new File(mediaItem.getPath());
-				continue;				
-			} else {
-				encodedFile = createEncodedMediaFile(mediaItem, mediaContentType); 
-			}
-			
-			
-		}
-		
-		if (encodedFile != null && encodedFile.length() > 0) {
-			return encodedFile;
-		}
-		
-		return originalFile;
-		
+
+		MediaContentType mediaContentType = mediaEncoding.getMediaContentType();
+		File encodedFile = getEncodedMediaFile(mediaItem, mediaContentType);
+		return encodedFile;
 	}
-	
-	
-	public static File createEncodedMediaFile(MediaItem mediaItem, MediaContentType mediaContentType) {
-		
+
+	public static File getEncodedMediaFile(MediaItem mediaItem, MediaContentType mediaContentType) {
+
 		Library library = mediaItem.getLibrary();
 		File libraryFolder = getLibraryFolder(library.getId());
 		File mediaFolder = new File(libraryFolder, FileType.MEDIA_ITEM_STREAM_ENCODED.getFolderName());
@@ -106,30 +82,6 @@ public class FileHelper {
 		File file = new File(mediaFolder, fileName);
 		return file;
 	}
-
-//	public static File createMediaFile(long libraryId, long mediaItemId, FileType fileType) {
-//		File libraryFolder = getLibraryFolder(libraryId);
-//		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
-//		mediaFolder.mkdirs();
-//
-//		String fileName = String.valueOf(mediaItemId);
-//		File mediaFile = new File(mediaFolder, fileName);
-//		return mediaFile;
-//	}
-
-	// public static File createEncodedMediaFile(long libraryId, long
-	// mediaItemId, MediaContentType mediaContentType) {
-	// File libraryFolder = getLibraryFolder(libraryId);
-	// File mediaFolder = new File(libraryFolder,
-	// FileType.MEDIA_ITEM_STREAM_ENCODED.getFolderName());
-	// mediaFolder.mkdirs();
-	//
-	// String fileName = String.valueOf(mediaItemId);
-	// fileName += "." + mediaContentType.getDisplayText().toLowerCase();
-	//
-	// File mediaFile = new File(mediaFolder, fileName);
-	// return mediaFile;
-	// }
 
 	public static File createAlbumArtFile(long libraryId) {
 		File libraryFolder = getLibraryFolder(libraryId);
