@@ -212,6 +212,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 			musicDao.saveSong(song, isSessionFlush);
 			writeSongToXml(libraryId, song);
+			
+			if ()
 
 			totalSongsSaved++;
 

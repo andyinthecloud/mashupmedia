@@ -17,7 +17,11 @@
 
 package org.mashupmedia.task;
 
+import java.io.File;
+
 import org.mashupmedia.encode.EncodeMediaManager;
+import org.mashupmedia.model.media.MediaEncoding;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -32,8 +36,29 @@ public class EncodeMediaItemTaskManager {
 	@Autowired
 	private EncodeMediaManager encodeMediaManager;
 
-	public void queueMediaItemForEncoding(long mediaItemId, MediaContentType mediaContentType) {
-		encodeMediaItemThreadPoolTaskExecutor.execute(new EncodeMediaItemTask(mediaItemId, mediaContentType));
+	public void processMediaItemForEncoding(MediaItem mediaItem, long fileLastModified, long savedMediaItemFileLastModified, MediaContentType mediaContentType) {
+		
+		
+//		MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
+		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
+		if (mediaEncoding != null) {
+			return;
+//			mediaContentType = mediaEncoding.getMediaContentType();
+		}
+
+//		long mediaItemFileLastModifiedOn = mediaItem.getFileLastModifiedOn();
+		
+		if (fileLastModified > savedMediaItemFileLastModified && mediaContentType == MediaContentType.UNSUPPORTED) {
+			
+			encodeMediaItemThreadPoolTaskExecutor.execute(new EncodeMediaItemTask(mediaItem.getId(), mediaContentType));
+			
+//			encodeMediaItemTaskManager.queueMediaItemForEncoding(video.getId(), mediaContentType);
+		}
+		
+		
+		
+		
+//		encodeMediaItemThreadPoolTaskExecutor.execute(new EncodeMediaItemTask(mediaItemId, mediaContentType));
 	}
 
 	private class EncodeMediaItemTask implements Runnable {

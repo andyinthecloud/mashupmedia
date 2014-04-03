@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.VideoDao;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
 import org.mashupmedia.model.media.MediaItem.MediaType;
@@ -50,13 +51,10 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		}
 
 		processVideos(videos, folder, videoDeriveTitleType, date, null, library);
-
-		// remove obsolete videos
-		removeObsoleteVideos(library, date);
-
 	}
 
-	protected void removeObsoleteVideos(VideoLibrary library, Date date) {
+	@Override
+	public void deleteObsoleteVideos(Library library, Date date) {
 		List<Video> videos = videoDao.getObsoleteVideos(library.getId(), date);
 		int totalDeletedVideos = videoDao.removeObsoleteVideos(library.getId(), date);
 
@@ -65,7 +63,6 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		}
 
 		logger.info(totalDeletedVideos + " obsolete videos deleted.");
-
 	}
 
 	protected void processVideos(List<Video> videos, File file, VideoDeriveTitleType videoDeriveTitleType, Date date,
@@ -100,7 +97,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		String path = file.getAbsolutePath();
 		Video video = videoDao.getVideoByPath(path);
 		long fileLastModified = file.lastModified();
-		long previouslyModified = 0;
+		long savedVideoFileLastModified = 0;
 
 		if (video == null) {
 			video = new Video();
@@ -118,7 +115,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 				mediaEncoding.setMediaContentType(mediaContentType);
 				mediaEncoding.setOriginal(true);
 				mediaEncodings.add(mediaEncoding);
-				
+
 				video.setMediaEncodings(mediaEncodings);
 			}
 
@@ -130,7 +127,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			video.setPath(path);
 			video.setSizeInBytes(file.length());
 		} else {
-			previouslyModified = video.getFileLastModifiedOn();
+			savedVideoFileLastModified = video.getFileLastModifiedOn();
 		}
 
 		video.setLibrary(library);
@@ -152,19 +149,24 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			isSessionFlush = true;
 		}
 
+		
 		videoDao.saveVideo(video, isSessionFlush);
+		
+		encodeMediaItemTaskManager.processMediaItemForEncoding(video, fileLastModified, savedVideoFileLastModified, MediaContentType.MP4);		
 
-//		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(video);
-		
-		MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
-		MediaEncoding mediaEncoding = video.getBestMediaEncoding();
-		if (mediaEncoding != null) {
-			mediaContentType = mediaEncoding.getMediaContentType();
-		}
-		
-		if (fileLastModified > previouslyModified && mediaContentType == MediaContentType.UNSUPPORTED) {
-			encodeMediaItemTaskManager.queueMediaItemForEncoding(video.getId(), MediaContentType.MP4);
-		}
+
+		// MediaContentType mediaContentType =
+		// MediaItemHelper.getMediaContentType(video);
+
+//		MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
+//		MediaEncoding mediaEncoding = video.getBestMediaEncoding();
+//		if (mediaEncoding != null) {
+//			mediaContentType = mediaEncoding.getMediaContentType();
+//		}
+//
+//		if (fileLastModified > previouslyModified && mediaContentType == MediaContentType.UNSUPPORTED) {
+//			encodeMediaItemTaskManager.queueMediaItemForEncoding(video.getId(), MediaContentType.MP4);
+//		}
 	}
 
 }
