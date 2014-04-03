@@ -33,10 +33,11 @@ import org.mashupmedia.model.media.Genre;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
+import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
-import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,6 +72,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Autowired
 	private LibraryManager libraryManager;
+	
+	@Autowired
+	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 
 	private MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
@@ -135,6 +139,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				musicDao.saveSong(savedSong);
 				logger.info("Song is already in database, updated song date.");
 				writeSongToXml(libraryId, savedSong);
+				long fileLastModified = file.lastModified();
+				long savedMediaItemLastModified = song.getFileLastModifiedOn();
+				encodeMediaItemTaskManager.processMediaItemForEncoding(song, fileLastModified, savedMediaItemLastModified, MediaContentType.MP3);
 				continue;
 			}
 
@@ -213,7 +220,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			musicDao.saveSong(song, isSessionFlush);
 			writeSongToXml(libraryId, song);
 			
-			if ()
+			encodeMediaItemTaskManager.processMediaItemForEncoding(song, file.lastModified(), 0, MediaContentType.MP3);
 
 			totalSongsSaved++;
 

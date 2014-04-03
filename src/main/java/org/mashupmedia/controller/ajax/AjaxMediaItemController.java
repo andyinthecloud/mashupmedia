@@ -92,33 +92,6 @@ public class AjaxMediaItemController {
 		return "ajax/message";
 	}
 
-	// @RequestMapping(value = "/format-unprocessed/{mediaItemId}", method =
-	// RequestMethod.GET)
-	// public String handleSetFormatUnprocessed(@PathVariable Long mediaItemId,
-	// Model model) {
-	// String page = setMediaEncodeStatus(mediaItemId,
-	// EncodeStatusType.OVERRIDE, model);
-	// return page;
-	// }
-	//
-	// @RequestMapping(value = "/format-encoded/{mediaItemId}", method =
-	// RequestMethod.GET)
-	// public String handleSetFormatEncoded(@PathVariable Long mediaItemId,
-	// Model model) {
-	// String page = setMediaEncodeStatus(mediaItemId, EncodeStatusType.ENCODED,
-	// model);
-	// return page;
-	// }
-
-	// protected String setMediaEncodeStatus(long mediaItemId, EncodeStatusType
-	// encodeStatusType, Model model) {
-	// MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-	// mediaItem.setEncodeStatusType(encodeStatusType);
-	// mediaManager.saveMediaItem(mediaItem);
-	// model.addAttribute(MODEL_KEY_IS_SUCCESSFUL, true);
-	// return "ajax/message";
-	// }
-
 	@RequestMapping(value = "/{mediaItemId}", method = RequestMethod.GET)
 	public String handleGetOriginalMediaFormat(@PathVariable Long mediaItemId, Model model) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);

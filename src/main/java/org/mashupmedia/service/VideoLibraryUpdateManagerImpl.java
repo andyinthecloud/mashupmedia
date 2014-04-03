@@ -9,11 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.VideoDao;
-import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
-import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.MediaEncoding;
+import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Video;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.FileHelper;
@@ -54,12 +53,12 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 	}
 
 	@Override
-	public void deleteObsoleteVideos(Library library, Date date) {
-		List<Video> videos = videoDao.getObsoleteVideos(library.getId(), date);
-		int totalDeletedVideos = videoDao.removeObsoleteVideos(library.getId(), date);
+	public void deleteObsoleteVideos(long libraryId, Date date) {
+		List<Video> videos = videoDao.getObsoleteVideos(libraryId, date);
+		int totalDeletedVideos = videoDao.removeObsoleteVideos(libraryId, date);
 
 		for (Video video : videos) {
-			FileHelper.deleteProcessedVideo(library.getId(), video.getId());
+			FileHelper.deleteProcessedVideo(libraryId, video.getId());
 		}
 
 		logger.info(totalDeletedVideos + " obsolete videos deleted.");
@@ -103,21 +102,16 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			video = new Video();
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
-			if (!MediaItemHelper.isCompatibleVideoFormat(mediaContentType)) {
-				mediaContentType = MediaContentType.UNSUPPORTED;
-			} else {
-				List<MediaEncoding> mediaEncodings = video.getMediaEncodings();
-				if (mediaEncodings == null) {
-					mediaEncodings = new ArrayList<MediaEncoding>();
-				}
-
-				MediaEncoding mediaEncoding = new MediaEncoding();
-				mediaEncoding.setMediaContentType(mediaContentType);
-				mediaEncoding.setOriginal(true);
-				mediaEncodings.add(mediaEncoding);
-
-				video.setMediaEncodings(mediaEncodings);
+			List<MediaEncoding> mediaEncodings = video.getMediaEncodings();
+			if (mediaEncodings == null) {
+				mediaEncodings = new ArrayList<MediaEncoding>();
 			}
+
+			MediaEncoding mediaEncoding = new MediaEncoding();
+			mediaEncoding.setMediaContentType(mediaContentType);
+			mediaEncoding.setOriginal(true);
+			mediaEncodings.add(mediaEncoding);
+			video.setMediaEncodings(mediaEncodings);
 
 			video.setFormat(mediaContentType.getName());
 			video.setEnabled(true);
@@ -153,20 +147,6 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		videoDao.saveVideo(video, isSessionFlush);
 		
 		encodeMediaItemTaskManager.processMediaItemForEncoding(video, fileLastModified, savedVideoFileLastModified, MediaContentType.MP4);		
-
-
-		// MediaContentType mediaContentType =
-		// MediaItemHelper.getMediaContentType(video);
-
-//		MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
-//		MediaEncoding mediaEncoding = video.getBestMediaEncoding();
-//		if (mediaEncoding != null) {
-//			mediaContentType = mediaEncoding.getMediaContentType();
-//		}
-//
-//		if (fileLastModified > previouslyModified && mediaContentType == MediaContentType.UNSUPPORTED) {
-//			encodeMediaItemTaskManager.queueMediaItemForEncoding(video.getId(), MediaContentType.MP4);
-//		}
 	}
 
 }

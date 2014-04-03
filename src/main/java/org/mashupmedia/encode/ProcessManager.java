@@ -213,8 +213,8 @@ public class ProcessManager {
 			process.destroy();
 		}
 
-		processQueueItems.remove(processQueueItem);
-		return true;
+		boolean isRemoved = processQueueItems.remove(processQueueItem);
+		return isRemoved;
 	}
 
 	public boolean moveProcess(int index, long mediaItemId, MediaContentType mediaContentType) {

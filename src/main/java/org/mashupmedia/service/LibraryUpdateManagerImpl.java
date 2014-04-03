@@ -100,18 +100,26 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			}
 			if (library instanceof MusicLibrary) {
 				MusicLibrary musicLibrary = (MusicLibrary) library;
-				musicLibraryUpdateManager.updateLibrary(musicLibrary, file, date);
-				musicLibraryUpdateManager.deleteObsoleteSongs(libraryId, date);
+				musicLibraryUpdateManager.updateLibrary(musicLibrary, file, date);				
 			} else if (library instanceof VideoLibrary) {
 				VideoLibrary videoLibrary = (VideoLibrary) library;
 				videoLibraryUpdateManager.updateLibrary(videoLibrary, file, date);
-				videoLibraryUpdateManager.deleteObsoleteVideos(library, date);
 			}
 
 		}
-
+		
+		deleteObsoleteMediaItems(library, date);
 		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
 
+	}
+
+	protected void deleteObsoleteMediaItems(Library library, Date date) {
+		long libraryId = library.getId();
+		if (library instanceof MusicLibrary) {
+			musicLibraryUpdateManager.deleteObsoleteSongs(libraryId, date);
+		} else if (library instanceof VideoLibrary) {
+			videoLibraryUpdateManager.deleteObsoleteVideos(libraryId, date);
+		}
 	}
 
 	@Override
