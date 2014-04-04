@@ -1,5 +1,7 @@
 package org.mashupmedia.model.media;
 
+import java.io.Serializable;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,7 +14,9 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 @Entity
 @Cacheable
-public class MediaEncoding {
+public class MediaEncoding implements Serializable {
+	private static final long serialVersionUID = -3656367571677496182L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

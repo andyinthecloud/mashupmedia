@@ -95,9 +95,8 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 
 		String path = file.getAbsolutePath();
 		Video video = videoDao.getVideoByPath(path);
-		long fileLastModified = file.lastModified();
-		long savedVideoFileLastModified = 0;
 
+		int totalVideosWithSameNameThreshold = 0;
 		if (video == null) {
 			video = new Video();
 			String fileExtension = FileHelper.getFileExtension(fileName);
@@ -115,24 +114,23 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 
 			video.setFormat(mediaContentType.getName());
 			video.setEnabled(true);
-			video.setFileLastModifiedOn(fileLastModified);
+			video.setFileLastModifiedOn(file.lastModified());
 			video.setFileName(fileName);
 			video.setMediaType(MediaType.VIDEO);
 			video.setPath(path);
 			video.setSizeInBytes(file.length());
+
 		} else {
-			savedVideoFileLastModified = video.getFileLastModifiedOn();
+			totalVideosWithSameNameThreshold = 1;
 		}
 
-		video.setLibrary(library);
-
-		String searchText = videoDisplayTitle;
-
 		int totalVideosWithSameName = videoDao.getTotalVideosWithSameName(videoDisplayTitle);
-		if (totalVideosWithSameName > 0) {
+		if (totalVideosWithSameName > totalVideosWithSameNameThreshold) {
 			String incrementValue = String.valueOf(totalVideosWithSameName);
 			videoDisplayTitle = videoDisplayTitle + "(" + incrementValue + ")";
 		}
+		video.setLibrary(library);
+		String searchText = videoDisplayTitle;
 		video.setDisplayTitle(videoDisplayTitle);
 		video.setSearchText(searchText);
 		video.setUpdatedOn(date);
@@ -143,10 +141,9 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			isSessionFlush = true;
 		}
 
-		
 		videoDao.saveVideo(video, isSessionFlush);
-		
-		encodeMediaItemTaskManager.processMediaItemForEncoding(video, fileLastModified, savedVideoFileLastModified, MediaContentType.MP4);		
+
+		encodeMediaItemTaskManager.processMediaItemForEncoding(video, MediaContentType.MP4);
 	}
 
 }

@@ -34,14 +34,13 @@ public class EncodeMediaItemTaskManager {
 	@Autowired
 	private EncodeMediaManager encodeMediaManager;
 
-	public void processMediaItemForEncoding(MediaItem mediaItem, long fileLastModified,
-			long savedMediaItemFileLastModified, MediaContentType mediaContentType) {
+	public void processMediaItemForEncoding(MediaItem mediaItem, MediaContentType mediaContentType) {
 		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
 		if (mediaEncoding == null) {
 			return;
 		}
 
-		if (fileLastModified > savedMediaItemFileLastModified && mediaContentType == MediaContentType.UNSUPPORTED) {
+		if (mediaEncoding.getMediaContentType() == MediaContentType.UNSUPPORTED) {
 			queueMediaItemForEncoding(mediaItem.getId(), mediaContentType);
 		}
 	}
