@@ -143,7 +143,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 
 		videoDao.saveVideo(video, isSessionFlush);
 
-		encodeMediaItemTaskManager.processMediaItemForEncoding(video, MediaContentType.MP4);
+		encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(video, MediaContentType.MP4);
 	}
 
 }

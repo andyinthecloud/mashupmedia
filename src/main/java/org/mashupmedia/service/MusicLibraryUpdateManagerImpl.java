@@ -139,7 +139,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				musicDao.saveSong(savedSong);
 				logger.info("Song is already in database, updated song date.");
 				writeSongToXml(libraryId, savedSong);
-				encodeMediaItemTaskManager.processMediaItemForEncoding(song, MediaContentType.MP3);
+				encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(song, MediaContentType.MP3);
 				continue;
 			}
 
@@ -218,7 +218,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			musicDao.saveSong(song, isSessionFlush);
 			writeSongToXml(libraryId, song);
 			
-			encodeMediaItemTaskManager.processMediaItemForEncoding(song, MediaContentType.MP3);
+			encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(song, MediaContentType.MP3);
 
 			totalSongsSaved++;
 
