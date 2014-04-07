@@ -35,6 +35,7 @@
 <script type="text/javascript">
 	$(document).ready(
 			function() {
+				var jPlayerVersion = "${jPlayerVersion}";
 				<c:if test="${isTransparentBackground}">
 				$("#contextUrl").val("<c:url value="/" />");
 				processBackground("<c:url value="${themePath}/"/>",
