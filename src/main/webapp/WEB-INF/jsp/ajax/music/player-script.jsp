@@ -47,7 +47,7 @@
 					myAndroidFix.play();
 				}				
 			},			
-			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/" />" + jPlayerVersion,
+			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}" />",
 			supplied: "${streamingFormat}",
 			wmode: "window",
 			solution: "html,flash",

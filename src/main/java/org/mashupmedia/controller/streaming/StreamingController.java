@@ -83,6 +83,11 @@ public class StreamingController {
 			return null;
 		}
 		
+		mediaContentTypeValue = StringUtils.trimToEmpty(mediaContentTypeValue);
+		if (StringUtils.isBlank(mediaContentTypeValue)) {
+			return mediaEncodings.get(0);
+		}
+		
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
 		
 		for (MediaEncoding mediaEncoding : mediaEncodings) {

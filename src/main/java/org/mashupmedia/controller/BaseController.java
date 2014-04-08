@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 public abstract class BaseController {
-	
+
 	protected final static String MODEL_KEY_HAS_ERRORS = "hasErrors";
 	protected final static String MODEL_KEY_BREADCRUMBS = "breadcrumbs";
 	protected final static String MODEL_KEY_HEAD_PAGE_TITLE = "headPageTitle";
 
 	@Autowired
 	private PlaylistManager playlistManager;
-	
+
 	@Autowired
 	private ConfigurationManager configurationManager;
 
@@ -39,7 +39,7 @@ public abstract class BaseController {
 	public boolean isTransparentBackground() {
 		return true;
 	}
-	
+
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_VERSION)
 	public String getVersion() {
 		String version = MessageHelper.getMessage("application.version");
@@ -49,32 +49,34 @@ public abstract class BaseController {
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_CURRENT_YEAR)
 	public String getCurrentYear() {
 		Calendar calendar = Calendar.getInstance();
-		int year = calendar.get(Calendar.YEAR);		
+		int year = calendar.get(Calendar.YEAR);
 		return String.valueOf(year);
 	}
 
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_THEME_PATH)
 	public String getThemePath() {
 		return "/themes/default";
-	}	
+	}
 
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_IS_NEW_MASHUP_MEDIA_AVAILABLE)
-	public boolean isNewMashupMediaVersionAvailable() {		
-		String latestVersionValue = configurationManager.getConfigurationValue(MashUpMediaConstants.LATEST_RELEASE_FINAL_VERSION);
+	public boolean isNewMashupMediaVersionAvailable() {
+		String latestVersionValue = configurationManager
+				.getConfigurationValue(MashUpMediaConstants.LATEST_RELEASE_FINAL_VERSION);
 		double latestVersion = NumberUtils.toDouble(latestVersionValue);
 		if (latestVersion == 0) {
 			return false;
 		}
-		
-		double currentVersion =  NumberUtils.toDouble(MessageHelper.getMessage(MashUpMediaConstants.APPLICATION_VERSION));
-		
+
+		double currentVersion = NumberUtils
+				.toDouble(MessageHelper.getMessage(MashUpMediaConstants.APPLICATION_VERSION));
+
 		if (latestVersion > currentVersion) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	@ModelAttribute(MODEL_KEY_BREADCRUMBS)
 	public List<Breadcrumb> populateBreadcrumbs() {
 		List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();
@@ -84,9 +86,9 @@ public abstract class BaseController {
 	}
 
 	public abstract void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs);
-	
+
 	public abstract String getPageTitleMessageKey();
-	
+
 	@ModelAttribute(MODEL_KEY_HEAD_PAGE_TITLE)
 	public String populateHeadPageTitle() {
 		StringBuilder titleBuilder = new StringBuilder(MessageHelper.getMessage("page.default.title.prefix"));
@@ -94,18 +96,41 @@ public abstract class BaseController {
 		titleBuilder.append(MessageHelper.getMessage(getPageTitleMessageKey()));
 		return titleBuilder.toString();
 	}
-	
+
 	@ModelAttribute("pageTitle")
 	public String populatePageTitle() {
 		return getPageTitleMessageKey();
 	}
-	
-	
 
 	@ModelAttribute("musicPlaylists")
 	public List<Playlist> populatePlaylists() {
 		List<Playlist> playlist = playlistManager.getPlaylistsForCurrentUser(PlaylistType.MUSIC);
 		return playlist;
+	}
+
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_JQUERYUI_VERSION)
+	public String populateJQueryUIVersion() {
+		return MashUpMediaConstants.JQUERYUI_VERSION;
+	}
+
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_JQUERY_VERSION)
+	public String populateJQuery() {
+		return MashUpMediaConstants.JQUERY_VERSION;
+	}
+
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_JQUERY_ADDRESS_VERSION)
+	public String populateJQueryAddress() {
+		return MashUpMediaConstants.JQUERY_ADDRESS_VERSION;
+	}
+
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_JPLAYER_VERSION)
+	public String populateJPlayer() {
+		return MashUpMediaConstants.JPLAYER_VERSION;
+	}
+
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_DATATABLES_VERSION)
+	public String populateDataTables() {
+		return MashUpMediaConstants.DATATABLES_VERSION;
 	}
 
 	@InitBinder

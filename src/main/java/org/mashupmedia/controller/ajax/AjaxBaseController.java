@@ -38,6 +38,12 @@ public abstract class AjaxBaseController {
 	
 	}
 	
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_JPLAYER_VERSION)
+	public String populateJPlayer() {
+		return MashUpMediaConstants.JPLAYER_VERSION;
+	}
+
+	
 	
 
 }

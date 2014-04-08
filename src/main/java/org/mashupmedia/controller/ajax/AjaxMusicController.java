@@ -182,67 +182,34 @@ public class AjaxMusicController extends AjaxBaseController {
 		playlistMediaItem.setPlaylist(playlist);
 		playlistMediaItem.setMediaItem(song);
 
-//		MediaType mediaType = song.getMediaType();
-//		if (mediaType == MediaType.SONG) {
-//			Song song = (Song) mediaItem;
+		playlist = updatePlayingSong(playlist, song);
 
-			playlist = updatePlayingSong(playlist, song);
+		song = SerializationUtils.clone(song);
+		song.setDisplayTitle(StringHelper.escapeJavascript(song.getDisplayTitle()));
 
-			song = SerializationUtils.clone(song);
-			song.setDisplayTitle(StringHelper.escapeJavascript(song.getDisplayTitle()));
+		Artist artist = song.getArtist();
+		artist.setName(StringHelper.escapeJavascript(artist.getName()));
+		song.setArtist(artist);
 
-			Artist artist = song.getArtist();
-			artist.setName(StringHelper.escapeJavascript(artist.getName()));
-			song.setArtist(artist);
+		Album album = song.getAlbum();
+		song.setAlbum(album);
+		album.setName(StringHelper.escapeJavascript(album.getName()));
 
-			Album album = song.getAlbum();
-			song.setAlbum(album);
-			album.setName(StringHelper.escapeJavascript(album.getName()));
+		playlist = SerializationUtils.clone(playlist);
+		playlist.setName(StringHelper.escapeJavascript(playlist.getName()));
 
-			playlist = SerializationUtils.clone(playlist);
-			playlist.setName(StringHelper.escapeJavascript(playlist.getName()));
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(song.getFormat());
 
-			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(song.getFormat());
-			
-//			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(song);
-			
-			
-			model.addAttribute("format", mediaContentType.getjPlayerContentType());
-			model.addAttribute("song", song);
-			model.addAttribute("playlist", playlist);
-			
-			String streamingUrl = "/app/streaming/media/" + song.getId();
-			model.addAttribute(MODEL_KEY_STREAMING_FORMAT, mediaContentType.getjPlayerContentType());
-			model.addAttribute(MODEL_KEY_STREAMING_URL, streamingUrl);
+		model.addAttribute("format", mediaContentType.getjPlayerContentType());
+		model.addAttribute("song", song);
+		model.addAttribute("playlist", playlist);
 
-//			prepareStreamingUrl(song, model);
+		String streamingUrl = "/app/streaming/media/" + song.getId();
+		model.addAttribute(MODEL_KEY_STREAMING_FORMAT, mediaContentType.getjPlayerContentType());
+		model.addAttribute(MODEL_KEY_STREAMING_URL, streamingUrl);
 
-			return "ajax/music/player-script";
-//		}
-
-//		return "";
+		return "ajax/music/player-script";
 	}
-
-//	private void prepareStreamingUrl(Song song, MediaContentType mediaContentType, Model model) {
-//		long songId = song.getId();
-//		
-//		
-//		String streamingUrl = "/app/streaming/media/" + songId;
-//
-////		MediaContentType mediaContentType = song.getMediaContentType();
-////		EncodeStatusType encodeStatusType = song.getEncodeStatusType();
-//
-//		if ((encodeStatusType == EncodeStatusType.PROCESSING) || (encodeStatusType == EncodeStatusType.ENCODED)) {
-//			streamingUrl += "/app/streaming/media/encoded/" + songId;
-//			mediaContentType = MediaContentType.OGA;
-//		} else {
-//			streamingUrl += "/app/streaming/media/unprocessed/" + songId;
-//		}
-//
-//		model.addAttribute(MODEL_KEY_STREAMING_FORMAT, mediaContentType.getjPlayerContentType());
-//		model.addAttribute(MODEL_KEY_STREAMING_URL, streamingUrl);
-//
-//	}
 
 	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
 	public String playNextSonginLastAccessedPlaylist(Model model) {

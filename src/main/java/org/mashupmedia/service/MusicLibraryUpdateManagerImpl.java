@@ -145,13 +145,12 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 			String fileName = file.getName();
 			String fileExtension = FileHelper.getFileExtension(fileName);
+
+			MediaEncoding mediaEncoding = new MediaEncoding();
+			mediaEncoding.setOriginal(true);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
-			if (mediaContentType != MediaContentType.UNSUPPORTED) {
-				MediaEncoding mediaEncoding = new MediaEncoding();
-				mediaEncoding.setOriginal(true);
-				mediaEncoding.setMediaContentType(mediaContentType);
-				song.addMediaEncoding(mediaEncoding);
-			}
+			mediaEncoding.setMediaContentType(mediaContentType);
+			song.addMediaEncoding(mediaEncoding);
 
 			Artist artist = song.getArtist();
 			artist = prepareArtist(groupIds, artist);

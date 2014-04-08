@@ -1,15 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+<%@page import="org.mashupmedia.constants.MashUpMediaConstants"%>
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <html lang="en">
 <head>
-
-<c:set var="jQueryUIVersion" value="1.10.3" />
-<c:set var="jQueryVersion" value="1.9.1" />
-<c:set var="jQueryAddress" value="1.6" />
-<c:set var="jPlayerVersion" value="2.5.0" />
-<c:set var="dataTables" value="1.9.4" />
 
 <link type="text/css" href="<c:url value="/jquery-ui/${jQueryUIVersion}/css/smoothness/jquery-ui-${jQueryUIVersion}.custom.min.css" />"
 	rel="stylesheet" />
@@ -18,13 +13,13 @@
 
 <script type="text/javascript" src="<c:url value="/scripts/mashupmedia.jsp" />"></script>
 
-<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.address/${jQueryAddress}/jquery.address-${jQueryAddress}.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.address/${jQueryAddressVersion}/jquery.address-${jQueryAddressVersion}.min.js" />"></script>
 
 <script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jquery.jplayer.min.js" />"></script>
 <script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/add-on/jplayer.playlist.min.js" />"></script>
 <link type="text/css" href="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/skins/pink.flag/jplayer.pink.flag.css" />" rel="stylesheet" />
 
-<script type="text/javascript" src="<c:url value="/jquery-plugins/datatables/${dataTables}/jquery.dataTables.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/jquery-plugins/datatables/${dataTablesVersion}/jquery.dataTables.min.js" />"></script>
 
 
 
