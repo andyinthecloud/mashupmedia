@@ -20,20 +20,9 @@
 			
 		
 		$(mashupMedia.jPlayerId).jPlayer("destroy");
-		
-		
-		
-//		var id = "#jquery_jplayer_1";
-
 		var bubble = {
 			${streamingFormat}: "<c:url value="${streamingUrl}" />"
 		};
-		/*
-		var lismore = {
-			mp3:"http://www.jplayer.org/audio/mp3/Miaow-04-Lismore.mp3",
-			oga:"http://www.jplayer.org/audio/ogg/Miaow-04-Lismore.ogg"
-		};
-		*/
 
 		var jPlayerStatus = "load";
 		if (isAutoPlay) {
@@ -59,19 +48,10 @@
 			preload: "auto"
 		};
 
-		var myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, bubble, options);
-		
-//		myAndroidFix.play();
-//		myAndroidFix.setMedia(bubble).play()
-		
-		
-		
-		var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";
-		
+		var myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, bubble, options);		
+		var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";		
 		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, ${song.artist.id});
 		
-		
-
 		
 		/*
 		$(mashupMedia.jPlayerId).jPlayer({
