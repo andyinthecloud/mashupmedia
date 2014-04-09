@@ -156,11 +156,13 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		sessionFactory.getCurrentSession().delete(playlist);
 	}
 
+	
+	
 	@Override
-	public void deletePlaylistMediaItems(List<? extends MediaItem> mediaItems) {
-		long totalDeletedItems = 0;
+	public void deletePlaylistMediaItem(MediaItem mediaItem) {
+//		long totalDeletedItems = 0;
 
-		for (MediaItem mediaItem : mediaItems) {
+//		for (MediaItem mediaItem : mediaItems) {
 			long mediaItemId = mediaItem.getId();
 
 			Query query = sessionFactory.getCurrentSession().createQuery("from PlaylistMediaItem pmi where pmi.mediaItem.id = :mediaItemId");
@@ -169,7 +171,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			@SuppressWarnings("unchecked")
 			List<PlaylistMediaItem> playlistMediaItems = query.list();
 			if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-				continue;
+				return;
 			}
 
 			for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
@@ -180,7 +182,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 				userQuery.executeUpdate();
 
 				sessionFactory.getCurrentSession().delete(playlistMediaItem);
-				totalDeletedItems++;
+//				totalDeletedItems++;
 			}
 
 			Library library = mediaItem.getLibrary();
@@ -190,8 +192,8 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			}
 			
 
-		}
-		logger.info("Deleted " + totalDeletedItems + " playlistMediaItems");
+//		}
+//		logger.info("Deleted " + totalDeletedItems + " playlistMediaItems");
 	}
 
 	@Override

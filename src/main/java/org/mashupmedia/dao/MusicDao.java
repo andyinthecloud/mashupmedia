@@ -24,7 +24,8 @@ public interface MusicDao {
 
 	public void saveSong(Song song);
 
-	public void deleteSongs(List<Song> songsToDelete);
+//	public void deleteSongs(List<Song> songsToDelete);
+	public void deleteSong(Song song);
 
 	public List<Song> getSongsToDelete(long libraryId, Date date);
 
@@ -62,6 +63,7 @@ public interface MusicDao {
 
 	public long getTotalSongsFromLibrary(long libraryId);
 
-	public void deleteObsoleteSongs(List<Song> songsToDelete);
+//	public void deleteObsoleteSongs(List<Song> songsToDelete);
+	public void deleteObsoleteSong(Song songToDelete);
 	
 }

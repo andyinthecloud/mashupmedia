@@ -217,15 +217,52 @@ public class ProcessManager {
 		return isRemoved;
 	}
 
+	public void killProcesses(long mediaItemId) {
+
+		List<ProcessQueueItem> processQueueItemsToBeDeleted = getProcessQueueItems(mediaItemId);
+		if (processQueueItemsToBeDeleted == null || processQueueItemsToBeDeleted.isEmpty()) {
+			return;
+		}
+
+		for (ProcessQueueItem processQueueItem : processQueueItemsToBeDeleted) {
+			Process process = processQueueItem.getProcess();
+			if (process != null) {
+				process.destroy();
+			}
+
+			processQueueItemsToBeDeleted.remove(processQueueItem);
+		}
+	}
+
+	protected List<ProcessQueueItem> getProcessQueueItems(long mediaItemId) {
+
+		if (mediaItemId == 0) {
+			return null;
+		}
+		List<ProcessQueueItem> matchingProcessQueueItems = new ArrayList<ProcessQueueItem>();
+
+		if (processQueueItems == null || processQueueItems.isEmpty()) {
+			return matchingProcessQueueItems;
+		}
+
+		for (ProcessQueueItem processQueueItem : processQueueItems) {
+			if (processQueueItem.getMediaItemId() == mediaItemId) {
+				matchingProcessQueueItems.add(processQueueItem);
+			}
+		}
+
+		return matchingProcessQueueItems;
+	}
+
 	public boolean moveProcess(int index, long mediaItemId, MediaContentType mediaContentType) {
-		
+
 		if (processQueueItems == null || processQueueItems.isEmpty()) {
 			return false;
 		}
-		
+
 		if (index < 0 || (index > processQueueItems.size() - 1)) {
 			return false;
-		}		
+		}
 
 		ProcessQueueItem processQueueItem = getProcessQueueItem(mediaItemId, mediaContentType);
 		if (processQueueItem == null) {

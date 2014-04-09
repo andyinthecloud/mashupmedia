@@ -104,11 +104,11 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public void deleteObsoleteSongs(List<Song> songsToDelete) {
-		Set<Genre> genres = new HashSet<Genre>();
+	public void deleteObsoleteSong(Song song) {
+//		Set<Genre> genres = new HashSet<Genre>();
 		Date deleteDate = DateUtils.addDays(new Date(), -NUMBER_OF_DAYS_TO_KEEP_DISABLED_SONGS);
 
-		for (Song song : songsToDelete) {
+//		for (Song song : songsToDelete) {
 
 			Date updatedOn = song.getUpdatedOn();
 			if (deleteDate.after(updatedOn)) {
@@ -116,48 +116,50 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 				sessionFactory.getCurrentSession().merge(song);
 			} else {
 				Genre genre = song.getGenre();
-				if (genre != null) {
-					genres.add(genre);
-				}
+//				if (genre != null) {
+//					genres.add(genre);
+					deleteGenre(genre);
+//				}
 				sessionFactory.getCurrentSession().delete(song);
 			}
 
-		}
+//		}
 
-		deleteEmptyGenres(genres);
+//		deleteEmptyGenres(genres);
 	}
 
 	@Override
-	public void deleteSongs(List<Song> songs) {
-		Set<Genre> genres = new HashSet<Genre>();
-		for (Song song : songs) {
+	public void deleteSong(Song song) {
+//		Set<Genre> genres = new HashSet<Genre>();
+//		for (Song song : songs) {
 			Genre genre = song.getGenre();
-			if (genre != null) {
-				genres.add(genre);
-			}
+			deleteGenre(genre);
+//			if (genre != null) {
+//				genres.add(genre);
+//			}
 			sessionFactory.getCurrentSession().delete(song);
-		}
+//		}
 
-		deleteEmptyGenres(genres);
+//		deleteEmptyGenres(genres);
 	}
 
-	private void deleteEmptyGenres(Set<Genre> genres) {
-		if (genres == null || genres.isEmpty()) {
+	private void deleteGenre(Genre genre) {
+		if (genre == null) {
 			return;
 		}
 
-		for (Genre genre : genres) {
+//		for (Genre genre : genres) {
 			Query query = sessionFactory.getCurrentSession().createQuery(
 					"select count(s.id) from Song s where s.genre.id = :genreId");
 			query.setCacheable(true);
 			query.setLong("genreId", genre.getId());
 			Long numberOfSongs = (Long) query.uniqueResult();
 			if (numberOfSongs > 0) {
-				continue;
+				return;
 			}
 
 			sessionFactory.getCurrentSession().delete(genre);
-		}
+//		}
 
 	}
 

@@ -23,6 +23,7 @@ import org.jaudiotagger.tag.TagException;
 import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
+import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
@@ -75,6 +76,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
+	
+	@Autowired
+	private ProcessManager processManager;
 
 	private MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
@@ -87,8 +91,14 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	@Override
 	public void deleteObsoleteSongs(long libraryId, Date date) {
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
-		playlistDao.deletePlaylistMediaItems(songsToDelete);
-		musicDao.deleteObsoleteSongs(songsToDelete);
+		for (Song song : songsToDelete) {
+			playlistDao.deletePlaylistMediaItem(song);
+			musicDao.deleteObsoleteSong(song);
+		}
+		
+		
+//		playlistDao.deletePlaylistMediaItems(songsToDelete);
+//		musicDao.deleteObsoleteSongs(songsToDelete);
 		logger.info("Deleted or disabled " + songsToDelete.size() + " out of date songs.");
 		deleteEmpty();
 		logger.info("Cleaned library.");
@@ -435,9 +445,16 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	@Override
 	public void deleteSongs(List<Song> songs) {
 
-		playlistDao.deletePlaylistMediaItems(songs);
-
-		musicDao.deleteSongs(songs);
+		for (Song song : songs) {
+			processManager.killProcesses(song.getId());
+			playlistDao.deletePlaylistMediaItem(song);
+			musicDao.deleteSong(song);
+		}
+		
+		
+//		playlistDao.deletePlaylistMediaItems(songs);
+//		musicDao.deleteSongs(songs);
+		
 		logger.info("Deleted " + songs.size() + " out of date songs.");
 
 		deleteEmpty();

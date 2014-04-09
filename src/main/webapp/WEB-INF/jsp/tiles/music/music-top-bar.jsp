@@ -31,8 +31,8 @@
 
 	$("#current-song div.encode").on("click", "a.encode-file", function(event) {
 		var mediaItemId = $("#current-song-id").val();
-		$.get(mashupMedia.contextUrl + "app/ajax/media/encode/" + mediaItemId, function(data) {
-		    setTimeout(function(){mashupMedia.playSong(mediaItemId)}, 5000);		    
+		$.get(mashupMedia.contextUrl + "app/ajax/media/encode/" + mediaItemId + "/mp3", function(data) {
+			$("#current-song td.song-title div.encode").html("<spring:message code="music.playlist.encode.queued" />");
 		});
 	});
 	

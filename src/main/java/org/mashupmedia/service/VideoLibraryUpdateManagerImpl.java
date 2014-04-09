@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.VideoDao;
+import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
 import org.mashupmedia.model.media.MediaEncoding;
@@ -34,6 +35,8 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
+	
+	private ProcessManager processManager;
 
 	@Autowired
 	private MediaDao mediaDao;
@@ -58,6 +61,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		int totalDeletedVideos = videoDao.removeObsoleteVideos(libraryId, date);
 
 		for (Video video : videos) {
+			processManager.killProcesses(video.getId());
 			FileHelper.deleteProcessedVideo(libraryId, video.getId());
 		}
 

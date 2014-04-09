@@ -137,7 +137,12 @@ public class TestPlaylistManager extends TestBaseService {
 		
 		
 //		playlistDao.deletePlaylistMediaItems(songsToDelete);
-		musicDao.deleteSongs(songsToDelete);
+		
+		for (Song song : songsToDelete) {
+			musicDao.deleteSong(song);	
+		}
+		
+		
 		
 //		mediaDao.deleteMediaList(mediaItemsToDelete);
 		
