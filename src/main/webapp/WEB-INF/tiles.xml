@@ -138,7 +138,7 @@
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/video/video.jsp" />
 	</definition>
 
-	<definition name="encode/list-processes" extends="video">
+	<definition name="encode/list-processes" extends="home">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/encode/processes.jsp" />
 	</definition>

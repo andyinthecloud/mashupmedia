@@ -21,6 +21,21 @@
 			}
 		});
 		$("#sortable").disableSelection();
+		
+		$("ul.items li a.dustbin").click(function() {
+			var id = $(this).closest("li").attr("id")
+			var mediaItemId = parseId(id, "media-id");
+			var mediaContentType = id.replace(/.*content-type-/g, "");
+			
+			$.get("<c:url value="/app/encode/processes/kill-process" />", {
+				mediaItemId : mediaItemId,
+				mediaContentType : mediaContentType
+			}, function(data) {
+				listProcesses();
+			});	
+			
+		});
+		
 
 	});
 </script>
@@ -47,8 +62,9 @@
 					</c:otherwise>
 				</c:choose>
 
-				<li id="media-id-${encodingProcess.mediaItem.id}-content-type-${encodingProcess.mediaContentType.name}"><a class="ui-icon"
-					href="javascript:void(0);" title="<spring:message code="encoding-processes.process.delete" />"><span class="ui-icon ui-icon-trash"></span></a>
+				<li id="media-id-${encodingProcess.mediaItem.id}-content-type-${encodingProcess.mediaContentType.name}"><a href="javascript:void(0);"
+					title="<spring:message code="encoding-processes.process.delete"  />"class="dustbin"><img alt=""
+						title="<spring:message code="encoding-processes.process.delete" />" src="<c:url value="${themePath}/images/controls/dustbin.png" />" /></a>
 					${processingMessage}</li>
 			</c:forEach>
 		</ul>

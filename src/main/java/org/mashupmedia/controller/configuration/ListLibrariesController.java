@@ -18,10 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class ListLibrariesController extends BaseController {
 
-//	private final static String PAGE_NAME = "list-libraries";
-//	private final static String PAGE_PATH = "configuration/" + PAGE_NAME;
-//	private final static String PAGE_URL = "/" + PAGE_PATH;
-	
 	@Autowired
 	private LibraryManager libraryManager;
 
@@ -29,10 +25,11 @@ public class ListLibrariesController extends BaseController {
 	public String getPageTitleMessageKey() {
 		return "list-libraries.title";
 	}
-	
+
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
+		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"),
+				"/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
 
 		Breadcrumb networkBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.libraries"));
@@ -41,22 +38,19 @@ public class ListLibrariesController extends BaseController {
 
 	@RequestMapping(value = "/configuration/list-libraries", method = RequestMethod.GET)
 	public String getListLibrariesPage(Model model) {
-		
+
 		ListLibrariesPage listLibrariesPage = new ListLibrariesPage();
 		model.addAttribute(listLibrariesPage);
-		
-		@SuppressWarnings("unchecked")
+
 		List<Library> libraries = (List<Library>) libraryManager.getLocalLibraries(LibraryType.ALL);
 		listLibrariesPage.setLibraries(libraries);
-		
+
 		return "configuration/list-libraries";
 	}
-	
+
 	@RequestMapping(value = "/configuration/choose-library-type", method = RequestMethod.GET)
 	public String handleChooseLibraryType(Model model) {
 		return "configuration/choose-library-type";
 	}
-	
-	
 
 }

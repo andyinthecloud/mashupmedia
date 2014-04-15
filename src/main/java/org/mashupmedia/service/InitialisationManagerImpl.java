@@ -27,9 +27,6 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	private ConfigurationManager configurationManager;
 
 	@Autowired
-	private VideoManager videoManager;
-
-	@Autowired
 	private FfMpegManager ffMpegManager;
 
 	@Autowired
@@ -49,7 +46,6 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		adminManager.initialiseAdminUser();
 		adminManager.initialiseSystemUser();
 		initialiseEncoder();
-		videoManager.initialiseVideoResolutions();
 	}
 
 	private void initialiseEncoder() {

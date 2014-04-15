@@ -34,9 +34,6 @@ public class ListEncodingProcessesController extends BaseController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb videosBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.videos"), "/app/videos");
-		breadcrumbs.add(videosBreadcrumb);
-
 		Breadcrumb processBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.encoding-processes"));
 		breadcrumbs.add(processBreadcrumb);
 	}
@@ -85,7 +82,8 @@ public class ListEncodingProcessesController extends BaseController {
 	}
 
 	@RequestMapping(value = "/kill-process", method = RequestMethod.GET, produces = "application/json")
-	public boolean handleGetKillEncodingProcesses(@RequestParam("mediaItemId") long mediaItemId,
+	public @ResponseBody
+	boolean handleGetKillEncodingProcesses(@RequestParam("mediaItemId") long mediaItemId,
 			@RequestParam("mediaContentType") String mediaContentTypeValue, Model model) {
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
 		boolean isKilled = processManager.killProcess(mediaItemId, mediaContentType);

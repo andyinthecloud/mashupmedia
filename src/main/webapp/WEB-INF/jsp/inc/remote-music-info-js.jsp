@@ -88,10 +88,6 @@
 	
     });
     
-
-    	
-    
-    
     function prepareImageUrl(imageUrl) {
     	imageUrl = $.trim(imageUrl);
     	if (imageUrl.length == 0) {

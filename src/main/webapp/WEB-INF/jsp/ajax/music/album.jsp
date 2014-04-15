@@ -43,6 +43,7 @@
 
 <jsp:include page="/WEB-INF/jsp/inc/remote-music-info-js.jsp" />
 
+
 <input type="hidden" id="artist-id" name="artist-id" value="${albumPage.album.artist.id}" />
 
 

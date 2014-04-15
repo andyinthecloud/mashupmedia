@@ -39,8 +39,11 @@
 			<td>
 				<ul class="main-menu group">
 					<li><a href="<c:url value="/app/videos" />"><spring:message code="top-bar.list-videos" /></a></li>
-					<li><a href="<c:url value="/app/encode/processes" />"><spring:message code="top-bar.encoding.status" /></a></li>
+					<sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
+					<li><a href="<c:url value="/app/encode/processes" />"><spring:message code="top-bar.encoding.queue" /></a></li>
+					</sec:authorize><sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
 					<li><a href="<c:url value="/app/configuration/administration/account" />"><spring:message code="top-bar.my-account" /></a></li>
+					</sec:authorize>
 					<li><a href="<c:url value="/j_spring_security_logout" />"><spring:message code="top-bar.log-out" /></a></li>
 					<li><a href="http://www.mashupmedia.org" target="_blank"><img title="Mashup Media"
 							src="<c:url value="/images/mashupmedia-logo-inline.png" />" /></a></li>

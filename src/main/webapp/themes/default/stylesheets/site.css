@@ -722,6 +722,11 @@ ul.items {
 	padding: 0;
 }
 
+ul.items img{
+	vertical-align: middle;
+}
+
+
 ul.items li {
 	padding: 10px 0;
 	clear: both;
