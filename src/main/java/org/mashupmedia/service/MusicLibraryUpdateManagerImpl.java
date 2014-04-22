@@ -149,7 +149,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				musicDao.saveSong(savedSong);
 				logger.info("Song is already in database, updated song date.");
 				writeSongToXml(libraryId, savedSong);
-				encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(song, MediaContentType.MP3);
+				encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedSong, MediaContentType.MP3);
 				continue;
 			}
 
