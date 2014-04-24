@@ -27,7 +27,7 @@ public class MediaItemHelper {
 	public enum MediaContentType {
 		MP3("audio/mpeg", "mp3", "mp3", 1), M4A("audio/m4a", "m4a", "m4a", 2), OGA("audio/ogg", "oga", "oga", 3), WAV(
 				"audio/wav", "wav", "wav", 3), FLAC("audio/flac", "flac", "flac", 4), UNSUPPORTED("media/unsupported",
-				"unsupported", "unsupported", -1), MP4("video/mp4", "m4v", "mp4", 1), WEBM("video/webm", "webmv",
+				"unsupported", "unsupported", 100), MP4("video/mp4", "m4v", "mp4", 1), WEBM("video/webm", "webmv",
 				"webm", 2), OGV("video/ogg", "ogv", "ogv", 3);
 
 		private String mimeContentType;

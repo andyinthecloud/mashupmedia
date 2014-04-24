@@ -2,6 +2,7 @@ package org.mashupmedia.model.media;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -303,6 +304,7 @@ public class MediaItem implements Serializable {
 			return null;
 		}
 		
+		Collections.sort(mediaEncodings, new MediaEncodingComparator());
 		return mediaEncodings.get(0);		
 	}
 	

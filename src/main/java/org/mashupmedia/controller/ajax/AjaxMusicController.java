@@ -12,6 +12,7 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
+import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.playlist.Playlist;
@@ -24,7 +25,6 @@ import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.PlaylistHelper;
@@ -198,7 +198,11 @@ public class AjaxMusicController extends AjaxBaseController {
 		playlist = SerializationUtils.clone(playlist);
 		playlist.setName(StringHelper.escapeJavascript(playlist.getName()));
 
-		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(song.getFormat());
+		MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
+		MediaEncoding mediaEncoding = song.getBestMediaEncoding();
+		if (mediaEncoding != null) {
+			mediaContentType = mediaEncoding.getMediaContentType();
+		}
 
 		model.addAttribute("format", mediaContentType.getjPlayerContentType());
 		model.addAttribute("song", song);
