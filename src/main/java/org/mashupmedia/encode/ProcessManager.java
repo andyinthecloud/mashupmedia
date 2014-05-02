@@ -38,7 +38,7 @@ public class ProcessManager {
 	private static Logger logger = Logger.getLogger(ProcessManager.class);
 
 	public final static String KEY_TOTAL_FFMPEG_PROCESSES = "totalFfMpegProcesses";
-	public final static int DEFAULT_TOTAL_FFMPEG_PROCESSES = 1;
+	public final static int DEFAULT_TOTAL_FFMPEG_PROCESSES = 0;
 
 	@Autowired
 	private ConfigurationManager configurationManager;

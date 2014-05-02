@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.encode.ProcessQueueItem;
 import org.mashupmedia.model.media.MediaItem;
@@ -48,6 +49,7 @@ public class ListEncodingProcessesController extends BaseController {
 		EncodingProcessesPage encodingProcessesPage = new EncodingProcessesPage();
 		encodingProcessesPage.setEncodingProcesses(new ArrayList<EncodingProcess>());
 		model.addAttribute("encodingProcessesPage", encodingProcessesPage);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_RELOAD, false);
 		return "encode/list-processes";
 	}
 
@@ -78,6 +80,7 @@ public class ListEncodingProcessesController extends BaseController {
 		encodingProcessesPage.setEncodingProcesses(encodingProcesses);
 
 		model.addAttribute("encodingProcessesPage", encodingProcessesPage);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_RELOAD, true);
 		return "ajax/media/list-processes";
 	}
 

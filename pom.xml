@@ -11,14 +11,14 @@
 
 	<properties>
 		<!-- spring.version>3.2.6.RELEASE</spring.version -->
-		<spring.version>4.0.1.RELEASE</spring.version>
-		<spring.security.version>3.2.0.RELEASE</spring.security.version>
-		<hibernate.version>4.3.1.Final</hibernate.version>
-		<hibernate.search.version>4.5.0.Final</hibernate.search.version>
+		<spring.version>4.0.3.RELEASE</spring.version>
+		<spring.security.version>3.2.3.RELEASE</spring.security.version>
+		<hibernate.version>4.3.5.Final</hibernate.version>
+		<hibernate.search.version>4.5.1.Final</hibernate.search.version>
 		<tiles.version>3.0.3</tiles.version>
-		<slf4j.version>1.7.5</slf4j.version>
-		<hsqldb.version>2.3.1</hsqldb.version>
-		<jackson.version>2.3.1</jackson.version>
+		<slf4j.version>1.7.7</slf4j.version>
+		<hsqldb.version>2.3.2</hsqldb.version>
+		<jackson.version>2.3.3</jackson.version>
 		<!-- aspectj.version>1.7.2</aspectj.version -->
 
 

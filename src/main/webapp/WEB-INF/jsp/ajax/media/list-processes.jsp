@@ -1,6 +1,10 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+
+<c:if test="${isReload == false}">
+
 <script type="text/javascript">
+
 	$(document).ready(function() {
 		$("#sortable").sortable({
 			stop : function(event, ui) {
@@ -21,24 +25,28 @@
 			}
 		});
 		$("#sortable").disableSelection();
-		
+
 		$("ul.items li a.dustbin").click(function() {
 			var id = $(this).closest("li").attr("id")
 			var mediaItemId = parseId(id, "media-id");
 			var mediaContentType = id.replace(/.*content-type-/g, "");
-			
+
 			$.get("<c:url value="/app/encode/processes/kill-process" />", {
 				mediaItemId : mediaItemId,
 				mediaContentType : mediaContentType
 			}, function(data) {
 				listProcesses();
-			});	
-			
+			});
+
 		});
 		
 
+
 	});
+
 </script>
+
+</c:if>
 
 
 <c:choose>
@@ -63,7 +71,7 @@
 				</c:choose>
 
 				<li id="media-id-${encodingProcess.mediaItem.id}-content-type-${encodingProcess.mediaContentType.name}"><a href="javascript:void(0);"
-					title="<spring:message code="encoding-processes.process.delete"  />"class="dustbin"><img alt=""
+					title="<spring:message code="encoding-processes.process.delete"  />" class="dustbin"><img alt=""
 						title="<spring:message code="encoding-processes.process.delete" />" src="<c:url value="${themePath}/images/controls/dustbin.png" />" /></a>
 					${processingMessage}</li>
 			</c:forEach>

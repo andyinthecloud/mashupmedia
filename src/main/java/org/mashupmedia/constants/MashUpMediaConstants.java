@@ -24,6 +24,7 @@ public interface MashUpMediaConstants {
 	public static final String MODEL_KEY_IS_PLAYLIST_OWNER = "isPlaylistOwner";
 	public static final String MODEL_KEY_IS_TRANSPARENT_BACKGROUND = "isTransparentBackground";
 	public static final String MODEL_KEY_IS_NEW_MASHUP_MEDIA_AVAILABLE = "isNewMashupMediaVersionAvailable";
+	public static final String MODEL_KEY_IS_RELOAD = "isReload";
 	
 	public static final String MODEL_KEY_JQUERYUI_VERSION = "jQueryUIVersion";
 	public static final String JQUERYUI_VERSION = "1.10.3";

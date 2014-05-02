@@ -2,9 +2,7 @@ package org.mashupmedia.dao;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -105,42 +103,25 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public void deleteObsoleteSong(Song song) {
-//		Set<Genre> genres = new HashSet<Genre>();
-		Date deleteDate = DateUtils.addDays(new Date(), -NUMBER_OF_DAYS_TO_KEEP_DISABLED_SONGS);
+		Date updatedOn = song.getUpdatedOn();
+		Date deleteDate = DateUtils.addDays(updatedOn, NUMBER_OF_DAYS_TO_KEEP_DISABLED_SONGS);
 
-//		for (Song song : songsToDelete) {
+		if (deleteDate.after(new Date())) {
+			song.setEnabled(false);
+			sessionFactory.getCurrentSession().merge(song);
+		} else {
+			Genre genre = song.getGenre();
+			deleteGenre(genre);
+			sessionFactory.getCurrentSession().delete(song);
+		}
 
-			Date updatedOn = song.getUpdatedOn();
-			if (deleteDate.after(updatedOn)) {
-				song.setEnabled(false);
-				sessionFactory.getCurrentSession().merge(song);
-			} else {
-				Genre genre = song.getGenre();
-//				if (genre != null) {
-//					genres.add(genre);
-					deleteGenre(genre);
-//				}
-				sessionFactory.getCurrentSession().delete(song);
-			}
-
-//		}
-
-//		deleteEmptyGenres(genres);
 	}
 
 	@Override
 	public void deleteSong(Song song) {
-//		Set<Genre> genres = new HashSet<Genre>();
-//		for (Song song : songs) {
-			Genre genre = song.getGenre();
-			deleteGenre(genre);
-//			if (genre != null) {
-//				genres.add(genre);
-//			}
-			sessionFactory.getCurrentSession().delete(song);
-//		}
-
-//		deleteEmptyGenres(genres);
+		Genre genre = song.getGenre();
+		deleteGenre(genre);
+		sessionFactory.getCurrentSession().delete(song);
 	}
 
 	private void deleteGenre(Genre genre) {
@@ -148,19 +129,16 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 			return;
 		}
 
-//		for (Genre genre : genres) {
-			Query query = sessionFactory.getCurrentSession().createQuery(
-					"select count(s.id) from Song s where s.genre.id = :genreId");
-			query.setCacheable(true);
-			query.setLong("genreId", genre.getId());
-			Long numberOfSongs = (Long) query.uniqueResult();
-			if (numberOfSongs > 0) {
-				return;
-			}
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"select count(s.id) from Song s where s.genre.id = :genreId");
+		query.setCacheable(true);
+		query.setLong("genreId", genre.getId());
+		Long numberOfSongs = (Long) query.uniqueResult();
+		if (numberOfSongs > 0) {
+			return;
+		}
 
-			sessionFactory.getCurrentSession().delete(genre);
-//		}
-
+		sessionFactory.getCurrentSession().delete(genre);
 	}
 
 	@Override
@@ -378,9 +356,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
-//		org.hibernate.Query fullTextQuery = fullTextSession.createFullTextQuery( luceneQuery );
-//		fullTextQuery = fullTextSession
-//			    .createFullTextQuery( luceneQuery, Item.class, Actor.class );
+		// org.hibernate.Query fullTextQuery =
+		// fullTextSession.createFullTextQuery( luceneQuery );
+		// fullTextQuery = fullTextSession
+		// .createFullTextQuery( luceneQuery, Item.class, Actor.class );
 
 		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(Song.class).get();
 		@SuppressWarnings("rawtypes")
@@ -418,14 +397,16 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		// }
 
 		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
-		org.hibernate.search.FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, Song.class, MediaItem.class);
+		org.hibernate.search.FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, Song.class,
+				MediaItem.class);
 
 		boolean isReverse = !mediaItemSearchCriteria.isAscending();
 
 		Sort sort = new Sort(new SortField("displayTitle", SortField.STRING, isReverse));
-//		Sort sort = new Sort(new SortField("lastAccessed", SortField.LONG, isReverse));
+		// Sort sort = new Sort(new SortField("lastAccessed", SortField.LONG,
+		// isReverse));
 		MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaSortType();
-		
+
 		if (mediaSortType == MediaSortType.FAVOURITES) {
 			sort = new Sort(new SortField("vote", SortField.INT, isReverse));
 		} else if (mediaSortType == MediaSortType.LAST_PLAYED) {
