@@ -7,6 +7,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.encode.FfMpegManager;
+import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
@@ -63,6 +64,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 
 		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, Boolean.TRUE.toString());
 		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegFile.getAbsolutePath());
+		configurationManager.saveConfiguration(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES, String.valueOf(ProcessManager.DEFAULT_TOTAL_FFMPEG_PROCESSES));
 	}
 
 	private void initialiseUniqueInstallationName() {

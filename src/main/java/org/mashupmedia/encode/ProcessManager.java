@@ -38,7 +38,7 @@ public class ProcessManager {
 	private static Logger logger = Logger.getLogger(ProcessManager.class);
 
 	public final static String KEY_TOTAL_FFMPEG_PROCESSES = "totalFfMpegProcesses";
-	public final static int DEFAULT_TOTAL_FFMPEG_PROCESSES = 0;
+	public final static int DEFAULT_TOTAL_FFMPEG_PROCESSES = 3;
 
 	@Autowired
 	private ConfigurationManager configurationManager;
@@ -65,7 +65,7 @@ public class ProcessManager {
 		processQueueItems.add(processQueueItem);
 
 		int totalFfMpegProcesses = NumberUtils.toInt(
-				configurationManager.getConfigurationValue(KEY_TOTAL_FFMPEG_PROCESSES), DEFAULT_TOTAL_FFMPEG_PROCESSES);
+				configurationManager.getConfigurationValue(KEY_TOTAL_FFMPEG_PROCESSES));
 
 		if (processQueueItems.size() <= totalFfMpegProcesses) {
 			startProcess(processQueueItem);

@@ -40,8 +40,6 @@ $(document).ready(function() {
 		}		
 	});
 	
-	
-		
 	var contextUrl = "<c:url value="/" />";
 	mashupMedia.setContextUrl(contextUrl);
 	$(".jp-previous").click(function() {

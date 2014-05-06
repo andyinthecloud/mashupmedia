@@ -8,6 +8,9 @@
 
 <form:form commandName="encodingPage">
 
+
+	<form:errors path="*" cssClass="error-box" />
+
 	<div>
 		<p>
 			<spring:message code="encoding.explanation" />
@@ -33,9 +36,14 @@
 		${ffmpegStatusText}
 	</div>
 
+	
+	<fieldset>
+	<label title="<spring:message code="encoding.processes.total.tip"/>"><spring:message code="encoding.processes.total"/></label>
+	<form:input path="totalFfmpegProcesses" cssClass="small-inline"/>
+	</fieldset>
 
 	<div class="button-panel">
-		<a class="button" href="<c:url value="/app/configuration/encoding" />"><spring:message code="action.refresh"/></a>
+		<input class="button" type="submit" value="<spring:message code="action.reload"/>"/>
 	</div>
 
 </form:form>

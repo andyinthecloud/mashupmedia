@@ -22,6 +22,15 @@ public class EncodingPage {
 	private String ffmpegFolderPath;
 	private boolean isFfMpegFound;
 	private String additionalErrorMessage;
+	private int totalFfmpegProcesses;
+
+	public int getTotalFfmpegProcesses() {
+		return totalFfmpegProcesses;
+	}
+
+	public void setTotalFfmpegProcesses(int totalFfmpegProcesses) {
+		this.totalFfmpegProcesses = totalFfmpegProcesses;
+	}
 
 	public String getAdditionalErrorMessage() {
 		return additionalErrorMessage;

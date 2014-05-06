@@ -30,6 +30,12 @@
 			displayRemoteArtistInformation(data);
 		});	
 
+		$("div.title-with-player-control div.re-encode a").click(function(){
+			$.get("<c:url value="/app/ajax/media/encode/artist/${artistPage.artist.id}" />", function(
+					data) {
+			});			
+		});
+
     });
 
 
@@ -49,6 +55,7 @@
 		</c:if>
 	</div>
 
+	<div class="re-encode"><a href="javascript:;" title="<spring:message code="action.re-encode.tip" />"><spring:message code="action.re-encode" /></a></div>
 </div>
 
 

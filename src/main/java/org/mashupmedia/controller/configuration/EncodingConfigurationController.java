@@ -21,22 +21,29 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.encode.FfMpegManager;
+import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.util.MessageHelper;
+import org.mashupmedia.validator.EncodingPageValidator;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.EncodingPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
+@SessionAttributes("encodingPage")
 public class EncodingConfigurationController extends BaseController {
 
 	private final static String PAGE_NAME = "encoding";
@@ -89,9 +96,28 @@ public class EncodingConfigurationController extends BaseController {
 		encodingPage.setFfMpegFound(isFfmpegValid);
 		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, BooleanUtils.toStringTrueFalse(isFfmpegValid));
 		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegFilePath);
-
+		
+		int totalFfmpegProcesses =  NumberUtils.toInt(configurationManager.getConfigurationValue(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES));
+		encodingPage.setTotalFfmpegProcesses(totalFfmpegProcesses);
+		
 		model.addAttribute(encodingPage);
 		return PAGE_PATH;
 	}
+	
+	
+	@RequestMapping(value = PAGE_URL, method = RequestMethod.POST)
+	public String processSubmitUser(@ModelAttribute("encodingPage") EncodingPage encodingPage, BindingResult bindingResult, Model model) {
+		
+		new EncodingPageValidator().validate(encodingPage, bindingResult);
+		if (bindingResult.hasErrors()) {
+			return PAGE_PATH;
+		}
+		
+		int totalFfmpegprocesses = encodingPage.getTotalFfmpegProcesses();
+		configurationManager.saveConfiguration(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES, String.valueOf(totalFfmpegprocesses));		
+		
+		return "redirect:/app/" + PAGE_PATH;
+	} 
+	
 
 }

@@ -35,8 +35,13 @@
 		
 		$.getJSON("<c:url value="/app/ajax/music/artist/remote/${albumPage.album.artist.id}" />", function( data ) {
 			displayRemoteArtistInformation(data);
-		});			
-				
+		});	
+		
+		$("div.title-with-player-control div.re-encode a").click(function(){
+			$.get("<c:url value="/app/ajax/media/encode/album/${albumPage.album.id}" />", function(
+					data) {
+			});			
+		});		
 
 	});
 </script>
@@ -59,7 +64,8 @@
 			<a id="add-all" class="add" href="javascript:;" title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus">&nbsp;</span></a>
 		</c:if>
 	</div>
-
+	
+	<div class="re-encode"><a href="javascript:;" title="<spring:message code="action.re-encode.tip" />"><spring:message code="action.re-encode" /></a></div>
 </div>
 
 <div id="remote">

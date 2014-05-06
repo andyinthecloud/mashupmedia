@@ -6,7 +6,6 @@ html,body {
 	background-color: transparent;
 }
 
-
 .cursor-progress {
 	cursor: progress;
 }
@@ -163,7 +162,6 @@ body.default div.panel {
 	opacity: 0.8; /* good browsers: FF, safari, opera */
 }
 
-
 #login-panel {
 	padding: 30px;
 	width: 400px;
@@ -224,7 +222,6 @@ div.panel .horizontal-gap {
 	margin-left: 10px;
 }
 
-
 div.panel a,div.panel a:VISITED {
 	color: #E579E9;
 }
@@ -245,6 +242,13 @@ div.panel fieldset {
 	-khtml-border-radius: 10px;
 	border-radius: 10px;
 }
+
+div.panel input.small-inline{
+	display: inline-block !important;
+	width: 30px !important;
+	min-width: inherit !important;
+}
+
 
 label {
 	padding-bottom: 5px;
@@ -342,7 +346,6 @@ div.panel ul.main-menu li a.library-video {
 	background-repeat: no-repeat;
 }
 
-
 div.panel ul.main-menu a:HOVER {
 	background-color: #E579E9;
 	text-decoration: none;
@@ -403,7 +406,7 @@ div.albums div.album-control .ui-icon {
 	display: inline-block;
 }
 
-div.title-with-player-control h1,div.title-with-player-control div.control-menu
+div.title-with-player-control h1,div.title-with-player-control div.control-menu,div.title-with-player-control div.re-encode
 	{
 	display: inline-block;
 }
@@ -411,6 +414,7 @@ div.title-with-player-control h1,div.title-with-player-control div.control-menu
 div.control-menu {
 	border: 1px solid #A0A0A0;
 	margin-left: 10px;
+	margin-right: 10px;
 }
 
 div.control-menu a {
@@ -553,11 +557,13 @@ ul.ui-autocomplete {
 	vertical-align: bottom;
 }
 
-#current-song td.song-title .artist-name,  #current-song td.song-title .playlist, #current-song td.song-title .encode{
+#current-song td.song-title .artist-name,#current-song td.song-title .playlist,#current-song td.song-title .encode
+	{
 	font-size: 80%;
 }
 
-#current-song td.song-title .playlist, #current-song td.song-title .encode {
+#current-song td.song-title .playlist,#current-song td.song-title .encode
+	{
 	margin-top: 10px;
 }
 
@@ -598,7 +604,6 @@ ul.ui-autocomplete {
 	padding-top: 5px;
 	font-size: 80%;
 }
-
 
 #top-bar-music-player div.songs {
 	clear: both;
@@ -722,10 +727,9 @@ ul.items {
 	padding: 0;
 }
 
-ul.items img{
+ul.items img {
 	vertical-align: middle;
 }
-
 
 ul.items li {
 	padding: 10px 0;
@@ -741,13 +745,12 @@ ul.items li a.album-cover img {
 	height: 110px;
 }
 
-
-
 ul.items li a.album-cover img {
 	width: auto;
 }
 
-ul.items li div.song,ul.items li div.artist-and-album,ul.items li div.meta {
+ul.items li div.song,ul.items li div.artist-and-album,ul.items li div.meta
+	{
 	margin-left: 120px;
 	padding-top: 10px;
 }
@@ -756,10 +759,9 @@ ul.items li div.song {
 	font-size: 120%;
 }
 
-ul.items li div.song .controls{
+ul.items li div.song .controls {
 	display: inline;
 }
-
 
 ul.items li div.album {
 	margin-top: 10px;
@@ -848,7 +850,6 @@ div.information {
 	clear: both;
 }
 
-
 #remote div.disclaimer {
 	display: block;
 	clear: both;
@@ -866,7 +867,7 @@ div.textfield-with-button-panel input[type=text] {
 }
 
 a.arrow-show-hide {
-	float: right; 	
+	float: right;
 }
 
 div.panel fieldset table {
@@ -874,27 +875,22 @@ div.panel fieldset table {
 	margin: 5px 0;
 }
 
-
-div.panel fieldset table thead th{
+div.panel fieldset table thead th {
 	text-align: left;
 	padding-right: 10px;
-	border-bottom:  2px solid #E3DEDE;
+	border-bottom: 2px solid #E3DEDE;
 	padding: 5px 10px 5px;
 }
 
-div.panel fieldset table tbody td{
+div.panel fieldset table tbody td {
 	padding: 5px 10px 5px;
-	border-bottom:  1px solid #E3DEDE;
+	border-bottom: 1px solid #E3DEDE;
 }
 
-
-
-ul.items a.ui-icon{
+ul.items a.ui-icon {
 	padding: 0 !important;
 	float: left;
 	width: 20px;
 	height: 20px;
-	margin-right: 10px; 
+	margin-right: 10px;
 }
-
-

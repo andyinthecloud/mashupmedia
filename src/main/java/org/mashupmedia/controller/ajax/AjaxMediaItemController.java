@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.commons.lang3.BooleanUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.media.Album;
+import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Song;
 import org.mashupmedia.service.ConfigurationManager;
@@ -52,87 +53,91 @@ public class AjaxMediaItemController {
 
 	@Autowired
 	private ConfigurationManager configurationManager;
-	
+
 	@Autowired
 	private MusicManager musicManager;
-	
-	
+
 	@RequestMapping(value = "/encode/{mediaItemId}/{mediaContentTypeValue}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	boolean handleEncodeMediaItem(@PathVariable long mediaItemId, @PathVariable String mediaContentTypeValue) {		
+	boolean handleEncodeMediaItem(@PathVariable long mediaItemId, @PathVariable String mediaContentTypeValue) {
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
 		if (mediaContentType == MediaContentType.UNSUPPORTED) {
 			return false;
 		}
-		
+
 		encodeMediaItemTaskManager.queueMediaItemForEncoding(mediaItemId, mediaContentType);
 		return true;
 	}
 
-
 	@RequestMapping(value = "/encode/album/{albumId}/{mediaContentTypeValue}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
 	boolean handleEncodeAlbum(@PathVariable long albumId, @PathVariable String mediaContentTypeValue) {
-		
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
 		if (mediaContentType == MediaContentType.UNSUPPORTED) {
 			return false;
 		}
 
+		boolean isSuccessful = encodeAlbum(albumId, mediaContentType);
+		return isSuccessful;
+	}
+
+	@RequestMapping(value = "/encode/album/{albumId}", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	boolean handleDefaultEncodeAlbum(@PathVariable long albumId) {
+		MediaContentType mediaContentType = MediaContentType.MP3;
+		boolean isSuccessful = encodeAlbum(albumId, mediaContentType);
+		return isSuccessful;
+	}
+
+	protected boolean encodeAlbum(long albumId, MediaContentType mediaContentType) {
 		Album album = musicManager.getAlbum(albumId);
 		if (album == null) {
 			return false;
 		}
-		
-		List<Song> songs =  album.getSongs();
+
+		List<Song> songs = album.getSongs();
 		for (Song song : songs) {
-			encodeMediaItemTaskManager.queueMediaItemForEncoding(song.getId(), mediaContentType);			
+			encodeMediaItemTaskManager.queueMediaItemForEncoding(song.getId(), mediaContentType);
 		}
-		
+
 		return true;
 	}
-	
-	
 
-//	@RequestMapping(value = "/encode/{mediaItemId}", method = RequestMethod.GET)
-//	public String handleEncodeHtml5(@PathVariable Long mediaItemId,
-//			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model) {
-//
-//		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-//
-//		MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
-//		mediaContentTypeValue = StringUtils.trimToEmpty(mediaContentTypeValue);
-//		if (StringUtils.isNotEmpty(mediaContentTypeValue)) {
-//			mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
-//		}
-//
-//		if (mediaContentType != MediaContentType.UNSUPPORTED) {
-//			String page = prepareEncodeMediaModel(mediaItemId, mediaContentType, model);
-//			return page;
-//		}
-//
-//		mediaContentType = null;
-//		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
-//		if (mediaEncoding != null) {
-//			mediaContentType = mediaEncoding.getMediaContentType();
-//			String page = prepareEncodeMediaModel(mediaItemId, mediaContentType, model);
-//			return page;
-//		}
-//
-//		mediaContentType = MediaContentType.MP3;
-//		if (mediaItem.getMediaType() == MediaType.VIDEO) {
-//			mediaContentType = MediaContentType.MP4;
-//		}
-//
-//		String page = prepareEncodeMediaModel(mediaItemId, mediaContentType, model);
-//		return page;
-//	}
 
-//	protected String prepareEncodeMediaModel(long mediaItemId, MediaContentType mediaContentType, Model model) {
-//		encodeMediaItemTaskManager.queueMediaItemForEncoding(mediaItemId, mediaContentType);
-//		model.addAttribute(MODEL_KEY_IS_SUCCESSFUL, true);
-//		return "ajax/message";
-//	}
+	@RequestMapping(value = "/encode/artist/{artistId}/{mediaContentTypeValue}", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	boolean handleEncodeArtist(@PathVariable long artistId, @PathVariable String mediaContentTypeValue) {
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
+		if (mediaContentType == MediaContentType.UNSUPPORTED) {
+			return false;
+		}
+
+		boolean isSuccessful = encodeArtist(artistId, mediaContentType);
+		return isSuccessful;
+	}
+
+	@RequestMapping(value = "/encode/artist/{artistId}", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody
+	boolean handleDefaultEncodeArtist(@PathVariable long artistId) {
+		MediaContentType mediaContentType = MediaContentType.MP3;
+		boolean isSuccessful = encodeArtist(artistId, mediaContentType);
+		return isSuccessful;
+	}
+	
+	protected boolean encodeArtist(long artistId, MediaContentType mediaContentType) {
+		Artist artist = musicManager.getArtist(artistId);
+		if (artist == null) {
+			return false;
+		}
+
+		List<Album> albums = artist.getAlbums();
+		for (Album album : albums) {
+			long albumId = album.getId();
+			encodeAlbum(albumId, mediaContentType);
+		}
+
+		return true;
+	}
 
 	@RequestMapping(value = "/{mediaItemId}", method = RequestMethod.GET)
 	public String handleGetOriginalMediaFormat(@PathVariable Long mediaItemId, Model model) {

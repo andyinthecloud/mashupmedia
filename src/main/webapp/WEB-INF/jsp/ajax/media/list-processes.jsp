@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 
-<c:if test="${isReload == false}">
 
 <script type="text/javascript">
 
@@ -26,27 +25,10 @@
 		});
 		$("#sortable").disableSelection();
 
-		$("ul.items li a.dustbin").click(function() {
-			var id = $(this).closest("li").attr("id")
-			var mediaItemId = parseId(id, "media-id");
-			var mediaContentType = id.replace(/.*content-type-/g, "");
-
-			$.get("<c:url value="/app/encode/processes/kill-process" />", {
-				mediaItemId : mediaItemId,
-				mediaContentType : mediaContentType
-			}, function(data) {
-				listProcesses();
-			});
-
-		});
-		
-
-
 	});
 
 </script>
 
-</c:if>
 
 
 <c:choose>
