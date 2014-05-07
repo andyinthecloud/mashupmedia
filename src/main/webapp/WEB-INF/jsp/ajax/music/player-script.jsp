@@ -47,6 +47,8 @@
 			},			
 			preload: "auto"
 		};
+		
+		
 
 		var myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, bubble, options);		
 		var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";		

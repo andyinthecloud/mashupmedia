@@ -10,7 +10,6 @@ import java.util.logging.LogManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.AudioHeader;
@@ -96,10 +95,11 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			musicDao.deleteObsoleteSong(song);
 		}
 		
-		
-//		playlistDao.deletePlaylistMediaItems(songsToDelete);
-//		musicDao.deleteObsoleteSongs(songsToDelete);
 		logger.info("Deleted or disabled " + songsToDelete.size() + " out of date songs.");
+		if (songsToDelete.isEmpty()) {
+			return;
+		}
+				
 		deleteEmpty();
 		logger.info("Cleaned library.");
 	}
@@ -517,38 +517,37 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Override
 	public void deleteEmpty() {
-		List<Long> groupIds = groupDao.getGroupIds();
-
-		List<Artist> artists = getArtists();
-		for (Artist artist : artists) {
-			List<Album> albums = musicDao.getAlbumsByArtist(groupIds, artist.getId());
-			if (albums == null || albums.isEmpty()) {
-				musicDao.deleteArtist(artist);
-				continue;
-			}
-
-			for (Album album : albums) {
-				List<Song> songs = musicDao.getSongs(groupIds, album.getId());
-				if (songs == null || songs.isEmpty()) {
-					// long albumId = album.getId();
-					// long libraryId = album.get
-					//
-					// FileHelper.deleteAlbum(album.getId());
-
-					musicDao.deleteAlbum(album);
-
-				}
-			}
-		}
+		musicDao.deleteEmptyAlbums();
+		musicDao.deleteEmptyArtists();
+		
+//		musicDao.deleteEmptyArt();
+		
+		
+//		List<Artist> artists = getArtists();
+//		for (Artist artist : artists) {
+//			List<Album> albums = musicDao.getAlbumsByArtist(groupIds, artist.getId());
+//			if (albums == null || albums.isEmpty()) {
+//				musicDao.deleteArtist(artist);
+//				continue;
+//			}
+//
+//			for (Album album : albums) {
+//				List<Song> songs = musicDao.getSongs(groupIds, album.getId());
+//				if (songs == null || songs.isEmpty()) {
+//					musicDao.deleteAlbum(album);
+//
+//				}
+//			}
+//		}
 	}
 
-	private List<Artist> getArtists() {
-		List<Long> groupIds = groupDao.getGroupIds();
-		List<Artist> artists = musicDao.getArtists(groupIds);
-		for (Artist artist : artists) {
-			Hibernate.initialize(artist.getAlbums());
-		}
-		return artists;
-	}
+//	private List<Artist> getArtists() {
+//		List<Long> groupIds = groupDao.getGroupIds();
+//		List<Artist> artists = musicDao.getArtists(groupIds);
+//		for (Artist artist : artists) {
+//			Hibernate.initialize(artist.getAlbums());
+//		}
+//		return artists;
+//	}
 
 }

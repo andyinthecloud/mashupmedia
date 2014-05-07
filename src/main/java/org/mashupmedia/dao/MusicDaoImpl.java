@@ -1,6 +1,5 @@
 package org.mashupmedia.dao;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.media.Album;
 import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.Genre;
@@ -281,28 +279,6 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public void deleteAlbum(Album album) {
-
-		List<Long> groupIds = new ArrayList<Long>();
-		List<Group> groups = groupDao.getGroups();
-		for (Group group : groups) {
-			groupIds.add(group.getId());
-		}
-
-		Artist artist = album.getArtist();
-		sessionFactory.getCurrentSession().delete(album);
-		List<Album> albums = getAlbumsByArtist(groupIds, artist.getId());
-		if (albums == null || albums.isEmpty()) {
-			sessionFactory.getCurrentSession().delete(artist);
-		}
-	}
-
-	@Override
-	public void deleteArtist(Artist artist) {
-		sessionFactory.getCurrentSession().delete(artist);
-	}
-
-	@Override
 	public List<Album> getAlbumsByArtist(List<Long> groupIds, long artistId) {
 		StringBuilder queryBuilder = new StringBuilder(
 				"select a from Album a join a.songs s join s.library.groups g where a.artist.id = :artistId ");
@@ -440,5 +416,24 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		Long totalSongs = (Long) query.uniqueResult();
 		return totalSongs;
 	}
+	
+	@Override
+	public void deleteEmptyAlbums() {
+		StringBuilder queryBuilder = new StringBuilder(
+				"delete Album a where a.songs is empty");
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		int albumsDeleted = query.executeUpdate(); 
+		logger.info(albumsDeleted + " empty albums deleted");
+		
+	}
 
+	@Override
+	public void deleteEmptyArtists() {
+		StringBuilder queryBuilder = new StringBuilder(
+				"delete Artist a where a.albums is empty");
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		int albumsDeleted = query.executeUpdate(); 
+		logger.info(albumsDeleted + " empty artists deleted");
+		
+	}
 }

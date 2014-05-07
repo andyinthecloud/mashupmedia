@@ -41,9 +41,6 @@ public interface MusicDao {
 
 	public List<Song> getSongs(List<Long> groupIds, Long albumId);
 
-	public void deleteArtist(Artist artist);
-
-	public void deleteAlbum(Album album);
 
 	public List<Album> getAlbumsByArtist(List<Long> groupIds, long artistId);
 
@@ -65,5 +62,9 @@ public interface MusicDao {
 
 //	public void deleteObsoleteSongs(List<Song> songsToDelete);
 	public void deleteObsoleteSong(Song songToDelete);
+
+	public void deleteEmptyAlbums();
+
+	public void deleteEmptyArtists();
 	
 }

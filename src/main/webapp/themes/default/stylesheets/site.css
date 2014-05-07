@@ -576,6 +576,15 @@ ul.ui-autocomplete {
 	vertical-align: top;
 }
 
+
+#top-bar-music-player div.jp-no-solution {
+	position: absolute;
+	top: 10px;
+	left: 10%;
+	width: 300px;
+	font-size: 75%;	
+}
+
 #top-bar-music-player div.jp-audio ul.jp-toggles {
 	height: 15px;
 }
