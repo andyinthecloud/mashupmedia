@@ -145,13 +145,15 @@ public class FfMpegManager {
 		return false;
 	}
 
-	public void encodeMediaItem(MediaItem mediaItem, MediaContentType mediaContentType) throws IOException {
+	public ProcessQueueItem prepareMediaItemBeforeEncoding(MediaItem mediaItem, MediaContentType mediaContentType){
 
+		ProcessQueueItem processQueueItem = null;
+		
 		String pathToFfMpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
 		if (StringUtils.isBlank(pathToFfMpeg)) {
 			String errorText = "Unable to encode media, ffmpeg is not configured.";
 			logger.info(errorText);
-			return;
+			return processQueueItem;
 		}
 
 		long mediaItemId = mediaItem.getId();
@@ -163,25 +165,30 @@ public class FfMpegManager {
 		if (!isDeleted) {
 			String errorText = "Exiting, unable to delete encoded media file: " + outputFile.getAbsolutePath();
 			logger.info(errorText);
-			return;
+			return processQueueItem;
 		}
 
+		
+		
+		
 		if (mediaContentType == MediaContentType.MP3) {
-			encodeAudioToMp3(pathToFfMpeg, inputFile, outputFile, mediaItemId);
+			processQueueItem = encodeAudioToMp3(pathToFfMpeg, inputFile, outputFile, mediaItemId);
 		} else if (mediaContentType == MediaContentType.MP4) {
-			encodeVideoToMp4(pathToFfMpeg, inputFile, outputFile, mediaItemId);
+			processQueueItem = encodeVideoToMp4(pathToFfMpeg, inputFile, outputFile, mediaItemId);
 		} else if (mediaContentType == MediaContentType.WEBM) {
-			encodeVideoToWebM(pathToFfMpeg, inputFile, outputFile, mediaItemId);
+			processQueueItem = encodeVideoToWebM(pathToFfMpeg, inputFile, outputFile, mediaItemId);
 		} else if (mediaContentType == MediaContentType.OGV) {
-			encodeVideoToOGV(pathToFfMpeg, inputFile, outputFile, mediaItemId);
+			processQueueItem = encodeVideoToOGV(pathToFfMpeg, inputFile, outputFile, mediaItemId);
 		} else {
 			logger.info(mediaContentType.name() + " not supported");
 		}
+		
+		return processQueueItem;
 
 	}
 
-	private void encodeAudioToMp3(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
-			throws IOException {
+	private ProcessQueueItem encodeAudioToMp3(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
+			{
 
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
@@ -196,11 +203,12 @@ public class FfMpegManager {
 		commands.add("mp3");
 		commands.add(outputFile.getAbsolutePath());
 
-		processManager.callProcess(commands, mediaItemId, MediaContentType.MP3);
+		ProcessQueueItem processQueueItem = processManager.addProcessToQueue(commands, mediaItemId, MediaContentType.MP3);
+		return processQueueItem;
 	}
 
-	private void encodeVideoToMp4(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
-			throws IOException {
+	private ProcessQueueItem encodeVideoToMp4(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
+			{
 
 		// ffmpeg -y -i test.avi -c:v libx264 -preset:v veryfast -strict
 		// experimental -c:a aac -b:a 240k -f mp4 output.encoded
@@ -225,11 +233,12 @@ public class FfMpegManager {
 		commands.add("mp4");
 		commands.add(outputFile.getAbsolutePath());
 
-		processManager.callProcess(commands, mediaItemId, MediaContentType.MP4);
+		ProcessQueueItem processQueueItem = processManager.addProcessToQueue(commands, mediaItemId, MediaContentType.MP4);
+		return processQueueItem;
 	}
 
-	private void encodeVideoToWebM(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
-			throws IOException {
+	private ProcessQueueItem encodeVideoToWebM(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
+			{
 
 		// ffmpeg -i input.mp4 -c:v libvpx -b:v 1M -c:a libvorbis -qscale:a 5
 		// output.webm
@@ -252,11 +261,12 @@ public class FfMpegManager {
 		commands.add("webm");
 		commands.add(outputFile.getAbsolutePath());
 
-		processManager.callProcess(commands, mediaItemId, MediaContentType.WEBM);
+		ProcessQueueItem processQueueItem  = processManager.addProcessToQueue(commands, mediaItemId, MediaContentType.WEBM);
+		return processQueueItem;
 	}
 
-	private void encodeVideoToOGV(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
-			throws IOException {
+	private ProcessQueueItem encodeVideoToOGV(String pathToFfMpeg, File inputFile, File outputFile, long mediaItemId)
+			{
 
 		// ffmpeg -y -i input.mp4 -sn -codec:v libtheora -qscale:v 7 -codec:a libvorbis -qscale:a 5 output.ogv
 		
@@ -278,7 +288,8 @@ public class FfMpegManager {
 		commands.add("-f");
 		commands.add("ogv");
 		
-		processManager.callProcess(commands, mediaItemId, MediaContentType.OGV);
+		ProcessQueueItem processQueueItem = processManager.addProcessToQueue(commands, mediaItemId, MediaContentType.OGV);
+		return processQueueItem;
 	}
 
 }

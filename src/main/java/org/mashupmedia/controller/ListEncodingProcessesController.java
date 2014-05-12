@@ -2,6 +2,7 @@ package org.mashupmedia.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.mashupmedia.constants.MashUpMediaConstants;
@@ -58,8 +59,10 @@ public class ListEncodingProcessesController extends BaseController {
 		EncodingProcessesPage encodingProcessesPage = new EncodingProcessesPage();
 		List<EncodingProcess> encodingProcesses = new ArrayList<EncodingProcess>();
 
-		List<ProcessQueueItem> processQueueItems = processManager.getProcessQueueItems();
-		for (ProcessQueueItem processQueueItem : processQueueItems) {
+		Iterator<ProcessQueueItem> iterator = processManager.getProcessQueueItemsIterator();
+		while(iterator.hasNext()) {
+			ProcessQueueItem processQueueItem = iterator.next();
+
 			EncodingProcess encodingProcess = new EncodingProcess();
 
 			MediaItem mediaItem = mediaManager.getMediaItem(processQueueItem.getMediaItemId());

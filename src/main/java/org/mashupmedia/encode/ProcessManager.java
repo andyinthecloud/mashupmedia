@@ -23,12 +23,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.service.ConfigurationManager;
+import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,12 +46,22 @@ public class ProcessManager {
 	@Autowired
 	private ConfigurationManager configurationManager;
 
-	private List<ProcessQueueItem> processQueueItems = new ArrayList<ProcessQueueItem>();
+	@Autowired
+	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
+	
+	
+	private List<ProcessQueueItem> processQueueItems = new CopyOnWriteArrayList<ProcessQueueItem>();
+	
+	
 
-	public List<ProcessQueueItem> getProcessQueueItems() {
-		return processQueueItems;
+	public Iterator<ProcessQueueItem> getProcessQueueItemsIterator() {
+		if (processQueueItems == null) {
+			return null;
+		}
+		
+		return processQueueItems.iterator();		
 	}
-
+	
 	public String callProcess(String path) throws IOException {
 		List<String> commands = new ArrayList<String>();
 		commands.add(path);
@@ -57,19 +70,17 @@ public class ProcessManager {
 		return textOutput;
 	}
 
-	public void callProcess(List<String> commands, long mediaItemId, MediaContentType mediaContentType)
-			throws IOException {
+	public int getMaximumConcurrentProcesses() {
+		int totalFfMpegProcesses = NumberUtils.toInt(configurationManager
+				.getConfigurationValue(KEY_TOTAL_FFMPEG_PROCESSES));
+		return totalFfMpegProcesses;
+	}
 
+	public ProcessQueueItem addProcessToQueue(List<String> commands, long mediaItemId, MediaContentType mediaContentType) {
 		ProcessQueueItem processQueueItem = generateProcessQueueItem(mediaItemId, mediaContentType, commands);
 		destroyProcessIfAlreadyStarted(processQueueItem);
 		processQueueItems.add(processQueueItem);
-
-		int totalFfMpegProcesses = NumberUtils.toInt(
-				configurationManager.getConfigurationValue(KEY_TOTAL_FFMPEG_PROCESSES));
-
-		if (processQueueItems.size() <= totalFfMpegProcesses) {
-			startProcess(processQueueItem);
-		}
+		return processQueueItem;		
 	}
 
 	protected ProcessQueueItem generateProcessQueueItem(long mediaItemId, MediaContentType mediaContentType,
@@ -89,7 +100,7 @@ public class ProcessManager {
 
 	}
 
-	protected void startProcess(ProcessQueueItem processQueueItem) throws IOException {
+	public void startProcess(ProcessQueueItem processQueueItem) throws IOException {
 
 		try {
 			logger.info("Starting process...");
@@ -123,11 +134,11 @@ public class ProcessManager {
 
 		} finally {
 			processQueueItems.remove(processQueueItem);
-
-			ProcessQueueItem nextProcessQueueItem = getNextProcessQueueItem();
-			if (nextProcessQueueItem != null) {
-				startProcess(nextProcessQueueItem);
-			}
+			encodeMediaItemTaskManager.processQueue();
+//			ProcessQueueItem nextProcessQueueItem = getNextProcessQueueItem();
+//			if (nextProcessQueueItem != null) {
+//				startProcess(nextProcessQueueItem);
+//			}
 		}
 
 	}
@@ -174,15 +185,23 @@ public class ProcessManager {
 
 	}
 
-	public boolean isInProcessQueue(long mediaItemId, MediaContentType mediaContentType) {
-
-		ProcessQueueItem processQueueItem = getProcessQueueItem(mediaItemId, mediaContentType);
-		if (processQueueItem != null) {
-			return true;
-		}
-
-		return false;
-	}
+//	public boolean isEncoding(long mediaItemId, MediaContentType mediaContentType) {
+//
+//		ProcessQueueItem processQueueItem = getProcessQueueItem(mediaItemId, mediaContentType);
+//		if (processQueueItem == null) {
+//			return false;
+//		}
+////		if (processQueueItem != null) {
+////			return true;
+////		}
+//		
+//		Process process = processQueueItem.getProcess();
+//		if (process == null) {
+//			return false;
+//		}
+//
+//		return true;
+//	}
 
 	private ProcessQueueItem getProcessQueueItem(long mediaItemId, MediaContentType mediaContentType) {
 		if (processQueueItems == null || processQueueItems.isEmpty()) {

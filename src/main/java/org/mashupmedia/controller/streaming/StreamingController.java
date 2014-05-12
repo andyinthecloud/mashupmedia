@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -77,19 +78,19 @@ public class StreamingController {
 	}
 
 	protected MediaEncoding getMediaContentType(MediaItem mediaItem, String mediaContentTypeValue) {
+
+		mediaContentTypeValue = StringUtils.trimToEmpty(mediaContentTypeValue);
+		if (StringUtils.isBlank(mediaContentTypeValue)) {
+			MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
+			return mediaEncoding;
+		}
 		
-		List<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
+		Collection<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();		
 		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
 			return null;
 		}
 		
-		mediaContentTypeValue = StringUtils.trimToEmpty(mediaContentTypeValue);
-		if (StringUtils.isBlank(mediaContentTypeValue)) {
-			return mediaEncodings.get(0);
-		}
-		
-		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
-		
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);		
 		for (MediaEncoding mediaEncoding : mediaEncodings) {
 			if (mediaEncoding.getMediaContentType() == mediaContentType) {
 				return mediaEncoding;

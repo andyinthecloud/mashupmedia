@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.LogManager;
 
 import org.apache.commons.lang3.StringUtils;
@@ -160,7 +162,12 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			mediaEncoding.setOriginal(true);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
 			mediaEncoding.setMediaContentType(mediaContentType);
-			song.addMediaEncoding(mediaEncoding);
+			Set<MediaEncoding> mediaEncodings = song.getMediaEncodings();
+			if (mediaEncodings == null) {
+				mediaEncodings = new HashSet<MediaEncoding>();
+				song.setMediaEncodings(mediaEncodings);
+			}
+			mediaEncodings.add(mediaEncoding);	
 
 			Artist artist = song.getArtist();
 			artist = prepareArtist(groupIds, artist);

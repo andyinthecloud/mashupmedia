@@ -3,7 +3,9 @@ package org.mashupmedia.service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -105,9 +107,9 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			video = new Video();
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
-			List<MediaEncoding> mediaEncodings = video.getMediaEncodings();
+			Set<MediaEncoding> mediaEncodings = video.getMediaEncodings();
 			if (mediaEncodings == null) {
-				mediaEncodings = new ArrayList<MediaEncoding>();
+				mediaEncodings = new HashSet<MediaEncoding>();
 			}
 
 			MediaEncoding mediaEncoding = new MediaEncoding();

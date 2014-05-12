@@ -17,12 +17,10 @@
 
 package org.mashupmedia.encode;
 
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
-
-
-
 public interface EncodeMediaManager {
+
+//	public void processQueue();
 	
-	public void encodeMedia(long mediaItemId, MediaContentType mediaContentType);
+	public void encodeMedia(ProcessQueueItem processQueueItem);
 
 }

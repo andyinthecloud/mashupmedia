@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -29,7 +30,6 @@ import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
 import org.apache.solr.analysis.LowerCaseFilterFactory;
 import org.apache.solr.analysis.SnowballPorterFilterFactory;
 import org.apache.solr.analysis.StandardTokenizerFactory;
-import org.hibernate.annotations.SortComparator;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.AnalyzerDef;
 import org.hibernate.search.annotations.DateBridge;
@@ -63,7 +63,6 @@ public class MediaItem implements Serializable {
 	public enum MediaType {
 		SONG, VIDEO, IMAGE;
 	}
-
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -109,33 +108,19 @@ public class MediaItem implements Serializable {
 	@XmlTransient
 	private List<Comment> comments;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	@SortComparator(MediaEncodingComparator.class)
 	@XmlTransient
-	private List<MediaEncoding> mediaEncodings;
+	private Set<MediaEncoding> mediaEncodings;
 
 	public MediaItem() {
 		this.enabled = true;
 	}
 
-	public List<MediaEncoding> getMediaEncodings() {
+	public Set<MediaEncoding> getMediaEncodings() {
 		return mediaEncodings;
 	}
 
-	public void setMediaEncodings(List<MediaEncoding> mediaEncodings) {
+	public void setMediaEncodings(Set<MediaEncoding> mediaEncodings) {
 		this.mediaEncodings = mediaEncodings;
-	}
-
-	public void addMediaEncoding(MediaEncoding mediaEncoding) {
-		mediaEncodings = getMediaEncodings();
-		if (mediaEncodings == null) {
-			mediaEncodings = new ArrayList<MediaEncoding>();
-		}
-
-		if (mediaEncodings.contains(mediaEncoding)) {
-			return;
-		}
-
-		mediaEncodings.add(mediaEncoding);
 	}
 
 	public List<Comment> getComments() {
@@ -303,11 +288,12 @@ public class MediaItem implements Serializable {
 		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
 			return null;
 		}
-		
-		Collections.sort(mediaEncodings, new MediaEncodingComparator());
-		return mediaEncodings.get(0);		
+
+		List<MediaEncoding> mediaEncodingsList = new ArrayList<MediaEncoding>(mediaEncodings);
+		Collections.sort(mediaEncodingsList, new MediaEncodingComparator());
+		return mediaEncodingsList.get(0);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -386,7 +372,5 @@ public class MediaItem implements Serializable {
 		builder.append("]");
 		return builder.toString();
 	}
-
-
 
 }

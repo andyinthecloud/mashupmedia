@@ -17,7 +17,12 @@
 
 package org.mashupmedia.task;
 
+import java.util.Iterator;
+
 import org.mashupmedia.encode.EncodeMediaManager;
+import org.mashupmedia.encode.FfMpegManager;
+import org.mashupmedia.encode.ProcessManager;
+import org.mashupmedia.encode.ProcessQueueItem;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
@@ -34,6 +39,12 @@ public class EncodeMediaItemTaskManager {
 	@Autowired
 	private EncodeMediaManager encodeMediaManager;
 
+	@Autowired
+	private FfMpegManager ffMpegManager;
+
+	@Autowired
+	private ProcessManager processManager;
+
 	public void processMediaItemForEncodingDuringAutomaticUpdate(MediaItem mediaItem, MediaContentType mediaContentType) {
 		MediaContentType savedMediaContentType = MediaContentType.UNSUPPORTED;
 		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
@@ -42,26 +53,67 @@ public class EncodeMediaItemTaskManager {
 		}
 
 		if (savedMediaContentType == MediaContentType.UNSUPPORTED) {
-			queueMediaItemForEncoding(mediaItem.getId(), mediaContentType);
+			processMediaItemForEncoding(mediaItem, mediaContentType);
 		}
 	}
 
-	public void queueMediaItemForEncoding(long mediaItemId, MediaContentType mediaContentType) {
-		encodeMediaItemThreadPoolTaskExecutor.execute(new EncodeMediaItemTask(mediaItemId, mediaContentType));
+	public void processMediaItemForEncoding(MediaItem mediaItem, MediaContentType mediaContentType) {
+		ffMpegManager.prepareMediaItemBeforeEncoding(mediaItem, mediaContentType);
+		processQueue();
+	}
+	
+		
+
+	public void processQueue() {
+ 		Iterator<ProcessQueueItem> iterator = processManager.getProcessQueueItemsIterator();
+
+		if (iterator == null) {
+			return;
+		}
+
+		int totalRunningProcesses = 0;
+
+		while (iterator.hasNext()) {
+			ProcessQueueItem processQueueItem = iterator.next();
+			if (processQueueItem.getProcess() != null) {
+				totalRunningProcesses++;
+			}
+		}
+
+		int maximumConcurrentProcesses = processManager.getMaximumConcurrentProcesses();
+
+		int availableProcesses = maximumConcurrentProcesses - totalRunningProcesses;
+		if (availableProcesses <= 0) {
+			return;
+		}
+
+		iterator = processManager.getProcessQueueItemsIterator();
+
+		for (int i = 0; i < availableProcesses; i++) {
+
+			while (iterator.hasNext()) {
+				ProcessQueueItem processQueueItem = iterator.next();
+				if (processQueueItem.getProcess() != null) {
+					continue;
+				}
+ 				encodeMediaItemThreadPoolTaskExecutor.execute(new EncodeMediaQueueTask(processQueueItem));
+				break;
+			}
+
+		}
+
 	}
 
-	private class EncodeMediaItemTask implements Runnable {
+	private class EncodeMediaQueueTask implements Runnable {
+		private ProcessQueueItem processQueueItem;
 
-		private long mediaItemId;
-		private MediaContentType mediaContentType;
-
-		public EncodeMediaItemTask(long mediaItemId, MediaContentType mediaContentType) {
-			this.mediaItemId = mediaItemId;
-			this.mediaContentType = mediaContentType;
+		public EncodeMediaQueueTask(ProcessQueueItem processQueueItem) {
+			this.processQueueItem = processQueueItem;
 		}
 
 		public void run() {
-			encodeMediaManager.encodeMedia(mediaItemId, mediaContentType);
+			encodeMediaManager.encodeMedia(processQueueItem);
+
 		}
 	}
 

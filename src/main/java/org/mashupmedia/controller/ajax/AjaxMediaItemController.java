@@ -65,7 +65,8 @@ public class AjaxMediaItemController {
 			return false;
 		}
 
-		encodeMediaItemTaskManager.queueMediaItemForEncoding(mediaItemId, mediaContentType);
+		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		encodeMediaItemTaskManager.processMediaItemForEncoding(mediaItem, mediaContentType);
 		return true;
 	}
 
@@ -97,7 +98,7 @@ public class AjaxMediaItemController {
 
 		List<Song> songs = album.getSongs();
 		for (Song song : songs) {
-			encodeMediaItemTaskManager.queueMediaItemForEncoding(song.getId(), mediaContentType);
+			encodeMediaItemTaskManager.processMediaItemForEncoding(song, mediaContentType);
 		}
 
 		return true;

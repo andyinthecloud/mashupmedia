@@ -17,6 +17,9 @@
 
 package org.mashupmedia.encode;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
@@ -38,13 +41,22 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 	@Autowired
 	private ProcessManager processManager;
 
-	@Override
-	public void encodeMedia(long mediaItemId, MediaContentType mediaContentType) {
+	@Autowired
+	private FfMpegManager ffMpegManager;
 
+	@Override
+	public void encodeMedia(ProcessQueueItem processQueueItem) {
+
+		long mediaItemId = processQueueItem.getMediaItemId();		
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		MediaContentType mediaContentType = processQueueItem.getMediaContentType();
 
 		try {
-			boolean isCurrentlyEncoding = processManager.isInProcessQueue(mediaItemId, mediaContentType);
+			boolean isCurrentlyEncoding = false;
+			if (processQueueItem.getProcess() != null) {
+				isCurrentlyEncoding = true;
+			}
+			
 			if (isCurrentlyEncoding) {
 				logger.info("Media file is being encoded, exiting...");
 				return;
@@ -52,18 +64,25 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 
 			logger.info("Starting to encode media file to html5 format");
 
-			encodeManager.encodeMediaItem(mediaItem, mediaContentType);
+			processManager.startProcess(processQueueItem);
 
 			logger.info("Media file decoded to " + mediaContentType.getName());
 			MediaEncoding mediaEncoding = new MediaEncoding();
 			mediaEncoding.setMediaContentType(mediaContentType);
-			mediaEncoding.setOriginal(false);			
-			mediaItem.addMediaEncoding(mediaEncoding);
+			mediaEncoding.setOriginal(false);
+			Set<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
+			if (mediaEncodings == null) {
+				mediaEncodings = new HashSet<MediaEncoding>();
+				mediaItem.setMediaEncodings(mediaEncodings);;
+			}
+			mediaEncodings.add(mediaEncoding);			
 			mediaManager.saveMediaItem(mediaItem);
 		} catch (Exception e) {
 			logger.error("Error encoding media item: " + mediaItemId, e);
 		}
 
 	}
+
+
 
 }
