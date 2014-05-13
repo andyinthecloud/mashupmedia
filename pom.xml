@@ -353,6 +353,9 @@
 				<configuration>
 					<path>/${project.name}</path>
 					<warDirectory>${exploded.war.path}</warDirectory>
+					<systemProperties>
+						<JAVA_OPTS>-Xms256m -Xmx512m -XX:MaxPermSize=256m</JAVA_OPTS>
+					</systemProperties>
 				</configuration>
 				<executions>
 					<execution>
