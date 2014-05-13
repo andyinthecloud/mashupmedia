@@ -48,20 +48,17 @@ public class ProcessManager {
 
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
-	
-	
+
 	private List<ProcessQueueItem> processQueueItems = new CopyOnWriteArrayList<ProcessQueueItem>();
-	
-	
 
 	public Iterator<ProcessQueueItem> getProcessQueueItemsIterator() {
 		if (processQueueItems == null) {
 			return null;
 		}
-		
-		return processQueueItems.iterator();		
+
+		return processQueueItems.iterator();
 	}
-	
+
 	public String callProcess(String path) throws IOException {
 		List<String> commands = new ArrayList<String>();
 		commands.add(path);
@@ -80,7 +77,7 @@ public class ProcessManager {
 		ProcessQueueItem processQueueItem = generateProcessQueueItem(mediaItemId, mediaContentType, commands);
 		destroyProcessIfAlreadyStarted(processQueueItem);
 		processQueueItems.add(processQueueItem);
-		return processQueueItem;		
+		return processQueueItem;
 	}
 
 	protected ProcessQueueItem generateProcessQueueItem(long mediaItemId, MediaContentType mediaContentType,
@@ -97,7 +94,6 @@ public class ProcessManager {
 
 		boolean isDeleted = processQueueItems.remove(processQueueItem);
 		logger.info("Process: " + processQueueItem.toString() + " deleted: " + isDeleted);
-
 	}
 
 	public void startProcess(ProcessQueueItem processQueueItem) throws IOException {
@@ -135,10 +131,6 @@ public class ProcessManager {
 		} finally {
 			processQueueItems.remove(processQueueItem);
 			encodeMediaItemTaskManager.processQueue();
-//			ProcessQueueItem nextProcessQueueItem = getNextProcessQueueItem();
-//			if (nextProcessQueueItem != null) {
-//				startProcess(nextProcessQueueItem);
-//			}
 		}
 
 	}
@@ -185,23 +177,25 @@ public class ProcessManager {
 
 	}
 
-//	public boolean isEncoding(long mediaItemId, MediaContentType mediaContentType) {
-//
-//		ProcessQueueItem processQueueItem = getProcessQueueItem(mediaItemId, mediaContentType);
-//		if (processQueueItem == null) {
-//			return false;
-//		}
-////		if (processQueueItem != null) {
-////			return true;
-////		}
-//		
-//		Process process = processQueueItem.getProcess();
-//		if (process == null) {
-//			return false;
-//		}
-//
-//		return true;
-//	}
+	// public boolean isEncoding(long mediaItemId, MediaContentType
+	// mediaContentType) {
+	//
+	// ProcessQueueItem processQueueItem = getProcessQueueItem(mediaItemId,
+	// mediaContentType);
+	// if (processQueueItem == null) {
+	// return false;
+	// }
+	// // if (processQueueItem != null) {
+	// // return true;
+	// // }
+	//
+	// Process process = processQueueItem.getProcess();
+	// if (process == null) {
+	// return false;
+	// }
+	//
+	// return true;
+	// }
 
 	private ProcessQueueItem getProcessQueueItem(long mediaItemId, MediaContentType mediaContentType) {
 		if (processQueueItems == null || processQueueItems.isEmpty()) {

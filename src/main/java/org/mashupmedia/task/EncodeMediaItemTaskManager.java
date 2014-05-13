@@ -58,7 +58,7 @@ public class EncodeMediaItemTaskManager {
 	}
 
 	public void processMediaItemForEncoding(MediaItem mediaItem, MediaContentType mediaContentType) {
-		ffMpegManager.prepareMediaItemBeforeEncoding(mediaItem, mediaContentType);
+		ffMpegManager.queueMediaItemBeforeEncoding(mediaItem, mediaContentType);
 		processQueue();
 	}
 	

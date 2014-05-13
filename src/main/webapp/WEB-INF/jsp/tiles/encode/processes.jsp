@@ -9,7 +9,6 @@
 		}, 5000);
 		
 		$("div.sub-panel").on("click", "ul.items li a.dustbin", function(){
-			alert("delete process");
 			var id = $(this).closest("li").attr("id")
 			var mediaItemId = parseId(id, "media-id");
 			var mediaContentType = id.replace(/.*content-type-/g, "");
