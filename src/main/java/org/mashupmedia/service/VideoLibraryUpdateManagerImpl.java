@@ -38,6 +38,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 	
+	@Autowired
 	private ProcessManager processManager;
 
 	@Autowired
@@ -52,6 +53,10 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 
 		if (VideoDeriveTitleType.USE_FILE_NAME.name().equalsIgnoreCase(deriveTitle)) {
 			videoDeriveTitleType = VideoDeriveTitleType.USE_FILE_NAME;
+		} else if (VideoDeriveTitleType.USE_FOLDER_NAME.name().equalsIgnoreCase(deriveTitle)) {
+			videoDeriveTitleType = VideoDeriveTitleType.USE_FOLDER_NAME;			
+		} else {
+			videoDeriveTitleType = VideoDeriveTitleType.USE_FOLDER_AND_FILE_NAME;
 		}
 
 		processVideos(videos, folder, videoDeriveTitleType, date, null, library);

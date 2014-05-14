@@ -64,15 +64,12 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 
 		remoteMediaMetaItem = new RemoteMediaMetaItem();
 		
-		if (!jsonVideo.has("id")) {
+		if (jsonVideo == null || !jsonVideo.has("id")) {
 			return remoteMediaMetaItem;
 		}
 		
-
 		remoteMediaMetaItem.setDate(new Date());
 
-		
-		
 		String remoteName = jsonVideo.getString("original_title");
 		remoteMediaMetaItem.setName(remoteName);
 

@@ -73,11 +73,14 @@ public class ProcessManager {
 		return totalFfMpegProcesses;
 	}
 
-	public ProcessQueueItem addProcessToQueue(List<String> commands, long mediaItemId, MediaContentType mediaContentType) {
+	public void addProcessToQueue(List<String> commands, long mediaItemId, MediaContentType mediaContentType) {
 		ProcessQueueItem processQueueItem = generateProcessQueueItem(mediaItemId, mediaContentType, commands);
-		destroyProcessIfAlreadyStarted(processQueueItem);
+		if (processQueueItems.contains(processQueueItem)) {
+			logger.info("Media is already queued for encoding: " + processQueueItem.toString());
+			return;
+		}
+		
 		processQueueItems.add(processQueueItem);
-		return processQueueItem;
 	}
 
 	protected ProcessQueueItem generateProcessQueueItem(long mediaItemId, MediaContentType mediaContentType,
@@ -85,15 +88,6 @@ public class ProcessManager {
 
 		ProcessQueueItem processQueueItem = new ProcessQueueItem(mediaItemId, mediaContentType, commands);
 		return processQueueItem;
-	}
-
-	protected void destroyProcessIfAlreadyStarted(ProcessQueueItem processQueueItem) {
-		if (processQueueItems == null || processQueueItems.isEmpty()) {
-			return;
-		}
-
-		boolean isDeleted = processQueueItems.remove(processQueueItem);
-		logger.info("Process: " + processQueueItem.toString() + " deleted: " + isDeleted);
 	}
 
 	public void startProcess(ProcessQueueItem processQueueItem) throws IOException {
@@ -106,7 +100,13 @@ public class ProcessManager {
 			processBuilder.redirectErrorStream(true);
 			Process process = processBuilder.start();
 
-			processQueueItem.setProcessStartedOn(new Date());
+			// The started on date should have already been set
+			Date startedOn = processQueueItem.getProcessStartedOn();
+			if (startedOn == null) {
+				processQueueItem.setProcessStartedOn(new Date());	
+			}
+			
+			
 			processQueueItem.setProcess(process);
 
 			InputStream inputStream = process.getInputStream();

@@ -1,29 +1,18 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
+<c:set var="mediaEncoding" value="${videoPage.video.bestMediaEncoding}" />
 
 <script type="text/javascript">
 $(document).ready(function(){
 
 	$("#jquery_jplayer_1").jPlayer({
 		ready: function () {
-			$(this).jPlayer("setMedia", {
-				
-				<c:set var="videoFormats" value="" />
-
-				<c:forEach items="${videoPage.video.mediaEncodings}" var="mediaEncoding">
-					<c:set var="videoFormat" value="${mediaEncoding.mediaContentType.jPlayerContentType}" />					
-					${videoFormat}: "<c:url value="/app/streaming/media/${videoPage.video.id}?mediaContentType=${videoFormat}" />",							
-					<c:if test="not empty videoFormats">
-						<c:set var="videoFormat" value=",${videoFormat}" />
-					</c:if>
-					<c:set var="videoFormats" value="${videoFormats}${videoFormat}" />
-							
-				</c:forEach>
-				
+			$(this).jPlayer("setMedia", {				
+				${mediaEncoding.mediaContentType.jPlayerContentType}: "<c:url value="/app/streaming/media/${videoPage.video.id}?mediaContentType=${mediaEncoding.mediaContentType.jPlayerContentType}" />",				
 				poster: "<c:url value="${videoPage.posterUrl}" />"				
 			});
 		},
 		swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}" />",
-		supplied: "${videoFormats}",
+		supplied: "${mediaEncoding.mediaContentType.jPlayerContentType}",
 		size: {
 			width: "640px",
 			height: "360px",

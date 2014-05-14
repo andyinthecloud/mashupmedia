@@ -17,6 +17,7 @@
 
 package org.mashupmedia.task;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import org.mashupmedia.encode.EncodeMediaManager;
@@ -65,6 +66,7 @@ public class EncodeMediaItemTaskManager {
 		
 
 	public void processQueue() {
+		
  		Iterator<ProcessQueueItem> iterator = processManager.getProcessQueueItemsIterator();
 
 		if (iterator == null) {
@@ -75,7 +77,7 @@ public class EncodeMediaItemTaskManager {
 
 		while (iterator.hasNext()) {
 			ProcessQueueItem processQueueItem = iterator.next();
-			if (processQueueItem.getProcess() != null) {
+			if (processQueueItem.getProcessStartedOn() != null) {
 				totalRunningProcesses++;
 			}
 		}
@@ -87,15 +89,16 @@ public class EncodeMediaItemTaskManager {
 			return;
 		}
 
-		iterator = processManager.getProcessQueueItemsIterator();
-
 		for (int i = 0; i < availableProcesses; i++) {
-
+			iterator = processManager.getProcessQueueItemsIterator();
 			while (iterator.hasNext()) {
 				ProcessQueueItem processQueueItem = iterator.next();
-				if (processQueueItem.getProcess() != null) {
+				Date startedOn = processQueueItem.getProcessStartedOn();
+				if (startedOn != null) {
 					continue;
 				}
+				
+				processQueueItem.setProcessStartedOn(new Date());
  				encodeMediaItemThreadPoolTaskExecutor.execute(new EncodeMediaQueueTask(processQueueItem));
 				break;
 			}

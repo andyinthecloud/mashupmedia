@@ -20,6 +20,7 @@ package org.mashupmedia.service;
 import java.io.File;
 import java.util.Date;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryStatusType;
@@ -34,6 +35,8 @@ import org.springframework.stereotype.Service;
 public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	private Logger logger = Logger.getLogger(getClass());
+	
+	private final int LIBRARY_UPDATE_TIMEOUT_HOURS = 1;
 
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
@@ -57,11 +60,15 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			return;
 		}
 
-		if (library.getLibraryStatusType() == LibraryStatusType.WORKING) {
+		Date lastUpdated = library.getUpdatedOn();
+		Date date = new Date();
+		date = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);
+		
+		if (library.getLibraryStatusType() == LibraryStatusType.WORKING && date.before(lastUpdated)) {
 			logger.info("Library is already updating, exiting:" + library.toString());
-			return;
+//			return;			
 		}
-
+				
 		try {
 			library.setLibraryStatusType(LibraryStatusType.WORKING);
 			libraryManager.saveLibrary(library);
