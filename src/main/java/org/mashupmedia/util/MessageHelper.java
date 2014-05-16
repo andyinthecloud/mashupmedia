@@ -43,4 +43,10 @@ public class MessageHelper {
 		return message;
 	}
 
+	public static String getRemoteConnectionError(String contextUrl) {
+		String networkPage = contextUrl + "/app/configuration/network";
+		String message = MessageHelper.getMessage("remote.connection.error", new String[] { networkPage });
+		return message;
+	}
+
 }

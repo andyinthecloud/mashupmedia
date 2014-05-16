@@ -3,6 +3,8 @@ package org.mashupmedia.controller;
 import java.net.ConnectException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.Video;
@@ -10,6 +12,7 @@ import org.mashupmedia.restful.VideoWebService;
 import org.mashupmedia.service.VideoManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.MessageHelper;
+import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.VideoPage;
 import org.mashupmedia.web.remote.RemoteImage;
@@ -51,7 +54,7 @@ public class VideoController extends BaseController {
 	}
 
 	@RequestMapping(value = "/show/{videoId}", method = RequestMethod.GET)
-	public String handleGetVideo(@PathVariable("videoId") Long videoId, Model model) {
+	public String handleGetVideo(@PathVariable("videoId") Long videoId, Model model, HttpServletRequest request) {
 
 		Video video = videoManager.getVideo(videoId);
 
@@ -67,7 +70,7 @@ public class VideoController extends BaseController {
 
 		videoPage.setVideo(video);
 
-		RemoteMediaMetaItem remoteMediaMetaItem = getRemoteMediaMetaItem(videoId);
+		RemoteMediaMetaItem remoteMediaMetaItem = getRemoteMediaMetaItem(videoId, request);
 		if (remoteMediaMetaItem != null && !video.isIgnoreRemoteContent()) {
 			video.setSummary(remoteMediaMetaItem.getIntroduction());
 		}
@@ -84,7 +87,7 @@ public class VideoController extends BaseController {
 		return "videos/show";
 	}
 
-	protected RemoteMediaMetaItem getRemoteMediaMetaItem(long videoId) {
+	protected RemoteMediaMetaItem getRemoteMediaMetaItem(long videoId, HttpServletRequest request) {
 		Video video = videoManager.getVideo(videoId);
 
 		RemoteMediaMetaItem remoteMediaMetaItem = new RemoteMediaMetaItem();
@@ -101,7 +104,10 @@ public class VideoController extends BaseController {
 			logger.error(
 					"Error connecting to the remote web service, site may be unavailable or check proxy are incorrect",
 					e);
-			remoteMediaMetaItem.setIntroduction(MessageHelper.getMessage("remote.connection.error"));
+			
+			String contextUrl = WebHelper.getContextUrl(request);
+			String introductionMessage = MessageHelper.getRemoteConnectionError(contextUrl);
+			remoteMediaMetaItem.setIntroduction(introductionMessage);
 			remoteMediaMetaItem.setError(true);
 		} catch (Exception e) {
 			logger.error("Error getting remote video information", e);

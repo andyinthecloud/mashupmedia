@@ -4,6 +4,8 @@ import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +31,7 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.StringHelper;
+import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.web.page.AlbumPage;
 import org.mashupmedia.web.page.AlbumsPage;
 import org.mashupmedia.web.page.ArtistPage;
@@ -107,7 +110,7 @@ public class AjaxMusicController extends AjaxBaseController {
 
 	@RequestMapping(value = "/artist/remote/{artistId}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody
-	RemoteMediaMetaItem getArtistInformation(@PathVariable("artistId") Long artistId) {
+	RemoteMediaMetaItem getArtistInformation(@PathVariable("artistId") Long artistId, HttpServletRequest request) {
 		Artist artist = musicManager.getArtist(artistId);
 
 		RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
@@ -124,7 +127,9 @@ public class AjaxMusicController extends AjaxBaseController {
 			logger.error(
 					"Error connecting to the remote web service, site may be unavailable or check proxy are incorrect",
 					e);
-			remoteMediaMeta.setIntroduction(MessageHelper.getMessage("remote.connection.error"));
+			String contextUrl = WebHelper.getContextUrl(request);
+			String introductionMessage = MessageHelper.getRemoteConnectionError(contextUrl);
+			remoteMediaMeta.setIntroduction(introductionMessage);
 			remoteMediaMeta.setError(true);
 		} catch (Exception e) {
 			logger.error("Error getting remote artist information", e);
