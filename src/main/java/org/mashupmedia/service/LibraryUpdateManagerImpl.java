@@ -102,9 +102,6 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		File locationFolder = new File(location.getPath());
 		File[] files = locationFolder.listFiles();
 		for (File file : files) {
-			if (!file.isDirectory()) {
-				continue;
-			}
 			if (library instanceof MusicLibrary) {
 				MusicLibrary musicLibrary = (MusicLibrary) library;
 				musicLibraryUpdateManager.updateLibrary(musicLibrary, file, date);				
