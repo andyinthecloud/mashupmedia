@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
 public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	private Logger logger = Logger.getLogger(getClass());
-	
+
 	private final int LIBRARY_UPDATE_TIMEOUT_HOURS = 1;
 
 	@Autowired
@@ -63,12 +63,12 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		Date lastUpdated = library.getUpdatedOn();
 		Date date = new Date();
 		date = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);
-		
+
 		if (library.getLibraryStatusType() == LibraryStatusType.WORKING && date.before(lastUpdated)) {
 			logger.info("Library is already updating, exiting:" + library.toString());
-//			return;			
+			return;
 		}
-				
+
 		try {
 			library.setLibraryStatusType(LibraryStatusType.WORKING);
 			libraryManager.saveLibrary(library);
@@ -104,14 +104,14 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		for (File file : files) {
 			if (library instanceof MusicLibrary) {
 				MusicLibrary musicLibrary = (MusicLibrary) library;
-				musicLibraryUpdateManager.updateLibrary(musicLibrary, file, date);				
+				musicLibraryUpdateManager.updateLibrary(musicLibrary, file, date);
 			} else if (library instanceof VideoLibrary) {
 				VideoLibrary videoLibrary = (VideoLibrary) library;
 				videoLibraryUpdateManager.updateLibrary(videoLibrary, file, date);
 			}
 
 		}
-		
+
 		deleteObsoleteMediaItems(library, date);
 		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
 
