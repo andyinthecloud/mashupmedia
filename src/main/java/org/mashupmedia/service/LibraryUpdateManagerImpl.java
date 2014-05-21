@@ -101,6 +101,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		Location location = library.getLocation();
 		File locationFolder = new File(location.getPath());
 		File[] files = locationFolder.listFiles();
+		
 		for (File file : files) {
 			if (library instanceof MusicLibrary) {
 				MusicLibrary musicLibrary = (MusicLibrary) library;
@@ -109,7 +110,6 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				VideoLibrary videoLibrary = (VideoLibrary) library;
 				videoLibraryUpdateManager.updateLibrary(videoLibrary, file, date);
 			}
-
 		}
 
 		deleteObsoleteMediaItems(library, date);

@@ -155,7 +155,7 @@ public class FileHelper {
 			return true;
 		} else if (fileName.endsWith(".avi")) {
 			return true;
-		} else if (fileName.endsWith(".mk4")) {
+		} else if (fileName.endsWith(".mkv")) {
 			return true;
 		} else if (fileName.endsWith(".ogg")) {
 			return true;
