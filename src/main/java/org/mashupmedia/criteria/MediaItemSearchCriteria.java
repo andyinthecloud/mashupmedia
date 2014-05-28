@@ -17,15 +17,6 @@ public class MediaItemSearchCriteria {
 	private MediaSortType mediaSortType;
 	boolean ascending;
 	boolean enabled;
-	private long genreId;
-
-	public long getGenreId() {
-		return genreId;
-	}
-
-	public void setGenreId(long genreId) {
-		this.genreId = genreId;
-	}
 
 	public static int getDefaultFetchSize() {
 		return DEFAULT_FETCH_SIZE;

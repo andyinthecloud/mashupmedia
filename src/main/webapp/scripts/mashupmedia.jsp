@@ -255,6 +255,21 @@ var mashupMedia = new function() {
 	};
 
     this.playSongSearchResults = function() {
+    	
+    	if ($("ul.search-results li").length == 0) {
+    		return;
+    	}
+    	
+    	var ulId = $("ul.search-results").attr("id");
+    	var playlistId = parseId(ulId, "playlist-id"); 
+    	
+    	$("ul.search-results li").each(function( index ) {
+			var listId = $(this).attr("id");
+			var mediaItemId = parseId(listId, "media-item-id");
+			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
+		});
+    
+    /*
 	    var serialisedSearchForm = $("#quick-search").serialize();
 
    		$.post(mashupMedia.contextUrl + "app/ajax/search/media-items?" + serialisedSearchForm, {
@@ -262,15 +277,30 @@ var mashupMedia = new function() {
    		    "pageNumber" : 0,
    		    "maximumResults" : 500
    		}, function(data) {
-		var mediaItemId = data.mediaItem.id;
-		var playlistId = data.mediaItem.playlistId;
-		mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
+			var mediaItemId = data.mediaItem.id;
+			var playlistId = data.mediaItem.playlistId;
+			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
    		});	    	    	
-   	    
+   */	    
     };
 
 
 	this.appendSongSearchResults = function() {
+	
+    	if ($("ul.search-results li").length == 0) {
+    		return;
+    	}
+    	
+    	var ulId = $("ul.search-results").attr("id");
+    	var playlistId = parseId(ulId, "playlist-id"); 
+    	
+    	$("ul.search-results li").each(function( index ) {
+			var listId = $(this).attr("id");
+			var mediaItemId = parseId(listId, "media-item-id");
+			showSongInPlaylistIfEmpty(playlistId, mediaItemId);
+		});	
+
+		/*	
     	var serialisedSearchForm = $("#quick-search").serialize();
 
    		$.post(mashupMedia.contextUrl + "app/ajax/search/media-items?" + serialisedSearchForm, {
@@ -280,9 +310,9 @@ var mashupMedia = new function() {
    		}, function(data) {    		    
 			var mediaItemId = data.mediaItem.id;
 			var playlistId = data.mediaItem.playlistId;		
-			showtSongInPlaylistIfEmpty(playlistId, mediaItemId)		
+			showSongInPlaylistIfEmpty(playlistId, mediaItemId);
    		});	    	    	
-
+		*/
 	};
 
 	
@@ -292,7 +322,7 @@ var mashupMedia = new function() {
 		}, function(data) {
 			var mediaItemId = data.mediaItem.id;
 			var playlistId = data.mediaItem.playlistId;		
-			showtSongInPlaylistIfEmpty(playlistId, mediaItemId)		
+			showSongInPlaylistIfEmpty(playlistId, mediaItemId);
 		});
 	};
 
@@ -302,7 +332,7 @@ var mashupMedia = new function() {
 		}, function(data) {
 			var mediaItemId = data.mediaItem.id;
 			var playlistId = data.mediaItem.playlistId;		
-			showtSongInPlaylistIfEmpty(playlistId, mediaItemId)		
+			showSongInPlaylistIfEmpty(playlistId, mediaItemId)		
 		});		
 	};
 	
@@ -312,7 +342,7 @@ var mashupMedia = new function() {
 		}, function(data) {
 			var mediaItemId = data.mediaItem.id;
 			var playlistId = data.mediaItem.playlistId;		
-			showtSongInPlaylistIfEmpty(playlistId, mediaItemId)		
+			showSongInPlaylistIfEmpty(playlistId, mediaItemId)		
 		});		
 	};
 
@@ -377,7 +407,7 @@ var mashupMedia = new function() {
 }
 
 
-function showtSongInPlaylistIfEmpty(playlistId, mediaItemId) {
+function showSongInPlaylistIfEmpty(playlistId, mediaItemId) {
 	var currentSongId = $("#current-song-id").val();
 	if (currentSongId > 0) {
 		return;

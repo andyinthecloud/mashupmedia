@@ -355,11 +355,6 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		booleanJunction.must(queryBuilder.keyword().onField("enabled").matching(mediaItemSearchCriteria.isEnabled())
 				.createQuery());
 
-		long genreId = mediaItemSearchCriteria.getGenreId();
-		if (genreId > 0) {
-			booleanJunction.must(queryBuilder.keyword().onField("genre.id").matching(genreId).createQuery());
-		}
-
 		@SuppressWarnings("rawtypes")
 		BooleanJunction<BooleanJunction> groupJunction = queryBuilder.bool();
 		for (Long groupId : groupIds) {

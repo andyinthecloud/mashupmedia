@@ -490,13 +490,29 @@ table.top-bar-menu td.home {
 	right: 10px;
 }
 
+
+#top-bar-video-player form.quick-search input[type=text]{
+	top: -70px;	
+}
+
+#top-bar-video-player form.quick-search input[type=image]{
+	top: -65px;	
+}
+
+#top-bar-music-player form.quick-search input[type=text]{
+	top: -35px;
+}
+
+#top-bar-music-player form.quick-search input[type=image]{
+	top: -30px;
+}
+
 #quick-search input[type=text] {
 	position: absolute;
 	width: 300px;
 	padding: 2px 5px;
 	color: #3A2A45;
-	right: 0;
-	top: -35px;
+	right: 0;	
 }
 
 #quick-search input[type=image] {
@@ -506,7 +522,6 @@ table.top-bar-menu td.home {
 	vertical-align: middle;
 	background-color: white;
 	position: absolute;
-	top: -30px;
 	right: 6px;
 }
 

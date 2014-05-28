@@ -33,7 +33,6 @@ public class Song extends MediaItem {
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
 	@ManyToOne
-	@IndexedEmbedded
 	private Genre genre;
 	@ManyToOne
 	@IndexedEmbedded

@@ -56,8 +56,8 @@
 		</tr>
 	</table>
 
-	<form action="address-quick-search-media-items" id="quick-search">
-		<input type="hidden" name="genreId" value="${genreId}" /> <input type="hidden" name="orderBy" value="${orderBy}" /> <input type="hidden"
+	<form action="address-quick-search-media-items" id="quick-search" class="quick-search">
+		<input type="hidden" name="orderBy" value="${orderBy}" /> <input type="hidden"
 			name="isAscending" value="${isAscending}" /> <input type="hidden" name="mediaType" value="${mediaType}" /> <input type="text" name="searchWords"
 			value="${searchWords}" /><input type="image" src="<c:url value="${themePath}/images/controls/search.png"/>" />
 	</form>

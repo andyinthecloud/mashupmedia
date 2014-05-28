@@ -136,7 +136,7 @@
 
 </c:if>
 
-<ul class="items">
+<ul class="items search-results">
 
 	<c:forEach items="${songs}" var="song" varStatus="status">
 		<li id="song-id-${song.id}" class="item"><a class="album-cover" href="javascript:;" rel="address:/address-load-album-${song.album.id}"> <img

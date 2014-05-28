@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
@@ -56,7 +55,6 @@ public class AjaxSearchController extends AjaxBaseController {
 			@RequestParam(value = "action", required = false) String action,
 			@RequestParam(value = "maximumResults", required = false) Integer maximumResults, 
 			@RequestParam(value = "isAppend", required = false) String isAppendValue,			
-			@RequestParam(value = "genreId", required = false) String genreIdValue,
 			Model model) {
 
 		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();
@@ -76,8 +74,6 @@ public class AjaxSearchController extends AjaxBaseController {
 		}
 		mediaItemSearchCriteria.setPageNumber(pageNumber);
 		mediaItemSearchCriteria.setSearchWords(searchWords);
-		long genreId = NumberUtils.toLong(genreIdValue);
-		mediaItemSearchCriteria.setGenreId(genreId);
 		
 		boolean isAscending = BooleanUtils.toBoolean(isAscendingValue);
 		if (StringUtils.isBlank(isAscendingValue)) {
