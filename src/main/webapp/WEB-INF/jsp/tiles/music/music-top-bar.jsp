@@ -136,8 +136,6 @@
 
 	<div class="clear"></div>
 
-	<input type="hidden" id="playlist-id" /> <input type="hidden" id="playlist-isDefault" />
-
 	<div id="jquery_jplayer_1" class="jp-jplayer"></div>
 	<div id="jp_container_1" class="jp-audio">
 		<div class="jp-type-playlist">

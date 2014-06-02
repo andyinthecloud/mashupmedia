@@ -191,6 +191,42 @@ public class AjaxPlaylistController extends AjaxBaseController {
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
 		return "ajax/json/media-item";
 	}
+	
+	
+	@RequestMapping(value = "/append-media-items", method = RequestMethod.POST)
+	public String appendMediaItems(@RequestParam("mediaItemIds[]") Long[] mediaItemIds, Model model) {
+		addMediaItemsToPlaylist(mediaItemIds, model, false);		
+		return "ajax/json/media-item";
+	}
+	
+	@RequestMapping(value = "/replace-media-items", method = RequestMethod.POST)
+	public String replaceMediaItems(@RequestParam("mediaItemIds[]") Long[] mediaItemIds, Model model) {
+		addMediaItemsToPlaylist(mediaItemIds, model, true);		
+		return "ajax/json/media-item";
+	}
+	
+	protected void addMediaItemsToPlaylist(Long[] mediaItemIds, Model model, boolean isReplace) {
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+
+		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		for (Long mediaItemId : mediaItemIds) {
+			MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+			mediaItems.add(mediaItem);
+		}
+		
+		if (isReplace) {
+			PlaylistHelper.replacePlaylist(playlist, mediaItems);
+		} else {
+		PlaylistHelper.appendPlaylist(playlist, mediaItems);
+		}
+		savePlaylist(playlist);
+
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		MediaItem mediaItem = playlistMediaItem.getMediaItem();
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
+	}
+	
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String handleSaveCurrentPlaylist(@RequestParam("playlistId") Long playlistId,
