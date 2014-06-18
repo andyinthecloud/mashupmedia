@@ -104,7 +104,7 @@ public class VideoController extends BaseController {
 			logger.error(
 					"Error connecting to the remote web service, site may be unavailable or check proxy are incorrect",
 					e);
-			
+
 			String contextUrl = WebHelper.getContextUrl(request);
 			String introductionMessage = MessageHelper.getRemoteConnectionError(contextUrl);
 			remoteMediaMetaItem.setIntroduction(introductionMessage);
@@ -117,6 +117,11 @@ public class VideoController extends BaseController {
 
 		return remoteMediaMetaItem;
 
+	}
+
+	@Override
+	public String populateMediaType() {
+		return "video";
 	}
 
 }

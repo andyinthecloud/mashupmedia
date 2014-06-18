@@ -65,7 +65,7 @@ public class MusicController extends BaseController {
 	public boolean isTransparentBackground() {
 		return false;
 	}
-	
+
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music");
@@ -91,8 +91,8 @@ public class MusicController extends BaseController {
 	}
 
 	@RequestMapping(value = "/album-art/{imageType}/{albumId}", method = RequestMethod.GET)
-	public ModelAndView getAlbumArt(@PathVariable("imageType") String imageTypeValue, @PathVariable("albumId") Long albumId, Model model)
-			throws Exception {
+	public ModelAndView getAlbumArt(@PathVariable("imageType") String imageTypeValue,
+			@PathVariable("albumId") Long albumId, Model model) throws Exception {
 		ImageType imageType = ImageHelper.getImageType(imageTypeValue);
 		ModelAndView modelAndView = getAlbumArtModelAndView(albumId, imageType);
 		return modelAndView;
@@ -130,7 +130,8 @@ public class MusicController extends BaseController {
 		ModelAndView modelAndView = new ModelAndView(new View() {
 
 			@Override
-			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
+					throws Exception {
 				if (isEmptyBytes(imageBytes)) {
 					response.sendRedirect(request.getContextPath() + "/images/no-album-art.png");
 					return;
@@ -177,6 +178,11 @@ public class MusicController extends BaseController {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public String populateMediaType() {
+		return "music";
 	}
 
 }

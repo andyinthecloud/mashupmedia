@@ -137,5 +137,10 @@ public abstract class BaseController {
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(String.class, new StringTrimmerEditor(" \t\r\n\f", true));
 	}
-
+	
+	@ModelAttribute("mediaType")
+	public String populateMediaType() {
+		return "";
+	}
+	
 }

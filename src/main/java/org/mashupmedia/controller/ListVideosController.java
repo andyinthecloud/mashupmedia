@@ -36,4 +36,10 @@ public class ListVideosController extends BaseController {
 		model.addAttribute("videos", videos);
 		return "videos";
 	}
+	
+	@Override
+	public String populateMediaType() {
+		return "video";
+	}
+	
 }
