@@ -57,7 +57,7 @@ public abstract class Library implements Serializable {
 	private String status;
 	
 	public enum LibraryType {
-		ALL, MUSIC, VIDEO
+		ALL, MUSIC, VIDEO, PHOTO
 	}
 	public enum LibraryStatusType {
 		NONE, WORKING, ERROR, UNABLE_TO_CONNECT_TO_REMOTE_LIBRARY, OK;
