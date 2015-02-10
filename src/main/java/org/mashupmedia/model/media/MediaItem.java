@@ -26,10 +26,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
-import org.apache.solr.analysis.LowerCaseFilterFactory;
-import org.apache.solr.analysis.SnowballPorterFilterFactory;
-import org.apache.solr.analysis.StandardTokenizerFactory;
+import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
+import org.apache.lucene.analysis.snowball.SnowballPorterFilterFactory;
+import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.AnalyzerDef;
 import org.hibernate.search.annotations.DateBridge;

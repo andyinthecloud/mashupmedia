@@ -373,19 +373,19 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		boolean isReverse = !mediaItemSearchCriteria.isAscending();
 
-		Sort sort = new Sort(new SortField("displayTitle", SortField.STRING, isReverse));
+		Sort sort = new Sort(new SortField("displayTitle", SortField.Type.STRING, isReverse));
 		// Sort sort = new Sort(new SortField("lastAccessed", SortField.LONG,
 		// isReverse));
 		MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaSortType();
 
 		if (mediaSortType == MediaSortType.FAVOURITES) {
-			sort = new Sort(new SortField("vote", SortField.INT, isReverse));
+			sort = new Sort(new SortField("vote", SortField.Type.INT, isReverse));
 		} else if (mediaSortType == MediaSortType.LAST_PLAYED) {
-			sort = new Sort(new SortField("lastAccessed", SortField.LONG, isReverse));
+			sort = new Sort(new SortField("lastAccessed", SortField.Type.LONG, isReverse));
 		} else if (mediaSortType == MediaSortType.ALBUM_NAME) {
-			sort = new Sort(new SortField("album.indexText", SortField.STRING, isReverse));
+			sort = new Sort(new SortField("album.indexText", SortField.Type.STRING, isReverse));
 		} else if (mediaSortType == MediaSortType.ARTIST_NAME) {
-			sort = new Sort(new SortField("artist.indexText", SortField.STRING, isReverse));
+			sort = new Sort(new SortField("artist.indexText", SortField.Type.STRING, isReverse));
 		}
 
 		query.setSort(sort);
