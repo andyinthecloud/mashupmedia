@@ -27,15 +27,15 @@ public interface MashUpMediaConstants {
 	public static final String MODEL_KEY_IS_RELOAD = "isReload";
 	
 	public static final String MODEL_KEY_JQUERYUI_VERSION = "jQueryUIVersion";
-	public static final String JQUERYUI_VERSION = "1.10.3";
+	public static final String JQUERYUI_VERSION = "1.11.3";
 	public static final String MODEL_KEY_JQUERY_VERSION = "jQueryVersion";
-	public static final String JQUERY_VERSION = "1.9.1";
+	public static final String JQUERY_VERSION = "1.11.2";
 	public static final String MODEL_KEY_JQUERY_ADDRESS_VERSION = "jQueryAddressVersion";
 	public static final String JQUERY_ADDRESS_VERSION = "1.6";
 	public static final String MODEL_KEY_JPLAYER_VERSION = "jPlayerVersion";
-	public static final String JPLAYER_VERSION = "2.5.0";
+	public static final String JPLAYER_VERSION = "2.9.2";
 	public static final String MODEL_KEY_DATATABLES_VERSION = "dataTablesVersion";
-	public static final String DATATABLES_VERSION = "1.9.4";
+	public static final String DATATABLES_VERSION = "1.10.5";
 
 	public static final String PROXY_CACHE_SECONDS = "proxy.cache.seconds";
 	public static final String VOTE_USER_WAIT_SECONDS = "vote.user.wait.seconds";

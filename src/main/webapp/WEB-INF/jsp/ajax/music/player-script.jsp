@@ -36,7 +36,7 @@
 					myAndroidFix.play();
 				}				
 			},			
-			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}" />",
+			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
 			supplied: "${streamingFormat}",
 			wmode: "window",
 			solution: "html,flash",
@@ -50,12 +50,12 @@
 		
 		
 
-		var myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, bubble, options);		
+		//var myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, bubble, options);		
 		var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";		
 		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, ${song.artist.id});
 		
 		
-		/*
+		
 		$(mashupMedia.jPlayerId).jPlayer({
 			ready: function (event) {
 				$(this).jPlayer("setMedia", {
@@ -71,7 +71,7 @@
 			},
 			preload: "auto"
 		});	
-		*/
+		
 				
 		
 	}

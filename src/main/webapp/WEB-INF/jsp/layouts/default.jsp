@@ -6,25 +6,24 @@
 <html lang="en">
 <head>
 
-<link type="text/css" href="<c:url value="/jquery-ui/${jQueryUIVersion}/css/smoothness/jquery-ui-${jQueryUIVersion}.custom.min.css" />"
-	rel="stylesheet" />
-<script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-${jQueryVersion}.min.js" />"></script>
-<script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/js/jquery-ui-${jQueryUIVersion}.custom.min.js" />"></script>
+<link type="text/css" href="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.css" />" rel="stylesheet" />
+<script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-${jQueryVersion}.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.js" />"></script>
 
 <script type="text/javascript" src="<c:url value="/scripts/mashupmedia.jsp" />"></script>
 
 <script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.address/${jQueryAddressVersion}/jquery.address-${jQueryAddressVersion}.min.js" />"></script>
 
-<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jquery.jplayer.min.js" />"></script>
+<script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer/jquery.jplayer.min.js" />"></script>
 <script type="text/javascript" src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/add-on/jplayer.playlist.min.js" />"></script>
-<link type="text/css" href="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/skins/pink.flag/jplayer.pink.flag.css" />" rel="stylesheet" />
+<link type="text/css" href="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/skin/pink.flag/css/jplayer.pink.flag.min.css" />" rel="stylesheet" />
 
 <script type="text/javascript" src="<c:url value="/jquery-plugins/datatables/${dataTablesVersion}/jquery.dataTables.min.js" />"></script>
 
 
 
 <link href="<c:url value="${themePath}/stylesheets/site.css"/>" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="<c:url value="/scripts/jplayer-android-fix.js" />"></script>
+<!--  script type="text/javascript" src="<c:url value="/scripts/jplayer-android-fix.js" />"></script -->
 <script type="text/javascript" src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 
 <script type="text/javascript">

@@ -50,6 +50,9 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	}
 
 	private void initialiseEncoder() {
+		// Set the default number of processes
+		configurationManager.saveConfiguration(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES, String.valueOf(ProcessManager.DEFAULT_TOTAL_FFMPEG_PROCESSES));
+
 		File ffMpegFile = ffMpegManager.findFFMpegExecutable();
 		Boolean isValidFfMpegConfiguration = false;
 		try {
@@ -64,7 +67,6 @@ public class InitialisationManagerImpl implements InitialisationManager {
 
 		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, Boolean.TRUE.toString());
 		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegFile.getAbsolutePath());
-		configurationManager.saveConfiguration(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES, String.valueOf(ProcessManager.DEFAULT_TOTAL_FFMPEG_PROCESSES));
 	}
 
 	private void initialiseUniqueInstallationName() {

@@ -40,7 +40,7 @@ public class ProxyController {
 	@RequestMapping(value = "/jplayer.swf", method = RequestMethod.GET)
 	public ModelAndView getJPlayerFlash(HttpServletRequest request, Model model) throws Exception {
 		String contextUrl = WebHelper.getContextUrl(request);
-		String url = contextUrl + "/jquery-plugins/jquery.jplayer/" + JPLAYER_VERSION + "/Jplayer.swf";
+		String url = contextUrl + "/jquery-plugins/jquery.jplayer/" + JPLAYER_VERSION + "/jplayer/jquery.jplayer.swf";
 		ProxyFile proxyFile = getProxyFile(url, ProxyType.BINARY_FILE);
 		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile, WebContentType.FLASH);
 		return modelAndView;

@@ -600,11 +600,11 @@ ul.ui-autocomplete {
 	font-size: 75%;	
 }
 
-#top-bar-music-player div.jp-audio ul.jp-toggles {
+#top-bar-music-player div.jp-audio div.jp-toggles {
 	height: 15px;
 }
 
-#top-bar-music-player .jp-controls li {
+#top-bar-music-player .jp-controls button {
 	padding-left: 0 !important;
 }
 
@@ -621,7 +621,7 @@ ul.ui-autocomplete {
 }
 
 #top-bar-music-player .jp-audio .jp-interface {
-	height: 75px;
+	height: 90px;
 }
 
 #top-bar-music-player .jp-title {
