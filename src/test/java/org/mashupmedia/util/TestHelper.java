@@ -1,10 +1,10 @@
 package org.mashupmedia.util;
 
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.media.Album;
-import org.mashupmedia.model.media.Artist;
-import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
+import org.mashupmedia.model.media.music.Album;
+import org.mashupmedia.model.media.music.Artist;
+import org.mashupmedia.model.media.music.Song;
 
 public class TestHelper {
 	

@@ -26,6 +26,7 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryStatusType;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
+import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.location.Location;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +110,9 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			} else if (library instanceof VideoLibrary) {
 				VideoLibrary videoLibrary = (VideoLibrary) library;
 				videoLibraryUpdateManager.updateLibrary(videoLibrary, file, date);
+			} else if (library instanceof PhotoLibrary) {
+				PhotoLibrary photoLibrary = (PhotoLibrary) library;
+				
 			}
 		}
 

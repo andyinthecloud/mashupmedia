@@ -3,7 +3,7 @@ package org.mashupmedia.util;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.model.media.AlbumArtImage;
+import org.mashupmedia.model.media.music.AlbumArtImage;
 
 public class WebHelper {
 

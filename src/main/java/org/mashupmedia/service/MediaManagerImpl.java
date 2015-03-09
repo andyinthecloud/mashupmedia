@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.MediaDao;
-import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

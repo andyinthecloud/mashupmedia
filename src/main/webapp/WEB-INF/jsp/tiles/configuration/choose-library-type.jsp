@@ -20,7 +20,8 @@
 
 	<div>
 		<input type="radio" value="music" name="libraryType" id="libraryTypeMusic" checked="checked"> <label for="libraryTypeMusic"><spring:message code="chooselibrary.type.music" /></label> <br />
-		<input type="radio" value="video" name="libraryType" id="libraryTypeVideo"> <label for="libraryTypeVideo"><spring:message code="chooselibrary.type.video" /></label>
+		<input type="radio" value="video" name="libraryType" id="libraryTypeVideo"> <label for="libraryTypeVideo"><spring:message code="chooselibrary.type.video" /></label><br />
+		<input type="radio" value="photo" name="libraryType" id="libraryTypePhoto"> <label for="libraryTypePhoto"><spring:message code="chooselibrary.type.photo" /></label>
 	</div>
 	
 	<br />

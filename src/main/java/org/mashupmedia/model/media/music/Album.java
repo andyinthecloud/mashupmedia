@@ -1,4 +1,4 @@
-package org.mashupmedia.model.media;
+package org.mashupmedia.model.media.music;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 
-@Entity
+@Entity(name = "org.mashupmedia.model.media.music.Album")
 @Cacheable
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Album implements Serializable {

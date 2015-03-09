@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.mashupmedia.model.media.Artist;
+import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.restful.MusicWebService;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;

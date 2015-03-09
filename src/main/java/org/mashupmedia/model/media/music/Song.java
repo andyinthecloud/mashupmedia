@@ -1,4 +1,4 @@
-package org.mashupmedia.model.media;
+package org.mashupmedia.model.media.music;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -12,6 +12,10 @@ import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.mashupmedia.model.media.MediaEncoding;
+import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.Year;
+import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;

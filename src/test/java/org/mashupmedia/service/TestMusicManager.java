@@ -8,8 +8,8 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
-import org.mashupmedia.model.media.Album;
-import org.mashupmedia.model.media.Song;
+import org.mashupmedia.model.media.music.Album;
+import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.util.TestHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -3,7 +3,7 @@ package org.mashupmedia.service;
 import java.util.List;
 
 import org.mashupmedia.dao.VideoDao;
-import org.mashupmedia.model.media.Video;
+import org.mashupmedia.model.media.video.Video;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

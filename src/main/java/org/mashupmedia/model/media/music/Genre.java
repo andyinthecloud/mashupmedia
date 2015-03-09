@@ -1,4 +1,4 @@
-package org.mashupmedia.model.media;
+package org.mashupmedia.model.media.music;
 
 import java.io.Serializable;
 

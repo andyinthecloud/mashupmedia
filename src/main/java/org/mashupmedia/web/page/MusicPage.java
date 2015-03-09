@@ -2,7 +2,7 @@ package org.mashupmedia.web.page;
 
 import java.util.List;
 
-import org.mashupmedia.model.media.Album;
+import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.playlist.Playlist;
 
 public class MusicPage {

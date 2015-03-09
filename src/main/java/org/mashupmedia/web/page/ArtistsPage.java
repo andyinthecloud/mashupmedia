@@ -2,7 +2,7 @@ package org.mashupmedia.web.page;
 
 import java.util.List;
 
-import org.mashupmedia.model.media.Artist;
+import org.mashupmedia.model.media.music.Artist;
 
 public class ArtistsPage {
 	

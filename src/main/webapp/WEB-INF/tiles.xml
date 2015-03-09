@@ -75,6 +75,16 @@
 		<put-attribute name="body" value="configuration.library.video.panel" />
 	</definition>
 
+	<definition name="configuration/library/photo" extends="home">
+		<put-attribute name="body" value="configuration.library.photo.panel" />		
+	</definition>
+	
+	<definition name="configuration.library.photo.panel"
+		template="/WEB-INF/jsp/tiles/configuration/library.jsp">
+		<put-attribute name="additionalConfiguration"
+			value="" />
+	</definition>
+	
 	<definition name="configuration/administration/list-users"
 		extends="home">
 		<put-attribute name="body"

@@ -2,7 +2,7 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
-import org.mashupmedia.model.media.Video;
+import org.mashupmedia.model.media.video.Video;
 
 public interface VideoManager {
 

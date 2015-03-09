@@ -2,7 +2,7 @@ package org.mashupmedia.controller;
 
 import java.util.List;
 
-import org.mashupmedia.model.media.Video;
+import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.service.VideoManager;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;

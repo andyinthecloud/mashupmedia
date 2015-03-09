@@ -1,6 +1,6 @@
 package org.mashupmedia.restful;
 
-import org.mashupmedia.model.media.Video;
+import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 
 public interface VideoWebService {

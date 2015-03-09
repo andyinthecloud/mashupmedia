@@ -1,6 +1,6 @@
 package org.mashupmedia.web.page;
 
-import org.mashupmedia.model.media.Artist;
+import org.mashupmedia.model.media.music.Artist;
 
 public class ArtistPage {
 	private Artist artist;

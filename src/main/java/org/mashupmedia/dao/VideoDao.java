@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.mashupmedia.model.media.Video;
+import org.mashupmedia.model.media.video.Video;
 
 public interface VideoDao {
 

@@ -346,6 +346,13 @@ div.panel ul.main-menu li a.library-video {
 	background-repeat: no-repeat;
 }
 
+div.panel ul.main-menu li a.library-photo {
+	padding-left: 25px;
+	background-image: url("../images/library/photo.png");
+	background-position: left center;
+	background-repeat: no-repeat;
+}
+
 div.panel ul.main-menu a:HOVER {
 	background-color: #E579E9;
 	text-decoration: none;

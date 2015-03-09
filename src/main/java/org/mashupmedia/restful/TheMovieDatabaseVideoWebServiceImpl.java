@@ -14,7 +14,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.Configuration;
-import org.mashupmedia.model.media.Video;
+import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.util.MessageHelper;

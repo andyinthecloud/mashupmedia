@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.mashupmedia.model.media.Video;
+import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.util.DaoHelper;
 import org.springframework.stereotype.Repository;
 

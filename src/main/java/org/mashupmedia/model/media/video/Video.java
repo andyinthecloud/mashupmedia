@@ -1,10 +1,11 @@
-package org.mashupmedia.model.media;
+package org.mashupmedia.model.media.video;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.search.annotations.Indexed;
+import org.mashupmedia.model.media.MediaItem;
 
 @Entity
 @Indexed

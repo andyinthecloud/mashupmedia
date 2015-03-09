@@ -21,10 +21,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.model.media.Album;
-import org.mashupmedia.model.media.Artist;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.Song;
+import org.mashupmedia.model.media.music.Album;
+import org.mashupmedia.model.media.music.Artist;
+import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;

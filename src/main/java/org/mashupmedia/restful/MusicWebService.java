@@ -19,7 +19,7 @@ package org.mashupmedia.restful;
 
 import java.util.List;
 
-import org.mashupmedia.model.media.Artist;
+import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 
 public interface MusicWebService {

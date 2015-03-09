@@ -1,8 +1,8 @@
 package org.mashupmedia.service;
 
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.media.AlbumArtImage;
-import org.mashupmedia.model.media.Song;
+import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.model.media.music.Song;
 
 public interface AlbumArtManager {
 

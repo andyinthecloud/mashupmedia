@@ -3,8 +3,8 @@ package org.mashupmedia.dao;
 import java.util.List;
 
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
-import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.music.AlbumArtImage;
 
 public interface MediaDao {
 

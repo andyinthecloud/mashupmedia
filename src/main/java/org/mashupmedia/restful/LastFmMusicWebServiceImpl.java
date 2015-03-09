@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.mashupmedia.model.media.Artist;
+import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.ProxyHelper;

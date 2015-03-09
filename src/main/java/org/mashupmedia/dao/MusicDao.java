@@ -4,11 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
-import org.mashupmedia.model.media.Album;
-import org.mashupmedia.model.media.Artist;
-import org.mashupmedia.model.media.Genre;
-import org.mashupmedia.model.media.Song;
 import org.mashupmedia.model.media.Year;
+import org.mashupmedia.model.media.music.Album;
+import org.mashupmedia.model.media.music.Artist;
+import org.mashupmedia.model.media.music.Genre;
+import org.mashupmedia.model.media.music.Song;
 
 public interface MusicDao {
 

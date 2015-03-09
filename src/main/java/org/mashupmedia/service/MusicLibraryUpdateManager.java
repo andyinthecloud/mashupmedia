@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.media.Song;
+import org.mashupmedia.model.media.music.Song;
 
 public interface MusicLibraryUpdateManager {
 

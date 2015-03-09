@@ -2,7 +2,7 @@ package org.mashupmedia.service;
 
 import java.io.InputStream;
 
-import org.mashupmedia.model.media.AlbumArtImage;
+import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.util.ImageHelper.ImageType;
 
 public interface ConnectionManager {

@@ -21,7 +21,7 @@ import java.util.Comparator;
 
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
-import org.mashupmedia.model.media.Song;
+import org.mashupmedia.model.media.music.Song;
 
 public class MediaItemComparator implements Comparator<MediaItem>{
 

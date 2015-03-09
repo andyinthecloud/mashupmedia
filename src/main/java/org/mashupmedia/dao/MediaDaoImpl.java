@@ -16,10 +16,10 @@ import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.mashupmedia.comparator.MediaItemComparator;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
-import org.mashupmedia.model.media.Album;
-import org.mashupmedia.model.media.AlbumArtImage;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.music.Album;
+import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
