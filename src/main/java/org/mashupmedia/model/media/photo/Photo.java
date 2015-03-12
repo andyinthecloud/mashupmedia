@@ -22,10 +22,8 @@ public class Photo extends MediaItem {
 	@IndexedEmbedded
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
-	private String url;
-	private String thumbnailUrl;
-	private String contentType;
-	private String metaData;
+	private String thumbnailPath;
+	private String metadata;
 
 	public Album getAlbum() {
 		return album;
@@ -35,53 +33,20 @@ public class Photo extends MediaItem {
 		this.album = album;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getMetadata() {
+		return metadata;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setMetadata(String metadata) {
+		this.metadata = metadata;
 	}
 
-	public String getThumbnailUrl() {
-		return thumbnailUrl;
+	public String getThumbnailPath() {
+		return thumbnailPath;
 	}
 
-	public void setThumbnailUrl(String thumbnailUrl) {
-		this.thumbnailUrl = thumbnailUrl;
-	}
-
-	public String getContentType() {
-		return contentType;
-	}
-
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-
-	public String getMetaData() {
-		return metaData;
-	}
-
-	public void setMetaData(String metaData) {
-		this.metaData = metaData;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Photo [album=");
-		builder.append(album);
-		builder.append(", url=");
-		builder.append(url);
-		builder.append(", thumbnailUrl=");
-		builder.append(thumbnailUrl);
-		builder.append(", contentType=");
-		builder.append(contentType);
-		builder.append(", metaData=");
-		builder.append(metaData);
-		builder.append("]");
-		return builder.toString();
+	public void setThumbnailPath(String thumbnailPath) {
+		this.thumbnailPath = thumbnailPath;
 	}
 
 }

@@ -44,6 +44,9 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	@Autowired
 	private VideoLibraryUpdateManager videoLibraryUpdateManager;
+	
+	@Autowired
+	private PhotoLibraryUpdateManager photoLibraryUpdateManager;
 
 	@Autowired
 	private MapperManager mapperManager;

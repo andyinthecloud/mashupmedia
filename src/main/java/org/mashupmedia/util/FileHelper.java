@@ -24,7 +24,7 @@ public class FileHelper {
 
 	public enum FileType {
 		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM_UNPROCESSED(
-				"media-item-stream"), MEDIA_ITEM_STREAM_ENCODED("media-item-encoded");
+				"media-item-stream"), MEDIA_ITEM_STREAM_ENCODED("media-item-encoded"), PHOTO_THUMBNAIL("photo-thumbnail");
 
 		private String folderName;
 
@@ -83,21 +83,15 @@ public class FileHelper {
 		return file;
 	}
 
-	public static File createAlbumArtFile(long libraryId) {
-		File libraryFolder = getLibraryFolder(libraryId);
-		File mediaFolder = new File(libraryFolder, FileType.ALBUM_ART.getFolderName());
-		mediaFolder.mkdirs();
-		File mediaFile = new File(mediaFolder, String.valueOf(System.nanoTime()));
-		return mediaFile;
-	}
 
-	public static File createAlbumArtThumbnailFile(long libraryId) {
+	public static File createThumbnailFile(long libraryId, FileType fileType) {
 		File libraryFolder = getLibraryFolder(libraryId);
-		File thumbnailFolder = new File(libraryFolder, FileType.ALBUM_ART_THUMBNAIL.getFolderName());
+		File thumbnailFolder = new File(libraryFolder, fileType.getFolderName());
 		thumbnailFolder.mkdirs();
 		File thumbnailFile = new File(thumbnailFolder, String.valueOf(System.nanoTime()));
 		return thumbnailFile;
 	}
+	
 
 	public static boolean isSupportedSong(String fileName) {
 		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();

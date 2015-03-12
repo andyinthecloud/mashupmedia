@@ -25,17 +25,23 @@ import org.mashupmedia.model.media.MediaItem.MediaType;
 public class MediaItemHelper {
 
 	public enum MediaContentType {
-		MP3("audio/mpeg", "mp3", "mp3", 1), M4A("audio/m4a", "m4a", "m4a", 2), OGA("audio/ogg", "oga", "oga", 3), WAV(
-				"audio/wav", "wav", "wav", 3), FLAC("audio/flac", "flac", "flac", 4), UNSUPPORTED("media/unsupported",
-				"unsupported", "unsupported", 100), MP4("video/mp4", "m4v", "mp4", 1), WEBM("video/webm", "webmv",
-				"webm", 2), OGV("video/ogg", "ogv", "ogv", 3);
+		MP3("audio/mpeg", "mp3", "mp3", 1), M4A("audio/m4a", "m4a", "m4a", 2), OGA(
+				"audio/ogg", "oga", "oga", 3), WAV("audio/wav", "wav", "wav", 3), FLAC(
+				"audio/flac", "flac", "flac", 4), UNSUPPORTED(
+				"media/unsupported", "unsupported", "unsupported", 100), MP4(
+				"video/mp4", "m4v", "mp4", 1), WEBM("video/webm", "webmv",
+				"webm", 2), OGV("video/ogg", "ogv", "ogv", 3), JPEG(
+				"image/jpeg", "jpg", "jpg", 1), PNG("image/png", "png", "png",
+				2), GIF("image/gif", "gif", "gif", 3), TIF("image/tiff",
+				"tiff", "tiff", 4);
 
 		private String mimeContentType;
 		private String jPlayerContentType;
 		private String name;
 		private int ranking;
 
-		private MediaContentType(String mimeContentType, String jPlayerContentType, String name, int ranking) {
+		private MediaContentType(String mimeContentType,
+				String jPlayerContentType, String name, int ranking) {
 			this.mimeContentType = mimeContentType;
 			this.jPlayerContentType = jPlayerContentType;
 			this.name = name;
@@ -107,25 +113,40 @@ public class MediaItemHelper {
 
 		format = StringUtils.trimToEmpty(format);
 
-		if (format.equalsIgnoreCase("MPEG-1 Layer 3") || format.equalsIgnoreCase("mp3")) {
+		if (format.equalsIgnoreCase("MPEG-1 Layer 3")
+				|| format.equalsIgnoreCase("mp3")) {
 			return MediaContentType.MP3;
-		} else if (format.equalsIgnoreCase("Vorbis") || format.equalsIgnoreCase("ogg")
+		} else if (format.equalsIgnoreCase("Vorbis")
+				|| format.equalsIgnoreCase("ogg")
 				|| format.equalsIgnoreCase("oga")) {
 			return MediaContentType.OGA;
-		} else if (format.equalsIgnoreCase("Free Lossless Audio Codec") || format.equalsIgnoreCase("flac")) {
+		} else if (format.equalsIgnoreCase("Free Lossless Audio Codec")
+				|| format.equalsIgnoreCase("flac")) {
 			return MediaContentType.FLAC;
 		} else if (format.equalsIgnoreCase("webm")) {
 			return MediaContentType.WEBM;
-		} else if (format.equalsIgnoreCase("mp4") || format.equalsIgnoreCase("m4v")) {
+		} else if (format.equalsIgnoreCase("mp4")
+				|| format.equalsIgnoreCase("m4v")) {
 			return MediaContentType.MP4;
 		} else if (format.equalsIgnoreCase("ogv")) {
 			return MediaContentType.OGV;
+		} else if (format.equalsIgnoreCase("jpg")
+				|| format.equalsIgnoreCase("jpeg")) {
+			return MediaContentType.JPEG;
+		} else if (format.equalsIgnoreCase("png")) {
+			return MediaContentType.PNG;
+		} else if (format.equalsIgnoreCase("gif")) {
+			return MediaContentType.GIF;
+		} else if (format.equalsIgnoreCase("tif")
+				|| format.equalsIgnoreCase("tiff")) {
+			return MediaContentType.TIF;
 		}
 
 		return MediaContentType.UNSUPPORTED;
 	}
 
-	public static boolean isCompatibleVideoFormat(MediaContentType mediaContentType) {
+	public static boolean isCompatibleVideoFormat(
+			MediaContentType mediaContentType) {
 		if (mediaContentType == MediaContentType.MP4) {
 			return true;
 		}

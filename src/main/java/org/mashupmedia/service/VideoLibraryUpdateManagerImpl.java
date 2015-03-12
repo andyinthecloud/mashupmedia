@@ -106,17 +106,22 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 
 		String path = file.getAbsolutePath();
 		Video video = videoDao.getVideoByPath(path);
+		
+		boolean isCreateVideo = false;
+		if (video == null) {
+			isCreateVideo = true;
+		} else {
+			if (file.length() != video.getSizeInBytes()) {
+				isCreateVideo = true;
+			}
+		}		
 
 		int totalVideosWithSameNameThreshold = 0;
-		if (video == null) {
+		if (isCreateVideo) {
 			video = new Video();
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
-			Set<MediaEncoding> mediaEncodings = video.getMediaEncodings();
-			if (mediaEncodings == null) {
-				mediaEncodings = new HashSet<MediaEncoding>();
-			}
-
+			Set<MediaEncoding> mediaEncodings = new HashSet<MediaEncoding>();
 			MediaEncoding mediaEncoding = new MediaEncoding();
 			mediaEncoding.setMediaContentType(mediaContentType);
 			mediaEncoding.setOriginal(true);
@@ -153,6 +158,8 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		}
 
 		videoDao.saveVideo(video, isSessionFlush);
+		
+
 
 		encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(video, MediaContentType.MP4);
 	}

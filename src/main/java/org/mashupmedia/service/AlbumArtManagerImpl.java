@@ -21,6 +21,7 @@ import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.StringHelper;
+import org.mashupmedia.util.FileHelper.FileType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,7 +115,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 			}
 			// imagePath = FileHelper.writeAlbumArt(musicLibrary.getId(),
 			// bytes);
-			File albumArtFile = FileHelper.createAlbumArtFile(musicLibrary.getId());
+			File albumArtFile = FileHelper.createThumbnailFile(musicLibrary.getId(), FileType.ALBUM_ART_THUMBNAIL);
 			FileUtils.writeByteArrayToFile(albumArtFile, bytes);
 			imagePath = albumArtFile.getAbsolutePath();
 
@@ -137,7 +138,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 
 		String thumbnailUrl = imagePath;
 		try {
-			thumbnailUrl = ImageHelper.generateAndSaveThumbnail(musicLibrary.getId(), imagePath);
+			thumbnailUrl = ImageHelper.generateAndSaveMusicAlbumArtThumbnail(musicLibrary.getId(), imagePath);
 		} catch (Exception e) {
 			logger.error("Error converting album art image to thumbnail, using original image.", e);
 		}
