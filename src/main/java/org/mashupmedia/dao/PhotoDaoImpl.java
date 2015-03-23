@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
+	
+	private final static int MAX_PHOTOS_RETURNED = 100;
 
 	@Override
 	public List<Album> getAlbums(String albumName) {
@@ -66,5 +68,34 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		}
 
 	}
+
+	@Override
+	public List<Photo> getLatestPhotos() {
+		Query query = sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"from Photo p order by p.updatedOn");
+
+		query.setCacheable(true);
+		query.setMaxResults(MAX_PHOTOS_RETURNED);
+		@SuppressWarnings("unchecked")
+		List<Photo> photos = query.list();
+		return photos;
+	}
+
+	@Override
+	public List<Album> getAlbums() {
+		Query query = sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"from org.mashupmedia.model.media.photo.Album a order by a.updatedOn");
+
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Album> albums = query.list();
+		return albums;
+	}
+	
+	
 
 }

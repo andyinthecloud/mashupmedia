@@ -14,4 +14,8 @@ public interface PhotoDao {
 
 	List<Album> getAlbums(String albumName);
 
+	List<Photo> getLatestPhotos();
+
+	List<Album> getAlbums();
+
 }
