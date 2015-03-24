@@ -153,5 +153,15 @@
 			value="/WEB-INF/jsp/tiles/encode/processes.jsp" />
 	</definition>
 
-
+	<definition name="photo" extends="home">
+		<put-attribute name="topBar"
+			value="/WEB-INF/jsp/tiles/photo/photo-top-bar.jsp" />
+	</definition>
+	
+	<definition name="photos" extends="photo">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/list-photos.jsp" />
+	</definition>
+	
+	
 </tiles-definitions>

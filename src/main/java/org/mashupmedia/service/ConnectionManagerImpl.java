@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.StringHelper.Encoding;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,27 +120,44 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	}
 
 	@Override
-	public byte[] getAlbumArtImageBytes(AlbumArtImage image, ImageType imageType) throws Exception {
+	public byte[] getAlbumArtImageBytes(AlbumArtImage image, ImageType imageType) throws IOException {
 		if (image == null) {
 			return null;
 		}
 
-		File file = null;
+		String filePath = null;
 		if (imageType == ImageType.THUMBNAIL) {
-			file = new File(image.getThumbnailUrl());
+			filePath = image.getThumbnailUrl();
 		} else {
-			file = new File(image.getUrl());
+			filePath = image.getUrl();
 		}
+		
+		byte[] bytes = getFileBytes(filePath);
+		return bytes;
+	}
+	
+	@Override
+	public byte[] getPhotoBytes(Photo photo, ImageType imageType) throws IOException {
+		String filePath = photo.getPath();
+		if (imageType == ImageType.THUMBNAIL) {
+			filePath = photo.getThumbnailPath();
+		}
+		byte[] bytes = getFileBytes(filePath);
+		return bytes;
+
+	}
+
+	private byte[] getFileBytes(String filePath) throws IOException {
+		File file = new File(filePath);
 		if (!file.exists()) {
 			return null;
 		}
-
+		
 		FileInputStream fileInputStream = new FileInputStream(file);
 		byte[] bytes = IOUtils.toByteArray(fileInputStream);
 		IOUtils.closeQuietly(fileInputStream);
 		return bytes;
 	}
-
 
 	@Override
 	public long getMediaItemFileSize(long mediaItemId) {

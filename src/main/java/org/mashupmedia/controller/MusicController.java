@@ -1,18 +1,13 @@
 package org.mashupmedia.controller;
 
 import java.util.List;
-import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
+import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Song;
@@ -20,11 +15,14 @@ import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.WebHelper;
+import org.mashupmedia.util.WebHelper.WebContentType;
+import org.mashupmedia.view.MediaItemImageView;
 import org.mashupmedia.web.Breadcrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,7 +32,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
@@ -108,11 +105,10 @@ public class MusicController extends BaseController {
 
 		AlbumArtImage albumArtImage = album.getAlbumArtImage();
 
-		final byte[] imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage, imageType);
-
+		byte[] imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage, imageType);
 		Song remoteSong = getFirstRemoteSongInAlbum(album);
 
-		if (remoteSong != null && isEmptyBytes(imageBytes)) {
+		if (remoteSong != null && FileHelper.isEmptyBytes(imageBytes)) {
 			Library library = remoteSong.getLibrary();
 			Location location = library.getLocation();
 			String path = location.getPath();
@@ -126,34 +122,8 @@ public class MusicController extends BaseController {
 			}
 		}
 
-		final String contentType = WebHelper.getImageContentType(albumArtImage);
-		ModelAndView modelAndView = new ModelAndView(new View() {
-
-			@Override
-			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
-					throws Exception {
-				if (isEmptyBytes(imageBytes)) {
-					response.sendRedirect(request.getContextPath() + "/images/no-album-art.png");
-					return;
-				}
-				ServletOutputStream outputStream = response.getOutputStream();
-				try {
-					IOUtils.write(imageBytes, outputStream);
-					outputStream.flush();
-				} finally {
-					IOUtils.closeQuietly(outputStream);
-				}
-			}
-
-			@Override
-			public String getContentType() {
-				if (StringUtils.isBlank(contentType)) {
-					return "image/png";
-				}
-
-				return contentType;
-			}
-		});
+		WebContentType webContentType = WebHelper.getWebContentType(albumArtImage);		
+		ModelAndView modelAndView = new ModelAndView(new MediaItemImageView(imageBytes, webContentType, MediaType.SONG));		
 		return modelAndView;
 	}
 
@@ -173,12 +143,7 @@ public class MusicController extends BaseController {
 		return null;
 	}
 
-	private boolean isEmptyBytes(byte[] bytes) {
-		if (bytes == null || bytes.length == 0) {
-			return true;
-		}
-		return false;
-	}
+
 
 	@Override
 	public String populateMediaType() {

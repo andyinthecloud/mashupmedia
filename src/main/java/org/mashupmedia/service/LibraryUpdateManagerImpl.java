@@ -115,7 +115,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				videoLibraryUpdateManager.updateLibrary(videoLibrary, file, date);
 			} else if (library instanceof PhotoLibrary) {
 				PhotoLibrary photoLibrary = (PhotoLibrary) library;
-				
+				photoLibraryUpdateManager.updateLibrary(photoLibrary, file, date);				
 			}
 		}
 

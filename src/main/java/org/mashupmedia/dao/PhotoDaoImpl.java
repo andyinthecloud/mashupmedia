@@ -19,7 +19,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 				.createQuery(
 						"from org.mashupmedia.model.media.photo.Album a where a.name = :albumName");
 
-		query.setString("name", albumName);
+		query.setString("albumName", albumName);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Album> albums = query.list();
@@ -70,7 +70,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public List<Photo> getLatestPhotos() {
+	public List<Photo> getLatestPhotos(int firstResult) {
 		Query query = sessionFactory
 				.getCurrentSession()
 				.createQuery(
@@ -78,6 +78,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 		query.setCacheable(true);
 		query.setMaxResults(MAX_PHOTOS_RETURNED);
+		query.setFirstResult(firstResult);
 		@SuppressWarnings("unchecked")
 		List<Photo> photos = query.list();
 		return photos;

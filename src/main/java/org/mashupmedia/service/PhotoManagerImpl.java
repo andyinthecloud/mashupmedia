@@ -18,7 +18,7 @@ public class PhotoManagerImpl implements PhotoManager{
 
 	@Override
 	public List<Photo> getLatestPhotos() {
-		List<Photo> photos = photoDao.getLatestPhotos();
+		List<Photo> photos = photoDao.getLatestPhotos(0);
 		return photos;
 	}
 

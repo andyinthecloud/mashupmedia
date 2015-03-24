@@ -329,4 +329,11 @@ public class FileHelper {
 		}
 	}
 
+	
+	public static boolean isEmptyBytes(byte[] bytes) {
+		if (bytes == null || bytes.length == 0) {
+			return true;
+		}
+		return false;
+	}
 }

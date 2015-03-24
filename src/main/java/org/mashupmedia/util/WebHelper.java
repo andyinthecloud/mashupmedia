@@ -9,8 +9,9 @@ public class WebHelper {
 
 	public enum WebContentType {
 		HTML("text/html; charset=utf-8"), JSON("application/json; charset=utf-8"), XML("text/xml; charset=utf-8"), FLASH(
-				"application/x-shockwave-flash"), JPG("image/jpeg"), JPEG("image/jpeg"), PNG("image/x-png"), GIF(
-				"image/gif"), ;
+				"application/x-shockwave-flash"), JPEG("image/jpeg"), PNG("image/x-png"), GIF(
+				"image/gif"), TIFF(
+						"image/tiff");
 
 		WebContentType(String contentType) {
 			this.contentType = contentType;
@@ -56,6 +57,14 @@ public class WebHelper {
 				return webContentType;
 			}
 		}
+		
+		// Check image types with more than one spelling
+		if (webContentTypeValue.equalsIgnoreCase("jpg")) {
+			return WebContentType.JPEG;
+		} else if (webContentTypeValue.equalsIgnoreCase("tif")) {
+			return WebContentType.TIFF;
+		}
+		
 		return defaultWebContentType;
 	}
 
@@ -79,26 +88,17 @@ public class WebHelper {
 		return parameter;
 	}
 
-	public static String getImageContentType(AlbumArtImage albumArtImage) {
+	public static WebContentType getWebContentType(AlbumArtImage albumArtImage) {
 		if (albumArtImage == null) {
-			return null;
+			return WebContentType.PNG;
 		}
 
 		String contentType = albumArtImage.getContentType();
-		return "image/" + contentType;
+		WebContentType webContentType = WebHelper.getWebContentType(contentType, WebContentType.PNG);
+		return webContentType;
 	}
 
-	// public static String getContentType(String format, FormatContentType
-	// formatContentType) {
-	// MediaContentType mediaContentType = getMediaContentType(format,
-	// MediaContentType.MP3);
-	// if (formatContentType == FormatContentType.JPLAYER) {
-	// return mediaContentType.getjPlayerContentType();
-	// } else {
-	// return mediaContentType.getMimeContentType();
-	// }
-	//
-	// }
+
 
 
 

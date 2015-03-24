@@ -52,7 +52,7 @@ public class ProxyController {
 			Model model) throws Exception {
 		String url = "http://api.discogs.com/image/" + fileName;
 		ProxyFile proxyFile = getProxyFile(url, ProxyType.BINARY_FILE);
-		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile, WebContentType.JPG);
+		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile, WebContentType.JPEG);
 		return modelAndView;
 	}
 
@@ -60,7 +60,7 @@ public class ProxyController {
 	public ModelAndView getProxyFile(@RequestParam("url") String url, HttpServletRequest request, Model model)
 			throws Exception {
 		String fileExtension = FileHelper.getFileExtension(url);
-		WebContentType webContentType = WebHelper.getWebContentType(fileExtension, WebContentType.JPG);
+		WebContentType webContentType = WebHelper.getWebContentType(fileExtension, WebContentType.JPEG);
 		ProxyFile proxyFile = getProxyFile(url, ProxyType.BINARY_FILE);
 		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile, webContentType);
 		return modelAndView;

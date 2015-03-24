@@ -62,6 +62,11 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			}
 		}
 
+		if (albumName == null) {
+			File parentFolder = file.getParentFile();
+			albumName = parentFolder.getName();
+		}
+		
 		Album album = getAlbum(albumName, date);
 		album.setUpdatedOn(date);
 
@@ -83,6 +88,10 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper
 					.getMediaContentType(fileExtension);
+			if (mediaContentType == MediaContentType.UNSUPPORTED) {
+				return;
+			}
+			
 			Set<MediaEncoding> mediaEncodings = new HashSet<MediaEncoding>();
 			MediaEncoding mediaEncoding = new MediaEncoding();
 			mediaEncoding.setMediaContentType(mediaContentType);
