@@ -141,7 +141,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		String filePath = photo.getPath();
 		if (imageType == ImageType.THUMBNAIL) {
 			filePath = photo.getThumbnailPath();
-		}
+		} 
+		
 		byte[] bytes = getFileBytes(filePath);
 		return bytes;
 

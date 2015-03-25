@@ -1,5 +1,6 @@
 package org.mashupmedia.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.mashupmedia.model.media.photo.Album;
@@ -17,5 +18,9 @@ public interface PhotoDao {
 	List<Photo> getLatestPhotos(int firstResult);
 
 	List<Album> getAlbums();
+
+	List<Photo> getObsoletePhotos(long libraryId, Date date);
+
+	int removeObsoletePhotos(long libraryId, Date date);
 
 }

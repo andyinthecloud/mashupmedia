@@ -19,9 +19,9 @@ import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.LibraryHelper;
+import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
-import org.mashupmedia.util.WebHelper;
-import org.mashupmedia.util.WebHelper.WebContentType;
 import org.mashupmedia.view.MediaItemImageView;
 import org.mashupmedia.web.Breadcrumb;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,8 @@ public class MusicController extends BaseController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music");
+		Breadcrumb breadcrumb = new Breadcrumb(
+				MessageHelper.getMessage("breadcrumb.music"), "/app/music");
 		breadcrumbs.add(breadcrumb);
 	}
 
@@ -81,21 +82,25 @@ public class MusicController extends BaseController {
 
 	protected void addBreadcrumbsToModel(Model model, String messageKey) {
 		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
-		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage(messageKey));
+		Breadcrumb breadcrumb = new Breadcrumb(
+				MessageHelper.getMessage(messageKey));
 		breadcrumbs.add(breadcrumb);
 		model.addAttribute(breadcrumbs);
 
 	}
 
 	@RequestMapping(value = "/album-art/{imageType}/{albumId}", method = RequestMethod.GET)
-	public ModelAndView getAlbumArt(@PathVariable("imageType") String imageTypeValue,
-			@PathVariable("albumId") Long albumId, Model model) throws Exception {
+	public ModelAndView getAlbumArt(
+			@PathVariable("imageType") String imageTypeValue,
+			@PathVariable("albumId") Long albumId, Model model)
+			throws Exception {
 		ImageType imageType = ImageHelper.getImageType(imageTypeValue);
 		ModelAndView modelAndView = getAlbumArtModelAndView(albumId, imageType);
 		return modelAndView;
 	}
 
-	protected ModelAndView getAlbumArtModelAndView(Long albumId, ImageType imageType) throws Exception {
+	protected ModelAndView getAlbumArtModelAndView(Long albumId,
+			ImageType imageType) throws Exception {
 
 		Album album = musicManager.getAlbum(albumId);
 		if (album == null) {
@@ -105,7 +110,8 @@ public class MusicController extends BaseController {
 
 		AlbumArtImage albumArtImage = album.getAlbumArtImage();
 
-		byte[] imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage, imageType);
+		byte[] imageBytes = connectionManager.getAlbumArtImageBytes(
+				albumArtImage, imageType);
 		Song remoteSong = getFirstRemoteSongInAlbum(album);
 
 		if (remoteSong != null && FileHelper.isEmptyBytes(imageBytes)) {
@@ -117,13 +123,16 @@ public class MusicController extends BaseController {
 
 			if (StringUtils.isNotBlank(path) && remoteMediaItemId > 0) {
 				String imageTypeValue = imageType.toString().toLowerCase();
-				String redirectUrl = path + "/" + imageTypeValue + "/" + remoteMediaItemId;
+				String redirectUrl = path + "/" + imageTypeValue + "/"
+						+ remoteMediaItemId;
 				return new ModelAndView(new RedirectView(redirectUrl));
 			}
 		}
 
-		WebContentType webContentType = WebHelper.getWebContentType(albumArtImage);		
-		ModelAndView modelAndView = new ModelAndView(new MediaItemImageView(imageBytes, webContentType, MediaType.SONG));		
+		MediaContentType mediaContentType = MediaItemHelper
+				.getMediaContentType(albumArtImage.getContentType());
+		ModelAndView modelAndView = new ModelAndView(new MediaItemImageView(
+				imageBytes, mediaContentType, MediaType.SONG));
 		return modelAndView;
 	}
 
@@ -142,8 +151,6 @@ public class MusicController extends BaseController {
 
 		return null;
 	}
-
-
 
 	@Override
 	public String populateMediaType() {

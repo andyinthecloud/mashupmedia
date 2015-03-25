@@ -12,8 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.service.ProxyManager;
 import org.mashupmedia.service.ProxyManager.ProxyType;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.WebHelper;
-import org.mashupmedia.util.WebHelper.WebContentType;
+import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.web.proxy.ProxyFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,45 +32,41 @@ public class ProxyController {
 	private Map<String, ProxyFile> proxyCache = new HashMap<String, ProxyFile>();
 	public static int DEFAULT_CACHE_SECONDS = 86400;
 
-	private static String JPLAYER_VERSION = "2.2.0";
-
 	@Autowired
 	private ProxyManager proxyManager;
 
-	@RequestMapping(value = "/jplayer.swf", method = RequestMethod.GET)
-	public ModelAndView getJPlayerFlash(HttpServletRequest request, Model model) throws Exception {
-		String contextUrl = WebHelper.getContextUrl(request);
-		String url = contextUrl + "/jquery-plugins/jquery.jplayer/" + JPLAYER_VERSION + "/jplayer/jquery.jplayer.swf";
-		ProxyFile proxyFile = getProxyFile(url, ProxyType.BINARY_FILE);
-		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile, WebContentType.FLASH);
-		return modelAndView;
-
-	}
-
 	@RequestMapping(value = "/discogs-image/{fileName:.+}", method = RequestMethod.GET)
-	public ModelAndView getDiscogsImage(@PathVariable("fileName") String fileName, HttpServletRequest request,
-			Model model) throws Exception {
+	public ModelAndView getDiscogsImage(
+			@PathVariable("fileName") String fileName,
+			HttpServletRequest request, Model model) throws Exception {
 		String url = "http://api.discogs.com/image/" + fileName;
 		ProxyFile proxyFile = getProxyFile(url, ProxyType.BINARY_FILE);
-		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile, WebContentType.JPEG);
+		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile,
+				MediaContentType.JPEG);
 		return modelAndView;
 	}
 
 	@RequestMapping(value = "/binary-file", method = RequestMethod.GET)
-	public ModelAndView getProxyFile(@RequestParam("url") String url, HttpServletRequest request, Model model)
-			throws Exception {
+	public ModelAndView getProxyFile(@RequestParam("url") String url,
+			HttpServletRequest request, Model model) throws Exception {
 		String fileExtension = FileHelper.getFileExtension(url);
-		WebContentType webContentType = WebHelper.getWebContentType(fileExtension, WebContentType.JPEG);
+
+		MediaContentType contentType = MediaItemHelper
+				.getMediaContentType(fileExtension);
+
 		ProxyFile proxyFile = getProxyFile(url, ProxyType.BINARY_FILE);
-		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile, webContentType);
+		ModelAndView modelAndView = prepareProxyModelAndView(proxyFile,
+				contentType);
 		return modelAndView;
 	}
 
-	protected ModelAndView prepareProxyModelAndView(final ProxyFile proxyFile, final WebContentType contentType) {
+	protected ModelAndView prepareProxyModelAndView(final ProxyFile proxyFile,
+			final MediaContentType contentType) {
 		ModelAndView modelAndView = new ModelAndView(new View() {
 
 			@Override
-			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
+			public void render(Map<String, ?> model,
+					HttpServletRequest request, HttpServletResponse response)
 					throws Exception {
 				response.getOutputStream().write(proxyFile.getBytes());
 				response.flushBuffer();
@@ -80,7 +76,7 @@ public class ProxyController {
 
 			@Override
 			public String getContentType() {
-				return contentType.getContentType();
+				return contentType.getMimeContentType();
 			}
 		});
 
@@ -88,7 +84,8 @@ public class ProxyController {
 
 	}
 
-	private ProxyFile getProxyFile(String url, ProxyType proxyType) throws IOException {
+	private ProxyFile getProxyFile(String url, ProxyType proxyType)
+			throws IOException {
 		Date date = new Date();
 
 		ProxyFile proxyFile = proxyCache.get(url);

@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.dao.PhotoDao;
+import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem.MediaType;
@@ -41,11 +42,26 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	@Autowired
 	private PhotoDao photoDao;
 
+	private ProcessManager processManager;
+
+	@Override
+	public void deleteObsoletePhotos(long libraryId, Date date) {
+		List<Photo> photos = photoDao.getObsoletePhotos(libraryId, date);
+		int totalDeletedPhotos = photoDao.removeObsoletePhotos(libraryId, date);
+
+		for (Photo photo : photos) {
+			processManager.killProcesses(photo.getId());
+			photo.getThumbnailPath();
+			FileHelper.deletePhotoThumbnail(photo.getThumbnailPath());
+		}
+
+		logger.info(totalDeletedPhotos + " obsolete photos deleted.");
+	}
+
 	@Override
 	public void updateLibrary(PhotoLibrary library, File folder, Date date) {
 		List<Photo> photos = new ArrayList<Photo>();
 		processPhotos(photos, folder, date, null, library);
-
 	}
 
 	protected void processPhotos(List<Photo> photos, File file, Date date,
@@ -66,7 +82,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			File parentFolder = file.getParentFile();
 			albumName = parentFolder.getName();
 		}
-		
+
 		Album album = getAlbum(albumName, date);
 		album.setUpdatedOn(date);
 
@@ -91,7 +107,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			if (mediaContentType == MediaContentType.UNSUPPORTED) {
 				return;
 			}
-			
+
 			Set<MediaEncoding> mediaEncodings = new HashSet<MediaEncoding>();
 			MediaEncoding mediaEncoding = new MediaEncoding();
 			mediaEncoding.setMediaContentType(mediaContentType);

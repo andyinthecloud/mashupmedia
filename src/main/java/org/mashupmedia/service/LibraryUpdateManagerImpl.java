@@ -130,6 +130,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			musicLibraryUpdateManager.deleteObsoleteSongs(libraryId, date);
 		} else if (library instanceof VideoLibrary) {
 			videoLibraryUpdateManager.deleteObsoleteVideos(libraryId, date);
+		} else if (library instanceof PhotoLibrary) {
+			photoLibraryUpdateManager.deleteObsoletePhotos(libraryId, date);			
 		}
 	}
 

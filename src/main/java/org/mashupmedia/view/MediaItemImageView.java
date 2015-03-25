@@ -9,30 +9,30 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.WebHelper.WebContentType;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.web.servlet.View;
 
 public class MediaItemImageView implements View {
 
 	private byte[] imageBytes;
-	private WebContentType webContentType;
+	private MediaContentType mediaContentType;
 	private MediaType mediaType;
 
-	public MediaItemImageView(byte[] imageBytes, WebContentType webContentType,
+	public MediaItemImageView(byte[] imageBytes, MediaContentType mediaContentType,
 			MediaType mediaType) {
 
 		this.imageBytes = imageBytes;
 
-		if (webContentType == null) {
-			webContentType = WebContentType.PNG;
+		if (mediaContentType == null) {
+			mediaContentType = MediaContentType.PNG;
 		}
-		this.webContentType = webContentType;
+		this.mediaContentType = mediaContentType;
 		this.mediaType = mediaType;
 	}
 
 	@Override
 	public String getContentType() {
-		return webContentType.getContentType();
+		return mediaContentType.getMimeContentType();
 	}
 
 	@Override

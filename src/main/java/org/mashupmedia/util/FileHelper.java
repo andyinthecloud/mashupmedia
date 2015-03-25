@@ -329,6 +329,11 @@ public class FileHelper {
 		}
 	}
 
+	public static void deletePhotoThumbnail(String thumbnailPath) {
+		File thumbnailFile = new File(thumbnailPath);		
+		boolean isDeleted = thumbnailFile.delete();
+		logger.info("Photo thumbnail delete status = " + isDeleted);		
+	}
 	
 	public static boolean isEmptyBytes(byte[] bytes) {
 		if (bytes == null || bytes.length == 0) {

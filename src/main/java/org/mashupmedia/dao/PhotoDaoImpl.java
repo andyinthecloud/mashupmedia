@@ -1,5 +1,6 @@
 package org.mashupmedia.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
-	
+
 	private final static int MAX_PHOTOS_RETURNED = 100;
 
 	@Override
@@ -71,10 +72,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public List<Photo> getLatestPhotos(int firstResult) {
-		Query query = sessionFactory
-				.getCurrentSession()
-				.createQuery(
-						"from Photo p order by p.updatedOn");
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"from Photo p order by p.updatedOn");
 
 		query.setCacheable(true);
 		query.setMaxResults(MAX_PHOTOS_RETURNED);
@@ -96,7 +95,31 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		List<Album> albums = query.list();
 		return albums;
 	}
-	
-	
+
+	@Override
+	public List<Photo> getObsoletePhotos(long libraryId, Date date) {
+		Query query = sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"from Photo p where p.updatedOn < :date and p.library.id = :libraryId");
+		query.setDate("date", date);
+		query.setLong("libraryId", libraryId);
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Photo> photos = query.list();
+		return photos;
+	}
+
+	@Override
+	public int removeObsoletePhotos(long libraryId, Date date) {
+		Query query = sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"delete Photo p where p.updatedOn < :date and p.library.id = :libraryId");
+		query.setDate("date", date);
+		query.setLong("libraryId", libraryId);
+		int totalDeletedPhotos = query.executeUpdate();
+		return totalDeletedPhotos;
+	}
 
 }
