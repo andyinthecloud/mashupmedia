@@ -10,7 +10,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.music.Album;
 
 @Entity
 @Indexed

@@ -39,7 +39,7 @@ public class PhotoController {
 		return modelAndView;
 	}
 
-	@RequestMapping(value = "/orignal/{photoId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/original/{photoId}", method = RequestMethod.GET)
 	public ModelAndView getOriginal(@PathVariable("photoId") Long photoId,
 			Model model) throws Exception {
 		ModelAndView modelAndView = getPhotoModelAndView(photoId,
@@ -62,6 +62,20 @@ public class PhotoController {
 		ModelAndView modelAndView = new ModelAndView(new MediaItemImageView(
 				photoBytes, MediaContentType.PNG, MediaType.PHOTO));
 		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/show/{photoId}", method = RequestMethod.GET)
+	public String getPhotoPage(@PathVariable("photoId") Long photoId,
+			Model model) throws Exception {
+		MediaItem mediaItem = mediaManager.getMediaItem(photoId);
+		if (!(mediaItem instanceof Photo)) {
+			logger.error("Expecting a photo got " + mediaItem.getClass()
+					+ " from id = " + mediaItem.getId());
+			return null;
+		}
+		
+		model.addAttribute("photo", mediaItem);
+		return "photo/show";
 	}
 
 }

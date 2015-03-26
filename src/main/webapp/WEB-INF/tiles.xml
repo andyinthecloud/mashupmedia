@@ -139,12 +139,12 @@
 	</definition>
 
 	<definition name="videos" extends="video">
+		<put-attribute name="bodyClass" value="video" />
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/video/list-videos.jsp" />
 	</definition>
 
-	<definition name="videos/show" extends="video">
-		<put-attribute name="bodyClass" value="video" />
+	<definition name="video/show" extends="video">
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/video/video.jsp" />
 	</definition>
 
@@ -154,13 +154,20 @@
 	</definition>
 
 	<definition name="photo" extends="home">
+		<put-attribute name="bodyClass" value="photo" />
 		<put-attribute name="topBar"
 			value="/WEB-INF/jsp/tiles/photo/photo-top-bar.jsp" />
+		<put-attribute name="bodyClass" value="photo" />
 	</definition>
 	
 	<definition name="photos" extends="photo">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/photo/list-photos.jsp" />
+	</definition>
+	
+	<definition name="photo/show" extends="photo">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/photo.jsp" />
 	</definition>
 	
 	

@@ -925,3 +925,31 @@ ul.items a.ui-icon {
 	height: 20px;
 	margin-right: 10px;
 }
+
+body.photo ul.photo-thumbnails {
+	list-style: none;
+}
+
+body.photo ul.photo-thumbnails li{
+	display: inline-block;
+	padding: 5px;
+	margin: 15px;
+	width: 200px;	
+	height: 200px;
+	border: 2px solid #a0a0a0;
+	overflow: hidden;
+}
+
+body.photo ul.photo-thumbnails li a{
+
+	/*
+	background-size: cover;
+	*/
+}
+
+body.photo ul.photo-thumbnails li a img{
+	border: none;
+	width: 100%;
+	
+
+}
