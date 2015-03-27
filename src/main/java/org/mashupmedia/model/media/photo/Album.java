@@ -9,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -29,10 +27,8 @@ public class Album implements Serializable {
 	private String name;
 	private Date createdOn;
 	private Date updatedOn;
-	@OneToMany(mappedBy = "album")
-	@OrderBy("updatedOn")
 	@XmlTransient
-	private List<Photo> photos;
+	private transient List<Photo> photos;
 
 
 	public long getId() {

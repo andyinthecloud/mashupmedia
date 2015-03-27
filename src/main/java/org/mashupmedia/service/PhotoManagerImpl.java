@@ -11,14 +11,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class PhotoManagerImpl implements PhotoManager{
+public class PhotoManagerImpl implements PhotoManager {
+
+	@Autowired
+	private SecurityManager securityManager;
 	
 	@Autowired
 	private PhotoDao photoDao;
 
 	@Override
 	public List<Photo> getLatestPhotos() {
-		List<Photo> photos = photoDao.getLatestPhotos(0);
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
+		List<Photo> photos = photoDao.getLatestPhotos(userGroupIds, 0);
 		return photos;
 	}
 
@@ -26,6 +30,13 @@ public class PhotoManagerImpl implements PhotoManager{
 	public List<Album> getAlbums() {
 		List<Album> albums = photoDao.getAlbums();
 		return albums;
+	}
+
+	@Override
+	public Album getAlbum(long albumId) {
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
+		Album album = photoDao.getAlbum(userGroupIds, albumId);
+		return album;
 	}
 
 }

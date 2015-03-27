@@ -7,6 +7,7 @@
 	<img class="original-photo" alt="${photo.displayTitle}" title="${photo.displayTitle}"
 		src="<c:url value="/app/photo/original/${photo.id}" />" />
 
-	<p>${photo.metadata}</p>
+	<% pageContext.setAttribute("newLine", "\n"); %> 
+	<p>${fn:replace(photo.metadata, newLine, "<br />")}</p>
 
 </div>

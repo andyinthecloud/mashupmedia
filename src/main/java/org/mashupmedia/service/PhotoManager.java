@@ -10,4 +10,6 @@ public interface PhotoManager {
 	public List<Photo> getLatestPhotos();
 
 	public List<Album> getAlbums();
+
+	public Album getAlbum(long albumId);	
 }

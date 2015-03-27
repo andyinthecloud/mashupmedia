@@ -9,18 +9,20 @@ import org.mashupmedia.model.media.photo.Photo;
 public interface PhotoDao {
 
 
-	void savePhoto(Photo photo, boolean isSessionFlush);
+	public void savePhoto(Photo photo, boolean isSessionFlush);
 
-	Photo getPhotoByAbsolutePath(String path);
+	public Photo getPhotoByAbsolutePath(String path);
 
-	List<Album> getAlbums(String albumName);
+	public List<Album> getAlbums(String albumName);
 
-	List<Photo> getLatestPhotos(int firstResult);
+	public List<Photo> getLatestPhotos(List<Long> groupIds, int firstResult);
 
-	List<Album> getAlbums();
+	public List<Album> getAlbums();
 
-	List<Photo> getObsoletePhotos(long libraryId, Date date);
+	public List<Photo> getObsoletePhotos(long libraryId, Date date);
 
-	int removeObsoletePhotos(long libraryId, Date date);
+	public int removeObsoletePhotos(long libraryId, Date date);
+
+	public Album getAlbum(List<Long> groupIds, long albumId);
 
 }

@@ -26,7 +26,7 @@ public class ListPhotosController extends BaseController {
 				MessageHelper.getMessage("breadcrumb.photos"));
 		breadcrumbs.add(breadcrumb);
 	}
-	
+
 	@Override
 	@ModelAttribute("isTransparentBackground")
 	public boolean isTransparentBackground() {
@@ -39,7 +39,7 @@ public class ListPhotosController extends BaseController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String handleGetVideoList(Model model) {
+	public String handleGetPhotoList(Model model) {
 		List<Photo> photos = photoManager.getLatestPhotos();
 		model.addAttribute("photos", photos);
 		return "photos";

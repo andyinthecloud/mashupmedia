@@ -36,6 +36,7 @@ import com.drew.metadata.Tag;
 public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager {
 
 	private final int PHOTOS_SAVE_AMOUNT_MAX_SIZE = 20;
+	private final String NEW_LINE = "\n";
 
 	private Logger logger = Logger.getLogger(getClass());
 
@@ -101,6 +102,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 		if (isCreatePhoto) {
 			photo = new Photo();
+			photo.setAlbum(album);
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper
 					.getMediaContentType(fileExtension);
@@ -128,6 +130,9 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				Metadata metadata = ImageMetadataReader.readMetadata(file);
 				for (Directory directory : metadata.getDirectories()) {
 					for (Tag tag : directory.getTags()) {
+						if (metadataBuilder.length() > 0) {
+							metadataBuilder.append(NEW_LINE);
+						}
 						metadataBuilder.append(tag.toString());
 					}
 				}

@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
+import org.mashupmedia.util.DaoHelper;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -29,14 +31,20 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public void savePhoto(Photo photo, boolean isSessionFlush) {
+		Album album = photo.getAlbum();
+		saveOrUpdate(album);
 		saveOrUpdate(photo);
 		flushSession(isSessionFlush);
 	}
 
 	@Override
 	public Photo getPhotoByAbsolutePath(String path) {
+
+		StringBuilder queryBuilder = new StringBuilder("select p from Photo p");
+		queryBuilder.append(" where p.path = :path");
+
 		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from Photo p where p.path = :path");
+				queryBuilder.toString());
 		query.setString("path", path);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -71,10 +79,15 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public List<Photo> getLatestPhotos(int firstResult) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from Photo p order by p.updatedOn");
+	public List<Photo> getLatestPhotos(List<Long> groupIds, int firstResult) {
 
+		StringBuilder queryBuilder = new StringBuilder(
+				"select p from Photo p join p.library.groups g");
+		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+		queryBuilder.append(" order by p.createdOn desc");
+
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				queryBuilder.toString());
 		query.setCacheable(true);
 		query.setMaxResults(MAX_PHOTOS_RETURNED);
 		query.setFirstResult(firstResult);
@@ -120,6 +133,45 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		query.setLong("libraryId", libraryId);
 		int totalDeletedPhotos = query.executeUpdate();
 		return totalDeletedPhotos;
+	}
+
+	@Override
+	public Album getAlbum(List<Long> groupIds, long albumId) {
+
+		Query albumQuery = sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"from org.mashupmedia.model.media.photo.Album a where a.id = :albumId");
+		albumQuery.setLong("albumId", albumId);
+		albumQuery.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Album> albums = albumQuery.list();
+		if (albums.isEmpty()) {
+			return null;
+		}
+
+		if (albums.size() > 1) {
+			throw new MashupMediaRuntimeException("Error - " + albums.size()
+					+ " share the same id");
+		}
+
+		Album album = albums.get(0);
+
+		StringBuilder listPhotosQueryBuilder = new StringBuilder(
+				"select p from Photo p join p.library.groups g");
+		DaoHelper.appendGroupFilter(listPhotosQueryBuilder, groupIds);
+		listPhotosQueryBuilder.append(" where p.album.id = :albumId");
+		listPhotosQueryBuilder.append(" order by p.createdOn desc");
+		Query listPhotosQuery = sessionFactory.getCurrentSession().createQuery(
+				listPhotosQueryBuilder.toString());
+		albumQuery.setLong("albumId", albumId);
+		albumQuery.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Photo> photos = listPhotosQuery.list();
+
+		album.setPhotos(photos);
+
+		return album;
 	}
 
 }

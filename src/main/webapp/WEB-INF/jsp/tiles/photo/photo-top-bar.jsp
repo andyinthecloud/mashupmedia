@@ -31,17 +31,16 @@
 </script>
 
 
-<div id="top-bar-music-player" class="top-bar">
+<div id="top-bar-video-player" class="top-bar">
 
 	<table class="top-bar-menu">
 		<tr>
 			<td class="top-home-link"><a href="<c:url value="/" />"><spring:message code="top-bar.home" /></a></td>
 			<td>
 				<ul class="main-menu group">
-					<li><a href="<c:url value="/app/videos" />"><spring:message code="top-bar.list-videos" /></a></li>
+					<li><a href="<c:url value="/app/photos" />"><spring:message code="top-bar.photos" /></a></li>
+					<li><a href="<c:url value="/app/photos/albums" />"><spring:message code="top-bar.photo-albums" /></a></li>
 					<sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
-					<li><a href="<c:url value="/app/encode/processes" />"><spring:message code="top-bar.encoding.queue" /></a></li>
-					</sec:authorize><sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
 					<li><a href="<c:url value="/app/configuration/administration/account" />"><spring:message code="top-bar.my-account" /></a></li>
 					</sec:authorize>
 					<li><a href="<c:url value="/j_spring_security_logout" />"><spring:message code="top-bar.log-out" /></a></li>

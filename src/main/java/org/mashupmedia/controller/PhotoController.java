@@ -1,6 +1,7 @@
 package org.mashupmedia.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.MediaItem;
@@ -8,9 +9,11 @@ import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MediaManager;
+import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.view.MediaItemImageView;
+import org.mashupmedia.web.Breadcrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/photo")
-public class PhotoController {
+public class PhotoController extends BaseController {
 
 	private Logger logger = Logger.getLogger(getClass());
 
@@ -30,6 +33,18 @@ public class PhotoController {
 
 	@Autowired
 	private ConnectionManager connectionManager;
+
+	@Override
+	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
+		Breadcrumb breadcrumb = new Breadcrumb(
+				MessageHelper.getMessage("breadcrumb.photos"), "/app/photos");
+		breadcrumbs.add(breadcrumb);
+	}
+
+	@Override
+	public String getPageTitleMessageKey() {
+		return "photo.title";
+	}
 
 	@RequestMapping(value = "/thumbnail/{photoId}", method = RequestMethod.GET)
 	public ModelAndView getThumbnail(@PathVariable("photoId") Long photoId,
@@ -63,7 +78,7 @@ public class PhotoController {
 				photoBytes, MediaContentType.PNG, MediaType.PHOTO));
 		return modelAndView;
 	}
-	
+
 	@RequestMapping(value = "/show/{photoId}", method = RequestMethod.GET)
 	public String getPhotoPage(@PathVariable("photoId") Long photoId,
 			Model model) throws Exception {
@@ -73,7 +88,7 @@ public class PhotoController {
 					+ " from id = " + mediaItem.getId());
 			return null;
 		}
-		
+
 		model.addAttribute("photo", mediaItem);
 		return "photo/show";
 	}
