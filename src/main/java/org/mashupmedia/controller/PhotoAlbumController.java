@@ -41,7 +41,7 @@ public class PhotoAlbumController extends BaseController {
 	public String handleGetPhotoAlbumList(Model model) {
 		List<Album> albums = photoManager.getAlbums();
 		model.addAttribute("albums", albums);
-		return "photo-albums";
+		return "photo/albums";
 	}
 
 	@RequestMapping(value = "/show/{albumId}", method = RequestMethod.GET)
@@ -49,7 +49,7 @@ public class PhotoAlbumController extends BaseController {
 			Model model) {
 		Album album = photoManager.getAlbum(albumId);
 		model.addAttribute("album", album);
-		return "photo-album";
+		return "photo/album";
 	}
 
 }

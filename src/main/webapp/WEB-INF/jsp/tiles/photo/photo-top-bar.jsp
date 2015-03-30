@@ -39,7 +39,7 @@
 			<td>
 				<ul class="main-menu group">
 					<li><a href="<c:url value="/app/photos" />"><spring:message code="top-bar.photos" /></a></li>
-					<li><a href="<c:url value="/app/photos/albums" />"><spring:message code="top-bar.photo-albums" /></a></li>
+					<li><a href="<c:url value="/app/photo/album/list" />"><spring:message code="top-bar.photo-albums" /></a></li>
 					<sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
 					<li><a href="<c:url value="/app/configuration/administration/account" />"><spring:message code="top-bar.my-account" /></a></li>
 					</sec:authorize>

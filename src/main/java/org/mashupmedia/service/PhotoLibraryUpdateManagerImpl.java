@@ -102,6 +102,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 		if (isCreatePhoto) {
 			photo = new Photo();
+			photo.setCreatedOn(date);
 			photo.setAlbum(album);
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper

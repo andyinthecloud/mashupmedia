@@ -170,5 +170,15 @@
 			value="/WEB-INF/jsp/tiles/photo/photo.jsp" />
 	</definition>
 	
+	<definition name="photo/albums" extends="photo">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/list-albums.jsp" />
+	</definition>
+	
+	<definition name="photo/album" extends="photo">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/album.jsp" />
+	</definition>
+	
 	
 </tiles-definitions>

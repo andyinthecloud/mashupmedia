@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -146,6 +147,7 @@ public class MapperManagerImpl implements MapperManager {
 
 		PartialUnmarshaller<Song> partialUnmarshaller = new PartialUnmarshaller<Song>(inputStream, Song.class);
 
+		Date date = new Date();		
 		while (partialUnmarshaller.hasNext()) {
 			Song song = partialUnmarshaller.next();
 			String title = StringEscapeUtils.unescapeXml(song.getTitle());
@@ -156,13 +158,13 @@ public class MapperManagerImpl implements MapperManager {
 			songs.add(song);
 
 			if (songs.size() == 10) {
-				musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
+				musicLibraryUpdateManager.saveSongs(musicLibrary, songs, date);
 				songs.clear();
 			}
 		}
 
 		partialUnmarshaller.close();
-		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs, date);
 
 	}
 

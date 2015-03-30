@@ -1,6 +1,7 @@
 package org.mashupmedia.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -32,17 +33,18 @@ public class TestMusicManager extends TestBaseService {
 		musicLibrary.setName("test");
 		libraryManager.saveLibrary(musicLibrary);
 		Assert.assertTrue(musicLibrary.getId() > 0);
+		Date date =  new Date();
 		
 		List<Song> songs = new ArrayList<Song>();
 		Song song1 = TestHelper.prepareSong(musicLibrary, "song1");
 		songs.add(song1);
-		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs, date);
 		
 
 		songs = new ArrayList<Song>();
 		Song song2 = TestHelper.prepareSong(musicLibrary, "song2");
 		songs.add(song2);
-		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs, date);
 		
 		String artistName = song2.getArtist().getName();
 		String albumName = song2.getAlbum().getName();
@@ -61,22 +63,24 @@ public class TestMusicManager extends TestBaseService {
 		musicLibrary.setName("test");
 		libraryManager.saveLibrary(musicLibrary);
 		
+		Date date = new Date();	
+		
 		List<Song> songs = new ArrayList<Song>();
 		Song song1 = TestHelper.prepareSong(musicLibrary, "song1");
 		songs.add(song1);
-		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs, date);
 
 		songs = new ArrayList<Song>();
 		Song song2 = TestHelper.prepareSong(musicLibrary, "song2");
 		song2.getAlbum().setName("album2");
 		songs.add(song2);
-		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs, date);
 
 		songs = new ArrayList<Song>();
 		Song song3 = TestHelper.prepareSong(musicLibrary, "song2");
 		song3.getAlbum().setName("album3");
 		songs.add(song3);
-		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs, date);
 		
 		
 		int totalAlbums = 30;

@@ -9,7 +9,7 @@ import org.mashupmedia.model.media.music.Song;
 
 public interface MusicLibraryUpdateManager {
 
-	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs);
+	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs, Date date);
 
 	public void deleteSongs(List<Song> songs);
 

@@ -1,6 +1,7 @@
 package org.mashupmedia.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -89,9 +90,11 @@ public class TestPlaylistManager extends TestBaseService {
 
 	protected PlaylistMediaItem preparePlaylistMediaItem(MusicLibrary musicLibrary, String songName, Playlist playlist) {
 		List<Song> songs = new ArrayList<Song>();
+		
+		Date date = new Date();
 		Song song1 = TestHelper.prepareSong(musicLibrary, songName);
 		songs.add(song1);
-		musicLibraryUpdateManager.saveSongs(musicLibrary, songs);
+		musicLibraryUpdateManager.saveSongs(musicLibrary, songs, date);
 		
 		PlaylistMediaItem playlistMediaItem = new PlaylistMediaItem();
 		playlistMediaItem.setMediaItem(song1);

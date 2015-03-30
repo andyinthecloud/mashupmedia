@@ -119,6 +119,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		int totalVideosWithSameNameThreshold = 0;
 		if (isCreateVideo) {
 			video = new Video();
+			video.setCreatedOn(date);
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
 			Set<MediaEncoding> mediaEncodings = new HashSet<MediaEncoding>();

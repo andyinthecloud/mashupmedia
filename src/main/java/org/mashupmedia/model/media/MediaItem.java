@@ -76,6 +76,8 @@ public class MediaItem implements Serializable {
 	private Library library;
 	private long sizeInBytes;
 	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdOn;
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedOn;
 	private String format;
 	@Field(analyze = Analyze.NO)
@@ -236,6 +238,16 @@ public class MediaItem implements Serializable {
 		this.format = format;
 	}
 
+	
+	
+	public Date getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
+	}
+
 	public Date getUpdatedOn() {
 		return updatedOn;
 	}
@@ -341,6 +353,8 @@ public class MediaItem implements Serializable {
 		builder.append(library);
 		builder.append(", sizeInBytes=");
 		builder.append(sizeInBytes);
+		builder.append(", createdOn=");
+		builder.append(createdOn);
 		builder.append(", updatedOn=");
 		builder.append(updatedOn);
 		builder.append(", format=");

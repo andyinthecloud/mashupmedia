@@ -121,7 +121,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
-	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs) {
+	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs, Date date) {
 		if (songs == null || songs.isEmpty()) {
 			return;
 		}
@@ -195,6 +195,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			album.setAlbumArtImage(albumArtImage);
 			song.setAlbum(album);
 
+			song.setCreatedOn(date);
 			song.setArtist(artist);
 
 			Year year = song.getYear();
@@ -313,7 +314,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 					prepareSongs(date, songs, childFile, musicLibrary,
 							folderArtistName, folderAlbumName);
 				}
-				saveSongs(musicLibrary, songs);
+				saveSongs(musicLibrary, songs, date);
 				songs.clear();
 				folderArtistName = "";
 			} else {
