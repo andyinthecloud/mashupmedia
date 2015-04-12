@@ -109,10 +109,10 @@ public class MediaItem implements Serializable {
 	@OrderBy("createdOn")
 	@XmlTransient
 	private List<Comment> comments;
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@OrderBy("text")
-	@XmlTransient
-	private List<Tag> tags;
+//	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+//	@OrderBy("text")
+//	@XmlTransient
+//	private List<Tag> tags;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	@XmlTransient
 	private Set<MediaEncoding> mediaEncodings;
@@ -139,13 +139,13 @@ public class MediaItem implements Serializable {
 	
 	
 
-	public List<Tag> getTags() {
-		return tags;
-	}
-
-	public void setTags(List<Tag> tags) {
-		this.tags = tags;
-	}
+//	public List<Tag> getTags() {
+//		return tags;
+//	}
+//
+//	public void setTags(List<Tag> tags) {
+//		this.tags = tags;
+//	}
 
 	public boolean isPublicAccess() {
 		return publicAccess;
@@ -397,8 +397,6 @@ public class MediaItem implements Serializable {
 		builder.append(uniqueName);
 		builder.append(", comments=");
 		builder.append(comments);
-		builder.append(", tags=");
-		builder.append(tags);
 		builder.append("]");
 		return builder.toString();
 	}

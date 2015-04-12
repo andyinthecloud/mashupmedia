@@ -1,5 +1,6 @@
 package org.mashupmedia.model.media;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Cacheable;
@@ -14,8 +15,12 @@ import org.mashupmedia.model.User;
 
 @Entity
 @Cacheable
-public class Tag {
+public class Tag implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1056696816094274402L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
