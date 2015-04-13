@@ -17,9 +17,6 @@ import org.mashupmedia.model.User;
 @Cacheable
 public class Tag implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1056696816094274402L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

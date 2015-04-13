@@ -17,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -109,10 +110,9 @@ public class MediaItem implements Serializable {
 	@OrderBy("createdOn")
 	@XmlTransient
 	private List<Comment> comments;
-//	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-//	@OrderBy("text")
-//	@XmlTransient
-//	private List<Tag> tags;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@XmlTransient
+	private Set<Tag> tags;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	@XmlTransient
 	private Set<MediaEncoding> mediaEncodings;
@@ -136,16 +136,14 @@ public class MediaItem implements Serializable {
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
-	
-	
 
-//	public List<Tag> getTags() {
-//		return tags;
-//	}
-//
-//	public void setTags(List<Tag> tags) {
-//		this.tags = tags;
-//	}
+	public Set<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
+	}
 
 	public boolean isPublicAccess() {
 		return publicAccess;
@@ -397,6 +395,8 @@ public class MediaItem implements Serializable {
 		builder.append(uniqueName);
 		builder.append(", comments=");
 		builder.append(comments);
+		builder.append(", tags=");
+		builder.append(tags);		
 		builder.append("]");
 		return builder.toString();
 	}

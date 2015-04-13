@@ -1,32 +1,45 @@
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/security
-           http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<b:beans xmlns:b="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 
 
-	<beans:bean id="customUserDetailsService"
-		class="org.mashupmedia.security.CustomUserDetailsService" />
+	<b:bean id="customUserDetailsService" class="org.mashupmedia.security.CustomUserDetailsService" />
 
-	<beans:bean id="daoAuthenticationProvider"
+	<b:bean id="daoAuthenticationProvider"
 		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
-		<beans:property name="userDetailsService" ref="customUserDetailsService" />
-	</beans:bean>
+		<b:property name="userDetailsService" ref="customUserDetailsService" />
+		<b:property name="authoritiesMapper" ref="authoritiesMapper" />
+	</b:bean>
+
+	<b:bean id="authoritiesMapper"
+		class="org.springframework.security.access.hierarchicalroles.RoleHierarchyAuthoritiesMapper">
+		<b:constructor-arg ref="roleHierarchy" />
+	</b:bean>
+
+	<b:bean id="roleHierarchy"
+		class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+		<b:property name="hierarchy">
+			<b:value>
+				ROLE_ADMIN > ROLE_USER
+			</b:value>
+		</b:property>
+	</b:bean>
 
 
-	<beans:bean id="authenticationManager"
+	<b:bean id="authenticationManager"
 		class="org.springframework.security.authentication.ProviderManager">
-		<beans:property name="providers">
-			<beans:list>
-				<beans:ref local="daoAuthenticationProvider" />
-			</beans:list>
-		</beans:property>
-	</beans:bean>
+		<b:property name="providers">
+			<b:list>
+				<b:ref local="daoAuthenticationProvider" />
+			</b:list>
+		</b:property>
+	</b:bean>
 
-	<authentication-manager >
-		<authentication-provider user-service-ref="customUserDetailsService" >
+	<authentication-manager>
+		<authentication-provider user-service-ref="customUserDetailsService">
 			<password-encoder ref="customPasswordEncoder" />
 		</authentication-provider>
 	</authentication-manager>
@@ -48,4 +61,4 @@
 	</http>
 
 
-</beans:beans>
+</b:beans>
