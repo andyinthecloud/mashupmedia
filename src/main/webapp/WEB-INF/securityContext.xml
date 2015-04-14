@@ -4,38 +4,21 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-
-
 	<b:bean id="customUserDetailsService" class="org.mashupmedia.security.CustomUserDetailsService" />
 
 	<b:bean id="daoAuthenticationProvider"
 		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
 		<b:property name="userDetailsService" ref="customUserDetailsService" />
-		<b:property name="authoritiesMapper" ref="authoritiesMapper" />
 	</b:bean>
-
-	<b:bean id="authoritiesMapper"
-		class="org.springframework.security.access.hierarchicalroles.RoleHierarchyAuthoritiesMapper">
-		<b:constructor-arg ref="roleHierarchy" />
-	</b:bean>
-
-	<b:bean id="roleHierarchy"
-		class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
-		<b:property name="hierarchy">
-			<b:value>
-				ROLE_ADMIN > ROLE_USER
-			</b:value>
-		</b:property>
-	</b:bean>
-
 
 	<b:bean id="authenticationManager"
 		class="org.springframework.security.authentication.ProviderManager">
-		<b:property name="providers">
+		<b:constructor-arg>
 			<b:list>
 				<b:ref local="daoAuthenticationProvider" />
 			</b:list>
-		</b:property>
+		</b:constructor-arg>
+
 	</b:bean>
 
 	<authentication-manager>
@@ -53,7 +36,7 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
 	<http pattern="/app/login*" security="none" />
 	<http pattern="/app/remote/**" security="none" />
 
-	<http auto-config='true'>
+	<http auto-config="true" use-expressions="false">
 		<remember-me />
 		<intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/**" access="ROLE_USER" />
