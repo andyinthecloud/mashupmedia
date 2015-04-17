@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html> 
 
 <%@page import="org.mashupmedia.constants.MashUpMediaConstants"%>
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
@@ -48,6 +48,11 @@
 </head>
 
 <body class="<tiles:getAsString name="bodyClass"/>">
+
+<c:url var="rootUrl" value="/" />
+<form:form id="form-log-out"  action="${rootUrl}app/log-out">
+<input type="submit" />
+</form:form>
 
 	<tiles:insertAttribute name="topBar" />
 

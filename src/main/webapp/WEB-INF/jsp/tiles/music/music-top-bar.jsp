@@ -115,11 +115,11 @@
 					<li><a href="javascript:;" rel="address:/address-list-artists"><spring:message code="top-bar.artists" /></a></li>
 					<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message code="top-bar.albums" /></a></li>
 					<li><a href="javascript:;" rel="address:/address-list-playlists"><spring:message code="top-bar.playlists" /></a></li>
-					<sec:authorize ifAllGranted="ROLE_ADMINISTRATOR">
+					<sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
 					<li><a href="<c:url value="/app/encode/processes" />"><spring:message code="top-bar.encoding.queue" /></a></li>
 					</sec:authorize>
 					<li><a href="<c:url value="/app/configuration/administration/account" />"><spring:message code="top-bar.my-account" /></a></li>
-					<li><a href="<c:url value="/j_spring_security_logout" />"><spring:message code="top-bar.log-out" /></a></li>
+					<li><a href="<c:url value="/app/log-out" />"><spring:message code="top-bar.log-out" /></a></li>
 					<li><a href="http://www.mashupmedia.org" target="_blank"><img title="Mashup Media" src="<c:url value="/images/mashupmedia-logo-inline.png" />" /></a></li>
 					<c:if test="${isNewMashupMediaVersionAvailable}">
 						<li class="update-available ui-corner-all"><a href="http://www.mashupmedia.org/download" target="_blank" title="<spring:message code="top-bar.new-update.message" />"><span class="ui-icon ui-icon-circle-arrow-s"></span></a></li>

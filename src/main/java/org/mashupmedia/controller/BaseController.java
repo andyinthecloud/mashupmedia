@@ -31,7 +31,8 @@ public abstract class BaseController {
 	private ConfigurationManager configurationManager;
 
 	protected Breadcrumb getHomeBreadcrumb() {
-		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.home"), "/app/home");
+		Breadcrumb breadcrumb = new Breadcrumb(
+				MessageHelper.getMessage("breadcrumb.home"), "/app/home");
 		return breadcrumb;
 	}
 
@@ -67,8 +68,8 @@ public abstract class BaseController {
 			return false;
 		}
 
-		double currentVersion = NumberUtils
-				.toDouble(MessageHelper.getMessage(MashUpMediaConstants.APPLICATION_VERSION));
+		double currentVersion = NumberUtils.toDouble(MessageHelper
+				.getMessage(MashUpMediaConstants.APPLICATION_VERSION));
 
 		if (latestVersion > currentVersion) {
 			return true;
@@ -91,7 +92,8 @@ public abstract class BaseController {
 
 	@ModelAttribute(MODEL_KEY_HEAD_PAGE_TITLE)
 	public String populateHeadPageTitle() {
-		StringBuilder titleBuilder = new StringBuilder(MessageHelper.getMessage("page.default.title.prefix"));
+		StringBuilder titleBuilder = new StringBuilder(
+				MessageHelper.getMessage("page.default.title.prefix"));
 		titleBuilder.append(" ");
 		titleBuilder.append(MessageHelper.getMessage(getPageTitleMessageKey()));
 		return titleBuilder.toString();
@@ -104,7 +106,8 @@ public abstract class BaseController {
 
 	@ModelAttribute("musicPlaylists")
 	public List<Playlist> populatePlaylists() {
-		List<Playlist> playlist = playlistManager.getPlaylistsForCurrentUser(PlaylistType.MUSIC);
+		List<Playlist> playlist = playlistManager
+				.getPlaylistsForCurrentUser(PlaylistType.MUSIC);
 		return playlist;
 	}
 
@@ -135,12 +138,13 @@ public abstract class BaseController {
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
-		binder.registerCustomEditor(String.class, new StringTrimmerEditor(" \t\r\n\f", true));
+		binder.registerCustomEditor(String.class, new StringTrimmerEditor(
+				" \t\r\n\f", true));
 	}
-	
+
 	@ModelAttribute("mediaType")
 	public String populateMediaType() {
 		return "";
 	}
-	
+
 }

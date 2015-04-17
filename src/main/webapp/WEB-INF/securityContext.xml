@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<b:beans xmlns:b="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/security"
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-	<b:bean id="customUserDetailsService" class="org.mashupmedia.security.CustomUserDetailsService" />
 
-	<b:bean id="daoAuthenticationProvider"
+	<debug/>
+	
+	<global-method-security pre-post-annotations="enabled" />
+
+	<beans:bean id="customUserDetailsService" class="org.mashupmedia.security.CustomUserDetailsService" />
+
+	<beans:bean id="daoAuthenticationProvider"
 		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
-		<b:property name="userDetailsService" ref="customUserDetailsService" />
-	</b:bean>
+		<beans:property name="userDetailsService" ref="customUserDetailsService" />
+	</beans:bean>
 
-	<b:bean id="authenticationManager"
+	<beans:bean id="authenticationManager"
 		class="org.springframework.security.authentication.ProviderManager">
-		<b:constructor-arg>
-			<b:list>
-				<b:ref local="daoAuthenticationProvider" />
-			</b:list>
-		</b:constructor-arg>
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:ref local="daoAuthenticationProvider" />
+			</beans:list>
+		</beans:constructor-arg>
 
-	</b:bean>
+	</beans:bean>
 
 	<authentication-manager>
 		<authentication-provider user-service-ref="customUserDetailsService">
@@ -33,15 +39,17 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
 	<http pattern="/jquery-ui/**" security="none" />
 	<http pattern="/jquery-plugins/**" security="none" />
 	<http pattern="/images/**" security="none" />
-	<http pattern="/app/login*" security="none" />
 	<http pattern="/app/remote/**" security="none" />
 
-	<http auto-config="true" use-expressions="false">
+	<http>
+		<intercept-url pattern="/app/login*" access="permitAll" />
+		<intercept-url pattern="/app/log-out*" access="permitAll" />
+		<intercept-url pattern="/**" access="isAuthenticated()" />
+		<form-login login-page="/app/login" default-target-url="/app/login"/>
+		<csrf disabled="false"/>
+		<logout logout-success-url="/app/log-out" delete-cookies="JSESSIONID"/>
 		<remember-me />
-		<intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<intercept-url pattern="/**" access="ROLE_USER" />
-		<form-login login-page="/app/login" />
 	</http>
 
 
-</b:beans>
+</beans:beans>

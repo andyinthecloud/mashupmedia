@@ -49,6 +49,10 @@ $(document).ready(function() {
 		mashupMedia.playNextSong();
 	});
 
+	$("#log-out").click(function() {
+		$("#form-log-out").submit(); 
+	});
+
 	$.address.init(function(event) {
 		$("#quick-search").address();
 	});
