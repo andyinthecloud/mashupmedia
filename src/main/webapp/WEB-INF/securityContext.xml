@@ -47,7 +47,7 @@
 		<intercept-url pattern="/**" access="isAuthenticated()" />
 		<form-login login-page="/app/login" default-target-url="/app/login"/>
 		<csrf disabled="false"/>
-		<logout logout-success-url="/app/log-out" delete-cookies="JSESSIONID"/>
+		<logout logout-success-url="/app/log-out-success" delete-cookies="JSESSIONID"/>
 		<remember-me />
 	</http>
 

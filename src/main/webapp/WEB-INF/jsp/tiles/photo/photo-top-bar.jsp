@@ -43,7 +43,7 @@
 					<sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
 					<li><a href="<c:url value="/app/configuration/administration/account" />"><spring:message code="top-bar.my-account" /></a></li>
 					</sec:authorize>
-					<li><a href="<c:url value="/app/log-out" />"><spring:message code="top-bar.log-out" /></a></li>
+					<li><a id="log-out" href="#"><spring:message code="top-bar.log-out" /></a></li>
 					<li><a href="http://www.mashupmedia.org" target="_blank"><img title="Mashup Media"
 							src="<c:url value="/images/mashupmedia-logo-inline.png" />" /></a></li>
 					<c:if test="${isNewMashupMediaVersionAvailable}">

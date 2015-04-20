@@ -50,7 +50,7 @@
 <body class="<tiles:getAsString name="bodyClass"/>">
 
 <c:url var="rootUrl" value="/" />
-<form:form id="form-log-out"  action="${rootUrl}app/log-out">
+<form:form id="form-log-out"  action="${rootUrl}logout" cssClass="hide">
 <input type="submit" />
 </form:form>
 

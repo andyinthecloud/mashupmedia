@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class LogOutController extends BaseController {
+public class LogOutSuccessController extends BaseController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
@@ -20,9 +20,9 @@ public class LogOutController extends BaseController {
 		return "log-out.title";
 	}
 	
-	@RequestMapping(value = "/log-out", method = RequestMethod.GET)
+	@RequestMapping(value = "/log-out-success", method = RequestMethod.GET)
 	public String getLogOut() {
-		return "log-out";
+		return "log-out-success";
 	}
 
 }
