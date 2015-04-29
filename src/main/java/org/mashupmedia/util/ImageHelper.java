@@ -1,8 +1,5 @@
 package org.mashupmedia.util;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,32 +48,33 @@ public class ImageHelper {
 			thumbnailImage = Scalr.resize(image, Scalr.Method.SPEED,
 					Scalr.Mode.FIT_TO_WIDTH, width, height, Scalr.OP_ANTIALIAS);
 		} catch (Exception e) {
-			LOGGER.error("Error resizing image, using JDK default algorithm", e);
-			thumbnailImage = resizeImageDefault(image, width, height);
+			LOGGER.error("Error resizing image.", e);
+//			LOGGER.error("Error resizing image, using JDK default algorithm", e);
+//			thumbnailImage = resizeImageDefault(image, width, height);
 		}
 		return thumbnailImage;
 	}
 
-	private static BufferedImage resizeImageDefault(BufferedImage image,
-			int width, int height) {
-		int imageType = image.getType();
-		if (imageType == 0) {
-			imageType = BufferedImage.TYPE_INT_ARGB;
-		}
-
-		BufferedImage resizedImage = new BufferedImage(width, height, imageType);
-		Graphics2D graphics2d = resizedImage.createGraphics();
-		graphics2d.drawImage(image, 0, 0, width, height, null);
-		graphics2d.dispose();
-		graphics2d.setComposite(AlphaComposite.Src);
-		graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		graphics2d.setRenderingHint(RenderingHints.KEY_RENDERING,
-				RenderingHints.VALUE_RENDER_QUALITY);
-		graphics2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		return resizedImage;
-	}
+//	private static BufferedImage resizeImageDefault(BufferedImage image,
+//			int width, int height) {
+//		int imageType = image.getType();
+//		if (imageType == 0) {
+//			imageType = BufferedImage.TYPE_INT_ARGB;
+//		}
+//
+//		BufferedImage resizedImage = new BufferedImage(width, height, imageType);
+//		Graphics2D graphics2d = resizedImage.createGraphics();
+//		graphics2d.drawImage(image, 0, 0, width, height, null);
+//		graphics2d.dispose();
+//		graphics2d.setComposite(AlphaComposite.Src);
+//		graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+//				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//		graphics2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+//				RenderingHints.VALUE_RENDER_QUALITY);
+//		graphics2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//				RenderingHints.VALUE_ANTIALIAS_ON);
+//		return resizedImage;
+//	}
 
 	public static String generateAndSaveMusicAlbumArtThumbnail(long libraryId,
 			String imageFilePath) throws IOException {

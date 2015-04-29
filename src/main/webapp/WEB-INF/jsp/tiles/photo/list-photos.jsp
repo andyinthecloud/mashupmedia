@@ -1,5 +1,21 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		$("body.photo ul.photo-thumbnails li a" ).hover(
+		  function() {
+		    $(this).find("img").addClass("photo-highlight");
+		  }, function() {
+			  $(this).find("img").removeClass("photo-highlight");
+		  }
+		);
+
+	});
+
+</script>
+
 <div class="sub-panel">
 
 	<c:choose>

@@ -932,24 +932,17 @@ body.photo ul.photo-thumbnails {
 
 body.photo ul.photo-thumbnails li{
 	display: inline-block;
-	padding: 5px;
-	margin: 15px;
-	width: 200px;	
-	height: 200px;
-	border: 2px solid #a0a0a0;
-	overflow: hidden;
-}
-
-body.photo ul.photo-thumbnails li a{
-
-	/*
-	background-size: cover;
-	*/
+	padding: 2px;
+	margin: 2px;
+	width: 200px;
+	vertical-align: middle;
 }
 
 body.photo ul.photo-thumbnails li a img{
-	border: none;
+	border: 5px solid transparent;
 	width: 100%;
-	
+}
 
+body.photo ul.photo-thumbnails li a img.photo-highlight{
+	border-color: #e579e9;
 }

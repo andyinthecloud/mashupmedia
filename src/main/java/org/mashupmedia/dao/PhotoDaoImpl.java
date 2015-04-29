@@ -98,10 +98,16 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public List<Album> getAlbums() {
+//		Query query = sessionFactory
+//				.getCurrentSession()
+//				.createQuery(
+//						"select a from org.mashupmedia.model.media.photo.Album a order by a.updatedOn")
+//				.setResultTransformer(Transformers.aliasToBean(Album.class));
+
 		Query query = sessionFactory
 				.getCurrentSession()
 				.createQuery(
-						"from org.mashupmedia.model.media.photo.Album a order by a.updatedOn");
+						"select a from org.mashupmedia.model.media.photo.Album a order by a.updatedOn");
 
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")

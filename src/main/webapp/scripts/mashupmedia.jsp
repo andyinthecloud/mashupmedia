@@ -111,11 +111,17 @@ $(document).ready(function() {
 });
 
 
-$( document ).ajaxComplete(function() {
+$(document).ajaxComplete(function() {
 	$("body, a").removeClass("cursor-progress");
 });
 
-
+$(function () {
+	var token = $("meta[name='_csrf']").attr("content");
+	var header = $("meta[name='_csrf_header']").attr("content");
+	$(document).ajaxSend(function(e, xhr, options) {
+		xhr.setRequestHeader(header, token);
+	});
+});
 
 
 var mashupMedia = new function() {
@@ -231,8 +237,7 @@ var mashupMedia = new function() {
 		$.post(mashupMedia.contextUrl + "app/ajax/playlist/play-artist", {
 			"artistId" : artistId
 		}, function(data) {
-			var mediaItemId = data.mediaItem.id;
-			
+			var mediaItemId = data.mediaItem.id;			
 			var playlistId = data.mediaItem.playlistId;
 			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 		});		

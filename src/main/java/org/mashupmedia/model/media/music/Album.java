@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -20,6 +21,7 @@ import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 
 @Entity(name = "org.mashupmedia.model.media.music.Album")
+@Table(name = "MusicAlbum")
 @Cacheable
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Album implements Serializable {
