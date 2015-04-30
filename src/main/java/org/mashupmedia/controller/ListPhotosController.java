@@ -44,5 +44,13 @@ public class ListPhotosController extends BaseController {
 		model.addAttribute("photos", photos);
 		return "photos";
 	}
+	
+	@RequestMapping(name = "/load-latest-photos", method = RequestMethod.GET)
+	public String handleAjaxGetPhotoList(Model model, long pageNumber) {
+		List<Photo> photos = photoManager.getLatestPhotos();
+		model.addAttribute("photos", photos);
+		return "photos";
+	}
+	
 
 }

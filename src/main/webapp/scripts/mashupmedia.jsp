@@ -14,6 +14,8 @@ var addressAlbum = "address-load-album";
 var addressArtist = "address-artist-";
 var addressListPlaylists = "address-list-playlists";
 var addressPlaylist = "address-playlist-";
+var addressListPhotos = "address-list-photos";
+
 
 $(document).ready(function() {
     
@@ -476,6 +478,14 @@ function loadSongSearchResults(isAppend) {
 
 }
 
+function loadLatestPhotos(isAppend) {
+	if (isLoadingContent) {
+		return;
+	}
+	isLoadingContent = true;
+	
+	
+}
 
 function loadAlbums(isAppend) {	
 	if (isLoadingContent) {
@@ -561,16 +571,20 @@ function isValidNumber(value) {
 function appendContentsOnScroll() {
     if ($(window).scrollTop() >= $(document).height() - $(window).height()) {
 	
-	var pageNumber = mashupMedia.filterPageNumber + 1;
-	mashupMedia.filterPageNumber = pageNumber;
+		var pageNumber = mashupMedia.filterPageNumber + 1;
+		mashupMedia.filterPageNumber = pageNumber;
+		
+		if (textStartsWith(currentPage, addressRandomAlbums) || currentPage == "") {
+		    loadRandomAlbums(true);
+		} else if (textStartsWith(currentPage, addressListAlbums) || textStartsWith(currentPage, addressListFilterAlbums)) {
+		    loadAlbums(true);
+		} else if (textStartsWith(currentPage, addressQuickSearchMediaItems)) {
+		    loadSongSearchResults(true);    
+		}  else if (textStartsWith(currentPage, addressListPhotos)) {
+			loadLatestPhotos(true);			
+		} 
 	
-	if (textStartsWith(currentPage, addressRandomAlbums) || currentPage == "") {
-	    loadRandomAlbums(true);
-	} else if (textStartsWith(currentPage, addressListAlbums) || textStartsWith(currentPage, addressListFilterAlbums)) {
-	    loadAlbums(true);
-	} else if (textStartsWith(currentPage, addressQuickSearchMediaItems)) {
-	    loadSongSearchResults(true);    
-	}  
+
 	
     }
 }

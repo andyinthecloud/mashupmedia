@@ -4,6 +4,9 @@
 <script type="text/javascript">
 
 	$(document).ready(function() {
+		
+		
+		
 		$("body.photo ul.photo-thumbnails li a" ).hover(
 		  function() {
 		    $(this).find("img").addClass("photo-highlight");
@@ -13,6 +16,17 @@
 		);
 
 	});
+	
+	$(window).scroll(function() {
+/*
+		if ($("div.random-album-art div.album").length == 0) {
+			return;
+		}
+*/
+		currentPage = addressListPhotos; 
+		appendContentsOnScroll();
+	});
+	
 
 </script>
 
