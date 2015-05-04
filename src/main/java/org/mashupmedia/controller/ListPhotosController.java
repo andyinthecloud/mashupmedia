@@ -2,7 +2,6 @@ package org.mashupmedia.controller;
 
 import java.util.List;
 
-import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.service.PhotoManager;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
@@ -40,17 +39,7 @@ public class ListPhotosController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String handleGetPhotoList(Model model) {
-		List<Photo> photos = photoManager.getLatestPhotos();
-		model.addAttribute("photos", photos);
-		return "photos";
+		return "photos-home";
 	}
-	
-	@RequestMapping(value = "/load-latest-photos", method = RequestMethod.GET)
-	public String handleAjaxGetPhotoList(Model model, long pageNumber) {
-		List<Photo> photos = photoManager.getLatestPhotos();
-		model.addAttribute("photos", photos);
-		return "photos";
-	}
-	
 
 }

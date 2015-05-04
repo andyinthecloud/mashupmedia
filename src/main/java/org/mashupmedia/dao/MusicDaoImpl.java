@@ -17,12 +17,11 @@ import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Song;
-import org.mashupmedia.model.media.Year;
 import org.mashupmedia.util.DaoHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,8 +212,6 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		saveOrMerge(artist);
 
 		Album album = song.getAlbum();
-		AlbumArtImage albumArtImage = album.getAlbumArtImage();
-		saveOrMerge(albumArtImage);		
 		saveOrMerge(album);
 		song.setAlbum(album);
 

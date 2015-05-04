@@ -13,8 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
-	private final static int MAX_PHOTOS_RETURNED = 100;
-
 	@Override
 	public List<Album> getAlbums(String albumName) {
 		Query query = sessionFactory
@@ -79,7 +77,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public List<Photo> getLatestPhotos(List<Long> groupIds, int firstResult) {
+	public List<Photo> getLatestPhotos(List<Long> groupIds, int pageNumber,
+			int totalItems) {
 
 		StringBuilder queryBuilder = new StringBuilder(
 				"select distinct p from Photo p join p.library.groups g");
@@ -89,8 +88,11 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		Query query = sessionFactory.getCurrentSession().createQuery(
 				queryBuilder.toString());
 		query.setCacheable(true);
-		query.setMaxResults(MAX_PHOTOS_RETURNED);
+
+		int firstResult = pageNumber * totalItems;
+		query.setMaxResults(totalItems);
 		query.setFirstResult(firstResult);
+
 		@SuppressWarnings("unchecked")
 		List<Photo> photos = query.list();
 		return photos;
@@ -98,11 +100,11 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public List<Album> getAlbums() {
-//		Query query = sessionFactory
-//				.getCurrentSession()
-//				.createQuery(
-//						"select a from org.mashupmedia.model.media.photo.Album a order by a.updatedOn")
-//				.setResultTransformer(Transformers.aliasToBean(Album.class));
+		// Query query = sessionFactory
+		// .getCurrentSession()
+		// .createQuery(
+		// "select a from org.mashupmedia.model.media.photo.Album a order by a.updatedOn")
+		// .setResultTransformer(Transformers.aliasToBean(Album.class));
 
 		Query query = sessionFactory
 				.getCurrentSession()

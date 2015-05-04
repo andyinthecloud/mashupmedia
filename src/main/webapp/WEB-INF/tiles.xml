@@ -160,9 +160,9 @@
 		<put-attribute name="bodyClass" value="photo" />
 	</definition>
 	
-	<definition name="photos" extends="photo">
+	<definition name="photos-home" extends="photo">
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/photo/list-photos.jsp" />
+			value="/WEB-INF/jsp/tiles/photo/photos-home.jsp" />
 	</definition>
 	
 	<definition name="photo/show" extends="photo">

@@ -15,7 +15,7 @@ public interface PhotoDao {
 
 	public List<Album> getAlbums(String albumName);
 
-	public List<Photo> getLatestPhotos(List<Long> groupIds, int firstResult);
+	public List<Photo> getLatestPhotos(List<Long> groupIds, int firstResult, int totalItems);
 
 	public List<Album> getAlbums();
 

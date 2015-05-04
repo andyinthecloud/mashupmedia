@@ -70,7 +70,7 @@ $(document).ready(function() {
 		address = address.replace("/", "");
 		address = $.trim(address);
 		currentPage = address;
-		
+				
 		if (textStartsWith(address, addressAlbum)) {
 			var albumId = getNumberFromText(address);
 			mashupMedia.showAlbum(albumId);
@@ -86,7 +86,7 @@ $(document).ready(function() {
 			mashupMedia.filterAlbumsSearchLetter = searchLetter;
 			mashupMedia.filterPageNumber = 0;
 			loadAlbums(false);			
-		} else if (textStartsWith(address, addressRandomAlbums) || address == "") {
+		} else if (textStartsWith(address, addressRandomAlbums)) {
 			loadRandomAlbums(false);
 		} else if (textStartsWith(address, addressArtist)) {
 			var artistId = parseId(address, addressArtist);
@@ -482,8 +482,11 @@ function loadLatestPhotos(isAppend) {
 	if (isLoadingContent) {
 		return;
 	}
-	isLoadingContent = true;
 	
+	$.get("<c:url value="/app/ajax/photo/load-latest-photos" />", { pageNumber: mashupMedia.filterPageNumber }, function( data ) {
+		$("body.photo div.sub-panel ul.photo-thumbnails").append( data );
+		pauseScrollLoadMore();
+	});
 	
 }
 

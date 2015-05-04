@@ -7,7 +7,7 @@ import org.mashupmedia.model.media.photo.Photo;
 
 public interface PhotoManager {
 
-	public List<Photo> getLatestPhotos();
+	public List<Photo> getLatestPhotos(int pageNumber, int totalItems);
 
 	public List<Album> getAlbums();
 

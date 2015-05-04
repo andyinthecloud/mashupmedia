@@ -20,9 +20,9 @@ public class PhotoManagerImpl implements PhotoManager {
 	private PhotoDao photoDao;
 
 	@Override
-	public List<Photo> getLatestPhotos() {
+	public List<Photo> getLatestPhotos(int pageNumber, int totalItems) {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		List<Photo> photos = photoDao.getLatestPhotos(userGroupIds, 0);
+		List<Photo> photos = photoDao.getLatestPhotos(userGroupIds, pageNumber, totalItems);
 		return photos;
 	}
 
