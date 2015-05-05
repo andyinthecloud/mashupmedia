@@ -1,4 +1,4 @@
-html,body {
+html, body {
 	font-size: 100%;
 	margin: 0;
 	padding: 0;
@@ -18,7 +18,7 @@ html,body {
 	clear: both;
 }
 
-a,a:ACTIVE,a:VISITED {
+a, a:ACTIVE, a:VISITED {
 	color: #E579E9;
 }
 
@@ -100,7 +100,7 @@ li.update-available {
 	margin-left: 5px;
 }
 
-.top-bar a,.top-bar a:VISITED {
+.top-bar a, .top-bar a:VISITED {
 	color: #e579e9;
 	text-decoration: none;
 }
@@ -222,7 +222,7 @@ div.panel .horizontal-gap {
 	margin-left: 10px;
 }
 
-div.panel a,div.panel a:VISITED {
+div.panel a, div.panel a:VISITED {
 	color: #E579E9;
 }
 
@@ -243,12 +243,11 @@ div.panel fieldset {
 	border-radius: 10px;
 }
 
-div.panel input.small-inline{
+div.panel input.small-inline {
 	display: inline-block !important;
 	width: 30px !important;
 	min-width: inherit !important;
 }
-
 
 label {
 	padding-bottom: 5px;
@@ -264,7 +263,7 @@ label.date-to {
 	padding-top: 10px;
 }
 
-div.panel input[type='text'],div.panel input[type='password'] {
+div.panel input[type='text'], div.panel input[type='password'] {
 	width: 99%;
 	min-width: 200px;
 }
@@ -279,7 +278,7 @@ div.button-panel {
 	text-align: right;
 }
 
-div.panel a.button,div.panel a.button:VISITED {
+div.panel a.button, div.panel a.button:VISITED {
 	color: white;
 }
 
@@ -303,8 +302,9 @@ div.panel a.button:HOVER {
 	border-radius: 10px;
 }
 
-div.panel div.breadcrumbs a:HOVER,#top-bar ul.main-menu a:HOVER,#top-bar a.home:HOVER,#top-bar-music-player .main-menu a:hover,#top-bar-music-player .top-home-link a:HOVER
-	{
+div.panel div.breadcrumbs a:HOVER, #top-bar ul.main-menu a:HOVER,
+	#top-bar a.home:HOVER, #top-bar-music-player .main-menu a:hover,
+	#top-bar-music-player .top-home-link a:HOVER {
 	text-decoration: underline;
 }
 
@@ -312,7 +312,7 @@ div.panel div.breadcrumbs {
 	margin-bottom: 10px;
 }
 
-div.panel a,div.panel a:VISITED {
+div.panel a, div.panel a:VISITED {
 	text-decoration: none;
 }
 
@@ -376,12 +376,12 @@ div.albums div.album {
 	overflow:
 }
 
-div.albums div.album a,div.albums div.album a:ACTIVE,div.albums div.album a:HOVER
+div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HOVER
 	{
 	color: #606060;
 }
 
-div.albums div.album img,ul.items li a.album-cover img {
+div.albums div.album img, ul.items li a.album-cover img {
 	width: 150px;
 	height: 150px;
 }
@@ -413,8 +413,8 @@ div.albums div.album-control .ui-icon {
 	display: inline-block;
 }
 
-div.title-with-player-control h1,div.title-with-player-control div.control-menu,div.title-with-player-control div.re-encode
-	{
+div.title-with-player-control h1, div.title-with-player-control div.control-menu,
+	div.title-with-player-control div.re-encode {
 	display: inline-block;
 }
 
@@ -497,20 +497,19 @@ table.top-bar-menu td.home {
 	right: 10px;
 }
 
-
-#top-bar-video-player form.quick-search input[type=text]{
-	top: -70px;	
+#top-bar-video-player form.quick-search input[type=text] {
+	top: -70px;
 }
 
-#top-bar-video-player form.quick-search input[type=image]{
-	top: -65px;	
+#top-bar-video-player form.quick-search input[type=image] {
+	top: -65px;
 }
 
-#top-bar-music-player form.quick-search input[type=text]{
+#top-bar-music-player form.quick-search input[type=text] {
 	top: -35px;
 }
 
-#top-bar-music-player form.quick-search input[type=image]{
+#top-bar-music-player form.quick-search input[type=image] {
 	top: -30px;
 }
 
@@ -519,7 +518,7 @@ table.top-bar-menu td.home {
 	width: 300px;
 	padding: 2px 5px;
 	color: #3A2A45;
-	right: 0;	
+	right: 0;
 }
 
 #quick-search input[type=image] {
@@ -579,12 +578,12 @@ ul.ui-autocomplete {
 	vertical-align: bottom;
 }
 
-#current-song td.song-title .artist-name,#current-song td.song-title .playlist,#current-song td.song-title .encode
-	{
+#current-song td.song-title .artist-name, #current-song td.song-title .playlist,
+	#current-song td.song-title .encode {
 	font-size: 80%;
 }
 
-#current-song td.song-title .playlist,#current-song td.song-title .encode
+#current-song td.song-title .playlist, #current-song td.song-title .encode
 	{
 	margin-top: 10px;
 }
@@ -598,13 +597,12 @@ ul.ui-autocomplete {
 	vertical-align: top;
 }
 
-
 #top-bar-music-player div.jp-no-solution {
 	position: absolute;
 	top: 10px;
 	left: 10%;
 	width: 300px;
-	font-size: 75%;	
+	font-size: 75%;
 }
 
 #top-bar-music-player div.jp-audio div.jp-toggles {
@@ -661,7 +659,7 @@ ul.ui-autocomplete {
 	padding-left: 0px;
 }
 
-#playlist table td,#playlist table th {
+#playlist table td, #playlist table th {
 	padding-left: 10px;
 	padding-top: 3px;
 	padding-bottom: 3px;
@@ -735,7 +733,7 @@ ul.index-letters li {
 	padding: 0 5px;
 }
 
-.hide,div.dialog {
+.hide, div.dialog {
 	display: none;
 }
 
@@ -780,7 +778,7 @@ ul.items li a.album-cover img {
 	width: auto;
 }
 
-ul.items li div.song,ul.items li div.artist-and-album,ul.items li div.meta
+ul.items li div.song, ul.items li div.artist-and-album, ul.items li div.meta
 	{
 	margin-left: 120px;
 	padding-top: 10px;
@@ -829,7 +827,7 @@ div.index-letter {
 	padding-top: 10px;
 }
 
-input[type="text"],input[type="password"] {
+input[type="text"], input[type="password"] {
 	font-size: 1em;
 	padding: 3px;
 	border: 2px solid #A0A0A0;
@@ -840,7 +838,7 @@ input[type="text"],input[type="password"] {
 	border-radius: 5px;
 }
 
-input[type="text"].disabled,input[type="password"].disabled {
+input[type="text"].disabled, input[type="password"].disabled {
 	background-color: #D3D3D3;
 }
 
@@ -930,7 +928,7 @@ body.photo ul.photo-thumbnails {
 	list-style: none;
 }
 
-body.photo ul.photo-thumbnails li{
+body.photo ul.photo-thumbnails li {
 	display: inline-block;
 	padding: 2px;
 	margin: 2px;
@@ -938,11 +936,51 @@ body.photo ul.photo-thumbnails li{
 	vertical-align: middle;
 }
 
-body.photo ul.photo-thumbnails li a img{
+body.photo ul.photo-thumbnails li a img {
 	border: 5px solid transparent;
 	width: 100%;
 }
 
-body.photo ul.photo-thumbnails li a img.photo-highlight{
+body.photo ul.photo-thumbnails li a img.photo-highlight {
 	border-color: #e579e9;
+}
+
+body.photo table.photo-container {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+body.photo table.photo-container td.photo-previous, table.photo-container td.photo-next
+	{
+	text-align: center;
+}
+
+body.photo table.photo-container td.photo {
+	width: 100%;
+	text-align: center;
+}
+
+body.photo table.photo-container td.photo img.original-photo {
+	width: 100%;
+	height: auto;
+}
+
+a.arrow {
+	display: block;
+	width: 0;
+	height: 0;
+}
+
+a.image-previous {
+	border-top: 30px solid transparent;
+	border-bottom: 30px solid transparent;
+	border-right: 30px solid #a0a0a0;
+	margin-right: 10px;
+}
+
+a.image-next {
+	border-top: 30px solid transparent;
+	border-bottom: 30px solid transparent;
+	border-left: 30px solid #a0a0a0;
+	margin-left: 10px;
 }

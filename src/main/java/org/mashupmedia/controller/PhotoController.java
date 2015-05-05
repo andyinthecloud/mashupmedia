@@ -36,9 +36,12 @@ public class PhotoController extends BaseController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb breadcrumb = new Breadcrumb(
+		Breadcrumb photosBreadcrumb = new Breadcrumb(
 				MessageHelper.getMessage("breadcrumb.photos"), "/app/photos");
-		breadcrumbs.add(breadcrumb);
+		breadcrumbs.add(photosBreadcrumb);
+		Breadcrumb photoBreadcrumb = new Breadcrumb(
+				MessageHelper.getMessage("breadcrumb.photo"));
+		breadcrumbs.add(photoBreadcrumb);
 	}
 
 	@Override
