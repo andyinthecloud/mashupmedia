@@ -9,11 +9,14 @@ import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MediaManager;
-import org.mashupmedia.util.MessageHelper;
+import org.mashupmedia.service.PhotoManager;
+import org.mashupmedia.service.PhotoManager.PhotoSequenceType;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.view.MediaItemImageView;
 import org.mashupmedia.web.Breadcrumb;
+import org.mashupmedia.web.page.PhotoPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +36,9 @@ public class PhotoController extends BaseController {
 
 	@Autowired
 	private ConnectionManager connectionManager;
+	
+	@Autowired
+	private PhotoManager photoManager;
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
@@ -91,8 +97,18 @@ public class PhotoController extends BaseController {
 					+ " from id = " + mediaItem.getId());
 			return null;
 		}
-
-		model.addAttribute("photo", mediaItem);
+		
+		Photo photo = (Photo) mediaItem;
+		Photo previousPhoto = photoManager.getPhotoInSequence(photo, PhotoSequenceType.PREVIOUS);
+		Photo nextPhoto = photoManager.getPhotoInSequence(photo, PhotoSequenceType.NEXT);
+		
+		
+		PhotoPage photoPage = new PhotoPage();
+		photoPage.setPhoto(photo);
+		photoPage.setPreviousPhoto(previousPhoto);
+		photoPage.setNextPhoto(nextPhoto);
+		
+		model.addAttribute("photoPage", photoPage);
 		return "photo/show";
 	}
 

@@ -7,6 +7,7 @@ import org.hibernate.Query;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
+import org.mashupmedia.service.PhotoManager.PhotoSequenceType;
 import org.mashupmedia.util.DaoHelper;
 import org.springframework.stereotype.Repository;
 
@@ -100,12 +101,6 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public List<Album> getAlbums() {
-		// Query query = sessionFactory
-		// .getCurrentSession()
-		// .createQuery(
-		// "select a from org.mashupmedia.model.media.photo.Album a order by a.updatedOn")
-		// .setResultTransformer(Transformers.aliasToBean(Album.class));
-
 		Query query = sessionFactory
 				.getCurrentSession()
 				.createQuery(
@@ -180,6 +175,49 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		album.setPhotos(photos);
 
 		return album;
+	}
+
+	@Override
+	public Photo getPhotoInSequence(List<Long> groupIds, Date photoCreatedOn,
+			Long albumId, PhotoSequenceType photoSequenceType) {
+		StringBuilder photoQueryBuilder = new StringBuilder();
+		photoQueryBuilder.append("select p from Photo p join p.library.groups g where p.id = (");
+		if (photoSequenceType == PhotoSequenceType.PREVIOUS) {
+			preparePreviousPhotoSql(photoQueryBuilder, groupIds);
+		} else if (photoSequenceType == PhotoSequenceType.NEXT) {
+			prepareNextPhotoSql(photoQueryBuilder, groupIds);
+		}
+		photoQueryBuilder.append(" )");
+
+		Query photoQuery = sessionFactory.getCurrentSession().createQuery(
+				photoQueryBuilder.toString());
+		photoQuery.setLong("albumId", albumId);
+		photoQuery.setDate("createdOn", photoCreatedOn);
+		photoQuery.setCacheable(true);
+
+		@SuppressWarnings("unchecked")
+		List<Photo> photos = photoQuery.list();
+		if (photos == null || photos.isEmpty()) {
+			return null;
+		}
+
+		return photos.get(0);
+	}
+
+	protected void preparePreviousPhotoSql(StringBuilder queryBuilder,
+			List<Long> groupIds) {
+		queryBuilder.append(" select max(id) from Photo");
+		queryBuilder.append(" where album.id = :albumId");
+		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+		queryBuilder.append(" and createdOn = :createdOn");
+	}
+
+	protected void prepareNextPhotoSql(StringBuilder queryBuilder,
+			List<Long> groupIds) {
+		queryBuilder.append(" select min(id) from Photo");
+		queryBuilder.append(" where album.id = :albumId");
+		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+		queryBuilder.append(" and createdOn > :createdOn");
 	}
 
 }

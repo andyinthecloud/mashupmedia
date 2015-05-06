@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
+import org.mashupmedia.service.PhotoManager.PhotoSequenceType;
 
 public interface PhotoDao {
 
@@ -24,5 +25,7 @@ public interface PhotoDao {
 	public int removeObsoletePhotos(long libraryId, Date date);
 
 	public Album getAlbum(List<Long> groupIds, long albumId);
+
+	public Photo getPhotoInSequence(List<Long> groupIds, Date photoCreatedOn, Long albumId,PhotoSequenceType photoSequenceType);
 
 }

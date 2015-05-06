@@ -12,16 +12,18 @@
 
 <div class="sub-panel">
 
+	<c:set var="photo" value="${photoPage.photo }" />
+
 	<h1>${photo.album.name}-${photo.displayTitle}</h1>
 
 	<table class="photo-container">
 		<tr>
-			<td class="photo-previous"><a href="javascript:;"
+			<td class="photo-previous"><a id="previous-photo-id-${photoPage.previousPhoto.id}" href="javascript:;"
 				class="arrow image-previous">&nbsp;</a></td>
 			<td class="photo"><img class="original-photo"
 				alt="${photo.displayTitle}" title="${photo.displayTitle}"
 				src="<c:url value="/app/photo/original/${photo.id}" />" /></td>
-			<td class="photo-next"><a href="javascript:;"
+			<td class="photo-next"><a id="next-photo-id-${photoPage.nextPhoto.id}" href="javascript:;"
 				class="arrow image-next">&nbsp;</a></td>
 		</tr>
 	</table>

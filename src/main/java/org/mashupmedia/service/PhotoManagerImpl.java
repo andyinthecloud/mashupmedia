@@ -1,5 +1,6 @@
 package org.mashupmedia.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.mashupmedia.dao.PhotoDao;
@@ -37,6 +38,16 @@ public class PhotoManagerImpl implements PhotoManager {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		Album album = photoDao.getAlbum(userGroupIds, albumId);
 		return album;
+	}
+	
+	@Override
+	public Photo getPhotoInSequence(Photo photo, PhotoSequenceType sequenceType) {
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
+		Date createdOn = photo.getCreatedOn();
+		Long albumId = photo.getAlbum().getId();
+		
+		Photo foundPhoto = photoDao.getPhotoInSequence(userGroupIds, createdOn, albumId, sequenceType);
+		return foundPhoto;
 	}
 
 }
