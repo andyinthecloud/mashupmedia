@@ -178,22 +178,33 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getPhotoInSequence(List<Long> groupIds, Date photoCreatedOn,
+	public Photo getPhotoInSequence(List<Long> groupIds, Long photoId, Date photoCreatedOn,
 			Long albumId, PhotoSequenceType photoSequenceType) {
+		
+//		List nextItems = sessionFactory.getCurrentSession().createQuery("select distinct(p) from Photo p join p.library.groups g where p.album.id = 1 and g.id in (2,1) and p.createdOn <= '2015-05-04 15:35:37.331' order by p.id desc, ").list();
+//		List previousItems = sessionFactory.getCurrentSession().createQuery("select distinct(p) from Photo p join p.library.groups g where p.album.id = 2 and g.id in (2,1) and p.createdOn <= '2015-05-04 15:35:37.331' order by p.id asc").list();
+
+	
 		StringBuilder photoQueryBuilder = new StringBuilder();
-		photoQueryBuilder.append("select p from Photo p join p.library.groups g where p.id = (");
+		photoQueryBuilder.append(" select distinct(p) from Photo p join p.library.groups g");
+		photoQueryBuilder.append(" where p.album.id = :albumId");
+		DaoHelper.appendGroupFilter(photoQueryBuilder, groupIds);
+		
 		if (photoSequenceType == PhotoSequenceType.PREVIOUS) {
 			preparePreviousPhotoSql(photoQueryBuilder, groupIds);
 		} else if (photoSequenceType == PhotoSequenceType.NEXT) {
 			prepareNextPhotoSql(photoQueryBuilder, groupIds);
 		}
-		photoQueryBuilder.append(" )");
 
 		Query photoQuery = sessionFactory.getCurrentSession().createQuery(
 				photoQueryBuilder.toString());
+		photoQuery.setLong("photoId", photoId);
 		photoQuery.setLong("albumId", albumId);
-		photoQuery.setDate("createdOn", photoCreatedOn);
+		photoQuery.setTimestamp("createdOn", photoCreatedOn);
 		photoQuery.setCacheable(true);
+		photoQuery.setFirstResult(0);
+		photoQuery.setMaxResults(1);
+		photoQuery.setFetchSize(1);
 
 		@SuppressWarnings("unchecked")
 		List<Photo> photos = photoQuery.list();
@@ -206,18 +217,16 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	protected void preparePreviousPhotoSql(StringBuilder queryBuilder,
 			List<Long> groupIds) {
-		queryBuilder.append(" select max(id) from Photo");
-		queryBuilder.append(" where album.id = :albumId");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" and createdOn = :createdOn");
+		queryBuilder.append(" and p.createdOn <= :createdOn");
+		queryBuilder.append(" and p.id < :photoId");
+		queryBuilder.append(" order by p.id desc");
 	}
 
 	protected void prepareNextPhotoSql(StringBuilder queryBuilder,
 			List<Long> groupIds) {
-		queryBuilder.append(" select min(id) from Photo");
-		queryBuilder.append(" where album.id = :albumId");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" and createdOn > :createdOn");
+		queryBuilder.append(" and p.createdOn >= :createdOn");
+		queryBuilder.append(" and p.id > :photoId");
+		queryBuilder.append(" order by p.id asc");
 	}
 
 }

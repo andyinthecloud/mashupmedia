@@ -16,14 +16,15 @@ public class PhotoManagerImpl implements PhotoManager {
 
 	@Autowired
 	private SecurityManager securityManager;
-	
+
 	@Autowired
 	private PhotoDao photoDao;
 
 	@Override
 	public List<Photo> getLatestPhotos(int pageNumber, int totalItems) {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		List<Photo> photos = photoDao.getLatestPhotos(userGroupIds, pageNumber, totalItems);
+		List<Photo> photos = photoDao.getLatestPhotos(userGroupIds, pageNumber,
+				totalItems);
 		return photos;
 	}
 
@@ -39,14 +40,16 @@ public class PhotoManagerImpl implements PhotoManager {
 		Album album = photoDao.getAlbum(userGroupIds, albumId);
 		return album;
 	}
-	
+
 	@Override
 	public Photo getPhotoInSequence(Photo photo, PhotoSequenceType sequenceType) {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		Date createdOn = photo.getCreatedOn();
 		Long albumId = photo.getAlbum().getId();
-		
-		Photo foundPhoto = photoDao.getPhotoInSequence(userGroupIds, createdOn, albumId, sequenceType);
+		Long photoId = photo.getId();
+
+		Photo foundPhoto = photoDao.getPhotoInSequence(userGroupIds, photoId,
+				createdOn, albumId, sequenceType);
 		return foundPhoto;
 	}
 

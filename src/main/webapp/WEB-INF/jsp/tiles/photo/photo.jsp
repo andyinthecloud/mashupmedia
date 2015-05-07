@@ -18,13 +18,21 @@
 
 	<table class="photo-container">
 		<tr>
-			<td class="photo-previous"><a id="previous-photo-id-${photoPage.previousPhoto.id}" href="javascript:;"
-				class="arrow image-previous">&nbsp;</a></td>
+			<td class="photo-previous"><c:if
+					test="${not empty photoPage.previousPhoto.id}">
+					<a
+						href="<c:url value="/app/photo/show/${photoPage.previousPhoto.id}" />"
+						class="arrow image-previous"></a>
+				</c:if></td>
 			<td class="photo"><img class="original-photo"
 				alt="${photo.displayTitle}" title="${photo.displayTitle}"
 				src="<c:url value="/app/photo/original/${photo.id}" />" /></td>
-			<td class="photo-next"><a id="next-photo-id-${photoPage.nextPhoto.id}" href="javascript:;"
-				class="arrow image-next">&nbsp;</a></td>
+			<td class="photo-next"><c:if
+					test="${not empty photoPage.nextPhoto.id}">
+					<a
+						href="<c:url value="/app/photo/show/${photoPage.nextPhoto.id}" />"
+						class="arrow image-next"></a>
+				</c:if></td>
 		</tr>
 	</table>
 

@@ -169,6 +169,8 @@ public class FileHelper {
 			return true;
 		} else if (fileName.endsWith(".3gp")) {
 			return true;
+		} else if (fileName.endsWith(".wmv")) {
+			return true;
 		}
 
 		return false;

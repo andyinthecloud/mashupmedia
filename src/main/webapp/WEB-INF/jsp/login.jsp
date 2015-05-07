@@ -14,7 +14,7 @@
 
 <script type="text/javascript">
 	function focusUsername() {
-		document.getElementById("j_username").focus();
+		document.getElementById("username").focus();
 	}
 </script>
 

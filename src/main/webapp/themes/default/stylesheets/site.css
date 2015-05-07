@@ -971,6 +971,11 @@ a.arrow {
 	height: 0;
 }
 
+a.arrow:HOVER {
+	text-decoration: none;
+}
+
+
 a.image-previous {
 	border-top: 30px solid transparent;
 	border-bottom: 30px solid transparent;

@@ -14,6 +14,12 @@ public class VideoLibrary extends Library {
 	}
 
 	private String videoDeriveTitle;
+	private boolean encodeVideoOnDemand;
+	
+	public VideoLibrary() {
+		// By default set the video encoding to on demand
+		this.encodeVideoOnDemand = true;
+	}
 
 	@Override
 	public LibraryType getLibraryType() {
@@ -26,6 +32,14 @@ public class VideoLibrary extends Library {
 
 	public void setVideoDeriveTitle(String videoDeriveTitle) {
 		this.videoDeriveTitle = videoDeriveTitle;
+	}
+
+	public boolean isEncodeVideoOnDemand() {
+		return encodeVideoOnDemand;
+	}
+
+	public void setEncodeVideoOnDemand(boolean encodeOnDemand) {
+		this.encodeVideoOnDemand = encodeOnDemand;
 	}
 
 }

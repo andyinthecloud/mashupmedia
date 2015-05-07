@@ -26,6 +26,6 @@ public interface PhotoDao {
 
 	public Album getAlbum(List<Long> groupIds, long albumId);
 
-	public Photo getPhotoInSequence(List<Long> groupIds, Date photoCreatedOn, Long albumId,PhotoSequenceType photoSequenceType);
+	public Photo getPhotoInSequence(List<Long> groupIds, Long photoId, Date photoCreatedOn, Long albumId,PhotoSequenceType photoSequenceType);
 
 }

@@ -21,6 +21,9 @@ $(document).ready(function(){
 		smoothPlayBar: true,
 		keyEnabled: true
 	});
+	
+	$("#jp_container_1 div.jp-details div.jp-title").html("${videoPage.video.displayTitle}");
+	
 });
 </script>
 
@@ -33,24 +36,29 @@ $(document).ready(function(){
 	</h1>
 
 	<div id="remote">
-		<a class="arrow-show-hide" href="javascript:void(0)"> <img src="<c:url value="/images/arrow-down.png" />" /></a>
+		<a class="arrow-show-hide" href="javascript:void(0)"> <img
+			src="<c:url value="/images/arrow-down.png" />" /></a>
 		<div class="profile">${videoPage.video.summary}</div>
 		<div class="images"></div>
 
 		<div class="disclaimer">
 			<spring:message code="music.artists.remote" />
-			<a href="http://www.last.fm" target="_blank" title=""><img title="last.fm" src="<c:url value="/images/lastfm.png" />" /></a>. <a class="incorrect"
-				href="javascript:;"><spring:message code="music.artists.remote.correct" /></a> | <a
-				href="<c:url value="/app/video/show/${videoPage.video.id}?reencode=true" />"><spring:message code="video.re-encode" /></a>
+			<a href="http://www.last.fm" target="_blank" title=""><img
+				title="last.fm" src="<c:url value="/images/lastfm.png" />" /></a>. <a
+				class="incorrect" href="javascript:;"><spring:message
+					code="music.artists.remote.correct" /></a> | <a
+				href="<c:url value="/app/video/show/${videoPage.video.id}?reencode=true" />"><spring:message
+					code="video.re-encode" /></a>
 		</div>
 	</div>
 
-	<div id="jp_container_1" class="jp-video jp-video-360p">
+	<div id="jp_container_1" class="jp-video jp-video-360p"
+		role="application" aria-label="media player">
 		<div class="jp-type-single">
 			<div id="jquery_jplayer_1" class="jp-jplayer"></div>
 			<div class="jp-gui">
 				<div class="jp-video-play">
-					<a href="javascript:;" class="jp-video-play-icon" tabindex="1">play</a>
+					<button class="jp-video-play-icon" role="button" tabindex="0">play</button>
 				</div>
 				<div class="jp-interface">
 					<div class="jp-progress">
@@ -58,38 +66,37 @@ $(document).ready(function(){
 							<div class="jp-play-bar"></div>
 						</div>
 					</div>
-					<div class="jp-current-time"></div>
-					<div class="jp-duration"></div>
-					<div class="jp-title">
-						<ul>
-							<li>${videoPage.video.displayTitle}</li>
-						</ul>
+					<div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
+					<div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>
+					<div class="jp-details">
+						<div class="jp-title" aria-label="title">&nbsp;</div>
 					</div>
 					<div class="jp-controls-holder">
-						<ul class="jp-controls">
-							<li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
-							<li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
-							<li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
-							<li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
-							<li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
-							<li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
-						</ul>
-						<div class="jp-volume-bar">
-							<div class="jp-volume-bar-value"></div>
+						<div class="jp-volume-controls">
+							<button class="jp-mute" role="button" tabindex="0">mute</button>
+							<button class="jp-volume-max" role="button" tabindex="0">max
+								volume</button>
+							<div class="jp-volume-bar">
+								<div class="jp-volume-bar-value"></div>
+							</div>
 						</div>
-
-						<ul class="jp-toggles">
-							<li><a href="javascript:;" class="jp-full-screen" tabindex="1" title="full screen">full screen</a></li>
-							<li><a href="javascript:;" class="jp-restore-screen" tabindex="1" title="restore screen">restore screen</a></li>
-							<li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
-							<li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
-						</ul>
+						<div class="jp-controls">
+							<button class="jp-play" role="button" tabindex="0">play</button>
+							<button class="jp-stop" role="button" tabindex="0">stop</button>
+						</div>
+						<div class="jp-toggles">
+							<button class="jp-repeat" role="button" tabindex="0">repeat</button>
+							<button class="jp-full-screen" role="button" tabindex="0">full
+								screen</button>
+						</div>
 					</div>
 				</div>
 			</div>
 			<div class="jp-no-solution">
-				<span>Update Required</span> To play the media you will need to either update your browser to a recent version or update your <a
-					href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+				<span>Update Required</span> To play the media you will need to
+				either update your browser to a recent version or update your <a
+					href="http://get.adobe.com/flashplayer/" target="_blank">Flash
+					plugin</a>.
 			</div>
 		</div>
 	</div>

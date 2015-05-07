@@ -11,6 +11,7 @@ import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.restful.VideoWebService;
 import org.mashupmedia.service.VideoManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.web.Breadcrumb;
@@ -25,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/video")
@@ -43,8 +45,14 @@ public class VideoController extends BaseController {
 	private VideoWebService videoWebService;
 
 	@Override
+	public boolean isTransparentBackground() {
+		return false;
+	}
+
+	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.videos"), "/app/videos");
+		Breadcrumb breadcrumb = new Breadcrumb(
+				MessageHelper.getMessage("breadcrumb.videos"), "/app/videos");
 		breadcrumbs.add(breadcrumb);
 	}
 
@@ -54,30 +62,38 @@ public class VideoController extends BaseController {
 	}
 
 	@RequestMapping(value = "/show/{videoId}", method = RequestMethod.GET)
-	public String handleGetVideo(@PathVariable("videoId") Long videoId, Model model, HttpServletRequest request) {
+	public String handleGetVideo(
+			@PathVariable("videoId") Long videoId,
+			@RequestParam(value = "reencode", required = false) Boolean isReencode,
+			Model model, HttpServletRequest request) {
 
 		Video video = videoManager.getVideo(videoId);
+
+		processReencodeRequest(isReencode, video);
 
 		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
 		Breadcrumb breadcrumb = new Breadcrumb(video.getDisplayTitle());
 		breadcrumbs.add(breadcrumb);
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
 
-		String headPageTitle = populateHeadPageTitle() + " " + video.getDisplayTitle();
+		String headPageTitle = populateHeadPageTitle() + " "
+				+ video.getDisplayTitle();
 		model.addAttribute(MODEL_KEY_HEAD_PAGE_TITLE, headPageTitle);
 
 		VideoPage videoPage = new VideoPage();
 
 		videoPage.setVideo(video);
 
-		RemoteMediaMetaItem remoteMediaMetaItem = getRemoteMediaMetaItem(videoId, request);
+		RemoteMediaMetaItem remoteMediaMetaItem = getRemoteMediaMetaItem(
+				videoId, request);
 		if (remoteMediaMetaItem != null && !video.isIgnoreRemoteContent()) {
 			video.setSummary(remoteMediaMetaItem.getIntroduction());
 		}
 		videoPage.setRemoteMediaMetaItem(remoteMediaMetaItem);
 
 		String posterUrl = "/images/no-video-poster.png";
-		RemoteImage remoteImage = remoteMediaMetaItem.getRemoteImage(RemoteImageType.BACKDROP);
+		RemoteImage remoteImage = remoteMediaMetaItem
+				.getRemoteImage(RemoteImageType.BACKDROP);
 		if (remoteImage != null) {
 			posterUrl = remoteImage.getImageUrl();
 		}
@@ -87,7 +103,21 @@ public class VideoController extends BaseController {
 		return "video/show";
 	}
 
-	protected RemoteMediaMetaItem getRemoteMediaMetaItem(long videoId, HttpServletRequest request) {
+	protected void processReencodeRequest(Boolean isReencode, Video video) {
+		if (isReencode == null || video == null) {
+			return;
+		}
+
+		if (isReencode == false) {
+			return;
+		}
+
+		encodeMediaItemTaskManager.processMediaItemForEncoding(video,
+				MediaContentType.MP4);
+	}
+
+	protected RemoteMediaMetaItem getRemoteMediaMetaItem(long videoId,
+			HttpServletRequest request) {
 		Video video = videoManager.getVideo(videoId);
 
 		RemoteMediaMetaItem remoteMediaMetaItem = new RemoteMediaMetaItem();
@@ -106,12 +136,14 @@ public class VideoController extends BaseController {
 					e);
 
 			String contextUrl = WebHelper.getContextUrl(request);
-			String introductionMessage = MessageHelper.getRemoteConnectionError(contextUrl);
+			String introductionMessage = MessageHelper
+					.getRemoteConnectionError(contextUrl);
 			remoteMediaMetaItem.setIntroduction(introductionMessage);
 			remoteMediaMetaItem.setError(true);
 		} catch (Exception e) {
 			logger.error("Error getting remote video information", e);
-			remoteMediaMetaItem.setIntroduction(MessageHelper.getMessage("remote.error"));
+			remoteMediaMetaItem.setIntroduction(MessageHelper
+					.getMessage("remote.error"));
 			remoteMediaMetaItem.setError(true);
 		}
 

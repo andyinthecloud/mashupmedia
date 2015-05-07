@@ -101,7 +101,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		} else if (videoDeriveTitleType == VideoDeriveTitleType.USE_FILE_NAME) {
 			videoDisplayTitle = file.getName();
 		} else {
-			videoDisplayTitle = videoDisplayTitle + "/" + file.getName();
+			videoDisplayTitle = videoDisplayTitle + " / " + file.getName();
 		}
 
 		String path = file.getAbsolutePath();
@@ -161,8 +161,9 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		videoDao.saveVideo(video, isSessionFlush);
 		
 
-
-		encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(video, MediaContentType.MP4);
+		if (!library.isEncodeVideoOnDemand()) {
+			encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(video, MediaContentType.MP4);			
+		}
 	}
 
 }
