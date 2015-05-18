@@ -74,6 +74,9 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			}
 
 			File[] files = file.listFiles();
+			if (files == null) {
+				return;
+			}
 			for (File childFile : files) {
 				processPhotos(photos, childFile, date, albumName, library);
 			}

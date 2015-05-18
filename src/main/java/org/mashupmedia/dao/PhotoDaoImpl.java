@@ -84,7 +84,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		StringBuilder queryBuilder = new StringBuilder(
 				"select distinct p from Photo p join p.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" order by p.createdOn desc");
+		queryBuilder.append(" order by p.createdOn desc, p.fileLastModifiedOn desc");
 
 		Query query = sessionFactory.getCurrentSession().createQuery(
 				queryBuilder.toString());
@@ -164,7 +164,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 				"select distinct p from Photo p join p.library.groups g");
 		listPhotosQueryBuilder.append(" where p.album.id = :albumId");
 		DaoHelper.appendGroupFilter(listPhotosQueryBuilder, groupIds);
-		listPhotosQueryBuilder.append(" order by p.createdOn desc");
+		listPhotosQueryBuilder.append(" order by p.displayTitle");
 		Query listPhotosQuery = sessionFactory.getCurrentSession().createQuery(
 				listPhotosQueryBuilder.toString());
 		listPhotosQuery.setLong("albumId", albumId);
