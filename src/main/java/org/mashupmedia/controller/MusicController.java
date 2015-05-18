@@ -1,5 +1,6 @@
 package org.mashupmedia.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -65,8 +66,7 @@ public class MusicController extends BaseController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb breadcrumb = new Breadcrumb(
-				MessageHelper.getMessage("breadcrumb.music"), "/app/music");
+		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music");
 		breadcrumbs.add(breadcrumb);
 	}
 
@@ -82,25 +82,21 @@ public class MusicController extends BaseController {
 
 	protected void addBreadcrumbsToModel(Model model, String messageKey) {
 		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
-		Breadcrumb breadcrumb = new Breadcrumb(
-				MessageHelper.getMessage(messageKey));
+		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage(messageKey));
 		breadcrumbs.add(breadcrumb);
 		model.addAttribute(breadcrumbs);
 
 	}
 
 	@RequestMapping(value = "/album-art/{imageType}/{albumId}", method = RequestMethod.GET)
-	public ModelAndView getAlbumArt(
-			@PathVariable("imageType") String imageTypeValue,
-			@PathVariable("albumId") Long albumId, Model model)
+	public ModelAndView getAlbumArt(@PathVariable("imageType") String imageTypeValue, @PathVariable("albumId") Long albumId, Model model)
 			throws Exception {
 		ImageType imageType = ImageHelper.getImageType(imageTypeValue);
 		ModelAndView modelAndView = getAlbumArtModelAndView(albumId, imageType);
 		return modelAndView;
 	}
 
-	protected ModelAndView getAlbumArtModelAndView(Long albumId,
-			ImageType imageType) throws Exception {
+	protected ModelAndView getAlbumArtModelAndView(Long albumId, ImageType imageType) throws Exception {
 
 		Album album = musicManager.getAlbum(albumId);
 		if (album == null) {
@@ -110,8 +106,14 @@ public class MusicController extends BaseController {
 
 		AlbumArtImage albumArtImage = album.getAlbumArtImage();
 
-		byte[] imageBytes = connectionManager.getAlbumArtImageBytes(
-				albumArtImage, imageType);
+		byte[] imageBytes = null;
+
+		try {
+			imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage, imageType);
+		} catch (IOException e) {
+			logger.info("Unable to read album art: " + albumArtImage.getUrl(), e);
+		}
+		
 		Song remoteSong = getFirstRemoteSongInAlbum(album);
 
 		if (remoteSong != null && FileHelper.isEmptyBytes(imageBytes)) {
@@ -123,16 +125,17 @@ public class MusicController extends BaseController {
 
 			if (StringUtils.isNotBlank(path) && remoteMediaItemId > 0) {
 				String imageTypeValue = imageType.toString().toLowerCase();
-				String redirectUrl = path + "/" + imageTypeValue + "/"
-						+ remoteMediaItemId;
+				String redirectUrl = path + "/" + imageTypeValue + "/" + remoteMediaItemId;
 				return new ModelAndView(new RedirectView(redirectUrl));
 			}
 		}
 
-		MediaContentType mediaContentType = MediaItemHelper
-				.getMediaContentType(albumArtImage.getContentType());
-		ModelAndView modelAndView = new ModelAndView(new MediaItemImageView(
-				imageBytes, mediaContentType, MediaType.SONG));
+		MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
+		if (albumArtImage != null) {
+			mediaContentType = MediaItemHelper.getMediaContentType(albumArtImage.getContentType());			
+		}
+		
+		ModelAndView modelAndView = new ModelAndView(new MediaItemImageView(imageBytes, mediaContentType, MediaType.SONG));
 		return modelAndView;
 	}
 

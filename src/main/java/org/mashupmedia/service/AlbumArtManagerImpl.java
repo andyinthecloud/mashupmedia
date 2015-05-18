@@ -99,12 +99,13 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		File musicFile = new File(song.getPath());
 		String imagePath = null;
 		String albumArtFileName = MashUpMediaConstants.COVER_ART_DEFAULT_NAME;
-		Artwork artwork = getArtwork(musicFile);
+		Artwork artwork = null;
+		try {
+			artwork = getArtwork(musicFile);
+		} catch (Exception e) {
+			logger.info("Error reading music file artwork: " + musicFile.getAbsolutePath(), e);
+		}
 
-		// AudioFile audioFile = AudioFileIO.read(musicFile);
-		// Tag tag = audioFile.getTag();
-		//
-		// Artwork artwork = tag.getFirstArtwork();
 		final String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
 		String contentType = null;
 		if (artwork != null) {
