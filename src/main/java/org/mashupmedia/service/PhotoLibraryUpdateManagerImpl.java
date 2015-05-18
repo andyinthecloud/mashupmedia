@@ -2,7 +2,6 @@ package org.mashupmedia.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +34,7 @@ import com.drew.metadata.Tag;
 @Transactional
 public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager {
 
-	private final int PHOTOS_SAVE_AMOUNT_MAX_SIZE = 20;
+//	private final int PHOTOS_SAVE_AMOUNT_MAX_SIZE = 5;
 	private final String NEW_LINE = "\n";
 
 	private Logger logger = Logger.getLogger(getClass());
@@ -61,11 +60,12 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	@Override
 	public void updateLibrary(PhotoLibrary library, File folder, Date date) {
-		List<Photo> photos = new ArrayList<Photo>();
-		processPhotos(photos, folder, date, null, library);
+//		List<Photo> photos = new ArrayList<Photo>();
+		long totalPhotosSaved = 0;
+		processPhotos(totalPhotosSaved, folder, date, null, library);
 	}
 
-	protected void processPhotos(List<Photo> photos, File file, Date date,
+	protected void processPhotos(long totalPhotosSaved, File file, Date date,
 			String albumName, PhotoLibrary library) {
 
 		if (file.isDirectory()) {
@@ -78,7 +78,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				return;
 			}
 			for (File childFile : files) {
-				processPhotos(photos, childFile, date, albumName, library);
+				processPhotos(totalPhotosSaved, childFile, date, albumName, library);
 			}
 		}
 
@@ -170,14 +170,16 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		photo.setDisplayTitle(title);
 		photo.setSearchText(album.getName() + " " + title);
 		photo.setUpdatedOn(date);
-		photos.add(photo);
+//		photos.add(photo);
+		totalPhotosSaved++;
 
-		boolean isSessionFlush = false;
-		if (photos.size() == PHOTOS_SAVE_AMOUNT_MAX_SIZE) {
-			isSessionFlush = true;
-		}
+//		boolean isSessionFlush = false;
+//		if (totalPhotosSaved % PHOTOS_SAVE_AMOUNT_MAX_SIZE == 0) {
+//			isSessionFlush = true;
+//		}
 
-		photoDao.savePhoto(photo, isSessionFlush);
+		photoDao.savePhoto(photo, true);
+		
 	}
 
 	protected Album getAlbum(String albumName, Date date) {
