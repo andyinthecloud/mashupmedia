@@ -22,6 +22,7 @@ import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -34,7 +35,7 @@ import com.drew.metadata.Tag;
 @Transactional
 public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager {
 
-//	private final int PHOTOS_SAVE_AMOUNT_MAX_SIZE = 5;
+	private final int PHOTOS_SAVE_AMOUNT_MAX_SIZE = 10;
 	private final String NEW_LINE = "\n";
 
 	private Logger logger = Logger.getLogger(getClass());
@@ -59,12 +60,14 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void updateLibrary(PhotoLibrary library, File folder, Date date) {
-//		List<Photo> photos = new ArrayList<Photo>();
 		long totalPhotosSaved = 0;
 		processPhotos(totalPhotosSaved, folder, date, null, library);
+		logger.info("Total photos saved:" + totalPhotosSaved);
 	}
 
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	protected void processPhotos(long totalPhotosSaved, File file, Date date,
 			String albumName, PhotoLibrary library) {
 
@@ -78,7 +81,8 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				return;
 			}
 			for (File childFile : files) {
-				processPhotos(totalPhotosSaved, childFile, date, albumName, library);
+				processPhotos(totalPhotosSaved, childFile, date, albumName,
+						library);
 			}
 		}
 
@@ -92,7 +96,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 		String fileName = file.getName();
 		String path = file.getAbsolutePath();
-		Photo photo = photoDao.getPhotoByAbsolutePath(path);
+		Photo photo = getPhotoByAbsolutePath(path);
 
 		boolean isCreatePhoto = false;
 		if (photo == null) {
@@ -170,16 +174,25 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		photo.setDisplayTitle(title);
 		photo.setSearchText(album.getName() + " " + title);
 		photo.setUpdatedOn(date);
-//		photos.add(photo);
+		// photos.add(photo);
 		totalPhotosSaved++;
 
-//		boolean isSessionFlush = false;
-//		if (totalPhotosSaved % PHOTOS_SAVE_AMOUNT_MAX_SIZE == 0) {
-//			isSessionFlush = true;
-//		}
+		boolean isSessionFlush = false;
+		if (totalPhotosSaved % PHOTOS_SAVE_AMOUNT_MAX_SIZE == 0) {
+			isSessionFlush = true;
+		}
 
-		photoDao.savePhoto(photo, true);
-		
+		savePhoto(photo, isSessionFlush);
+
+	}
+
+	protected void savePhoto(Photo photo, boolean isSessionFlush) {
+		photoDao.savePhoto(photo, isSessionFlush);
+	}
+
+	protected Photo getPhotoByAbsolutePath(String path) {
+		Photo photo = photoDao.getPhotoByAbsolutePath(path);
+		return photo;
 	}
 
 	protected Album getAlbum(String albumName, Date date) {
