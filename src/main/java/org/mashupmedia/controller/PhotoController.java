@@ -36,15 +36,18 @@ public class PhotoController extends BaseController {
 
 	@Autowired
 	private ConnectionManager connectionManager;
-	
+
 	@Autowired
 	private PhotoManager photoManager;
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb photosBreadcrumb = new Breadcrumb(
-				MessageHelper.getMessage("breadcrumb.photos"), "/app/photos");
-		breadcrumbs.add(photosBreadcrumb);
+
+		Breadcrumb albumsBreadcrumb = new Breadcrumb(
+				MessageHelper.getMessage("breadcrumb.photo.albums"),
+				"/app/photo/album/list");
+		breadcrumbs.add(albumsBreadcrumb);
+
 		Breadcrumb photoBreadcrumb = new Breadcrumb(
 				MessageHelper.getMessage("breadcrumb.photo"));
 		breadcrumbs.add(photoBreadcrumb);
@@ -97,17 +100,18 @@ public class PhotoController extends BaseController {
 					+ " from id = " + mediaItem.getId());
 			return null;
 		}
-		
+
 		Photo photo = (Photo) mediaItem;
-		Photo previousPhoto = photoManager.getPhotoInSequence(photo, PhotoSequenceType.PREVIOUS);
-		Photo nextPhoto = photoManager.getPhotoInSequence(photo, PhotoSequenceType.NEXT);
-		
-		
+		Photo previousPhoto = photoManager.getPhotoInSequence(photo,
+				PhotoSequenceType.PREVIOUS);
+		Photo nextPhoto = photoManager.getPhotoInSequence(photo,
+				PhotoSequenceType.NEXT);
+
 		PhotoPage photoPage = new PhotoPage();
 		photoPage.setPhoto(photo);
 		photoPage.setPreviousPhoto(previousPhoto);
 		photoPage.setNextPhoto(nextPhoto);
-		
+
 		model.addAttribute("photoPage", photoPage);
 		return "photo/show";
 	}

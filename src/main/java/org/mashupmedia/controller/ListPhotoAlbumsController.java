@@ -9,20 +9,21 @@ import org.mashupmedia.web.Breadcrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("/photo/album")
-public class PhotoAlbumController extends BaseController {
+@RequestMapping("/photo/album/list")
+public class ListPhotoAlbumsController extends BaseController {
 
 	@Autowired
 	private PhotoManager photoManager;
 
-	@Override
-	public boolean isTransparentBackground() {
-		return false;
+	@RequestMapping(method = RequestMethod.GET)
+	public String handleGetPhotoAlbumList(Model model) {
+		List<Album> albums = photoManager.getAlbums();
+		model.addAttribute("albums", albums);
+		return "photo/album/list";
 	}
 
 	@Override
@@ -35,14 +36,6 @@ public class PhotoAlbumController extends BaseController {
 	@Override
 	public String getPageTitleMessageKey() {
 		return "photo-albums.title";
-	}
-
-	@RequestMapping(value = "/show/{albumId}", method = RequestMethod.GET)
-	public String handleGetPhotoAlbum(@PathVariable("albumId") long albumId,
-			Model model) {
-		Album album = photoManager.getAlbum(albumId);
-		model.addAttribute("album", album);
-		return "photo/album/show";
 	}
 
 }

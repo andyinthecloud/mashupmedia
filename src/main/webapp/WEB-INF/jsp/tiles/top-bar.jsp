@@ -7,7 +7,7 @@
 	<ul class="main-menu">
 		<li><a href="<c:url value="/app/music" />"><spring:message code="top-bar.music" /></a></li>
 		<li><a href="<c:url value="/app/videos" />"><spring:message code="top-bar.videos" /></a></li>		
-		<li><a href="<c:url value="/app/photos" />"><spring:message
+		<li><a href="<c:url value="/app/photo/list" />"><spring:message
 					code="top-bar.photos" /></a></li>		
 		<sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">		
 		<li><a href="<c:url value="/app/encode/processes" />"><spring:message code="top-bar.encoding.queue" /></a></li>

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("/photos")
+@RequestMapping("/photo/list")
 public class ListPhotosController extends BaseController {
 
 	@Autowired
