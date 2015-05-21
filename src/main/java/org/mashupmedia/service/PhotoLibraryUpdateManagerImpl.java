@@ -132,29 +132,10 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setMediaType(MediaType.PHOTO);
 			photo.setPath(path);
 			photo.setSizeInBytes(file.length());
-
-			StringBuilder metadataBuilder = new StringBuilder();
-			try {
-				Metadata metadata = ImageMetadataReader.readMetadata(file);
-				for (Directory directory : metadata.getDirectories()) {
-					for (Tag tag : directory.getTags()) {
-						if (metadataBuilder.length() > 0) {
-							metadataBuilder.append(NEW_LINE);
-						}
-						metadataBuilder.append(tag.toString());
-					}
-				}
-
-			} catch (ImageProcessingException e) {
-				logger.info(
-						"Unable to read image meta data for photo: "
-								+ file.getAbsolutePath(), e);
-			} catch (IOException e) {
-				logger.info(
-						"Unable to read image meta data for photo: "
-								+ file.getAbsolutePath(), e);
-			}
-			photo.setMetadata(metadataBuilder.toString());
+			
+//			Not sure if this is worthwhile and could be very slow
+//			String metadata = getPhotoMetadata(file);
+//			photo.setMetadata(metadata);
 
 			try {
 				String thumbnailPath = ImageHelper
@@ -184,6 +165,31 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 		savePhoto(photo, isSessionFlush);
 
+	}
+	
+	protected String getPhotoMetadata(File file) {
+		StringBuilder metadataBuilder = new StringBuilder();
+		try {
+			Metadata metadata = ImageMetadataReader.readMetadata(file);
+			for (Directory directory : metadata.getDirectories()) {
+				for (Tag tag : directory.getTags()) {
+					if (metadataBuilder.length() > 0) {
+						metadataBuilder.append(NEW_LINE);
+					}
+					metadataBuilder.append(tag.toString());
+				}
+			}
+
+		} catch (ImageProcessingException e) {
+			logger.info(
+					"Unable to read image meta data for photo: "
+							+ file.getAbsolutePath(), e);
+		} catch (IOException e) {
+			logger.info(
+					"Unable to read image meta data for photo: "
+							+ file.getAbsolutePath(), e);
+		}
+		return metadataBuilder.toString();
 	}
 
 	protected void savePhoto(Photo photo, boolean isSessionFlush) {

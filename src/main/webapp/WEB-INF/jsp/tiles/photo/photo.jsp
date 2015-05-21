@@ -1,5 +1,10 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+<%
+ 	pageContext.setAttribute("newLine", "\n");
+%>
+
+
 <script type="text/javascript">
 	$(document).ready(function() {
 		$("#meta-section a").click(function() {
@@ -39,12 +44,11 @@
 	<ul class="items">
 		<li><a href="<c:url value="/app/photo/original/${photo.id}" />"><spring:message
 					code="photo.original" /></a></li>
-		<li id="meta-section"><a href="javascript:;"><spring:message
-					code="photo.meta" /></a> <%
- 	pageContext.setAttribute("newLine", "\n");
- %>
+					
+		<!-- li id="meta-section"><a href="javascript:;"><spring:message
+					code="photo.meta" /></a> 
 			<p class="hide">${fn:replace(photo.metadata, newLine, "<br />")}</p>
-		</li>
+		</li -->
 	</ul>
 
 </div>
