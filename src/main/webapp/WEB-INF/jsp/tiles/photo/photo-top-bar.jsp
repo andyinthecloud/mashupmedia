@@ -31,7 +31,7 @@
 </script>
 
 
-<div id="top-bar-video-player" class="top-bar">
+<div id="top-bar-photo-player" class="top-bar">
 
 	<table class="top-bar-menu">
 		<tr>
@@ -55,10 +55,6 @@
 		</tr>
 	</table>
 
-	<form action="address-quick-search-media-items" id="quick-search" class="quick-search">
-		<input type="hidden" name="orderBy" value="${orderBy}" /> <input type="hidden"
-			name="isAscending" value="${isAscending}" /> <input type="hidden" name="mediaType" value="${mediaType}" /> <input type="text" name="searchWords"
-			value="${searchWords}" /><input type="image" src="<c:url value="${themePath}/images/controls/search.png"/>" />
-	</form>
+
 
 </div>

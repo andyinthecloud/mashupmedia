@@ -104,7 +104,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		Query query = sessionFactory
 				.getCurrentSession()
 				.createQuery(
-						"select a from org.mashupmedia.model.media.photo.Album a order by a.updatedOn");
+						"select a from org.mashupmedia.model.media.photo.Album a order by a.name");
 
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
