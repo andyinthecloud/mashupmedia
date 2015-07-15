@@ -1,8 +1,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 
-<h1>${album.name}</h1>
-
 <div class="sub-panel">
 
 	<c:choose>

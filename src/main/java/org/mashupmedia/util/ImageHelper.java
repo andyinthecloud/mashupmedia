@@ -17,11 +17,11 @@ import org.mashupmedia.util.FileHelper.FileType;
 public class ImageHelper {
 	private static Logger LOGGER = Logger.getLogger(ImageHelper.class);
 
-	public final static int PHOTO_THUMBNAIL_WIDTH = 500;
-	public final static int PHOTO_THUMBNAIL_HEIGHT = 500;
+	public final static int PHOTO_THUMBNAIL_WIDTH = 200;
+	public final static int PHOTO_THUMBNAIL_HEIGHT = 200;
 
-	public final static int MUSIC_ALBUM_ART_THUMBNAIL_WIDTH = 150;
-	public final static int MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT = 150;
+	public final static int MUSIC_ALBUM_ART_THUMBNAIL_WIDTH = 200;
+	public final static int MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT = 200;
 
 	public enum ImageFormatType {
 		PNG("png");

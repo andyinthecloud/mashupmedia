@@ -19,7 +19,7 @@
 
 	<c:set var="photo" value="${photoPage.photo }" />
 
-	<h1>${photo.album.name}-${photo.displayTitle}</h1>
+	<h1>${photo.album.name} / ${photo.displayTitle}</h1>
 
 	<table class="photo-container">
 		<tr>
@@ -45,10 +45,10 @@
 		<li><a href="<c:url value="/app/photo/original/${photo.id}" />"><spring:message
 					code="photo.original" /></a></li>
 					
-		<!-- li id="meta-section"><a href="javascript:;"><spring:message
+		<li id="meta-section"><a href="javascript:;"><spring:message
 					code="photo.meta" /></a> 
 			<p class="hide">${fn:replace(photo.metadata, newLine, "<br />")}</p>
-		</li -->
+		</li>
 	</ul>
 
 </div>

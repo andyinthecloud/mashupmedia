@@ -29,13 +29,7 @@
 			jPlayerStatus = "play";
 		}
 		
-		var options = {			
-			ready: function (event) {
-				myAndroidFix.setMedia(bubble);
-				if (isAutoPlay) {
-					myAndroidFix.play();
-				}				
-			},			
+		var options = {		
 			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
 			supplied: "${streamingFormat}",
 			wmode: "window",
@@ -48,13 +42,8 @@
 			preload: "auto"
 		};
 		
-		
-
-		//var myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, bubble, options);		
 		var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";		
 		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, ${song.artist.id});
-		
-		
 		
 		$(mashupMedia.jPlayerId).jPlayer({
 			ready: function (event) {

@@ -18,6 +18,7 @@
 package org.mashupmedia.service;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -106,6 +107,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		Location location = library.getLocation();
 		File locationFolder = new File(location.getPath());
 		File[] files = locationFolder.listFiles();
+		Arrays.sort(files);
 		
 		for (File file : files) {
 			if (library instanceof MusicLibrary) {

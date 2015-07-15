@@ -11,6 +11,11 @@
     $(document).ready(function() {
 
 	mashupMedia.loadLastAccessedPlaylist();
+	
+	
+	$("#jp_container_1 .jp-play").click(function() {
+		$(mashupMedia.jPlayerId).jPlayer.pause();
+	});
 
 	$("#current-song .vote .like").click(function() {
 	    var mediaItemId = $("#current-song-id").val();

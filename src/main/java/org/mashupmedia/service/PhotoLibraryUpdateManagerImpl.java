@@ -2,6 +2,7 @@ package org.mashupmedia.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -74,21 +75,20 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		if (file.isDirectory()) {
 			if (StringUtils.isNotBlank(albumName)) {
 				albumName += " / " + file.getName();
+			} else {
+				albumName = file.getName();
 			}
 
 			File[] files = file.listFiles();
 			if (files == null) {
 				return;
 			}
+			
+			Arrays.sort(files);			
 			for (File childFile : files) {
 				processPhotos(totalPhotosSaved, childFile, date, albumName,
 						library);
 			}
-		}
-
-		if (albumName == null) {
-			File parentFolder = file.getParentFile();
-			albumName = parentFolder.getName();
 		}
 
 		Album album = getAlbum(albumName, date);
@@ -114,7 +114,8 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper
 					.getMediaContentType(fileExtension);
-			if (mediaContentType == MediaContentType.UNSUPPORTED) {
+			
+			if (!MediaItemHelper.isCompatiblePhotoFormat(mediaContentType)) {
 				return;
 			}
 
@@ -134,8 +135,8 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setSizeInBytes(file.length());
 			
 //			Not sure if this is worthwhile and could be very slow
-//			String metadata = getPhotoMetadata(file);
-//			photo.setMetadata(metadata);
+			String metadata = getPhotoMetadata(file);
+			photo.setMetadata(metadata);
 
 			try {
 				String thumbnailPath = ImageHelper

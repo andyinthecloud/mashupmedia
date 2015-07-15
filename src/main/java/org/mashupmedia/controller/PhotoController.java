@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MediaManager;
@@ -48,9 +49,6 @@ public class PhotoController extends BaseController {
 				"/app/photo/album/list");
 		breadcrumbs.add(albumsBreadcrumb);
 
-		Breadcrumb photoBreadcrumb = new Breadcrumb(
-				MessageHelper.getMessage("breadcrumb.photo"));
-		breadcrumbs.add(photoBreadcrumb);
 	}
 
 	@Override
@@ -102,6 +100,15 @@ public class PhotoController extends BaseController {
 		}
 
 		Photo photo = (Photo) mediaItem;
+		
+		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
+		Album album = photo.getAlbum();		
+		Breadcrumb albumBreadcrumb = new Breadcrumb(album.getName(), "/app/photo/album/show/" + album.getId());		
+		breadcrumbs.add(albumBreadcrumb);
+		Breadcrumb photoBreadcrumb = new Breadcrumb(photo.getDisplayTitle());
+		breadcrumbs.add(photoBreadcrumb);		
+		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);		
+		
 		Photo previousPhoto = photoManager.getPhotoInSequence(photo,
 				PhotoSequenceType.PREVIOUS);
 		Photo nextPhoto = photoManager.getPhotoInSequence(photo,

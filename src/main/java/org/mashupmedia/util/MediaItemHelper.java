@@ -163,4 +163,24 @@ public class MediaItemHelper {
 		return false;
 	}
 
+	public static boolean isCompatiblePhotoFormat(MediaContentType mediaContentType) {
+		if (mediaContentType == MediaContentType.JPEG) {
+			return true;
+		}
+
+		if (mediaContentType == MediaContentType.GIF) {
+			return true;
+		}
+
+		if (mediaContentType == MediaContentType.TIF) {
+			return true;
+		}
+
+		if (mediaContentType == MediaContentType.PNG) {
+			return true;
+		}
+
+		return false;
+	}
+
 }
