@@ -87,6 +87,11 @@ public class ImageHelper {
 
 	public static String generateAndSavePhotoThumbnail(long libraryId,
 			String imageFilePath) throws IOException {
+		
+		if (StringUtils.isBlank(imageFilePath)) {
+			return null;
+		}
+		
 		File thumbnailFile = FileHelper.createThumbnailFile(libraryId,
 				FileType.PHOTO_THUMBNAIL);
 		return generateAndSaveThumbnail(libraryId, imageFilePath,

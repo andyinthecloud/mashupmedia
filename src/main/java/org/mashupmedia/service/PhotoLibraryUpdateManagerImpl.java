@@ -83,8 +83,8 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			if (files == null) {
 				return;
 			}
-			
-			Arrays.sort(files);			
+
+			Arrays.sort(files);
 			for (File childFile : files) {
 				processPhotos(totalPhotosSaved, childFile, date, albumName,
 						library);
@@ -114,7 +114,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper
 					.getMediaContentType(fileExtension);
-			
+
 			if (!MediaItemHelper.isCompatiblePhotoFormat(mediaContentType)) {
 				return;
 			}
@@ -133,15 +133,13 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setMediaType(MediaType.PHOTO);
 			photo.setPath(path);
 			photo.setSizeInBytes(file.length());
-			
-//			Not sure if this is worthwhile and could be very slow
+
 			String metadata = getPhotoMetadata(file);
 			photo.setMetadata(metadata);
 
-			try {
+			try {				
 				String thumbnailPath = ImageHelper
-						.generateAndSavePhotoThumbnail(library.getId(),
-								file.getAbsolutePath());
+						.generateAndSavePhotoThumbnail(library.getId(), path);
 				photo.setThumbnailPath(thumbnailPath);
 			} catch (IOException e) {
 				logger.error(
@@ -167,7 +165,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		savePhoto(photo, isSessionFlush);
 
 	}
-	
+
 	protected String getPhotoMetadata(File file) {
 		StringBuilder metadataBuilder = new StringBuilder();
 		try {
