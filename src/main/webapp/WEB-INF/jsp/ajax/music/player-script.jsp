@@ -17,30 +17,13 @@
 	});
 
 	function setupJPlayer(isAutoPlay) {
-			
-		
+					
 		$(mashupMedia.jPlayerId).jPlayer("destroy");
-		var bubble = {
-			${streamingFormat}: "<c:url value="${streamingUrl}" />"
-		};
 
 		var jPlayerStatus = "load";
 		if (isAutoPlay) {
 			jPlayerStatus = "play";
-		}
-		
-		var options = {		
-			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
-			supplied: "${streamingFormat}",
-			wmode: "window",
-			solution: "html,flash",
-			smoothPlayBar: true,
-			keyEnabled: true,
-			ended: function() { 
-				mashupMedia.playNextSong();				
-			},			
-			preload: "auto"
-		};
+		}		
 		
 		var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";		
 		mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, ${song.artist.id});
@@ -51,7 +34,7 @@
 					${streamingFormat} : "<c:url value="${streamingUrl}" />"
 				}).jPlayer(jPlayerStatus);				
 			},
-			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}" />",
+			swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
 			supplied: "${streamingFormat}",
 			solution: "html, flash",
 			wmode: "window",
