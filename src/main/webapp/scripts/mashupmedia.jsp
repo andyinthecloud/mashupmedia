@@ -1,5 +1,6 @@
-<%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
+<%@page contentType="text/javascript" %>
 
+<%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 var isLoadingContent = false;
 var currentPage = "";
