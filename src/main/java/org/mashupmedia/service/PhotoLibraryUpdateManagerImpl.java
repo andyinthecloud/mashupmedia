@@ -141,7 +141,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				String thumbnailPath = ImageHelper
 						.generateAndSavePhotoThumbnail(library.getId(), path);
 				photo.setThumbnailPath(thumbnailPath);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				logger.error(
 						"Unable to create thumbnail of photo: "
 								+ file.getAbsolutePath(), e);
