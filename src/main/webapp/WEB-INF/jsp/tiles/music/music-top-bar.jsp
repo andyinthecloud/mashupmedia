@@ -14,7 +14,7 @@
 	
 	
 	$("#jp_container_1 .jp-play").click(function() {
-		$(mashupMedia.jPlayerId).jPlayer.pause();
+		//$(mashupMedia.jPlayerId).jPlayer.pause;
 	});
 
 	$("#current-song .vote .like").click(function() {
