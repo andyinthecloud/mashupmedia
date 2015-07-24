@@ -19,6 +19,10 @@ public class ImageHelper {
 
 	public final static int PHOTO_THUMBNAIL_WIDTH = 200;
 	public final static int PHOTO_THUMBNAIL_HEIGHT = 200;
+	
+	public final static int PHOTO_WEB_OPTIMISED_WIDTH = 600;
+	public final static int PHOTO_WEB_OPTIMISED_HEIGHT = 600;
+	
 
 	public final static int MUSIC_ALBUM_ART_THUMBNAIL_WIDTH = 200;
 	public final static int MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT = 200;
@@ -38,7 +42,7 @@ public class ImageHelper {
 	}
 
 	public enum ImageType {
-		ORIGINAL, THUMBNAIL;
+		ORIGINAL, THUMBNAIL, WEB_OPTIMISED;
 	}
 
 	private static BufferedImage createThumbnail(BufferedImage image,
@@ -46,11 +50,9 @@ public class ImageHelper {
 		BufferedImage thumbnailImage = null;
 		try {
 			thumbnailImage = Scalr.resize(image, Scalr.Method.SPEED,
-					Scalr.Mode.FIT_TO_WIDTH, width, height, Scalr.OP_ANTIALIAS);
+					Scalr.Mode.FIT_TO_WIDTH, width, height, Scalr.OP_ANTIALIAS);			
 		} catch (Exception e) {
 			LOGGER.error("Error resizing image.", e);
-//			LOGGER.error("Error resizing image, using JDK default algorithm", e);
-//			thumbnailImage = resizeImageDefault(image, width, height);
 		}
 		return thumbnailImage;
 	}
@@ -78,26 +80,37 @@ public class ImageHelper {
 
 	public static String generateAndSaveMusicAlbumArtThumbnail(long libraryId,
 			String imageFilePath) throws IOException {
-		File thumbnailFile = FileHelper.createThumbnailFile(libraryId,
+		File thumbnailFile = FileHelper.createMediaItemFile(libraryId,
 				FileType.ALBUM_ART_THUMBNAIL);
 		return generateAndSaveThumbnail(libraryId, imageFilePath,
 				thumbnailFile, MUSIC_ALBUM_ART_THUMBNAIL_WIDTH,
 				MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT);
 	}
 
-	public static String generateAndSavePhotoThumbnail(long libraryId,
-			String imageFilePath) throws IOException {
+	public static String generateAndSavePhoto(long libraryId,
+			String imageFilePath, ImageType imageType) throws IOException {
 		
 		if (StringUtils.isBlank(imageFilePath)) {
 			return null;
 		}
 		
-		File thumbnailFile = FileHelper.createThumbnailFile(libraryId,
-				FileType.PHOTO_THUMBNAIL);
+		FileType fileType = FileType.PHOTO_THUMBNAIL;
+		int width = PHOTO_THUMBNAIL_WIDTH;
+		int height = PHOTO_THUMBNAIL_HEIGHT;
+		
+		
+		if (imageType == ImageType.WEB_OPTIMISED) {
+			fileType = FileType.PHOTO_WEB_OPTIMISED;
+			width = PHOTO_WEB_OPTIMISED_WIDTH;
+			height = PHOTO_WEB_OPTIMISED_HEIGHT;
+		}
+		
+		File thumbnailFile = FileHelper.createMediaItemFile(libraryId,
+				fileType);
 		return generateAndSaveThumbnail(libraryId, imageFilePath,
-				thumbnailFile, PHOTO_THUMBNAIL_WIDTH, PHOTO_THUMBNAIL_HEIGHT);
+				thumbnailFile, width, height);
 	}
-
+	
 	protected static String generateAndSaveThumbnail(long libraryId,
 			String imageFilePath, File thumbnailFile, int width, int height)
 			throws IOException {

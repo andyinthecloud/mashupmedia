@@ -24,7 +24,7 @@ public class FileHelper {
 
 	public enum FileType {
 		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM_UNPROCESSED(
-				"media-item-stream"), MEDIA_ITEM_STREAM_ENCODED("media-item-encoded"), PHOTO_THUMBNAIL("photo-thumbnail");
+				"media-item-stream"), MEDIA_ITEM_STREAM_ENCODED("media-item-encoded"), PHOTO_THUMBNAIL("photo-thumbnail"), PHOTO_WEB_OPTIMISED("photo-web-optimised");
 
 		private String folderName;
 
@@ -84,7 +84,7 @@ public class FileHelper {
 	}
 
 
-	public static File createThumbnailFile(long libraryId, FileType fileType) {
+	public static File createMediaItemFile(long libraryId, FileType fileType) {
 		File libraryFolder = getLibraryFolder(libraryId);
 		File thumbnailFolder = new File(libraryFolder, fileType.getFolderName());
 		thumbnailFolder.mkdirs();

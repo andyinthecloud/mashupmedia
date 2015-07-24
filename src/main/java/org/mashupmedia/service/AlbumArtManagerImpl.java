@@ -116,7 +116,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 			}
 			// imagePath = FileHelper.writeAlbumArt(musicLibrary.getId(),
 			// bytes);
-			File albumArtFile = FileHelper.createThumbnailFile(musicLibrary.getId(), FileType.ALBUM_ART_THUMBNAIL);
+			File albumArtFile = FileHelper.createMediaItemFile(musicLibrary.getId(), FileType.ALBUM_ART_THUMBNAIL);
 			FileUtils.writeByteArrayToFile(albumArtFile, bytes);
 			imagePath = albumArtFile.getAbsolutePath();
 

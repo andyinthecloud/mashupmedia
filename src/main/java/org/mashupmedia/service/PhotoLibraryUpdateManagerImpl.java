@@ -19,6 +19,7 @@ import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
+import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,9 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifIFD0Directory;
 
 @Service
 @Transactional
@@ -134,12 +137,26 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setPath(path);
 			photo.setSizeInBytes(file.length());
 
-			String metadata = getPhotoMetadata(file);
-			photo.setMetadata(metadata);
+			try {
+				Metadata metadata = ImageMetadataReader.readMetadata(file);
+				String metadataText = processPhotoMetadata(metadata);
+				photo.setMetadata(metadataText);
 
-			try {				
-				String thumbnailPath = ImageHelper
-						.generateAndSavePhotoThumbnail(library.getId(), path);
+				int imageOrientation = getPhotoOrientation(metadata);
+
+			} catch (ImageProcessingException e) {
+				logger.info(
+						"Unable to read image meta data for photo: "
+								+ file.getAbsolutePath(), e);
+			} catch (IOException e) {
+				logger.info(
+						"Unable to read image meta data for photo: "
+								+ file.getAbsolutePath(), e);
+			}
+
+			try {
+				String thumbnailPath = ImageHelper.generateAndSavePhoto(
+						library.getId(), path, ImageType.THUMBNAIL);
 				photo.setThumbnailPath(thumbnailPath);
 			} catch (Exception e) {
 				logger.error(
@@ -147,15 +164,15 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 								+ file.getAbsolutePath(), e);
 			}
 
+			photo.setLibrary(library);
+			String title = StringUtils.trimToEmpty(fileName);
+			photo.setDisplayTitle(title);
+			photo.setSearchText(album.getName() + " " + title);
+			// photos.add(photo);
+			totalPhotosSaved++;
 		}
 
-		photo.setLibrary(library);
-		String title = StringUtils.trimToEmpty(fileName);
-		photo.setDisplayTitle(title);
-		photo.setSearchText(album.getName() + " " + title);
 		photo.setUpdatedOn(date);
-		// photos.add(photo);
-		totalPhotosSaved++;
 
 		boolean isSessionFlush = false;
 		if (totalPhotosSaved % PHOTOS_SAVE_AMOUNT_MAX_SIZE == 0) {
@@ -166,28 +183,29 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	}
 
-	protected String getPhotoMetadata(File file) {
-		StringBuilder metadataBuilder = new StringBuilder();
+	protected int getPhotoOrientation(Metadata metadata) {
+		Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
+		
+		int orientation = 1;
 		try {
-			Metadata metadata = ImageMetadataReader.readMetadata(file);
-			for (Directory directory : metadata.getDirectories()) {
-				for (Tag tag : directory.getTags()) {
-					if (metadataBuilder.length() > 0) {
-						metadataBuilder.append(NEW_LINE);
-					}
-					metadataBuilder.append(tag.toString());
-				}
-			}
-
-		} catch (ImageProcessingException e) {
-			logger.info(
-					"Unable to read image meta data for photo: "
-							+ file.getAbsolutePath(), e);
-		} catch (IOException e) {
-			logger.info(
-					"Unable to read image meta data for photo: "
-							+ file.getAbsolutePath(), e);
+			orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+		} catch (MetadataException me) {
+			logger.warn("Could not get orientation");
 		}
+		return orientation;
+	}
+
+	protected String processPhotoMetadata(Metadata metadata) {
+		StringBuilder metadataBuilder = new StringBuilder();
+		for (Directory directory : metadata.getDirectories()) {
+			for (Tag tag : directory.getTags()) {
+				if (metadataBuilder.length() > 0) {
+					metadataBuilder.append(NEW_LINE);
+				}
+				metadataBuilder.append(tag.toString());
+			}
+		}
+
 		return metadataBuilder.toString();
 	}
 
