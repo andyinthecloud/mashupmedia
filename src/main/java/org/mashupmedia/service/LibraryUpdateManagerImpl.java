@@ -31,7 +31,6 @@ import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.location.Location;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -46,7 +45,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	@Autowired
 	private VideoLibraryUpdateManager videoLibraryUpdateManager;
-	
+
 	@Autowired
 	private PhotoLibraryUpdateManager photoLibraryUpdateManager;
 
@@ -66,11 +65,15 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			return;
 		}
 
-		Date lastUpdated = library.getUpdatedOn();
 		Date date = new Date();
 		date = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);
 
-		if (library.getLibraryStatusType() == LibraryStatusType.WORKING && date.before(lastUpdated)) {
+		Date lastSuccessfulScanOn = library.getLastSuccessfulScanOn();
+		if (lastSuccessfulScanOn == null) {
+			lastSuccessfulScanOn = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);			
+		}
+
+		if (library.getLibraryStatusType() != LibraryStatusType.OK && date.before(lastSuccessfulScanOn)) {
 			logger.info("Library is already updating, exiting:" + library.toString());
 			return;
 		}
@@ -89,6 +92,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			processLibrary(library);
 
 			library.setLibraryStatusType(LibraryStatusType.OK);
+			library.setLastSuccessfulScanOn(new Date());
 
 		} catch (Exception e) {
 			logger.error("Error updating library", e);
@@ -108,7 +112,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		File locationFolder = new File(location.getPath());
 		File[] files = locationFolder.listFiles();
 		Arrays.sort(files);
-		
+
 		for (File file : files) {
 			if (library instanceof MusicLibrary) {
 				MusicLibrary musicLibrary = (MusicLibrary) library;
@@ -118,7 +122,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 				videoLibraryUpdateManager.updateLibrary(videoLibrary, file, date);
 			} else if (library instanceof PhotoLibrary) {
 				PhotoLibrary photoLibrary = (PhotoLibrary) library;
-				photoLibraryUpdateManager.updateLibrary(photoLibrary, file, date);				
+				photoLibraryUpdateManager.updateLibrary(photoLibrary, file, date);
 			}
 		}
 
@@ -134,7 +138,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		} else if (library instanceof VideoLibrary) {
 			videoLibraryUpdateManager.deleteObsoleteVideos(libraryId, date);
 		} else if (library instanceof PhotoLibrary) {
-			photoLibraryUpdateManager.deleteObsoletePhotos(libraryId, date);			
+			photoLibraryUpdateManager.deleteObsoletePhotos(libraryId, date);
 		}
 	}
 

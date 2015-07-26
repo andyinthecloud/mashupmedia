@@ -47,6 +47,7 @@ public abstract class Library implements Serializable {
 	private User updatedBy;
 	private boolean enabled;
 	private String scanMinutesInterval;
+	private Date lastSuccessfulScanOn;
 	@IndexedEmbedded
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Group> groups;
@@ -187,6 +188,16 @@ public abstract class Library implements Serializable {
 	public void setScanMinutesInterval(String scanMinutesInterval) {
 		this.scanMinutesInterval = scanMinutesInterval;
 	}
+	
+	
+
+	public Date getLastSuccessfulScanOn() {
+		return lastSuccessfulScanOn;
+	}
+
+	public void setLastSuccessfulScanOn(Date lastSuccessfulScanOn) {
+		this.lastSuccessfulScanOn = lastSuccessfulScanOn;
+	}
 
 	@Override
 	public int hashCode() {
@@ -243,8 +254,16 @@ public abstract class Library implements Serializable {
 		builder.append(enabled);
 		builder.append(", scanMinutesInterval=");
 		builder.append(scanMinutesInterval);
+		builder.append(", lastSuccessfulScanOn=");
+		builder.append(lastSuccessfulScanOn);
 		builder.append(", groups=");
 		builder.append(groups);
+		builder.append(", remoteShares=");
+		builder.append(remoteShares);
+		builder.append(", remote=");
+		builder.append(remote);
+		builder.append(", status=");
+		builder.append(status);
 		builder.append("]");
 		return builder.toString();
 	}
