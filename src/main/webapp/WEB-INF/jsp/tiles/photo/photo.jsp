@@ -29,9 +29,9 @@
 						href="<c:url value="/app/photo/show/${photoPage.previousPhoto.id}" />"
 						class="arrow image-previous"></a>
 				</c:if></td>
-			<td class="photo"><img class="original-photo"
+			<td class="photo"><img
 				alt="${photo.displayTitle}" title="${photo.displayTitle}"
-				src="<c:url value="/app/photo/original/${photo.id}" />" /></td>
+				src="<c:url value="/app/photo/web-optimised/${photo.id}" />" /></td>
 			<td class="photo-next"><c:if
 					test="${not empty photoPage.nextPhoto.id}">
 					<a

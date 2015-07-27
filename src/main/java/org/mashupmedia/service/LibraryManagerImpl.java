@@ -58,7 +58,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	}
 
 	@Override
-	public void saveLibrary(Library library) {
+	public void saveLibrary(Library library, boolean isFlushSession) {
 		User user = AdminHelper.getLoggedInUser();
 		if (user == null) {
 			logger.error("No user found in session, using system user...");
@@ -91,8 +91,13 @@ public class LibraryManagerImpl implements LibraryManager {
 			}
 		}
 
-		libraryDao.saveLibrary(library);
+		libraryDao.saveLibrary(library, isFlushSession);
 
+	}
+	
+	@Override
+	public void saveLibrary(Library library) {
+		saveLibrary(library, false);		
 	}
 
 	@Override

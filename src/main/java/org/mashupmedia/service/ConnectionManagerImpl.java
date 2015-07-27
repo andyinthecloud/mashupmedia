@@ -141,14 +141,26 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		String filePath = photo.getPath();
 		if (imageType == ImageType.THUMBNAIL) {
 			filePath = photo.getThumbnailPath();
-		} 
+		} else if (imageType == ImageType.WEB_OPTIMISED) {
+			filePath = photo.getWebOptimisedImagePath();			
+		}
 		
 		byte[] bytes = getFileBytes(filePath);
+		if (bytes == null || bytes.length == 0) {
+			logger.error("Cannot find image of type: " + imageType + " for file: " + filePath);
+			filePath = photo.getPath();
+			bytes = getFileBytes(filePath);
+		}
+				
 		return bytes;
 
 	}
 
 	private byte[] getFileBytes(String filePath) throws IOException {
+		if (StringUtils.isBlank(filePath)) {
+			return null;
+		}
+		
 		File file = new File(filePath);
 		if (!file.exists()) {
 			return null;

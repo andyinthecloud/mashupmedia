@@ -19,6 +19,7 @@ import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
+import org.mashupmedia.util.ImageHelper.ImageRotationType;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
@@ -137,12 +138,12 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setPath(path);
 			photo.setSizeInBytes(file.length());
 
+			ImageRotationType imageRotationType = null;
 			try {
 				Metadata metadata = ImageMetadataReader.readMetadata(file);
 				String metadataText = processPhotoMetadata(metadata);
 				photo.setMetadata(metadataText);
-
-				int imageOrientation = getPhotoOrientation(metadata);
+				imageRotationType = getPhotoOrientation(metadata);				 
 
 			} catch (ImageProcessingException e) {
 				logger.info(
@@ -155,9 +156,15 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			}
 
 			try {
-				String thumbnailPath = ImageHelper.generateAndSavePhoto(
-						library.getId(), path, ImageType.THUMBNAIL);
+				String thumbnailPath = ImageHelper.generateAndSaveImage(
+						library.getId(), path, ImageType.THUMBNAIL, imageRotationType);
 				photo.setThumbnailPath(thumbnailPath);
+				
+				String webOptimisedImagePath = ImageHelper.generateAndSaveImage(
+						library.getId(), path, ImageType.WEB_OPTIMISED, imageRotationType);
+				photo.setWebOptimisedImagePath(webOptimisedImagePath);
+				
+				
 			} catch (Exception e) {
 				logger.error(
 						"Unable to create thumbnail of photo: "
@@ -183,16 +190,18 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	}
 
-	protected int getPhotoOrientation(Metadata metadata) {
+	protected ImageRotationType getPhotoOrientation(Metadata metadata) {
 		Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
 		
-		int orientation = 1;
+		int exifTagOrientation = 0;
 		try {
-			orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+			exifTagOrientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
 		} catch (MetadataException me) {
 			logger.warn("Could not get orientation");
 		}
-		return orientation;
+		
+		ImageRotationType imageRotationType = ImageHelper.getImageRotationType(exifTagOrientation);
+		return imageRotationType;
 	}
 
 	protected String processPhotoMetadata(Metadata metadata) {

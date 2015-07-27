@@ -57,7 +57,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	}
 
 	@Override
-	public void saveLibrary(Library library) {
+	public void saveLibrary(Library library, boolean isFlushSession) {
 		long id = library.getId();
 
 		if (id > 0) {
@@ -65,6 +65,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		} else {
 			sessionFactory.getCurrentSession().save(library);
 		}
+		
+		flushSession(isFlushSession);
 	}
 
 	@Override

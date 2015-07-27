@@ -23,6 +23,7 @@ public class Photo extends MediaItem {
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
 	private String thumbnailPath;
+	private String webOptimisedImagePath;
 	@Type(type = "text")
 	private String metadata;
 
@@ -48,6 +49,14 @@ public class Photo extends MediaItem {
 
 	public void setThumbnailPath(String thumbnailPath) {
 		this.thumbnailPath = thumbnailPath;
+	}
+
+	public String getWebOptimisedImagePath() {
+		return webOptimisedImagePath;
+	}
+
+	public void setWebOptimisedImagePath(String webOptimisedImagePath) {
+		this.webOptimisedImagePath = webOptimisedImagePath;
 	}
 
 }

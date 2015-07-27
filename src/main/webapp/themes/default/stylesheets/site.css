@@ -960,7 +960,7 @@ body.photo table.photo-container td.photo {
 	text-align: center;
 }
 
-body.photo table.photo-container td.photo img.original-photo {
+body.photo table.photo-container td.photo img {
 	width: auto;	
 	height: auto;
 	max-width: 100%;	

@@ -80,7 +80,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 		try {
 			library.setLibraryStatusType(LibraryStatusType.WORKING);
-			libraryManager.saveLibrary(library);
+			libraryManager.saveLibrary(library, true);
 
 			Location location = library.getLocation();
 			File folder = new File(location.getPath());

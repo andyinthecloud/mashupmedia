@@ -17,6 +17,8 @@ public interface LibraryManager {
 
 	public void saveLibrary(Library library);
 
+	public void saveLibrary(Library library, boolean isFlushSession);
+
 	public List<Library> getLibrariesForGroup(long groupId);
 
 	public void saveRemoteShares(Long[] remoteShareIds, String remoteShareStatus);

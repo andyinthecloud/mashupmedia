@@ -64,6 +64,14 @@ public class PhotoController extends BaseController {
 		return modelAndView;
 	}
 
+	@RequestMapping(value = "/web-optimised/{photoId}", method = RequestMethod.GET)
+	public ModelAndView getWebOptimised(@PathVariable("photoId") Long photoId,
+			Model model) throws Exception {
+		ModelAndView modelAndView = getPhotoModelAndView(photoId,
+				ImageType.WEB_OPTIMISED);
+		return modelAndView;
+	}
+
 	@RequestMapping(value = "/original/{photoId}", method = RequestMethod.GET)
 	public ModelAndView getOriginal(@PathVariable("photoId") Long photoId,
 			Model model) throws Exception {
