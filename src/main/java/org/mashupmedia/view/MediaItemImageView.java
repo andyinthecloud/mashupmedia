@@ -24,7 +24,7 @@ public class MediaItemImageView implements View {
 		this.imageBytes = imageBytes;
 
 		if (mediaContentType == null) {
-			mediaContentType = MediaContentType.PNG;
+			mediaContentType = MediaContentType.JPEG;
 		}
 		this.mediaContentType = mediaContentType;
 		this.mediaType = mediaType;

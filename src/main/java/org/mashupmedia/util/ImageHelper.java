@@ -28,7 +28,7 @@ public class ImageHelper {
 	public final static int MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT = 200;
 
 	public enum ImageFormatType {
-		PNG("png");
+		PNG("png"), JPEG("JPEG");
 
 		private String value;
 
@@ -46,9 +46,8 @@ public class ImageHelper {
 	}
 
 	public enum ImageRotationType {
-		FLIP_HORIZONTAL(2, Rotation.FLIP_HORZ), CLOCKWISE_180(3,
-				Rotation.CW_180), FLIP_VERTICAL(4, Rotation.FLIP_VERT), CLOCKWISE_90(
-				6, Rotation.CW_90), CLOCKWISE_270(8, Rotation.CW_270);
+		FLIP_HORIZONTAL(2, Rotation.FLIP_HORZ), CLOCKWISE_180(3, Rotation.CW_180), FLIP_VERTICAL(4, Rotation.FLIP_VERT), CLOCKWISE_90(6,
+				Rotation.CW_90), CLOCKWISE_270(8, Rotation.CW_270);
 
 		private int exifTagOrientation;
 		private Rotation rotation;
@@ -70,17 +69,14 @@ public class ImageHelper {
 		return null;
 	}
 
-	private static BufferedImage createThumbnail(BufferedImage image,
-			int width, int height, ImageRotationType imageRotationType) {
+	private static BufferedImage processImage(BufferedImage image, int width, int height, ImageRotationType imageRotationType) {
 		BufferedImage processedImage = null;
 		try {
 
-			processedImage = Scalr.resize(image, Scalr.Method.BALANCED,
-					Scalr.Mode.FIT_TO_WIDTH, width, height);
+			processedImage = Scalr.resize(image, Scalr.Method.BALANCED, Scalr.Mode.FIT_TO_WIDTH, width, height);
 
 			if (imageRotationType != null) {
-				processedImage = Scalr.rotate(processedImage,
-						imageRotationType.rotation);
+				processedImage = Scalr.rotate(processedImage, imageRotationType.rotation);
 			}
 
 		} catch (Exception e) {
@@ -110,18 +106,13 @@ public class ImageHelper {
 	// return resizedImage;
 	// }
 
-	public static String generateAndSaveMusicAlbumArtThumbnail(long libraryId,
-			String imageFilePath) throws IOException {
-		File thumbnailFile = FileHelper.createMediaItemFile(libraryId,
-				FileType.ALBUM_ART_THUMBNAIL);
-		return generateAndSaveImage(libraryId, imageFilePath, thumbnailFile,
-				MUSIC_ALBUM_ART_THUMBNAIL_WIDTH,
-				MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT, null);
+	public static String generateAndSaveMusicAlbumArtThumbnail(long libraryId, String imageFilePath) throws IOException {
+		File thumbnailFile = FileHelper.createMediaItemFile(libraryId, FileType.ALBUM_ART_THUMBNAIL);
+		return generateAndSaveImage(libraryId, imageFilePath, thumbnailFile, MUSIC_ALBUM_ART_THUMBNAIL_WIDTH, MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT, null);
 	}
 
-	public static String generateAndSaveImage(long libraryId,
-			String imageFilePath, ImageType imageType,
-			ImageRotationType imageRotationType) throws IOException {
+	public static String generateAndSaveImage(long libraryId, String imageFilePath, ImageType imageType, ImageRotationType imageRotationType)
+			throws IOException {
 
 		if (StringUtils.isBlank(imageFilePath)) {
 			return null;
@@ -138,12 +129,10 @@ public class ImageHelper {
 		}
 
 		File file = FileHelper.createMediaItemFile(libraryId, fileType);
-		return generateAndSaveImage(libraryId, imageFilePath, file, width,
-				height, imageRotationType);
+		return generateAndSaveImage(libraryId, imageFilePath, file, width, height, imageRotationType);
 	}
 
-	protected static String generateAndSaveImage(long libraryId,
-			String imageFilePath, File thumbnailFile, int width, int height,
+	protected static String generateAndSaveImage(long libraryId, String imageFilePath, File file, int width, int height,
 			ImageRotationType imageRotationType) throws IOException {
 		File imageFile = new File(imageFilePath);
 		if (!imageFile.exists()) {
@@ -155,16 +144,13 @@ public class ImageHelper {
 		imageFileInputStream.close();
 		IOUtils.closeQuietly(imageFileInputStream);
 
-		BufferedImage thumbnailImage = createThumbnail(image, width, height,
-				imageRotationType);
-		FileOutputStream thumbnailFileOutputStream = new FileOutputStream(
-				thumbnailFile);
-		ImageIO.write(thumbnailImage, ImageFormatType.PNG.getFormat(),
-				thumbnailFileOutputStream);
-		thumbnailFileOutputStream.close();
-		IOUtils.closeQuietly(thumbnailFileOutputStream);
+		BufferedImage bufferedImage = processImage(image, width, height, imageRotationType);
+		FileOutputStream outputStream = new FileOutputStream(file);
+		ImageIO.write(bufferedImage, ImageFormatType.JPEG.getFormat(), outputStream);
+		outputStream.close();
+		IOUtils.closeQuietly(outputStream);
 
-		return thumbnailFile.getAbsolutePath();
+		return file.getAbsolutePath();
 	}
 
 	public static ImageType getImageType(String imageTypeValue) {

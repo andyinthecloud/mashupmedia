@@ -113,7 +113,7 @@ public class MusicController extends BaseController {
 		} catch (IOException e) {
 			logger.info("Unable to read album art: " + albumArtImage.getUrl(), e);
 		}
-		
+
 		Song remoteSong = getFirstRemoteSongInAlbum(album);
 
 		if (remoteSong != null && FileHelper.isEmptyBytes(imageBytes)) {
@@ -132,9 +132,13 @@ public class MusicController extends BaseController {
 
 		MediaContentType mediaContentType = MediaContentType.UNSUPPORTED;
 		if (albumArtImage != null) {
-			mediaContentType = MediaItemHelper.getMediaContentType(albumArtImage.getContentType());			
+			if (imageType == ImageType.THUMBNAIL) {
+				mediaContentType = MediaContentType.JPEG;
+			} else {
+				mediaContentType = MediaItemHelper.getMediaContentType(albumArtImage.getContentType());					
+			}
 		}
-		
+
 		ModelAndView modelAndView = new ModelAndView(new MediaItemImageView(imageBytes, mediaContentType, MediaType.SONG));
 		return modelAndView;
 	}

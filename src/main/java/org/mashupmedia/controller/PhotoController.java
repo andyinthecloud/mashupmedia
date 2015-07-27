@@ -93,7 +93,7 @@ public class PhotoController extends BaseController {
 
 		byte[] photoBytes = connectionManager.getPhotoBytes(photo, imageType);
 		ModelAndView modelAndView = new ModelAndView(new MediaItemImageView(
-				photoBytes, MediaContentType.PNG, MediaType.PHOTO));
+				photoBytes, MediaContentType.JPEG, MediaType.PHOTO));
 		return modelAndView;
 	}
 
