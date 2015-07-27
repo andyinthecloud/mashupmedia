@@ -79,6 +79,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		}
 
 		try {
+			library.setLastSuccessfulScanOn(new Date());
 			library.setLibraryStatusType(LibraryStatusType.WORKING);
 			libraryManager.saveLibrary(library, true);
 

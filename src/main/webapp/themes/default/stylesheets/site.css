@@ -958,6 +958,7 @@ body.photo table.photo-container td.photo-previous, table.photo-container td.pho
 body.photo table.photo-container td.photo {
 	width: 100%;
 	text-align: center;
+	height: 600px;
 }
 
 body.photo table.photo-container td.photo img {
