@@ -67,13 +67,13 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void updateLibrary(PhotoLibrary library, File folder, Date date) {
-		long totalPhotosSaved = 0;
+		Long totalPhotosSaved = Long.valueOf(0);
 		processPhotos(totalPhotosSaved, folder, date, null, library);
 		logger.info("Total photos saved:" + totalPhotosSaved);
 	}
 
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	protected void processPhotos(long totalPhotosSaved, File file, Date date,
+	protected void processPhotos(Long totalPhotosSaved, File file, Date date,
 			String albumName, PhotoLibrary library) {
 
 		if (file.isDirectory()) {
@@ -192,6 +192,9 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	protected ImageRotationType getPhotoOrientation(Metadata metadata) {
 		Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
+		if (directory == null) {
+			return null;
+		}
 		
 		int exifTagOrientation = 0;
 		try {
