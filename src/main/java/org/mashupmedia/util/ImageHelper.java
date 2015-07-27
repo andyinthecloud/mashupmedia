@@ -75,12 +75,12 @@ public class ImageHelper {
 		BufferedImage processedImage = null;
 		try {
 
-			processedImage = Scalr.resize(image, Scalr.Method.SPEED,
-					Scalr.Mode.FIT_TO_WIDTH, width, height, Scalr.OP_ANTIALIAS);
+			processedImage = Scalr.resize(image, Scalr.Method.BALANCED,
+					Scalr.Mode.FIT_TO_WIDTH, width, height);
 
 			if (imageRotationType != null) {
 				processedImage = Scalr.rotate(processedImage,
-						imageRotationType.rotation, Scalr.OP_ANTIALIAS);
+						imageRotationType.rotation);
 			}
 
 		} catch (Exception e) {
