@@ -958,14 +958,14 @@ body.photo table.photo-container td.photo-previous, table.photo-container td.pho
 body.photo table.photo-container td.photo {
 	width: 100%;
 	text-align: center;
-	height: 600px;
+	height: 800px;
 }
 
 body.photo table.photo-container td.photo img {
 	width: auto;	
 	height: auto;
 	max-width: 100%;	
-	max-height: 600px;	
+	max-height: 800px;	
 }
 
 a.arrow {

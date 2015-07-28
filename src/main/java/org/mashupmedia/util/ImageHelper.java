@@ -21,8 +21,8 @@ public class ImageHelper {
 	public final static int PHOTO_THUMBNAIL_WIDTH = 200;
 	public final static int PHOTO_THUMBNAIL_HEIGHT = 200;
 
-	public final static int PHOTO_WEB_OPTIMISED_WIDTH = 600;
-	public final static int PHOTO_WEB_OPTIMISED_HEIGHT = 600;
+	public final static int PHOTO_WEB_OPTIMISED_WIDTH = 800;
+	public final static int PHOTO_WEB_OPTIMISED_HEIGHT = 800;
 
 	public final static int MUSIC_ALBUM_ART_THUMBNAIL_WIDTH = 200;
 	public final static int MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT = 200;
