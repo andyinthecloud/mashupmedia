@@ -85,27 +85,6 @@ public class ImageHelper {
 		return processedImage;
 	}
 
-	// private static BufferedImage resizeImageDefault(BufferedImage image,
-	// int width, int height) {
-	// int imageType = image.getType();
-	// if (imageType == 0) {
-	// imageType = BufferedImage.TYPE_INT_ARGB;
-	// }
-	//
-	// BufferedImage resizedImage = new BufferedImage(width, height, imageType);
-	// Graphics2D graphics2d = resizedImage.createGraphics();
-	// graphics2d.drawImage(image, 0, 0, width, height, null);
-	// graphics2d.dispose();
-	// graphics2d.setComposite(AlphaComposite.Src);
-	// graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-	// RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-	// graphics2d.setRenderingHint(RenderingHints.KEY_RENDERING,
-	// RenderingHints.VALUE_RENDER_QUALITY);
-	// graphics2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-	// RenderingHints.VALUE_ANTIALIAS_ON);
-	// return resizedImage;
-	// }
-
 	public static String generateAndSaveMusicAlbumArtThumbnail(long libraryId, String imageFilePath) throws IOException {
 		File thumbnailFile = FileHelper.createMediaItemFile(libraryId, FileType.ALBUM_ART_THUMBNAIL);
 		return generateAndSaveImage(libraryId, imageFilePath, thumbnailFile, MUSIC_ALBUM_ART_THUMBNAIL_WIDTH, MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT, null);
@@ -145,6 +124,10 @@ public class ImageHelper {
 		IOUtils.closeQuietly(imageFileInputStream);
 
 		BufferedImage bufferedImage = processImage(image, width, height, imageRotationType);
+		if (bufferedImage == null) {
+			return null;
+		}
+		
 		FileOutputStream outputStream = new FileOutputStream(file);
 		ImageIO.write(bufferedImage, ImageFormatType.JPEG.getFormat(), outputStream);
 		outputStream.close();

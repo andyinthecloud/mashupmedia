@@ -176,7 +176,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setDisplayTitle(title);
 			photo.setSearchText(album.getName() + " " + title);
 			// photos.add(photo);
-			totalPhotosSaved++;
+			totalPhotosSaved = Long.valueOf(totalPhotosSaved++);
 		}
 
 		photo.setUpdatedOn(date);
