@@ -1,10 +1,37 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 
 <%@page import="org.springframework.security.web.WebAttributes"%>
+<%@page import="org.mashupmedia.constants.MashUpMediaConstants"%>
+
+
+
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
+
+
+<%
+	request.setAttribute(MashUpMediaConstants.MODEL_KEY_JQUERY_MOBILE_VERSION,
+			MashUpMediaConstants.JQUERY_MOBILE_VERSION);
+	request.setAttribute(MashUpMediaConstants.MODEL_KEY_JQUERY_VERSION, MashUpMediaConstants.JQUERY_VERSION);
+%>
 
 <html>
 <head>
+
+<title><spring:message code="page.default.title.prefix" /> <spring:message
+		code="login.title" /></title>
+<link rel="icon" type="image/ico"
+	href="<c:url value="/default/images/favicon.ico"/>">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet"
+	href="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.css" />" />
+<script
+	src="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery-1.11.1.min.js" />"></script>
+<script
+	src="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.js" />"></script>
+
 <link href="<c:url value="${themePath}/stylesheets/site.css"/>"
 	rel="stylesheet" type="text/css" />
 
@@ -55,7 +82,7 @@
 					</tr>
 					<tr>
 						<td colspan="2"><input type='checkbox' name='remember-me' />
-						<spring:message code="login.remember-me" /></td>
+							<spring:message code="login.remember-me" /></td>
 					</tr>
 					<tr>
 						<td colspan="2" class="buttons"><input class="button"
