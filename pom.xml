@@ -463,7 +463,7 @@
 
 	<profiles>
 		<profile>
-			<id>mashupmedia-test</id>
+			<id>mashupmedia-local</id>
 			<activation>
 				<property>
 					<name>env</name>
