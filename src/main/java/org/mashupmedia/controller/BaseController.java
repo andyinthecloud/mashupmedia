@@ -121,6 +121,12 @@ public abstract class BaseController {
 		return MashUpMediaConstants.JQUERY_VERSION;
 	}
 
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_JQUERY_MOBILE_VERSION)
+	public String populateJQueryMobile() {
+		return MashUpMediaConstants.JQUERY_MOBILE_VERSION;
+	}
+
+	
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_JQUERY_ADDRESS_VERSION)
 	public String populateJQueryAddress() {
 		return MashUpMediaConstants.JQUERY_ADDRESS_VERSION;
@@ -136,6 +142,9 @@ public abstract class BaseController {
 		return MashUpMediaConstants.DATATABLES_VERSION;
 	}
 
+	
+	
+	
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(String.class, new StringTrimmerEditor(

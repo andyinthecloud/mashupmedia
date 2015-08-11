@@ -17,17 +17,14 @@
 <html>
 <head>
 
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title><spring:message code="page.default.title.prefix" /> <spring:message
-		code="login.title" /></title>
 <link rel="icon" type="image/ico"
 	href="<c:url value="/default/images/favicon.ico"/>">
 
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><spring:message code="page.title.prefix" /> <spring:message
+		code="login.title" /></title>
 
 <link rel="stylesheet"
 	href="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.css" />" />
@@ -41,12 +38,7 @@
 <link href="<c:url value="${themePath}/stylesheets/site-desktop.css"/>"
 	rel="stylesheet" type="text/css" />
 
-<title><spring:message code="page.title.prefix" /> <spring:message
-		code="login.title" /></title>
 <!-- @LOGGED-OUT@ -->
-
-
-
 
 </head>
 <body>
@@ -58,7 +50,7 @@
 		<img alt="Mashup Media"
 			src="<c:url value="/images/mashupmedia-logo.png"/>">
 
-		<form method="POST" action="<%=request.getContextPath()%>/login">
+		<form method="POST" action="<%=request.getContextPath()%>/login" data-ajax="false">
 
 			<sec:csrfInput />
 

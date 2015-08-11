@@ -6,10 +6,31 @@
 <html lang="en">
 <head>
 
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
 <sec:csrfMetaTags/>
 
+
+
+<link rel="stylesheet"
+	href="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.css" />" />
+<script
+	src="<c:url value="/jquery/${jQueryVersion}/jquery-${jQueryVersion}.min.js" />"></script>
+<script
+	src="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.js" />"></script>
+
+<link href="<c:url value="${themePath}/stylesheets/site.css"/>"
+	rel="stylesheet" type="text/css" />
+<link href="<c:url value="${themePath}/stylesheets/site-desktop.css"/>"
+	rel="stylesheet" type="text/css" />
+
+
 <link type="text/css" href="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.css" />" rel="stylesheet" />
-<script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-${jQueryVersion}.min.js" />"></script>
+
+<!-- script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-${jQueryVersion}.min.js" />"></script -->
+
 <script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.js" />"></script>
 
 <script type="text/javascript" src="<c:url value="/scripts/mashupmedia.jsp" />"></script>
@@ -25,6 +46,11 @@
 
 
 <link href="<c:url value="${themePath}/stylesheets/site.css"/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value="${themePath}/stylesheets/site-desktop.css"/>"
+	rel="stylesheet" type="text/css" />
+
+
+
 <!--  script type="text/javascript" src="<c:url value="/scripts/jplayer-android-fix.js" />"></script -->
 <script type="text/javascript" src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 
