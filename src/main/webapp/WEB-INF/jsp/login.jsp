@@ -17,6 +17,10 @@
 <html>
 <head>
 
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title><spring:message code="page.default.title.prefix" /> <spring:message
 		code="login.title" /></title>
 <link rel="icon" type="image/ico"
@@ -28,26 +32,25 @@
 <link rel="stylesheet"
 	href="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.css" />" />
 <script
-	src="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery-1.11.1.min.js" />"></script>
+	src="<c:url value="/jquery/${jQueryVersion}/jquery-${jQueryVersion}.min.js" />"></script>
 <script
 	src="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.js" />"></script>
 
 <link href="<c:url value="${themePath}/stylesheets/site.css"/>"
+	rel="stylesheet" type="text/css" />
+<link href="<c:url value="${themePath}/stylesheets/site-desktop.css"/>"
 	rel="stylesheet" type="text/css" />
 
 <title><spring:message code="page.title.prefix" /> <spring:message
 		code="login.title" /></title>
 <!-- @LOGGED-OUT@ -->
 
-<script type="text/javascript">
-	function focusUsername() {
-		document.getElementById("username").focus();
-	}
-</script>
+
 
 
 </head>
-<body onload="focusUsername()">
+<body>
+
 	<input type="hidden" id="logged-out" value="true" />
 
 	<div id="login-panel" class="panel big-rounded-corners">
@@ -65,33 +68,34 @@
 			<div class="error-box">
 				<spring:message code="login.error" />
 			</div>
+			
 			<%
 				session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
 				}
 			%>
 
-			<table>
-				<tbody>
-					<tr>
-						<td><label><spring:message code="login.username" /></label></td>
-						<td><input type="text" value="" name="username" id="username"></td>
-					</tr>
-					<tr>
-						<td><label><spring:message code="login.password" /></label></td>
-						<td><input type="password" name="password"></td>
-					</tr>
-					<tr>
-						<td colspan="2"><input type='checkbox' name='remember-me' />
-							<spring:message code="login.remember-me" /></td>
-					</tr>
-					<tr>
-						<td colspan="2" class="buttons"><input class="button"
-							type="submit"
-							value="<spring:message code="login.button.login" />"
-							name="submit"></td>
-					</tr>
-				</tbody>
-			</table>
+			<div class="new-line">
+				<label><spring:message code="login.username" /></label> <input
+					type="text" value="" name="username" id="username" data-clear-btn="true" />
+			</div>
+
+			<div class="new-line">
+				<label><spring:message code="login.password" /></label> <input
+					type="password" name="password" data-clear-btn="true" />
+			</div>
+
+			<div class="new-line">
+				<label> <input type="checkbox" name="remember-me" /> <spring:message
+						code="login.remember-me" />
+				</label>
+			</div>
+
+			<div class="new-line">
+				<input class="button" type="submit"
+					value="<spring:message code="login.button.login" />" name="submit">
+			</div>
+
+
 		</form>
 	</div>
 

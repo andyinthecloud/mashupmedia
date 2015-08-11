@@ -33,9 +33,7 @@
 
 	<http pattern="/stylesheets/**" security="none" />
 	<http pattern="/themes/**" security="none" />
-	<http pattern="/jquery-ui/**" security="none" />
-	<http pattern="/jquery-plugins/**" security="none" />
-	<http pattern="/jquery-mobile/**" security="none" />	
+	<http pattern="/jquery*/**" security="none" />
 	<http pattern="/images/**" security="none" />
 	<http pattern="/app/remote/**" security="none" />
 

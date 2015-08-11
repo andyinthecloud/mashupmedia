@@ -1,0 +1,12 @@
+@media all and (min-width: 50em) {
+	div.panel {
+		border: 2px solid #A0A0A0;
+		-moz-border-radius: 20px;
+		-webkit-border-radius: 20px;
+		-khtml-border-radius: 20px;
+		border-radius: 20px;
+	}
+	#login-panel {
+		padding: 20px;
+	}
+}

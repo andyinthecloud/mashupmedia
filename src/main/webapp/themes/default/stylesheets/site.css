@@ -36,10 +36,9 @@ img {
 
 .error-box {
 	display: block;
+	margin-top: 10px;
 	margin-bottom: 10px;
 	color: #CC0099;
-	font-weight: bold;
-	width: 100%;
 }
 
 #player-script {
@@ -141,20 +140,15 @@ li.update-available {
 
 div.panel {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
-	font-size: 0.8em;
 	padding: 10px;
 	margin-top: 10px;
 	margin-left: auto;
 	margin-right: auto;
 	width: 95%;
-	border: 3px solid #A0A0A0;
 	background-color: white;
-	-moz-border-radius: 20px;
-	-webkit-border-radius: 20px;
-	-khtml-border-radius: 20px;
-	border-radius: 20px;
 }
 
+ 
 body.default div.panel {
 	filter: alpha(opacity =     80); /* For IE8 and earlier */
 	-khtml-opacity: 0.8; /* khtml, old safari */
@@ -163,26 +157,22 @@ body.default div.panel {
 }
 
 #login-panel {
-	padding: 30px;
-	width: 400px;
-	margin: 50px auto;
-	text-align: center;
+	padding: 5px;
+	max-width: 400px;
 }
 
-#login-panel table {
-	padding-top: 20px;
-	width: 90%;
-	margin: 0 auto;
+#login-panel img{	
+	max-width: 300px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;	
 }
 
-#login-panel table td {
-	padding-bottom: 5px;
+div.new-line{	
+	margin-top: 1em;
 }
 
-#login-panel table td.buttons {
-	padding-top: 10px;
-	text-align: right;
-}
+
 
 .status-message {
 	font-style: italic;
@@ -249,23 +239,9 @@ div.panel input.small-inline {
 	min-width: inherit !important;
 }
 
-label {
-	padding-bottom: 5px;
-	padding-right: 5px;
-}
 
 label.date-to {
 	padding-left: 10px;
-}
-
-.new-line {
-	display: block;
-	padding-top: 10px;
-}
-
-div.panel input[type='text'], div.panel input[type='password'] {
-	width: 99%;
-	min-width: 200px;
 }
 
 div.panel input.date {
@@ -286,21 +262,7 @@ div.panel a.button:HOVER {
 	text-decoration: none;
 }
 
-.button {
-	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
-	border: 2px solid #E579E9;
-	color: white;
-	padding: 3px 15px;
-	font-size: 1.1em;
-	cursor: default;
-	background-color: #E579E9;
-	margin-left: 10px;
-	font-weight: bold;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-khtml-border-radius: 10px;
-	border-radius: 10px;
-}
+
 
 div.panel div.breadcrumbs a:HOVER, #top-bar ul.main-menu a:HOVER,
 	#top-bar a.home:HOVER, #top-bar-music-player .main-menu a:hover,
@@ -827,20 +789,7 @@ div.index-letter {
 	padding-top: 10px;
 }
 
-input[type="text"], input[type="password"] {
-	font-size: 1em;
-	padding: 3px;
-	border: 2px solid #A0A0A0;
-	color: #606060;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-khtml-border-radius: 5px;
-	border-radius: 5px;
-}
 
-input[type="text"].disabled, input[type="password"].disabled {
-	background-color: #D3D3D3;
-}
 
 .bottom-margin {
 	margin-bottom: 10px;
