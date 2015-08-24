@@ -1,6 +1,7 @@
 $(window)
 		.load(
 				function() {
+					/*
 					var theWindow = $(window), $backgroundImage = $("#background-image"), aspectRatio = $backgroundImage
 							.width()
 							/ $backgroundImage.height();
@@ -20,7 +21,7 @@ $(window)
 					theWindow.resize(function() {
 						resizeBackgroundImage();
 					}).trigger("resize");
-
+					*/
 				});
 
 $(document).ready(function() {
@@ -32,6 +33,7 @@ $(document).ready(function() {
 
 });
 
+/*
 function processBackground(themePath, pageType) {
 
 	var backgroundImagePath = getBackgroundImage(pageType);
@@ -72,3 +74,4 @@ function getMusicBackgroundImages() {
 	backgroundImages[3] = "/images/music/background-04.jpg";
 	return backgroundImages;
 }
+*/

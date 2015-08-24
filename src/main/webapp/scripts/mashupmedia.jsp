@@ -56,10 +56,13 @@ $(document).ready(function() {
 		$("#form-log-out").submit(); 
 	});
 
+	/*
 	$.address.init(function(event) {
 		$("#quick-search").address();
 	});
+	*/
 	
+	/*
 	$.address.change(function(event) {
 		isLoadingContent = false;
 				 
@@ -110,6 +113,7 @@ $(document).ready(function() {
 		} 
 				
 	});
+	*/
 
 });
 

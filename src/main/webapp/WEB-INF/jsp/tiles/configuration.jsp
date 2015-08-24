@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
-	<ul class="main-menu">
+	<ul class="main-menu" data-role="listview">
 		<li><a href="<c:url value="/app/configuration/network" />"><spring:message code="configuration.menu.network" /></a></li>
 		<li><a href="<c:url value="/app/configuration/list-libraries" />"><spring:message code="configuration.menu.libraries" /></a></li>
 		<li><a href="<c:url value="/app/configuration/administration/list-users" />"><spring:message code="configuration.menu.users" /></a></li>

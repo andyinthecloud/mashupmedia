@@ -1,9 +1,18 @@
-html, body {
-	font-size: 100%;
-	margin: 0;
-	padding: 0;
-	color: #606060;
-	background-color: transparent;
+
+img.logo-inline {
+	height: 40px;
+	width: auto;
+}
+
+img.logo-home {
+	width: 300px;
+	height: auto;
+	display: block;
+	margin: 0 auto 2em auto;	
+}
+
+html, body{
+	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
 }
 
 .cursor-progress {
@@ -19,7 +28,7 @@ html, body {
 }
 
 a, a:ACTIVE, a:VISITED {
-	color: #E579E9;
+	color: #E579E9 !important;
 }
 
 .no-wrap {
@@ -52,13 +61,6 @@ img {
 	z-index: -1;
 }
 
-div.transparent {
-	filter: alpha(opacity =             80);
-	/* for IE */
-	-khtml-opacity: 0.8; /* khtml, old safari */
-	-moz-opacity: 0.8; /* old mozilla, netscape */
-	opacity: 0.8; /* good browsers: FF, safari, opera */
-}
 
 #background-image.full-width {
 	width: 100%;
@@ -126,35 +128,23 @@ li.update-available {
 	padding: 0 10px;
 	text-align: center;
 	margin: 20px 0 10px 0;
+	background-color: transparent;
+	border: 0px none;
 }
 
 #footer div.meta {
-	display: inline;
-	background-color: white;
 	padding: 3px 10px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-khtml-border-radius: 5px;
-	border-radius: 5px;
+	font-weight: normal;
 }
 
-div.panel {
-	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
-	padding: 10px;
-	margin-top: 10px;
-	margin-left: auto;
-	margin-right: auto;
-	width: 95%;
-	background-color: white;
+#footer a {
+	font-weight: normal !important;
 }
+
+
 
  
-body.default div.panel {
-	filter: alpha(opacity =     80); /* For IE8 and earlier */
-	-khtml-opacity: 0.8; /* khtml, old safari */
-	-moz-opacity: 0.8; /* old mozilla, netscape */
-	opacity: 0.8; /* good browsers: FF, safari, opera */
-}
+
 
 #login-panel {
 	padding: 5px;
@@ -178,9 +168,7 @@ div.new-line{
 	font-style: italic;
 }
 
-div.panel form {
-	padding-top: 10px;
-}
+
 
 div.sub-panel {
 	padding: 10px;
@@ -204,49 +192,28 @@ div.panel iframe {
 	overflow: hidden;
 }
 
-div.panel h1 {
-	font-size: 1.5em;
-}
 
-div.panel .horizontal-gap {
+.horizontal-gap {
 	margin-left: 10px;
 }
 
-div.panel a, div.panel a:VISITED {
+a, a:VISITED {
 	color: #E579E9;
+	text-decoration: none;
 }
 
-div.panel a:HOVER {
+a:HOVER {
 	text-decoration: underline;
 }
 
-div.panel fieldset {
-	border: 1px solid #E3DEDE;
-	padding: 10px;
-	margin-top: 10px;
-	font-size: 1em;
-	padding: 10px;
-	line-height: 2em;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-khtml-border-radius: 10px;
-	border-radius: 10px;
-}
 
-div.panel input.small-inline {
-	display: inline-block !important;
-	width: 30px !important;
-	min-width: inherit !important;
-}
+
 
 
 label.date-to {
 	padding-left: 10px;
 }
 
-div.panel input.date {
-	width: 100px;
-}
 
 div.button-panel {
 	margin-top: 20px;
@@ -254,47 +221,32 @@ div.button-panel {
 	text-align: right;
 }
 
-div.panel a.button, div.panel a.button:VISITED {
-	color: white;
-}
-
-div.panel a.button:HOVER {
-	text-decoration: none;
-}
 
 
 
-div.panel div.breadcrumbs a:HOVER, #top-bar ul.main-menu a:HOVER,
+div.breadcrumbs a:HOVER, #top-bar ul.main-menu a:HOVER,
 	#top-bar a.home:HOVER, #top-bar-music-player .main-menu a:hover,
 	#top-bar-music-player .top-home-link a:HOVER {
 	text-decoration: underline;
 }
 
-div.panel div.breadcrumbs {
-	margin-bottom: 10px;
+div.breadcrumbs {
+	font-size: 0.9em;	
 }
 
-div.panel a, div.panel a:VISITED {
-	text-decoration: none;
+
+
+
+ul.main-menu {
+	margin-top: 1em !important;
 }
 
-div.panel ul.main-menu {
-	padding: 0;
-	margin: 0;
+ul.main-menu li a:HOVER{
+	color: white !important;
 }
 
-div.panel ul.main-menu li {
-	list-style: none;
-}
 
-div.panel ul.main-menu li a {
-	display: block;
-	padding: 5px 10px;
-	font-size: 1.2em;
-	color: #606060;
-}
-
-div.panel ul.main-menu li a.library-music {
+ul.main-menu li a.library-music {
 	padding-left: 25px;
 	background-image: url("../images/library/music.png");
 	background-position: left center;
