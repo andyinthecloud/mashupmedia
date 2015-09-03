@@ -93,44 +93,52 @@
 		// Bind to StateChange Event
 		History.Adapter.bind(window, 'statechange', function() { // Note: We are using statechange instead of popstate
 			var State = History.getState();
-			console.log(State);
+			// console.log(State);
 			var url = State.url;
 			var pageType = State.data.pageType;
 			if (pageType && pageType == "internal") {
+
 				url = prepareInternalUrlFragment(url);
-				$('div.ui-content').load(url);
-			} else {				
+				$.get(url, function(data) {
+					var uiContentElement = $("div.ui-content");
+					uiContentElement.html(data);
+					uiContentElement.enhanceWithin();
+				});
+
+			} else {
 				window.location.href = url;
 			}
 
 		});
 
 		// Capture all the links to push their url to the history stack and trigger the StateChange Event
-		$("a.internal").click(function(evt) {
-
-			var title = $(this).attr("title");
-			var link = $(this).attr("href");
-			evt.preventDefault();
-			History.pushState({
-				pageType : "internal"
-			}, title, link);
-		});
+		$("a[rel='internal']")
+				.click(
+						function(event) {
+							var pageTitlePrefix = "<spring:message code="page.default.title.prefix" />";
+							var title = pageTitlePrefix + " "
+									+ $(this).attr("title");
+							var link = $(this).attr("href");
+							event.preventDefault();
+							History.pushState({
+								pageType : "internal"
+							}, title, link);
+						});
 	});
-	
-	function prepareInternalUrlFragment(url) {		
-		url = $.trim(url);		
+
+	function prepareInternalUrlFragment(url) {
+		url = $.trim(url);
 		if (url.indexOf("?") > -1) {
 			url += "&";
 		} else {
-			url += "?";			
+			url += "?";
 		}
-		
+
 		url += "fragment=true";
 		return url;
 	}
 
 	$(document).ready(function() {
-		$.mobile.pushStateEnabled = false;
 
 		var jPlayerVersion = "${jPlayerVersion}";
 		<c:if test="${isTransparentBackground}">
@@ -141,9 +149,7 @@
 			$("#form-log-out").submit();
 		});
 
-
 	});
-
 </script>
 
 <link rel="stylesheet"
@@ -177,8 +183,8 @@
 
 		<div data-role="header" data-position="fixed">
 			<h1>
-				<a href="http://www.masupmedia.org"><img alt="Mashup Media"
-					title="Mashup Media"
+				<a href="<c:url value="/app/home" />" rel="internal"><img
+					alt="Mashup Media" title="<spring:message code="top-bar.home"/>"
 					src="<c:url value="/images/mashupmedia-logo-inline.png" />" /></a>
 			</h1>
 			<a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
@@ -240,7 +246,8 @@
 				<li><a href="<c:url value="/app/photo/list" />" data-rel="back"><spring:message
 							code="top-bar.photos" /></a></li>
 				<sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
-					<li><a class="internal" title="Mashup Media - Configuration"
+					<li><a rel="internal"
+						title="<spring:message code ="configuration.title" />"
 						data-ajax="false" href="<c:url value="/app/configuration" />"><spring:message
 								code="home.links.configuration" /></a></li>
 					<li><a href="<c:url value="/app/encode/processes" />"

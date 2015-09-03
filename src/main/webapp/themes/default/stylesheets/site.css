@@ -244,11 +244,6 @@ ul.main-menu {
 	margin-top: 1em !important;
 }
 
-ul.main-menu li a:HOVER{
-	color: white !important;
-}
-
-
 ul.main-menu li a.library-music {
 	padding-left: 25px;
 	background-image: url("../images/library/music.png");

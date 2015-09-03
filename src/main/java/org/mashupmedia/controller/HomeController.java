@@ -6,13 +6,15 @@ import org.mashupmedia.web.Breadcrumb;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class HomeController extends BaseController {
 
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
-	public String getHome() {
-		return "home";
+	public String getHome(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment) {		
+		String path = getPath(isFragment, "home");
+		return path;
 	}
 	
 	@Override

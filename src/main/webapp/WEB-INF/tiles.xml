@@ -15,6 +15,11 @@
 		<put-attribute name="body" value="" />
 	</definition>
 	
+
+	<definition name="home/fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/home.jsp" />
+	</definition>
 	
 	<definition name="configuration/fragment" extends="ui-content">
 		<put-attribute name="body"
