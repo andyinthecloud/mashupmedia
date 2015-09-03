@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ConfigurationController extends BaseController {
@@ -36,16 +37,11 @@ public class ConfigurationController extends BaseController {
 	}
 
 	@RequestMapping(value = PAGE_PATH, method = RequestMethod.GET)
-	public String getConfiguration(Model model) {
-
-		NetworkPage configurationPage = new NetworkPage();
-
-		String proxyUrl = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_URL);
-		configurationPage.setProxyUrl(proxyUrl);
-
-		model.addAttribute(configurationPage);
-		return REDIRECT_PATH;
+	public String getConfiguration(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+		String path = getPath(isFragment, REDIRECT_PATH);
+		return path;				
 	}
+
 
 	@RequestMapping(value = PAGE_PATH, method = RequestMethod.POST)
 	public String processConfiguration(@ModelAttribute("configurationPage") NetworkPage configurationPage, Model model, BindingResult result) {

@@ -18,6 +18,18 @@
 	href="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.css" />" />
 <script
 	src="<c:url value="/jquery/${jQueryVersion}/jquery-${jQueryVersion}.min.js" />"></script>
+
+<!-- History.js -->
+<script
+	src="<c:url value="/jquery-plugins/history/1.8b2/jquery.history.js" />"></script>
+
+<script>
+	$(document).on("mobileinit", function() {
+		$.mobile.hashListeningEnabled = false;
+		$.mobile.pushStateEnabled = false;
+		$.mobile.changePage.defaults.changeHash = false;
+	});
+</script>
 <script
 	src="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.js" />"></script>
 
@@ -68,12 +80,70 @@
 	src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 
 <script type="text/javascript">
+	$(function() {
+		// Prepare
+		var History = window.History; // Note: We are using a capital H instead of a lower h
+		//alert(History.enabled);
+		if (!History.enabled) {
+			// History.js is disabled for this browser.
+			// This is because we can optionally choose to support HTML4 browsers or not.
+			return false;
+		}
+
+		// Bind to StateChange Event
+		History.Adapter.bind(window, 'statechange', function() { // Note: We are using statechange instead of popstate
+			var State = History.getState();
+			console.log(State);
+			var url = State.url;
+			var pageType = State.data.pageType;
+			if (pageType && pageType == "internal") {
+				url = prepareInternalUrlFragment(url);
+				$('div.ui-content').load(url);
+			} else {				
+				window.location.href = url;
+			}
+
+		});
+
+		// Capture all the links to push their url to the history stack and trigger the StateChange Event
+		$("a.internal").click(function(evt) {
+
+			var title = $(this).attr("title");
+			var link = $(this).attr("href");
+			evt.preventDefault();
+			History.pushState({
+				pageType : "internal"
+			}, title, link);
+		});
+	});
+	
+	function prepareInternalUrlFragment(url) {		
+		url = $.trim(url);		
+		if (url.indexOf("?") > -1) {
+			url += "&";
+		} else {
+			url += "?";			
+		}
+		
+		url += "fragment=true";
+		return url;
+	}
+
 	$(document).ready(function() {
+		$.mobile.pushStateEnabled = false;
+
 		var jPlayerVersion = "${jPlayerVersion}";
 		<c:if test="${isTransparentBackground}">
 		$("#contextUrl").val("<c:url value="/" />");
 		</c:if>
+
+		$("#log-out").click(function() {
+			$("#form-log-out").submit();
+		});
+
+
 	});
+
 </script>
 
 <link rel="stylesheet"
@@ -98,7 +168,8 @@
 
 
 		<c:url var="rootUrl" value="/" />
-		<form:form id="form-log-out" action="${rootUrl}logout" cssClass="hide">
+		<form:form id="form-log-out" action="${rootUrl}logout" cssClass="hide"
+			data-ajax="false">
 			<input type="submit" />
 		</form:form>
 
@@ -162,21 +233,22 @@
 				<li data-icon="delete"><a href="#" data-rel="close"><spring:message
 							code="side-menu.close" /></a></li>
 
-				<li><a href="<c:url value="/app/music" />"><spring:message
-							code="top-bar.music" /></a></li>
-				<li><a href="<c:url value="/app/videos" />"><spring:message
+				<li><a href="<c:url value="/app/music" />" data-rel="back"
+					class="app-link"><spring:message code="top-bar.music" /></a></li>
+				<li><a href="<c:url value="/app/videos" />" data-rel="back"><spring:message
 							code="top-bar.videos" /></a></li>
-				<li><a href="<c:url value="/app/photo/list" />"><spring:message
+				<li><a href="<c:url value="/app/photo/list" />" data-rel="back"><spring:message
 							code="top-bar.photos" /></a></li>
 				<sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
-					<li><a href="<c:url value="/app/configuration" />"><spring:message
+					<li><a class="internal" title="Mashup Media - Configuration"
+						data-ajax="false" href="<c:url value="/app/configuration" />"><spring:message
 								code="home.links.configuration" /></a></li>
-					<li><a href="<c:url value="/app/encode/processes" />"><spring:message
-								code="top-bar.encoding.queue" /></a></li>
+					<li><a href="<c:url value="/app/encode/processes" />"
+						data-rel="back"><spring:message code="top-bar.encoding.queue" /></a></li>
 				</sec:authorize>
 				<li><a
-					href="<c:url value="/app/configuration/administration/account" />"><spring:message
-							code="top-bar.my-account" /></a></li>
+					href="<c:url value="/app/configuration/administration/account" />"
+					data-rel="back"><spring:message code="top-bar.my-account" /></a></li>
 				<li><a id="log-out" href="#" id="log-out"><spring:message
 							code="top-bar.log-out" /></a></li>
 

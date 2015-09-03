@@ -22,7 +22,9 @@ public abstract class BaseController {
 
 	protected final static String MODEL_KEY_HAS_ERRORS = "hasErrors";
 	protected final static String MODEL_KEY_BREADCRUMBS = "breadcrumbs";
-	protected final static String MODEL_KEY_HEAD_PAGE_TITLE = "headPageTitle";
+	protected final static String MODEL_KEY_HEAD_PAGE_TITLE = "headPageTitle";	
+	protected final static String FRAGMENT_PARAM = "fragment";
+	protected final static String FRAGMENT_APPEND_PATH = "/fragment";
 
 	@Autowired
 	private PlaylistManager playlistManager;
@@ -154,6 +156,19 @@ public abstract class BaseController {
 	@ModelAttribute("mediaType")
 	public String populateMediaType() {
 		return "";
+	}
+	
+
+	protected String getPath(Boolean isFragment, String path) {
+		if (isFragment == null) {
+			return path;
+		}
+		
+		if (isFragment) {
+			return path + FRAGMENT_APPEND_PATH;
+		}
+		
+		return path;
 	}
 
 }

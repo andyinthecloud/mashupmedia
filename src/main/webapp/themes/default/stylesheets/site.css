@@ -1,3 +1,6 @@
+html, body{
+	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+}
 
 img.logo-inline {
 	height: 40px;
@@ -11,8 +14,8 @@ img.logo-home {
 	margin: 0 auto 2em auto;	
 }
 
-html, body{
-	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+div.panel {
+	margin: 1em auto;	
 }
 
 .cursor-progress {
@@ -146,7 +149,7 @@ li.update-available {
  
 
 
-#login-panel {
+#login-panel{
 	padding: 5px;
 	max-width: 400px;
 }

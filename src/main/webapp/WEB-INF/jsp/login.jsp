@@ -45,7 +45,7 @@
 
 	<input type="hidden" id="logged-out" value="true" />
 
-	<div id="login-panel" class="panel big-rounded-corners">
+	<div id="login-panel" class="panel">
 
 		<img alt="Mashup Media"
 			src="<c:url value="/images/mashupmedia-logo.png"/>">
