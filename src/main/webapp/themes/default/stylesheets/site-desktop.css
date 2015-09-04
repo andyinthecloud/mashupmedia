@@ -1,8 +1,13 @@
 @media all and (min-width: 50em) {
-	div.panel {
+	div.center-panel {
+		padding: 20px;
+		max-width: 60em;
+		text-align: center;
+	}
+	
+	form {
 		padding: 20px;
 		max-width: 60em;
 	}
-	
 
 }

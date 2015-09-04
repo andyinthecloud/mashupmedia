@@ -14,6 +14,9 @@
 
 
 
+
+
+
 <link rel="stylesheet"
 	href="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.css" />" />
 <script
@@ -39,14 +42,14 @@
 	rel="stylesheet" type="text/css" />
 
 
-<link type="text/css"
+<!--  link type="text/css"
 	href="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.css" />"
-	rel="stylesheet" />
+	rel="stylesheet" / -->
 
 <!-- script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-${jQueryVersion}.min.js" />"></script -->
 
-<script type="text/javascript"
-	src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.js" />"></script>
+<!--  script type="text/javascript"
+	src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.js" />"></script -->
 
 <script type="text/javascript"
 	src="<c:url value="/scripts/mashupmedia.jsp" />"></script>
@@ -65,13 +68,6 @@
 
 <script type="text/javascript"
 	src="<c:url value="/jquery-plugins/datatables/${dataTablesVersion}/jquery.dataTables.min.js" />"></script>
-
-
-
-<link href="<c:url value="${themePath}/stylesheets/site.css"/>"
-	rel="stylesheet" type="text/css" />
-<link href="<c:url value="${themePath}/stylesheets/site-desktop.css"/>"
-	rel="stylesheet" type="text/css" />
 
 
 
@@ -209,7 +205,7 @@
 								</c:when>
 
 								<c:otherwise>
-									<a href="<c:url value="${breadcrumb.link}" />"><c:out
+									<a href="<c:url value="${breadcrumb.link}" />" rel="internal" title="${breadcrumb.name}"><c:out
 											value="${breadcrumb.name}" /></a> &gt;
 							</c:otherwise>
 

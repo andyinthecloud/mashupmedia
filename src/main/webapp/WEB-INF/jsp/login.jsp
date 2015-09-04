@@ -52,7 +52,7 @@ $(document).ready(function() {
 
 	<input type="hidden" id="logged-out" value="true" />
 
-	<div id="login-panel" class="panel">
+	<div id="login-panel" class="center-panel">
 
 		<img alt="Mashup Media"
 			src="<c:url value="/images/mashupmedia-logo.png"/>">
@@ -88,7 +88,7 @@ $(document).ready(function() {
 						code="login.remember-me" />
 				</label>
 			</div>
-
+			
 			<div class="new-line">
 				<input class="button" type="submit"
 					value="<spring:message code="login.button.login" />" name="submit">

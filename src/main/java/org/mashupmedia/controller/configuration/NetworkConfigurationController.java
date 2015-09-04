@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class NetworkConfigurationController extends BaseController {
@@ -43,8 +44,7 @@ public class NetworkConfigurationController extends BaseController {
 	}
 
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.GET)
-	public String getNetwork(Model model) {
-
+	public String getNetwork(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
 		NetworkPage networkPage = new NetworkPage();
 
 		String proxyEnabled = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
@@ -63,7 +63,9 @@ public class NetworkConfigurationController extends BaseController {
 		networkPage.setProxyUsername(proxyUsername);
 
 		model.addAttribute(networkPage);
-		return PAGE_PATH;
+		
+		String path = getPath(isFragment, PAGE_PATH);		
+		return path;
 	}
 
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.POST)
@@ -89,7 +91,7 @@ public class NetworkConfigurationController extends BaseController {
 		String proxyPassword = networkPage.getProxyPassword();
 		configurationManager.saveEncryptedConfiguration(MashUpMediaConstants.PROXY_PASSWORD, proxyPassword);
 
-		return "redirect:/app/configuration";
+		return "redirect:/app/configuration/fragment";
 	}
 
 }

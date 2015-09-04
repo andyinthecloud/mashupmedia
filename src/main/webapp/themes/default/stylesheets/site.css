@@ -1,4 +1,4 @@
-html, body{
+html, body {
 	font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
 }
 
@@ -11,11 +11,11 @@ img.logo-home {
 	width: 300px;
 	height: auto;
 	display: block;
-	margin: 0 auto 2em auto;	
+	margin: 0 auto 2em auto;
 }
 
-div.panel {
-	margin: 1em auto;	
+div.center-panel {
+	margin: 1em auto;
 }
 
 .cursor-progress {
@@ -63,7 +63,6 @@ img {
 	left: 0;
 	z-index: -1;
 }
-
 
 #background-image.full-width {
 	width: 100%;
@@ -144,34 +143,25 @@ li.update-available {
 	font-weight: normal !important;
 }
 
-
-
- 
-
-
-#login-panel{
+#login-panel {
 	padding: 5px;
 	max-width: 400px;
 }
 
-#login-panel img{	
+#login-panel img {
 	max-width: 300px;
 	display: block;
 	margin-left: auto;
-	margin-right: auto;	
+	margin-right: auto;
 }
 
-div.new-line{	
+div.new-line {
 	margin-top: 1em;
 }
-
-
 
 .status-message {
 	font-style: italic;
 }
-
-
 
 div.sub-panel {
 	padding: 10px;
@@ -195,7 +185,6 @@ div.panel iframe {
 	overflow: hidden;
 }
 
-
 .horizontal-gap {
 	margin-left: 10px;
 }
@@ -209,14 +198,9 @@ a:HOVER {
 	text-decoration: underline;
 }
 
-
-
-
-
 label.date-to {
 	padding-left: 10px;
 }
-
 
 div.button-panel {
 	margin-top: 20px;
@@ -224,21 +208,15 @@ div.button-panel {
 	text-align: right;
 }
 
-
-
-
-div.breadcrumbs a:HOVER, #top-bar ul.main-menu a:HOVER,
-	#top-bar a.home:HOVER, #top-bar-music-player .main-menu a:hover,
-	#top-bar-music-player .top-home-link a:HOVER {
+div.breadcrumbs a:HOVER, #top-bar ul.main-menu a:HOVER, #top-bar a.home:HOVER,
+	#top-bar-music-player .main-menu a:hover, #top-bar-music-player .top-home-link a:HOVER
+	{
 	text-decoration: underline;
 }
 
 div.breadcrumbs {
-	font-size: 0.9em;	
+	font-size: 0.9em;
 }
-
-
-
 
 ul.main-menu {
 	margin-top: 1em !important;
@@ -739,8 +717,6 @@ div.index-letter {
 	padding-top: 10px;
 }
 
-
-
 .bottom-margin {
 	margin-bottom: 10px;
 }
@@ -861,10 +837,10 @@ body.photo table.photo-container td.photo {
 }
 
 body.photo table.photo-container td.photo img {
-	width: auto;	
+	width: auto;
 	height: auto;
-	max-width: 100%;	
-	max-height: 800px;	
+	max-width: 100%;
+	max-height: 800px;
 }
 
 a.arrow {
@@ -876,7 +852,6 @@ a.arrow {
 a.arrow:HOVER {
 	text-decoration: none;
 }
-
 
 a.image-previous {
 	border-top: 30px solid transparent;

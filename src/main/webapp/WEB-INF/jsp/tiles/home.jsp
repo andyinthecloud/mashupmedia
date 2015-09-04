@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 
-<div class="panel">
+<div class="center-panel">
 
 	<img class="logo-home" alt="Mashup Media" title="Mashup Media"
 		src="<c:url value="/images/mashupmedia-logo.png" />" />

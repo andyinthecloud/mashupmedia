@@ -37,6 +37,11 @@
 			value="/WEB-INF/jsp/tiles/configuration/network.jsp" />
 	</definition>
 
+	<definition name="configuration/network/fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/network.jsp" />
+	</definition>
+
 	<definition name="configuration/encoding" extends="home">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/configuration/encoding.jsp" />
