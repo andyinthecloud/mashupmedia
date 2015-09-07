@@ -108,8 +108,10 @@
 		});
 
 		// Capture all the links to push their url to the history stack and trigger the StateChange Event
-		$("a[rel='internal']")
-				.click(
+		$("body")
+				.on(
+						"click",
+						"a[rel='internal']",
 						function(event) {
 							var pageTitlePrefix = "<spring:message code="page.default.title.prefix" />";
 							var title = pageTitlePrefix + " "
@@ -205,7 +207,8 @@
 								</c:when>
 
 								<c:otherwise>
-									<a href="<c:url value="${breadcrumb.link}" />" rel="internal" title="${breadcrumb.name}"><c:out
+									<a href="<c:url value="${breadcrumb.link}" />" rel="internal"
+										title="${breadcrumb.name}"><c:out
 											value="${breadcrumb.name}" /></a> &gt;
 							</c:otherwise>
 

@@ -25,6 +25,7 @@ public class NetworkConfigurationController extends BaseController {
 	private final static String PAGE_NAME = "network";
 	private final static String PAGE_PATH = "configuration/" + PAGE_NAME;
 	private final static String PAGE_URL = "/" + PAGE_PATH;
+	private final static String PAGE_FRAGMENT_PATH = PAGE_PATH  + FRAGMENT_APPEND_PATH;
 
 	@Autowired
 	private ConfigurationManager configurationManager;
@@ -73,7 +74,7 @@ public class NetworkConfigurationController extends BaseController {
 
 		new NetworkPageValidator().validate(networkPage, result);
 		if (result.hasErrors()) {
-			return PAGE_PATH;
+			return PAGE_FRAGMENT_PATH;
 		}
 
 		String proxyEnabled = networkPage.getProxyEnabled();
@@ -91,7 +92,7 @@ public class NetworkConfigurationController extends BaseController {
 		String proxyPassword = networkPage.getProxyPassword();
 		configurationManager.saveEncryptedConfiguration(MashUpMediaConstants.PROXY_PASSWORD, proxyPassword);
 
-		return "redirect:/app/configuration/fragment";
+		return "redirect:/app/configuration?fragment=true";
 	}
 
 }

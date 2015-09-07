@@ -12,7 +12,9 @@
 			var formAction = $(this).attr("action");
 			var formData = $(this).serialize();			
 			$.post(formAction, formData, function(data) {
-				$("div.ui-content").html(data);
+				var uiContentElement = $("div.ui-content");
+				uiContentElement.html(data);
+				uiContentElement.enhanceWithin();
 			});
 
 		});
