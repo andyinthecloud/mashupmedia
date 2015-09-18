@@ -3,9 +3,11 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		processForm();
-		$("#proxyEnabled").change(function() {
-			processForm();
+		
+		$("div.ui-content form").on("change", "#proxyEnabled", function() {
+			processForm($(this));
 		});
+		
 
 		$("#networkPage").submit(function(event) {
 			event.preventDefault();
@@ -15,29 +17,32 @@
 				var uiContentElement = $("div.ui-content");
 				uiContentElement.html(data);
 				uiContentElement.enhanceWithin();
+				if (data.indexOf("@CONFIGURATION@") > -1) {					
+					History.pushState({
+						pageType : "internal"
+					}, "<spring:message code ="configuration.title" />", "<c:url value="/app/configuration" />");										
+				}
+				
 			});
 
 		});
 
 	});
-
-	function processForm() {
+	
+	function processForm(checkbox) {
 		var isDisabled = false;
 
-		if ($("#proxyEnabled").val() == "false") {
+		if ($(checkbox).val() == "false") {
 			isDisabled = true;
 		}
 
-		var fieldSelector = "input[type='text'], input[type='password']";
-
-		$(fieldSelector).prop("disabled", isDisabled);
+		var fieldContainerElement = $("input[type='text'], input[type='password']").closest("div");
 
 		if (isDisabled) {
-			$(fieldSelector).addClass("disabled");
+			$(fieldContainerElement).addClass("ui-state-disabled");
 		} else {
-			$(fieldSelector).removeClass("disabled");
+			$(fieldContainerElement).removeClass("ui-state-disabled");
 		}
-
 	}
 </script>
 

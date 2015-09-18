@@ -1,10 +1,14 @@
 @media all and (min-width: 50em) {
 	div.center-panel {
-		padding: 20px;
+		padding: 20px !important;
 		max-width: 60em;
 		text-align: center;
 	}
 	
+	div.border {
+		border: 1px solid #e579e9;
+	}
+		
 	form {
 		padding: 20px;
 		max-width: 60em;

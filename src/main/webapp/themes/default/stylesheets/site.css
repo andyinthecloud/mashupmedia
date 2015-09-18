@@ -198,15 +198,15 @@ a:HOVER {
 	text-decoration: underline;
 }
 
+label {
+	text-align: left;
+}
+
 label.date-to {
 	padding-left: 10px;
 }
 
-div.button-panel {
-	margin-top: 20px;
-	margin-bottom: 10px;
-	text-align: right;
-}
+
 
 div.breadcrumbs a:HOVER, #top-bar ul.main-menu a:HOVER, #top-bar a.home:HOVER,
 	#top-bar-music-player .main-menu a:hover, #top-bar-music-player .top-home-link a:HOVER

@@ -51,6 +51,12 @@
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/configuration/list-libraries.jsp" />
 	</definition>
+	
+	<definition name="configuration/list-libraries/fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/list-libraries.jsp" />
+	</definition>		
+	
 
 	<definition name="configuration/list-remote-libraries"
 		extends="home">

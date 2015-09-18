@@ -37,7 +37,7 @@
 </head>
 <body>
 
-	<div id="login-panel" class="center-panel">
+	<div id="login-panel" class="center-panel border">
 
 		<img alt="Mashup Media"
 			src="<c:url value="/images/mashupmedia-logo.png"/>">

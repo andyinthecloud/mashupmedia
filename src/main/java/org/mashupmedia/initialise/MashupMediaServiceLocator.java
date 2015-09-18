@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.util.FileHelper;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
