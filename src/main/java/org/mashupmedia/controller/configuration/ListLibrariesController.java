@@ -14,9 +14,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ListLibrariesController extends BaseController {
+
+	private final static String LIST_LIBRARIES_PAGE_PATH = "configuration/list-libraries";
+	private final static String CHOOSE_LIBRARY_PAGE_PATH = "configuration/choose-library-type";
 
 	@Autowired
 	private LibraryManager libraryManager;
@@ -37,7 +41,8 @@ public class ListLibrariesController extends BaseController {
 	}
 
 	@RequestMapping(value = "/configuration/list-libraries", method = RequestMethod.GET)
-	public String getListLibrariesPage(Model model) {
+	public String getListLibrariesPage(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+			Model model) {
 
 		ListLibrariesPage listLibrariesPage = new ListLibrariesPage();
 		model.addAttribute(listLibrariesPage);
@@ -45,12 +50,15 @@ public class ListLibrariesController extends BaseController {
 		List<Library> libraries = (List<Library>) libraryManager.getLocalLibraries(LibraryType.ALL);
 		listLibrariesPage.setLibraries(libraries);
 
-		return "configuration/list-libraries";
+		String path = getPath(isFragment, LIST_LIBRARIES_PAGE_PATH);
+		return path;
 	}
 
 	@RequestMapping(value = "/configuration/choose-library-type", method = RequestMethod.GET)
-	public String handleChooseLibraryType(Model model) {
-		return "configuration/choose-library-type";
+	public String handleChooseLibraryType(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+			Model model) {
+		String path = getPath(isFragment, CHOOSE_LIBRARY_PAGE_PATH);
+		return path;
 	}
 
 }

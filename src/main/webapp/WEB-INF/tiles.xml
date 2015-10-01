@@ -82,6 +82,12 @@
 			value="/WEB-INF/jsp/tiles/configuration/choose-library-type.jsp" />
 	</definition>
 
+	<definition name="configuration/choose-library-type/fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/choose-library-type.jsp" />
+	</definition>
+
+
 
 	<definition name="configuration.library.music.panel"
 		template="/WEB-INF/jsp/tiles/configuration/library.jsp">
@@ -89,6 +95,10 @@
 	</definition>
 
 	<definition name="configuration/library/music" extends="home">
+		<put-attribute name="body" value="configuration.library.music.panel" />
+	</definition>
+
+	<definition name="configuration/library/music/fragment" extends="ui-content">
 		<put-attribute name="body" value="configuration.library.music.panel" />
 	</definition>
 
@@ -102,7 +112,15 @@
 		<put-attribute name="body" value="configuration.library.video.panel" />
 	</definition>
 
+	<definition name="configuration/library/video/fragment" extends="ui-content">
+		<put-attribute name="body" value="configuration.library.video.panel" />
+	</definition>
+
 	<definition name="configuration/library/photo" extends="home">
+		<put-attribute name="body" value="configuration.library.photo.panel" />		
+	</definition>
+	
+	<definition name="configuration/library/photo/fragment" extends="ui-content">
 		<put-attribute name="body" value="configuration.library.photo.panel" />		
 	</definition>
 	

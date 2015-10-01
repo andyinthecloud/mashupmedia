@@ -3,32 +3,52 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("#choose-library-type a.button" ).click(function() {
-			if ($("#choose-library-type input[name=libraryType]").is(":checked") ) {
+		
+		$("div.ui-content").on("click", "#choose-library-type a.ui-btn", function() {
+			var checkedLibraryTypeElement = $("#choose-library-type input[name=libraryType]").is(":checked");
+			
+			if (checkedLibraryTypeElement) {
 				var libraryType = $("#choose-library-type input[name=libraryType]:checked").val();
-				window.location = "<c:url value="/app/configuration/library/" />" + libraryType;
+				var libraryUrl = "<c:url value="/app/configuration/library/" />" + libraryType + "/fragmemt";
+				
+				alert("libraryType = " + libraryType + ", libraryUrl = " + libraryUrl);
+				
+				
+				/*
+				$.get(libraryUrl, function(data) {
+					var uiContentElement = $("div.ui-content");
+					uiContentElement.html(data);
+					uiContentElement.enhanceWithin();
+					
+					History.pushState({
+						pageType : "internal"
+					}, checkedLibraryTypeElement.attr("title"), libraryUrl);					
+				});
+				*/
 			}
 		});
 	});
 </script>
 
 
-<fieldset id="choose-library-type">
+<fieldset id="choose-library-type" data-role="controlgroup">
 	<legend>
 		<spring:message code="chooselibrary.title" />
 	</legend>
 
-	<div>
-		<input type="radio" value="music" name="libraryType" id="libraryTypeMusic" checked="checked"> <label for="libraryTypeMusic"><spring:message code="chooselibrary.type.music" /></label> <br />
-		<input type="radio" value="video" name="libraryType" id="libraryTypeVideo"> <label for="libraryTypeVideo"><spring:message code="chooselibrary.type.video" /></label><br />
-		<input type="radio" value="photo" name="libraryType" id="libraryTypePhoto"> <label for="libraryTypePhoto"><spring:message code="chooselibrary.type.photo" /></label>
-	</div>
-	
-	<br />
-
-	<div>
-		<a class="button" href="javascript:;"><spring:message code="next" /></a>
-	</div>
+	<input type="radio" value="music" name="libraryType"
+		id="libraryTypeMusic" checked="checked"
+		title="<spring:message code="library.music.title"/>"> <label
+		for="libraryTypeMusic"><spring:message
+			code="chooselibrary.type.music" /></label> <input type="radio" value="video"
+		name="libraryType" id="libraryTypeVideo"> <label
+		for="libraryTypeVideo"><spring:message
+			code="chooselibrary.type.video" /></label> <input type="radio" value="photo"
+		name="libraryType" id="libraryTypePhoto"> <label
+		for="libraryTypePhoto"><spring:message
+			code="chooselibrary.type.photo" /></label> <br /> <a
+		class="ui-btn ui-btn-inline" href="javascript:;"><spring:message
+			code="next" /></a>
 </fieldset>
 
 
