@@ -72,13 +72,16 @@ public abstract class AbstractLibraryController extends BaseController {
 
 	protected abstract LibraryPage initialiseLibraryPage(Long libraryId);
 
-	protected abstract String getPagePath();
+	protected abstract String getLibraryPath();
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String handleGetLibrary(@RequestParam(value = "id", required = false) Long libraryId, Model model) {
+	public String handleGetLibrary(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+			@RequestParam(value = "id", required = false) Long libraryId, Model model) {
 		LibraryPage libraryPage = initialiseLibraryPage(libraryId);
 		model.addAttribute(libraryPage);
-		return getPagePath();
+		String path = getLibraryPath();
+		path = getPath(isFragment, path);
+		return path;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -87,7 +90,7 @@ public abstract class AbstractLibraryController extends BaseController {
 
 		getValidator().validate(libraryPage, result);
 		if (result.hasErrors()) {
-			return getPagePath();
+			return getLibraryPath();
 		}
 
 		processPostLibrary(libraryPage, model, result, redirectAttributes);

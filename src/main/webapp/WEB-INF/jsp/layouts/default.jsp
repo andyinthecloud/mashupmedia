@@ -146,7 +146,8 @@
 		$("#log-out").click(function() {
 			$("#form-log-out").submit();
 		});
-
+		
+		document.title = "${headPageTitle}";
 	});
 </script>
 

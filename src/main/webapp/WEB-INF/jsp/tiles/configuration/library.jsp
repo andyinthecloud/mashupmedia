@@ -3,105 +3,97 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-	var locationType = $("#location input:radio[name=locationType]:checked").val();
-
-	$("#location input[name='locationType']").click(function() {
-	    var locationType = $(this).attr("value");
-	    showLocation(locationType);
-	});
+		var locationType = $("#location input:radio[name=locationType]:checked").val();
 	
-	$("#remote-share-panel").on("click", "input.link", function() {
-		$(this).select();
-	});
-	
-	
-
-	$("#location div.check-location a").click(function() {
-	    var path = $("#folderLocation-path").val();
-	    if (path.length == 0) {
-		return;
-	    }
-
-	    $.ajax({
-		url : "<c:url value="/app/ajax/check-folder-location"/>",
-		type : "post",
-		data : {
-		    path : path
-		},
-		success : function(data) {
-		    var classStatus = "error";
-		    if (data.response.isValid == 'true') {
-			classStatus = "ok";
-		    }
-		    $("#location div.check-location .message").addClass(classStatus);
-		    $("#location div.check-location .message").html(data.response.message);
-		}
-	    });
-
-	});
-
-	showRemoteShares();
-
-	$("#libraryPage input:submit").click(function() {
-	    var action = $(this).attr("name");
-	    $("#action").val(action);
-	});
-	
-	$("#remote-share-panel").hide();
-	
-	$("#remote-share").click(function() {
-	    $("#remote-share-panel").toggle();
-	});
-	
-	$("#create-remote-link").click(function() {
-		$.ajax({
-			url : "<c:url value="/app/ajax/library/add-remote-share"/>",
-			type : "post",
-			data : {
-			    libraryId : ${libraryPage.library.id}
-			},
-			success : function(data) {
-			    showRemoteShares();
-			}
-	    });	    
-	});
-	
-	$("#save-library-remote-connections").click(function() {
-		var remoteShareIds = new Array();
-		$("#remote-share-panel > table > tbody > tr").each(function() {
-		    if ($(this).find("input[type='checkbox']").is(":checked")) {
-				var remoteShareId = $(this).attr("id");
-				remoteShareId = parseId(remoteShareId, "remote-share-");
-				remoteShareIds.push(remoteShareId);					    
-			}		    
+		
+		$("div.ui-content form").on("click", "#location input[name='locationType']", function() {
+		    var locationType = $(this).attr("value");
+		    showLocation(locationType);
 		});
 		
-		if (remoteShareIds.length == 0) {
+		$("div.ui-content form").on("click", "#remote-share-panel", function() {
+			$(this).select();
+		});		
+	
+		$("div.ui-content form").on("click", "#location div.check-location a", function() {
+		    var path = $("#folderLocation-path").val();
+		    if (path.length == 0) {
 			return;
-		}
-		
-		var remoteShareStatus = $("#library-remote-connection-action").val();
-		if (remoteShareStatus == "") {
-			return;
-		}
-		
-		
-		$.ajax({
-			url : "<c:url value="/app/ajax/library/update-remote-shares"/>",
+		    }
+	
+		    $.ajax({
+			url : "<c:url value="/app/ajax/check-folder-location"/>",
 			type : "post",
 			data : {
-				remoteShareIds : remoteShareIds,
-			    libraryId : ${libraryPage.library.id},
-			    remoteShareStatus : remoteShareStatus
+			    path : path
 			},
 			success : function(data) {
-			    showRemoteShares();
+				$("#location div.check-location .status-message").html(data.response.message);
 			}
-	    });
+		    });
+	
+		});
+	
+		showRemoteShares();
+	
+		$("#libraryPage input:submit").click(function() {
+		    var action = $(this).attr("name");
+		    $("#action").val(action);
+		});
 		
+		$("#remote-share-panel").hide();
 		
+		$("div.ui-content form").on("click", "#remote-share", function() {
+		    $("#remote-share-panel").toggle();
+		});
 		
-	})
+		$("div.ui-content form").on("click", "#create-remote-link", function() {
+			$.ajax({
+				url : "<c:url value="/app/ajax/library/add-remote-share"/>",
+				type : "post",
+				data : {
+				    libraryId : <c:out value="${libraryPage.library.id}" />
+				},
+				success : function(data) {
+				    showRemoteShares();
+				}
+		    });	    
+		});
+		
+		$("div.ui-content form").on("click", "#save-library-remote-connections", function() {
+			var remoteShareIds = new Array();
+			$("#remote-share-panel > table > tbody > tr").each(function() {
+			    if ($(this).find("input[type='checkbox']").is(":checked")) {
+					var remoteShareId = $(this).attr("id");
+					remoteShareId = parseId(remoteShareId, "remote-share-");
+					remoteShareIds.push(remoteShareId);					    
+				}		    
+			});
+			
+			if (remoteShareIds.length == 0) {
+				return;
+			}
+			
+			var remoteShareStatus = $("#library-remote-connection-action").val();
+			if (remoteShareStatus == "") {
+				return;
+			}
+			
+			
+			$.ajax({
+				url : "<c:url value="/app/ajax/library/update-remote-shares"/>",
+				type : "post",
+				data : {
+					remoteShareIds : remoteShareIds,
+				    libraryId : <c:out value="${libraryPage.library.id}" />,
+				    remoteShareStatus : remoteShareStatus
+				},
+				success : function(data) {
+				    showRemoteShares();
+				}
+		    });
+			
+		})
 	
 	
     });
@@ -112,7 +104,7 @@
    		url : "<c:url value="/app/ajax/library/get-remote-shares"/>",
    		type : "get",
    		data : {
-   		    libraryId : ${libraryPage.library.id}
+   		    libraryId : <c:out value="${libraryPage.library.id}" />
    		},
    		success : function(data) {
    		       		    
@@ -157,46 +149,57 @@
 	<form:hidden path="library.id" />
 	<form:hidden path="library.scanMinutesInterval" />
 
-	<label for="library-name"><spring:message code="${pageTitle}" /></label>
-	<form:input path="library.name" id="library-name" cssStyle="margin-bottom: 10px;" />
-	<br />
+	<div class="new-line">
+		<label for="library-name"><spring:message code="${pageTitle}" /></label>
+		<form:input path="library.name" id="library-name"
+			data-clear-btn="true" />
+	</div>
 
-	<form:checkbox path="library.enabled" id="library-enabled" cssStyle="vertical-align: middle;" />
-	<label for="library-enabled"><spring:message code="library.enabled" /></label>
-	<br />
+	<div class="new-line">
+		<form:checkbox path="library.enabled" id="library-enabled" />
+		<label for="library-enabled"><spring:message
+				code="library.enabled" /></label>
+	</div>
 
-	<fieldset id="location">
-		<legend>
-			<spring:message code="library.location" />
-		</legend>
+	<div class="new-line">
+		<fieldset id="location">
+			<legend>
+				<spring:message code="library.location" />
+			</legend>
 
+			<div class="folder">
+				<label class="new-line" for="folderLocation-path"><spring:message
+						code="library.location.path" /></label>
+				<form:input path="library.location.path" id="folderLocation-path"
+					data-clear-btn="true" />
+			</div>
 
-		<div class="folder">
-			<label class="new-line" for="folderLocation-path"><spring:message code="library.location.path" /></label>
-			<form:input path="library.location.path" id="folderLocation-path" />
-		</div>
+			<div class="new-line check-location">
+				<a class="button" href="javascript:void(0);"><spring:message
+						code="path.check" /></a> <span class="status-message horizontal-gap"></span>
+			</div>
 
-
-		<br />
-
-		<div class="check-location">
-			<a class="button" href="javascript:void(0);"><spring:message code="path.check" /></a> <span class="message horizontal-gap"></span>
-		</div>
-	</fieldset>
+		</fieldset>
+	</div>
 
 	<tiles:insertAttribute name="additionalConfiguration" />
 
-	<label class="new-line" for="groups"><spring:message code="library.groups" /></label>
-	<form:checkboxes path="library.groups" items="${groups}" itemLabel="name" itemValue="id" cssClass="checkboxes" delimiter="<br/>" />
-	<br />
+	<div class="new-line">
+		<fieldset data-role="controlgroup">
+			<legend>
+				<spring:message code="library.groups" />
+			</legend>
+			<form:checkboxes path="library.groups" items="${groups}"
+				itemLabel="name" itemValue="id" />
+		</fieldset>
+	</div>
 
-
-
-	<br />
-	<c:if test="${libraryPage.isExists}">
+	<c:if test="${libraryPage.isShowRemoteConfiguration}">
 		<div class="new-line">
 
-			<input type="checkbox" id="remote-share" value="1" /> <label for="remote-share"><spring:message code="library.remote.enable" /></label> <br />
+			<input type="checkbox" id="remote-share" value="1" /> <label
+				for="remote-share"><spring:message
+					code="library.remote.enable" /></label> <br />
 			<fieldset id="remote-share-panel">
 				<legend>
 					<spring:message code="library.remote.title" />
@@ -206,7 +209,8 @@
 					<spring:message code="library.remote.description" />
 				</div>
 				<div>
-					<a id="create-remote-link" class="button" href="javascript:;"><spring:message code="library.remote.button.create-link" /></a>
+					<a id="create-remote-link" class="button" href="javascript:;"><spring:message
+							code="library.remote.button.create-link" /></a>
 				</div>
 
 				<table>
@@ -216,8 +220,10 @@
 							<th><spring:message code="library.remote.connection.url" /></th>
 							<th><spring:message code="library.remote.connection.server" /></th>
 							<th><spring:message code="library.remote.connection.created" /></th>
-							<th><spring:message code="library.remote.connection.last-connected" /></th>
-							<th><spring:message code="library.remote.connection.played-items" /></th>
+							<th><spring:message
+									code="library.remote.connection.last-connected" /></th>
+							<th><spring:message
+									code="library.remote.connection.played-items" /></th>
 							<th><spring:message code="library.remote.connection.status" /></th>
 						</tr>
 					</thead>
@@ -252,7 +258,9 @@
 							<spring:message code="library.remote.connection.status.delete" />
 						</option>
 
-					</select> <input id="save-library-remote-connections" type="button" class="button" value="<spring:message code="library.remote.connection.button.save" />" />
+					</select> <input id="save-library-remote-connections" type="button"
+						class="button"
+						value="<spring:message code="library.remote.connection.button.save" />" />
 				</div>
 
 
@@ -263,7 +271,9 @@
 
 
 	<div class="button-panel">
-		<input class="button" name="save" type="submit" value="<spring:message code="action.save" />" /> <input class="button" name="delete" type="submit"
+		<input class="button" name="save" type="submit"
+			value="<spring:message code="action.save" />" /> <input
+			class="button" name="delete" type="submit"
 			value="<spring:message code="action.delete" />" />
 	</div>
 </form:form>

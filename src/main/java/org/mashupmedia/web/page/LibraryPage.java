@@ -23,6 +23,13 @@ public class LibraryPage {
 	public boolean isExists() {
 		return exists;
 	}
+	
+	public boolean getIsShowRemoteConfiguration() {
+		// return isExists();
+		// Disable this feature for now
+		return false;
+	}
+	
 
 	public boolean getIsExists() {
 		return isExists();
