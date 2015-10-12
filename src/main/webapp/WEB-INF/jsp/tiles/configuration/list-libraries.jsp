@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
-
+<!-- @IS_ADD_TO_HISTORY@ -->
 
 <c:choose>
 	<c:when test="${fn:length(listLibrariesPage.libraries) == 0}">

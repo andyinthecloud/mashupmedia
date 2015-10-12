@@ -675,3 +675,15 @@ function loadSearchResults(isReplace) {
    	});	 	
 }
 
+function submitAjaxForm(formElement, pushTitle, pushUrl) {
+	var formAction = formElement.attr("action");
+	var formData = formElement.serialize();
+	$.post(formAction, formData, function(data) {
+	    var uiContentElement = $("div.ui-content");
+	    uiContentElement.html(data);
+	    uiContentElement.enhanceWithin();
+	    if (data.indexOf("@IS_ADD_TO_HISTORY@") > -1) {
+	    	History.pushState({pageType: "internal"}, pushTitle, pushUrl);
+	    }	
+	});
+}

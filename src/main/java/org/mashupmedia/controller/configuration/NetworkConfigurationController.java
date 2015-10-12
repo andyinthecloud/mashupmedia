@@ -92,7 +92,7 @@ public class NetworkConfigurationController extends BaseController {
 		String proxyPassword = networkPage.getProxyPassword();
 		configurationManager.saveEncryptedConfiguration(MashUpMediaConstants.PROXY_PASSWORD, proxyPassword);
 
-		return "redirect:/app/configuration?fragment=true";
+		return "redirect:/app/configuration?" +FRAGMENT_PARAM + "=true";
 	}
 
 }

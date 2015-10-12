@@ -90,7 +90,9 @@ public abstract class AbstractLibraryController extends BaseController {
 
 		getValidator().validate(libraryPage, result);
 		if (result.hasErrors()) {
-			return getLibraryPath();
+			String path = getLibraryPath();
+			path = getPath(true, path);
+			return path;
 		}
 
 		processPostLibrary(libraryPage, model, result, redirectAttributes);
@@ -114,7 +116,7 @@ public abstract class AbstractLibraryController extends BaseController {
 	}
 
 	protected String getRedirectListLibraryView() {
-		return "redirect:/app/configuration/list-libraries";
+		return "redirect:/app/configuration/list-libraries?" + FRAGMENT_PARAM + "=true";
 	}
 
 	private void processSaveAction(LibraryPage libraryPage) {

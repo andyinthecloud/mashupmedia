@@ -1,49 +1,51 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
-	$(document).ready(function() {
-		processForm();
-		
-		$("div.ui-content form").on("change", "#proxyEnabled", function() {
-			processForm($(this));
-		});
-		
+    $(document).ready(function() {
+        processForm();
 
-		$("#networkPage").submit(function(event) {
-			event.preventDefault();
-			var formAction = $(this).attr("action");
-			var formData = $(this).serialize();			
-			$.post(formAction, formData, function(data) {
-				var uiContentElement = $("div.ui-content");
-				uiContentElement.html(data);
-				uiContentElement.enhanceWithin();
-				if (data.indexOf("@CONFIGURATION@") > -1) {					
-					History.pushState({
-						pageType : "internal"
-					}, "<spring:message code ="configuration.title" />", "<c:url value="/app/configuration" />");										
-				}
-				
-			});
+        $("div.ui-content form").on("change", "#proxyEnabled", function() {
+            processForm($(this));
+        });
 
-		});
+        $("#networkPage").submit(function(event) {
+            event.preventDefault();
+            submitAjaxForm($(this), "<spring:message code ="configuration.title" />", "<c:url value="/app/configuration" />");
+            /*
+            var formAction = $(this).attr("action");
+            var formData = $(this).serialize();
+            $.post(formAction, formData, function(data) {
+                var uiContentElement = $("div.ui-content");
+                uiContentElement.html(data);
+                uiContentElement.enhanceWithin();
+                if (data.indexOf("@CONFIGURATION@") > -1) {
+                    History.pushState({
+                        pageType: "internal"
+                    }, "<spring:message code ="configuration.title" />", "<c:url value="/app/configuration" />");
+                }
 
-	});
-	
-	function processForm(checkbox) {
-		var isDisabled = false;
+            });
+            */
 
-		if ($(checkbox).val() == "false") {
-			isDisabled = true;
-		}
+        });
 
-		var fieldContainerElement = $("input[type='text'], input[type='password']").closest("div");
+    });
 
-		if (isDisabled) {
-			$(fieldContainerElement).addClass("ui-state-disabled");
-		} else {
-			$(fieldContainerElement).removeClass("ui-state-disabled");
-		}
-	}
+    function processForm(checkbox) {
+        var isDisabled = false;
+
+        if ($(checkbox).val() == "false") {
+            isDisabled = true;
+        }
+
+        var fieldContainerElement = $("input[type='text'], input[type='password']").closest("div");
+
+        if (isDisabled) {
+            $(fieldContainerElement).addClass("ui-state-disabled");
+        } else {
+            $(fieldContainerElement).removeClass("ui-state-disabled");
+        }
+    }
 </script>
 
 
