@@ -135,7 +135,13 @@
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/configuration/administration/list-users.jsp" />
 	</definition>
-
+	
+	<definition name="configuration/administration/list-users/fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/administration/list-users.jsp" />
+	</definition>
+	
 	<definition name="configuration/administration/edit-user"
 		extends="home">
 		<put-attribute name="body"

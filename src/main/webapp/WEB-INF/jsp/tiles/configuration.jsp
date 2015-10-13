@@ -12,8 +12,9 @@
 			href="<c:url value="/app/configuration/list-libraries" />"
 			title="<spring:message code="list-libraries.title" />"><spring:message
 					code="configuration.menu.libraries" /></a></li>
-		<li><a
-			href="<c:url value="/app/configuration/administration/list-users" />"><spring:message
+		<li><a rel="internal"
+			href="<c:url value="/app/configuration/administration/list-users" />"
+			title="<spring:message code="configuration.administration.list-users.title" />"><spring:message
 					code="configuration.menu.users" /></a></li>
 		<li><a
 			href="<c:url value="/app/configuration/administration/list-groups" />"><spring:message

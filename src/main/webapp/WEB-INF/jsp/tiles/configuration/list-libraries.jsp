@@ -25,5 +25,5 @@
 	<a class="ui-btn ui-btn-inline" rel="internal"
 		title="<spring:message code="list-libraries.title" />"
 		href="<c:url value="/app/configuration/choose-library-type" />"><spring:message
-			code="list-libraries.library.add" /></a>
+			code="configuration.administration.edit-user.title" /></a>
 </div>

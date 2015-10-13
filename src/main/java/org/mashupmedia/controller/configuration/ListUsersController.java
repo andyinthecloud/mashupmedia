@@ -30,6 +30,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/configuration/administration")
@@ -42,10 +43,11 @@ public class ListUsersController extends BaseController {
 	public String getPageTitleMessageKey() {
 		return "configuration.administration.list-users.title";
 	}
-	
+
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
+		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"),
+				"/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
 
 		Breadcrumb networkBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.users"));
@@ -53,14 +55,15 @@ public class ListUsersController extends BaseController {
 	}
 
 	@RequestMapping(value = "/list-users", method = RequestMethod.GET)
-	public String getUsers(Model model) {
+	public String getUsers(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
 		ListUsersPage listUsersPage = new ListUsersPage();
 		List<User> users = adminManager.getUsers();
 		listUsersPage.setUsers(users);
 
 		model.addAttribute("listUsersPage", listUsersPage);
 
-		return "configuration/administration/list-users";
+		String path = getPath(isFragment, "configuration/administration/list-users");
+		return path;
 	}
 
 }
