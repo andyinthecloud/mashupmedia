@@ -682,7 +682,7 @@ function submitAjaxForm(formElement, pushTitle, pushUrl) {
 	    var uiContentElement = $("div.ui-content");
 	    uiContentElement.html(data);
 	    uiContentElement.enhanceWithin();
-	    if (data.indexOf("@IS_ADD_TO_HISTORY@") > -1) {
+	    if (data.indexOf("@IS_SHOWN_AFTER_FORM@") > -1) {
 	    	History.pushState({pageType: "internal"}, pushTitle, pushUrl);
 	    }	
 	});

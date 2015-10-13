@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
-<!-- @IS_ADD_TO_HISTORY@ -->
+<!-- @IS_SHOWN_AFTER_FORM@ -->
 
 <c:choose>
 	<c:when test="${fn:length(listLibrariesPage.libraries) == 0}">
@@ -21,8 +21,9 @@
 	</c:otherwise>
 </c:choose>
 
-
-<a class="ui-btn ui-btn-inline" rel="internal"
-	title="<spring:message code="list-libraries.title" />"
-	href="<c:url value="/app/configuration/choose-library-type" />"><spring:message
-		code="list-libraries.library.add" /></a>
+<div class="new-line">
+	<a class="ui-btn ui-btn-inline" rel="internal"
+		title="<spring:message code="list-libraries.title" />"
+		href="<c:url value="/app/configuration/choose-library-type" />"><spring:message
+			code="list-libraries.library.add" /></a>
+</div>

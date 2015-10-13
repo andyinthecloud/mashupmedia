@@ -51,6 +51,9 @@ img {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	color: #CC0099;
+	border: 1px solid #CC0099;
+	background-color: #FFE6E6; 
+	padding: 5px;
 }
 
 #player-script {

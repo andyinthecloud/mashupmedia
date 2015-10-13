@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
-<!-- @IS_ADD_TO_HISTORY@ -->
+<!-- @IS_SHOWN_AFTER_FORM@ -->
 
 <sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
 	<ul class="main-menu" data-role="listview">
