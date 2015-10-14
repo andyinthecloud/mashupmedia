@@ -44,10 +44,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/configuration/administration")
 public class EditUserController extends BaseController {
+
+	private final static String PAGE_PATH = "configuration/administration/edit-user";
 
 	@Autowired
 	private AdminManager adminManager;
@@ -59,14 +62,15 @@ public class EditUserController extends BaseController {
 	private GroupEditor groupEditor;
 
 	@Override
-	public String getPageTitleMessageKey() {		
+	public String getPageTitleMessageKey() {
 		return "configuration.administration.edit-user.title";
 	}
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration"));
-		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.users"), "/app/configuration/administration/list-users"));
+		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.users"),
+				"/app/configuration/administration/list-users"));
 		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.edit-user")));
 	}
 
@@ -83,61 +87,71 @@ public class EditUserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/edit-user/{userId}", method = RequestMethod.GET)
-	public String editUser(@PathVariable("userId") Long userId, Model model) {
+	public String editUser(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+			@PathVariable("userId") Long userId, Model model) {
 		User user = adminManager.getUser(userId);
-		EditUserPage editUserPage = prepareEditUserPage(user);
-		model.addAttribute("editUserPage", editUserPage);
-		return "configuration/administration/edit-user";
+
+		processUserPage(user, model);
+		String path = getPath(isFragment, PAGE_PATH);
+		return path;
 	}
-	
-	@RequestMapping(value = "/account", method = RequestMethod.GET)
-	public String editAccount(Model model) {
-		User user = AdminHelper.getLoggedInUser();
+
+	protected void processUserPage(User user, Model model) {
 		EditUserPage editUserPage = prepareEditUserPage(user);
 		model.addAttribute("editUserPage", editUserPage);
-		return "configuration/administration/edit-user";
+	}
+
+	@RequestMapping(value = "/account", method = RequestMethod.GET)
+	public String editAccount(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+		User user = AdminHelper.getLoggedInUser();
+
+		processUserPage(user, model);
+		String path = getPath(isFragment, PAGE_PATH);
+		return path;
 	}
 
 	@RequestMapping(value = "/add-user", method = RequestMethod.GET)
-	public String addUser(Model model) {
+	public String addUser(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
 		User user = new User();
 		user.setEnabled(true);
 		user.setEditable(true);
-		EditUserPage editUserPage = prepareEditUserPage(user);
-		model.addAttribute("editUserPage", editUserPage);
-		return "configuration/administration/edit-user";
+
+		processUserPage(user, model);
+		String path = getPath(isFragment, PAGE_PATH);
+		return path;
 	}
 
 	@RequestMapping(value = "/submit-user", method = RequestMethod.POST)
-	public String processSubmitUser(@ModelAttribute("editUserPage") EditUserPage editUserPage, BindingResult bindingResult, Model model) {
+	public String processSubmitUser(@ModelAttribute("editUserPage") EditUserPage editUserPage,
+			BindingResult bindingResult, Model model) {
 
 		new EditUserPageValidator().validate(editUserPage, bindingResult);
 		if (bindingResult.hasErrors()) {
 			model.addAttribute(MODEL_KEY_HAS_ERRORS, Boolean.TRUE.toString());
-			return "configuration/administration/edit-user";
+			String path = getPath(true, PAGE_PATH);
+			return path;
 		}
 
 		processAdministratorRole(editUserPage);
 
 		User user = editUserPage.getUser();
-		user.setEditable(true);
 
 		String action = StringUtils.trimToEmpty(editUserPage.getAction());
 
 		if (action.equalsIgnoreCase("delete")) {
 			long userId = user.getId();
 			adminManager.deleteUser(userId);
-			
+
 			long currentUserId = AdminHelper.getLoggedInUser().getId();
 			if (userId == currentUserId) {
 				return "/j_spring_security_logout";
 			}
-			
+
 		} else {
 			adminManager.saveUser(user);
 		}
 
-		return "redirect:/app/configuration/administration/list-users";
+		return "redirect:/app/configuration/administration/list-users?" + FRAGMENT_PARAM + "=true";
 	}
 
 	protected void processAdministratorRole(EditUserPage editUserPage) {
@@ -164,11 +178,11 @@ public class EditUserController extends BaseController {
 		editUserPage.setUser(user);
 		boolean isUserAdministrator = AdminHelper.isAdministrator(user);
 		editUserPage.setAdministrator(isUserAdministrator);
-		
+
 		User currentUser = AdminHelper.getLoggedInUser();
 		boolean isShowAdministratorRights = AdminHelper.isAdministrator(currentUser);
 		editUserPage.setShowAdministrator(isShowAdministratorRights);
-		
+
 		return editUserPage;
 	}
 

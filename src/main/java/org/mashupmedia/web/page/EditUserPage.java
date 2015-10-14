@@ -17,17 +17,17 @@
 
 package org.mashupmedia.web.page;
 
-import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.User;
 
 public class EditUserPage {
 
 	private String action;
 	private User user;
-	private String repeatPassword;
+	private String newPassword;
+	private String newRepeatPassword;
 	private boolean administrator;
 	private boolean showAdministrator;
-	
+
 	public boolean isShowAdministrator() {
 		return showAdministrator;
 	}
@@ -39,21 +39,13 @@ public class EditUserPage {
 	public boolean isAdministrator() {
 		return administrator;
 	}
-	
+
 	public boolean getIsAdministrator() {
 		return isAdministrator();
 	}
 
 	public void setAdministrator(boolean isAdministrator) {
 		this.administrator = isAdministrator;
-	}
-
-	public String getRepeatPassword() {
-		return repeatPassword;
-	}
-
-	public void setRepeatPassword(String repeatPassword) {
-		this.repeatPassword = repeatPassword;
 	}
 
 	public String getAction() {
@@ -72,18 +64,20 @@ public class EditUserPage {
 		this.user = user;
 	}
 
-	public boolean getHasPassword() {
-		if (user == null) {
-			return false;
-		}
+	public String getNewPassword() {
+		return newPassword;
+	}
 
-		String password = user.getPassword();
-		if (StringUtils.isBlank(password)) {
-			return false;
-		}
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
+	}
 
-		return true;
+	public String getNewRepeatPassword() {
+		return newRepeatPassword;
+	}
 
+	public void setNewRepeatPassword(String newRepeatPassword) {
+		this.newRepeatPassword = newRepeatPassword;
 	}
 
 }

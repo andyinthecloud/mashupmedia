@@ -148,6 +148,12 @@
 			value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
 	</definition>
 
+	<definition name="configuration/administration/edit-user/fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
+	</definition>
+
 	<definition name="configuration/administration/list-groups"
 		extends="home">
 		<put-attribute name="body"

@@ -11,22 +11,6 @@
         $("#networkPage").submit(function(event) {
             event.preventDefault();
             submitAjaxForm($(this), "<spring:message code ="configuration.title" />", "<c:url value="/app/configuration" />");
-            /*
-            var formAction = $(this).attr("action");
-            var formData = $(this).serialize();
-            $.post(formAction, formData, function(data) {
-                var uiContentElement = $("div.ui-content");
-                uiContentElement.html(data);
-                uiContentElement.enhanceWithin();
-                if (data.indexOf("@CONFIGURATION@") > -1) {
-                    History.pushState({
-                        pageType: "internal"
-                    }, "<spring:message code ="configuration.title" />", "<c:url value="/app/configuration" />");
-                }
-
-            });
-            */
-
         });
 
     });

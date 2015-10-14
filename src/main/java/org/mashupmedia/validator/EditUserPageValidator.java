@@ -48,22 +48,37 @@ public class EditUserPageValidator implements Validator {
 
 	protected void validateChangePassword(EditUserPage editUserPage, Errors errors) {
 		User user = editUserPage.getUser();
-		String action = StringUtils.trimToEmpty(editUserPage.getAction());
-		if (!action.equalsIgnoreCase("changePassword")) {
-			user.setPassword("");
+		
+		StringBuilder newPasswordBuilder = new StringBuilder();
+		String newPassword = editUserPage.getNewPassword();
+		if (newPassword == null) {
+			newPassword = "";
+		}
+		newPasswordBuilder.append(newPassword);
+		
+		String newRepeatPassword = editUserPage.getNewRepeatPassword();
+		if (newRepeatPassword == null) {
+			newRepeatPassword = "";
+		}		
+		newPasswordBuilder.append(newRepeatPassword);
+		
+		String password = user.getPassword();
+		
+		if (StringUtils.isNotEmpty(password) && newPasswordBuilder.length() == 0) {
+			return;
+		}
+		
+		if (StringUtils.isEmpty(newPassword)) {
+			errors.rejectValue("user.password", "configuration.administration.edit-user.error.password");
 			return;
 		}
 
-		String password = user.getPassword();
-		if (StringUtils.isBlank(password)) {
-			errors.rejectValue("user.password", "configuration.administration.edit-user.error.password");
-		}
-
-		String repeatPassword = editUserPage.getRepeatPassword();
-		if (!password.equals(repeatPassword)) {
+		if (!newPassword.equals(newRepeatPassword)) {
 			errors.rejectValue("user.password", "configuration.administration.edit-user.error.password-not-same");
+			return;
 		}
-
+		
+		user.setPassword(newPassword);
 	}
 
 }

@@ -72,7 +72,7 @@ public class User implements UserDetails, Serializable {
 	public boolean isEditable() {
 		return editable;
 	}
-
+	
 	public void setEditable(boolean editable) {
 		this.editable = editable;
 	}
