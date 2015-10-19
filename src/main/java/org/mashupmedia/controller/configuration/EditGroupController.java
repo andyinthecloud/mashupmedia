@@ -44,10 +44,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/configuration/administration")
 public class EditGroupController extends BaseController {
+
+	private final static String PAGE_PATH = "configuration/administration/edit-group";
 
 	@Autowired
 	private AdminManager adminManager;
@@ -66,7 +69,8 @@ public class EditGroupController extends BaseController {
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration"));
-		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.groups"), "/app/configuration/administration/list-groups"));
+		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.groups"),
+				"/app/configuration/administration/list-groups"));
 		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.edit-group")));
 	}
 
@@ -77,11 +81,14 @@ public class EditGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/edit-group/{groupId}", method = RequestMethod.GET)
-	public String editUser(@PathVariable("groupId") Long groupId, Model model) {
+	public String editUser(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+			@PathVariable("groupId") Long groupId, Model model) {
 		Group group = adminManager.getGroup(groupId);
 		EditGroupPage editGroupPage = prepareEditGroupPage(group);
 		model.addAttribute("editGroupPage", editGroupPage);
-		return "configuration/administration/edit-group";
+
+		String path = getPath(isFragment, PAGE_PATH);
+		return path;
 	}
 
 	protected EditGroupPage prepareEditGroupPage(Group group) {
@@ -93,19 +100,22 @@ public class EditGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/add-group", method = RequestMethod.GET)
-	public String addUser(Model model) {
+	public String addUser(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
 		Group group = new Group();
 		EditGroupPage editGroupPage = prepareEditGroupPage(group);
 		model.addAttribute("editGroupPage", editGroupPage);
-		return "configuration/administration/edit-group";
+
+		String path = getPath(isFragment, PAGE_PATH);
+		return path;
 	}
 
 	@RequestMapping(value = "/submit-group", method = RequestMethod.POST)
-	public String processSubmitUser(@ModelAttribute("editGroupPage") EditGroupPage editGroupPage, BindingResult bindingResult, Model model) {
+	public String processSubmitUser(@ModelAttribute("editGroupPage") EditGroupPage editGroupPage,
+			BindingResult bindingResult, Model model) {
 
 		new EditGroupPageValidator().validate(editGroupPage, bindingResult);
 		if (bindingResult.hasErrors()) {
-			return "configuration/administration/edit-group";
+			return PAGE_PATH;
 		}
 
 		Group group = editGroupPage.getGroup();
@@ -122,7 +132,7 @@ public class EditGroupController extends BaseController {
 			adminManager.saveGroup(group);
 		}
 
-		return "redirect:/app/configuration/administration/list-groups";
+		return "redirect:/app/configuration/administration/list-groups?" + FRAGMENT_PARAM + "=true";
 	}
 
 	protected void processSaveLibraries(List<Library> selectedLibraries, Group group) {

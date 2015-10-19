@@ -160,16 +160,22 @@
 			value="/WEB-INF/jsp/tiles/configuration/administration/list-groups.jsp" />
 	</definition>
 
+	<definition name="configuration/administration/list-groups/fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/administration/list-groups.jsp" />
+	</definition>
+
 	<definition name="configuration/administration/edit-group"
 		extends="home">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/configuration/administration/edit-group.jsp" />
 	</definition>
 
-	<definition name="configuration/administration/new-user"
-		extends="home">
+	<definition name="configuration/administration/edit-group/fragment"
+		extends="ui-content">
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
+			value="/WEB-INF/jsp/tiles/configuration/administration/edit-group.jsp" />
 	</definition>
 
 	<definition name="music.panel" template="/WEB-INF/jsp/layouts/music-panel.jsp">

@@ -30,6 +30,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/configuration/administration")
@@ -41,10 +42,11 @@ public class ListGroupController extends BaseController {
 	public String getPageTitleMessageKey() {
 		return "configuration.administration.groups.title";
 	}
-	
+
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
+		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"),
+				"/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
 
 		Breadcrumb networkBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.groups"));
@@ -52,12 +54,14 @@ public class ListGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/list-groups", method = RequestMethod.GET)
-	public String getGroups(Model model) {
+	public String getGroups(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
 		ListGroupsPage listGroupsPage = new ListGroupsPage();
 		List<Group> groups = adminManager.getGroups();
 		listGroupsPage.setGroups(groups);
 		model.addAttribute("listGroupsPage", listGroupsPage);
-		return "configuration/administration/list-groups";
+
+		String path = getPath(isFragment, "configuration/administration/list-groups");
+		return path;
 	}
 
 }
