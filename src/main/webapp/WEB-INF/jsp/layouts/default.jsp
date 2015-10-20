@@ -27,11 +27,11 @@
 	src="<c:url value="/jquery-plugins/history/1.8b2/jquery.history.js" />"></script>
 
 <script>
-	$(document).on("mobileinit", function() {
-		$.mobile.hashListeningEnabled = false;
-		$.mobile.pushStateEnabled = false;
-		$.mobile.changePage.defaults.changeHash = false;
-	});
+    $(document).on("mobileinit", function() {
+        $.mobile.hashListeningEnabled = false;
+        $.mobile.pushStateEnabled = false;
+        $.mobile.changePage.defaults.changeHash = false;
+    });
 </script>
 <script
 	src="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.js" />"></script>
@@ -76,79 +76,74 @@
 	src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 
 <script type="text/javascript">
-	$(function() {
-		// Prepare
-		var History = window.History; // Note: We are using a capital H instead of a lower h
-		//alert(History.enabled);
-		if (!History.enabled) {
-			// History.js is disabled for this browser.
-			// This is because we can optionally choose to support HTML4 browsers or not.
-			return false;
-		}
+    $(function() {
+        // Prepare
+        var History = window.History; // Note: We are using a capital H instead of a lower h
+        //alert(History.enabled);
+        if (!History.enabled) {
+            // History.js is disabled for this browser.
+            // This is because we can optionally choose to support HTML4 browsers or not.
+            return false;
+        }
 
-		// Bind to StateChange Event
-		History.Adapter.bind(window, 'statechange', function() { // Note: We are using statechange instead of popstate
-			var State = History.getState();
-			// console.log(State);
-			var url = State.url;
-			var pageType = State.data.pageType;
-			if (pageType && pageType == "internal") {
+        // Bind to StateChange Event
+        History.Adapter.bind(window, 'statechange', function() { // Note: We are using statechange instead of popstate
+            var State = History.getState();
+            // console.log(State);
+            var url = State.url;
+            var pageType = State.data.pageType;
+            if (pageType && pageType == "internal") {
 
-				url = prepareInternalUrlFragment(url);
-				$.get(url, function(data) {
-					var uiContentElement = $("div.ui-content");
-					uiContentElement.html(data);
-					uiContentElement.enhanceWithin();
-				});
+                url = prepareInternalUrlFragment(url);
+                $.get(url, function(data) {
+                    var uiContentElement = $("div.ui-content");
+                    uiContentElement.html(data);
+                    uiContentElement.enhanceWithin();
+                });
 
-			} else {
-				window.location.href = url;
-			}
+            } else {
+                window.location.href = url;
+            }
 
-		});
+        });
 
-		// Capture all the links to push their url to the history stack and trigger the StateChange Event
-		$("body")
-				.on(
-						"click",
-						"a[rel='internal']",
-						function(event) {
-							var pageTitlePrefix = "<spring:message code="page.default.title.prefix" />";
-							var title = pageTitlePrefix + " "
-									+ $(this).attr("title");
-							var link = $(this).attr("href");
-							event.preventDefault();
-							History.pushState({
-								pageType : "internal"
-							}, title, link);
-						});
-	});
+        // Capture all the links to push their url to the history stack and trigger the StateChange Event
+        $("body").on("click", "a[rel='internal']", function(event) {
+            var pageTitlePrefix = "<spring:message code="page.default.title.prefix" />";
+            var title = pageTitlePrefix + " " + $(this).attr("title");
+            var link = $(this).attr("href");
+            event.preventDefault();
+            History.pushState({
+                pageType: "internal"
+            }, title, link);
+        });
+    });
 
-	function prepareInternalUrlFragment(url) {
-		url = $.trim(url);
-		if (url.indexOf("?") > -1) {
-			url += "&";
-		} else {
-			url += "?";
-		}
+    function prepareInternalUrlFragment(url) {
+        url = $.trim(url);
+        if (url.indexOf("?") > -1) {
+            url += "&";
+        } else {
+            url += "?";
+        }
 
-		url += "fragment=true";
-		return url;
-	}
+        url += "fragment=true";
+        return url;
+    }
 
-	$(document).ready(function() {
+    $(document).ready(function() {
 
-		var jPlayerVersion = "${jPlayerVersion}";
-		<c:if test="${isTransparentBackground}">
-		$("#contextUrl").val("<c:url value="/" />");
-		</c:if>
+        var jPlayerVersion = "${jPlayerVersion}";
+        <c:if test="${isTransparentBackground}">
+        $("#contextUrl").val("<c:url value="/" />");
+        </c:if>
 
-		$("#log-out").click(function() {
-			$("#form-log-out").submit();
-		});
-		
-		document.title = "${headPageTitle}";
-	});
+        $("#log-out").click(function() {
+            $("#form-log-out").submit();
+        });
+
+        document.title = "${headPageTitle}";
+    });
 </script>
 
 <link rel="stylesheet"
@@ -253,8 +248,9 @@
 					<li><a href="<c:url value="/app/encode/processes" />"
 						data-rel="back"><spring:message code="top-bar.encoding.queue" /></a></li>
 				</sec:authorize>
-				<li><a
-					href="<c:url value="/app/configuration/administration/account" />"
+				<li><a rel="internal"
+					title="<spring:message code="configuration.administration.my-account.title" />"
+					href="<c:url value="/app/configuration/administration/my-account" />"
 					data-rel="back"><spring:message code="top-bar.my-account" /></a></li>
 				<li><a id="log-out" href="#" id="log-out"><spring:message
 							code="top-bar.log-out" /></a></li>

@@ -115,7 +115,7 @@ public class EditGroupController extends BaseController {
 
 		new EditGroupPageValidator().validate(editGroupPage, bindingResult);
 		if (bindingResult.hasErrors()) {
-			return PAGE_PATH;
+			return PAGE_PATH + FRAGMENT_APPEND_PATH;
 		}
 
 		Group group = editGroupPage.getGroup();

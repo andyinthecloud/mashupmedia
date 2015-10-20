@@ -40,6 +40,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
@@ -54,7 +55,7 @@ public class EncodingConfigurationController extends BaseController {
 
 	@Autowired
 	private ConfigurationManager configurationManager;
-	
+
 	@Autowired
 	private FfMpegManager encodeManager;
 
@@ -65,7 +66,8 @@ public class EncodingConfigurationController extends BaseController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
+		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"),
+				"/app/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
 
 		Breadcrumb networkBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.encoding"));
@@ -73,7 +75,8 @@ public class EncodingConfigurationController extends BaseController {
 	}
 
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.GET)
-	public String getEncodingConfiguration(Model model) {
+	public String getEncodingConfiguration(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+			Model model) {
 		EncodingPage encodingPage = new EncodingPage();
 		String ffMpegFolderPath = encodeManager.getFFMpegFolderPath();
 		encodingPage.setFfmpegFolderPath(ffMpegFolderPath);
@@ -94,30 +97,34 @@ public class EncodingConfigurationController extends BaseController {
 
 		}
 		encodingPage.setFfMpegFound(isFfmpegValid);
-		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, BooleanUtils.toStringTrueFalse(isFfmpegValid));
+		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED,
+				BooleanUtils.toStringTrueFalse(isFfmpegValid));
 		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegFilePath);
-		
-		int totalFfmpegProcesses =  NumberUtils.toInt(configurationManager.getConfigurationValue(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES));
+
+		int totalFfmpegProcesses = NumberUtils
+				.toInt(configurationManager.getConfigurationValue(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES));
 		encodingPage.setTotalFfmpegProcesses(totalFfmpegProcesses);
-		
+
 		model.addAttribute(encodingPage);
-		return PAGE_PATH;
+
+		String pagePath = getPath(isFragment, PAGE_PATH);
+		return pagePath;
 	}
-	
-	
+
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.POST)
-	public String processSubmitUser(@ModelAttribute("encodingPage") EncodingPage encodingPage, BindingResult bindingResult, Model model) {
-		
+	public String processSubmitUser(@ModelAttribute("encodingPage") EncodingPage encodingPage,
+			BindingResult bindingResult, Model model) {
+
 		new EncodingPageValidator().validate(encodingPage, bindingResult);
 		if (bindingResult.hasErrors()) {
-			return PAGE_PATH;
+			return PAGE_PATH + FRAGMENT_APPEND_PATH;
 		}
-		
+
 		int totalFfmpegprocesses = encodingPage.getTotalFfmpegProcesses();
-		configurationManager.saveConfiguration(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES, String.valueOf(totalFfmpegprocesses));		
-		
-		return "redirect:/app/" + PAGE_PATH;
-	} 
-	
+		configurationManager.saveConfiguration(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES,
+				String.valueOf(totalFfmpegprocesses));
+
+		return "redirect:/app/" + PAGE_PATH + "?" + FRAGMENT_PARAM + "=true";
+	}
 
 }

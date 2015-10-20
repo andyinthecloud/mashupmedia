@@ -12,7 +12,7 @@
                         $("#editGroupPage").submit(
                                         function(event) {
                                             event.preventDefault();
-                                            submitAjaxForm($(this), "<spring:message code="configuration.administration.groups.title" />",
+                                            submitAjaxForm($(this), "<spring:message code="configuration.administration.list-groups.title" />",
                                                             "<c:url value="/app/configuration/administration/list-groups" />");
                                         });
 

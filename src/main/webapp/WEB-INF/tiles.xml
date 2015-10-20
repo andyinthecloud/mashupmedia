@@ -47,6 +47,11 @@
 			value="/WEB-INF/jsp/tiles/configuration/encoding.jsp" />
 	</definition>
 
+	<definition name="configuration/encoding/fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/encoding.jsp" />
+	</definition>
+
 	<definition name="configuration/list-libraries" extends="home">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/configuration/list-libraries.jsp" />

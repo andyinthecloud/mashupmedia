@@ -40,7 +40,7 @@ public class ListGroupController extends BaseController {
 
 	@Override
 	public String getPageTitleMessageKey() {
-		return "configuration.administration.groups.title";
+		return "configuration.administration.list-groups.title";
 	}
 
 	@Override

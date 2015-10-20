@@ -684,6 +684,7 @@ function submitAjaxForm(formElement, pushTitle, pushUrl) {
 	    uiContentElement.enhanceWithin();
 	    if (data.indexOf("@IS_SHOWN_AFTER_FORM@") > -1) {
 	    	History.pushState({pageType: "internal"}, pushTitle, pushUrl);
-	    }	
+	    }
+	    window.scrollTo(0, 0);
 	});
 }

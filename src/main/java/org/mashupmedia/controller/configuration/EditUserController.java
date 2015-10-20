@@ -50,7 +50,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/configuration/administration")
 public class EditUserController extends BaseController {
 
-	private final static String PAGE_PATH = "configuration/administration/edit-user";
+	protected final static String PAGE_PATH = "configuration/administration/edit-user";
 
 	@Autowired
 	private AdminManager adminManager;
@@ -101,15 +101,6 @@ public class EditUserController extends BaseController {
 		model.addAttribute("editUserPage", editUserPage);
 	}
 
-	@RequestMapping(value = "/account", method = RequestMethod.GET)
-	public String editAccount(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
-		User user = AdminHelper.getLoggedInUser();
-
-		processUserPage(user, model);
-		String path = getPath(isFragment, PAGE_PATH);
-		return path;
-	}
-
 	@RequestMapping(value = "/add-user", method = RequestMethod.GET)
 	public String addUser(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
 		User user = new User();
@@ -127,9 +118,8 @@ public class EditUserController extends BaseController {
 
 		new EditUserPageValidator().validate(editUserPage, bindingResult);
 		if (bindingResult.hasErrors()) {
-			model.addAttribute(MODEL_KEY_HAS_ERRORS, Boolean.TRUE.toString());
-			String path = getPath(true, PAGE_PATH);
-			return path;
+			model.addAttribute(MODEL_KEY_HAS_ERRORS, Boolean.TRUE.toString());			
+			return PAGE_PATH + FRAGMENT_APPEND_PATH;
 		}
 
 		processAdministratorRole(editUserPage);
