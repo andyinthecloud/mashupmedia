@@ -27,7 +27,7 @@ public interface MashUpMediaConstants {
 	public static final String MODEL_KEY_IS_RELOAD = "isReload";
 	
 	public static final String MODEL_KEY_JQUERYUI_VERSION = "jQueryUIVersion";
-	public static final String JQUERYUI_VERSION = "1.11.3";
+	public static final String JQUERYUI_VERSION = "1.11.4";
 	public static final String MODEL_KEY_JQUERY_VERSION = "jQueryVersion";
 	public static final String JQUERY_VERSION = "1.11.3";
 	public static final String MODEL_KEY_JQUERY_ADDRESS_VERSION = "jQueryAddressVersion";

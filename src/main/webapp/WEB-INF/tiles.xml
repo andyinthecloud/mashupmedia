@@ -221,6 +221,11 @@
 			value="/WEB-INF/jsp/tiles/encode/processes.jsp" />
 	</definition>
 
+	<definition name="encode/list-processes/fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/encode/processes.jsp" />
+	</definition>
+	
 	<definition name="photo" extends="home">
 		<put-attribute name="bodyClass" value="photo" />
 		<put-attribute name="topBar"

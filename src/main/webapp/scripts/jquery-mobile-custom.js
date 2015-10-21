@@ -1,4 +1,4 @@
-
+/*
 ( function( $, undefined ) {
 // Helper function that splits a URL just the way we want it
 var processHash = function( url ) {
@@ -48,3 +48,5 @@ $.mobile.document
         }
     });
 })( jQuery );
+
+*/

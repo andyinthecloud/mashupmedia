@@ -8,7 +8,7 @@
 			listProcesses();
 		}, 5000);
 		
-		$("div.sub-panel").on("click", "ul.items li a.dustbin", function(){
+		$("div.processes-container").on("click", "ul.items li a.dustbin", function(){
 			var id = $(this).closest("li").attr("id")
 			var mediaItemId = parseId(id, "media-id");
 			var mediaContentType = id.replace(/.*content-type-/g, "");
@@ -31,4 +31,8 @@
 	}
 </script>
 
-<div class="sub-panel"></div>
+
+<div class="processes-container">
+
+</div>
+

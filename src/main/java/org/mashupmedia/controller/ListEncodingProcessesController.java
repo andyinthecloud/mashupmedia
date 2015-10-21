@@ -46,12 +46,15 @@ public class ListEncodingProcessesController extends BaseController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String handleGetEncodingProcessesPage(Model model) {
+	public String handleGetEncodingProcessesPage(
+			@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
 		EncodingProcessesPage encodingProcessesPage = new EncodingProcessesPage();
 		encodingProcessesPage.setEncodingProcesses(new ArrayList<EncodingProcess>());
 		model.addAttribute("encodingProcessesPage", encodingProcessesPage);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_RELOAD, false);
-		return "encode/list-processes";
+
+		String path = getPath(isFragment, "encode/list-processes");
+		return path;
 	}
 
 	@RequestMapping(value = "/live-update", method = RequestMethod.GET)
@@ -60,7 +63,8 @@ public class ListEncodingProcessesController extends BaseController {
 		List<EncodingProcess> encodingProcesses = new ArrayList<EncodingProcess>();
 
 		Iterator<ProcessQueueItem> iterator = processManager.getProcessQueueItemsIterator();
-		while(iterator.hasNext()) {
+				
+		while (iterator.hasNext()) {
 			ProcessQueueItem processQueueItem = iterator.next();
 
 			EncodingProcess encodingProcess = new EncodingProcess();
@@ -88,8 +92,7 @@ public class ListEncodingProcessesController extends BaseController {
 	}
 
 	@RequestMapping(value = "/kill-process", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	boolean handleGetKillEncodingProcesses(@RequestParam("mediaItemId") long mediaItemId,
+	public @ResponseBody boolean handleGetKillEncodingProcesses(@RequestParam("mediaItemId") long mediaItemId,
 			@RequestParam("mediaContentType") String mediaContentTypeValue, Model model) {
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
 		boolean isKilled = processManager.killProcess(mediaItemId, mediaContentType);
@@ -97,8 +100,8 @@ public class ListEncodingProcessesController extends BaseController {
 	}
 
 	@RequestMapping(value = "/move-process", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody
-	boolean handleGetMoveProcess(@RequestParam("index") int index, @RequestParam("mediaItemId") long mediaItemId,
+	public @ResponseBody boolean handleGetMoveProcess(@RequestParam("index") int index,
+			@RequestParam("mediaItemId") long mediaItemId,
 			@RequestParam("mediaContentType") String mediaContentTypeValue, Model model) {
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
 		boolean isMoved = processManager.moveProcess(index, mediaItemId, mediaContentType);

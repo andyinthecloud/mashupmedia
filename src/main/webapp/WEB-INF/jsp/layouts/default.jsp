@@ -46,10 +46,14 @@
 	href="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.css" />"
 	rel="stylesheet" / -->
 
-<!-- script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-${jQueryVersion}.min.js" />"></script -->
+<!--  script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.js" />"></script -->
 
-<!--  script type="text/javascript"
-	src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.js" />"></script -->
+
+<script type="text/javascript"
+	src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.js" />"></script>
+
+<script type="text/javascript" src="<c:url value="/jquery-ui/touch-punch/jquery.ui.touch-punch.min.js" />"></script>
+
 
 <script type="text/javascript"
 	src="<c:url value="/scripts/mashupmedia.jsp" />"></script>
@@ -245,8 +249,10 @@
 						title="<spring:message code ="configuration.title" />"
 						data-ajax="false" href="<c:url value="/app/configuration" />"><spring:message
 								code="home.links.configuration" /></a></li>
-					<li><a href="<c:url value="/app/encode/processes" />"
-						data-rel="back"><spring:message code="top-bar.encoding.queue" /></a></li>
+					<li><a rel="internal"
+						title="<spring:message code="encoding-processes.title" />"
+						href="<c:url value="/app/encode/processes" />" data-rel="back"><spring:message
+								code="top-bar.encoding.queue" /></a></li>
 				</sec:authorize>
 				<li><a rel="internal"
 					title="<spring:message code="configuration.administration.my-account.title" />"
