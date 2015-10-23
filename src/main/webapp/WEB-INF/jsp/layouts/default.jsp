@@ -13,10 +13,6 @@
 <sec:csrfMetaTags />
 
 
-
-
-
-
 <link rel="stylesheet"
 	href="<c:url value="/jquery-mobile/${jQueryMobileVersion}/jquery.mobile-${jQueryMobileVersion}.min.css" />" />
 <script
@@ -42,13 +38,6 @@
 	rel="stylesheet" type="text/css" />
 
 
-<!--  link type="text/css"
-	href="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.css" />"
-	rel="stylesheet" / -->
-
-<!--  script type="text/javascript" src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.js" />"></script -->
-
-
 <script type="text/javascript"
 	src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.js" />"></script>
 
@@ -64,11 +53,16 @@
 
 <script type="text/javascript"
 	src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer/jquery.jplayer.min.js" />"></script>
-<script type="text/javascript"
-	src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/add-on/jplayer.playlist.min.js" />"></script>
-<link type="text/css"
+	
+	
+<!-- script type="text/javascript"
+	src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/add-on/jplayer.playlist.min.js" />"></script -->
+	
+	
+<!-- link type="text/css"
 	href="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/skin/pink.flag/css/jplayer.pink.flag.min.css" />"
-	rel="stylesheet" />
+	rel="stylesheet" / -->
+
 
 <script type="text/javascript"
 	src="<c:url value="/jquery-plugins/datatables/${dataTablesVersion}/jquery.dataTables.min.js" />"></script>
@@ -147,6 +141,32 @@
         });
 
         document.title = "${headPageTitle}";
+        
+    	$("#jquery_jplayer_1").jPlayer({
+    		ready: function (event) {
+    			$(this).jPlayer("setMedia", {
+    				title: "Bubble",
+    				m4a: "http://jplayer.org/audio/m4a/Miaow-07-Bubble.m4a",
+    				oga: "http://jplayer.org/audio/ogg/Miaow-07-Bubble.ogg"
+    			});
+    		},
+    		swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
+    		supplied: "m4a, oga",
+    		// wmode: "window",
+            cssSelectorAncestor: "#music-player",
+            cssSelector: {
+              title: "#title",
+              play: ".play",
+              pause: "#pause",
+              stop: "stop",
+              mute: "#mute",
+              unmute: "#unmute",
+              currentTime: "#currentTime",
+             duration: "#duration"
+            }    		
+    	});        
+        
+        
     });
 </script>
 
@@ -165,6 +185,7 @@
 
 <body class="<tiles:getAsString name="bodyClass"/>">
 
+<div id="jquery_jplayer_1" class="jp-jplayer"></div>
 
 
 	<div data-role="page">
@@ -191,6 +212,11 @@
 					data-icon="info" data-iconpos="notext"
 					title="<spring:message code="top-bar.new-update.message" />"></a>
 			</c:if>
+			
+			<div id="music-player">
+				<button class="play">Play</button>
+				<button class="stop">Stop</button>
+			</div>
 
 		</div>
 

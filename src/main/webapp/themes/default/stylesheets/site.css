@@ -215,9 +215,7 @@ label.date-to {
 
 
 
-div.breadcrumbs a:HOVER, #top-bar ul.main-menu a:HOVER, #top-bar a.home:HOVER,
-	#top-bar-music-player .main-menu a:hover, #top-bar-music-player .top-home-link a:HOVER
-	{
+div.breadcrumbs a:HOVER, #top-bar ul.main-menu a:HOVER{
 	text-decoration: underline;
 }
 
@@ -355,38 +353,6 @@ div.sub-panel div.album-art img {
 	height: auto;
 }
 
-#top-bar-music-player {
-	position: fixed;
-	width: 100%;
-	top: 0;
-	left: 0;
-	z-index: 999;
-	color: #C8C0CE;
-}
-
-table.top-bar-menu .main-menu {
-	float: right;
-}
-
-table.top-bar-menu {
-	width: 100%;
-	border-collapse: collapse;
-	padding: 5px;
-}
-
-table.top-bar-menu td {
-	padding: 0 5px;
-}
-
-table.top-bar-menu ul {
-	padding: 0;
-	margin: 0;
-}
-
-table.top-bar-menu td.home {
-	width: 100%;
-	padding-left: 5px;
-}
 
 #quick-search {
 	position: relative;
@@ -394,21 +360,7 @@ table.top-bar-menu td.home {
 	right: 10px;
 }
 
-#top-bar-video-player form.quick-search input[type=text] {
-	top: -70px;
-}
 
-#top-bar-video-player form.quick-search input[type=image] {
-	top: -65px;
-}
-
-#top-bar-music-player form.quick-search input[type=text] {
-	top: -35px;
-}
-
-#top-bar-music-player form.quick-search input[type=image] {
-	top: -30px;
-}
 
 #quick-search input[type=text] {
 	position: absolute;
@@ -494,51 +446,7 @@ ul.ui-autocomplete {
 	vertical-align: top;
 }
 
-#top-bar-music-player div.jp-no-solution {
-	position: absolute;
-	top: 10px;
-	left: 10%;
-	width: 300px;
-	font-size: 75%;
-}
 
-#top-bar-music-player div.jp-audio div.jp-toggles {
-	height: 15px;
-}
-
-#top-bar-music-player .jp-controls button {
-	padding-left: 0 !important;
-}
-
-#top-bar-music-player .jp-repeat-off { /* display: none; */
-	
-}
-
-#top-bar-music-player .jp-audio {
-	float: left;
-	padding-top: 10px;
-	padding-left: 20px;
-	padding-right: 20px;
-	padding-bottom: 0;
-}
-
-#top-bar-music-player .jp-audio .jp-interface {
-	height: 90px;
-}
-
-#top-bar-music-player .jp-title {
-	padding-top: 5px;
-	font-size: 80%;
-}
-
-#top-bar-music-player div.songs {
-	clear: both;
-	display: none;
-	padding-left: 10px;
-	height: 300px;
-	overflow: auto;
-	font-size: 80%;
-}
 
 #playlist input.play {
 	margin-left: 20px;
@@ -600,20 +508,6 @@ div.controls {
 	margin: 10px 0;
 }
 
-#top-bar-music-player .playlist-title select {
-	margin-left: 10px;
-}
-
-#top-bar-music-player .button {
-	font-size: 100%;
-	color: #E579E9;
-	border: 1px solid #E579E9;
-}
-
-#top-bar-music-player .button:hover {
-	background-color: #E579E9;
-	color: #3A2A45;
-}
 
 ul.index-letters {
 	list-style: none;
