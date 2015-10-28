@@ -788,8 +788,16 @@ a.image-next {
 }
 
 
-#music-player a.control {
-	height: 36px;
-	width: 36px;
+#music-player div.controls, #music-player div.information {
+	display: inline;
 }
+
+
+#music-player div.controls a img {
+	height: 20px;
+	width: auto;
+	padding: 0px 2px;
+}
+
+
 

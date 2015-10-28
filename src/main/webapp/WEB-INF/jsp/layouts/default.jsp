@@ -41,7 +41,8 @@
 <script type="text/javascript"
 	src="<c:url value="/jquery-ui/${jQueryUIVersion}/jquery-ui.min.js" />"></script>
 
-<script type="text/javascript" src="<c:url value="/jquery-ui/touch-punch/jquery.ui.touch-punch.min.js" />"></script>
+<script type="text/javascript"
+	src="<c:url value="/jquery-ui/touch-punch/jquery.ui.touch-punch.min.js" />"></script>
 
 
 <script type="text/javascript"
@@ -53,12 +54,12 @@
 
 <script type="text/javascript"
 	src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer/jquery.jplayer.min.js" />"></script>
-	
-	
+
+
 <!-- script type="text/javascript"
 	src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/add-on/jplayer.playlist.min.js" />"></script -->
-	
-	
+
+
 <!-- link type="text/css"
 	href="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/skin/pink.flag/css/jplayer.pink.flag.min.css" />"
 	rel="stylesheet" / -->
@@ -141,33 +142,70 @@
         });
 
         document.title = "${headPageTitle}";
-        
-    	$("#jquery_jplayer_1").jPlayer({
-    		ready: function (event) {
-    			$(this).jPlayer("setMedia", {
-    				title: "Bubble",
-    				m4a: "http://jplayer.org/audio/m4a/Miaow-07-Bubble.m4a",
-    				oga: "http://jplayer.org/audio/ogg/Miaow-07-Bubble.ogg"
-    			});
-    		},
-    		swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
-    		supplied: "m4a, oga",
-    		// wmode: "window",
+
+        $("#jquery_jplayer_1").jPlayer({
+            ready: function(event) {
+                $(this).jPlayer("setMedia", {
+                    title: "Bubble",
+                    m4a: "http://jplayer.org/audio/m4a/Miaow-07-Bubble.m4a",
+                    oga: "http://jplayer.org/audio/ogg/Miaow-07-Bubble.ogg"
+                });
+            },
+            swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
+            supplied: "m4a, oga",
+            // wmode: "window",
             cssSelectorAncestor: "#music-player",
             cssSelector: {
-              title: "#title",
-              play: ".play",
-              pause: "#pause",
-              stop: "stop",
-              mute: "#mute",
-              unmute: "#unmute",
-              currentTime: "#currentTime",
-             duration: "#duration"
-            }    		
-    	});        
+                title: "div.information div.title",
+                play: "div.controls a.play",
+                pause: "div.controls a.pause",
+                stop: "stop",
+                mute: "#mute",
+                unmute: "#unmute",
+                currentTime: "#currentTime",
+                duration: "#duration"
+            }
+        });
         
+         $("#music-player").on("click", "div.controls a.play", function() {
+             togglePlayPause("pause");
+         });        
         
+         $("#music-player").on("click", "div.controls a.pause", function() {
+             togglePlayPause("play");
+         });        
+
     });
+    
+    function togglePlayPause(action) {
+        
+        action = action.toLowerCase();        
+        var imagePath = null;
+        var text = null;
+        var sourceAction = null;
+
+        if (action == "play") {
+            sourceAction = "pause";
+            imagePath = "<c:url value="${themePath}/images/media-player/play.png"/>";
+            text = "<spring:message code="action.play"/>";            
+        } else {
+            sourceAction = "play";
+            imagePath = "<c:url value="${themePath}/images/media-player/pause.png"/>";
+            text = "<spring:message code="action.pause"/>";
+        }
+        
+        $("#jquery_jplayer_1").jPlayer(action);
+        
+                
+        var controlElement = $("#music-player div.controls a." + sourceAction);
+    	var imageElement = controlElement.find("img");
+    	imageElement.attr("src", imagePath);
+    	imageElement.attr("alt", text);
+    	imageElement.attr("title", text);
+    	controlElement.removeClass();
+    	controlElement.addClass(action);
+    }
+    
 </script>
 
 <link rel="stylesheet"
@@ -185,7 +223,7 @@
 
 <body class="<tiles:getAsString name="bodyClass"/>">
 
-<div id="jquery_jplayer_1" class="jp-jplayer"></div>
+	<div id="jquery_jplayer_1" class="jp-jplayer"></div>
 
 
 	<div data-role="page">
@@ -212,20 +250,34 @@
 					data-icon="info" data-iconpos="notext"
 					title="<spring:message code="top-bar.new-update.message" />"></a>
 			</c:if>
-			
+
 			<div id="music-player">
-			
-				<a class="control previous" href="javascript:;" ><img title="<spring:message code="action.previous"/>" alt="<spring:message code="action.previous"/>" src="<c:url value="${themePath}/images/media-player/previous.png"/>" /></a>
-				<a class="control play" href="javascript:;" ><img title="<spring:message code="action.play"/>" alt="<spring:message code="action.play"/>" src="<c:url value="${themePath}/images/media-player/play.png"/>" /></a>
-				<a class="control next" href="javascript:;" ><img title="<spring:message code="action.next"/>" alt="<spring:message code="action.next"/>" src="<c:url value="${themePath}/images/media-player/next.png"/>" /></a>
-			
+				<div class="controls">
+					<a class="previous" href="javascript:;"><img
+						title="<spring:message code="action.previous"/>"
+						alt="<spring:message code="action.previous"/>"
+						src="<c:url value="${themePath}/images/media-player/previous.png"/>" /></a>
+					<a class="play" href="javascript:;"><img
+						title="<spring:message code="action.play"/>"
+						alt="<spring:message code="action.play"/>"
+						src="<c:url value="${themePath}/images/media-player/play.png"/>" /></a>
+					<a class="next" href="javascript:;"><img
+						title="<spring:message code="action.next"/>"
+						alt="<spring:message code="action.next"/>"
+						src="<c:url value="${themePath}/images/media-player/next.png"/>" /></a>
+				</div>
+				<div class="information">
+				<div class="title"></div>
+				</div>
+
+
 				<!-- 
 				<a class="pause"><img title="<spring:message code="action.play"/>" alt="<spring:message code="action.play"/>" src="<c:url value="${themePath}/images/media-player/play.png"/>" /></a>
 				 
 				<button class="stop">Stop</button>
 				-->
 				<div class="progress">
-				<div class="play-bar"></div>
+					<div class="play-bar"></div>
 				</div>
 			</div>
 
