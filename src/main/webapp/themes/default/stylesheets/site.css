@@ -763,3 +763,33 @@ a.image-next {
 	border-left: 30px solid #a0a0a0;
 	margin-left: 10px;
 }
+
+/* New stuff */
+
+#music-player {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+
+#music-player div.progress{
+	height: 5px;
+	cursor: pointer;
+	position: relative;
+}
+
+#music-player div.play-bar{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background-color: #e579e9;
+	width: 42%;	
+	height: 2px;
+}
+
+
+#music-player a.control {
+	height: 36px;
+	width: 36px;
+}
+

@@ -214,8 +214,19 @@
 			</c:if>
 			
 			<div id="music-player">
-				<button class="play">Play</button>
+			
+				<a class="control previous" href="javascript:;" ><img title="<spring:message code="action.previous"/>" alt="<spring:message code="action.previous"/>" src="<c:url value="${themePath}/images/media-player/previous.png"/>" /></a>
+				<a class="control play" href="javascript:;" ><img title="<spring:message code="action.play"/>" alt="<spring:message code="action.play"/>" src="<c:url value="${themePath}/images/media-player/play.png"/>" /></a>
+				<a class="control next" href="javascript:;" ><img title="<spring:message code="action.next"/>" alt="<spring:message code="action.next"/>" src="<c:url value="${themePath}/images/media-player/next.png"/>" /></a>
+			
+				<!-- 
+				<a class="pause"><img title="<spring:message code="action.play"/>" alt="<spring:message code="action.play"/>" src="<c:url value="${themePath}/images/media-player/play.png"/>" /></a>
+				 
 				<button class="stop">Stop</button>
+				-->
+				<div class="progress">
+				<div class="play-bar"></div>
+				</div>
 			</div>
 
 		</div>
