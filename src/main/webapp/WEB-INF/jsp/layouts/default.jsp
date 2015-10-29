@@ -156,7 +156,7 @@
             // wmode: "window",
             cssSelectorAncestor: "#music-player",
             cssSelector: {
-                title: "div.information div.title",
+                title: "div.information span.title",
                 play: "div.controls a.play",
                 pause: "div.controls a.pause",
                 stop: "stop",
@@ -238,12 +238,15 @@
 
 
 
-		<div data-role="header" data-position="fixed">
-			<h1>
-				<a href="<c:url value="/app/home" />" rel="internal"><img
+		<div data-role="header" data-position="fixed" id="header">
+			
+			<div id="logo">
+			<a href="<c:url value="/app/home" />" rel="internal"><img
 					alt="Mashup Media" title="<spring:message code="top-bar.home"/>"
 					src="<c:url value="/images/mashupmedia-logo-inline.png" />" /></a>
-			</h1>
+			</div>
+			
+			
 			<a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
 			<c:if test="${isNewMashupMediaVersionAvailable}">
 				<a href="http://www.mashupmedia.org/download" target="_blank"
@@ -267,7 +270,7 @@
 						src="<c:url value="${themePath}/images/media-player/next.png"/>" /></a>
 				</div>
 				<div class="information">
-				<div class="title"></div>
+					<span class="title"></span>
 				</div>
 
 

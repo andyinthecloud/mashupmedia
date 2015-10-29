@@ -767,6 +767,7 @@ a.image-next {
 /* New stuff */
 
 #music-player {
+	clear: both;
 	padding-left: 5px;
 	padding-right: 5px;
 }
@@ -789,7 +790,7 @@ a.image-next {
 
 
 #music-player div.controls, #music-player div.information {
-	display: inline;
+	display: inline-block;
 }
 
 
@@ -799,5 +800,9 @@ a.image-next {
 	padding: 0px 2px;
 }
 
+#logo {
+	float: right;
+	margin-right: 5px;
+}
 
 
