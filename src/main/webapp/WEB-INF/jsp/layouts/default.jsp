@@ -159,53 +159,56 @@
                 title: "div.information span.title",
                 play: "div.controls a.play",
                 pause: "div.controls a.pause",
-                stop: "stop",
-                mute: "#mute",
-                unmute: "#unmute",
-                currentTime: "#currentTime",
-                duration: "#duration"
+                seekBar: "div.progress",
+                playBar: "div.play-bar"
             }
         });
-        
-         $("#music-player").on("click", "div.controls a.play", function() {
-             togglePlayPause("pause");
-         });        
-        
-         $("#music-player").on("click", "div.controls a.pause", function() {
-             togglePlayPause("play");
-         });        
 
+        $("#music-player").on("click", "div.controls a.play", function() {
+            togglePlayPause("play");
+        });
+
+        $("#music-player").on("click", "div.controls a.pause", function() {
+            togglePlayPause("pause");
+        });
+
+        $("#music-player").on("click", "div.controls a.stop", function() {
+            togglePlayPause("stop");
+        });
     });
-    
+
     function togglePlayPause(action) {
-        
-        action = action.toLowerCase();        
+
+        action = action.toLowerCase();
         var imagePath = null;
+
         var text = null;
-        var sourceAction = null;
+        var requestedAction = null;
 
         if (action == "play") {
-            sourceAction = "pause";
-            imagePath = "<c:url value="${themePath}/images/media-player/play.png"/>";
-            text = "<spring:message code="action.play"/>";            
-        } else {
-            sourceAction = "play";
+            requestedAction = "pause";
             imagePath = "<c:url value="${themePath}/images/media-player/pause.png"/>";
             text = "<spring:message code="action.pause"/>";
+        } else if (action == "pause") {
+            requestedAction = "play";
+            imagePath = "<c:url value="${themePath}/images/media-player/play.png"/>";
+            text = "<spring:message code="action.play"/>";
+        } else if (action == "stop") {
+            requestedAction = "play";
+            imagePath = "<c:url value="${themePath}/images/media-player/play.png"/>";
+            text = "<spring:message code="action.play"/>";
         }
-        
-        $("#jquery_jplayer_1").jPlayer(action);
-        
-                
-        var controlElement = $("#music-player div.controls a." + sourceAction);
-    	var imageElement = controlElement.find("img");
-    	imageElement.attr("src", imagePath);
-    	imageElement.attr("alt", text);
-    	imageElement.attr("title", text);
-    	controlElement.removeClass();
-    	controlElement.addClass(action);
+
+        $("#jquery_jplayer_1").jPlayer(requestedAction);
+
+        var controlElement = $("#music-player div.controls a." + action);
+        var imageElement = controlElement.find("img");
+        imageElement.attr("src", imagePath);
+        imageElement.attr("alt", text);
+        imageElement.attr("title", text);
+        controlElement.removeClass();
+        controlElement.addClass(requestedAction);
     }
-    
 </script>
 
 <link rel="stylesheet"
@@ -240,19 +243,9 @@
 
 		<div data-role="header" data-position="fixed" id="header">
 			
-			<div id="logo">
-			<a href="<c:url value="/app/home" />" rel="internal"><img
-					alt="Mashup Media" title="<spring:message code="top-bar.home"/>"
-					src="<c:url value="/images/mashupmedia-logo-inline.png" />" /></a>
-			</div>
 			
-			
-			<a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
-			<c:if test="${isNewMashupMediaVersionAvailable}">
-				<a href="http://www.mashupmedia.org/download" target="_blank"
-					data-icon="info" data-iconpos="notext"
-					title="<spring:message code="top-bar.new-update.message" />"></a>
-			</c:if>
+			<a class="ui-btn-right" href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+
 
 			<div id="music-player">
 				<div class="controls">
@@ -260,10 +253,10 @@
 						title="<spring:message code="action.previous"/>"
 						alt="<spring:message code="action.previous"/>"
 						src="<c:url value="${themePath}/images/media-player/previous.png"/>" /></a>
-					<a class="play" href="javascript:;"><img
+					<a class="stop" href="javascript:;"><img
 						title="<spring:message code="action.play"/>"
 						alt="<spring:message code="action.play"/>"
-						src="<c:url value="${themePath}/images/media-player/play.png"/>" /></a>
+						src="<c:url value="${themePath}/images/media-player/stop.png"/>" /></a>
 					<a class="next" href="javascript:;"><img
 						title="<spring:message code="action.next"/>"
 						alt="<spring:message code="action.next"/>"
@@ -322,9 +315,9 @@
 			</div>
 		</div>
 
-
-		<div data-role="panel" data-position-fixed="true" data-display="push"
-			data-theme="b" id="nav-panel">
+		<div data-role="panel" data-position="right"
+			data-position-fixed="true" data-display="push" data-theme="b"
+			id="nav-panel">
 
 			<ul data-role="listview">
 				<li data-icon="delete"><a href="#" data-rel="close"><spring:message
@@ -350,6 +343,14 @@
 					title="<spring:message code="configuration.administration.my-account.title" />"
 					href="<c:url value="/app/configuration/administration/my-account" />"
 					data-rel="back"><spring:message code="top-bar.my-account" /></a></li>
+
+				<c:if test="${isNewMashupMediaVersionAvailable}">
+					<li><a href="http://www.mashupmedia.org/download"
+						target="_blank"
+						title="<spring:message code="top-bar.new-update.message" />"></a></li>
+				</c:if>
+
+
 				<li><a id="log-out" href="#" id="log-out"><spring:message
 							code="top-bar.log-out" /></a></li>
 
