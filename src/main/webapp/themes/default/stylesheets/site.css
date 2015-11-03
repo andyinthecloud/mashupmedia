@@ -174,14 +174,7 @@ div.sub-panel {
 	padding: 10px;
 }
 
-div.music-sub-panel {
-	margin-top: 120px;
-	padding: 10px;
-	filter: alpha(opacity =     100); /* For IE8 and earlier */
-	-khtml-opacity: 1.0; /* khtml, old safari */
-	-moz-opacity: 1.0; /* old mozilla, netscape */
-	opacity: 1.0; /* good browsers: FF, safari, opera */
-}
+
 
 div.panel iframe {
 	width: 100%;
@@ -228,23 +221,23 @@ ul.main-menu {
 }
 
 ul.main-menu li a.library-music {
-	padding-left: 25px;
+	padding-left: 30px;
 	background-image: url("../images/library/music.png");
-	background-position: left center;
+	background-position: 5px center;
 	background-repeat: no-repeat;
 }
 
 div.panel ul.main-menu li a.library-video {
-	padding-left: 25px;
+	padding-left: 30px;
 	background-image: url("../images/library/video.png");
-	background-position: left center;
+	background-position: 5px center;
 	background-repeat: no-repeat;
 }
 
 div.panel ul.main-menu li a.library-photo {
-	padding-left: 25px;
+	padding-left: 30px;
 	background-image: url("../images/library/photo.png");
-	background-position: left center;
+	background-position: 5px center;
 	background-repeat: no-repeat;
 }
 
@@ -258,55 +251,7 @@ div.panel ul.main-menu a:HOVER {
 	clear: both;
 }
 
-div.albums div.album {
-	float: left;
-	position: relative;
-	padding: 5px;
-	width: 150px;
-	height: 240px;
-	border: 1px solid #A0A0A0;
-	margin-right: 5px;
-	margin-bottom: 5px;
-	font-size: 85%;
-	overflow:
-}
 
-div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HOVER
-	{
-	color: #606060;
-}
-
-div.albums div.album img, ul.items li a.album-cover img {
-	width: 150px;
-	height: 150px;
-}
-
-div.albums div.highlight {
-	border: 3px solid #E579E9;
-	padding: 3px;
-}
-
-div.albums div.album-control {
-	position: absolute;
-	left: 5px;
-	bottom: 5px;
-	padding: 3px;
-	border: 1px solid #A0A0A0;
-	background-color: white;
-}
-
-div.albums div.highlight div.album-control {
-	left: 3px;
-	bottom: 3px;
-}
-
-div.albums div.album-control a {
-	padding: 0 5px;
-}
-
-div.albums div.album-control .ui-icon {
-	display: inline-block;
-}
 
 div.title-with-player-control h1, div.title-with-player-control div.control-menu,
 	div.title-with-player-control div.re-encode {
@@ -770,6 +715,7 @@ a.image-next {
 	clear: both;
 	padding-left: 5px;
 	padding-right: 5px;
+	visibility: hidden;
 }
 
 

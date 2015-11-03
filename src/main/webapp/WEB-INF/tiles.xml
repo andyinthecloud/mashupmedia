@@ -183,21 +183,16 @@
 			value="/WEB-INF/jsp/tiles/configuration/administration/edit-group.jsp" />
 	</definition>
 
-	<definition name="music.panel" template="/WEB-INF/jsp/layouts/music-panel.jsp">
-		<put-attribute name="body" value="" />
-	</definition>
 
 	<definition name="music" extends="home">
-		<put-attribute name="bodyClass" value="music" />
-		<put-attribute name="topBar"
-			value="/WEB-INF/jsp/tiles/music/music-top-bar.jsp" />
-		<put-attribute name="backgroundImageType" value="music" />
-		<put-attribute name="body">
-			<definition extends="music.panel">
-				<put-attribute name="body"
-					value="/WEB-INF/jsp/tiles/music/music.jsp" />
-			</definition>
-		</put-attribute>
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/music.jsp" />
+	</definition>
+
+	<definition name="music/fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/music.jsp" />
 	</definition>
 
 

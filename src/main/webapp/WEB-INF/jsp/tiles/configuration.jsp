@@ -3,7 +3,7 @@
 <!-- @IS_SHOWN_AFTER_FORM@ -->
 
 <sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
-	<ul class="main-menu" data-role="listview">
+	<ul class="main-menu ui-listview-inset ui-corner-all ui-shadow" data-role="listview">
 		<li><a rel="internal"
 			href="<c:url value="/app/configuration/network" />"
 			title="<spring:message code="network.title" />"><spring:message

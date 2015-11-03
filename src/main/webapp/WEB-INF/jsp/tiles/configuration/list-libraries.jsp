@@ -10,7 +10,7 @@
 	</c:when>
 
 	<c:otherwise>
-		<ul class="main-menu" data-role="listview">
+		<ul class="main-menu ui-listview-inset ui-corner-all ui-shadow" data-role="listview">
 
 			<c:forEach items="${listLibrariesPage.libraries}" var="library">
 				<li><a class="library-${library.libraryTypeValue}"
@@ -25,5 +25,5 @@
 	<a class="ui-btn ui-btn-inline" rel="internal"
 		title="<spring:message code="list-libraries.title" />"
 		href="<c:url value="/app/configuration/choose-library-type" />"><spring:message
-			code="configuration.administration.edit-user.title" /></a>
+			code="list-libraries.library.add" /></a>
 </div>

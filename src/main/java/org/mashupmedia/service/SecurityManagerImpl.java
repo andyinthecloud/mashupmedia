@@ -50,7 +50,7 @@ public class SecurityManagerImpl implements SecurityManager {
 		user = adminManager.getUser(user.getId());
 		
 		Set<Group> groups = user.getGroups();
-		if (user.isSystem()) {
+		if (user.isSystem() || user.isAdministrator()) {
 			groups = new HashSet<Group>(adminManager.getGroups());
 		}
 		

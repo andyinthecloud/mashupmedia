@@ -53,9 +53,9 @@
 
 			<div class="album-control">
 
-				<a class="play" href="javascript:;" title="<spring:message code="action.play" />"><span class="ui-icon ui-icon-play"></span></a>
+				<a class="play" href="javascript:;" title="<spring:message code="action.play" />"><img alt="" src="" /></a>
 				<c:if test="${isPlaylistOwner}">
-					<a class="add" href="javascript:;" title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus"></span></a>
+					<a class="add" href="javascript:;" title="<spring:message code="action.add" />"></a>
 				</c:if>
 
 			</div>

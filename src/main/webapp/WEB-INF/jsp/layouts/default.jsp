@@ -143,6 +143,7 @@
 
         document.title = "${headPageTitle}";
 
+        /*
         $("#jquery_jplayer_1").jPlayer({
             ready: function(event) {
                 $(this).jPlayer("setMedia", {
@@ -163,6 +164,7 @@
                 playBar: "div.play-bar"
             }
         });
+         */
 
         $("#music-player").on("click", "div.controls a.play", function() {
             togglePlayPause("play");
@@ -242,9 +244,10 @@
 
 
 		<div data-role="header" data-position="fixed" id="header">
-			
-			
-			<a class="ui-btn-right" href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu</a>
+
+
+			<a class="ui-btn-right" href="#nav-panel" data-icon="bars"
+				data-iconpos="notext">Menu</a>
 
 
 			<div id="music-player">
@@ -304,7 +307,9 @@
 
 			</c:if>
 
-			<tiles:insertAttribute name="body" />
+			<div class="main-content">
+				<tiles:insertAttribute name="body" />
+			</div>
 		</div>
 
 
@@ -323,7 +328,9 @@
 				<li data-icon="delete"><a href="#" data-rel="close"><spring:message
 							code="side-menu.close" /></a></li>
 
-				<li><a href="<c:url value="/app/music" />" data-rel="back"
+				<li><a rel="internal"
+					title="<spring:message code="music.title" /> "
+					href="<c:url value="/app/music" />" data-rel="back"
 					class="app-link"><spring:message code="top-bar.music" /></a></li>
 				<li><a href="<c:url value="/app/videos" />" data-rel="back"><spring:message
 							code="top-bar.videos" /></a></li>

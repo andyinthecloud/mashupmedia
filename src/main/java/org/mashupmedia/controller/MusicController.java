@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -39,7 +40,12 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping("/music")
 public class MusicController extends BaseController {
 
+	private final static String PAGE_PATH = "music";
+	
 	private Logger logger = Logger.getLogger(getClass());
+	
+	
+	
 
 	@Autowired
 	private MusicManager musicManager;
@@ -71,13 +77,14 @@ public class MusicController extends BaseController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getMusic(Model model) {
-		model.addAttribute("orderBy", "song-title");
-		model.addAttribute("ascending", true);
-		model.addAttribute("mediaType", "song");
-		model.addAttribute("searchWords", "");
+	public String getMusic(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+//		model.addAttribute("orderBy", "song-title");
+//		model.addAttribute("ascending", true);
+//		model.addAttribute("mediaType", "song");
+//		model.addAttribute("searchWords", "");
 
-		return "music";
+		String pagePath = getPath(isFragment, PAGE_PATH);		
+		return pagePath;
 	}
 
 	protected void addBreadcrumbsToModel(Model model, String messageKey) {
