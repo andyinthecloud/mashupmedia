@@ -92,10 +92,9 @@
             var url = State.url;
             var pageType = State.data.pageType;
             if (pageType && pageType == "internal") {
-
                 url = prepareInternalUrlFragment(url);
                 $.get(url, function(data) {
-                    var uiContentElement = $("div.ui-content");
+                    var uiContentElement = $("div.ui-content div.dynamic-content");
                     uiContentElement.html(data);
                     uiContentElement.enhanceWithin();
                 });
@@ -111,11 +110,18 @@
             var pageTitlePrefix = "<spring:message code="page.default.title.prefix" />";
             var title = pageTitlePrefix + " " + $(this).attr("title");
             var link = $(this).attr("href");
+            var mediaType = $(this).attr("data-media");
+            showFooterTabs(mediaType);
+
             event.preventDefault();
             History.pushState({
                 pageType: "internal"
             }, title, link);
+            
+            
+
         });
+
     });
 
     function prepareInternalUrlFragment(url) {
@@ -177,7 +183,35 @@
         $("#music-player").on("click", "div.controls a.stop", function() {
             togglePlayPause("stop");
         });
+
+
     });
+
+    function showFooterTabs(mediaType) {
+        
+        if (mediaType === undefined) {
+            $("#footer").hide();
+            return;
+        }
+        
+        $("#footer div.tabs").hide();
+
+        var isShowFooter = false;
+
+        if (mediaType == "music") {
+            $("#footer div.music").show();
+            isShowFooter = true;
+        } else if (mediaType == "photos") {
+            isShowFooter = true;
+
+        }
+
+        if (isShowFooter) {
+            $("#footer").show();
+        } else {
+            $("#footer").hide();
+        }
+    }
 
     function togglePlayPause(action) {
 
@@ -245,10 +279,12 @@
 
 		<div data-role="header" data-position="fixed" id="header">
 
-
-			<a class="ui-btn-right" href="#nav-panel" data-icon="bars"
+			<a class="ui-btn-left" id="logo" href="<c:url value="/" />"
+				rel="internal" title="<spring:message code="home.title" />"><img
+				class="logo-inline" alt="Mashup Media" title="Mashup Media"
+				src="<c:url value="/images/mashupmedia-logo-inline.png" />" /></a> <a
+				class="ui-btn-right" href="#nav-panel" data-icon="bars"
 				data-iconpos="notext">Menu</a>
-
 
 			<div id="music-player">
 				<div class="controls">
@@ -284,39 +320,52 @@
 
 
 		<div role="main" class="ui-content jqm-content jqm-fullwidth">
-
-			<c:if test="${fn:length(breadcrumbs) > 1}">
-				<div class="breadcrumbs">
-					<c:forEach items="${breadcrumbs}" var="breadcrumb"
-						varStatus="status">
-						<span> <c:choose>
-								<c:when test="${status.last}">
-									<c:out value="${breadcrumb.name}" />
-								</c:when>
-
-								<c:otherwise>
-									<a href="<c:url value="${breadcrumb.link}" />" rel="internal"
-										title="${breadcrumb.name}"><c:out
-											value="${breadcrumb.name}" /></a> &gt;
-							</c:otherwise>
-
-							</c:choose>
-						</span>
-					</c:forEach>
+		
+			<div class="dynamic-content">
+				<c:if test="${fn:length(breadcrumbs) > 1}">
+					<div class="breadcrumbs">
+						<c:forEach items="${breadcrumbs}" var="breadcrumb"
+							varStatus="status">
+							<span> <c:choose>
+									<c:when test="${status.last}">
+										<c:out value="${breadcrumb.name}" />
+									</c:when>
+	
+									<c:otherwise>
+										<a href="<c:url value="${breadcrumb.link}" />" rel="internal"
+											title="${breadcrumb.name}"><c:out
+												value="${breadcrumb.name}" /></a> &gt;
+								</c:otherwise>
+	
+								</c:choose>
+							</span>
+						</c:forEach>
+					</div>
+	
+				</c:if>
+	
+				<div class="main-content">
+					<tiles:insertAttribute name="body" />
 				</div>
-
-			</c:if>
-
-			<div class="main-content">
-				<tiles:insertAttribute name="body" />
 			</div>
+			
+			<div class="footer-meta">
+				<spring:message code="application.meta"
+					arguments="${version},${currentYear}" />
+			</div>
+
 		</div>
 
 
-		<div id="footer" data-role="footer">
-			<div class="meta">
-				<spring:message code="application.meta"
-					arguments="${version},${currentYear}" />
+		<div id="footer"
+			class="ui-footer ui-bar-inherit ui-footer-fixed slideup"
+			data-role="footer" data-position-fixed="true">
+			<div class="tabs music" data-role="navbar">
+				<ul>
+					<li><a href="javascript:;">Random</a></li>
+					<li><a href="javascript:;">Latest</a></li>
+					<li><a href="javascript:;">Albums</a></li>
+				</ul>
 			</div>
 		</div>
 
@@ -327,11 +376,15 @@
 			<ul data-role="listview">
 				<li data-icon="delete"><a href="#" data-rel="close"><spring:message
 							code="side-menu.close" /></a></li>
+				<li><a rel="internal"
+					title="<spring:message code="home.title" /> "
+					href="<c:url value="/" />" data-rel="back"><spring:message
+							code="top-bar.home" /></a></li>
 
 				<li><a rel="internal"
 					title="<spring:message code="music.title" /> "
-					href="<c:url value="/app/music" />" data-rel="back"
-					class="app-link"><spring:message code="top-bar.music" /></a></li>
+					href="<c:url value="/app/music" />" data-rel="back" data-media="music"><spring:message
+							code="top-bar.music" /></a></li>
 				<li><a href="<c:url value="/app/videos" />" data-rel="back"><spring:message
 							code="top-bar.videos" /></a></li>
 				<li><a href="<c:url value="/app/photo/list" />" data-rel="back"><spring:message

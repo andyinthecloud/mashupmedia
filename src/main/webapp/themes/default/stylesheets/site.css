@@ -3,8 +3,12 @@ html, body {
 }
 
 img.logo-inline {
-	height: 40px;
+	height: 35px;
 	width: auto;
+}
+
+#logo {
+	padding: 0 !important;
 }
 
 img.logo-home {
@@ -129,20 +133,17 @@ li.update-available {
 }
 
 #footer {
-	font-size: 0.7em;
-	padding: 0 10px;
+	display: none;
+}
+
+div.footer-meta {		
+	clear: both;
+	font-size: 0.8em;
 	text-align: center;
-	margin: 20px 0 10px 0;
-	background-color: transparent;
-	border: 0px none;
+	padding: 2em 1em 0 1em;
 }
 
-#footer div.meta {
-	padding: 3px 10px;
-	font-weight: normal;
-}
-
-#footer a {
+div.ui a {
 	font-weight: normal !important;
 }
 

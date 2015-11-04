@@ -1,10 +1,9 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
-
-	$(document).ready(function() {		
-		loadRandomAlbums(false);
-	});
-
+    $(document).ready(function() {
+        showFooterTabs("music");
+        loadRandomAlbums(false);
+    });
 </script>
 

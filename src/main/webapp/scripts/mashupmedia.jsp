@@ -451,9 +451,9 @@ function loadRandomAlbums(isAppend) {
 	},
 		function(data) {
 			if (isAppend) {
-				$("div.main-content").append(data);	
+				$("div.dynamic-content").append(data);	
 			} else {
-				$("div.main-content").html(data);
+				$("div.dynamic-content").html(data);
 			}
 			pauseScrollLoadMore();	
 	});

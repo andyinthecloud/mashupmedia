@@ -2,7 +2,7 @@
 
 
 <c:if test="${!isAppend}">
-<script type="text/javascript">
+	<script type="text/javascript">
 	$(document).ready(function() {
 
 		<c:if test="${!isAppend}">
@@ -40,12 +40,16 @@
 <div class="random-album-art albums">
 	<c:forEach items="${albums}" var="album">
 		<div class="album" id="album-id-${album.id}">
-			<a href="javascript:;" rel="address:/address-load-album-${album.id}"> <img src="<c:url value="/app/music/album-art/thumbnail/${album.id}" />"
-				title="${album.artist.name} - ${album.name}" alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
+			<a href="javascript:;" rel="address:/address-load-album-${album.id}">
+				<img
+				src="<c:url value="/app/music/album-art/thumbnail/${album.id}" />"
+				title="${album.artist.name} - ${album.name}"
+				alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 			</a>
 
 			<div>
-				<a href="javascript:;" rel="address:/address-artist-${album.artist.id}">${album.artist.name}</a>
+				<a href="javascript:;"
+					rel="address:/address-artist-${album.artist.id}">${album.artist.name}</a>
 			</div>
 			<div>
 				<a href="javascript:;" rel="address:/address-load-album-${album.id}">${album.name}</a>
@@ -53,9 +57,17 @@
 
 			<div class="album-control">
 
-				<a class="play" href="javascript:;" title="<spring:message code="action.play" />"><img alt="" src="" /></a>
+				<a class="play" href="javascript:;"
+					title="<spring:message code="action.play" />"><img
+					alt="<spring:message code="action.play"/>"
+					title="<spring:message code="action.play"/>"
+					src="<c:url value="${themePath}/images/controls/play.png"/>" /></a>
 				<c:if test="${isPlaylistOwner}">
-					<a class="add" href="javascript:;" title="<spring:message code="action.add" />"></a>
+					<a class="add" href="javascript:;"
+						title="<spring:message code="action.add" />"><img
+					alt="<spring:message code="action.add"/>"
+					title="<spring:message code="action.add"/>"
+					src="<c:url value="${themePath}/images/controls/add.png"/>" /></a>
 				</c:if>
 
 			</div>
