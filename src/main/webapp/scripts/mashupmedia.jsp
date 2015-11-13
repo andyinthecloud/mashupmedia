@@ -455,6 +455,7 @@ function loadRandomAlbums(isAppend) {
 			} else {
 				$("div.dynamic-content").html(data);
 			}
+			
 			pauseScrollLoadMore();	
 	});
 }
@@ -542,9 +543,13 @@ function loadArtist(artistId) {
 }
 
 function pauseScrollLoadMore() {
+	var uiContentElement = $("div.dynamic-content");
+	uiContentElement.enhanceWithin();
+			
 	setTimeout(function() {
 		isLoadingContent = false;
-	}, 1000);
+	}, 1000);	
+			
 }
 
 function closeSongPlaylist() {
@@ -590,10 +595,8 @@ function appendContentsOnScroll() {
 		    loadSongSearchResults(true);    
 		}  else if (textStartsWith(currentPage, addressListPhotos)) {
 			loadLatestPhotos(true);			
-		} 
-	
-
-	
+		} 		
+		
     }
 }
 

@@ -34,8 +34,6 @@
 
 <link href="<c:url value="${themePath}/stylesheets/site.css"/>"
 	rel="stylesheet" type="text/css" />
-<link href="<c:url value="${themePath}/stylesheets/site-desktop.css"/>"
-	rel="stylesheet" type="text/css" />
 
 
 <script type="text/javascript"

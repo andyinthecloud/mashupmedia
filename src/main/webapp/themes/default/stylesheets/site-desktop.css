@@ -18,7 +18,7 @@
 	}
 	div.albums div.album {
 		float: left;
-		position: relative;
+		
 		padding: 5px;
 		width: 150px;
 		height: 240px;
@@ -28,11 +28,7 @@
 		font-size: 0.9em;
 		overflow: hidden;
 	}
-	div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HOVER
-		{
-		color: #606060 !important;
-		font-weight: normal !important;
-	}
+
 	div.albums div.album img, ul.items li a.album-cover img {
 		width: 150px;
 		height: 150px;
@@ -41,7 +37,12 @@
 		border: 3px solid #E579E9;
 		padding: 3px;
 	}
-	div.albums div.album-control {
+	
+	div.albums div.mobile-album-control {
+		display: none;
+	}
+	
+	div.albums div.desktop-album-control {
 		position: absolute;
 		left: 5px;
 		bottom: 5px;
@@ -49,18 +50,18 @@
 		border: 1px solid #A0A0A0;
 		background-color: white;
 	}
-	div.albums div.album-control img {
+	div.albums div.desktop-album-control img {
 		width: 10px;
 		height: auto;
 	}
-	div.albums div.highlight div.album-control {
+	div.albums div.highlight div.desktop-album-control {
 		left: 3px;
 		bottom: 3px;
 	}
-	div.albums div.album-control a {
+	div.albums div.desktop-album-control a {
 		padding: 0 5px;
 	}
-	div.albums div.album-control .ui-icon {
+	div.albums div.desktop-album-control .ui-icon {
 		display: inline-block;
 	}
 }
