@@ -39,5 +39,7 @@ public interface MusicManager {
 	public void saveArtist(Artist artist);
 
 	public long getTotalSongsFromLibrary(long libraryId);
+
+	public List<Album> getLatestAlbums(int totalAlbums);
 	
 }

@@ -53,7 +53,6 @@ public class AjaxMusicController extends AjaxBaseController {
 
 	private Logger logger = Logger.getLogger(getClass());
 
-	private final static int TOTAL_RANDOM_ALBUMS = 60;
 	private final static int TOTAL_ALBUMS = 60;
 
 	public static final String MODEL_KEY_STREAMING_FORMAT = "streamingFormat";
@@ -79,13 +78,23 @@ public class AjaxMusicController extends AjaxBaseController {
 	private ConfigurationManager configurationManager;
 
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
-	public String getMusic(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
-		List<Album> albums = musicManager.getRandomAlbums(TOTAL_RANDOM_ALBUMS);
+	public String getRandomAlbums(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
+		List<Album> albums = musicManager.getRandomAlbums(TOTAL_ALBUMS);
 		isAppend = BooleanUtils.toBoolean(isAppend);
 		model.addAttribute("isAppend", isAppend);
 		model.addAttribute("albums", albums);
-		return "ajax/music/random-albums";
+		return "ajax/music/albums";
 	}
+	
+	@RequestMapping(value = "/latest-albums", method = RequestMethod.GET)
+	public String getLatestAlbums(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
+		List<Album> albums = musicManager.getLatestAlbums(TOTAL_ALBUMS);
+		isAppend = BooleanUtils.toBoolean(isAppend);
+		model.addAttribute("isAppend", isAppend);
+		model.addAttribute("albums", albums);
+		return "ajax/music/albums";
+	}	
+	
 
 	@RequestMapping(value = "/album/{albumId}", method = RequestMethod.GET)
 	public String getAlbum(@PathVariable("albumId") Long albumId, Model model) throws Exception {

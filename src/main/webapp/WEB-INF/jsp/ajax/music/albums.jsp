@@ -1,97 +1,97 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+
 <c:if test="${!isAppend}">
 	<script type="text/javascript">
-		var pageNumber = 0;
-		var searchLetter = "";
-		$(document).ready(function() {
+	$(document).ready(function() {
 
-			window.scrollTo(0, 0);
+		<c:if test="${!isAppend}">
+		window.scrollTo(0, 0);
+		</c:if>
 
-			$("div.music-sub-panel").on("mouseover", "div.albums div.album", function() {
-				$(this).addClass("highlight");
-			});
-			
-			$("div.music-sub-panel").on("mouseout", "div.albums div.album", function() {
-				$(this).removeClass("highlight");
-			});			
-			
-
-			$("ul.index-letters a").click(function() {
-				fireRelLink(this);
-			});
-
-			$("div.music-sub-panel").on("click", "div.albums div.album a", function() {
-				fireRelLink(this);
-			});
-			
-			prepareShowIndexLetters();
-			
-			$(window).scroll(function() {				
-				if ($("div.albums div.album").length == 0) {
-					return;
-				}				
-				appendContentsOnScroll();
-			});
-
+		$("div.music-sub-panel").on("mouseover", "div.albums div.album", function() {
+			$(this).addClass("highlight");
+		});
+		
+		$("div.music-sub-panel").on("mouseout", "div.albums div.album", function() {
+			$(this).removeClass("highlight");
 		});
 
-		function prepareShowIndexLetters() {
-			var selector = "ul.index-letters";
-			if ($(selector).length == 1) {
-				$(selector).show();
+		
+		$("div.music-sub-panel").on("click", "div.albums div.album a", function() {
+			fireRelLink(this);
+		});
+
+		$(window).scroll(function() {
+			if ($("div.albums div.album").length == 0) {
+				return;
 			}
-		}
-	</script>
 
-	<h1>
-		<spring:message code="music.albums.title" />
-	</h1>
-
-	<ul class="hide index-letters">
-		<li><a href="javascript:;" rel="address:/address-list-albums"><spring:message code="action.all" /></a></li>
-		<c:forEach items="${albumsPage.albumIndexLetters}" var="letter">
-			<li><a href="javascript:;" rel="address:/address-filter-albums-letter-${letter}"><c:out value="${letter}" /></a></li>
-		</c:forEach>
-	</ul>
+			appendContentsOnScroll();
+		});
+		
 
 
-	<c:set var="indexLetter" value="" />
+
+	});
+</script>
 </c:if>
 
 
-
 <div class="albums">
-	<c:forEach items="${albumsPage.albums}" var="album">
-
-		<c:if test="${indexLetter != album.indexLetter}">
-			<div class="index-letter" id="index-letter-${album.indexLetter}">${album.indexLetter}</div>
-			<c:set var="indexLetter" value="${album.indexLetter}" />
-		</c:if>
-
+	<c:forEach items="${albums}" var="album">
 		<div class="album" id="album-id-${album.id}">
-			<a href="javascript:;" rel="address:/address-load-album-${album.id}"> <img src="<c:url value="/app/music/album-art/thumbnail/${album.id}" />"
-				title="${album.artist.name} - ${album.name}" alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
+			<a href="javascript:;" rel="address:/address-load-album-${album.id}">
+				<img
+				src="<c:url value="/app/music/album-art/thumbnail/${album.id}" />"
+				title="${album.artist.name} - ${album.name}"
+				alt="<c:out value="${album.artist.name}" /> - <c:out value="${album.name}" />" />
 			</a>
 
-			<div>
-				<a href="javascript:;" rel="address:/address-artist-${album.artist.id}">${album.artist.name}</a>
-			</div>
-			<div>
-				<a href="javascript:;" rel="address:/address-load-album-${album.id}">${album.name}</a>
+
+			<div class="album-title">
+				<div class="artist-name">
+					<a href="javascript:;"
+						rel="address:/address-artist-${album.artist.id}">${album.artist.name}</a>
+				</div>
+				<div class="album-name">
+					<a href="javascript:;"
+						rel="address:/address-load-album-${album.id}">${album.name}</a>
+				</div>
 			</div>
 
-			<div class="album-control">
 
-				<a class="play" href="javascript:;" title="<spring:message code="action.play" />"><span class="ui-icon ui-icon-play"></span></a>
+			<div class="mobile-album-control">
+				<a href="#popupMenu" data-rel="popup" data-transition="slideup"
+					class="ui-btn ui-shadow ui-corner-all ui-icon-action ui-btn-icon-notext">Album
+					actions</a>
+				<div data-role="popup" id="popupMenu" data-theme="b">
+					<ul data-role="listview" data-inset="true"
+						style="min-width: 210px;">
+						<li><a class="play" href="javascript:;"><spring:message code="action.play" /></a></li>
+						<c:if test="${isPlaylistOwner}">
+							<li><a class="add" href="javascript:;"><spring:message code="action.add" /></a></li>
+						</c:if>
+					</ul>
+				</div>
+			</div>
+
+			<div class="desktop-album-control">
+				<a class="play" href="javascript:;"
+					title="<spring:message code="action.play" />"><img
+					alt="<spring:message code="action.play"/>"
+					title="<spring:message code="action.play"/>"
+					src="<c:url value="${themePath}/images/controls/play.png"/>" /></a>
 				<c:if test="${isPlaylistOwner}">
-					<a class="add" href="javascript:;" title="<spring:message code="action.add" />"><span class="ui-icon ui-icon-plus"></span></a>
+					<a class="add" href="javascript:;"
+						title="<spring:message code="action.add" />"><img
+						alt="<spring:message code="action.add"/>"
+						title="<spring:message code="action.add"/>"
+						src="<c:url value="${themePath}/images/controls/add.png"/>" /></a>
 				</c:if>
-
 			</div>
 		</div>
 	</c:forEach>
 </div>
-
 
 

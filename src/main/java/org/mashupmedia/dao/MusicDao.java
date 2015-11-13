@@ -66,5 +66,8 @@ public interface MusicDao {
 	public void deleteEmptyAlbums();
 
 	public void deleteEmptyArtists();
+
+	public List<Album> getLatestAlbums(List<Long> userGroupIds, int numberOfAlbums);
+	
 	
 }

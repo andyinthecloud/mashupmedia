@@ -34,6 +34,10 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Autowired
 	private SecurityManager securityManager;
+	
+	protected enum ListAlbumsType {
+		RANDOM, LATEST, ALL
+	}
 
 	@Override
 	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems) {
@@ -113,7 +117,52 @@ public class MusicManagerImpl implements MusicManager {
 
 		return albums;
 	}
+	
+	@Override
+	public List<Album> getLatestAlbums(int totalAlbums) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	
+	protected List<Album> getAlbums(ListAlbumsType listAlbumsType, int numberOfAlbums) {
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
+		List<Album> albums = new ArrayList<Album>();
+		
+		List<Album> fetchedAlbums = null;
+		
+		if (listAlbumsType == ListAlbumsType.RANDOM) {
+			fetchedAlbums = musicDao.getRandomAlbums(userGroupIds, numberOfAlbums);
+		} else {
+			fetchedAlbums = musicDao.getLatestAlbums(userGroupIds, numberOfAlbums);
+		}		
+		
+		if (fetchedAlbums.isEmpty()) {
+			return albums;
+		}
+
+		albums.addAll(fetchedAlbums);
+		
+		if (listAlbumsType != ListAlbumsType.RANDOM) {
+			return albums;
+		}
+		
+
+		while (numberOfAlbums > albums.size()) {
+			int appendItemsTotal = fetchedAlbums.size();
+			int numberOfAlbumsAfterAppend = albums.size() + appendItemsTotal;
+			if (numberOfAlbumsAfterAppend > numberOfAlbums) {
+				appendItemsTotal = numberOfAlbums - albums.size();
+				fetchedAlbums = fetchedAlbums.subList(0, appendItemsTotal);
+			}
+
+			albums.addAll(fetchedAlbums);
+		}
+
+		return albums;
+	}
+	
+	
 	@Override
 	public Album getAlbum(String artistName, String albumName) {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
