@@ -60,7 +60,7 @@
 				</div>
 			</div>
 
-
+			<!-- 
 			<div class="mobile-album-control">
 				<a href="#popupMenu" data-rel="popup" data-transition="slideup"
 					class="ui-btn ui-shadow ui-corner-all ui-icon-action ui-btn-icon-notext">Album
@@ -75,8 +75,9 @@
 					</ul>
 				</div>
 			</div>
-
-			<div class="desktop-album-control">
+			 -->
+			 
+			<div class="album-control">
 				<a class="play" href="javascript:;"
 					title="<spring:message code="action.play" />"><img
 					alt="<spring:message code="action.play"/>"

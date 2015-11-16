@@ -15,13 +15,34 @@
 		font-size: 1em;
 	}
 	
-	div.albums div.desktop-album-control {
-		display: none;
-	}
 	
-	div.albums div.mobile-album-control {		
+	div.albums div.album-control {		
 		position: absolute;
 		right: 10px;
 		bottom: 0;
 	}
+	
+	div.albums div.album-control {
+		position: absolute;
+		right: 0px;
+		bottom: 5px;
+		padding: 3px;
+	}	
+	
+	
+	div.albums div.album-control img {
+		width: 16px;
+		height: auto;
+		padding: 5px;
+		
+	}
+	div.albums div.highlight div.album-control {
+		left: 3px;
+		bottom: 3px;
+	}
+	div.albums div.album-control a {
+		padding: 5px;
+		background-color: white;
+	}
+
 }

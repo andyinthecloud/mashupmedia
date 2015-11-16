@@ -37,12 +37,8 @@
 		border: 3px solid #E579E9;
 		padding: 3px;
 	}
-	
-	div.albums div.mobile-album-control {
-		display: none;
-	}
-	
-	div.albums div.desktop-album-control {
+		
+	div.albums div.album-control {
 		position: absolute;
 		left: 5px;
 		bottom: 5px;
@@ -50,18 +46,16 @@
 		border: 1px solid #A0A0A0;
 		background-color: white;
 	}
-	div.albums div.desktop-album-control img {
+	div.albums div.album-control img {
 		width: 10px;
 		height: auto;
 	}
-	div.albums div.highlight div.desktop-album-control {
+	div.albums div.highlight div.album-control {
 		left: 3px;
 		bottom: 3px;
 	}
-	div.albums div.desktop-album-control a {
+	div.albums div.album-control a {
 		padding: 0 5px;
 	}
-	div.albums div.desktop-album-control .ui-icon {
-		display: inline-block;
-	}
+
 }
