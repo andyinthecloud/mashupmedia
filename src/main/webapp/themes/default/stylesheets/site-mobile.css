@@ -36,10 +36,7 @@
 		padding: 5px;
 		
 	}
-	div.albums div.highlight div.album-control {
-		left: 3px;
-		bottom: 3px;
-	}
+
 	div.albums div.album-control a {
 		padding: 5px;
 		background-color: white;

@@ -52,6 +52,11 @@
 
 <script type="text/javascript"
 	src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer/jquery.jplayer.min.js" />"></script>
+	
+<script type="text/javascript"
+	src="<c:url value="/scripts/jplayer-android-fix.js" />"></script>
+	
+	
 
 
 <!-- script type="text/javascript"

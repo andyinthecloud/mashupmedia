@@ -3,6 +3,9 @@ package org.mashupmedia.util;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class WebHelper {
 
@@ -73,6 +76,23 @@ public class WebHelper {
 		contextUrlBuilder.append(request.getServerPort());
 		contextUrlBuilder.append(request.getContextPath());
 		return contextUrlBuilder.toString();
+	}
+	
+	public static String getContextUrl() {
+		
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		if (requestAttributes == null) {
+			return null;
+		}
+		
+		if (!(requestAttributes instanceof ServletRequestAttributes)) {
+			return null;
+		}
+		
+		ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
+		HttpServletRequest request = servletRequestAttributes.getRequest();
+		String contextUrl = getContextUrl(request);
+		return contextUrl;
 	}
 
 	public static String prepareParameter(String parameter) {

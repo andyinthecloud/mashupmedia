@@ -23,13 +23,13 @@ $(document).ready(function() {
 	$("body, a").removeClass("cursor-progress");
 	
 	
-	$("div.music-sub-panel").on("click", "div.albums div.album-control a.play", function() {					    
+	$("div.dynamic-content").on("click", "div.albums div.album-control a.play", function() {					    
 		var albumId = $(this).closest("div.album").attr("id");
 		albumId = parseId(albumId, "album-id");
 		mashupMedia.playAlbum(albumId);
 	});
 
-	$("div.music-sub-panel").on("click", "div.albums div.album-control a.add", function() {
+	$("div.dynamic-content").on("click", "div.albums div.album-control a.add", function() {
 		var albumId = $(this).closest("div.album").attr("id");
 		albumId = parseId(albumId, "album-id");
 		mashupMedia.appendAlbum(albumId);
@@ -56,64 +56,44 @@ $(document).ready(function() {
 		$("#form-log-out").submit(); 
 	});
 
-	/*
-	$.address.init(function(event) {
-		$("#quick-search").address();
-	});
-	*/
+	//*
+         * * $.address.init(function(event) { $("#quick-search").address(); }); /
+         */
 	
-	/*
-	$.address.change(function(event) {
-		isLoadingContent = false;
-				 
-		if($("#top-bar-music-player .songs").length > 0) {			
-			closeSongPlaylist();	
-		}
-		
-		var address = event.value;
-		address = address.replace("/", "");
-		address = $.trim(address);
-		currentPage = address;
-				
-		if (textStartsWith(address, addressAlbum)) {
-			var albumId = getNumberFromText(address);
-			mashupMedia.showAlbum(albumId);
-		} else if (textStartsWith(address, addressListArtists)) {
-			loadArtists();
-		} else if (textStartsWith(address, addressListAlbums)) {
-			mashupMedia.filterAlbumsSearchLetter = "";
-			mashupMedia.filterPageNumber = 0;
-			loadAlbums(false);
-		} else if (textStartsWith(address, addressFilterAlbumsByLetter)) {
-		    	address = address.replace("address:/", "");
-			var searchLetter = address.replace("" + addressFilterAlbumsByLetter, "");
-			mashupMedia.filterAlbumsSearchLetter = searchLetter;
-			mashupMedia.filterPageNumber = 0;
-			loadAlbums(false);			
-		} else if (textStartsWith(address, addressRandomAlbums)) {
-			loadRandomAlbums(false);
-		} else if (textStartsWith(address, addressArtist)) {
-			var artistId = parseId(address, addressArtist);
-			if (isNaN(artistId)) {
-				return;
-			}
-			loadArtist(artistId)
-		} else if (textStartsWith(address, addressQuickSearchMediaItems)) {		    	
-			mashupMedia.filterPageNumber = 0;
-			$("#quick-search input[name=genreId]").val("");
-			loadSongSearchResults(false);			
-		} else if (textStartsWith(address, addressListPlaylists)) {			
-			loadPlaylists();
-		}  else if (textStartsWith(address, addressPlaylist)) {
-    			var playlistId = parseId(address, addressPlaylist);
-    			if (isNaN(playlistId)) {
-    			    return;
-    			}
-    			loadPlaylist(playlistId);
-		} 
-				
-	});
-	*/
+	//*
+         * * $.address.change(function(event) { isLoadingContent = false;
+         * 
+         * if($("#top-bar-music-player .songs").length > 0) {
+         * closeSongPlaylist(); }
+         * 
+         * var address = event.value; address = address.replace("/", "");
+         * address = $.trim(address); currentPage = address;
+         * 
+         * if (textStartsWith(address, addressAlbum)) { var albumId =
+         * getNumberFromText(address); mashupMedia.showAlbum(albumId); } else if
+         * (textStartsWith(address, addressListArtists)) { loadArtists(); } else
+         * if (textStartsWith(address, addressListAlbums)) {
+         * mashupMedia.filterAlbumsSearchLetter = "";
+         * mashupMedia.filterPageNumber = 0; loadAlbums(false); } else if
+         * (textStartsWith(address, addressFilterAlbumsByLetter)) { address =
+         * address.replace("address:/", ""); var searchLetter =
+         * address.replace("" + addressFilterAlbumsByLetter, "");
+         * mashupMedia.filterAlbumsSearchLetter = searchLetter;
+         * mashupMedia.filterPageNumber = 0; loadAlbums(false); } else if
+         * (textStartsWith(address, addressRandomAlbums)) {
+         * loadRandomAlbums(false); } else if (textStartsWith(address,
+         * addressArtist)) { var artistId = parseId(address, addressArtist); if
+         * (isNaN(artistId)) { return; } loadArtist(artistId) } else if
+         * (textStartsWith(address, addressQuickSearchMediaItems)) {
+         * mashupMedia.filterPageNumber = 0; $("#quick-search
+         * input[name=genreId]").val(""); loadSongSearchResults(false); } else
+         * if (textStartsWith(address, addressListPlaylists)) { loadPlaylists(); }
+         * else if (textStartsWith(address, addressPlaylist)) { var playlistId =
+         * parseId(address, addressPlaylist); if (isNaN(playlistId)) { return; }
+         * loadPlaylist(playlistId); }
+         * 
+         * }); /
+         */
 
 });
 
@@ -198,7 +178,7 @@ var mashupMedia = new function() {
 		
 		$.get(mashupMedia.contextUrl + "app/ajax/music/play/media-item/" + mediaItemId, {
 			"playlistId" : playlistId
-		}, function(data) {		    
+		}, function(data) {
 			$("#media-player-script").html(data);
 			setupJPlayer(isAutoPlay);
 		});
@@ -544,11 +524,11 @@ function loadArtist(artistId) {
 
 function pauseScrollLoadMore() {
 	/*
-	var uiContentElement = $("div.dynamic-content");
-	uiContentElement.enhanceWithin();
-	*/
-		
-	setTimeout(function() {
+	va/*
+         * r uiContentElement = $("div.dynamic-content");
+         * uiContentElement.enhanceWithin(); /
+         * 
+         */setTimeout(function() {
 		isLoadingContent = false;
 	}, 1000);	
 			
@@ -608,27 +588,6 @@ function getURLParameter(name) {
     );  
 }
 
-function fireRelLink(element) {	
-	var rel = $(element).attr("rel");
-	if (rel === undefined) {
-	    return;
-	}
-
-	if (rel.length == 0) {
-		return;
-	}
-	
-	if (endsWith(window.location.href, rel)) {
-		return;
-	}
-
-   	$(element).addClass("cursor-progress");
-	$("body").addClass("cursor-progress");	
-	$.address.value(rel); 
-
-
-
-}
 
 function getHostUrl() {
  	var protocol = window.location.protocol;
@@ -693,3 +652,69 @@ function submitAjaxForm(formElement, pushTitle, pushUrl) {
 	    window.scrollTo(0, 0);
 	});
 }
+	
+function setupMusicPlayer(isAutoPlay) {
+    
+    $(mashupMedia.jPlayerId).jPlayer("destroy");
+    var bubble = {
+        ${streamingFormat}: "<c:url value="${streamingUrl}" />"
+    };
+
+    var jPlayerStatus = "load";
+    if (isAutoPlay) {
+        jPlayerStatus = "play";
+    }
+    
+    
+    /*
+    $("#jquery_jplayer_1").jPlayer({
+        ready: function(event) {
+            $(this).jPlayer("setMedia", {
+                title: "Bubble",
+                m4a: "http://jplayer.org/audio/m4a/Miaow-07-Bubble.m4a",
+                oga: "http://jplayer.org/audio/ogg/Miaow-07-Bubble.ogg"
+            });
+        },
+        swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
+        supplied: "m4a, oga",
+        // wmode: "window",
+        cssSelectorAncestor: "#music-player",
+        cssSelector: {
+            title: "div.information span.title",
+            play: "div.controls a.play",
+            pause: "div.controls a.pause",
+            seekBar: "div.progress",
+            playBar: "div.play-bar"
+        }
+    });
+    */    
+    
+    var options = {         
+        ready: function (event) {
+            myAndroidFix.setMedia(bubble);
+            if (isAutoPlay) {
+                myAndroidFix.play();
+            }               
+        },          
+        swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
+        supplied: "${streamingFormat}",
+        wmode: "window",
+        useStateClassSkin: true,
+        autoBlur: false,
+        smoothPlayBar: true,
+        keyEnabled: true,
+        remainingDuration: true,
+        toggleDuration: true,
+        ended: function() { 
+            mashupMedia.playNextSong();             
+        },          
+        preload: "auto"
+    };
+    
+    var myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, bubble, options);
+    // var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";      
+    mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, ${song.artist.id});
+}
+
+	
+	

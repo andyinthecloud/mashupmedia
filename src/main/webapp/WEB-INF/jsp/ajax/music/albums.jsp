@@ -9,19 +9,14 @@
 		window.scrollTo(0, 0);
 		</c:if>
 
-		$("div.music-sub-panel").on("mouseover", "div.albums div.album", function() {
+		$("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
 			$(this).addClass("highlight");
 		});
 		
-		$("div.music-sub-panel").on("mouseout", "div.albums div.album", function() {
+		$("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
 			$(this).removeClass("highlight");
 		});
-
-		
-		$("div.music-sub-panel").on("click", "div.albums div.album a", function() {
-			fireRelLink(this);
-		});
-
+	
 		$(window).scroll(function() {
 			if ($("div.albums div.album").length == 0) {
 				return;
@@ -30,6 +25,7 @@
 			appendContentsOnScroll();
 		});
 		
+
 
 
 
@@ -60,23 +56,6 @@
 				</div>
 			</div>
 
-			<!-- 
-			<div class="mobile-album-control">
-				<a href="#popupMenu" data-rel="popup" data-transition="slideup"
-					class="ui-btn ui-shadow ui-corner-all ui-icon-action ui-btn-icon-notext">Album
-					actions</a>
-				<div data-role="popup" id="popupMenu" data-theme="b">
-					<ul data-role="listview" data-inset="true"
-						style="min-width: 210px;">
-						<li><a class="play" href="javascript:;"><spring:message code="action.play" /></a></li>
-						<c:if test="${isPlaylistOwner}">
-							<li><a class="add" href="javascript:;"><spring:message code="action.add" /></a></li>
-						</c:if>
-					</ul>
-				</div>
-			</div>
-			 -->
-			 
 			<div class="album-control">
 				<a class="play" href="javascript:;"
 					title="<spring:message code="action.play" />"><img

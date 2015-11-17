@@ -93,7 +93,7 @@
 
 
 	$("#current-song").on("click", "a", function() {
-	    fireRelLink(this);
+	    
 	});
 
 		

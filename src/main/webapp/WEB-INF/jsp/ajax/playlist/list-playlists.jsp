@@ -6,7 +6,7 @@
 		window.scrollTo(0, 0);
 
 		$("div.music-sub-panel").on("click", "div.action-buttons a, ul.main-menu li a", function() {
-			fireRelLink(this);
+			
 		});
 
 	});

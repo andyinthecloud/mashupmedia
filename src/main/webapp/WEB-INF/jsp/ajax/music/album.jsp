@@ -30,7 +30,7 @@
 		});
 
 		$("h1 a").click(function() {
-			fireRelLink(this);
+			
 		});
 		
 		$.getJSON("<c:url value="/app/ajax/music/artist/remote/${albumPage.album.artist.id}" />", function( data ) {

@@ -9,7 +9,7 @@
 			window.scrollTo(0, 0);
 			
 			$("div.music-sub-panel").on("click", "ul.items a", function() {
-				fireRelLink(this);
+				
 			});
 
 			$("div.music-sub-panel").on("click", "div.controls a.play", function() {

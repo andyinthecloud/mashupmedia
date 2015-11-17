@@ -5,7 +5,7 @@
 		window.scrollTo(0, 0);
 		
 		$("div.albums div.album a").click(function() {
-			fireRelLink(this);
+			
 		});
 		
 		$("div.albums div.album").hover(function() {
