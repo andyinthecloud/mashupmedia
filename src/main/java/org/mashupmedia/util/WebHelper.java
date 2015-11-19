@@ -8,6 +8,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class WebHelper {
+	
+	private static String CONTEXT_URL;
+	private static String CONTEXT_PATH;
 
 	public enum WebContentType {
 		HTML("text/html; charset=utf-8"), JSON("application/json; charset=utf-8"), XML("text/xml; charset=utf-8"), FLASH(
@@ -68,6 +71,10 @@ public class WebHelper {
 	}
 
 	public static String getContextUrl(HttpServletRequest request) {
+		if (CONTEXT_URL != null) {
+			return CONTEXT_URL;
+		}		
+		
 		StringBuilder contextUrlBuilder = new StringBuilder();
 		contextUrlBuilder.append(request.getScheme());
 		contextUrlBuilder.append("://");
@@ -75,10 +82,24 @@ public class WebHelper {
 		contextUrlBuilder.append(":");
 		contextUrlBuilder.append(request.getServerPort());
 		contextUrlBuilder.append(request.getContextPath());
-		return contextUrlBuilder.toString();
+		CONTEXT_URL = contextUrlBuilder.toString();
+		return CONTEXT_URL;
 	}
 	
-	public static String getContextUrl() {
+	public static String getContextPath(HttpServletRequest request) {
+		if (CONTEXT_PATH != null) {
+			return CONTEXT_PATH;
+		}		
+		
+		String contextPath = "/" + request.getContextPath();
+		CONTEXT_PATH = contextPath;
+		return CONTEXT_URL;
+	}
+	
+	public static String getContextPath() {
+		if (CONTEXT_URL != null) {
+			return CONTEXT_URL;
+		}		
 		
 		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 		if (requestAttributes == null) {
@@ -91,8 +112,7 @@ public class WebHelper {
 		
 		ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
 		HttpServletRequest request = servletRequestAttributes.getRequest();
-		String contextUrl = getContextUrl(request);
-		return contextUrl;
+		return getContextPath(request);
 	}
 
 	public static String prepareParameter(String parameter) {
