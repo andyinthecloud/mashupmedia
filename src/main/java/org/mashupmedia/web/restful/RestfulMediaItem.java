@@ -1,17 +1,17 @@
 package org.mashupmedia.web.restful;
 
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.util.WebHelper;
 
 public class RestfulMediaItem {
 
 	private String title;
-	private String streamingUrl;
+	private String streamUrl;
+	private String streamFormat;
 
-	public RestfulMediaItem(MediaItem mediaItem) {
+	public RestfulMediaItem(String contextPath, MediaItem mediaItem) {
 		this.title = mediaItem.getDisplayTitle();
-		String contextUrl = WebHelper.getContextPath();
-		this.streamingUrl = contextUrl + "/streaming/media/" + mediaItem.getId();
+		this.streamUrl = contextPath + "/app/streaming/media/" + mediaItem.getId();
+		this.streamFormat = mediaItem.getBestMediaEncoding().getMediaContentType().getjPlayerContentType();
 	}
 
 	public String getTitle() {
@@ -22,12 +22,33 @@ public class RestfulMediaItem {
 		this.title = title;
 	}
 
-	public String getStreamingUrl() {
-		return streamingUrl;
+	public String getStreamUrl() {
+		return streamUrl;
 	}
 
-	public void setStreamingUrl(String streamingUrl) {
-		this.streamingUrl = streamingUrl;
+	public void setStreamUrl(String streamUrl) {
+		this.streamUrl = streamUrl;
+	}
+
+	public String getStreamFormat() {
+		return streamFormat;
+	}
+
+	public void setStreamFormat(String streamFormat) {
+		this.streamFormat = streamFormat;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("RestfulMediaItem [title=");
+		builder.append(title);
+		builder.append(", streamUrl=");
+		builder.append(streamUrl);
+		builder.append(", streamFormat=");
+		builder.append(streamFormat);
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

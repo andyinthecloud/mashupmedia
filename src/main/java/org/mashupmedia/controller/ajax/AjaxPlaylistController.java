@@ -41,21 +41,7 @@ public class AjaxPlaylistController extends AjaxBaseController {
 	@Autowired
 	private MediaManager mediaManager;
 
-	@RequestMapping(value = "/play/current", method = RequestMethod.GET)
-	public String getCurrentUserMusicPlaylist(Model model) {
-		Playlist playlist = playlistManager
-				.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		model.addAttribute("playlist", playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper
-				.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
-		MediaItem mediaItem = playlistMediaItem.getMediaItem();
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM,
-				mediaItem);
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST,
-				playlist);
-		return "ajax/json/media-item";
-	}
 
 	@RequestMapping(value = "/play/id/{playlistId}", method = RequestMethod.GET)
 	public String handlePlayPlaylist(@PathVariable Long playlistId, Model model) {

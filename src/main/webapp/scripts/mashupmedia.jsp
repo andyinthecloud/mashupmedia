@@ -55,6 +55,8 @@ $(document).ready(function() {
 	$("#log-out").click(function() {
 		$("#form-log-out").submit(); 
 	});
+		
+	mashupMedia.loadLastAccessedPlaylist();
 
 
 });
@@ -96,11 +98,9 @@ var mashupMedia = new function() {
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
 	
-	this.loadLastAccessedPlaylist = function() {			
-		$.get(mashupMedia.contextUrl + "app/ajax/playlist/play/current", function(data) {
-			var playlistId = data.mediaItem.playlistId;
-			var mediaItemId = data.mediaItem.id;						
-			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, false);
+	this.loadLastAccessedPlaylist = function() {	    
+		$.get(mashupMedia.contextUrl + "app/restful/music-playlist/play/current", function(data) {		    
+		    mashupMedia.streamSong(false, data);
 		});
 	};
 	
@@ -120,6 +120,7 @@ var mashupMedia = new function() {
 		});
 	};
 
+	/*
 	this.loadSongFromPlaylist = function(playlistId, mediaItemId, isAutoPlay) {
 		if (playlistId.length == 0 || isNaN(playlistId) || playlistId < 1) {
 			return;
@@ -145,6 +146,33 @@ var mashupMedia = new function() {
 			setupJPlayer(isAutoPlay);
 		});
 	};
+	*/
+	
+	this.streamSong = function(isAutoPlay, song) {
+	    if (!song) {
+	        mashupMedia.showMusicPlayer(false);
+	        return;
+	    }
+
+	    var albumName = song.artistName + " - " + song.albumName;
+	    $("#music-player .album-art").html("<a href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
+        $("#music-player .artist-name").text(song.artistName);
+        $("#music-player .title").text(song.title);	    
+        mashupMedia.showMusicPlayer(true);	    
+	    setupJPlayer(isAutoPlay, song.streamFormat, song.streamUrl);	    
+	};
+	
+	this.showMusicPlayer = function(isShow) {
+	    if (isShow === true) {
+	        $("#music-player").show();
+	        $("#music-player").css("visibility", "visible");
+	        $("#logo").hide();
+	    } else {
+            $("#music-player").hide();
+            $("#music-player").css("visibility", "hidden");
+            $("#logo").show();	        
+	    }	    
+	}
 
 	this.playNextSong = function() {
 		$.get(mashupMedia.contextUrl
@@ -171,6 +199,7 @@ var mashupMedia = new function() {
 		});
 	};
 
+	
 	this.showAlbum = function(albumId) {
 		if(!isValidNumber(albumId)) {
 			return;
@@ -183,7 +212,7 @@ var mashupMedia = new function() {
 	
 	this.playArtist = function(artistId) {
 		
-		$.post(mashupMedia.contextUrl + "app/ajax/playlist/play-artist", {
+		$.get(mashupMedia.contextUrl + "app/ajax/playlist/play-artist", {
 			"artistId" : artistId
 		}, function(data) {
 			var mediaItemId = data.mediaItem.id;			
@@ -193,18 +222,18 @@ var mashupMedia = new function() {
 	};
 
 	this.playAlbum = function(albumId) {
-		$.post(mashupMedia.contextUrl + "app/restful/music-playlist/play-album", {
+		$.get(mashupMedia.contextUrl + "app/restful/music-playlist/play-album", {
 			"albumId" : albumId
 		}, function(data) {
-		    console.log(data);
-			var mediaItemId = data.mediaItem.id;
-			var playlistId = data.mediaItem.playlistId;
+		    mashupMedia.streamSong(true, data);
+			//var mediaItemId = data.mediaItem.id;
+			//var playlistId = data.mediaItem.playlistId;
 			//mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 		});		
 	};
 	
 	this.playSong = function(songId) {
-		$.post(mashupMedia.contextUrl + "app/ajax/playlist/play-song", {
+		$.get(mashupMedia.contextUrl + "app/ajax/playlist/play-song", {
 			"songId" : songId
 		}, function(data) {
 			var mediaItemId = data.mediaItem.id;
@@ -262,10 +291,13 @@ var mashupMedia = new function() {
 		mashupMedia.showEmptySongInfo();
 	};
 	
+	/*
 	this.showEmptySongInfo = function() {		
 		mashupMedia.showSongInfo("", "", false, 0, 0, "", 0, 0);
 	};
+	*/
 	
+	/*
 	this.showSongInfo = function(songTitle, artistName, isShowVoteButtons, albumId, mediaItemId, playlistName, playlistId, artistId) {		
 		if (songTitle == "") {
 			songTitle = "<spring:message code="music.playlist.current-song.empty" />";
@@ -311,6 +343,7 @@ var mashupMedia = new function() {
 		
 		$("#current-song .encode").html(encodeMessage);
 	};
+	*/
 }
 
 

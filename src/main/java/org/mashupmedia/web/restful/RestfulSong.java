@@ -1,11 +1,9 @@
 package org.mashupmedia.web.restful;
 
 import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.util.ImageHelper.ImageType;
-import org.mashupmedia.util.WebHelper;
 
 public class RestfulSong extends RestfulMediaItem {
 
@@ -15,19 +13,18 @@ public class RestfulSong extends RestfulMediaItem {
 	private String albumUrl;
 	private String albumArtUrl;
 
-	public RestfulSong(Song song) {
-		super(song);
+	public RestfulSong(String contextPath, Song song) {
+		super(contextPath, song);
+		
 		Artist artist = song.getArtist();
 		this.artistName = artist.getName();
-		this.artistUrl = WebHelper.getContextPath() + "/app/ajax/music/artist/id/" + artist.getId();
+		this.artistUrl = contextPath + "/app/ajax/music/artist/id/" + artist.getId();
 
 		Album album = song.getAlbum();
-		this.albumName = song.getDisplayTitle();
-		this.albumUrl = WebHelper.getContextPath() + "/app/ajax/music/album/id/" + album.getId();
-
-		AlbumArtImage albumArtImage = album.getAlbumArtImage();
-		this.albumArtUrl = WebHelper.getContextPath() + "/app/music/album-art/" + ImageType.THUMBNAIL.name().toLowerCase() + "/"
-				+ albumArtImage.getId();
+		this.albumName = album.getName();
+		this.albumUrl = contextPath + "/app/ajax/music/album/id/" + album.getId();
+		this.albumArtUrl = contextPath + "/app/music/album-art/" + ImageType.THUMBNAIL.name().toLowerCase() + "/"
+				+ album.getId();
 
 	}
 
@@ -70,5 +67,36 @@ public class RestfulSong extends RestfulMediaItem {
 	public void setAlbumUrl(String albumUrl) {
 		this.albumUrl = albumUrl;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("RestfulSong [artistName=");
+		builder.append(artistName);
+		builder.append(", artistUrl=");
+		builder.append(artistUrl);
+		builder.append(", albumName=");
+		builder.append(albumName);
+		builder.append(", albumUrl=");
+		builder.append(albumUrl);
+		builder.append(", albumArtUrl=");
+		builder.append(albumArtUrl);
+		builder.append(", getTitle()=");
+		builder.append(getTitle());
+		builder.append(", getStreamUrl()=");
+		builder.append(getStreamUrl());
+		builder.append(", getStreamFormat()=");
+		builder.append(getStreamFormat());
+		builder.append(", toString()=");
+		builder.append(super.toString());
+		builder.append(", getClass()=");
+		builder.append(getClass());
+		builder.append(", hashCode()=");
+		builder.append(hashCode());
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

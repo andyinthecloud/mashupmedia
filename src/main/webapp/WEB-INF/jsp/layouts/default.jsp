@@ -52,11 +52,11 @@
 
 <script type="text/javascript"
 	src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer/jquery.jplayer.min.js" />"></script>
-	
+
 <script type="text/javascript"
 	src="<c:url value="/scripts/jplayer-android-fix.js" />"></script>
-	
-	
+
+
 
 
 <!-- script type="text/javascript"
@@ -78,6 +78,8 @@
 	src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 
 <script type="text/javascript">
+    var myAndroidFix = null;
+
     $(function() {
         // Prepare
         var History = window.History; // Note: We are using a capital H instead of a lower h
@@ -120,8 +122,6 @@
             History.pushState({
                 pageType: "internal"
             }, title, link);
-            
-            
 
         });
 
@@ -152,51 +152,64 @@
 
         document.title = "${headPageTitle}";
 
-        /*
-        $("#jquery_jplayer_1").jPlayer({
-            ready: function(event) {
-                $(this).jPlayer("setMedia", {
-                    title: "Bubble",
-                    m4a: "http://jplayer.org/audio/m4a/Miaow-07-Bubble.m4a",
-                    oga: "http://jplayer.org/audio/ogg/Miaow-07-Bubble.ogg"
-                });
-            },
-            swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
-            supplied: "m4a, oga",
-            // wmode: "window",
-            cssSelectorAncestor: "#music-player",
-            cssSelector: {
-                title: "div.information span.title",
-                play: "div.controls a.play",
-                pause: "div.controls a.pause",
-                seekBar: "div.progress",
-                playBar: "div.play-bar"
-            }
-        });
-         */
-
-        $("#music-player").on("click", "div.controls a.play", function() {
+        $("#music-player").on("click", ".controls a.play", function() {
             togglePlayPause("play");
         });
 
-        $("#music-player").on("click", "div.controls a.pause", function() {
+        $("#music-player").on("click", ".controls a.pause", function() {
             togglePlayPause("pause");
         });
 
-        $("#music-player").on("click", "div.controls a.stop", function() {
+        $("#music-player").on("click", ".controls a.stop", function() {
             togglePlayPause("stop");
         });
 
-
     });
 
-    function showFooterTabs(mediaType) {
+    function setupJPlayer(isAutoPlay, streamFormat, streamUrl) {
+
+        isAutoPlay = true;
         
+        var mediaStream = { };        
+        mediaStream[streamFormat] = streamUrl;
+
+        if (myAndroidFix) {
+            if (isAutoPlay) {
+                myAndroidFix.setMedia(mediaStream).play();
+            }
+            return;
+        }
+
+        var options = {
+            ready: function(event) {
+                myAndroidFix.setMedia(mediaStream);
+                if (isAutoPlay) {
+                    myAndroidFix.play();
+                }
+            },
+
+            swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
+            supplied: streamFormat,
+            cssSelectorAncestor: "#music-player",
+            cssSelector: {
+                title: ".information span.title",
+                play: ".controls a.play",
+                pause: ".controls a.pause",
+                seekBar: "div.progress",
+                playBar: "div.play-bar"
+            }
+        };
+
+        myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, mediaStream, options);        
+    }
+
+    function showFooterTabs(mediaType) {
+
         if (mediaType === undefined) {
             $("#footer").hide();
             return;
         }
-        
+
         $("#footer div.tabs").hide();
 
         var isShowFooter = false;
@@ -217,7 +230,7 @@
     }
 
     function togglePlayPause(action) {
-
+		console.log(action);
         action = action.toLowerCase();
         var imagePath = null;
 
@@ -237,16 +250,16 @@
             imagePath = "<c:url value="${themePath}/images/media-player/play.png"/>";
             text = "<spring:message code="action.play"/>";
         }
-
-        $("#jquery_jplayer_1").jPlayer(requestedAction);
-
-        var controlElement = $("#music-player div.controls a." + action);
+        
+        var controlElement = $("#music-player .controls a." + action);
         var imageElement = controlElement.find("img");
         imageElement.attr("src", imagePath);
         imageElement.attr("alt", text);
         imageElement.attr("title", text);
         controlElement.removeClass();
         controlElement.addClass(requestedAction);
+        
+        $(mashupMedia.jPlayerId).jPlayer(requestedAction);
     }
 </script>
 
@@ -290,23 +303,30 @@
 				data-iconpos="notext">Menu</a>
 
 			<div id="music-player">
-				<div class="controls">
-					<a class="previous" href="javascript:;"><img
-						title="<spring:message code="action.previous"/>"
-						alt="<spring:message code="action.previous"/>"
-						src="<c:url value="${themePath}/images/media-player/previous.png"/>" /></a>
-					<a class="stop" href="javascript:;"><img
-						title="<spring:message code="action.play"/>"
-						alt="<spring:message code="action.play"/>"
-						src="<c:url value="${themePath}/images/media-player/stop.png"/>" /></a>
-					<a class="next" href="javascript:;"><img
-						title="<spring:message code="action.next"/>"
-						alt="<spring:message code="action.next"/>"
-						src="<c:url value="${themePath}/images/media-player/next.png"/>" /></a>
-				</div>
-				<div class="information">
-					<span class="title"></span>
-				</div>
+				<table>
+					<tr>
+						<td class="controls"><a class="previous" href="javascript:;"><img
+								title="<spring:message code="action.previous"/>"
+								alt="<spring:message code="action.previous"/>"
+								src="<c:url value="${themePath}/images/media-player/previous.png"/>" /></a>
+							<a class="pause" href="javascript:;"><img
+								title="<spring:message code="action.pause"/>"
+								alt="<spring:message code="action.pause"/>"
+								src="<c:url value="${themePath}/images/media-player/pause.png"/>" /></a>
+							<a class="next" href="javascript:;"><img
+								title="<spring:message code="action.next"/>"
+								alt="<spring:message code="action.next"/>"
+								src="<c:url value="${themePath}/images/media-player/next.png"/>" /></a>
+						</td>
+						<td class="album-art"></td>
+						<td>
+							<div class="artist-name"></div>
+							<div class="title"></div>
+						</td>
+					</tr>
+
+				</table>
+
 
 
 				<!-- 
@@ -323,7 +343,7 @@
 
 
 		<div role="main" class="ui-content jqm-content jqm-fullwidth">
-		
+
 			<div class="dynamic-content">
 				<c:if test="${fn:length(breadcrumbs) > 1}">
 					<div class="breadcrumbs">
@@ -333,25 +353,25 @@
 									<c:when test="${status.last}">
 										<c:out value="${breadcrumb.name}" />
 									</c:when>
-	
+
 									<c:otherwise>
 										<a href="<c:url value="${breadcrumb.link}" />" rel="internal"
 											title="${breadcrumb.name}"><c:out
 												value="${breadcrumb.name}" /></a> &gt;
 								</c:otherwise>
-	
+
 								</c:choose>
 							</span>
 						</c:forEach>
 					</div>
-	
+
 				</c:if>
-	
+
 				<div class="main-content">
 					<tiles:insertAttribute name="body" />
 				</div>
 			</div>
-			
+
 			<div class="footer-meta">
 				<spring:message code="application.meta"
 					arguments="${version},${currentYear}" />
@@ -386,8 +406,8 @@
 
 				<li><a rel="internal"
 					title="<spring:message code="music.title" /> "
-					href="<c:url value="/app/music" />" data-rel="back" data-media="music"><spring:message
-							code="top-bar.music" /></a></li>
+					href="<c:url value="/app/music" />" data-rel="back"
+					data-media="music"><spring:message code="top-bar.music" /></a></li>
 				<li><a href="<c:url value="/app/videos" />" data-rel="back"><spring:message
 							code="top-bar.videos" /></a></li>
 				<li><a href="<c:url value="/app/photo/list" />" data-rel="back"><spring:message

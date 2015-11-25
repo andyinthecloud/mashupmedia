@@ -10,8 +10,10 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.PlaylistHelper;
+import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.web.restful.RestfulSong;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +29,7 @@ public class MusicPlaylistController {
 	@Autowired
 	private MusicManager musicManager;
 
-	@RequestMapping(value = "/play-album", method = RequestMethod.POST)
+	@RequestMapping(value = "/play-album", method = RequestMethod.GET)
 	public RestfulSong playAlbum(@RequestParam("albumId") Long albumId) {
 		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
@@ -39,8 +41,27 @@ public class MusicPlaylistController {
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
 		Song song = (Song) playlistMediaItem.getMediaItem();
 
-		RestfulSong restfulSong = new RestfulSong(song);
+		String contextPath = WebHelper.getContextPath();
+		RestfulSong restfulSong = new RestfulSong(contextPath, song);
 		return restfulSong;
+	}
+	
+	@RequestMapping(value = "/play/current", method = RequestMethod.GET)
+	public RestfulSong getCurrentUserMusicPlaylist(Model model) {
+		Playlist playlist = playlistManager
+				.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+		model.addAttribute("playlist", playlist);
+
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper
+				.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		if (playlistMediaItem == null || playlistMediaItem.getId() < 1) {
+			return null;
+		}
+		
+		Song song = (Song) playlistMediaItem.getMediaItem();
+		String contextPath = WebHelper.getContextPath();
+		RestfulSong restfulSong = new RestfulSong(contextPath, song);
+		return restfulSong;		
 	}
 
 	protected void savePlaylist(Playlist playlist) {
