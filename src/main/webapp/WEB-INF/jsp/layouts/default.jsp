@@ -78,8 +78,6 @@
 	src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
 
 <script type="text/javascript">
-    var myAndroidFix = null;
-
     $(function() {
         // Prepare
         var History = window.History; // Note: We are using a capital H instead of a lower h
@@ -164,45 +162,41 @@
             togglePlayPause("stop");
         });
 
+        mashupMedia.loadLastAccessedPlaylist();
     });
 
-    function setupJPlayer(isAutoPlay, streamFormat, streamUrl) {
+    function togglePlayPause(action) {
+        console.log(action);
+        action = action.toLowerCase();
+        var imagePath = null;
 
-        isAutoPlay = true;
-        
-        var mediaStream = { };        
-        mediaStream[streamFormat] = streamUrl;
+        var text = null;
+        var nextAction = null;
 
-        if (myAndroidFix) {
-            if (isAutoPlay) {
-                myAndroidFix.setMedia(mediaStream).play();
-            }
-            return;
+        if (action == "play") {
+            nextAction = "pause";
+            imagePath = "<c:url value="${themePath}/images/media-player/pause.png"/>";
+            text = "<spring:message code="action.pause"/>";
+        } else if (action == "pause") {
+            nextAction = "play";
+            imagePath = "<c:url value="${themePath}/images/media-player/play.png"/>";
+            text = "<spring:message code="action.play"/>";
+        } else if (action == "stop") {
+            nextAction = "play";
+            imagePath = "<c:url value="${themePath}/images/media-player/play.png"/>";
+            text = "<spring:message code="action.stop"/>";
         }
 
-        var options = {
-            ready: function(event) {
-                myAndroidFix.setMedia(mediaStream);
-                if (isAutoPlay) {
-                    myAndroidFix.play();
-                }
-            },
+        var controlElement = $("#music-player .controls a." + action);
+        var imageElement = controlElement.find("img");
+        imageElement.attr("src", imagePath);
+        imageElement.attr("alt", text);
+        imageElement.attr("title", text);
+        controlElement.removeClass();
+        controlElement.addClass(nextAction);
 
-            swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
-            supplied: streamFormat,
-            cssSelectorAncestor: "#music-player",
-            cssSelector: {
-                title: ".information span.title",
-                play: ".controls a.play",
-                pause: ".controls a.pause",
-                seekBar: "div.progress",
-                playBar: "div.play-bar"
-            }
-        };
-
-        myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, mediaStream, options);        
+        $(mashupMedia.jPlayerId).jPlayer(action);
     }
-
     function showFooterTabs(mediaType) {
 
         if (mediaType === undefined) {
@@ -227,39 +221,6 @@
         } else {
             $("#footer").hide();
         }
-    }
-
-    function togglePlayPause(action) {
-		console.log(action);
-        action = action.toLowerCase();
-        var imagePath = null;
-
-        var text = null;
-        var requestedAction = null;
-
-        if (action == "play") {
-            requestedAction = "pause";
-            imagePath = "<c:url value="${themePath}/images/media-player/pause.png"/>";
-            text = "<spring:message code="action.pause"/>";
-        } else if (action == "pause") {
-            requestedAction = "play";
-            imagePath = "<c:url value="${themePath}/images/media-player/play.png"/>";
-            text = "<spring:message code="action.play"/>";
-        } else if (action == "stop") {
-            requestedAction = "play";
-            imagePath = "<c:url value="${themePath}/images/media-player/play.png"/>";
-            text = "<spring:message code="action.play"/>";
-        }
-        
-        var controlElement = $("#music-player .controls a." + action);
-        var imageElement = controlElement.find("img");
-        imageElement.attr("src", imagePath);
-        imageElement.attr("alt", text);
-        imageElement.attr("title", text);
-        controlElement.removeClass();
-        controlElement.addClass(requestedAction);
-        
-        $(mashupMedia.jPlayerId).jPlayer(requestedAction);
     }
 </script>
 
@@ -309,10 +270,10 @@
 								title="<spring:message code="action.previous"/>"
 								alt="<spring:message code="action.previous"/>"
 								src="<c:url value="${themePath}/images/media-player/previous.png"/>" /></a>
-							<a class="pause" href="javascript:;"><img
-								title="<spring:message code="action.pause"/>"
-								alt="<spring:message code="action.pause"/>"
-								src="<c:url value="${themePath}/images/media-player/pause.png"/>" /></a>
+							<a class="play" href="javascript:;"><img
+								title="<spring:message code="action.play"/>"
+								alt="<spring:message code="action.play"/>"
+								src="<c:url value="${themePath}/images/media-player/play.png"/>" /></a>
 							<a class="next" href="javascript:;"><img
 								title="<spring:message code="action.next"/>"
 								alt="<spring:message code="action.next"/>"

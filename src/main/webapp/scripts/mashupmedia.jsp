@@ -56,7 +56,7 @@ $(document).ready(function() {
 		$("#form-log-out").submit(); 
 	});
 		
-	mashupMedia.loadLastAccessedPlaylist();
+	
 
 
 });
@@ -74,6 +74,9 @@ $(function () {
 	});
 });
 
+	
+	
+	
 
 var mashupMedia = new function() {
 	this.contextUrl = $("#contextUrl").val();
@@ -157,9 +160,9 @@ var mashupMedia = new function() {
 	    var albumName = song.artistName + " - " + song.albumName;
 	    $("#music-player .album-art").html("<a href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
         $("#music-player .artist-name").text(song.artistName);
-        $("#music-player .title").text(song.title);	    
-        mashupMedia.showMusicPlayer(true);	    
-	    setupJPlayer(isAutoPlay, song.streamFormat, song.streamUrl);	    
+        $("#music-player .title").text(song.title);	            
+	    setupJPlayer(isAutoPlay, song.streamFormat, song.streamUrl);
+	    mashupMedia.showMusicPlayer(true);
 	};
 	
 	this.showMusicPlayer = function(isShow) {
@@ -345,6 +348,49 @@ var mashupMedia = new function() {
 	};
 	*/
 }
+
+var myAndroidFix = null;
+
+function setupJPlayer(isAutoPlay, streamFormat, streamUrl) {
+    
+    if (isAutoPlay) {
+        togglePlayPause("play");
+    }
+    
+    var mediaStream = { };        
+    mediaStream[streamFormat] = streamUrl;
+
+    if (myAndroidFix) {
+        if (isAutoPlay) {
+            myAndroidFix.setMedia(mediaStream).play();
+        }
+        return;
+    }
+
+    var options = {
+        ready: function(event) {
+            myAndroidFix.setMedia(mediaStream);
+            if (isAutoPlay) {
+                myAndroidFix.play();
+            }
+        },
+
+        swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
+        supplied: streamFormat,
+        cssSelectorAncestor: "#music-player",
+        cssSelector: {
+            title: ".information span.title",
+            play: ".controls a.play",
+            pause: ".controls a.pause",
+            seekBar: "div.progress",
+            playBar: "div.play-bar"
+        }
+    };
+
+    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, mediaStream, options);        
+}
+
+
 
 
 function showSongInPlaylistIfEmpty(playlistId, mediaItemId) {
