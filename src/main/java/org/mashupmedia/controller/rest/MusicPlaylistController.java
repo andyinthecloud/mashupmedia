@@ -47,13 +47,26 @@ public class MusicPlaylistController {
 	}
 	
 	@RequestMapping(value = "/play/current", method = RequestMethod.GET)
-	public RestfulSong getCurrentUserMusicPlaylist(Model model) {
+	public RestfulSong playCurrentUserMusicPlaylist(Model model) {
 		Playlist playlist = playlistManager
 				.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		model.addAttribute("playlist", playlist);
+
+		RestfulSong restfulSong = getSongFromPlaylist(0, playlist);		
+		return restfulSong;		
+	}
+	
+	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
+	public RestfulSong playNextSong(Model model) {
+		Playlist playlist = playlistManager
+				.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+		RestfulSong restfulSong = getSongFromPlaylist(1, playlist);		
+		return restfulSong;		
+	}
+	
+	protected RestfulSong getSongFromPlaylist(int relativePosition, Playlist playlist) {
 
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper
-				.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+				.getRelativePlayingMediaItemFromPlaylist(playlist, relativePosition);
 		if (playlistMediaItem == null || playlistMediaItem.getId() < 1) {
 			return null;
 		}
@@ -63,6 +76,7 @@ public class MusicPlaylistController {
 		RestfulSong restfulSong = new RestfulSong(contextPath, song);
 		return restfulSong;		
 	}
+	
 
 	protected void savePlaylist(Playlist playlist) {
 		playlistManager.savePlaylist(playlist);

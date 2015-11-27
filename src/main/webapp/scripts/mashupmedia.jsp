@@ -374,7 +374,9 @@ function setupJPlayer(isAutoPlay, streamFormat, streamUrl) {
                 myAndroidFix.play();
             }
         },
-
+        ended: function(event) {
+            mashupMedia.playNextSong();
+        },
         swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
         supplied: streamFormat,
         cssSelectorAncestor: "#music-player",
