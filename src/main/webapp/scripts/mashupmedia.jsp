@@ -21,8 +21,7 @@ var addressListPhotos = "address-list-photos";
 $(document).ready(function() {
     
 	$("body, a").removeClass("cursor-progress");
-	
-	
+		
 	$("div.dynamic-content").on("click", "div.albums div.album-control a.play", function() {					    
 		var albumId = $(this).closest("div.album").attr("id");
 		albumId = parseId(albumId, "album-id");
@@ -33,8 +32,7 @@ $(document).ready(function() {
 		var albumId = $(this).closest("div.album").attr("id");
 		albumId = parseId(albumId, "album-id");
 		mashupMedia.appendAlbum(albumId);
-	});
-	
+	});	
     
 	$(document).ajaxComplete(function(e, xhr, settings) {
 		var responseHtml = xhr.responseText;
@@ -43,14 +41,18 @@ $(document).ready(function() {
 		}		
 	});
 	
+	
 	var contextUrl = "<c:url value="/" />";
 	mashupMedia.setContextUrl(contextUrl);
+	
+	/*
 	$(".jp-previous").click(function() {
 		mashupMedia.playPreviousSong();
 	});
 	$(".jp-next").click(function() {
 		mashupMedia.playNextSong();
 	});
+	*/
 
 	$("#log-out").click(function() {
 		$("#form-log-out").submit(); 
@@ -95,15 +97,15 @@ var mashupMedia = new function() {
 		});		
 		return isInstalled;
 	};	
-	this.playingClass = "playing";
+	//this.playingClass = "playing";
 	this.jPlayerId = "#jquery_jplayer_1";
-	this.jPlayerContainerId = "#jp_container_1";
+	//this.jPlayerContainerId = "#jp_container_1";
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
 	
 	this.loadLastAccessedPlaylist = function() {	    
 		$.get(mashupMedia.contextUrl + "app/restful/music-playlist/play/current", function(data) {		    
-		    mashupMedia.streamSong(false, data);
+		    mashupMedia.streamSong(data);
 		});
 	};
 	
@@ -151,9 +153,31 @@ var mashupMedia = new function() {
 	};
 	*/
 	
-	this.streamSong = function(isAutoPlay, song) {
+	this.isMusicPlaying = function() {
+	    if($(mashupMedia.jPlayerId) == false) {
+	        return false;
+	    }
+	    
+	    
+	    if($(mashupMedia.jPlayerId).data().jPlayer.status.paused == false){
+	       return true;
+	    }
+	    
+	    return false;    
+	}
+	
+	this.isMusicPlayerInitialised = function() {
+	    if ($(mashupMedia.jPlayerId) == false) {
+	        return false;
+	    }
+	    
+	    var source = $(mashupMedia.jPlayerId).data().jPlayer.status.src;
+	    console.log(source);
+	    return true;
+	};
+	
+	this.streamSong = function(song) {
 	    if (!song) {
-	        mashupMedia.showMusicPlayer(false);
 	        return;
 	    }
 
@@ -161,7 +185,7 @@ var mashupMedia = new function() {
 	    $("#music-player .album-art").html("<a href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
         $("#music-player .artist-name").text(song.artistName);
         $("#music-player .title").text(song.title);	            
-	    setupJPlayer(isAutoPlay, song.streamFormat, song.streamUrl);
+	    setupJPlayer(song.streamFormat, song.streamUrl);
 	    mashupMedia.showMusicPlayer(true);
 	};
 	
@@ -178,28 +202,15 @@ var mashupMedia = new function() {
 	}
 
 	this.playNextSong = function() {
-		$.get(mashupMedia.contextUrl
-				+ "app/ajax/music/play/next", function(data) {				
-			var mediaItemId = data.mediaItem.id;
-			if (mediaItemId < 1) {
-				mashupMedia.destroyPlayer();
-				return;
-			}			
-			
-			var playlistId = $("#current-playlist-id").val();
-			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
-			updatePlaylistView(mediaItemId);
+	    $.get(mashupMedia.contextUrl + "app/restful/music-playlist/play/next", function(data) {       
+	        mashupMedia.streamSong(data);	       
 		});
 	};
 
 	this.playPreviousSong = function() {
-		$.get(mashupMedia.contextUrl
-				+ "app/ajax/music/play/previous", function(data) {
-			var mediaItemId = data.mediaItem.id;
-			var playlistId = $("#current-playlist-id").val();
-			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
-			updatePlaylistView(mediaItemId);
-		});
+        $.get(mashupMedia.contextUrl + "app/restful/music-playlist/play/previous", function(data) {       
+            mashupMedia.streamSong(data);            
+        });	    
 	};
 
 	
@@ -228,7 +239,9 @@ var mashupMedia = new function() {
 		$.get(mashupMedia.contextUrl + "app/restful/music-playlist/play-album", {
 			"albumId" : albumId
 		}, function(data) {
-		    mashupMedia.streamSong(true, data);
+		    mashupMedia.streamSong(data);
+		    myAndroidFix.play();
+		    
 			//var mediaItemId = data.mediaItem.id;
 			//var playlistId = data.mediaItem.playlistId;
 			//mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
@@ -266,13 +279,27 @@ var mashupMedia = new function() {
 	};
 
 	this.appendAlbum = function(albumId) {
+        $.get(mashupMedia.contextUrl + "app/restful/music-playlist/append-album", {
+            "albumId" : albumId
+        }, function(data) {
+            mashupMedia.isMusicPlayerInitialised()
+            
+            /*
+            mashupMedia.streamSong(data);
+            myAndroidFix.play();
+            */
+            
+        });     	    
+	    
+	    /*
 		$.post(mashupMedia.contextUrl + "app/ajax/playlist/append-album", {
 			"albumId" : albumId
 		}, function(data) {
 			var mediaItemId = data.mediaItem.id;
 			var playlistId = data.mediaItem.playlistId;		
 			showSongInPlaylistIfEmpty(playlistId, mediaItemId)		
-		});		
+		});
+		*/		
 	};
 	
 	this.appendSong = function(songId) {
@@ -351,31 +378,27 @@ var mashupMedia = new function() {
 
 var myAndroidFix = null;
 
-function setupJPlayer(isAutoPlay, streamFormat, streamUrl) {
-    
-    if (isAutoPlay) {
-        togglePlayPause("play");
-    }
-    
+function setupJPlayer(streamFormat, streamUrl) {
+        
     var mediaStream = { };        
     mediaStream[streamFormat] = streamUrl;
 
     if (myAndroidFix) {
-        if (isAutoPlay) {
-            myAndroidFix.setMedia(mediaStream).play();
-        }
+        var isPlaying = mashupMedia.isMusicPlaying();
+        console.log(isPlaying);
+        myAndroidFix.setMedia(mediaStream);
+        if (isPlaying) {
+            myAndroidFix.play();    
+        }        
         return;
     }
 
     var options = {
         ready: function(event) {
             myAndroidFix.setMedia(mediaStream);
-            if (isAutoPlay) {
-                myAndroidFix.play();
-            }
         },
         ended: function(event) {
-            mashupMedia.playNextSong();
+            mashupMedia.playNextSong(true);
         },
         swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
         supplied: streamFormat,
@@ -391,6 +414,7 @@ function setupJPlayer(isAutoPlay, streamFormat, streamUrl) {
 
     myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, mediaStream, options);        
 }
+
 
 
 

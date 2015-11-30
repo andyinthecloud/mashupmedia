@@ -150,23 +150,33 @@
 
         document.title = "${headPageTitle}";
 
-        $("#music-player").on("click", ".controls a.play", function() {
+        $("#music-player").on("click", ".controls a.play", function() {            
             togglePlayPause("play");
+            myAndroidFix.play();
         });
 
         $("#music-player").on("click", ".controls a.pause", function() {
             togglePlayPause("pause");
+          	$(mashupMedia.jPlayerId).jPlayer("pause");
         });
 
         $("#music-player").on("click", ".controls a.stop", function() {
             togglePlayPause("stop");
+            $(mashupMedia.jPlayerId).jPlayer("stop");
         });
 
+        $("#music-player").on("click", ".controls a.previous", function() {
+            mashupMedia.playPreviousSong();
+        });
+        
+        $("#music-player").on("click", ".controls a.next", function() {
+            mashupMedia.playNextSong();
+        });
+                
         mashupMedia.loadLastAccessedPlaylist();
     });
 
     function togglePlayPause(action) {
-        console.log(action);
         action = action.toLowerCase();
         var imagePath = null;
 
@@ -194,9 +204,8 @@
         imageElement.attr("title", text);
         controlElement.removeClass();
         controlElement.addClass(nextAction);
-
-        $(mashupMedia.jPlayerId).jPlayer(action);
     }
+    
     function showFooterTabs(mediaType) {
 
         if (mediaType === undefined) {

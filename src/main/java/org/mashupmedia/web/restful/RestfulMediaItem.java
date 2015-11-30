@@ -1,17 +1,28 @@
 package org.mashupmedia.web.restful;
 
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.util.WebHelper;
 
 public class RestfulMediaItem {
 
 	private String title;
 	private String streamUrl;
 	private String streamFormat;
+	private String contextPath;
 
-	public RestfulMediaItem(String contextPath, MediaItem mediaItem) {
+	public RestfulMediaItem(MediaItem mediaItem) {
+		this.contextPath = WebHelper.getContextPath();
 		this.title = mediaItem.getDisplayTitle();
 		this.streamUrl = contextPath + "/app/streaming/media/" + mediaItem.getId();
 		this.streamFormat = mediaItem.getBestMediaEncoding().getMediaContentType().getjPlayerContentType();
+	}
+
+	public String getContextPath() {
+		return contextPath;
+	}
+
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
 	}
 
 	public String getTitle() {

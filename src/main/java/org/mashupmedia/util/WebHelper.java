@@ -93,7 +93,7 @@ public class WebHelper {
 		
 		String contextPath = request.getContextPath();
 		CONTEXT_PATH = contextPath;
-		return CONTEXT_URL;
+		return contextPath;
 	}
 	
 	public static String getContextPath() {

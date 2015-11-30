@@ -229,32 +229,32 @@ public class AjaxMusicController extends AjaxBaseController {
 		return "ajax/music/player-script";
 	}
 
-	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
-	public String playNextSonginLastAccessedPlaylist(Model model) {
-		playRelativeSong(model, 1);
-		return "ajax/json/media-item";
-	}
+//	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
+//	public String playNextSonginLastAccessedPlaylist(Model model) {
+//		playRelativeSong(model, 1);
+//		return "ajax/json/media-item";
+//	}
+//
+//	@RequestMapping(value = "/play/previous", method = RequestMethod.GET)
+//	public String playPreviousSonginLastAccessedPlaylist(Model model) {
+//		playRelativeSong(model, -1);
+//		return "ajax/json/media-item";
+//	}
 
-	@RequestMapping(value = "/play/previous", method = RequestMethod.GET)
-	public String playPreviousSonginLastAccessedPlaylist(Model model) {
-		playRelativeSong(model, -1);
-		return "ajax/json/media-item";
-	}
-
-	private void playRelativeSong(Model model, int relativeOffset) {
-		User user = AdminHelper.getLoggedInUser();
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist,
-				relativeOffset);
-		if (playlistMediaItem.getId() > 0) {
-			playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-
-		}
-
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, playlistMediaItem.getMediaItem());
-
-	}
+//	private void playRelativeSong(Model model, int relativeOffset) {
+//		User user = AdminHelper.getLoggedInUser();
+//		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+//		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist,
+//				relativeOffset);
+//		if (playlistMediaItem.getId() > 0) {
+//			playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
+//
+//		}
+//
+//		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);
+//		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, playlistMediaItem.getMediaItem());
+//
+//	}
 
 	private Playlist updatePlayingSong(Playlist playlist, MediaItem mediaItem) {
 
