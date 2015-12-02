@@ -702,6 +702,11 @@ a.image-next {
 	visibility: hidden;
 }
 
+#music-player .controls{
+	white-space: nowrap;
+}
+
+
 #music-player div.progress {
 	height: 5px;
 	cursor: pointer;

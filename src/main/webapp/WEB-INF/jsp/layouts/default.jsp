@@ -150,14 +150,14 @@
 
         document.title = "${headPageTitle}";
 
-        $("#music-player").on("click", ".controls a.play", function() {            
+        $("#music-player").on("click", ".controls a.play", function() {
             togglePlayPause("play");
             myAndroidFix.play();
         });
 
         $("#music-player").on("click", ".controls a.pause", function() {
             togglePlayPause("pause");
-          	$(mashupMedia.jPlayerId).jPlayer("pause");
+            $(mashupMedia.jPlayerId).jPlayer("pause");
         });
 
         $("#music-player").on("click", ".controls a.stop", function() {
@@ -168,11 +168,11 @@
         $("#music-player").on("click", ".controls a.previous", function() {
             mashupMedia.playPreviousSong();
         });
-        
+
         $("#music-player").on("click", ".controls a.next", function() {
             mashupMedia.playNextSong();
         });
-                
+
         mashupMedia.loadLastAccessedPlaylist();
     });
 
@@ -205,7 +205,7 @@
         controlElement.removeClass();
         controlElement.addClass(nextAction);
     }
-    
+
     function showFooterTabs(mediaType) {
 
         if (mediaType === undefined) {
@@ -355,9 +355,26 @@
 			data-role="footer" data-position-fixed="true">
 			<div class="tabs music" data-role="navbar">
 				<ul>
-					<li><a href="javascript:;">Random</a></li>
-					<li><a href="javascript:;">Latest</a></li>
-					<li><a href="javascript:;">Albums</a></li>
+					<li><a href="javascript:;"><img
+							title="<spring:message code="footer.music.random"/>"
+							alt="<spring:message code="footer.music.random"/>"
+							src="<c:url value="${themePath}/images/link-icons/random.png"/>" /></a></li>
+					<li><a href="javascript:;"><img
+							title="<spring:message code="footer.music.latest"/>"
+							alt="<spring:message code="footer.music.latest"/>"
+							src="<c:url value="${themePath}/images/link-icons/star.png"/>" /></a></li>
+					<li><a href="javascript:;"><img
+							title="<spring:message code="footer.music.artists"/>"
+							alt="<spring:message code="footer.music.artists"/>"
+							src="<c:url value="${themePath}/images/link-icons/artist.png"/>" /></a></li>
+					<li><a href="javascript:;"><img
+							title="<spring:message code="footer.music.albums"/>"
+							alt="<spring:message code="footer.music.albums"/>"
+							src="<c:url value="${themePath}/images/link-icons/album.png"/>" /></a></li>
+					<li><a href="javascript:;"><img
+							title="<spring:message code="footer.music.playlist"/>"
+							alt="<spring:message code="footer.music.playlist"/>"
+							src="<c:url value="${themePath}/images/link-icons/playlist.png"/>" /></a></li>
 				</ul>
 			</div>
 		</div>
