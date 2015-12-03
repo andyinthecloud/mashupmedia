@@ -184,15 +184,15 @@
 	</definition>
 
 
-	<definition name="music" extends="home">
+	<definition name="music/albums" extends="home">
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/music/music.jsp" />
+			value="/WEB-INF/jsp/tiles/music/albums.jsp" />
 	</definition>
 
-	<definition name="music/fragment"
+	<definition name="music/albums/fragment"
 		extends="ui-content">
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/music/music.jsp" />
+			value="/WEB-INF/jsp/tiles/music/albums.jsp" />
 	</definition>
 
 

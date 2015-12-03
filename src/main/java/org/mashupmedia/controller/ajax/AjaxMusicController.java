@@ -178,7 +178,8 @@ public class AjaxMusicController extends AjaxBaseController {
 		model.addAttribute(artistsPage);
 		return "ajax/music/artists";
 	}
-
+	
+	/*
 	@RequestMapping(value = "/play/media-item/{mediaItemId}", method = RequestMethod.GET)
 	public String playSong(@PathVariable Long mediaItemId,
 			@RequestParam(value = "playlistId", required = false) Long playlistId, Model model) {
@@ -228,6 +229,7 @@ public class AjaxMusicController extends AjaxBaseController {
 
 		return "ajax/music/player-script";
 	}
+	*/
 
 //	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
 //	public String playNextSonginLastAccessedPlaylist(Model model) {

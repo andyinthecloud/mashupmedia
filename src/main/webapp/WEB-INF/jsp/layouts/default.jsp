@@ -114,6 +114,7 @@
             var title = pageTitlePrefix + " " + $(this).attr("title");
             var link = $(this).attr("href");
             var mediaType = $(this).attr("data-media");
+            alert(mediaType);
             showFooterTabs(mediaType);
 
             event.preventDefault();
@@ -393,7 +394,7 @@
 
 				<li><a rel="internal"
 					title="<spring:message code="music.title" /> "
-					href="<c:url value="/app/music" />" data-rel="back"
+					href="<c:url value="/app/music/random-albums" />" data-rel="back"
 					data-media="music"><spring:message code="top-bar.music" /></a></li>
 				<li><a href="<c:url value="/app/videos" />" data-rel="back"><spring:message
 							code="top-bar.videos" /></a></li>

@@ -38,10 +38,11 @@ public abstract class BaseController {
 		return breadcrumb;
 	}
 
-	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_IS_TRANSPARENT_BACKGROUND)
-	public boolean isTransparentBackground() {
-		return true;
-	}
+	
+//	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_IS_TRANSPARENT_BACKGROUND)
+//	public boolean isTransparentBackground() {
+//		return true;
+//	}
 
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_VERSION)
 	public String getVersion() {

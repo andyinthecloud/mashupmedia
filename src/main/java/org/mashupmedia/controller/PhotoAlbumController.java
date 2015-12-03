@@ -20,10 +20,6 @@ public class PhotoAlbumController extends BaseController {
 	@Autowired
 	private PhotoManager photoManager;
 
-	@Override
-	public boolean isTransparentBackground() {
-		return false;
-	}
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {

@@ -3,6 +3,7 @@ package org.mashupmedia.controller;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -40,7 +41,9 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping("/music")
 public class MusicController extends BaseController {
 
-	private final static String PAGE_PATH = "music";
+//	private final static String PAGE_PATH = "music";
+	private final static int TOTAL_ALBUMS = 60;
+
 	
 	private Logger logger = Logger.getLogger(getClass());
 	
@@ -64,11 +67,11 @@ public class MusicController extends BaseController {
 		return "music.title";
 	}
 
-	@Override
-	@ModelAttribute("isTransparentBackground")
-	public boolean isTransparentBackground() {
-		return false;
-	}
+//	@Override
+//	@ModelAttribute("isTransparentBackground")
+//	public boolean isTransparentBackground() {
+//		return false;
+//	}
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
@@ -76,17 +79,17 @@ public class MusicController extends BaseController {
 		breadcrumbs.add(breadcrumb);
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+/*	@RequestMapping(method = RequestMethod.GET)
 	public String getMusic(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
-//		model.addAttribute("orderBy", "song-title");
-//		model.addAttribute("ascending", true);
-//		model.addAttribute("mediaType", "song");
-//		model.addAttribute("searchWords", "");
-
 		String pagePath = getPath(isFragment, PAGE_PATH);		
 		return pagePath;
-	}
+	}*/
 
+	
+	
+	
+	
+	
 	protected void addBreadcrumbsToModel(Model model, String messageKey) {
 		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage(messageKey));
@@ -94,6 +97,29 @@ public class MusicController extends BaseController {
 		model.addAttribute(breadcrumbs);
 
 	}
+	
+
+	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
+	public String getRandomAlbums(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+		List<Album> albums = musicManager.getRandomAlbums(TOTAL_ALBUMS);
+		model.addAttribute("isAppend", false);
+		model.addAttribute("albums", albums);
+		
+		String pagePath = getPath(isFragment, "music/albums");
+		
+		return pagePath;
+	}
+
+	
+	
+	@RequestMapping(value = "/append-random-albums", method = RequestMethod.GET)
+	public String getAppendRandomAlbums(Model model) {
+		List<Album> albums = musicManager.getRandomAlbums(TOTAL_ALBUMS);
+		model.addAttribute("isAppend", true);
+		model.addAttribute("albums", albums);
+		return "/tiles/music/albums";
+	}
+	
 
 	@RequestMapping(value = "/album-art/{imageType}/{albumId}", method = RequestMethod.GET)
 	public ModelAndView getAlbumArt(@PathVariable("imageType") String imageTypeValue, @PathVariable("albumId") Long albumId, Model model)

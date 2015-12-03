@@ -44,10 +44,6 @@ public class VideoController extends BaseController {
 	@Qualifier("themoviedb")
 	private VideoWebService videoWebService;
 
-	@Override
-	public boolean isTransparentBackground() {
-		return false;
-	}
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {

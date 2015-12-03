@@ -26,11 +26,6 @@ public class ListPhotosController extends BaseController {
 		breadcrumbs.add(breadcrumb);
 	}
 
-	@Override
-	@ModelAttribute("isTransparentBackground")
-	public boolean isTransparentBackground() {
-		return false;
-	}
 
 	@Override
 	public String getPageTitleMessageKey() {

@@ -4,9 +4,10 @@
 <c:if test="${!isAppend}">
 	<script type="text/javascript">
 	$(document).ready(function() {
-
+	    
 		<c:if test="${!isAppend}">
-		window.scrollTo(0, 0);
+		showFooterTabs("music");
+		window.scrollTo(0, 0);	
 		</c:if>
 
 		$("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
@@ -25,10 +26,6 @@
 			appendContentsOnScroll();
 		});
 		
-
-
-
-
 	});
 </script>
 </c:if>
