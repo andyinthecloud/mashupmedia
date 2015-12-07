@@ -12,7 +12,7 @@ import org.mashupmedia.model.media.music.Song;
 
 public interface MusicDao {
 
-	public List<Album> getAlbums(List<Long> groupIds, String searchLetter, int pageNumber, int totalItems);
+	public List<Album> getAlbums(List<Long> groupIds, String searchLetter, int pageNumber, int maxResults);
 
 	public List<Artist> getArtists(List<Long> groupIds);
 
@@ -35,7 +35,7 @@ public interface MusicDao {
 
 	public Album getAlbum(List<Long> groupIds, long albumId);
 
-	public List<Album> getRandomAlbums(List<Long> groupIds, int numberOfAlbums);
+	public List<Album> getRandomAlbums(List<Long> groupIds, int maxResults);
 
 	public Year getYear(int year);
 
@@ -67,7 +67,7 @@ public interface MusicDao {
 
 	public void deleteEmptyArtists();
 
-	public List<Album> getLatestAlbums(List<Long> userGroupIds, int numberOfAlbums);
+	public List<Album> getLatestAlbums(List<Long> userGroupIds, int pageNumber, int maxResults);
 	
 	
 }

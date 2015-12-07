@@ -10,7 +10,7 @@ import org.mashupmedia.model.media.music.Song;
 
 public interface MusicManager {
 
-	public List<Album> getAlbums(String searchLetter, int pageNumber, int totalItems);
+	public List<Album> getAlbums(String searchLetter, int pageNumber, int maxResults);
 
 	public List<Artist> getArtists();
 
@@ -18,7 +18,7 @@ public interface MusicManager {
 
 	public Album getAlbum(long albumId);
 
-	public List<Album> getRandomAlbums(int numberOfAlbums);
+	public List<Album> getRandomAlbums(int maxResults);
 
 	public Album getAlbum(String artistName, String albumName);
 
@@ -40,6 +40,6 @@ public interface MusicManager {
 
 	public long getTotalSongsFromLibrary(long libraryId);
 
-	public List<Album> getLatestAlbums(int totalAlbums);
+	public List<Album> getLatestAlbums(int pageNumber, int maxResults);
 	
 }

@@ -77,23 +77,23 @@ public class AjaxMusicController extends AjaxBaseController {
 	@Autowired
 	private ConfigurationManager configurationManager;
 
-	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
-	public String getRandomAlbums(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
-		List<Album> albums = musicManager.getRandomAlbums(TOTAL_ALBUMS);
-		isAppend = BooleanUtils.toBoolean(isAppend);
-		model.addAttribute("isAppend", isAppend);
-		model.addAttribute("albums", albums);
-		return "ajax/music/albums";
-	}
+//	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
+//	public String getRandomAlbums(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
+//		List<Album> albums = musicManager.getRandomAlbums(TOTAL_ALBUMS);
+//		isAppend = BooleanUtils.toBoolean(isAppend);
+//		model.addAttribute("isAppend", isAppend);
+//		model.addAttribute("albums", albums);
+//		return "ajax/music/albums";
+//	}
 	
-	@RequestMapping(value = "/latest-albums", method = RequestMethod.GET)
-	public String getLatestAlbums(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
-		List<Album> albums = musicManager.getLatestAlbums(TOTAL_ALBUMS);
-		isAppend = BooleanUtils.toBoolean(isAppend);
-		model.addAttribute("isAppend", isAppend);
-		model.addAttribute("albums", albums);
-		return "ajax/music/albums";
-	}	
+//	@RequestMapping(value = "/latest-albums", method = RequestMethod.GET)
+//	public String getLatestAlbums(@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
+//		List<Album> albums = musicManager.getLatestAlbums(TOTAL_ALBUMS);
+//		isAppend = BooleanUtils.toBoolean(isAppend);
+//		model.addAttribute("isAppend", isAppend);
+//		model.addAttribute("albums", albums);
+//		return "ajax/music/albums";
+//	}	
 	
 
 	@RequestMapping(value = "/album/{albumId}", method = RequestMethod.GET)

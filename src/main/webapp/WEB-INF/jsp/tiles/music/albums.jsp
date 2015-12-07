@@ -4,12 +4,16 @@
 <c:if test="${!isAppend}">
 	<script type="text/javascript">
 	$(document).ready(function() {
-	    
+	    	    
 		<c:if test="${!isAppend}">
 		showFooterTabs("music");
 		window.scrollTo(0, 0);	
 		</c:if>
 
+		$("#footer div.music li a").removeClass("ui-btn-active");
+		
+		$("#footer div.music li a.${musicAlbumListType.className}").addClass("ui-btn-active");
+		
 		$("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
 			$(this).addClass("highlight");
 		});
@@ -23,7 +27,7 @@
 				return;
 			}
 
-			appendContentsOnScroll();
+			appendContentsOnScroll("${musicAlbumListType.className}");
 		});
 		
 	});

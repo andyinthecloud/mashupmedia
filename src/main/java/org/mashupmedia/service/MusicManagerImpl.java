@@ -94,47 +94,28 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public List<Album> getRandomAlbums(int numberOfAlbums) {
-		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		List<Album> albums = new ArrayList<Album>();
-		List<Album> randomAlbums = musicDao.getRandomAlbums(userGroupIds, numberOfAlbums);
-		if (randomAlbums.isEmpty()) {
-			return albums;
-		}
-
-		albums.addAll(randomAlbums);
-
-		while (numberOfAlbums > albums.size()) {
-			int appendItemsTotal = randomAlbums.size();
-			int numberOfAlbumsAfterAppend = albums.size() + appendItemsTotal;
-			if (numberOfAlbumsAfterAppend > numberOfAlbums) {
-				appendItemsTotal = numberOfAlbums - albums.size();
-				randomAlbums = randomAlbums.subList(0, appendItemsTotal);
-			}
-
-			albums.addAll(randomAlbums);
-		}
-
+	public List<Album> getRandomAlbums(int maxResults) {		
+		List<Album> albums = getAlbums(ListAlbumsType.RANDOM, 0, maxResults);
 		return albums;
 	}
 	
 	@Override
-	public List<Album> getLatestAlbums(int totalAlbums) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Album> getLatestAlbums(int pageNumber, int maxResults) {
+		List<Album> albums = getAlbums(ListAlbumsType.LATEST, pageNumber, maxResults);
+		return albums;
 	}
 
 	
-	protected List<Album> getAlbums(ListAlbumsType listAlbumsType, int numberOfAlbums) {
+	protected List<Album> getAlbums(ListAlbumsType listAlbumsType, int pageNumber, int maxResults) {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		List<Album> albums = new ArrayList<Album>();
 		
 		List<Album> fetchedAlbums = null;
 		
 		if (listAlbumsType == ListAlbumsType.RANDOM) {
-			fetchedAlbums = musicDao.getRandomAlbums(userGroupIds, numberOfAlbums);
+			fetchedAlbums = musicDao.getRandomAlbums(userGroupIds, maxResults);
 		} else {
-			fetchedAlbums = musicDao.getLatestAlbums(userGroupIds, numberOfAlbums);
+			fetchedAlbums = musicDao.getLatestAlbums(userGroupIds, pageNumber, maxResults);
 		}		
 		
 		if (fetchedAlbums.isEmpty()) {
@@ -148,11 +129,11 @@ public class MusicManagerImpl implements MusicManager {
 		}
 		
 
-		while (numberOfAlbums > albums.size()) {
+		while (maxResults > albums.size()) {
 			int appendItemsTotal = fetchedAlbums.size();
 			int numberOfAlbumsAfterAppend = albums.size() + appendItemsTotal;
-			if (numberOfAlbumsAfterAppend > numberOfAlbums) {
-				appendItemsTotal = numberOfAlbums - albums.size();
+			if (numberOfAlbumsAfterAppend > maxResults) {
+				appendItemsTotal = maxResults - albums.size();
 				fetchedAlbums = fetchedAlbums.subList(0, appendItemsTotal);
 			}
 

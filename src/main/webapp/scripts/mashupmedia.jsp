@@ -5,6 +5,7 @@
 var isLoadingContent = false;
 var currentPage = "";
 
+/*
 var addressRandomAlbums = "address-random-albums";
 var addressQuickSearchMediaItems = "address-quick-search-media-items";
 var addressListArtists = "address-list-artists";
@@ -16,7 +17,7 @@ var addressArtist = "address-artist-";
 var addressListPlaylists = "address-list-playlists";
 var addressPlaylist = "address-playlist-";
 var addressListPhotos = "address-list-photos";
-
+*/
 
 $(document).ready(function() {
     
@@ -488,14 +489,32 @@ function textStartsWith(text, startsWithValue) {
 	return false;
 }
 
-function loadRandomAlbums(isAppend) {
+function loadRandomAlbums() {
 	if (isLoadingContent) {
 		return;
 	}
 	
 	isLoadingContent = true;
-	$.get(mashupMedia.contextUrl + "app/ajax/music/random-albums", {
-	    "isAppend" : isAppend
+	$.get(mashupMedia.contextUrl + "app/music/append-random-albums",
+		function(data) {
+			if (isAppend) {
+				$("div.dynamic-content").append(data);	
+			} else {
+				$("div.dynamic-content").html(data);
+			}
+			
+			pauseScrollLoadMore();	
+	});
+}
+
+function loadLatestAlbums() {
+	if (isLoadingContent) {
+		return;
+	}
+	
+	isLoadingContent = true;
+	$.get(mashupMedia.contextUrl + "app/music/append-latest-albums", {
+	    "pageNumber" : mashupMedia.filterPageNumber
 	},
 		function(data) {
 			if (isAppend) {
@@ -631,15 +650,17 @@ function isValidNumber(value) {
 	return true;
 }
 
-function appendContentsOnScroll() {
+function appendContentsOnScroll(contentType) {
     if ($(window).scrollTop() >= $(document).height() - $(window).height()) {
 	
 		var pageNumber = mashupMedia.filterPageNumber + 1;
 		mashupMedia.filterPageNumber = pageNumber;
 		
-		if (textStartsWith(currentPage, addressRandomAlbums) || currentPage == "") {
+		if (contentType == "music-random-albums") {
 		    loadRandomAlbums(true);
-		} else if (textStartsWith(currentPage, addressListAlbums) || textStartsWith(currentPage, addressListFilterAlbums)) {
+		} else if (contentType == "music-latest-albums") {
+		    loadLatestAlbums(true);
+		} else if (contentType == "music-alphabetical-albums") {
 		    loadAlbums(true);
 		} else if (textStartsWith(currentPage, addressQuickSearchMediaItems)) {
 		    loadSongSearchResults(true);    

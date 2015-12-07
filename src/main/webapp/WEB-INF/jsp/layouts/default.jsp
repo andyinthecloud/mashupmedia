@@ -356,23 +356,23 @@
 			data-role="footer" data-position-fixed="true">
 			<div class="tabs music" data-role="navbar">
 				<ul>
-					<li><a href="javascript:;"><img
+					<li><a rel="internal" href="javascript:;" class="music-random-albums"><img
 							title="<spring:message code="footer.music.random"/>"
 							alt="<spring:message code="footer.music.random"/>"
 							src="<c:url value="${themePath}/images/link-icons/random.png"/>" /></a></li>
-					<li><a href="javascript:;"><img
+					<li><a rel="internal" href="javascript:;" class="music-latest-albums"><img
 							title="<spring:message code="footer.music.latest"/>"
 							alt="<spring:message code="footer.music.latest"/>"
 							src="<c:url value="${themePath}/images/link-icons/star.png"/>" /></a></li>
-					<li><a href="javascript:;"><img
+					<li><a rel="internal" href="javascript:;" class="music-artists"><img
 							title="<spring:message code="footer.music.artists"/>"
 							alt="<spring:message code="footer.music.artists"/>"
 							src="<c:url value="${themePath}/images/link-icons/artist.png"/>" /></a></li>
-					<li><a href="javascript:;"><img
+					<li><a rel="internal" href="javascript:;" class="music-alphabetical-albums"><img
 							title="<spring:message code="footer.music.albums"/>"
 							alt="<spring:message code="footer.music.albums"/>"
 							src="<c:url value="${themePath}/images/link-icons/album.png"/>" /></a></li>
-					<li><a href="javascript:;"><img
+					<li><a rel="internal" href="javascript:;" class="music-playlist"><img
 							title="<spring:message code="footer.music.playlist"/>"
 							alt="<spring:message code="footer.music.playlist"/>"
 							src="<c:url value="${themePath}/images/link-icons/playlist.png"/>" /></a></li>
