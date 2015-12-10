@@ -1,6 +1,7 @@
 package org.mashupmedia.model.media.music;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Cacheable;
@@ -13,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -35,7 +38,7 @@ public class Album implements Serializable {
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@XmlTransient
 	private Artist artist;
-	@ManyToOne(cascade = { CascadeType.ALL })	
+	@ManyToOne(cascade = { CascadeType.ALL })
 	@XmlTransient
 	private AlbumArtImage albumArtImage;
 	@OneToMany(mappedBy = "album")
@@ -44,6 +47,16 @@ public class Album implements Serializable {
 	private List<Song> songs;
 	private String indexText;
 	private String indexLetter;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date updatedOn;
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
+	}
 
 	public String getIndexText() {
 		return indexText;

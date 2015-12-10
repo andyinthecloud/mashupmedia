@@ -11,37 +11,37 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 public abstract class AjaxBaseController {
 	
-	@Autowired
-	private PlaylistManager playlistManager;
+//	@Autowired
+//	private PlaylistManager playlistManager;
 
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_THEME_PATH)
 	public String getThemePath() {
 		return "/themes/default";
 	}
 	
-	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_IS_PLAYLIST_OWNER)
-	public boolean isPlaylistOwner() {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
-		User createdBy = playlist.getCreatedBy();
-		User user = AdminHelper.getLoggedInUser();
-		
-		// If the createdBy is null presume that the user has just created this playlist
-		if (createdBy == null) {
-			return true;
-		}
-		
-		if (createdBy.equals(user)) {
-			return true;
-		}
-		
-		return false;
+//	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_IS_PLAYLIST_OWNER)
+//	public boolean isPlaylistOwner() {
+//		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
+//		User createdBy = playlist.getCreatedBy();
+//		User user = AdminHelper.getLoggedInUser();
+//		
+//		// If the createdBy is null presume that the user has just created this playlist
+//		if (createdBy == null) {
+//			return true;
+//		}
+//		
+//		if (createdBy.equals(user)) {
+//			return true;
+//		}
+//		
+//		return false;
+//	
+//	}
 	
-	}
-	
-	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_JPLAYER_VERSION)
-	public String populateJPlayer() {
-		return MashUpMediaConstants.JPLAYER_VERSION;
-	}
+//	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_JPLAYER_VERSION)
+//	public String populateJPlayer() {
+//		return MashUpMediaConstants.JPLAYER_VERSION;
+//	}
 
 	
 	

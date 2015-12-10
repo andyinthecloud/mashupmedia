@@ -181,6 +181,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 			album.setArtist(artist);
 			album = prepareAlbum(groupIds, album);
+			album.setUpdatedOn(date);
 
 			AlbumArtImage albumArtImage = album.getAlbumArtImage();
 			if (albumArtImage == null) {

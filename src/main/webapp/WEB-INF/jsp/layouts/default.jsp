@@ -114,7 +114,6 @@
             var title = pageTitlePrefix + " " + $(this).attr("title");
             var link = $(this).attr("href");
             var mediaType = $(this).attr("data-media");
-            alert(mediaType);
             showFooterTabs(mediaType);
 
             event.preventDefault();
@@ -356,24 +355,31 @@
 			data-role="footer" data-position-fixed="true">
 			<div class="tabs music" data-role="navbar">
 				<ul>
-					<li><a rel="internal" href="javascript:;" class="music-random-albums"><img
-							title="<spring:message code="footer.music.random"/>"
+					<li><a rel="internal"
+						href="<c:url value="/app/music/random-albums" />"
+						class="music-random-albums" data-media="music"
+						title="<spring:message code="footer.music.random"/>"><img
 							alt="<spring:message code="footer.music.random"/>"
 							src="<c:url value="${themePath}/images/link-icons/random.png"/>" /></a></li>
-					<li><a rel="internal" href="javascript:;" class="music-latest-albums"><img
-							title="<spring:message code="footer.music.latest"/>"
+					<li><a rel="internal"
+						href="<c:url value="/app/music/latest-albums" />"
+						class="music-latest-albums" data-media="music"
+						title="<spring:message code="footer.music.latest"/>"><img
 							alt="<spring:message code="footer.music.latest"/>"
 							src="<c:url value="${themePath}/images/link-icons/star.png"/>" /></a></li>
-					<li><a rel="internal" href="javascript:;" class="music-artists"><img
-							title="<spring:message code="footer.music.artists"/>"
+					<li><a rel="internal" href="javascript:;"
+						class="music-artists" data-media="music"
+						title="<spring:message code="footer.music.artists"/>"><img
 							alt="<spring:message code="footer.music.artists"/>"
 							src="<c:url value="${themePath}/images/link-icons/artist.png"/>" /></a></li>
-					<li><a rel="internal" href="javascript:;" class="music-alphabetical-albums"><img
-							title="<spring:message code="footer.music.albums"/>"
+					<li><a rel="internal" href="javascript:;"
+						class="music-alphabetical-albums" data-media="music"
+						title="<spring:message code="footer.music.albums"/>"><img
 							alt="<spring:message code="footer.music.albums"/>"
 							src="<c:url value="${themePath}/images/link-icons/album.png"/>" /></a></li>
-					<li><a rel="internal" href="javascript:;" class="music-playlist"><img
-							title="<spring:message code="footer.music.playlist"/>"
+					<li><a rel="internal" href="javascript:;"
+						class="music-playlist" data-media="music"
+						title="<spring:message code="footer.music.playlist"/>"><img
 							alt="<spring:message code="footer.music.playlist"/>"
 							src="<c:url value="${themePath}/images/link-icons/playlist.png"/>" /></a></li>
 				</ul>
@@ -389,16 +395,15 @@
 							code="side-menu.close" /></a></li>
 				<li><a rel="internal"
 					title="<spring:message code="home.title" /> "
-					href="<c:url value="/" />" data-rel="back"><spring:message
-							code="top-bar.home" /></a></li>
+					href="<c:url value="/" />"><spring:message code="top-bar.home" /></a></li>
 
 				<li><a rel="internal"
 					title="<spring:message code="music.title" /> "
-					href="<c:url value="/app/music/random-albums" />" data-rel="back"
+					href="<c:url value="/app/music/random-albums" />"
 					data-media="music"><spring:message code="top-bar.music" /></a></li>
-				<li><a href="<c:url value="/app/videos" />" data-rel="back"><spring:message
+				<li><a href="<c:url value="/app/videos" />"><spring:message
 							code="top-bar.videos" /></a></li>
-				<li><a href="<c:url value="/app/photo/list" />" data-rel="back"><spring:message
+				<li><a href="<c:url value="/app/photo/list" />"><spring:message
 							code="top-bar.photos" /></a></li>
 				<sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
 					<li><a rel="internal"
@@ -407,13 +412,13 @@
 								code="home.links.configuration" /></a></li>
 					<li><a rel="internal"
 						title="<spring:message code="encoding-processes.title" />"
-						href="<c:url value="/app/encode/processes" />" data-rel="back"><spring:message
+						href="<c:url value="/app/encode/processes" />"><spring:message
 								code="top-bar.encoding.queue" /></a></li>
 				</sec:authorize>
 				<li><a rel="internal"
 					title="<spring:message code="configuration.administration.my-account.title" />"
-					href="<c:url value="/app/configuration/administration/my-account" />"
-					data-rel="back"><spring:message code="top-bar.my-account" /></a></li>
+					href="<c:url value="/app/configuration/administration/my-account" />"><spring:message
+							code="top-bar.my-account" /></a></li>
 
 				<c:if test="${isNewMashupMediaVersionAvailable}">
 					<li><a href="http://www.mashupmedia.org/download"

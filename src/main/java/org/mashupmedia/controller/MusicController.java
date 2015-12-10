@@ -6,16 +6,21 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
@@ -28,6 +33,7 @@ import org.mashupmedia.web.Breadcrumb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -79,6 +85,26 @@ public class MusicController extends BaseController {
 	// public boolean isTransparentBackground() {
 	// return false;
 	// }
+	
+	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_IS_PLAYLIST_OWNER)
+	public boolean isPlaylistOwner() {
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
+		User createdBy = playlist.getCreatedBy();
+		User user = AdminHelper.getLoggedInUser();
+		
+		// If the createdBy is null presume that the user has just created this playlist
+		if (createdBy == null) {
+			return true;
+		}
+		
+		if (createdBy.equals(user)) {
+			return true;
+		}
+		
+		return false;
+	
+	}
+
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {

@@ -250,13 +250,15 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	@Override
 	public List<Album> getLatestAlbums(List<Long> groupIds, int pageNumber, int maxResults) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g");
+				"select distinct a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" order by s.updatedOn desc");
+		queryBuilder.append(" order by a.updatedOn desc");
+
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		int firstResult = getFirstResult(pageNumber, maxResults);
 		query.setFirstResult(firstResult);
 		query.setMaxResults(maxResults);
+
 		@SuppressWarnings("unchecked")
 		List<Album> albums = query.list();
 		return albums;

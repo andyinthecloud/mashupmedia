@@ -22,8 +22,11 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MediaManager;
+import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
@@ -54,8 +57,12 @@ public class StreamingController {
 	@Autowired
 	private MediaManager mediaManager;
 
+//	@Autowired
+//	private ConnectionManager connectionManager;
+	
 	@Autowired
-	private ConnectionManager connectionManager;
+	private PlaylistManager playlistManager;
+	
 
 	@RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.HEAD)
 	public ModelAndView getMediaStreamHead(@PathVariable("mediaItemId") Long mediaItemId,
@@ -71,6 +78,11 @@ public class StreamingController {
 	public ModelAndView getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
 			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model)
 			throws Exception {
+		
+		// Save playlist when a song is streamed to make it last accessed by the user
+		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
+		playlistManager.savePlaylist(playlist);		
+		
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		MediaEncoding mediaEncoding = getMediaContentType(mediaItem, mediaContentTypeValue);
 		ModelAndView modelAndView = prepareModelAndView(mediaItem, mediaEncoding, true);
