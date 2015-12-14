@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/restful/music-playlist")
-public class MusicPlaylistController {
+public class RestfulMusicPlaylistController {
 
 	@Autowired
 	private PlaylistManager playlistManager;

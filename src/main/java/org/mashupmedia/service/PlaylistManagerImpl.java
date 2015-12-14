@@ -195,7 +195,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
 			throw new MashupMediaRuntimeException("Can only update the playlistMediaItem for an existing user.");
 		}
 		
-		user.setPlaylistMediaItem(playlistMediaItem);
+		user.setPlaylistMediaItem(playlistMediaItem);		
+		savePlaylist(playlistMediaItem.getPlaylist());		
+
 		adminManager.updateUser(user);
 		
 	}

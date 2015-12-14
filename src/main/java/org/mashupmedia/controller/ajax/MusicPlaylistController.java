@@ -30,7 +30,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/ajax/playlist")
-public class AjaxPlaylistController extends AjaxBaseController {
+@Deprecated
+public class MusicPlaylistController extends AjaxBaseController {
 
 	@Autowired
 	private PlaylistManager playlistManager;
@@ -371,35 +372,35 @@ public class AjaxPlaylistController extends AjaxBaseController {
 		return "ajax/playlist/list-playlists";
 	}
 
-//	@RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
-//	public String handleGetPlaylist(
-//			@PathVariable Long playlistId,
-//			@RequestParam(value = "webFormatType", required = false) String webFormatTypeValue,
-//			@RequestParam(value = "updateLastAccessedToNow", required = false) Boolean isUpdateLastAccessedToNow,
-//			Model model) {
-//		Playlist playlist = playlistManager.getPlaylist(playlistId);
-//		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
-//
-//		if (isUpdateLastAccessedToNow != null && isUpdateLastAccessedToNow) {
-//			playlistManager.savePlaylist(playlist);
-//		}
-//
-//		model.addAttribute("playlist", playlist);
-//
-//		boolean canSavePlaylist = PlaylistHelper.canSavePlaylist(playlist);
-//		if (playlistId == 0) {
-//			canSavePlaylist = true;
-//		}
-//
-//		model.addAttribute("canSavePlaylist", canSavePlaylist);
-//
-//		WebContentType webFormatType = WebHelper.getWebContentType(
-//				webFormatTypeValue, WebContentType.HTML);
-//		if (webFormatType == WebContentType.JSON) {
-//			return "ajax/json/playlist";
-//		}
-//
-//		return "ajax/playlist/music-playlist";
-//	}
+	@RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
+	public String handleGetPlaylist(
+			@PathVariable Long playlistId,
+			@RequestParam(value = "webFormatType", required = false) String webFormatTypeValue,
+			@RequestParam(value = "updateLastAccessedToNow", required = false) Boolean isUpdateLastAccessedToNow,
+			Model model) {
+		Playlist playlist = playlistManager.getPlaylist(playlistId);
+		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
+
+		if (isUpdateLastAccessedToNow != null && isUpdateLastAccessedToNow) {
+			playlistManager.savePlaylist(playlist);
+		}
+
+		model.addAttribute("playlist", playlist);
+
+		boolean canSavePlaylist = PlaylistHelper.canSavePlaylist(playlist);
+		if (playlistId == 0) {
+			canSavePlaylist = true;
+		}
+
+		model.addAttribute("canSavePlaylist", canSavePlaylist);
+
+		WebContentType webFormatType = WebHelper.getWebContentType(
+				webFormatTypeValue, WebContentType.HTML);
+		if (webFormatType == WebContentType.JSON) {
+			return "ajax/json/playlist";
+		}
+
+		return "ajax/playlist/music-playlist";
+	}
 
 }
