@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/ajax/playlist")
 @Deprecated
-public class MusicPlaylistController extends AjaxBaseController {
+public class AjaxMusicPlaylistController extends AjaxBaseController {
 
 	@Autowired
 	private PlaylistManager playlistManager;

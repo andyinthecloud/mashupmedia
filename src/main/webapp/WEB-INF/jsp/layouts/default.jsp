@@ -377,7 +377,7 @@
 						title="<spring:message code="footer.music.albums"/>"><img
 							alt="<spring:message code="footer.music.albums"/>"
 							src="<c:url value="${themePath}/images/link-icons/album.png"/>" /></a></li>
-					<li><a rel="internal" href="javascript:;"
+					<li><a rel="internal" href="<c:url value="/app/music/playlist" />"
 						class="music-playlist" data-media="music"
 						title="<spring:message code="footer.music.playlist"/>"><img
 							alt="<spring:message code="footer.music.playlist"/>"
