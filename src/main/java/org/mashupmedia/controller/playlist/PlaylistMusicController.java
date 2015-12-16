@@ -1,7 +1,8 @@
-package org.mashupmedia.controller;
+package org.mashupmedia.controller.playlist;
 
 import java.util.List;
 
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.springframework.stereotype.Controller;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/playlist/music")
-public class MusicPlaylistController extends PlaylistController {
+public class PlaylistMusicController extends AbstractPlaylistController {
 
 	@Override
 	protected String getPlaylistPath() {
@@ -25,6 +26,11 @@ public class MusicPlaylistController extends PlaylistController {
 	@Override
 	public String getPageTitleMessageKey() {
 		return "music.playlist.title";
+	}
+
+	@Override
+	protected PlaylistType getPlaylistType() {
+		return PlaylistType.MUSIC;
 	}
 
 }

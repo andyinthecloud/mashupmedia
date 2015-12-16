@@ -197,13 +197,13 @@
 
 	<definition name="playlist/music" extends="home">
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/music/playlist.jsp" />
+			value="/WEB-INF/jsp/tiles/playlist/playlist-music.jsp" />
 	</definition>
 
 	<definition name="playlist/music/fragment"
 		extends="ui-content">
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/music/playlist.jsp" />
+			value="/WEB-INF/jsp/tiles/playlist/playlist-music.jsp" />
 	</definition>
 
 
