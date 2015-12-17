@@ -334,10 +334,6 @@ ul.ui-autocomplete {
 	display: none;
 }
 
-#current-song span.playlist {
-	display: none;
-	margin-left: 20px;
-}
 
 #current-song .vote img {
 	background-color: #C8C0CE;
@@ -361,15 +357,9 @@ ul.ui-autocomplete {
 	vertical-align: bottom;
 }
 
-#current-song td.song-title .artist-name, #current-song td.song-title .playlist,
-	#current-song td.song-title .encode {
-	font-size: 80%;
-}
 
-#current-song td.song-title .playlist, #current-song td.song-title .encode
-	{
-	margin-top: 10px;
-}
+
+
 
 .ui-autocomplete {
 	z-index: 1000;
@@ -380,51 +370,7 @@ ul.ui-autocomplete {
 	vertical-align: top;
 }
 
-#playlist input.play {
-	margin-left: 20px;
-}
 
-#playlist table th .ui-icon {
-	float: right;
-}
-
-#playlist table {
-	border-collapse: collapse;
-}
-
-#playlist table th.first {
-	padding-left: 0px;
-}
-
-#playlist table td, #playlist table th {
-	padding-left: 10px;
-	padding-top: 3px;
-	padding-bottom: 3px;
-	text-align: left;
-	min-width: 80px;
-}
-
-#playlist table tbody tr {
-	cursor: move;
-	border-bottom: 1px solid #E579E9;
-}
-
-#playlist table tbody td.track-length {
-	text-align: right;
-}
-
-#playlist table tbody tr.playing td {
-	font-style: italic;
-	font-weight: bold;
-}
-
-#playlist table tbody td.text {
-	overflow: hidden;
-}
-
-#playlist table td.controls {
-	width: 75px;
-}
 
 .controls .ui-icon {
 	background-color: white;
@@ -553,9 +499,7 @@ div.index-letter {
 	margin-bottom: 10px;
 }
 
-div.action-buttons {
-	float: right;
-}
+
 
 .icon {
 	width: 16px;
@@ -760,3 +704,39 @@ div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HO
 	color: #606060 !important;
 	font-weight: normal !important;
 }
+
+ul.playlist-items {
+	list-style: none;
+	padding: 0; 
+}
+
+ul.playlist-items li{
+	position: relative;
+	clear: both;
+	border-bottom: 1px solid #e579e9;
+	padding: 5px 0;
+}
+
+ul.playlist-items a.delete {
+	vertical-align: middle;
+	padding: 1em;  	
+}
+
+ul.playlist-items div.item {
+	display: inline-block; 
+}
+
+ul.playlist-items div.item div.title{
+	font-size: 1.1em;  	
+}
+
+ul.playlist-items div.item div.meta{
+	font-size: 0.8em;  	
+}
+
+ul.playlist-items img.up-down{
+	position: absolute;
+	left: 95%; 
+	top: 40%;  	
+}
+

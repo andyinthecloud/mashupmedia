@@ -6,8 +6,8 @@
     $(document).ready(function() {
         window.scrollTo(0, 0);
         showFooterTabs("music");
-        
 
+        /*
         $("#playlist table.songs tbody").sortable({
             stop: function(event, ui) {
             }
@@ -44,7 +44,7 @@
             var playlistId = $("#playlist input[name=playlistId]").val();
             mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
         });
-
+         */
 
         $("div.dynamic-content").on("change", "#playlist-actions", function() {
             var action = $(this).val();
@@ -128,13 +128,10 @@
 
     });
 
-
-    
     function savePlaylist() {
 
         var playlistName = $.trim($("#playlist input[name=playlistName]").val());
-        
-        
+
         var playlistAction = $("#playlist input[name=playlistAction]").val();
         var isNewPlaylistId = false;
         if (playlistAction == "save-as" || playlistAction == "new") {
@@ -192,6 +189,8 @@
 		type="hidden" name="playlistId"
 		value="<c:out value="${playlist.id}" />" />
 
+
+
 	<h1>${playlist.name}</h1>
 
 	<div class="hide change-name">
@@ -200,7 +199,7 @@
 
 
 
-	<div class="controls">
+	<div class="controls clear">
 
 		<select id="playlist-actions" data-native-menu="false">
 			<option value="">
@@ -212,21 +211,21 @@
 			</option>
 
 
-		<c:if test="${canSavePlaylist}">
-			<option value="clear">
-				<spring:message code="music.playlist.action.clear" />
-			</option>
-</c:if>
+			<c:if test="${canSavePlaylist}">
+				<option value="clear">
+					<spring:message code="music.playlist.action.clear" />
+				</option>
+			</c:if>
 
 			<option value="new">
 				<spring:message code="music.playlist.action.new" />
 			</option>
 
-		<c:if test="${canSavePlaylist}">
-			<option value="change-name">
-				<spring:message code="music.playlist.action.change-name" />
-			</option>
-</c:if>
+			<c:if test="${canSavePlaylist}">
+				<option value="change-name">
+					<spring:message code="music.playlist.action.change-name" />
+				</option>
+			</c:if>
 
 			<option value="copy-to">
 				<spring:message code="music.playlist.action.copy-to" />
@@ -238,9 +237,13 @@
 				</option>
 			</c:if>
 
+			<option value="playlists">
+				<spring:message code="music.playlist.action.playlists" />
+			</option>
+
 		</select>
-		
-<!-- 
+
+		<!-- 
 		<c:if test="${canSavePlaylist}">
 			<input type="button" class="button" id="save-current-playlist"
 				value="<spring:message code="action.save" />" />
@@ -248,69 +251,53 @@
 
 		<input type="button" class="button play" id="play-playlist"
 			value="<spring:message code="action.play" />" />
-			 -->	
-			
+			 -->
+
 	</div>
 
-	<table class="songs">
-		<thead>
-			<tr>
-				<th class="first"></th>
-				<th class="song controls"><a href="javascript:;"><span
-						class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message
-							code="music.playlist.song" /></a></th>
-				<th class="album controls"><a href="javascript:;"><span
-						class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message
-							code="music.playlist.album" /></a></th>
-				<th class="artist controls"><a href="javascript:;"><span
-						class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message
-							code="music.playlist.artist" /></a></th>
-				<th class="length controls"><a href="javascript:;"><span
-						class="ui-icon ui-icon-carat-2-n-s"></span> <spring:message
-							code="music.playlist.length" /></a></th>
-			</tr>
+	<ul class="playlist-items">
 
-		</thead>
-		<tbody>
 
-			<c:forEach items="${playlist.accessiblePlaylistMediaItems}"
-				var="playlistMediaItem">
-				<c:set var="song" value="${playlistMediaItem.mediaItem}" />
-				<c:set var="playingClass" value="" />
-				<c:if test="${playlistMediaItem.playing }">
-					<c:set var="playingClass" value="playing" />
-				</c:if>
+		<c:forEach items="${playlist.accessiblePlaylistMediaItems}"
+			var="playlistMediaItem">
+			<c:set var="song" value="${playlistMediaItem.mediaItem}" />
+			<c:set var="playingClass" value="" />
+			<c:if test="${playlistMediaItem.playing }">
+				<c:set var="playingClass" value="playing" />
+			</c:if>
 
-				<tr
-					id="playlist-media-id-<c:out value="${song.id}"/>-album-id-${song.album.id}"
-					class="<c:out value="${playingClass}"/>">
-
-					<td class="controls"><span class="ui-icon ui-icon-carat-2-n-s"></span>
-						<a class="delete" href="javascript:;"
-						title="<spring:message code="action.playlist.delete" />"><span
-							class="ui-icon ui-icon-minus"></span></a> <a class="play"
-						href="javascript:;" title="<spring:message code="action.play" />"><span
-							class="ui-icon ui-icon-play"></span></a> <input type="hidden"
-						name="format" value="<c:out value="${song.format}" />" /><input
-						type="hidden" name="album-id"
-						value="<c:out value="${song.album.id}" />" /></td>
-
-					<td class="text song-title"><c:out
-							value="${song.displayTitle}" /></td>
-					<td class="text album-name"><c:out value="${song.album.name}" /></td>
-					<td class="text artist-name"><c:out
-							value="${song.artist.name}" /></td>
-					<td class="text track-length"><c:out
-							value="${song.displayTrackLength}" /></td>
-
-				</tr>
+			<li
+				id="playlist-media-id-<c:out value="${song.id}"/>-album-id-${song.album.id}"
+				class="<c:out value="${playingClass}"/>"><a href="javascript:;"
+				class="delete"><img
+					alt="<spring:message code="action.delete"/>"
+					title="<spring:message code="action.delete"/>"
+					src="<c:url value="${themePath}/images/controls/delete.png"/>" /></a>
 
 
 
-			</c:forEach>
 
-		</tbody>
+				<div class="item">
+					<div class="title">${song.displayTitle}</div>
+					<div class="meta">${song.artist.name}-${song.album.name}</div>
+				</div>
+				
+				
+<img class="up-down"
+				alt="<spring:message code="action.reorder"/>"
+				title="<spring:message code="action.reorder"/>"
+				src="<c:url value="${themePath}/images/controls/up-down.png"/>" />
+				
+				
+				</li>
 
-	</table>
+
+
+
+
+		</c:forEach>
+
+
+	</ul>
 
 </div>
