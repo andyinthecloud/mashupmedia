@@ -45,6 +45,25 @@
             mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
         });
          */
+         
+         
+         $("#playlist ul.playlist-items a.delete").click(function() {
+             var songRow = $(this).closest("li");
+             var songRowId = $(songRow).attr("id");
+             var mediaItemId = parseId(songRowId, "playlist-media-id");
+             alert(mediaItemId);
+             $(songRow).remove();
+             
+             /*
+             if ($(songRow).hasClass(mashupMedia.playingClass)) {
+                 mashupMedia.destroyPlayer();
+             }
+             */
+             
+             //$(this).closest("tr").remove();
+         });
+         
+         
 
         $("div.dynamic-content").on("change", "#playlist-actions", function() {
             var action = $(this).val();
@@ -270,8 +289,8 @@
 				id="playlist-media-id-<c:out value="${song.id}"/>-album-id-${song.album.id}"
 				class="<c:out value="${playingClass}"/>"><a href="javascript:;"
 				class="delete"><img
-					alt="<spring:message code="action.delete"/>"
-					title="<spring:message code="action.delete"/>"
+					alt="<spring:message code="action.playlist.item.remove"/>"
+					title="<spring:message code="action.playlist.item.remove"/>"
 					src="<c:url value="${themePath}/images/controls/delete.png"/>" /></a>
 
 

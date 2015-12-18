@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest;
+package org.mashupmedia.controller.rest.playlist;
 
 import java.util.List;
 
@@ -14,6 +14,7 @@ import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.util.WebHelper.WebContentType;
+import org.mashupmedia.web.restful.RestfulMediaItem;
 import org.mashupmedia.web.restful.RestfulSong;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/restful/music-playlist")
-public class RestfulMusicPlaylistController {
+public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistController{
 
 	@Autowired
 	private PlaylistManager playlistManager;
@@ -69,26 +70,16 @@ public class RestfulMusicPlaylistController {
 	public RestfulSong playCurrentUserMusicPlaylist(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
-		PlaylistMediaItem playlistMediaItem = getSongFromPlaylist(0, playlist);
-		RestfulSong restfulSong = convertToResfulSong(playlistMediaItem);
+		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(0, playlist);
+		RestfulSong restfulSong = convertToResfulMediaItem(playlistMediaItem);
 		return restfulSong;
 	}
 
-	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
-	public RestfulSong playNextSong(Model model) {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		PlaylistMediaItem playlistMediaItem = getSongFromPlaylist(1, playlist);
-		if (playlistMediaItem == null) {
-			return null;
-		}
 
-		User user = AdminHelper.getLoggedInUser();
-		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-		RestfulSong restfulSong = convertToResfulSong(playlistMediaItem);
-		return restfulSong;
-	}
 
-	protected RestfulSong convertToResfulSong(PlaylistMediaItem playlistMediaItem) {
+
+	@Override
+	protected RestfulMediaItem convertToRestfulMediaItem(PlaylistMediaItem playlistMediaItem) {
 		if (playlistMediaItem == null) {
 			return null;
 		}
@@ -96,32 +87,23 @@ public class RestfulMusicPlaylistController {
 		Song song = (Song) playlistMediaItem.getMediaItem();
 		RestfulSong restfulSong = new RestfulSong(song);
 		return restfulSong;
-
 	}
 
 	@RequestMapping(value = "/play/previous", method = RequestMethod.GET)
 	public RestfulSong playPreviousSong(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		PlaylistMediaItem playlistMediaItem = getSongFromPlaylist(-1, playlist);
+		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);
 		if (playlistMediaItem == null) {
 			return null;
 		}
 
 		User user = AdminHelper.getLoggedInUser();
 		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-		RestfulSong restfulSong = convertToResfulSong(playlistMediaItem);
+		RestfulSong restfulSong = convertToResfulMediaItem(playlistMediaItem);
 		return restfulSong;
 	}
 
-	protected PlaylistMediaItem getSongFromPlaylist(int relativePosition, Playlist playlist) {
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist,
-				relativePosition);
-		if (playlistMediaItem == null || playlistMediaItem.getId() < 1) {
-			return null;
-		}
 
-		return playlistMediaItem;
-	}
 
 	protected void savePlaylist(Playlist playlist) {
 		playlistManager.savePlaylist(playlist);
