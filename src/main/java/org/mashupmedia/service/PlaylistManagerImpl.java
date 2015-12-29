@@ -29,47 +29,46 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 	@Autowired
 	private MediaDao mediaDao;
-	
+
 	@Autowired
 	private SecurityManager securityManager;
-	
+
 	@Autowired
 	private AdminManager adminManager;
 
 	@Override
 	public List<Playlist> getPlaylists(PlaylistType playlistType) {
-		
+
 		User user = AdminHelper.getLoggedInUser();
 		long userId = user.getId();
-		boolean isAdministrator = AdminHelper.isAdministrator(user); 
-		
+		boolean isAdministrator = AdminHelper.isAdministrator(user);
+
 		List<Playlist> playlists = playlistDao.getPlaylists(userId, isAdministrator, playlistType);
 		return playlists;
 	}
-	
+
 	protected synchronized void initialisePlaylist(Playlist playlist) {
-		
+
 		if (playlist == null) {
 			return;
 		}
-		
+
 		Hibernate.initialize(playlist.getPlaylistMediaItems());
-		
+
 		List<PlaylistMediaItem> accessiblePlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();		
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
 			MediaItem mediaItem = playlistMediaItem.getMediaItem();
 			if (!mediaItem.isEnabled()) {
 				continue;
-			}			
-			
+			}
+
 			if (securityManager.canAccessPlaylistMediaItem(playlistMediaItem)) {
 				accessiblePlaylistMediaItems.add(playlistMediaItem);
 			}
 		}
 		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
-		
-		
+
 	}
 
 	@Override
@@ -78,7 +77,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		if (playlist == null) {
 			return playlist;
 		}
-		
+
 		initialisePlaylist(playlist);
 
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
@@ -105,9 +104,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		if (playlist == null) {
 			playlist = getDefaultPlaylistForCurrentUser(playlistType);
 		}
-		
+
 		initialisePlaylist(playlist);
-		
+
 		return playlist;
 	}
 
@@ -135,11 +134,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	public void savePlaylist(Playlist playlist) {
 		User createdbyUser = playlist.getCreatedBy();
 		User user = AdminHelper.getLoggedInUser();
-		
+
 		if (createdbyUser != null && !user.equals(createdbyUser)) {
 			throw new UnauthorisedException("Unable to save user playlist");
 		}
-		
+
 		long playlistId = playlist.getId();
 		Date date = new Date();
 		if (playlistId == 0) {
@@ -159,7 +158,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		if (user == null) {
 			return null;
 		}
-		
+
 		long userId = user.getId();
 		List<Playlist> playlists = playlistDao.getPlaylistsForCurrentUser(userId, playlistType);
 		return playlists;
@@ -171,7 +170,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 		User createdbyUser = playlist.getCreatedBy();
 		User user = AdminHelper.getLoggedInUser();
-		
+
 		if (!user.equals(createdbyUser)) {
 			throw new UnauthorisedException("Unable to delete user playlist");
 		}
@@ -184,22 +183,22 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		playlistDao.deleteLibrary(libraryId);
 
 	}
-	
+
 	@Override
 	public void saveUserPlaylistMediaItem(User user, PlaylistMediaItem playlistMediaItem) {
 		if (user == null || playlistMediaItem == null) {
 			return;
 		}
-		
+
 		if (user.getId() == 0) {
 			throw new MashupMediaRuntimeException("Can only update the playlistMediaItem for an existing user.");
 		}
-		
-		user.setPlaylistMediaItem(playlistMediaItem);		
-		savePlaylist(playlistMediaItem.getPlaylist());		
+
+		user.setPlaylistMediaItem(playlistMediaItem);
+		savePlaylist(playlistMediaItem.getPlaylist());
 
 		adminManager.updateUser(user);
-		
+
 	}
 
 }

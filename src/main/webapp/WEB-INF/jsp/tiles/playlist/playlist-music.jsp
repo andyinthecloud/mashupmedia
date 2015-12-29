@@ -6,6 +6,22 @@
     $(document).ready(function() {
         window.scrollTo(0, 0);
         showFooterTabs("music");
+        $("ul.playlist-items").sortable();
+        
+        $("ul.playlist-items").on("sortstop", function( event, ui) {
+            var playlistId = $("#playlist input[name=playlistId]").val();
+            var mediaItemIds = [];
+            
+            $("#playlist ul.playlist-items li").each(function(index) {
+                var mediaItemId = parseId($(this).attr("id"), "playlist-media-id");
+                mediaItemIds.push(mediaItemId);                
+            });
+            
+            $.post( "<c:url value="/app/restful/music-playlist/save-media-items" />", { playlistId: playlistId, mediaItemIds: mediaItemIds } );
+        });
+        
+        //$("ul.playlist-items").disableSelection();
+        
 
         /*
         $("#playlist table.songs tbody").sortable({
@@ -164,6 +180,22 @@
             }
         }
 
+        
+        
+        var playlistId = $("#playlist input[name=playlistId]").val();
+        var mediaItemIds = [];
+        
+        $("#playlist ul.playlist-items li").each(function(index) {
+            var mediaItemId = parseId($(this).attr("id"), "playlist-media-id");
+            mediaItemIds.push(mediaItemId);                
+        });
+        
+        $.post( "<c:url value="/app/restful/music-playlist/save-playlist" />", { 
+            playlistId: playlistId, 
+            mediaItemIds: mediaItemIds 
+        });
+        
+        /*
         var playlistId = $("#playlist input[name=playlistId]").val();
         var mediaItemIds = new Array();
 
@@ -180,10 +212,10 @@
             "playlistName": playlistName,
             "mediaItemIds": mediaItemIds
         }, function(data) {
-            /*
-            $("#playlist input[type=playlistAction]").val("save");
-            $("#playlist-actions").val("");
-             */
+            
+            // $("#playlist input[type=playlistAction]").val("save");
+            // $("#playlist-actions").val("");
+            
             if (playlistAction == "delete") {
                 loadPlaylists();
                 return;
@@ -195,6 +227,7 @@
 
             loadPlaylist(playlistId);
         });
+        */
 
     };
 </script>
@@ -287,7 +320,7 @@
 
 			<li
 				id="playlist-media-id-<c:out value="${song.id}"/>-album-id-${song.album.id}"
-				class="<c:out value="${playingClass}"/>"><a href="javascript:;"
+				class="cursor-move <c:out value="${playingClass}"/>"><a href="javascript:;"
 				class="delete"><img
 					alt="<spring:message code="action.playlist.item.remove"/>"
 					title="<spring:message code="action.playlist.item.remove"/>"

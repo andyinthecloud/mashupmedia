@@ -66,17 +66,20 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		return restfulSong;
 	}
 
-	@RequestMapping(value = "/play/current", method = RequestMethod.GET)
-	public RestfulSong playCurrentUserMusicPlaylist(Model model) {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+//	@RequestMapping(value = "/play/current", method = RequestMethod.GET)
+//	public RestfulSong playCurrentUserMusicPlaylist(Model model) {
+//		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+//
+//		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(0, playlist);
+//		RestfulSong restfulSong = convertToRestfulMediaItem(playlistMediaItem);
+//		return restfulSong;
+//	}
 
-		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(0, playlist);
-		RestfulSong restfulSong = convertToResfulMediaItem(playlistMediaItem);
-		return restfulSong;
-	}
 
-
-
+@Override
+protected PlaylistType getPlaylistType() {
+	return PlaylistType.MUSIC;
+}
 
 	@Override
 	protected RestfulMediaItem convertToRestfulMediaItem(PlaylistMediaItem playlistMediaItem) {
@@ -89,57 +92,57 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		return restfulSong;
 	}
 
-	@RequestMapping(value = "/play/previous", method = RequestMethod.GET)
-	public RestfulSong playPreviousSong(Model model) {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);
-		if (playlistMediaItem == null) {
-			return null;
-		}
+//	@RequestMapping(value = "/play/previous", method = RequestMethod.GET)
+//	public RestfulSong playPreviousSong(Model model) {
+//		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+//		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);
+//		if (playlistMediaItem == null) {
+//			return null;
+//		}
+//
+//		User user = AdminHelper.getLoggedInUser();
+//		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
+//		RestfulSong restfulSong = convertToResfulMediaItem(playlistMediaItem);
+//		return restfulSong;
+//	}
 
-		User user = AdminHelper.getLoggedInUser();
-		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-		RestfulSong restfulSong = convertToResfulMediaItem(playlistMediaItem);
-		return restfulSong;
-	}
 
 
-
-	protected void savePlaylist(Playlist playlist) {
-		playlistManager.savePlaylist(playlist);
-		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getPlaylistMediaItems();
-		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
-	}
+//	protected void savePlaylist(Playlist playlist) {
+//		playlistManager.savePlaylist(playlist);
+//		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getPlaylistMediaItems();
+//		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
+//	}
 	
-	@RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
-	public String handleGetPlaylist(
-			@PathVariable Long playlistId,
-			@RequestParam(value = "webFormatType", required = false) String webFormatTypeValue,
-			@RequestParam(value = "updateLastAccessedToNow", required = false) Boolean isUpdateLastAccessedToNow,
-			Model model) {
-		Playlist playlist = playlistManager.getPlaylist(playlistId);
-		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
-
-		if (isUpdateLastAccessedToNow != null && isUpdateLastAccessedToNow) {
-			playlistManager.savePlaylist(playlist);
-		}
-
-		model.addAttribute("playlist", playlist);
-
-		boolean canSavePlaylist = PlaylistHelper.canSavePlaylist(playlist);
-		if (playlistId == 0) {
-			canSavePlaylist = true;
-		}
-
-		model.addAttribute("canSavePlaylist", canSavePlaylist);
-
-		WebContentType webFormatType = WebHelper.getWebContentType(
-				webFormatTypeValue, WebContentType.HTML);
-		if (webFormatType == WebContentType.JSON) {
-			return "ajax/json/playlist";
-		}
-
-		return "ajax/playlist/music-playlist";
-	}
+//	@RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
+//	public String handleGetPlaylist(
+//			@PathVariable Long playlistId,
+//			@RequestParam(value = "webFormatType", required = false) String webFormatTypeValue,
+//			@RequestParam(value = "updateLastAccessedToNow", required = false) Boolean isUpdateLastAccessedToNow,
+//			Model model) {
+//		Playlist playlist = playlistManager.getPlaylist(playlistId);
+//		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
+//
+//		if (isUpdateLastAccessedToNow != null && isUpdateLastAccessedToNow) {
+//			playlistManager.savePlaylist(playlist);
+//		}
+//
+//		model.addAttribute("playlist", playlist);
+//
+//		boolean canSavePlaylist = PlaylistHelper.canSavePlaylist(playlist);
+//		if (playlistId == 0) {
+//			canSavePlaylist = true;
+//		}
+//
+//		model.addAttribute("canSavePlaylist", canSavePlaylist);
+//
+//		WebContentType webFormatType = WebHelper.getWebContentType(
+//				webFormatTypeValue, WebContentType.HTML);
+//		if (webFormatType == WebContentType.JSON) {
+//			return "ajax/json/playlist";
+//		}
+//
+//		return "ajax/playlist/music-playlist";
+//	}
 
 }
