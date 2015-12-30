@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
@@ -13,6 +12,7 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.AdminHelper;
+import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.web.restful.RestfulMediaItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,13 +91,17 @@ public abstract class AbstractRestfulPlaylistController {
 	@RequestMapping(value = "/save-playlist", method = RequestMethod.POST)
 	public RestfulMediaItem savePlaylist(
 			@RequestParam("playlistId") Long playlistId,
-			@RequestParam(value = "playlistName", required = false) String playlistName,
+//			@RequestParam(value = "playlistName", required = false) String playlistName,
 			@RequestParam(value = "mediaItemIds[]", required = false) Long[] mediaItemsIds,
 			
 			
 			Model model) {
 
 		Playlist playlist = playlistManager.getPlaylist(playlistId);		
+		RestfulMediaItem restfulMediaItem = processSavePlaylist(playlist, mediaItemsIds);
+		return restfulMediaItem;
+
+		/*
 
 		if (mediaItemsIds == null) {
 			mediaItemsIds = new Long[0];
@@ -112,14 +116,92 @@ public abstract class AbstractRestfulPlaylistController {
 		PlaylistHelper.replacePlaylist(playlist, mediaItems);
 		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
 		
-		playlistName = StringUtils.trimToEmpty(playlistName);
-		if (StringUtils.isNotEmpty(playlistName)) {
-			playlist.setName(playlistName);
-		}		
+//		playlistName = StringUtils.trimToEmpty(playlistName);
+//		if (StringUtils.isNotEmpty(playlistName)) {
+//			playlist.setName(playlistName);
+//		}		
+		
+		playlistManager.savePlaylist(playlist);
+		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);
+		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
+		return restfulMediaItem;
+		*/
+	}
+
+	
+	@RequestMapping(value = "/new-playlist", method = RequestMethod.POST)
+	public Long newPlaylist(
+//			@RequestParam("playlistId") Long playlistId,
+			@RequestParam(value = "name", required = false) String name,
+			@RequestParam(value = "mediaItemIds[]", required = false) Long[] mediaItemsIds,
+			
+			
+			Model model) {
+
+		
+		Playlist playlist = new Playlist();
+		
+		name = StringUtils.trimToEmpty(name);
+		if (StringUtils.isEmpty(name)) {
+			name = MessageHelper.getMessage("playlist.new.name"); 
+		}
+		
+		playlist.setName(name);
+		
+		processSavePlaylist(playlist, mediaItemsIds);		
+		return playlist.getId();
+
+		/*
+		if (mediaItemsIds == null) {
+			mediaItemsIds = new Long[0];
+		}
+
+		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		for (Long mediaItemId : mediaItemsIds) {
+			MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+			mediaItems.add(mediaItem);
+		}
+
+		PlaylistHelper.replacePlaylist(playlist, mediaItems);
+		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
+		
+//		playlistName = StringUtils.trimToEmpty(playlistName);
+//		if (StringUtils.isNotEmpty(playlistName)) {
+//			playlist.setName(playlistName);
+//		}		
+		
+		playlistManager.savePlaylist(playlist);
+		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);
+		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
+		return restfulMediaItem;
+		*/
+	}
+	
+	protected RestfulMediaItem processSavePlaylist(Playlist playlist, Long[] mediaItemsIds) {
+		if (mediaItemsIds == null) {
+			mediaItemsIds = new Long[0];
+		}
+
+		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		for (Long mediaItemId : mediaItemsIds) {
+			MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+			mediaItems.add(mediaItem);
+		}
+
+		PlaylistHelper.replacePlaylist(playlist, mediaItems);
+		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
+		
+//		playlistName = StringUtils.trimToEmpty(playlistName);
+//		if (StringUtils.isNotEmpty(playlistName)) {
+//			playlist.setName(playlistName);
+//		}		
 		
 		playlistManager.savePlaylist(playlist);
 		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);
 		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
 		return restfulMediaItem;
 	}
+
+	
+	
 }

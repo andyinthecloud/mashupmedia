@@ -742,6 +742,23 @@ function submitAjaxForm(formElement, pushTitle, pushUrl) {
 	});
 }
 	
+function loadInternalPage(title, url) {
+    History.pushState({
+        pageType: "internal"
+    }, title, url);
+    
+    url = prepareInternalUrlFragment(url);
+    
+    $.get(url, function(data) {
+        var uiContentElement = $("div.ui-content div.dynamic-content");
+        uiContentElement.html(data);
+        uiContentElement.enhanceWithin();
+    });    
+    
+}
+	
+
+	
 function setupMusicPlayer(isAutoPlay) {
     /*
     $(mashupMedia.jPlayerId).jPlayer("destroy");

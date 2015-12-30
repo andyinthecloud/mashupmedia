@@ -148,6 +148,11 @@
             $("#form-log-out").submit();
         });
 
+        $("#nav-panel").on("click", "a", function(){
+            $("#nav-panel a[data-rel=close]").click();
+        });
+        
+        
         document.title = "${headPageTitle}";
 
         $("#music-player").on("click", ".controls a.play", function() {
