@@ -34,8 +34,6 @@ public interface MashUpMediaConstants {
 	public static final String JQUERY_ADDRESS_VERSION = "1.6";
 	public static final String MODEL_KEY_JPLAYER_VERSION = "jPlayerVersion";
 	public static final String JPLAYER_VERSION = "2.9.2";
-	public static final String MODEL_KEY_DATATABLES_VERSION = "dataTablesVersion";
-	public static final String DATATABLES_VERSION = "1.10.5";
 	public static final String MODEL_KEY_JQUERY_MOBILE_VERSION = "jQueryMobileVersion";
 	public static final String JQUERY_MOBILE_VERSION = "1.4.5";
 

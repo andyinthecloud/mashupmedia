@@ -7,6 +7,7 @@
         window.scrollTo(0, 0);
         showFooterTabs("music");
         $("ul.playlist-items").sortable();
+        $("h1.edit").editable("<c:url value="/app/restful/music-playlist/edit-playlist-name" />");
         
         $("div.dynamic-content").on("sortstop", "ul.playlist-items", function( event, ui) {
             var playlistId = $("#playlist input[name=playlistId]").val();
@@ -278,7 +279,7 @@
 
 
 
-	<h1>${playlist.name}</h1>
+	<h1 class="edit" id="playlist-id-${playlist.id}">${playlist.name}</h1>
 
 	<div class="hide change-name">
 		<input type="text" name="playlistName" value="${playlist.name}" />

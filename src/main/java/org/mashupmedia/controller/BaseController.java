@@ -141,11 +141,6 @@ public abstract class BaseController {
 		return MashUpMediaConstants.JPLAYER_VERSION;
 	}
 
-	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_DATATABLES_VERSION)
-	public String populateDataTables() {
-		return MashUpMediaConstants.DATATABLES_VERSION;
-	}
-
 	
 	
 	

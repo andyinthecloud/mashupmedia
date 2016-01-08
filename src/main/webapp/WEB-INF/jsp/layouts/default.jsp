@@ -68,10 +68,10 @@
 	rel="stylesheet" / -->
 
 
-<script type="text/javascript"
-	src="<c:url value="/jquery-plugins/datatables/${dataTablesVersion}/jquery.dataTables.min.js" />"></script>
+<!-- script type="text/javascript"
+	src="<c:url value="/jquery-plugins/datatables/${dataTablesVersion}/jquery.dataTables.min.js" />"></script -->
 
-
+<script src="<c:url value="/jquery-plugins/jeditable/1.7.1/jquery.jeditable.min.js" />" type="text/javascript" charset="utf-8"></script>
 
 <!--  script type="text/javascript" src="<c:url value="/scripts/jplayer-android-fix.js" />"></script -->
 <script type="text/javascript"

@@ -3,7 +3,9 @@ package org.mashupmedia.controller.rest.playlist;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.log4j.Logger;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
@@ -24,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public abstract class AbstractRestfulPlaylistController {
+	
+	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private PlaylistManager playlistManager;
@@ -87,6 +91,27 @@ public abstract class AbstractRestfulPlaylistController {
 	}
 
 	protected abstract RestfulMediaItem convertToRestfulMediaItem(PlaylistMediaItem playlistMediaItem);
+	
+	@RequestMapping(value = "/save-playlist-name", method = RequestMethod.POST)
+	public boolean savePlaylistName(@RequestParam(value = "id") String id, @RequestParam(value = "value") String value ) {
+		id = StringUtils.trimToEmpty(id);
+		if (StringUtils.isEmpty(id)) {
+			logger.info("Unable to save playlist name without id. Id = " + id);
+			return false;
+		}
+		long playlistId = NumberUtils.toLong(id.replaceAll("\\D", ""));
+		Playlist playlist = playlistManager.getPlaylist(playlistId);
+		value = StringUtils.trimToEmpty(value);
+		if (StringUtils.isEmpty(value)) {
+			logger.info("Unable to save empty playlist name.");
+			return false;
+			
+		}		
+		playlist.setName(value);
+		playlistManager.savePlaylist(playlist);		
+		return true;
+	}
+	
 	
 	@RequestMapping(value = "/save-playlist", method = RequestMethod.POST)
 	public RestfulMediaItem savePlaylist(
