@@ -93,24 +93,32 @@ public abstract class AbstractRestfulPlaylistController {
 	protected abstract RestfulMediaItem convertToRestfulMediaItem(PlaylistMediaItem playlistMediaItem);
 	
 	@RequestMapping(value = "/save-playlist-name", method = RequestMethod.POST)
-	public boolean savePlaylistName(@RequestParam(value = "id") String id, @RequestParam(value = "value") String value ) {
+	public String savePlaylistName(@RequestParam(value = "id") String id, @RequestParam(value = "value") String value ) {
 		id = StringUtils.trimToEmpty(id);
 		if (StringUtils.isEmpty(id)) {
 			logger.info("Unable to save playlist name without id. Id = " + id);
-			return false;
+			return value;
 		}
 		long playlistId = NumberUtils.toLong(id.replaceAll("\\D", ""));
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
 		value = StringUtils.trimToEmpty(value);
 		if (StringUtils.isEmpty(value)) {
 			logger.info("Unable to save empty playlist name.");
-			return false;
+			return value;
 			
 		}		
 		playlist.setName(value);
-		playlistManager.savePlaylist(playlist);		
-		return true;
+		playlistManager.savePlaylist(playlist);	
+		String savedPlaylistName = playlist.getName(); 
+		return savedPlaylistName;
 	}
+
+	
+	@RequestMapping(value = "/delete-playlist", method = RequestMethod.POST)
+	public void savePlaylist(@RequestParam("playlistId") Long playlistId, Model model){
+		playlistManager.deletePlaylist(playlistId);		
+}
+
 	
 	
 	@RequestMapping(value = "/save-playlist", method = RequestMethod.POST)
@@ -172,7 +180,7 @@ public abstract class AbstractRestfulPlaylistController {
 		}
 		
 		playlist.setName(name);
-		
+		playlist.setPlaylistType(getPlaylistType());		
 		processSavePlaylist(playlist, mediaItemsIds);		
 		return playlist.getId();
 

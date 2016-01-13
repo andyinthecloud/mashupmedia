@@ -33,6 +33,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		if (playlistType != PlaylistType.ALL) {
 			hqlBuilder.append(" and playlistTypeValue = '" + playlistType.getValue() + "'");
 		}
+		hqlBuilder.append(" order by name");
 
 		Query query = sessionFactory.getCurrentSession().createQuery(hqlBuilder.toString());
 		query.setCacheable(true);

@@ -221,6 +221,8 @@
         $("#footer div.tabs").hide();
 
         var isShowFooter = false;
+        
+        mediaType = mediaType.toLowerCase();
 
         if (mediaType == "music") {
             $("#footer div.music").show();

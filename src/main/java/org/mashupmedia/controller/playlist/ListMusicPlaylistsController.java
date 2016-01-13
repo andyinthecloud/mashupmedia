@@ -9,31 +9,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/playlist/music")
-public class PlaylistMusicController extends AbstractPlaylistController {
+@RequestMapping("/playlist/list/music")
+public class ListMusicPlaylistsController extends AbstractListPlaylistsController {
 
 	@Override
-	protected String getPlaylistPath() {
-		return "playlist/music";
+	protected PlaylistType getPlaylistType() {
+		return PlaylistType.MUSIC;
 	}
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb musicBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music");
 		breadcrumbs.add(musicBreadcrumb);
-		
-		Breadcrumb listPlaylistsBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.playlist"));
+
+		Breadcrumb listPlaylistsBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.playlists"));
 		breadcrumbs.add(listPlaylistsBreadcrumb);
-	}
-
-	@Override
-	public String getPageTitleMessageKey() {
-		return "music.playlist.title";
-	}
-
-	@Override
-	protected PlaylistType getPlaylistType() {
-		return PlaylistType.MUSIC;
 	}
 
 }

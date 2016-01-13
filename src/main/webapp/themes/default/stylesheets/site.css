@@ -717,9 +717,12 @@ ul.playlist-items li{
 	padding: 5px 0;
 }
 
+ul.playlist-items li.playing{
+	font-weight: bold;
+}
+
 ul.playlist-items a.delete {
 	vertical-align: middle;
-	padding: 1em;  	
 }
 
 ul.playlist-items div.item {
@@ -734,9 +737,10 @@ ul.playlist-items div.item div.meta{
 	font-size: 0.8em;  	
 }
 
-ul.playlist-items img.up-down{
+ul.playlist-items div.icons-right{
 	position: absolute;
-	left: 95%; 
-	top: 40%;  	
+	right: 0; 
+	top: 40%; 
+	white-space: nowrap;
 }
 

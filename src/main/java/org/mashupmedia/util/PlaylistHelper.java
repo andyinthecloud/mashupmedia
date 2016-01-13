@@ -190,6 +190,7 @@ public class PlaylistHelper {
 
 		PlaylistMediaItem userPlaylistMediaItem = user.getPlaylistMediaItem();
 		if (userPlaylistMediaItem == null) {
+			playlistMediaItems.get(0).setPlaying(true);
 			return;
 		}
 
@@ -201,6 +202,8 @@ public class PlaylistHelper {
 				return;
 			}
 		}
+		
+		playlistMediaItems.get(0).setPlaying(true);
 
 	}
 
