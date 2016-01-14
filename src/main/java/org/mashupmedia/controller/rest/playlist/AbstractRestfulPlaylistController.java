@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
@@ -26,12 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public abstract class AbstractRestfulPlaylistController {
-	
+
 	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private PlaylistManager playlistManager;
-	
+
 	@Autowired
 	private MediaManager mediaManager;
 
@@ -91,9 +92,9 @@ public abstract class AbstractRestfulPlaylistController {
 	}
 
 	protected abstract RestfulMediaItem convertToRestfulMediaItem(PlaylistMediaItem playlistMediaItem);
-	
+
 	@RequestMapping(value = "/save-playlist-name", method = RequestMethod.POST)
-	public String savePlaylistName(@RequestParam(value = "id") String id, @RequestParam(value = "value") String value ) {
+	public String savePlaylistName(@RequestParam(value = "id") String id, @RequestParam(value = "value") String value) {
 		id = StringUtils.trimToEmpty(id);
 		if (StringUtils.isEmpty(id)) {
 			logger.info("Unable to save playlist name without id. Id = " + id);
@@ -105,111 +106,70 @@ public abstract class AbstractRestfulPlaylistController {
 		if (StringUtils.isEmpty(value)) {
 			logger.info("Unable to save empty playlist name.");
 			return value;
-			
-		}		
+
+		}
 		playlist.setName(value);
-		playlistManager.savePlaylist(playlist);	
-		String savedPlaylistName = playlist.getName(); 
+		playlistManager.savePlaylist(playlist);
+		String savedPlaylistName = playlist.getName();
 		return savedPlaylistName;
 	}
 
-	
 	@RequestMapping(value = "/delete-playlist", method = RequestMethod.POST)
-	public void savePlaylist(@RequestParam("playlistId") Long playlistId, Model model){
-		playlistManager.deletePlaylist(playlistId);		
-}
+	public void deletePlaylist(@RequestParam("playlistId") Long playlistId, Model model) {
+		playlistManager.deletePlaylist(playlistId);
+	}
 
-	
-	
 	@RequestMapping(value = "/save-playlist", method = RequestMethod.POST)
-	public RestfulMediaItem savePlaylist(
-			@RequestParam("playlistId") Long playlistId,
-//			@RequestParam(value = "playlistName", required = false) String playlistName,
-			@RequestParam(value = "mediaItemIds[]", required = false) Long[] mediaItemsIds,
-			
-			
-			Model model) {
+	public RestfulMediaItem savePlaylist(@RequestParam("playlistId") Long playlistId,
+			@RequestParam(value = "mediaItemIds[]", required = false) Long[] mediaItemsIds, Model model) {
 
-		Playlist playlist = playlistManager.getPlaylist(playlistId);		
+		Playlist playlist = playlistManager.getPlaylist(playlistId);
 		RestfulMediaItem restfulMediaItem = processSavePlaylist(playlist, mediaItemsIds);
 		return restfulMediaItem;
-
-		/*
-
-		if (mediaItemsIds == null) {
-			mediaItemsIds = new Long[0];
-		}
-
-		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
-		for (Long mediaItemId : mediaItemsIds) {
-			MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-			mediaItems.add(mediaItem);
-		}
-
-		PlaylistHelper.replacePlaylist(playlist, mediaItems);
-		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
-		
-//		playlistName = StringUtils.trimToEmpty(playlistName);
-//		if (StringUtils.isNotEmpty(playlistName)) {
-//			playlist.setName(playlistName);
-//		}		
-		
-		playlistManager.savePlaylist(playlist);
-		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);
-		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
-		return restfulMediaItem;
-		*/
 	}
 
-	
+	@RequestMapping(value = "/play", method = RequestMethod.POST)
+	public RestfulMediaItem playingMediaItem(@RequestParam("playlist") Long playlistId,
+			@RequestParam(value = "mediaItem") Long mediaItemId, Model model) {
+
+		Playlist playlist = playlistManager.getPlaylist(playlistId);
+
+		if (mediaItemId == 0) {
+			throw new MashupMediaRuntimeException("Unable to play media item. mediaItemId = " + mediaItemId);
+		}
+
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, mediaItemId);
+		if (playlistMediaItem == null) {
+			throw new MashupMediaRuntimeException("Unable to play media item. mediaItemId = " + mediaItemId);
+		}
+
+		User user = AdminHelper.getLoggedInUser();
+		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
+
+		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
+		return restfulMediaItem;
+	}
+
 	@RequestMapping(value = "/new-playlist", method = RequestMethod.POST)
-	public Long newPlaylist(
-//			@RequestParam("playlistId") Long playlistId,
-			@RequestParam(value = "name", required = false) String name,
+	public Long newPlaylist(@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "mediaItemIds[]", required = false) Long[] mediaItemsIds,
-			
-			
+
 			Model model) {
 
-		
 		Playlist playlist = new Playlist();
-		
+
 		name = StringUtils.trimToEmpty(name);
 		if (StringUtils.isEmpty(name)) {
-			name = MessageHelper.getMessage("playlist.new.name"); 
+			name = MessageHelper.getMessage("playlist.new.name");
 		}
-		
+
 		playlist.setName(name);
-		playlist.setPlaylistType(getPlaylistType());		
-		processSavePlaylist(playlist, mediaItemsIds);		
+		playlist.setPlaylistType(getPlaylistType());
+		processSavePlaylist(playlist, mediaItemsIds);
 		return playlist.getId();
 
-		/*
-		if (mediaItemsIds == null) {
-			mediaItemsIds = new Long[0];
-		}
-
-		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
-		for (Long mediaItemId : mediaItemsIds) {
-			MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-			mediaItems.add(mediaItem);
-		}
-
-		PlaylistHelper.replacePlaylist(playlist, mediaItems);
-		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
-		
-//		playlistName = StringUtils.trimToEmpty(playlistName);
-//		if (StringUtils.isNotEmpty(playlistName)) {
-//			playlist.setName(playlistName);
-//		}		
-		
-		playlistManager.savePlaylist(playlist);
-		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);
-		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
-		return restfulMediaItem;
-		*/
 	}
-	
+
 	protected RestfulMediaItem processSavePlaylist(Playlist playlist, Long[] mediaItemsIds) {
 		if (mediaItemsIds == null) {
 			mediaItemsIds = new Long[0];
@@ -223,18 +183,12 @@ public abstract class AbstractRestfulPlaylistController {
 
 		PlaylistHelper.replacePlaylist(playlist, mediaItems);
 		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
-		
-//		playlistName = StringUtils.trimToEmpty(playlistName);
-//		if (StringUtils.isNotEmpty(playlistName)) {
-//			playlist.setName(playlistName);
-//		}		
-		
+
 		playlistManager.savePlaylist(playlist);
 		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);
+
 		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
 		return restfulMediaItem;
 	}
 
-	
-	
 }

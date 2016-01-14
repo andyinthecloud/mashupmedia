@@ -9,7 +9,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
 <sec:csrfMetaTags />
 
 
@@ -270,7 +269,7 @@
 
 
 
-		<div data-role="header" data-position="fixed" id="header">
+		<div data-role="header" data-position="fixed" id="header" data-tap-toggle="false">
 
 			<a class="ui-btn-left" id="logo" href="<c:url value="/" />"
 				rel="internal" title="<spring:message code="home.title" />"><img

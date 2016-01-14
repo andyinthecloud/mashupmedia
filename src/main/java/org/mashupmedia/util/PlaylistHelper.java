@@ -223,4 +223,37 @@ public class PlaylistHelper {
 
 	}
 
+	public static PlaylistMediaItem getPlaylistMediaItem(Playlist playlist, Long mediaItemId) {
+		
+		if (mediaItemId == null || mediaItemId == 0) {
+			return null;
+		}
+		
+		if (playlist == null) {
+			return null;
+		}
+
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return null;
+		}
+
+		User user = AdminHelper.getLoggedInUser();
+		if (user == null) {
+			return null;
+		}
+		
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			MediaItem mediaItem = playlistMediaItem.getMediaItem(); 
+			if (mediaItem.getId() == mediaItemId) {
+				return playlistMediaItem;
+			}
+		}
+		
+		return null;
+		
+	}
+
+
+
 }
