@@ -4,17 +4,16 @@
     var playlistSelectName = $("#playlist input[name=playlistSelectName]").val();
 
     $(document).ready(function() {
-        
+
         // Unbind declared handlers
-        $("div.dynamic-content").off("click", "#playlist ul.playlist-items li");
+        $("div.dynamic-content").off("click", "#playlist ul.playlist-items li a.play");
         $("div.dynamic-content").off("sortstop", "ul.playlist-items");
         $("div.dynamic-content").off("click", "#playlist ul.playlist-items a.delete");
-		$("div.dynamic-content").off("change", "#playlist-actions");
-		                
+        $("div.dynamic-content").off("change", "#playlist-actions");
+
         window.scrollTo(0, 0);
         showFooterTabs("music");
         $("ul.playlist-items").sortable();
-        
 
         <c:if test="${canSavePlaylist}">
         $("h1.edit").editable("<c:url value="/app/restful/music-playlist/save-playlist-name" />", {
@@ -60,25 +59,26 @@
             $(songRow).remove();
             savePlaylist();
         });
-        
-        $("div.dynamic-content").on("click", "#playlist ul.playlist-items li", function() {
-            
+
+        $("div.dynamic-content").on("click", "#playlist ul.playlist-items li a.play", function() {
+
             $("#playlist ul.playlist-items li").removeClass("playing");
-            $(this).addClass("playing");
             
+            var songRow = $(this).closest("li");
+            $(songRow).addClass("playing");
+
             var playlistId = $("#playlist input[name=playlistId]").val();
-            var mediaItemId = parseId($(this).attr("id"), "media-item-id");
-            
-            
+            var mediaItemId = parseId($(songRow).attr("id"), "media-item-id");
+
             $.post("<c:url value="/app/restful/music-playlist/play" />", {
                 playlist: playlistId,
                 mediaItem: mediaItemId
             }, function(data) {
                 mashupMedia.streamSong(data);
-                myAndroidFix.play();
-            });                        
+                mashupMedia.playSong();
+            });
         });
-        
+
     });
 
     function newPlaylist() {
@@ -109,7 +109,7 @@
             playlistId: playlistId
         }, function(data) {
             var url = "<c:url value="/app/playlist/list/music" />";
-            loadInternalPage("<spring:message code="playlists.title" />", url)            
+            loadInternalPage("<spring:message code="playlists.title" />", url)
         });
     }
 
@@ -203,30 +203,29 @@
 				<c:set var="playingClass" value="playing" />
 			</c:if>
 
-			<li
-				id="media-item-id-<c:out value="${song.id}"/>"
-				class="<c:out value="${playingClass}"/>">
+			<li id="media-item-id-<c:out value="${song.id}"/>"
+				class="<c:out value="${playingClass}"/>"><a href="javascript:;"
+				class="play"> <img
+					src="<c:url value="${themePath}/images/controls/play.png"/>" />
+			</a>
 
 				<div class="item">
 					<div class="title">${song.displayTitle}</div>
-					<div class="meta">${song.artist.name} - ${song.album.name}</div>
-				</div> 
-				
+					<div class="meta">${song.artist.name}-${song.album.name}</div>
+				</div>
+
 				<div class="icons-right">
-				
-				<img class="cursor-move" alt="<spring:message code="action.reorder"/>"
-				title="<spring:message code="action.reorder"/>"
-				src="<c:url value="${themePath}/images/controls/up-down.png"/>" />
-				
-				<a
-				href="javascript:;" class="delete"><img
-					alt="<spring:message code="action.playlist.item.remove"/>"
-					title="<spring:message code="action.playlist.item.remove"/>"
-					src="<c:url value="${themePath}/images/controls/delete.png"/>" /></a>
-					</div>
-				
-			</li>
-			
+					<img class="cursor-move"
+						alt="<spring:message code="action.reorder"/>"
+						title="<spring:message code="action.reorder"/>"
+						src="<c:url value="${themePath}/images/controls/up-down.png"/>" />
+
+					<a href="javascript:;" class="delete"><img
+						alt="<spring:message code="action.playlist.item.remove"/>"
+						title="<spring:message code="action.playlist.item.remove"/>"
+						src="<c:url value="${themePath}/images/controls/delete.png"/>" /></a>
+				</div></li>
+
 		</c:forEach>
 
 	</ul>

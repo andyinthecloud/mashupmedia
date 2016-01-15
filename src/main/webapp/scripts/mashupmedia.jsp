@@ -125,6 +125,10 @@ var mashupMedia = new function() {
 			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 		});
 	};
+	this.playSong = function() {
+	    togglePlayPause("play");
+	    myAndroidFix.play();  
+	};
 
 	/*
 	this.loadSongFromPlaylist = function(playlistId, mediaItemId, isAutoPlay) {
@@ -249,6 +253,7 @@ var mashupMedia = new function() {
 		});		
 	};
 	
+	/*
 	this.playSong = function(songId) {
 		$.get(mashupMedia.contextUrl + "app/ajax/playlist/play-song", {
 			"songId" : songId
@@ -258,6 +263,7 @@ var mashupMedia = new function() {
 			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
 		});
 	};
+	*/
 
     this.playSongSearchResults = function() {    	
 		loadSearchResults(true);    

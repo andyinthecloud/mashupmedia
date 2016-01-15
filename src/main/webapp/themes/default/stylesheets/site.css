@@ -715,11 +715,18 @@ ul.playlist-items li{
 	clear: both;
 	border-bottom: 1px solid #e579e9;
 	padding: 5px 0;
+	white-space: nowrap;
 }
 
 ul.playlist-items li.playing{
 	font-weight: bold;
 }
+
+ul.playlist-items a.play {
+	vertical-align: middle;
+	margin-right: 1em;
+}
+
 
 ul.playlist-items a.delete {
 	vertical-align: middle;
