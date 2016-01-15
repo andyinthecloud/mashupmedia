@@ -5,7 +5,7 @@
 
     $(document).ready(function() {
 
-        // Unbind declared handlers
+        // Unbind declared event handlers
         $("div.dynamic-content").off("click", "#playlist ul.playlist-items li a.play");
         $("div.dynamic-content").off("sortstop", "ul.playlist-items");
         $("div.dynamic-content").off("click", "#playlist ul.playlist-items a.delete");

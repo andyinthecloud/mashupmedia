@@ -4,7 +4,12 @@
 <c:if test="${!isAppend}">
 	<script type="text/javascript">
 	$(document).ready(function() {
-	    	    
+
+        // Unbind declared event handlers
+        $("div.dynamic-content").off("mouseover", "div.albums div.album");
+        $("div.dynamic-content").off("mouseout", "div.albums div.album");
+	    
+	    
 		<c:if test="${!isAppend}">
 		showFooterTabs("music");
 		window.scrollTo(0, 0);	
