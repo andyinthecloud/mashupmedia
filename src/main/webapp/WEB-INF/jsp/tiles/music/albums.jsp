@@ -10,11 +10,12 @@
         $("div.dynamic-content").off("mouseout", "div.albums div.album");
 	    
 	    
-		<c:if test="${!isFragment}">		
+		<c:if test="${!isAppend}">
 		window.scrollTo(0, 0);	
 		</c:if>
 
 		showFooterTabs("music", "${musicAlbumListType.className}");
+		
 		
 		$("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
 			$(this).addClass("highlight");
@@ -23,7 +24,8 @@
 		$("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
 			$(this).removeClass("highlight");
 		});
-	
+		
+		
 		$(window).scroll(function() {
 			if ($("div.albums div.album").length == 0) {
 				return;

@@ -177,7 +177,6 @@ var mashupMedia = new function() {
 	    }
 	    
 	    var source = $(mashupMedia.jPlayerId).data().jPlayer.status.src;
-	    console.log(source);
 	    return true;
 	};
 	
@@ -388,7 +387,6 @@ function setupJPlayer(streamFormat, streamUrl) {
 
     if (myAndroidFix) {
         var isPlaying = mashupMedia.isMusicPlaying();
-        console.log(isPlaying);
         myAndroidFix.setMedia(mediaStream);
         if (isPlaying) {
             myAndroidFix.play();    
@@ -491,14 +489,14 @@ function textStartsWith(text, startsWithValue) {
 	return false;
 }
 
-function loadRandomAlbums() {
+function loadRandomAlbums(isAppend) {
 	if (isLoadingContent) {
 		return;
 	}
 	
 	isLoadingContent = true;
 	$.get(mashupMedia.contextUrl + "app/music/random-albums", {
-	        fragment: true
+	    isAppend: isAppend
 	    },      
 		function(data) {
 	        $("div.dynamic-content").append(data);
@@ -506,14 +504,14 @@ function loadRandomAlbums() {
 	});
 }
 
-function loadLatestAlbums() {
+function loadLatestAlbums(isAppend) {
 	if (isLoadingContent) {
 		return;
 	}
 	
 	isLoadingContent = true;
 	$.get(mashupMedia.contextUrl + "app/music/latest-albums", {
-	    fragment: true,
+	    isAppend: isAppend,
 	    pageNumber: mashupMedia.filterPageNumber
 	},
 		function(data) {

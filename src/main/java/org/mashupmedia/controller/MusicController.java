@@ -128,14 +128,15 @@ public class MusicController extends BaseController {
 	}
 
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
-	public String getRandomAlbums(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
-			Model model) {
+	public String getRandomAlbums(
+			@RequestParam(value = MashUpMediaConstants.MODEL_KEY_IS_APPEND, required = false) Boolean isAppend,
+			@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
 		List<Album> albums = musicManager.getRandomAlbums(MAX_ALBUMS);
 
-		if (isFragment == null) {
-			isFragment = false;
+		if (isAppend == null) {
+			isAppend = false;
 		}
-		model.addAttribute("isFragment", isFragment);
+		model.addAttribute("isAppend", isAppend);
 
 		model.addAttribute("albums", albums);
 		model.addAttribute(MusicAlbumListType.RANDOM);
@@ -154,14 +155,15 @@ public class MusicController extends BaseController {
 	 */
 
 	@RequestMapping(value = "/latest-albums", method = RequestMethod.GET)
-	public String getLatestAlbums(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
-			Model model) {
+	public String getLatestAlbums(
+			@RequestParam(value = MashUpMediaConstants.MODEL_KEY_IS_APPEND, required = false) Boolean isAppend,
+			@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
 		List<Album> albums = musicManager.getLatestAlbums(0, MAX_ALBUMS);
 
-		if (isFragment == null) {
-			isFragment = false;
+		if (isAppend == null) {
+			isAppend = false;
 		}
-		model.addAttribute("isFragment", isFragment);
+		model.addAttribute("isAppend", isAppend);
 
 		model.addAttribute("albums", albums);
 		model.addAttribute(MusicAlbumListType.LATEST);
