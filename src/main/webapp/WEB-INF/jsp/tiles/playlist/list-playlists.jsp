@@ -1,5 +1,14 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+<script type="text/javascript">
+
+$(document).ready(function() {
+	showFooterTabs("music", "music-playlist");
+});
+
+</script>
+
+
 <ul class="main-menu ui-listview-inset ui-corner-all ui-shadow"
 	data-role="listview">
 

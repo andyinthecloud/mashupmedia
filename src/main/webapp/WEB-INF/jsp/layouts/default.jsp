@@ -210,7 +210,7 @@
         controlElement.addClass(nextAction);
     }
 
-    function showFooterTabs(mediaType) {
+    function showFooterTabs(mediaType, highlight) {
 
         if (mediaType === undefined) {
             $("#footer").hide();
@@ -236,6 +236,10 @@
         } else {
             $("#footer").hide();
         }
+        
+		$("#footer div.music li a").removeClass("ui-btn-active");		
+		$("#footer div.music li a." + highlight).addClass("ui-btn-active");        
+        
     }
 </script>
 

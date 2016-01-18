@@ -10,14 +10,11 @@
         $("div.dynamic-content").off("mouseout", "div.albums div.album");
 	    
 	    
-		<c:if test="${!isAppend}">
-		showFooterTabs("music");
+		<c:if test="${!isFragment}">		
 		window.scrollTo(0, 0);	
 		</c:if>
 
-		$("#footer div.music li a").removeClass("ui-btn-active");
-		
-		$("#footer div.music li a.${musicAlbumListType.className}").addClass("ui-btn-active");
+		showFooterTabs("music", "${musicAlbumListType.className}");
 		
 		$("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
 			$(this).addClass("highlight");

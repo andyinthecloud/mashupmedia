@@ -12,7 +12,8 @@
         $("div.dynamic-content").off("change", "#playlist-actions");
 
         window.scrollTo(0, 0);
-        showFooterTabs("music");
+        showFooterTabs("music", "music-playlist");
+        
         $("ul.playlist-items").sortable();
 
         <c:if test="${canSavePlaylist}">
@@ -35,7 +36,6 @@
 
         $("div.dynamic-content").on("change", "#playlist-actions", function() {
             var action = $(this).val();
-            if (action == "") { return; }
 
             if (action == "clear") {
                 $("#playlist ul.playlist-items li").remove();
@@ -47,10 +47,12 @@
                 copyPlaylist()
             } else if (action == "delete") {
                 deletePlaylist();
-            } else if (action == "playlists") {
+            } else if (action == "playlists") {                                
                 var url = "<c:url value="/app/playlist/list/music" />";
-                loadInternalPage("<spring:message code="playlists.title" />", url)
+                loadInternalPage("<spring:message code="playlists.title" />", url);                
             }
+            
+            return false;
 
         });
 

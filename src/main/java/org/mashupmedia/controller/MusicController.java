@@ -50,7 +50,7 @@ public class MusicController extends BaseController {
 	public enum MusicAlbumListType {
 		RANDOM("music-random-albums"), LATEST("music-latest-albums"), ALPHABETICAL("music-alphabetical-albums");
 
-		private	MusicAlbumListType(String className) {
+		private MusicAlbumListType(String className) {
 			this.className = className;
 		}
 
@@ -85,26 +85,26 @@ public class MusicController extends BaseController {
 	// public boolean isTransparentBackground() {
 	// return false;
 	// }
-	
+
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_IS_PLAYLIST_OWNER)
 	public boolean isPlaylistOwner() {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
 		User createdBy = playlist.getCreatedBy();
 		User user = AdminHelper.getLoggedInUser();
-		
-		// If the createdBy is null presume that the user has just created this playlist
+
+		// If the createdBy is null presume that the user has just created this
+		// playlist
 		if (createdBy == null) {
 			return true;
 		}
-		
+
 		if (createdBy.equals(user)) {
 			return true;
 		}
-		
-		return false;
-	
-	}
 
+		return false;
+
+	}
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
@@ -131,7 +131,12 @@ public class MusicController extends BaseController {
 	public String getRandomAlbums(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
 			Model model) {
 		List<Album> albums = musicManager.getRandomAlbums(MAX_ALBUMS);
-		model.addAttribute("isAppend", false);
+
+		if (isFragment == null) {
+			isFragment = false;
+		}
+		model.addAttribute("isFragment", isFragment);
+
 		model.addAttribute("albums", albums);
 		model.addAttribute(MusicAlbumListType.RANDOM);
 
@@ -140,19 +145,24 @@ public class MusicController extends BaseController {
 		return pagePath;
 	}
 
-	@RequestMapping(value = "/append-random-albums", method = RequestMethod.GET)
-	public String getAppendRandomAlbums(Model model) {
-		List<Album> albums = musicManager.getRandomAlbums(MAX_ALBUMS);
-		model.addAttribute("isAppend", true);
-		model.addAttribute("albums", albums);
-		return "/tiles/music/albums";
-	}
+	/*
+	 * @RequestMapping(value = "/append-random-albums", method =
+	 * RequestMethod.GET) public String getAppendRandomAlbums(Model model) {
+	 * List<Album> albums = musicManager.getRandomAlbums(MAX_ALBUMS);
+	 * model.addAttribute("isAppend", true); model.addAttribute("albums",
+	 * albums); return "/tiles/music/albums"; }
+	 */
 
 	@RequestMapping(value = "/latest-albums", method = RequestMethod.GET)
 	public String getLatestAlbums(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
 			Model model) {
 		List<Album> albums = musicManager.getLatestAlbums(0, MAX_ALBUMS);
-		model.addAttribute("isAppend", false);
+
+		if (isFragment == null) {
+			isFragment = false;
+		}
+		model.addAttribute("isFragment", isFragment);
+
 		model.addAttribute("albums", albums);
 		model.addAttribute(MusicAlbumListType.LATEST);
 
@@ -161,13 +171,15 @@ public class MusicController extends BaseController {
 		return pagePath;
 	}
 
-	@RequestMapping(value = "/append-latest-albums", method = RequestMethod.GET)
-	public String getAppendLatestAlbums(@RequestParam(value = PAGE_NUMBER_PARAM, required = true) int pageNumber, Model model) {
-		List<Album> albums = musicManager.getLatestAlbums(pageNumber, MAX_ALBUMS);
-		model.addAttribute("isAppend", true);
-		model.addAttribute("albums", albums);
-		return "/tiles/music/albums";
-	}
+	/*
+	 * @RequestMapping(value = "/append-latest-albums", method =
+	 * RequestMethod.GET) public String
+	 * getAppendLatestAlbums(@RequestParam(value = PAGE_NUMBER_PARAM, required =
+	 * true) int pageNumber, Model model) { List<Album> albums =
+	 * musicManager.getLatestAlbums(pageNumber, MAX_ALBUMS);
+	 * model.addAttribute("isAppend", true); model.addAttribute("albums",
+	 * albums); return "/tiles/music/albums"; }
+	 */
 
 	@RequestMapping(value = "/album-art/{imageType}/{albumId}", method = RequestMethod.GET)
 	public ModelAndView getAlbumArt(@PathVariable("imageType") String imageTypeValue,

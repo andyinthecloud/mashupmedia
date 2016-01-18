@@ -245,11 +245,7 @@ var mashupMedia = new function() {
 			"albumId" : albumId
 		}, function(data) {
 		    mashupMedia.streamSong(data);
-		    myAndroidFix.play();
-		    
-			//var mediaItemId = data.mediaItem.id;
-			//var playlistId = data.mediaItem.playlistId;
-			//mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
+            mashupMedia.playSong();
 		});		
 	};
 	
@@ -501,14 +497,11 @@ function loadRandomAlbums() {
 	}
 	
 	isLoadingContent = true;
-	$.get(mashupMedia.contextUrl + "app/music/append-random-albums",
+	$.get(mashupMedia.contextUrl + "app/music/random-albums", {
+	        fragment: true
+	    },      
 		function(data) {
-			if (isAppend) {
-				$("div.dynamic-content").append(data);	
-			} else {
-				$("div.dynamic-content").html(data);
-			}
-			
+	        $("div.dynamic-content").append(data);
 			pauseScrollLoadMore();	
 	});
 }
@@ -519,16 +512,12 @@ function loadLatestAlbums() {
 	}
 	
 	isLoadingContent = true;
-	$.get(mashupMedia.contextUrl + "app/music/append-latest-albums", {
-	    "pageNumber" : mashupMedia.filterPageNumber
+	$.get(mashupMedia.contextUrl + "app/music/latest-albums", {
+	    fragment: true,
+	    pageNumber: mashupMedia.filterPageNumber
 	},
 		function(data) {
-			if (isAppend) {
-				$("div.dynamic-content").append(data);	
-			} else {
-				$("div.dynamic-content").html(data);
-			}
-			
+	        $("div.dynamic-content").append(data);			
 			pauseScrollLoadMore();	
 	});
 }
