@@ -19,7 +19,7 @@ public abstract class AbstractPlaylistController extends BaseController {
 	private PlaylistManager playlistManager;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getPlaylist(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+	public String getPlaylist(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			@RequestParam(value = "playlist", required = false) Long playlistId, Model model) {
 
 		Playlist playlist = null;

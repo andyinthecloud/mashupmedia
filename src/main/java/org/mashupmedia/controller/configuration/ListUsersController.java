@@ -55,7 +55,7 @@ public class ListUsersController extends BaseController {
 	}
 
 	@RequestMapping(value = "/list-users", method = RequestMethod.GET)
-	public String getUsers(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+	public String getUsers(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
 		ListUsersPage listUsersPage = new ListUsersPage();
 		List<User> users = adminManager.getUsers();
 		listUsersPage.setUsers(users);

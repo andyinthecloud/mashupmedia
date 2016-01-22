@@ -37,7 +37,7 @@ public class ConfigurationController extends BaseController {
 	}
 
 	@RequestMapping(value = PAGE_PATH, method = RequestMethod.GET)
-	public String getConfiguration(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+	public String getConfiguration(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
 		String path = getPath(isFragment, REDIRECT_PATH);
 		return path;				
 	}

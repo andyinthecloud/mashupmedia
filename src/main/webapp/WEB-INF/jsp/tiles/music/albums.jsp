@@ -8,14 +8,19 @@
         // Unbind declared event handlers
         $("div.dynamic-content").off("mouseover", "div.albums div.album");
         $("div.dynamic-content").off("mouseout", "div.albums div.album");
-	    
+        $(window).unbind("scroll");
 	    
 		<c:if test="${!isAppend}">
-		window.scrollTo(0, 0);	
-		</c:if>
-
+		mashupMedia.reinitialiseInfinitePage();
 		showFooterTabs("music", "${musicAlbumListType.className}");
 		
+		$(window).scroll(function() {
+			if ($("div.albums div.album").length == 0) {
+				return;
+			}
+			
+			appendContentsOnScroll("${musicAlbumListType.className}");
+		});		
 		
 		$("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
 			$(this).addClass("highlight");
@@ -24,15 +29,7 @@
 		$("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
 			$(this).removeClass("highlight");
 		});
-		
-		
-		$(window).scroll(function() {
-			if ($("div.albums div.album").length == 0) {
-				return;
-			}
-
-			appendContentsOnScroll("${musicAlbumListType.className}");
-		});
+		</c:if>
 		
 	});
 </script>

@@ -13,6 +13,7 @@ import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
@@ -30,6 +31,7 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.view.MediaItemImageView;
 import org.mashupmedia.web.Breadcrumb;
+import org.mashupmedia.web.page.ArtistsPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -129,8 +131,8 @@ public class MusicController extends BaseController {
 
 	@RequestMapping(value = "/random-albums", method = RequestMethod.GET)
 	public String getRandomAlbums(
-			@RequestParam(value = MashUpMediaConstants.MODEL_KEY_IS_APPEND, required = false) Boolean isAppend,
-			@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) Boolean isAppend,
+			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
 		List<Album> albums = musicManager.getRandomAlbums(MAX_ALBUMS);
 
 		if (isAppend == null) {
@@ -156,9 +158,16 @@ public class MusicController extends BaseController {
 
 	@RequestMapping(value = "/latest-albums", method = RequestMethod.GET)
 	public String getLatestAlbums(
-			@RequestParam(value = MashUpMediaConstants.MODEL_KEY_IS_APPEND, required = false) Boolean isAppend,
-			@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
-		List<Album> albums = musicManager.getLatestAlbums(0, MAX_ALBUMS);
+			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) Boolean isAppend,
+			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, 
+			@RequestParam(value = PARAM_PAGE_NUMBER, required = false) Integer pageNumber, 			
+			Model model) {
+		
+		if(pageNumber == null || pageNumber < 0) {
+			pageNumber = 0;
+		}
+		
+		List<Album> albums = musicManager.getLatestAlbums(pageNumber, MAX_ALBUMS);
 
 		if (isAppend == null) {
 			isAppend = false;
@@ -171,6 +180,18 @@ public class MusicController extends BaseController {
 		String pagePath = getPath(isFragment, "music/albums");
 
 		return pagePath;
+	}
+	
+	
+	@RequestMapping(value = "/artists", method = RequestMethod.GET)
+	public String getArtists(Model model) {
+		ArtistsPage artistsPage = new ArtistsPage();
+		List<String> artistIndexLetters = musicManager.getArtistIndexLetters();
+		artistsPage.setArtistIndexLetters(artistIndexLetters);
+		List<Artist> artists = musicManager.getArtists();
+		artistsPage.setArtists(artists);
+		model.addAttribute(artistsPage);
+		return "ajax/music/artists";
 	}
 
 	/*

@@ -75,7 +75,7 @@ public class EncodingConfigurationController extends BaseController {
 	}
 
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.GET)
-	public String getEncodingConfiguration(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+	public String getEncodingConfiguration(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			Model model) {
 		EncodingPage encodingPage = new EncodingPage();
 		String ffMpegFolderPath = encodeManager.getFFMpegFolderPath();
@@ -124,7 +124,7 @@ public class EncodingConfigurationController extends BaseController {
 		configurationManager.saveConfiguration(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES,
 				String.valueOf(totalFfmpegprocesses));
 
-		return "redirect:/app/" + PAGE_PATH + "?" + FRAGMENT_PARAM + "=true";
+		return "redirect:/app/" + PAGE_PATH + "?" + PARAM_FRAGMENT + "=true";
 	}
 
 }

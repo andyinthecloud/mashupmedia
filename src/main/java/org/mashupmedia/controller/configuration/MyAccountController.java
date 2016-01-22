@@ -19,7 +19,7 @@ public class MyAccountController extends EditUserController{
 
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String editAccount(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+	public String editAccount(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
 		User user = AdminHelper.getLoggedInUser();
 		processUserPage(user, model);
 		String path = getPath(isFragment, PAGE_PATH);

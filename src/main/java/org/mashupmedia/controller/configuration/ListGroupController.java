@@ -54,7 +54,7 @@ public class ListGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/list-groups", method = RequestMethod.GET)
-	public String getGroups(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+	public String getGroups(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
 		ListGroupsPage listGroupsPage = new ListGroupsPage();
 		List<Group> groups = adminManager.getGroups();
 		listGroupsPage.setGroups(groups);

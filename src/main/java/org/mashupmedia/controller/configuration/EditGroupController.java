@@ -81,7 +81,7 @@ public class EditGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/edit-group/{groupId}", method = RequestMethod.GET)
-	public String editUser(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+	public String editUser(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			@PathVariable("groupId") Long groupId, Model model) {
 		Group group = adminManager.getGroup(groupId);
 		EditGroupPage editGroupPage = prepareEditGroupPage(group);
@@ -100,7 +100,7 @@ public class EditGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/add-group", method = RequestMethod.GET)
-	public String addUser(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+	public String addUser(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
 		Group group = new Group();
 		EditGroupPage editGroupPage = prepareEditGroupPage(group);
 		model.addAttribute("editGroupPage", editGroupPage);
@@ -132,7 +132,7 @@ public class EditGroupController extends BaseController {
 			adminManager.saveGroup(group);
 		}
 
-		return "redirect:/app/configuration/administration/list-groups?" + FRAGMENT_PARAM + "=true";
+		return "redirect:/app/configuration/administration/list-groups?" + PARAM_FRAGMENT + "=true";
 	}
 
 	protected void processSaveLibraries(List<Library> selectedLibraries, Group group) {

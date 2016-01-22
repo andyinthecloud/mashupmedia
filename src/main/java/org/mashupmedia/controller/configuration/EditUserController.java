@@ -87,7 +87,7 @@ public class EditUserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/edit-user/{userId}", method = RequestMethod.GET)
-	public String editUser(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+	public String editUser(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			@PathVariable("userId") Long userId, Model model) {
 		User user = adminManager.getUser(userId);
 
@@ -102,7 +102,7 @@ public class EditUserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/add-user", method = RequestMethod.GET)
-	public String addUser(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+	public String addUser(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
 		User user = new User();
 		user.setEnabled(true);
 		user.setEditable(true);
@@ -141,7 +141,7 @@ public class EditUserController extends BaseController {
 			adminManager.saveUser(user);
 		}
 
-		return "redirect:/app/configuration/administration/list-users?" + FRAGMENT_PARAM + "=true";
+		return "redirect:/app/configuration/administration/list-users?" + PARAM_FRAGMENT + "=true";
 	}
 
 	protected void processAdministratorRole(EditUserPage editUserPage) {

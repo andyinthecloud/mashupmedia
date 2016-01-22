@@ -20,7 +20,7 @@ public abstract class AbstractListPlaylistsController extends BaseController {
 	private PlaylistManager playlistManager;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getPlaylists(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+	public String getPlaylists(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			Model model) {
 
 		List<Playlist> playlists = playlistManager.getPlaylists(getPlaylistType());

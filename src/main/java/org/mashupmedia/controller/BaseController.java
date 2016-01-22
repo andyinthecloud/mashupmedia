@@ -23,9 +23,9 @@ public abstract class BaseController {
 	protected final static String MODEL_KEY_HAS_ERRORS = "hasErrors";
 	protected final static String MODEL_KEY_BREADCRUMBS = "breadcrumbs";
 	protected final static String MODEL_KEY_HEAD_PAGE_TITLE = "headPageTitle";	
-	protected final static String FRAGMENT_PARAM = "fragment";
+	protected final static String PARAM_FRAGMENT = "fragment";
 	protected final static String FRAGMENT_APPEND_PATH = "/fragment";
-	protected final static String PAGE_NUMBER_PARAM = "pageNumber";
+	protected final static String PARAM_PAGE_NUMBER = "pageNumber";
 
 	@Autowired
 	private PlaylistManager playlistManager;

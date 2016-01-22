@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class HomeController extends BaseController {
 
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
-	public String getHome(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment) {		
+	public String getHome(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment) {		
 		String path = getPath(isFragment, "home");
 		return path;
 	}

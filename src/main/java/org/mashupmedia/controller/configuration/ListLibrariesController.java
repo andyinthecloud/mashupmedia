@@ -41,7 +41,7 @@ public class ListLibrariesController extends BaseController {
 	}
 
 	@RequestMapping(value = "/configuration/list-libraries", method = RequestMethod.GET)
-	public String getListLibrariesPage(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+	public String getListLibrariesPage(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			Model model) {
 
 		ListLibrariesPage listLibrariesPage = new ListLibrariesPage();
@@ -55,7 +55,7 @@ public class ListLibrariesController extends BaseController {
 	}
 
 	@RequestMapping(value = "/configuration/choose-library-type", method = RequestMethod.GET)
-	public String handleChooseLibraryType(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+	public String handleChooseLibraryType(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			Model model) {
 		String path = getPath(isFragment, CHOOSE_LIBRARY_PAGE_PATH);
 		return path;

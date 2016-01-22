@@ -45,7 +45,7 @@ public class NetworkConfigurationController extends BaseController {
 	}
 
 	@RequestMapping(value = PAGE_URL, method = RequestMethod.GET)
-	public String getNetwork(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+	public String getNetwork(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
 		NetworkPage networkPage = new NetworkPage();
 
 		String proxyEnabled = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
@@ -92,7 +92,7 @@ public class NetworkConfigurationController extends BaseController {
 		String proxyPassword = networkPage.getProxyPassword();
 		configurationManager.saveEncryptedConfiguration(MashUpMediaConstants.PROXY_PASSWORD, proxyPassword);
 
-		return "redirect:/app/configuration?" +FRAGMENT_PARAM + "=true";
+		return "redirect:/app/configuration?" +PARAM_FRAGMENT + "=true";
 	}
 
 }

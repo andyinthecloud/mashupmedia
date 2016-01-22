@@ -54,7 +54,7 @@ public class AjaxSearchController extends AjaxBaseController {
 			@RequestParam(value = "isAscending", required = false) String isAscendingValue,
 			@RequestParam(value = "action", required = false) String action,
 			@RequestParam(value = "maximumResults", required = false) Integer maximumResults, 
-			@RequestParam(value = "isAppend", required = false) String isAppendValue,			
+			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) String isAppendValue,			
 			Model model) {
 
 		MediaItemSearchCriteria mediaItemSearchCriteria = new MediaItemSearchCriteria();

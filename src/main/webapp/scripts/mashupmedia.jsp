@@ -248,6 +248,11 @@ var mashupMedia = new function() {
 		});		
 	};
 	
+	this.reinitialiseInfinitePage = function() {
+	    window.scrollTo(0, 0);
+	    this.filterPageNumber = 0;
+	};
+	
 	/*
 	this.playSong = function(songId) {
 		$.get(mashupMedia.contextUrl + "app/ajax/playlist/play-song", {
@@ -496,7 +501,8 @@ function loadRandomAlbums(isAppend) {
 	
 	isLoadingContent = true;
 	$.get(mashupMedia.contextUrl + "app/music/random-albums", {
-	    isAppend: isAppend
+	    append: true,
+	    fragment: true
 	    },      
 		function(data) {
 	        $("div.dynamic-content").append(data);
@@ -509,13 +515,18 @@ function loadLatestAlbums(isAppend) {
 		return;
 	}
 	
-	isLoadingContent = true;
+	isLoadingContent = true;	
+    mashupMedia.filterPageNumber++;
+
+
 	$.get(mashupMedia.contextUrl + "app/music/latest-albums", {
-	    isAppend: isAppend,
+	    append: true,
+        fragment: true,
 	    pageNumber: mashupMedia.filterPageNumber
 	},
 		function(data) {
-	        $("div.dynamic-content").append(data);			
+	        var albumListElements = $(data).find("div.albums li");
+	        $("div.dynamic-content div.albums").append(albumListElements);			
 			pauseScrollLoadMore();	
 	});
 }
@@ -645,9 +656,11 @@ function isValidNumber(value) {
 
 function appendContentsOnScroll(contentType) {
     if ($(window).scrollTop() >= $(document).height() - $(window).height()) {
-	
-		var pageNumber = mashupMedia.filterPageNumber + 1;
-		mashupMedia.filterPageNumber = pageNumber;
+        
+
+        
+//		var pageNumber = mashupMedia.filterPageNumber + 1;
+//		mashupMedia.filterPageNumber = pageNumber;
 		
 		if (contentType == "music-random-albums") {
 		    loadRandomAlbums(true);

@@ -75,7 +75,7 @@ public abstract class AbstractLibraryController extends BaseController {
 	protected abstract String getLibraryPath();
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String handleGetLibrary(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment,
+	public String handleGetLibrary(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			@RequestParam(value = "id", required = false) Long libraryId, Model model) {
 		LibraryPage libraryPage = initialiseLibraryPage(libraryId);
 		model.addAttribute(libraryPage);
@@ -116,7 +116,7 @@ public abstract class AbstractLibraryController extends BaseController {
 	}
 
 	protected String getRedirectListLibraryView() {
-		return "redirect:/app/configuration/list-libraries?" + FRAGMENT_PARAM + "=true";
+		return "redirect:/app/configuration/list-libraries?" + PARAM_FRAGMENT + "=true";
 	}
 
 	private void processSaveAction(LibraryPage libraryPage) {

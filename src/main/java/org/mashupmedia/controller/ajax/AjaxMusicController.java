@@ -152,7 +152,7 @@ public class AjaxMusicController extends AjaxBaseController {
 	@RequestMapping(value = "/albums", method = RequestMethod.GET)
 	public String getAlbums(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
 			@RequestParam(value = "searchLetter", required = false) String searchLetter,
-			@RequestParam(value = "isAppend", required = false) Boolean isAppend, Model model) {
+			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) Boolean isAppend, Model model) {
 		AlbumsPage albumsPage = new AlbumsPage();
 		List<String> albumIndexLetters = musicManager.getAlbumIndexLetters();
 		albumsPage.setAlbumIndexLetters(albumIndexLetters);
@@ -163,21 +163,21 @@ public class AjaxMusicController extends AjaxBaseController {
 		List<Album> albums = musicManager.getAlbums(searchLetter, pageNumber, TOTAL_ALBUMS);
 		albumsPage.setAlbums(albums);
 		model.addAttribute(albumsPage);
-		model.addAttribute("isAppend", BooleanUtils.toBoolean(isAppend));
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
 
 		return "ajax/music/albums";
 	}
 
-	@RequestMapping(value = "/artists", method = RequestMethod.GET)
-	public String getArtists(Model model) {
-		ArtistsPage artistsPage = new ArtistsPage();
-		List<String> artistIndexLetters = musicManager.getArtistIndexLetters();
-		artistsPage.setArtistIndexLetters(artistIndexLetters);
-		List<Artist> artists = musicManager.getArtists();
-		artistsPage.setArtists(artists);
-		model.addAttribute(artistsPage);
-		return "ajax/music/artists";
-	}
+//	@RequestMapping(value = "/artists", method = RequestMethod.GET)
+//	public String getArtists(Model model) {
+//		ArtistsPage artistsPage = new ArtistsPage();
+//		List<String> artistIndexLetters = musicManager.getArtistIndexLetters();
+//		artistsPage.setArtistIndexLetters(artistIndexLetters);
+//		List<Artist> artists = musicManager.getArtists();
+//		artistsPage.setArtists(artists);
+//		model.addAttribute(artistsPage);
+//		return "ajax/music/artists";
+//	}
 	
 	/*
 	@RequestMapping(value = "/play/media-item/{mediaItemId}", method = RequestMethod.GET)

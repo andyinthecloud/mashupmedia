@@ -47,7 +47,7 @@ public class ListEncodingProcessesController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String handleGetEncodingProcessesPage(
-			@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean isFragment, Model model) {
+			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
 		EncodingProcessesPage encodingProcessesPage = new EncodingProcessesPage();
 		encodingProcessesPage.setEncodingProcesses(new ArrayList<EncodingProcess>());
 		model.addAttribute("encodingProcessesPage", encodingProcessesPage);

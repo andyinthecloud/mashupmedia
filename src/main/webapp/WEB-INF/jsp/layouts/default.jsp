@@ -377,7 +377,7 @@
 						title="<spring:message code="footer.music.latest"/>"><img
 							alt="<spring:message code="footer.music.latest"/>"
 							src="<c:url value="${themePath}/images/link-icons/star.png"/>" /></a></li>
-					<li><a rel="internal" href="javascript:;"
+					<li><a rel="internal" href="<c:url value="/app/music/artists" />"
 						class="music-artists" data-media="music"
 						title="<spring:message code="footer.music.artists"/>"><img
 							alt="<spring:message code="footer.music.artists"/>"
