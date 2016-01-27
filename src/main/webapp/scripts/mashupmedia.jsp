@@ -531,6 +531,25 @@ function loadLatestAlbums() {
 	});
 }
 
+function loadAlbums() { 
+    if (isLoadingContent) {
+        return;
+    }
+    isLoadingContent = true;
+    mashupMedia.filterPageNumber++;
+    
+    $.get("<c:url value="/app/ajax/music/albums" />", {
+        append: true,
+        fragment: true
+        pageNumber : mashupMedia.filterPageNumber,
+        searchLetter: mashupMedia.filterAlbumsSearchLetter
+    }, function(data) {        
+        var albums = $(data).filter("div.albums");
+        $("div.dynamic-content div.albums").append(albums);
+        pauseScrollLoadMore();          
+    });
+}
+
 
 function loadSongSearchResults(isAppend) {
 	if (isLoadingContent) {
@@ -567,25 +586,6 @@ function loadLatestPhotos(isAppend) {
 	
 }
 
-function loadAlbums(isAppend) {	
-	if (isLoadingContent) {
-		return;
-	}
-	isLoadingContent = true;
-	
-	$.get("<c:url value="/app/ajax/music/albums" />", {
-		"pageNumber" : mashupMedia.filterPageNumber,
-		"searchLetter": mashupMedia.filterAlbumsSearchLetter,
-		"isAppend": isAppend
-	}, function(data) {
-		if (isAppend) {
-			$("div.panel div.content").append(data);	
-		} else {
-			$("div.panel div.content").html(data);
-		}				
-		pauseScrollLoadMore();
-	});
-}
 
 function loadArtists() {
 	$.get("<c:url value="/app/ajax/music/artists" />", function(data) {

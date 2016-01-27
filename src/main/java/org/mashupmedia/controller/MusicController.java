@@ -3,6 +3,7 @@ package org.mashupmedia.controller;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -135,10 +136,7 @@ public class MusicController extends BaseController {
 			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
 		List<Album> albums = musicManager.getRandomAlbums(MAX_ALBUMS);
 
-		if (isAppend == null) {
-			isAppend = false;
-		}
-		model.addAttribute("isAppend", isAppend);
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
 
 		model.addAttribute("albums", albums);
 		model.addAttribute(MusicAlbumListType.RANDOM);
@@ -167,18 +165,41 @@ public class MusicController extends BaseController {
 			pageNumber = 0;
 		}
 		
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
+		
 		List<Album> albums = musicManager.getLatestAlbums(pageNumber, MAX_ALBUMS);
-
-		if (isAppend == null) {
-			isAppend = false;
-		}
-		model.addAttribute("isAppend", isAppend);
-
 		model.addAttribute("albums", albums);
+		
 		model.addAttribute(MusicAlbumListType.LATEST);
 
 		String pagePath = getPath(isFragment, "music/albums");
+		return pagePath;
+	}
+	
+	
+	@RequestMapping(value = "/albums", method = RequestMethod.GET)
+	public String getAlbums(
+			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) Boolean isAppend,
+			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, 
+			@RequestParam(value = PARAM_PAGE_NUMBER, required = false) Integer pageNumber,
+			@RequestParam(value = "searchLetter", required = false) String searchLetter,
+			Model model) {
+		
+		List<String> albumIndexLetters = musicManager.getAlbumIndexLetters();
+		model.addAttribute("albumIndexLetters", albumIndexLetters);
+		
+		if (pageNumber == null || pageNumber < 0) {
+			pageNumber = 0;
+		}
 
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
+
+		List<Album> albums = musicManager.getAlbums(searchLetter, pageNumber, MAX_ALBUMS);		
+		model.addAttribute("albums", albums);
+		
+		model.addAttribute(MusicAlbumListType.ALPHABETICAL);
+
+		String pagePath = getPath(isFragment, "music/albums");
 		return pagePath;
 	}
 	

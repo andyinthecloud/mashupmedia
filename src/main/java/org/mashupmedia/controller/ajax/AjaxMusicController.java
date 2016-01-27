@@ -6,19 +6,14 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
-import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.restful.MusicWebService;
 import org.mashupmedia.service.AdminManager;
@@ -27,15 +22,10 @@ import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
-import org.mashupmedia.util.PlaylistHelper;
-import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.web.page.AlbumPage;
-import org.mashupmedia.web.page.AlbumsPage;
 import org.mashupmedia.web.page.ArtistPage;
-import org.mashupmedia.web.page.ArtistsPage;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,7 +34,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -149,24 +138,24 @@ public class AjaxMusicController extends AjaxBaseController {
 		return remoteMediaMeta;
 	}
 
-	@RequestMapping(value = "/albums", method = RequestMethod.GET)
-	public String getAlbums(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-			@RequestParam(value = "searchLetter", required = false) String searchLetter,
-			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) Boolean isAppend, Model model) {
-		AlbumsPage albumsPage = new AlbumsPage();
-		List<String> albumIndexLetters = musicManager.getAlbumIndexLetters();
-		albumsPage.setAlbumIndexLetters(albumIndexLetters);
-		if (pageNumber == null) {
-			pageNumber = 0;
-		}
-
-		List<Album> albums = musicManager.getAlbums(searchLetter, pageNumber, TOTAL_ALBUMS);
-		albumsPage.setAlbums(albums);
-		model.addAttribute(albumsPage);
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
-
-		return "ajax/music/albums";
-	}
+//	@RequestMapping(value = "/albums", method = RequestMethod.GET)
+//	public String getAlbums(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+//			@RequestParam(value = "searchLetter", required = false) String searchLetter,
+//			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) Boolean isAppend, Model model) {
+//		AlbumsPage albumsPage = new AlbumsPage();
+//		List<String> albumIndexLetters = musicManager.getAlbumIndexLetters();
+//		albumsPage.setAlbumIndexLetters(albumIndexLetters);
+//		if (pageNumber == null) {
+//			pageNumber = 0;
+//		}
+//
+//		List<Album> albums = musicManager.getAlbums(searchLetter, pageNumber, TOTAL_ALBUMS);
+//		albumsPage.setAlbums(albums);
+//		model.addAttribute(albumsPage);
+//		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
+//
+//		return "ajax/music/albums";
+//	}
 
 //	@RequestMapping(value = "/artists", method = RequestMethod.GET)
 //	public String getArtists(Model model) {
