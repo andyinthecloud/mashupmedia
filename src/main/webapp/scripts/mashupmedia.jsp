@@ -494,7 +494,7 @@ function textStartsWith(text, startsWithValue) {
 	return false;
 }
 
-function loadRandomAlbums(isAppend) {
+function loadRandomAlbums() {
 	if (isLoadingContent) {
 		return;
 	}
@@ -503,14 +503,14 @@ function loadRandomAlbums(isAppend) {
 	$.get(mashupMedia.contextUrl + "app/music/random-albums", {
 	    append: true,
 	    fragment: true
-	    },      
-		function(data) {
-	        $("div.dynamic-content").append(data);
-			pauseScrollLoadMore();	
+	    }, function(data) {
+	        var albums = $(data).filter("div.albums");
+	        $("div.dynamic-content div.albums").append(albums);
+	        pauseScrollLoadMore();
 	});
 }
 
-function loadLatestAlbums(isAppend) {
+function loadLatestAlbums() {
 	if (isLoadingContent) {
 		return;
 	}
@@ -525,9 +525,9 @@ function loadLatestAlbums(isAppend) {
 	    pageNumber: mashupMedia.filterPageNumber
 	},
 		function(data) {
-	        var albumListElements = $(data).find("div.albums li");
-	        $("div.dynamic-content div.albums").append(albumListElements);			
-			pauseScrollLoadMore();	
+            var albums = $(data).filter("div.albums");
+            $("div.dynamic-content div.albums").append(albums);
+            pauseScrollLoadMore();			
 	});
 }
 
@@ -614,12 +614,7 @@ function loadArtist(artistId) {
 }
 
 function pauseScrollLoadMore() {
-	/*
-	va/*
-         * r uiContentElement = $("div.dynamic-content");
-         * uiContentElement.enhanceWithin(); /
-         * 
-         */setTimeout(function() {
+	setTimeout(function() {
 		isLoadingContent = false;
 	}, 1000);	
 			
@@ -663,9 +658,9 @@ function appendContentsOnScroll(contentType) {
 //		mashupMedia.filterPageNumber = pageNumber;
 		
 		if (contentType == "music-random-albums") {
-		    loadRandomAlbums(true);
+		    loadRandomAlbums();
 		} else if (contentType == "music-latest-albums") {
-		    loadLatestAlbums(true);
+		    loadLatestAlbums();
 		} else if (contentType == "music-alphabetical-albums") {
 		    loadAlbums(true);
 		} else if (textStartsWith(currentPage, addressQuickSearchMediaItems)) {
@@ -748,7 +743,7 @@ function submitAjaxForm(formElement, pushTitle, pushUrl) {
 	});
 }
 	
-function loadInternalPage(title, url) {
+function loadInternalPage(title, url) {    
     History.pushState({
         pageType: "internal"
     }, title, url);
@@ -759,6 +754,7 @@ function loadInternalPage(title, url) {
         var uiContentElement = $("div.ui-content div.dynamic-content");
         uiContentElement.html(data);
         uiContentElement.enhanceWithin();
+        
     });    
     
 }

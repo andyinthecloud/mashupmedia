@@ -3,38 +3,74 @@
 
 <c:if test="${!isAppend}">
 	<script type="text/javascript">
-	$(document).ready(function() {
+        $(document).ready(function() {
 
-        // Unbind declared event handlers
-        $("div.dynamic-content").off("mouseover", "div.albums div.album");
-        $("div.dynamic-content").off("mouseout", "div.albums div.album");
-        $(window).unbind("scroll");
-	    
-		<c:if test="${!isAppend}">
-		mashupMedia.reinitialiseInfinitePage();
-		showFooterTabs("music", "${musicAlbumListType.className}");
-		
-		$(window).scroll(function() {
-			if ($("div.albums div.album").length == 0) {
-				return;
-			}
-			
-			appendContentsOnScroll("${musicAlbumListType.className}");
-		});		
-		
-		$("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
-			$(this).addClass("highlight");
-		});
-		
-		$("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
-			$(this).removeClass("highlight");
-		});
-		</c:if>
-		
-	});
-</script>
+            // Unbind declared event handlers
+            $("div.dynamic-content").off("mouseover", "div.albums div.album");
+            $("div.dynamic-content").off("mouseout", "div.albums div.album");
+            $("div.dynamic-content").off("change", "input[name=albums-view]");
+            $(window).unbind("scroll");
+
+            mashupMedia.reinitialiseInfinitePage();
+
+            showFooterTabs("music", "music-albums");
+
+            $(window).scroll(function() {
+                if ($("div.albums div.album").length == 0) { return; }
+
+                appendContentsOnScroll("${musicAlbumListType.className}");
+            });
+
+            $("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
+                $(this).addClass("highlight");
+            });
+
+            $("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
+                $(this).removeClass("highlight");
+            });
+
+            $("div.dynamic-content").on("change", "input[name=albums-view]", function() {
+
+                var albumView = $(this).val();
+                var url = "<c:url value="/app/music/latest-albums" />";
+                var title = "<spring:message code="music.title.latest" />";
+
+                if (albumView == "random") {
+                    url = "<c:url value="/app/music/random-albums" />";
+                    title = "<spring:message code="music.title.random" />";
+                } else if (albumView == "alphabetical") {
+                    url = "<c:url value="/app/music/albums" />";
+                    title = "<spring:message code="music.title.alphabetical" />";
+                }
+
+                loadInternalPage(title, url);
+            });
+
+        });
+    </script>
+
+	<div class="ui-field-contain">
+		<fieldset data-role="controlgroup" data-type="horizontal"
+			id="albums-view">
+			<input name="albums-view" id="albums-view-random" value="random"
+				type="radio"
+				<c:if test="${musicAlbumListType == 'RANDOM'}">checked="checked"</c:if> />
+			<label for="albums-view-random"><spring:message
+					code="music.show.random" /></label> <input name="albums-view"
+				id="albums-view-latest" value="latest" type="radio"
+				<c:if test="${musicAlbumListType == 'LATEST'}">checked="checked"</c:if> />
+			<label for="albums-view-latest"><spring:message
+					code="music.show.latest" /></label> <input name="albums-view"
+				id="albums-view-alphabetical" value="alphabetical" type="radio"
+				<c:if test="${musicAlbumListType == 'ALPHABETICAL'}">checked="checked"</c:if> />
+			<label for="albums-view-alphabetical"><spring:message
+					code="music.show.alphabetical" /></label>
+		</fieldset>
+	</div>
+
+
+
 </c:if>
-
 
 <div class="albums">
 	<c:forEach items="${albums}" var="album">

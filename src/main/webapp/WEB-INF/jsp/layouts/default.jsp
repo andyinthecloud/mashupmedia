@@ -70,7 +70,9 @@
 <!-- script type="text/javascript"
 	src="<c:url value="/jquery-plugins/datatables/${dataTablesVersion}/jquery.dataTables.min.js" />"></script -->
 
-<script src="<c:url value="/jquery-plugins/jeditable/1.7.1/jquery.jeditable.min.js" />" type="text/javascript" charset="utf-8"></script>
+<script
+	src="<c:url value="/jquery-plugins/jeditable/1.7.1/jquery.jeditable.min.js" />"
+	type="text/javascript" charset="utf-8"></script>
 
 <!--  script type="text/javascript" src="<c:url value="/scripts/jplayer-android-fix.js" />"></script -->
 <script type="text/javascript"
@@ -147,11 +149,10 @@
             $("#form-log-out").submit();
         });
 
-        $("#nav-panel").on("click", "a", function(){
+        $("#nav-panel").on("click", "a", function() {
             $("#nav-panel a[data-rel=close]").click();
         });
-        
-        
+
         document.title = "${headPageTitle}";
 
         $("#music-player").on("click", ".controls a.play", function() {
@@ -220,7 +221,7 @@
         $("#footer div.tabs").hide();
 
         var isShowFooter = false;
-        
+
         mediaType = mediaType.toLowerCase();
 
         if (mediaType == "music") {
@@ -236,10 +237,10 @@
         } else {
             $("#footer").hide();
         }
-        
-		$("#footer div.music li a").removeClass("ui-btn-active");		
-		$("#footer div.music li a." + highlight).addClass("ui-btn-active");        
-        
+
+        $("#footer div.music li a").removeClass("ui-btn-active");
+        $("#footer div.music li a." + highlight).addClass("ui-btn-active");
+
     }
 </script>
 
@@ -273,7 +274,8 @@
 
 
 
-		<div data-role="header" data-position="fixed" id="header" data-tap-toggle="false">
+		<div data-role="header" data-position="fixed" id="header"
+			data-tap-toggle="false">
 
 			<a class="ui-btn-left" id="logo" href="<c:url value="/" />"
 				rel="internal" title="<spring:message code="home.title" />"><img
@@ -365,29 +367,22 @@
 			data-role="footer" data-position-fixed="true">
 			<div class="tabs music" data-role="navbar">
 				<ul>
-					<li><a rel="internal"
-						href="<c:url value="/app/music/random-albums" />"
-						class="music-random-albums" data-media="music"
-						title="<spring:message code="footer.music.random"/>"><img
-							alt="<spring:message code="footer.music.random"/>"
-							src="<c:url value="${themePath}/images/link-icons/random.png"/>" /></a></li>
-					<li><a rel="internal"
-						href="<c:url value="/app/music/latest-albums" />"
-						class="music-latest-albums" data-media="music"
-						title="<spring:message code="footer.music.latest"/>"><img
-							alt="<spring:message code="footer.music.latest"/>"
-							src="<c:url value="${themePath}/images/link-icons/star.png"/>" /></a></li>
-					<li><a rel="internal" href="<c:url value="/app/music/artists" />"
-						class="music-artists" data-media="music"
-						title="<spring:message code="footer.music.artists"/>"><img
-							alt="<spring:message code="footer.music.artists"/>"
-							src="<c:url value="${themePath}/images/link-icons/artist.png"/>" /></a></li>
-					<li><a rel="internal" href="javascript:;"
-						class="music-alphabetical-albums" data-media="music"
+
+					<li><a rel="internal" href="javascript:;" class="music-albums"
+						data-media="music"
 						title="<spring:message code="footer.music.albums"/>"><img
 							alt="<spring:message code="footer.music.albums"/>"
 							src="<c:url value="${themePath}/images/link-icons/album.png"/>" /></a></li>
-					<li><a rel="internal" href="<c:url value="/app/playlist/music" />"
+
+					<li><a rel="internal"
+						href="<c:url value="/app/music/artists" />" class="music-artists"
+						data-media="music"
+						title="<spring:message code="footer.music.artists"/>"><img
+							alt="<spring:message code="footer.music.artists"/>"
+							src="<c:url value="${themePath}/images/link-icons/artist.png"/>" /></a></li>
+
+					<li><a rel="internal"
+						href="<c:url value="/app/playlist/music" />"
 						class="music-playlist" data-media="music"
 						title="<spring:message code="footer.music.playlist"/>"><img
 							alt="<spring:message code="footer.music.playlist"/>"
