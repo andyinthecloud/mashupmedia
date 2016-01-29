@@ -9,6 +9,10 @@
             $("div.dynamic-content").off("mouseover", "div.albums div.album");
             $("div.dynamic-content").off("mouseout", "div.albums div.album");
             $("div.dynamic-content").off("change", "input[name=albums-view]");
+            $("div.dynamic-content").off("click", "ul.index-letters a");
+            
+            mashupMedia.filterAlbumsSearchLetter = "";
+            
             $(window).unbind("scroll");
 
             mashupMedia.reinitialiseInfinitePage();
@@ -17,10 +21,14 @@
 
             $(window).scroll(function() {
                 if ($("div.albums div.album").length == 0) { return; }
-
                 appendContentsOnScroll("${musicAlbumListType.className}");
             });
 
+            $("div.dynamic-content").on("click", "ul.index-letters a", function() {
+                mashupMedia.filterAlbumsSearchLetter = $(this).text();
+            });
+
+            
             $("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
                 $(this).addClass("highlight");
             });
@@ -30,7 +38,6 @@
             });
 
             $("div.dynamic-content").on("change", "input[name=albums-view]", function() {
-
                 var albumView = $(this).val();
                 var url = "<c:url value="/app/music/latest-albums" />";
                 var title = "<spring:message code="music.title.latest" />";
@@ -71,6 +78,19 @@
 
 
 </c:if>
+
+<c:if test="${not empty albumIndexLetters}">
+
+	<ul class="index-letters">
+		<c:forEach items="${albumIndexLetters}" var="letter">
+			<li><a rel="internal"
+				title="<spring:message code="music.title" /> - ${letter}"
+				href="<c:url value="/app/music/albums" />?searchLetter=${letter}">${letter}</a></li>
+		</c:forEach>
+	</ul>
+
+</c:if>
+
 
 <div class="albums">
 	<c:forEach items="${albums}" var="album">

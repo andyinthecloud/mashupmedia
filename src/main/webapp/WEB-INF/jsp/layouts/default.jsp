@@ -368,7 +368,7 @@
 			<div class="tabs music" data-role="navbar">
 				<ul>
 
-					<li><a rel="internal" href="javascript:;" class="music-albums"
+					<li><a rel="internal" href="<c:url value="/app/music/random-albums" />" class="music-albums"
 						data-media="music"
 						title="<spring:message code="footer.music.albums"/>"><img
 							alt="<spring:message code="footer.music.albums"/>"
@@ -403,7 +403,7 @@
 					href="<c:url value="/" />"><spring:message code="top-bar.home" /></a></li>
 
 				<li><a rel="internal"
-					title="<spring:message code="music.title" /> "
+					title="<spring:message code="music.title" />"
 					href="<c:url value="/app/music/random-albums" />"
 					data-media="music"><spring:message code="top-bar.music" /></a></li>
 				<li><a href="<c:url value="/app/videos" />"><spring:message

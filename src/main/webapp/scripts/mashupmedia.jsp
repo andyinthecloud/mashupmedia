@@ -494,53 +494,24 @@ function textStartsWith(text, startsWithValue) {
 	return false;
 }
 
-function loadRandomAlbums() {
-	if (isLoadingContent) {
-		return;
-	}
-	
-	isLoadingContent = true;
-	$.get(mashupMedia.contextUrl + "app/music/random-albums", {
-	    append: true,
-	    fragment: true
-	    }, function(data) {
-	        var albums = $(data).filter("div.albums");
-	        $("div.dynamic-content div.albums").append(albums);
-	        pauseScrollLoadMore();
-	});
-}
-
-function loadLatestAlbums() {
-	if (isLoadingContent) {
-		return;
-	}
-	
-	isLoadingContent = true;	
-    mashupMedia.filterPageNumber++;
-
-
-	$.get(mashupMedia.contextUrl + "app/music/latest-albums", {
-	    append: true,
-        fragment: true,
-	    pageNumber: mashupMedia.filterPageNumber
-	},
-		function(data) {
-            var albums = $(data).filter("div.albums");
-            $("div.dynamic-content div.albums").append(albums);
-            pauseScrollLoadMore();			
-	});
-}
-
-function loadAlbums() { 
+function loadAlbums(viewType) { 
     if (isLoadingContent) {
         return;
     }
     isLoadingContent = true;
     mashupMedia.filterPageNumber++;
     
-    $.get("<c:url value="/app/ajax/music/albums" />", {
+    var url = mashupMedia.contextUrl + "app/music/albums";
+    if (viewType == 'latest') {
+        url = mashupMedia.contextUrl + "app/music/latest-albums"
+    } else if (viewType == 'random') {
+        url = mashupMedia.contextUrl + "app/music/random-albums"
+    }
+    
+    
+    $.get(url, {
         append: true,
-        fragment: true
+        fragment: true,
         pageNumber : mashupMedia.filterPageNumber,
         searchLetter: mashupMedia.filterAlbumsSearchLetter
     }, function(data) {        
@@ -652,17 +623,15 @@ function isValidNumber(value) {
 function appendContentsOnScroll(contentType) {
     if ($(window).scrollTop() >= $(document).height() - $(window).height()) {
         
-
-        
 //		var pageNumber = mashupMedia.filterPageNumber + 1;
 //		mashupMedia.filterPageNumber = pageNumber;
 		
 		if (contentType == "music-random-albums") {
-		    loadRandomAlbums();
+		    loadAlbums("random");
 		} else if (contentType == "music-latest-albums") {
-		    loadLatestAlbums();
+		    loadAlbums("latest");
 		} else if (contentType == "music-alphabetical-albums") {
-		    loadAlbums(true);
+		    loadAlbums("alphabetical");
 		} else if (textStartsWith(currentPage, addressQuickSearchMediaItems)) {
 		    loadSongSearchResults(true);    
 		}  else if (textStartsWith(currentPage, addressListPhotos)) {
