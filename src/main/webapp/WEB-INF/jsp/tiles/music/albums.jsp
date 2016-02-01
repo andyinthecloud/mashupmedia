@@ -10,9 +10,9 @@
             $("div.dynamic-content").off("mouseout", "div.albums div.album");
             $("div.dynamic-content").off("change", "input[name=albums-view]");
             $("div.dynamic-content").off("click", "ul.index-letters a");
-            
+
             mashupMedia.filterAlbumsSearchLetter = "";
-            
+
             $(window).unbind("scroll");
 
             mashupMedia.reinitialiseInfinitePage();
@@ -28,7 +28,6 @@
                 mashupMedia.filterAlbumsSearchLetter = $(this).text();
             });
 
-            
             $("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
                 $(this).addClass("highlight");
             });
@@ -83,9 +82,14 @@
 
 	<ul class="index-letters">
 		<c:forEach items="${albumIndexLetters}" var="letter">
+			<c:set var="urlLetter" value="${letter}" />
+			<c:if test="${urlLetter == '#'}">
+				<c:set var="urlLetter" value="." />
+			</c:if>
+
 			<li><a rel="internal"
 				title="<spring:message code="music.title" /> - ${letter}"
-				href="<c:url value="/app/music/albums" />?searchLetter=${letter}">${letter}</a></li>
+				href="<c:url value="/app/music/albums" />?searchLetter=${urlLetter}">${letter}</a></li>
 		</c:forEach>
 	</ul>
 

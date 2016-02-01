@@ -43,7 +43,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		int firstResult = getFirstResult(pageNumber, maxResults);
 		StringBuilder queryBuilder = new StringBuilder(
 				"select distinct a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g");
-		searchLetter = StringUtils.trimToEmpty(searchLetter);
+		searchLetter = StringUtils.trimToEmpty(searchLetter);				
 		if (StringUtils.isNotEmpty(searchLetter)) {
 			queryBuilder.append(" where a.indexLetter = '" + searchLetter.toLowerCase() + "'");
 		}

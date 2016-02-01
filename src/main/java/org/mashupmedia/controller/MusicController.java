@@ -18,7 +18,6 @@ import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
-import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
@@ -74,9 +73,6 @@ public class MusicController extends BaseController {
 
 	@Autowired
 	private PlaylistManager playlistManager;
-
-	@Autowired
-	private ConfigurationManager configurationManager;
 
 	@Override
 	public String getPageTitleMessageKey() {
@@ -157,53 +153,57 @@ public class MusicController extends BaseController {
 	@RequestMapping(value = "/latest-albums", method = RequestMethod.GET)
 	public String getLatestAlbums(
 			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) Boolean isAppend,
-			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, 
-			@RequestParam(value = PARAM_PAGE_NUMBER, required = false) Integer pageNumber, 			
-			Model model) {
-		
-		if(pageNumber == null || pageNumber < 0) {
-			pageNumber = 0;
-		}
-		
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
-		
-		List<Album> albums = musicManager.getLatestAlbums(pageNumber, MAX_ALBUMS);
-		model.addAttribute("albums", albums);
-		
-		model.addAttribute(MusicAlbumListType.LATEST);
+			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
+			@RequestParam(value = PARAM_PAGE_NUMBER, required = false) Integer pageNumber, Model model) {
 
-		String pagePath = getPath(isFragment, "music/albums");
-		return pagePath;
-	}
-	
-	
-	@RequestMapping(value = "/albums", method = RequestMethod.GET)
-	public String getAlbums(
-			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) Boolean isAppend,
-			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, 
-			@RequestParam(value = PARAM_PAGE_NUMBER, required = false) Integer pageNumber,
-			@RequestParam(value = "searchLetter", required = false) String searchLetter,
-			Model model) {
-		
-		List<String> albumIndexLetters = musicManager.getAlbumIndexLetters();
-		model.addAttribute("albumIndexLetters", albumIndexLetters);
-		
 		if (pageNumber == null || pageNumber < 0) {
 			pageNumber = 0;
 		}
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
 
-		List<Album> albums = musicManager.getAlbums(searchLetter, pageNumber, MAX_ALBUMS);		
+		List<Album> albums = musicManager.getLatestAlbums(pageNumber, MAX_ALBUMS);
 		model.addAttribute("albums", albums);
-		
+
+		model.addAttribute(MusicAlbumListType.LATEST);
+
+		String pagePath = getPath(isFragment, "music/albums");
+		return pagePath;
+	}
+
+	@RequestMapping(value = "/albums", method = RequestMethod.GET)
+	public String getAlbums(
+			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) Boolean isAppend,
+			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
+			@RequestParam(value = PARAM_PAGE_NUMBER, required = false) Integer pageNumber,
+			@RequestParam(value = "searchLetter", required = false) String searchLetter, Model model) {
+
+		List<String> albumIndexLetters = musicManager.getAlbumIndexLetters();
+
+		model.addAttribute("albumIndexLetters", albumIndexLetters);
+
+		if (pageNumber == null || pageNumber < 0) {
+			pageNumber = 0;
+		}
+
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
+
+		if (searchLetter != null) {
+			searchLetter = StringUtils.trimToEmpty(searchLetter);
+			if (searchLetter.equals(".")) {
+				searchLetter = "#";
+			}
+		}
+
+		List<Album> albums = musicManager.getAlbums(searchLetter, pageNumber, MAX_ALBUMS);
+		model.addAttribute("albums", albums);
+
 		model.addAttribute(MusicAlbumListType.ALPHABETICAL);
 
 		String pagePath = getPath(isFragment, "music/albums");
 		return pagePath;
 	}
-	
-	
+
 	@RequestMapping(value = "/artists", method = RequestMethod.GET)
 	public String getArtists(Model model) {
 		ArtistsPage artistsPage = new ArtistsPage();
