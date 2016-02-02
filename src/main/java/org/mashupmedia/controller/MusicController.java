@@ -205,14 +205,16 @@ public class MusicController extends BaseController {
 	}
 
 	@RequestMapping(value = "/artists", method = RequestMethod.GET)
-	public String getArtists(Model model) {
+	public String getArtists(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
 		ArtistsPage artistsPage = new ArtistsPage();
 		List<String> artistIndexLetters = musicManager.getArtistIndexLetters();
 		artistsPage.setArtistIndexLetters(artistIndexLetters);
 		List<Artist> artists = musicManager.getArtists();
 		artistsPage.setArtists(artists);
 		model.addAttribute(artistsPage);
-		return "ajax/music/artists";
+		
+		String pagePath = getPath(isFragment, "music/artists");
+		return pagePath;
 	}
 
 	/*

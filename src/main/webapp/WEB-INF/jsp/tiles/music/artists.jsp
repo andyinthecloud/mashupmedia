@@ -3,6 +3,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 	    window.scrollTo(0, 0);
+	    showFooterTabs("music", "music-artists");
 	});
 </script>
 
@@ -17,7 +18,7 @@
 	</c:forEach>
 </ul>
 
-<ul class="main-menu">
+<ul class="playlist-items">
 	<c:set var="rowIndex" value="" />
 	<c:forEach items="${artistsPage.artists}" var="artist">
 		<c:choose>
