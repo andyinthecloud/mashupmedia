@@ -196,6 +196,17 @@
 	</definition>
 	
 	
+	<definition name="music/album" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/album.jsp" />
+	</definition>
+
+	<definition name="music/album/fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/album.jsp" />
+	</definition>
+	
 	<definition name="music/artists" extends="home">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/music/artists.jsp" />

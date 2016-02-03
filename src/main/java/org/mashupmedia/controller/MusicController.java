@@ -31,6 +31,7 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.view.MediaItemImageView;
 import org.mashupmedia.web.Breadcrumb;
+import org.mashupmedia.web.page.AlbumPage;
 import org.mashupmedia.web.page.ArtistsPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -212,7 +213,7 @@ public class MusicController extends BaseController {
 		List<Artist> artists = musicManager.getArtists();
 		artistsPage.setArtists(artists);
 		model.addAttribute(artistsPage);
-		
+
 		String pagePath = getPath(isFragment, "music/artists");
 		return pagePath;
 	}
@@ -302,6 +303,20 @@ public class MusicController extends BaseController {
 	@Override
 	public String populateMediaType() {
 		return "music";
+	}
+
+	@RequestMapping(value = "/album/{albumId}", method = RequestMethod.GET)
+	public String getAlbum(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
+			@PathVariable("albumId") Long albumId, Model model) throws Exception {
+		Album album = musicManager.getAlbum(albumId);
+		List<Song> songs = album.getSongs();
+		AlbumPage albumPage = new AlbumPage();
+		albumPage.setAlbum(album);
+		albumPage.setSongs(songs);
+		model.addAttribute(albumPage);
+
+		String pagePath = getPath(isFragment, "music/album");
+		return pagePath;
 	}
 
 }

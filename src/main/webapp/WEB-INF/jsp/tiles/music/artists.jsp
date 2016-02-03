@@ -2,8 +2,20 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+        // Unbind declared event handlers
+	    $("div.dynamic-content").off("click", "ul.index-letters a");
+
 	    window.scrollTo(0, 0);
 	    showFooterTabs("music", "music-artists");
+	    
+        $("div.dynamic-content").on("click", "ul.index-letters a", function() {
+            var anchor = $(this).attr("href");            
+            $('html, body').animate({
+                scrollTop: $(anchor).position().top - 20
+            }, 500);
+            return false;
+        });
+	    
 	});
 </script>
 

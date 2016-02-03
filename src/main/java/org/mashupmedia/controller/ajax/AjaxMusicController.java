@@ -85,16 +85,16 @@ public class AjaxMusicController extends AjaxBaseController {
 //	}	
 	
 
-	@RequestMapping(value = "/album/{albumId}", method = RequestMethod.GET)
-	public String getAlbum(@PathVariable("albumId") Long albumId, Model model) throws Exception {
-		Album album = musicManager.getAlbum(albumId);
-		List<Song> songs = album.getSongs();
-		AlbumPage albumPage = new AlbumPage();
-		albumPage.setAlbum(album);
-		albumPage.setSongs(songs);
-		model.addAttribute(albumPage);
-		return "ajax/music/album";
-	}
+//	@RequestMapping(value = "/album/{albumId}", method = RequestMethod.GET)
+//	public String getAlbum(@PathVariable("albumId") Long albumId, Model model) throws Exception {
+//		Album album = musicManager.getAlbum(albumId);
+//		List<Song> songs = album.getSongs();
+//		AlbumPage albumPage = new AlbumPage();
+//		albumPage.setAlbum(album);
+//		albumPage.setSongs(songs);
+//		model.addAttribute(albumPage);
+//		return "ajax/music/album";
+//	}
 
 	@RequestMapping(value = "/artist/{artistId}", method = RequestMethod.GET)
 	public String getArtist(@PathVariable("artistId") Long artistId, Model model) {
