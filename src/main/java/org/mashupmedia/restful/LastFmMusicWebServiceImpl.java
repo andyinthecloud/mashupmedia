@@ -164,7 +164,7 @@ public class LastFmMusicWebServiceImpl extends AbstractCachingMusicWebServiceImp
 
 
 		org.jsoup.nodes.Document document = Jsoup.parse(html);
-		Elements elements = document.select("#pictures li");
+		Elements elements = document.select("ul.image-list li");
 		int imageSize = elements.size();
 		if (imageSize > MAX_IMAGES) {
 			imageSize = MAX_IMAGES;

@@ -82,7 +82,6 @@
     $(function() {
         // Prepare
         var History = window.History; // Note: We are using a capital H instead of a lower h
-        //alert(History.enabled);
         if (!History.enabled) {
             // History.js is disabled for this browser.
             // This is because we can optionally choose to support HTML4 browsers or not.
@@ -109,21 +108,6 @@
 
         });
 
-        // Capture all the links to push their url to the history stack and trigger the StateChange Event
-        $("body").on("click", "a[rel='internal']", function(event) {
-            var pageTitlePrefix = "<spring:message code="page.default.title.prefix" />";
-            var title = pageTitlePrefix + " " + $(this).attr("title");
-            var link = $(this).attr("href");
-            var mediaType = $(this).attr("data-media");
-            showFooterTabs(mediaType);
-
-            event.preventDefault();
-            History.pushState({
-                pageType: "internal"
-            }, title, link);
-
-        });
-
     });
 
     function prepareInternalUrlFragment(url) {
@@ -139,6 +123,24 @@
     }
 
     $(document).ready(function() {
+        // Unbind declared event handlers
+	    $("body").off("click", "a[rel='internal']");
+
+        
+        // Capture all the links to push their url to the history stack and trigger the StateChange Event
+        $("body").on("click", "a[rel='internal']", function(event) {            
+            var pageTitlePrefix = "<spring:message code="page.default.title.prefix" />";
+            var title = pageTitlePrefix + " " + $(this).attr("title");
+            var link = $(this).attr("href");
+            var mediaType = $(this).attr("data-media");
+            showFooterTabs(mediaType);
+
+            event.preventDefault();
+            History.pushState({
+                pageType: "internal"
+            }, title, link);
+
+        });        
 
         var jPlayerVersion = "${jPlayerVersion}";
         <c:if test="${isTransparentBackground}">
