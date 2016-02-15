@@ -82,11 +82,11 @@
 	</div>
 </div>
 
-<div id="remote">
+<div id="remote" class="teaser-on">
 	<a class="arrow-show-hide" href="javascript:void(0)"> <img
 		src="<c:url value="/images/arrow-down.png" />" /></a>
 	<div class="profile"></div>
-	<div class="images"></div>
+	<ul class="images"></ul>
 
 	<div class="disclaimer">
 		<spring:message code="music.artists.remote" />

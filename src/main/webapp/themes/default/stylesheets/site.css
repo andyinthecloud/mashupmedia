@@ -512,7 +512,19 @@ div.information {
 	margin: 10px 0;
 }
 
-#remote div.images img {
+#remote ul.images {
+	list-style: none;	
+	padding: 0;
+
+}
+
+#remote ul.images li{
+	display: inline;	
+
+}
+
+
+#remote ul.images img {
 	height: 90px;
 	max-height: 90px;
 	width: auto;
@@ -522,10 +534,22 @@ div.information {
 
 #remote {
 	margin: 10px 0;
+	/*
 	height: 50px;
 	overflow: hidden;
+	*/
 	clear: both;
 }
+
+div#remote.teaser-on {
+	height: 50px;
+	overflow: hidden;
+}
+
+div#remote.teaser-off {
+	overflow: visible;
+}
+
 
 #remote div.disclaimer {
 	display: block;

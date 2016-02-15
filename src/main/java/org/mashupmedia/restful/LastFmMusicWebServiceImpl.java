@@ -179,7 +179,8 @@ public class LastFmMusicWebServiceImpl extends AbstractCachingMusicWebServiceImp
 			String proxyThumbUrl = ProxyHelper.formatUrlForProxy(thumbUrl);
 			remoteImage.setThumbUrl(proxyThumbUrl);
 
-			String imageUrl = thumbUrl.replaceFirst("/\\d{3}s/", "/_/");
+//			String imageUrl = thumbUrl.replaceFirst("/\\d{3}s/", "/_/");
+			String imageUrl = thumbUrl.replaceFirst("/u/.*?/", "/u/");
 			String proxyImageUrl = ProxyHelper.formatUrlForProxy(imageUrl);
 			remoteImage.setImageUrl(proxyImageUrl);
 			remoteImages.add(remoteImage);
