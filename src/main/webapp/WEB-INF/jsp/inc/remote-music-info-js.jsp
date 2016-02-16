@@ -4,7 +4,7 @@
     $(document).ready(function() {
         
      // Unbind declared event handlers
-     $("div.dynamic-content").off("mouseover", "div.albums div.album");   
+     //$("div.dynamic-content").off("mouseover", "div.albums div.album");   
 
 // 	$("#remote div.images .swipebox").swipebox();
 	$(".swipebox").swipebox();

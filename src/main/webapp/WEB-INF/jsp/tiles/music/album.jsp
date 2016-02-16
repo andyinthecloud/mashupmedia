@@ -5,39 +5,38 @@
 
         window.scrollTo(0, 0);
 
-        $("#play-all").click(function() {
+        
+        $("div.dynamic-content").on("click", "#play-all", function() {
+            alert("play");
             var albumId = $(this).closest("div").attr("id");
+            
             albumId = albumId.replace("album-id-", "");
             mashupMedia.playAlbum(albumId);
         });
 
-        $("#add-all").click(function() {
+        $("div.dynamic-content").off().on("click", "#add-all", function() {
             var albumId = $(this).closest("div").attr("id");
             albumId = albumId.replace("album-id-", "");
             mashupMedia.appendAlbum(albumId);
         });
 
-        $("ul.album-menu a.play").click(function() {
+        $("div.dynamic-content").off().on("click", "ul.tracks a.play", function() {
             var songId = $(this).closest("li").attr("id");
             songId = parseId(songId, "song-id");
             mashupMedia.playSong(songId);
         });
 
-        $("ul.album-menu a.add").click(function() {
+        $("div.dynamic-content").off().on("click", "ul.tracks a.add", function() {
             var songId = $(this).closest("li").attr("id");
             songId = parseId(songId, "song-id");
             mashupMedia.appendSong(songId);
-        });
-
-        $("h1 a").click(function() {
-
         });
 
         $.getJSON("<c:url value="/app/ajax/music/artist/remote/${albumPage.album.artist.id}" />", function(data) {
             displayRemoteArtistInformation(data);
         });
 
-        $("div.title-with-player-control div.re-encode a").click(function() {
+        $("div.dynamic-content").off().on("click", "div.title-with-player-control div.re-encode a", function() {
             $.get("<c:url value="/app/ajax/media/encode/album/${albumPage.album.id}" />", function(data) {
             });
         });
@@ -97,37 +96,38 @@
 	</div>
 </div>
 
+<div class="album">
 
-<div class="album-art">
-	<img
-		src="<c:url value="/app/music/album-art/original/${albumPage.album.id}" />"
-		title="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />"
-		alt="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />" />
+	<div class="album-art">
+		<img
+			src="<c:url value="/app/music/album-art/original/${albumPage.album.id}" />"
+			title="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />"
+			alt="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />" />
+	</div>
+
+	<ul class="tracks">
+		<c:forEach items="${albumPage.songs}" var="song">
+			<li id="song-id-<c:out value="${song.id}"/>">
+				<div class="controls">
+					<a class="play" href="javascript:;"
+						title="<spring:message code="action.play" />"><img
+						src="<c:url value="${themePath}/images/controls/play.png"/>" /></a>
+					<c:if test="${isPlaylistOwner}">
+						<a class="add" href="javascript:;"
+							title="<spring:message code="action.add" />"><img
+							src="<c:url value="${themePath}/images/controls/add.png"/>" /></a>
+					</c:if>
+				</div> <c:out value="${song.displayTitle}" />
+
+				<div class="meta">
+					<c:out value="${song.meta}" />
+				</div>
+
+			</li>
+		</c:forEach>
+	</ul>
+
 </div>
-
-<ul class="album-menu">
-	<c:forEach items="${albumPage.songs}" var="song">
-		<li id="song-id-<c:out value="${song.id}"/>">
-			<div class="controls">
-				<a class="play" href="javascript:;"
-					title="<spring:message code="action.play" />"><span
-					class="ui-icon ui-icon-play"></span></a>
-				<c:if test="${isPlaylistOwner}">
-					<a class="add" href="javascript:;"
-						title="<spring:message code="action.add" />"><span
-						class="ui-icon ui-icon-plus"></span></a>
-				</c:if>
-			</div> <c:out value="${song.displayTitle}" />
-
-			<div class="meta">
-				<c:out value="${song.meta}" />
-			</div>
-
-		</li>
-	</c:forEach>
-</ul>
-
-
 
 
 

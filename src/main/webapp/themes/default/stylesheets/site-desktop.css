@@ -57,5 +57,16 @@
 	div.albums div.album-control a {
 		padding: 0 5px;
 	}
+	
+	div.album div.album-art {
+		float: right;
+		width: 45%;
+		margin-left: 1em;
+		margin-bottom: 1em;
+	}
+	
+	div.album ul.tracks {
+		
+	}
 
 }

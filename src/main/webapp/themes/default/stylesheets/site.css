@@ -259,22 +259,30 @@ div.control-menu img {
 	margin-right: 5px;
 }
 
-ul.album-menu{
+div.album ul.tracks{
 	margin: 0;
 	padding: 0;
 }
 
-ul.album-menu li {
+div.album ul.tracks li {
 	list-style: none;
 	padding: 5px 0;
 	margin: 0;	
 }
 
-ul.album-menu li div.controls {
+div.album ul.tracks li div.controls {
 	display: inline;
+		
 }
 
-ul.album-menu li div.meta {
+div.album ul.tracks li div.controls img{
+	width: 16px;
+	height: auto;	
+	margin-right: 0.5em;
+}
+
+
+div.album ul.tracks li div.meta {
 	display: inline;
 	text-align: right;
 	margin-left: 20px;
@@ -283,7 +291,7 @@ ul.album-menu li div.meta {
 
 
 
-div.album-art img {
+div.album div.album-art img {
 	width: 100%;
 	height: auto;
 }
