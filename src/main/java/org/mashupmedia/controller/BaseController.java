@@ -89,7 +89,7 @@ public abstract class BaseController {
 		prepareBreadcrumbs(breadcrumbs);
 		return breadcrumbs;
 	}
-
+	
 	public abstract void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs);
 
 	public abstract String getPageTitleMessageKey();

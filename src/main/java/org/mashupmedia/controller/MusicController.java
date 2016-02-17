@@ -1,6 +1,7 @@
 package org.mashupmedia.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -107,9 +108,13 @@ public class MusicController extends BaseController {
 	}
 
 	@Override
-	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
+	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {		
+		breadcrumbs.add(getMusicBreadcrumb());
+	}
+	
+	protected Breadcrumb getMusicBreadcrumb() {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music");
-		breadcrumbs.add(breadcrumb);
+		return breadcrumb;
 	}
 
 	/*
@@ -304,6 +309,13 @@ public class MusicController extends BaseController {
 	public String populateMediaType() {
 		return "music";
 	}
+	
+	protected List<Breadcrumb> prepareBreadcrumbs() {
+		List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();
+		breadcrumbs.add(getHomeBreadcrumb());
+		breadcrumbs.add(getMusicBreadcrumb());
+		return breadcrumbs;
+	}
 
 	@RequestMapping(value = "/album/{albumId}", method = RequestMethod.GET)
 	public String getAlbum(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
@@ -314,6 +326,12 @@ public class MusicController extends BaseController {
 		albumPage.setAlbum(album);
 		albumPage.setSongs(songs);
 		model.addAttribute(albumPage);
+		
+		List<Breadcrumb> breadcrumbs = prepareBreadcrumbs();
+		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.music.album") + "-" + album.getName()));		
+		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
+		
+//		prepareBreadcrumbs(breadcrumbs);
 
 		String pagePath = getPath(isFragment, "music/album");
 		return pagePath;

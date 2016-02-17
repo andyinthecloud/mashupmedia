@@ -51,6 +51,10 @@
 
                 loadInternalPage(title, url);
             });
+            
+            //$("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
+                
+            
 
         });
     </script>

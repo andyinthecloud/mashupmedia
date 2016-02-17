@@ -5,28 +5,26 @@
 
         window.scrollTo(0, 0);
 
-        
-        $("div.dynamic-content").on("click", "#play-all", function() {
-            alert("play");
-            var albumId = $(this).closest("div").attr("id");
-            
+        $("#play-all").click(function() {
+            var albumId = $(this).closest("div").attr("id");			            
             albumId = albumId.replace("album-id-", "");
             mashupMedia.playAlbum(albumId);
         });
-
-        $("div.dynamic-content").off().on("click", "#add-all", function() {
+		
+        
+        $("#add-all").click(function() {
             var albumId = $(this).closest("div").attr("id");
             albumId = albumId.replace("album-id-", "");
             mashupMedia.appendAlbum(albumId);
         });
 
-        $("div.dynamic-content").off().on("click", "ul.tracks a.play", function() {
+        $("div.dynamic-content ul.tracks a.play").click(function() {
             var songId = $(this).closest("li").attr("id");
             songId = parseId(songId, "song-id");
             mashupMedia.playSong(songId);
         });
 
-        $("div.dynamic-content").off().on("click", "ul.tracks a.add", function() {
+        $("div.dynamic-content ul.tracks a.add").click(function() {
             var songId = $(this).closest("li").attr("id");
             songId = parseId(songId, "song-id");
             mashupMedia.appendSong(songId);
