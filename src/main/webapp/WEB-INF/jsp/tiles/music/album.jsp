@@ -4,6 +4,13 @@
     $(document).ready(function() {
 
         window.scrollTo(0, 0);
+        
+        
+        $("h1 span.edit").editable("<c:url value="/app/restful/music-playlist/save-playlist-name" />", {
+            tooltip: "<spring:message code="action.click.edit" />"
+        });
+
+        
 
         $("#play-all").click(function() {
             var albumId = $(this).closest("div").attr("id");			            
@@ -54,8 +61,11 @@
 		<a href="javascript:;"
 			rel="address:/address-artist-${albumPage.album.artist.id}"><c:out
 				value="${albumPage.album.artist.name}" /></a> -
-		<c:out value="${albumPage.album.name}" />
+		<span class="edit"><c:out value="${albumPage.album.name}" /></span>
 	</h1>
+	
+	
+	
 
 	<div class="control-menu"
 		id="album-id-<c:out value="${albumPage.album.id}" />">
