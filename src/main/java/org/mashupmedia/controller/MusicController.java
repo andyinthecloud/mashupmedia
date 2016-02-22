@@ -113,7 +113,7 @@ public class MusicController extends BaseController {
 	}
 	
 	protected Breadcrumb getMusicBreadcrumb() {
-		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music");
+		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music/albums");
 		return breadcrumb;
 	}
 
@@ -328,7 +328,7 @@ public class MusicController extends BaseController {
 		model.addAttribute(albumPage);
 		
 		List<Breadcrumb> breadcrumbs = prepareBreadcrumbs();
-		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.music.album") + "-" + album.getName()));		
+		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.music.album")));		
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
 		
 //		prepareBreadcrumbs(breadcrumbs);

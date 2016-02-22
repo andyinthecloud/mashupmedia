@@ -4,21 +4,17 @@
     $(document).ready(function() {
 
         window.scrollTo(0, 0);
-        
-        
-        $("h1 span.edit").editable("<c:url value="/app/restful/music-playlist/save-playlist-name" />", {
+
+        $("h1.edit").editable("<c:url value="/app/restful/music-playlist/save-playlist-name" />", {
             tooltip: "<spring:message code="action.click.edit" />"
         });
 
-        
-
         $("#play-all").click(function() {
-            var albumId = $(this).closest("div").attr("id");			            
+            var albumId = $(this).closest("div").attr("id");
             albumId = albumId.replace("album-id-", "");
             mashupMedia.playAlbum(albumId);
         });
-		
-        
+
         $("#add-all").click(function() {
             var albumId = $(this).closest("div").attr("id");
             albumId = albumId.replace("album-id-", "");
@@ -57,15 +53,16 @@
 
 
 <div class="title-with-player-control">
-	<h1>
-		<a href="javascript:;"
-			rel="address:/address-artist-${albumPage.album.artist.id}"><c:out
-				value="${albumPage.album.artist.name}" /></a> -
-		<span class="edit"><c:out value="${albumPage.album.name}" /></span>
-	</h1>
-	
-	
-	
+
+	<h1 class="edit">${albumPage.album.name}</h1>
+
+	<h2>
+		- <a href="javascript:;"
+			rel="address:/address-artist-${albumPage.album.artist.id}">${albumPage.album.artist.name}</a>
+	</h2>
+
+
+
 
 	<div class="control-menu"
 		id="album-id-<c:out value="${albumPage.album.id}" />">

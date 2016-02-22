@@ -46,8 +46,13 @@ a, a:ACTIVE, a:VISITED {
 }
 
 h1 {
+	font-size: 1.2em;
+}
+
+h2 {
 	font-size: 1.1em;
 }
+
 
 img {
 	border: none;
@@ -246,10 +251,14 @@ div.panel ul.main-menu a:HOVER {
 	color: white;
 }
 
-div.title-with-player-control h1, div.title-with-player-control div.control-menu,
-	div.title-with-player-control div.re-encode {
+div.title-with-player-control h1, div.title-with-player-control h2, div.title-with-player-control div.control-menu,
+	div.title-with-player-control div.re-encode{
 	display: inline-block;
 	margin-left: 10px;
+}
+
+div.title-with-player-control h1 form{
+	display: inline;
 }
 
 
