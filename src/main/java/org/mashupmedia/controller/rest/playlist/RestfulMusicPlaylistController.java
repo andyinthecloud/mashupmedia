@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/restful/music-playlist")
+@RequestMapping("/restful/playlist/music")
 public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistController {
 
 	@Autowired

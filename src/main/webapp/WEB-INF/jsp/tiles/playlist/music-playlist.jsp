@@ -17,7 +17,7 @@
         $("ul.playlist-items").sortable();
 
         <c:if test="${canSavePlaylist}">
-        $("h1.edit").editable("<c:url value="/app/restful/music-playlist/save-playlist-name" />", {
+        $("h1.edit").editable("<c:url value="/app/restful/playlist/music/save-playlist-name" />", {
             tooltip: "<spring:message code="action.click.edit" />"
         });
         </c:if>
@@ -72,7 +72,7 @@
             var playlistId = $("#playlist input[name=playlistId]").val();
             var mediaItemId = parseId($(songRow).attr("id"), "media-item-id");
 
-            $.post("<c:url value="/app/restful/music-playlist/play" />", {
+            $.post("<c:url value="/app/restful/playlist/music/play" />", {
                 playlist: playlistId,
                 mediaItem: mediaItemId
             }, function(data) {
@@ -85,7 +85,7 @@
 
     function newPlaylist() {
         var mediaItemIds = getMediaItemIds();
-        $.post("<c:url value="/app/restful/music-playlist/new-playlist" />", {
+        $.post("<c:url value="/app/restful/playlist/music/new-playlist" />", {
             mediaItemIds: mediaItemIds
         }, function(data) {
             var url = "<c:url value="/app/playlist/music" />?playlist=" + data;
@@ -96,7 +96,7 @@
     function copyPlaylist() {
         var name = $("#playlist h1").text() + " <spring:message code="playlist.copy.name.suffix" />";
         var mediaItemIds = getMediaItemIds();
-        $.post("<c:url value="/app/restful/music-playlist/new-playlist" />", {
+        $.post("<c:url value="/app/restful/playlist/music/new-playlist" />", {
             name: name,
             mediaItemIds: mediaItemIds
         }, function(data) {
@@ -107,7 +107,7 @@
 
     function deletePlaylist() {
         var playlistId = $("#playlist input[name=playlistId]").val();
-        $.post("<c:url value="/app/restful/music-playlist/delete-playlist" />", {
+        $.post("<c:url value="/app/restful/playlist/music/delete-playlist" />", {
             playlistId: playlistId
         }, function(data) {
             var url = "<c:url value="/app/playlist/list/music" />";
@@ -119,7 +119,7 @@
         var playlistId = $("#playlist input[name=playlistId]").val();
         var mediaItemIds = getMediaItemIds();
 
-        $.post("<c:url value="/app/restful/music-playlist/save-playlist" />", {
+        $.post("<c:url value="/app/restful/playlist/music/save-playlist" />", {
             playlistId: playlistId,
             mediaItemIds: mediaItemIds
         });

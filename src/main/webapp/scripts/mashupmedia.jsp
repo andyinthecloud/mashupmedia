@@ -105,7 +105,7 @@ var mashupMedia = new function() {
 	this.filterAlbumsSearchLetter = "";
 	
 	this.loadLastAccessedPlaylist = function() {	    
-		$.get(mashupMedia.contextUrl + "app/restful/music-playlist/play/current", function(data) {		    
+		$.get(mashupMedia.contextUrl + "app/restful/playlist/music/play/current", function(data) {		    
 		    mashupMedia.streamSong(data);
 		});
 	};
@@ -213,13 +213,13 @@ var mashupMedia = new function() {
 	}
 
 	this.playNextSong = function() {
-	    $.get(mashupMedia.contextUrl + "app/restful/music-playlist/play/next", function(data) {       
+	    $.get(mashupMedia.contextUrl + "app/restful/playlist/music/play/next", function(data) {       
 	        mashupMedia.streamSong(data);	       
 		});
 	};
 
 	this.playPreviousSong = function() {
-        $.get(mashupMedia.contextUrl + "app/restful/music-playlist/play/previous", function(data) {       
+        $.get(mashupMedia.contextUrl + "app/restful/playlist/music/play/previous", function(data) {       
             mashupMedia.streamSong(data);            
         });	    
 	};
@@ -236,7 +236,7 @@ var mashupMedia = new function() {
 	};
 	
     this.playSong = function(songId) {        
-        $.get(mashupMedia.contextUrl + "app/restful/music-playlist/play-song", {
+        $.get(mashupMedia.contextUrl + "app/restful/playlist/music/play-song", {
             "songId" : songId
         }, function(data) {
             mashupMedia.streamSong(data);
@@ -245,7 +245,7 @@ var mashupMedia = new function() {
 	
 	
 	this.playArtist = function(artistId) {		
-		$.get(mashupMedia.contextUrl + "app/restful/music-playlist/play-artist", {
+		$.get(mashupMedia.contextUrl + "app/restful/playlist/music/play-artist", {
 			"artistId" : artistId
 		}, function(data) {
 		    mashupMedia.streamSong(data);
@@ -253,7 +253,7 @@ var mashupMedia = new function() {
 	};
 
 	this.playAlbum = function(albumId) {
-		$.get(mashupMedia.contextUrl + "app/restful/music-playlist/play-album", {
+		$.get(mashupMedia.contextUrl + "app/restful/playlist/music/play-album", {
 			"albumId" : albumId
 		}, function(data) {		    
             mashupMedia.streamSong(data);
@@ -288,21 +288,21 @@ var mashupMedia = new function() {
 
 	
 	this.appendArtist = function(artistId) {
-		$.post(mashupMedia.contextUrl + "app/restful/music-playlist/append-artist", {
+		$.post(mashupMedia.contextUrl + "app/restful/playlist/music/append-artist", {
 			"artistId" : artistId
 		}, function(data) {
 		});
 	};
 
 	this.appendAlbum = function(albumId) {
-        $.get(mashupMedia.contextUrl + "app/restful/music-playlist/append-album", {
+        $.get(mashupMedia.contextUrl + "app/restful/playlist/music/append-album", {
             "albumId" : albumId
         }, function(data) {            
         });     	    
 	};
 	
 	this.appendSong = function(songId) {
-		$.post(mashupMedia.contextUrl + "app/restful/music-playlist/append-song", {
+		$.post(mashupMedia.contextUrl + "app/restful/playlist/music/append-song", {
 			"songId" : songId
 		}, function(data) {
 		});		

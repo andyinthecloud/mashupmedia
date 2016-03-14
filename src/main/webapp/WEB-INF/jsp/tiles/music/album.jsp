@@ -5,7 +5,7 @@
 
         window.scrollTo(0, 0);
 
-        $("h1.edit").editable("<c:url value="/app/restful/music-playlist/save-playlist-name" />", {
+        $("h1.edit").editable("<c:url value="/app/restful/media/music/save-album-name" />", {
             tooltip: "<spring:message code="action.click.edit" />"
         });
 

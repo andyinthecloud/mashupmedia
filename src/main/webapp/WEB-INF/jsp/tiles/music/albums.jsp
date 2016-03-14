@@ -51,10 +51,8 @@
 
                 loadInternalPage(title, url);
             });
-            
+
             //$("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
-                
-            
 
         });
     </script>
@@ -118,8 +116,8 @@
 						rel="address:/address-artist-${album.artist.id}">${album.artist.name}</a>
 				</div>
 				<div class="album-name">
-					<a href="javascript:;"
-						rel="address:/address-load-album-${album.id}">${album.name}</a>
+					<a rel="internal"
+						href="<c:url value="/app/music/album/${album.id}" />">${album.name}</a>
 				</div>
 			</div>
 
