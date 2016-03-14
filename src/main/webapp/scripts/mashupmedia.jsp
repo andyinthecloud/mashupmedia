@@ -302,7 +302,7 @@ var mashupMedia = new function() {
 	};
 	
 	this.appendSong = function(songId) {
-		$.post(mashupMedia.contextUrl + "app/restful/playlist/music/append-song", {
+		$.get(mashupMedia.contextUrl + "app/restful/playlist/music/append-song", {
 			"songId" : songId
 		}, function(data) {
 		});		

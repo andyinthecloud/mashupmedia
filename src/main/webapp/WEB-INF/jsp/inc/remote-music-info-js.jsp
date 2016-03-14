@@ -10,11 +10,8 @@
 	$(".swipebox").swipebox();
 	
 
-	$("#remote").on("click", "a.incorrect", function() {
-	    $("#remote-dialog").dialog();
-	    $("#remote-dialog input[type=text]").blur();
-	});
 
+/*
 	var artistNameLabel = "<spring:message code="music.artists.remote.search" />";
 
 	$("#remote-dialog input[type=text]").blur(function() {
@@ -72,8 +69,10 @@
 
 		});
 	    });
+	    
 
 	});
+	*/
 	
 	
 	$("div.dynamic-content").on("click", "#remote a.arrow-show-hide", function() {
@@ -112,6 +111,7 @@
 	
     });
     
+	/*
     function prepareImageUrl(imageUrl) {
     	imageUrl = $.trim(imageUrl);
     	if (imageUrl.length == 0) {
@@ -126,6 +126,7 @@
     	return imageUrl;
 
 	}
+	*/
     
 
     function displayRemoteArtistInformation(data) {
@@ -142,31 +143,8 @@
     }
 </script>
 
-<!-- 
-<ul id="box-container">
-				<li class="box">
-					<a title="Fog" class="swipebox" href="http://swipebox.csag.co/images/image-1.jpg">
-						<img alt="image" src="http://swipebox.csag.co/images/image-1.jpg">
-					</a>
-				</li>
-				<li class="box">
-					<a title="City" class="swipebox" href="http://swipebox.csag.co/images/image-2.jpg">
-						<img alt="image" src="http://swipebox.csag.co/images/image-2.jpg">
-					</a>
-				</li>
-				<li class="box">
-					<a title="Street" class="swipebox" href="http://swipebox.csag.co/images/image-3.jpg">
-						<img alt="image" src="http://swipebox.csag.co/images/image-3.jpg">
-					</a>
-				</li>
-				<li class="box">
-					<a title="Mustache Guy" class="swipebox" href="http://swipebox.csag.co/images/image-4.jpg">
-						<img alt="image" src="http://swipebox.csag.co/images/image-4.jpg">
-					</a>
-				</li>
-			</ul>
- -->
 
+<!-- 
 <div id="remote-dialog" class="dialog" title="Find artist">
 
 
@@ -179,3 +157,4 @@
 		</ul>
 	</p>
 </div>
+ -->

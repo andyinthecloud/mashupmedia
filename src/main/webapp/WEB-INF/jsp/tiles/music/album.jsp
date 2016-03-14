@@ -4,6 +4,7 @@
     $(document).ready(function() {
 
         window.scrollTo(0, 0);
+        showFooterTabs("music", "music-albums");
 
         $("h1.edit").editable("<c:url value="/app/restful/media/music/save-album-name" />", {
             tooltip: "<spring:message code="action.click.edit" />"
@@ -54,7 +55,7 @@
 
 <div class="title-with-player-control">
 
-	<h1 class="edit">${albumPage.album.name}</h1>
+	<h1 class="edit" id="album-id-${albumPage.album.id}">${albumPage.album.name}</h1>
 
 	<h2>
 		- <a href="javascript:;"
@@ -95,9 +96,7 @@
 	<div class="disclaimer">
 		<spring:message code="music.artists.remote" />
 		<a href="http://www.last.fm" target="_blank" title=""><img
-			title="last.fm" src="<c:url value="/images/lastfm.png" />" /></a>. <a
-			class="incorrect" href="javascript:;"><spring:message
-				code="music.artists.remote.correct" /></a>
+			title="last.fm" src="<c:url value="/images/lastfm.png" />" /></a>.
 	</div>
 </div>
 
