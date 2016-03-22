@@ -106,7 +106,7 @@ var mashupMedia = new function() {
 	
 	this.loadLastAccessedPlaylist = function() {	    
 		$.get(mashupMedia.contextUrl + "app/restful/playlist/music/play/current", function(data) {		    
-		    mashupMedia.streamSong(data);
+		    mashupMedia.prepareSong(data);
 		});
 	};
 	
@@ -182,19 +182,27 @@ var mashupMedia = new function() {
 	    return true;
 	};
 	
+    this.prepareSong = function(song) {
+        if (!song) {
+            return;
+        }                   
+        
+
+        var albumName = song.artistName + " - " + song.albumName;
+        $("#music-player .album-art").html("<a href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
+        $("#music-player .artist-name").text(song.artistName);
+        $("#music-player .title").text(song.title);             
+        setupJPlayer(song.streamFormat, song.streamUrl);
+        mashupMedia.showMusicPlayer(true);
+
+    };
+    
 	this.streamSong = function(song) {
 	    if (!song) {
 	        return;
 	    }	    	   	    
 	    
-
-	    var albumName = song.artistName + " - " + song.albumName;
-	    $("#music-player .album-art").html("<a href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
-        $("#music-player .artist-name").text(song.artistName);
-        $("#music-player .title").text(song.title);	            
-	    setupJPlayer(song.streamFormat, song.streamUrl);
-	    mashupMedia.showMusicPlayer(true);
-	    
+	    mashupMedia.prepareSong(song);
         togglePlayPause("play");
         myAndroidFix.play();  
 
@@ -404,9 +412,18 @@ function setupJPlayer(streamFormat, streamUrl) {
             pause: ".controls a.pause",
             seekBar: "div.progress",
             playBar: "div.play-bar"
+        },
+        error: function(event) {
+            console.log(event.jPlayer.error);
+//            console.log(event.jPlayer.error.type); 
+
+            var errorType = event.jPlayer.error.type;
+            if (errorType == "e_no_solution") {
+                alert("Unable to play");
+            }
         }
     };
-
+    
     myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, mediaStream, options);        
 }
 
