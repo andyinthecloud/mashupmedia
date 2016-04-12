@@ -9,7 +9,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class MessageHelper {
 
-	private static String MESSAGE_NOT_FOUND = "Message not found";
+	public static String MESSAGE_NOT_FOUND = "Message not found";
 
 	private static MessageSource messageSource;
 

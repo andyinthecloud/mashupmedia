@@ -19,7 +19,7 @@ public class PlaylistMusicController extends AbstractPlaylistController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb musicBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music");
+		Breadcrumb musicBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music/albums");
 		breadcrumbs.add(musicBreadcrumb);
 		
 		Breadcrumb listPlaylistsBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.playlist"));

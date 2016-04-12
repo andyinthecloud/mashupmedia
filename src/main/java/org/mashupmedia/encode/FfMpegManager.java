@@ -26,10 +26,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.exception.MediaItemEncodeException;
+import org.mashupmedia.exception.MediaItemEncodeException.EncodeExceptionType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.service.ConfigurationManager;
-import org.mashupmedia.service.ConnectionManager;
-import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,13 +49,7 @@ public class FfMpegManager {
 	private ProcessManager processManager;
 
 	@Autowired
-	private ConnectionManager connectionManager;
-
-	@Autowired
 	private ConfigurationManager configurationManager;
-
-	@Autowired
-	private MediaManager mediaManager;
 
 	public String getFFMpegFolderPath() {
 		File ffMpegFolder = new File(FileHelper.getApplicationFolder(), FFMPEG_FOLDER_NAME);
@@ -136,7 +130,7 @@ public class FfMpegManager {
 		if (ffMpegExecutableFile == null) {
 			return false;
 		}
-		
+
 		String outputText = processManager.callProcess(ffMpegExecutableFile.getAbsolutePath());
 		if (outputText.contains(FFMPEG_EXECUTABLE_NAME)) {
 			return true;
@@ -145,13 +139,13 @@ public class FfMpegManager {
 		return false;
 	}
 
-	public void queueMediaItemBeforeEncoding(MediaItem mediaItem, MediaContentType mediaContentType){
+	public void queueMediaItemBeforeEncoding(MediaItem mediaItem, MediaContentType mediaContentType)
+			throws MediaItemEncodeException {
 
 		String pathToFfMpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
 		if (StringUtils.isBlank(pathToFfMpeg)) {
 			String errorText = "Unable to encode media, ffmpeg is not configured.";
-			logger.info(errorText);
-			return;
+			throw new MediaItemEncodeException(EncodeExceptionType.ENCODER_NOT_CONFIGURED, errorText);
 		}
 
 		long mediaItemId = mediaItem.getId();
@@ -163,11 +157,11 @@ public class FfMpegManager {
 		if (!isDeleted) {
 			String errorText = "Exiting, unable to delete encoded media file: " + outputFile.getAbsolutePath();
 			logger.info(errorText);
-			return;
+			throw new MediaItemEncodeException(EncodeExceptionType.UNABLE_TO_DELETE_PREVIOUS_ENCODED_FILE, errorText);
 		}
-		
+
 		List<String> commands = new ArrayList<String>();
-		
+
 		if (mediaContentType == MediaContentType.MP3) {
 			commands = queueEncodeAudioToMp3(pathToFfMpeg, inputFile, outputFile);
 		} else if (mediaContentType == MediaContentType.MP4) {
@@ -177,16 +171,15 @@ public class FfMpegManager {
 		} else if (mediaContentType == MediaContentType.OGV) {
 			commands = queueEncodeVideoToOGV(pathToFfMpeg, inputFile, outputFile);
 		} else {
-			logger.info(mediaContentType.name() + " not supported");
-			return;
+			throw new MediaItemEncodeException(EncodeExceptionType.UNSUPPORTED_ENCODING_FORMAT,
+					mediaContentType.name() + " not supported");
 		}
-				
+
 		processManager.addProcessToQueue(commands, mediaItemId, mediaContentType);
-		
+
 	}
 
-	private List<String> queueEncodeAudioToMp3(String pathToFfMpeg, File inputFile, File outputFile)
-			{
+	private List<String> queueEncodeAudioToMp3(String pathToFfMpeg, File inputFile, File outputFile) {
 
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
@@ -204,8 +197,7 @@ public class FfMpegManager {
 		return commands;
 	}
 
-	private List<String> queueEncodeVideoToMp4(String pathToFfMpeg, File inputFile, File outputFile)
-			{
+	private List<String> queueEncodeVideoToMp4(String pathToFfMpeg, File inputFile, File outputFile) {
 
 		// ffmpeg -y -i test.avi -c:v libx264 -preset:v veryfast -strict
 		// experimental -c:a aac -b:a 240k -f mp4 output.encoded
@@ -233,8 +225,7 @@ public class FfMpegManager {
 		return commands;
 	}
 
-	private List<String> queueEncodeVideoToWebM(String pathToFfMpeg, File inputFile, File outputFile)
-			{
+	private List<String> queueEncodeVideoToWebM(String pathToFfMpeg, File inputFile, File outputFile) {
 
 		// ffmpeg -i input.mp4 -c:v libvpx -b:v 1M -c:a libvorbis -qscale:a 5
 		// output.webm
@@ -260,11 +251,11 @@ public class FfMpegManager {
 		return commands;
 	}
 
-	private List<String> queueEncodeVideoToOGV(String pathToFfMpeg, File inputFile, File outputFile)
-			{
+	private List<String> queueEncodeVideoToOGV(String pathToFfMpeg, File inputFile, File outputFile) {
 
-		// ffmpeg -y -i input.mp4 -sn -codec:v libtheora -qscale:v 7 -codec:a libvorbis -qscale:a 5 output.ogv
-		
+		// ffmpeg -y -i input.mp4 -sn -codec:v libtheora -qscale:v 7 -codec:a
+		// libvorbis -qscale:a 5 output.ogv
+
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
 		commands.add("-y");
@@ -282,7 +273,7 @@ public class FfMpegManager {
 		commands.add(outputFile.getAbsolutePath());
 		commands.add("-f");
 		commands.add("ogv");
-		
+
 		return commands;
 	}
 

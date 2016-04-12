@@ -20,10 +20,12 @@ package org.mashupmedia.task;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.mashupmedia.encode.EncodeMediaManager;
 import org.mashupmedia.encode.FfMpegManager;
 import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.encode.ProcessQueueItem;
+import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
@@ -33,6 +35,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EncodeMediaItemTaskManager {
+	
+	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private ThreadPoolTaskExecutor encodeMediaItemThreadPoolTaskExecutor;
@@ -54,11 +58,15 @@ public class EncodeMediaItemTaskManager {
 		}
 
 		if (savedMediaContentType == MediaContentType.UNSUPPORTED) {
-			processMediaItemForEncoding(mediaItem, mediaContentType);
+			try {
+				processMediaItemForEncoding(mediaItem, mediaContentType);
+			} catch (MediaItemEncodeException exception) {
+				logger.error(exception);
+			}
 		}
 	}
 
-	public void processMediaItemForEncoding(MediaItem mediaItem, MediaContentType mediaContentType) {
+	public void processMediaItemForEncoding(MediaItem mediaItem, MediaContentType mediaContentType) throws MediaItemEncodeException {
 		ffMpegManager.queueMediaItemBeforeEncoding(mediaItem, mediaContentType);
 		processQueue();
 	}

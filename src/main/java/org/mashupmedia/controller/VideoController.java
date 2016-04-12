@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.restful.VideoWebService;
 import org.mashupmedia.service.VideoManager;
@@ -65,7 +66,11 @@ public class VideoController extends BaseController {
 
 		Video video = videoManager.getVideo(videoId);
 
-		processReencodeRequest(isReencode, video);
+		try {
+			processReencodeRequest(isReencode, video);
+		} catch (MediaItemEncodeException e) {
+			logger.error("Error encoding video", e);
+		}
 
 		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
 		Breadcrumb breadcrumb = new Breadcrumb(video.getDisplayTitle());
@@ -99,7 +104,7 @@ public class VideoController extends BaseController {
 		return "video/show";
 	}
 
-	protected void processReencodeRequest(Boolean isReencode, Video video) {
+	protected void processReencodeRequest(Boolean isReencode, Video video) throws MediaItemEncodeException {
 		if (isReencode == null || video == null) {
 			return;
 		}

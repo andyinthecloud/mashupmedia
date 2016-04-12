@@ -45,6 +45,13 @@ public class ListEncodingProcessesController extends BaseController {
 		return "encoding-processes.title";
 	}
 
+	public String postEncodingProcessesPage(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
+		String path = getPath(isFragment, "encode/list-processes");
+		return path;
+		
+	}
+	
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public String handleGetEncodingProcessesPage(
 			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {

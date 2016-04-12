@@ -18,11 +18,11 @@ public class RestfulSong extends RestfulMediaItem {
 		
 		Artist artist = song.getArtist();
 		this.artistName = artist.getName();
-		this.artistUrl = getContextPath() + "/app/ajax/music/artist/id/" + artist.getId();
+		this.artistUrl = getContextPath() + "/app/music/artist/id/" + artist.getId();
 
 		Album album = song.getAlbum();
 		this.albumName = album.getName();
-		this.albumUrl = getContextPath() + "/app/ajax/music/album/id/" + album.getId();
+		this.albumUrl = getContextPath() + "/app/music/album/" + album.getId();
 		this.albumArtUrl = getContextPath() + "/app/music/album-art/" + ImageType.THUMBNAIL.name().toLowerCase() + "/"
 				+ album.getId();
 

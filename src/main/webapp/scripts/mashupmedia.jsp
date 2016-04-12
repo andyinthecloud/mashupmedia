@@ -189,7 +189,7 @@ var mashupMedia = new function() {
         
 
         var albumName = song.artistName + " - " + song.albumName;
-        $("#music-player .album-art").html("<a href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
+        $("#music-player .album-art").html("<a rel=\"internal\" href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
         $("#music-player .artist-name").text(song.artistName);
         $("#music-player .title").text(song.title);             
         setupJPlayer(song.streamFormat, song.streamUrl);
