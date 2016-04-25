@@ -97,12 +97,23 @@ var mashupMedia = new function() {
 		  }
 		});		
 		return isInstalled;
-	};	
+	};
+	this.songId = 0;
 	//this.playingClass = "playing";
 	this.jPlayerId = "#jquery_jplayer_1";
 	//this.jPlayerContainerId = "#jp_container_1";
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
+	
+	this.showMessage = function(message) {
+	    $("#information-box").html(message);
+	    $("#information-box").show();
+	    
+	    setTimeout(function() {
+	        $("#information-box").fadeOut("slow");                  
+	    }, 5000);
+	    
+	};
 	
 	this.loadLastAccessedPlaylist = function() {	    
 		$.get(mashupMedia.contextUrl + "app/restful/playlist/music/play/current", function(data) {		    
@@ -185,14 +196,14 @@ var mashupMedia = new function() {
     this.prepareSong = function(song) {
         if (!song) {
             return;
-        }                   
-        
+        }                           
 
         var albumName = song.artistName + " - " + song.albumName;
         $("#music-player .album-art").html("<a rel=\"internal\" href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
         $("#music-player .artist-name").text(song.artistName);
         $("#music-player .title").text(song.title);             
         setupJPlayer(song.streamFormat, song.streamUrl);
+        mashupMedia.songId = song.id;
         mashupMedia.showMusicPlayer(true);
 
     };
@@ -419,7 +430,11 @@ function setupJPlayer(streamFormat, streamUrl) {
 
             var errorType = event.jPlayer.error.type;
             if (errorType == "e_no_solution") {
-                alert("Unable to play");
+                $.post("<c:url value="/app/restful/encode/music-album" />", { id: mashupMedia.songId })
+                    .done(function( data ) {
+                        mashupMedia.showMessage(data);          
+                });   
+                
             }
         }
     };
@@ -771,7 +786,7 @@ function setupMusicPlayer(isAutoPlay) {
             playBar: "div.play-bar"
         }
     });
-    */    
+    
     
     var options = {         
         ready: function (event) {
@@ -798,6 +813,7 @@ function setupMusicPlayer(isAutoPlay) {
     var myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, bubble, options);
     // var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";      
     //mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, ${song.artist.id});
+    */
 }
 
 	

@@ -1,11 +1,15 @@
 package org.mashupmedia.controller.rest.encode;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.exception.MediaItemEncodeException.EncodeExceptionType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
+import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
@@ -23,74 +27,133 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/restful/encode")
 public class RestfulEncodeController {
 
+	enum EncodeMessageType {
+		ERROR, INFO, WARNING
+	}
+	
+	private MediaContentType musicEncodingMediaContentType = MediaContentType.MP3;
+
 	@Autowired
 	private MediaManager mediaManager;
 
 	@Autowired
 	private MusicManager musicManager;
 
-	
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 
 	@RequestMapping(value = "/media-item", method = RequestMethod.POST)
-	public String encodeMediaItem(@RequestParam(value = "id") long mediaItemId,
-			@RequestParam(value = "mediaContentTypeValue") String mediaContentTypeValue) {
-		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
+	public String encodeMediaItem(@RequestParam(value = "id") long mediaItemId) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		if (mediaItem == null) {
 			return "encode.message.media-item-not-found";
 		}
-		String messageKey = encodeMediaItem(mediaContentType, mediaItem);
+		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
+		encodeMediaItem(messageKeys, musicEncodingMediaContentType, mediaItem);
+		
+		String messageKey = getMostImportantMessageKey(messageKeys);		
+		String message = MessageHelper.getMessage(messageKey);
+		return message;
+	}
+
+	protected String getMostImportantMessageKey(Map<EncodeMessageType, String> messageKeys) {
+		if (messageKeys == null || messageKeys.isEmpty()) {
+			return null;
+		}
+		
+		String messageKey = messageKeys.get(EncodeMessageType.ERROR);
+		if (StringUtils.isNotEmpty(messageKey)) {
+			return messageKey;
+		}
+		
+		messageKey = messageKeys.get(EncodeMessageType.WARNING);
+		if (StringUtils.isNotEmpty(messageKey)) {
+			return messageKey;
+		}
+		
+		messageKey = messageKeys.get(EncodeMessageType.INFO);
+		if (StringUtils.isNotEmpty(messageKey)) {
+			return messageKey;
+		}
+		
+		return null;
+	}
+
+	@RequestMapping(value = "/music-album", method = RequestMethod.POST)
+	public String encodeMusicAlbum(@RequestParam(value = "id") long albumId) {
+		Album album = musicManager.getAlbum(albumId);
+		
+		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
+		encodeMusicAlbum(album, messageKeys, musicEncodingMediaContentType);
+
+		String messageKey = getMostImportantMessageKey(messageKeys);
 		String message = MessageHelper.getMessage(messageKey);
 		return message;
 	}
 	
-
-	@RequestMapping(value = "/music-album", method = RequestMethod.POST)
-	public String encodeMusicAlbum(@RequestParam(value = "id") long albumId,
-			@RequestParam(value = "mediaContentTypeValue") String mediaContentTypeValue) {
-		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaContentTypeValue);
-		Album album = musicManager.getAlbum(albumId);
-		if (album == null) {
+	@RequestMapping(value = "/music-artist", method = RequestMethod.POST)
+	public String encodeMusicArtist(@RequestParam(value = "id") long albumId) {
+		
+		Artist artist = musicManager.getArtist(albumId);
+		if (artist == null) {
 			return MessageHelper.getMessage("encode.message.media-item-not-found");
 		}
 		
-		String messageKey = null;
-		List<Song> songs = album.getSongs();
-		for (Song song : songs) {
-			messageKey = encodeMediaItem(mediaContentType, song);
+		List<Album> albums = artist.getAlbums();
+		for (Album album : albums) {
+			if (album == null) {
+				continue;
+			}
+			
 		}
 		
+		Album album = musicManager.getAlbum(albumId);
+		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>(); 
+		encodeMusicAlbum(album, messageKeys, musicEncodingMediaContentType);
+
+		String messageKey = getMostImportantMessageKey(messageKeys);
 		String message = MessageHelper.getMessage(messageKey);
 		return message;
 	}
 	
-	
-	protected String encodeMediaItem(MediaContentType mediaContentType, MediaItem mediaItem) {
-		String messageKey = null;
-		if (mediaContentType == null || mediaContentType == MediaContentType.UNSUPPORTED) {
-			return "encode.message.unsupported-format ";
-		}		
+	protected void encodeMusicAlbum(Album album, Map<EncodeMessageType, String> messageKeys, MediaContentType mediaContentType) {
+		if (messageKeys == null) {
+			messageKeys = new HashMap<EncodeMessageType, String>();
+		}
 		
+		if (album == null) {
+			messageKeys.put(EncodeMessageType.ERROR, "encode.message.media-item-not-found");
+			return;
+		}
+		
+		List<Song> songs = album.getSongs();
+		for (Song song : songs) {
+			encodeMediaItem(messageKeys, mediaContentType, song);
+		}
+	}
+	
+
+	protected void encodeMediaItem(Map<EncodeMessageType, String> messageKeys, MediaContentType mediaContentType, MediaItem mediaItem) {
+		if (mediaContentType == null || mediaContentType == MediaContentType.UNSUPPORTED) {
+			messageKeys.put(EncodeMessageType.ERROR, "encode.message.unsupported-format");
+			return;
+		}
+
 		try {
 			encodeMediaItemTaskManager.processMediaItemForEncoding(mediaItem, mediaContentType);
 		} catch (MediaItemEncodeException e) {
 			EncodeExceptionType encodeExceptionType = e.getEncodeExceptionType();
 			if (encodeExceptionType == EncodeExceptionType.ENCODER_NOT_CONFIGURED) {
-				messageKey = "encode.message.not-installed";
+				messageKeys.put(EncodeMessageType.WARNING, "encode.message.not-installed");
 			} else if (encodeExceptionType == EncodeExceptionType.UNSUPPORTED_ENCODING_FORMAT) {
-				messageKey = "encode.message.unsupported-format";
-
+				messageKeys.put(EncodeMessageType.ERROR, "encode.message.unsupported-format");
 			} else {
-				messageKey = "encode.message.error";
-
+				messageKeys.put(EncodeMessageType.ERROR, "encode.message.error");
 			}
+			return;
 		}
 
-		messageKey = "encode.message.queued";
-		
-		return messageKey;
+		messageKeys.put(EncodeMessageType.INFO, "encode.message.queued");
 	}
 
 }

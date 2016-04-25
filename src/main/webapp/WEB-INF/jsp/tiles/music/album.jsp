@@ -39,8 +39,10 @@
         });
 
         $("div.dynamic-content").off().on("click", "div.title-with-player-control div.re-encode a", function() {
-            $.get("<c:url value="/app/ajax/media/encode/album/${albumPage.album.id}" />", function(data) {
-            });
+            $.post("<c:url value="/app/restful/encode/music-album" />", { id: <c:out value="${albumPage.album.id}" /> })
+            .done(function( data ) {
+                mashupMedia.showMessage(data);          
+            });            
         });
 
     });

@@ -181,6 +181,8 @@
         });
 
         mashupMedia.loadLastAccessedPlaylist();
+        
+        mashupMedia.showMessage("andy message bix");
     });
 
     function togglePlayPause(action) {
@@ -333,6 +335,8 @@
 
 
 		<div role="main" class="ui-content jqm-content jqm-fullwidth">
+		
+			<div id="information-box"></div>
 
 			<div class="dynamic-content">
 				<c:if test="${fn:length(breadcrumbs) > 1}">
