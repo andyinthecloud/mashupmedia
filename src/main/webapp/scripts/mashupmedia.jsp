@@ -201,9 +201,9 @@ var mashupMedia = new function() {
         var albumName = song.artistName + " - " + song.albumName;
         $("#music-player .album-art").html("<a rel=\"internal\" href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
         $("#music-player .artist-name").text(song.artistName);
-        $("#music-player .title").text(song.title);             
-        setupJPlayer(song.streamFormat, song.streamUrl);
+        $("#music-player .title").text(song.title);
         mashupMedia.songId = song.id;
+        setupJPlayer(song.streamFormat, song.streamUrl);
         mashupMedia.showMusicPlayer(true);
 
     };
@@ -336,59 +336,6 @@ var mashupMedia = new function() {
 		mashupMedia.showEmptySongInfo();
 	};
 	
-	/*
-	this.showEmptySongInfo = function() {		
-		mashupMedia.showSongInfo("", "", false, 0, 0, "", 0, 0);
-	};
-	*/
-	
-	/*
-	this.showSongInfo = function(songTitle, artistName, isShowVoteButtons, albumId, mediaItemId, playlistName, playlistId, artistId) {		
-		if (songTitle == "") {
-			songTitle = "<spring:message code="music.playlist.current-song.empty" />";
-		}
-		
-		var albumArtImageSrc = "<c:url value="/images/no-album-art.png" />";
-		if (albumId > 0) {
-			albumArtImageSrc = mashupMedia.contextUrl + "app/music/album-art/thumbnail/" + albumId;
-		}
-		
-		
-		songTitle = unescape(songTitle);
-		artistName = unescape(artistName);
-		playlistName = unescape(playlistName);
-		
-		$("#current-song td.song-title .title").text(songTitle);	
-		$("#current-song td.song-title .artist-name").html("<a href=\"javascript:;\"  rel=\"address:address-artist-" + artistId + "\" >" + artistName + "</a>");
-		if (isShowVoteButtons) {
-			$("#current-song .vote").show();	
-		} else {
-			$("#current-song .vote").hide();
-		}
-				
-		$("#current-song .album-art img").attr("src", albumArtImageSrc);
-		$("#current-song-id").val(mediaItemId);
-		
-		if (playlistId == 0) {
-			$("#current-song span.playlist").hide();
-		} else {
-			$("#current-song span.playlist").show();			
-		}
-		
-		$("#current-song .playlist a").text(playlistName);
-		$("#current-playlist-id").val(playlistId);
-		$("#current-song .playlist a").attr("rel", "address:/address-playlist-" + playlistId);
-		
-		
-		
-		var encodeMessage = "<spring:message code="music.playlist.encode.not-installed" />";	
-		if (mashupMedia.isFfMpegInstalled()) {
-			encodeMessage = "<spring:message code="music.playlist.encode.process" />";
-		}
-		
-		$("#current-song .encode").html(encodeMessage);
-	};
-	*/
 }
 
 var myAndroidFix = null;
@@ -406,7 +353,9 @@ function setupJPlayer(streamFormat, streamUrl) {
         }        
         return;
     }
-
+    
+    
+    
     var options = {
         ready: function(event) {
             myAndroidFix.setMedia(mediaStream);
@@ -425,17 +374,13 @@ function setupJPlayer(streamFormat, streamUrl) {
             playBar: "div.play-bar"
         },
         error: function(event) {
-            console.log(event.jPlayer.error);
-//            console.log(event.jPlayer.error.type); 
-
             var errorType = event.jPlayer.error.type;
             if (errorType == "e_no_solution") {
-                $.post("<c:url value="/app/restful/encode/music-album" />", { id: mashupMedia.songId })
+                $.post("<c:url value="/app/restful/encode/song" />", { id: mashupMedia.songId })
                     .done(function( data ) {
                         mashupMedia.showMessage(data);          
-                });   
-                
-            }
+                });                   
+            }            
         }
     };
     

@@ -182,7 +182,6 @@
 
         mashupMedia.loadLastAccessedPlaylist();
         
-        mashupMedia.showMessage("andy message bix");
     });
 
     function togglePlayPause(action) {
