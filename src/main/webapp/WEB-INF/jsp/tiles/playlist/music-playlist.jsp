@@ -195,7 +195,7 @@
 
 	</div>
 
-	<ul class="playlist-items">
+	<ul class="items">
 
 		<c:forEach items="${playlist.accessiblePlaylistMediaItems}"
 			var="playlistMediaItem">

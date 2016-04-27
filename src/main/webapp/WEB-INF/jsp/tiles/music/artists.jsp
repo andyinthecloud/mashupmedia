@@ -1,22 +1,22 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 <script type="text/javascript">
-	$(document).ready(function() {
+    $(document).ready(function() {
         // Unbind declared event handlers
-	    $("div.dynamic-content").off("click", "ul.index-letters a");
+        $("div.dynamic-content").off("click", "ul.index-letters a");
 
-	    window.scrollTo(0, 0);
-	    showFooterTabs("music", "music-artists");
-	    
+        window.scrollTo(0, 0);
+        showFooterTabs("music", "music-artists");
+
         $("div.dynamic-content").on("click", "ul.index-letters a", function() {
-            var anchor = $(this).attr("href");            
+            var anchor = $(this).attr("href");
             $('html, body').animate({
                 scrollTop: $(anchor).position().top - 20
             }, 500);
             return false;
         });
-	    
-	});
+
+    });
 </script>
 
 
@@ -24,18 +24,32 @@
 	<spring:message code="music.artists.title" />
 </h1>
 
+
+<c:set var="nonAlphabeticalId" value="non-alphabetical-id" />
+
 <ul class="index-letters">
 	<c:forEach items="${artistsPage.artistIndexLetters}" var="letter">
-		<li><a href="#index-letter-${letter}"><c:out value="${letter}" /></a></li>
+		<c:set var="urlLetter" value="${letter}" />
+		<c:if test="${urlLetter eq '#'}">
+			<c:set var="urlLetter" value="${nonAlphabeticalId}" />
+		</c:if>
+
+		<li><a href="#index-letter-${urlLetter}">${letter}</a></li>
 	</c:forEach>
 </ul>
 
-<ul class="playlist-items">
+<ul class="items">
 	<c:set var="rowIndex" value="" />
+	<c:set var="indexLetter" value="" />
 	<c:forEach items="${artistsPage.artists}" var="artist">
 		<c:choose>
 			<c:when test="${artist.indexLetter != indexLetter}">
 				<c:set var="rowIndex" value="index-letter-${artist.indexLetter}" />
+				<c:if test="${artist.indexLetter eq '#'}">
+					<c:set var="rowIndex" value="index-letter-${nonAlphabeticalId}" />
+				</c:if>
+
+
 				<c:set var="indexLetter" value="${artist.indexLetter}" />
 			</c:when>
 			<c:otherwise>
@@ -43,7 +57,10 @@
 			</c:otherwise>
 		</c:choose>
 
-		<li id="${rowIndex}"><a href="<c:url value="/app/music#address-artist-${artist.id}"/>" rel="address:/address-artist-${artist.id}" id="artist-id-${artist.id}"><c:out value="${artist.name}" /></a></li>
+		<li id="${rowIndex}"><a
+			href="<c:url value="/app/music#address-artist-${artist.id}"/>"
+			rel="address:/address-artist-${artist.id}"
+			id="artist-id-${artist.id}"><c:out value="${artist.name}" /></a></li>
 	</c:forEach>
 </ul>
 

@@ -8,7 +8,7 @@
 			listProcesses();
 		}, 5000);
 		
-		$("div.processes-container").on("click", "ul.items li a.dustbin", function(){
+		$("div.processes-container").on("click", "ul.items li a.delete", function(){
 			var id = $(this).closest("li").attr("id")
 			var mediaItemId = parseId(id, "media-id");
 			var mediaContentType = id.replace(/.*content-type-/g, "");

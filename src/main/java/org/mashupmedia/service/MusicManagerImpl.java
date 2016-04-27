@@ -77,7 +77,7 @@ public class MusicManagerImpl implements MusicManager {
 	@Override
 	public List<String> getArtistIndexLetters() {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		List<String> indexLetters = musicDao.getArtistIndexLetters(userGroupIds);
+		List<String> indexLetters = musicDao.getArtistIndexLetters(userGroupIds);		
 		return indexLetters;
 	}
 

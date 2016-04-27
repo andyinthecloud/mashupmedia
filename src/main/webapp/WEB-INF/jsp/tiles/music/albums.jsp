@@ -85,7 +85,7 @@
 	<ul class="index-letters">
 		<c:forEach items="${albumIndexLetters}" var="letter">
 			<c:set var="urlLetter" value="${letter}" />
-			<c:if test="${urlLetter == '#'}">
+			<c:if test="${urlLetter eq '#'}">
 				<c:set var="urlLetter" value="." />
 			</c:if>
 

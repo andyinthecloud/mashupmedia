@@ -432,76 +432,6 @@ div.ui-dialog input.search-field {
 	margin-right: 10px;
 }
 
-ul.items {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-ul.items img {
-	vertical-align: middle;
-}
-
-ul.items li {
-	padding: 10px 0;
-	clear: both;
-	border-bottom: 1px solid #C8C0CE;
-}
-
-ul.items li a.album-cover {
-	float: left;
-}
-
-ul.items li a.album-cover img {
-	height: 110px;
-}
-
-ul.items li a.album-cover img {
-	width: auto;
-}
-
-ul.items li div.song, ul.items li div.artist-and-album, ul.items li div.meta
-	{
-	margin-left: 120px;
-	padding-top: 10px;
-}
-
-ul.items li div.song {
-	font-size: 120%;
-}
-
-ul.items li div.song .controls {
-	display: inline;
-}
-
-ul.items li div.album {
-	margin-top: 10px;
-	margin-bottom: 15px;
-	font-size: 120%;
-}
-
-ul.items li div.artist {
-	font-size: 90%;
-}
-
-ul.items ul.control-menu {
-	margin-top: 10px;
-	clear: none;
-}
-
-ul.items li div.controls {
-	margin-top: 10px;
-}
-
-ul.items ul.control-menu li {
-	border-bottom: none !important;
-	padding: 0 0 0 5px !important;
-}
-
-ul.items ul.control-menu li.first {
-	padding: 0 5px 0 0 !important;
-}
-
 div.index-letter {
 	clear: both;
 	text-transform: uppercase;
@@ -743,51 +673,52 @@ div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HO
 	font-weight: normal !important;
 }
 
-ul.playlist-items {
+ul.items {
 	list-style: none;
 	padding: 0; 
 }
 
-ul.playlist-items li{
+ul.items li{
 	position: relative;
 	clear: both;
 	border-bottom: 1px solid #e579e9;
 	padding: 5px 0;
-	white-space: nowrap;
+	
 }
 
-ul.playlist-items li.playing{
+ul.items li.playing{
 	font-weight: bold;
 }
 
-ul.playlist-items a.play {
+ul.items a.play {
 	vertical-align: middle;
 	margin-right: 1em;
 }
 
 
-ul.playlist-items a.delete {
+ul.items a.delete {
 	vertical-align: middle;
 }
 
-ul.playlist-items div.item {
+ul.items div.item {
 	display: inline-block; 
 }
 
-ul.playlist-items div.item div.title{
+ul.items div.item div.title{
 	font-size: 1.1em;  	
 }
 
-ul.playlist-items div.item div.meta{
+ul.items div.item div.meta{
 	font-size: 0.8em;  	
 }
 
-ul.playlist-items div.icons-right{
+ul.items div.icons-right{
 	position: absolute;
 	right: 0; 
 	top: 40%; 
 	white-space: nowrap;
 }
+
 
 #information-box {
 	display: none;
