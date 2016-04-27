@@ -91,7 +91,12 @@ public class ProcessManager {
 	}
 
 	public void startProcess(ProcessQueueItem processQueueItem) throws IOException {
-
+		
+		if (true){
+			return;
+		}
+		
+		
 		try {
 			logger.info("Starting process...");
 			List<String> commands = processQueueItem.getCommands();

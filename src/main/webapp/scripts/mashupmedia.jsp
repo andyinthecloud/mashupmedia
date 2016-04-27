@@ -111,7 +111,7 @@ var mashupMedia = new function() {
 	    
 	    setTimeout(function() {
 	        $("#information-box").fadeOut("slow");                  
-	    }, 5000);
+	    }, 10000);
 	    
 	};
 	

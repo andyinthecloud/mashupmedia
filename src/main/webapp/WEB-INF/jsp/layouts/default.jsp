@@ -428,7 +428,7 @@
 								code="home.links.configuration" /></a></li>
 					<li><a rel="internal"
 						title="<spring:message code="encoding-processes.title" />"
-						href="<c:url value="/app/encode/processes" />"><spring:message
+						href="<c:url value="/app/encode/queue" />"><spring:message
 								code="top-bar.encoding.queue" /></a></li>
 				</sec:authorize>
 				<li><a rel="internal"

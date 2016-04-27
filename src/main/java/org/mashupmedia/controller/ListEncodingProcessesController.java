@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/encode/processes")
+@RequestMapping("/encode/queue")
 public class ListEncodingProcessesController extends BaseController {
 
 	@Autowired
@@ -60,7 +60,7 @@ public class ListEncodingProcessesController extends BaseController {
 		model.addAttribute("encodingProcessesPage", encodingProcessesPage);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_RELOAD, false);
 
-		String path = getPath(isFragment, "encode/list-processes");
+		String path = getPath(isFragment, "encode/queue");
 		return path;
 	}
 
@@ -95,7 +95,7 @@ public class ListEncodingProcessesController extends BaseController {
 
 		model.addAttribute("encodingProcessesPage", encodingProcessesPage);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_RELOAD, true);
-		return "ajax/media/list-processes";
+		return "ajax/media/list-encoding-processes";
 	}
 
 	@RequestMapping(value = "/kill-process", method = RequestMethod.GET, produces = "application/json")

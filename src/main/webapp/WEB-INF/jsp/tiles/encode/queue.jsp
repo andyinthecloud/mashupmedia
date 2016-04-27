@@ -13,7 +13,7 @@
 			var mediaItemId = parseId(id, "media-id");
 			var mediaContentType = id.replace(/.*content-type-/g, "");
 
-			$.get("<c:url value="/app/encode/processes/kill-process" />", {
+			$.get("<c:url value="/app/encode/queue/kill-process" />", {
 				mediaItemId : mediaItemId,
 				mediaContentType : mediaContentType
 			}, function(data) {
@@ -24,9 +24,9 @@
 	});
 
 	function listProcesses() {
-		$.get("<c:url value="/app/encode/processes/live-update" />", function(
+		$.get("<c:url value="/app/encode/queue/live-update" />", function(
 				data) {
-			$("div.sub-panel").html(data);
+			$("div.processes-container").html(data);
 		});
 	}
 </script>

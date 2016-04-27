@@ -257,14 +257,14 @@
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/video/video.jsp" />
 	</definition>
 
-	<definition name="encode/list-processes" extends="home">
+	<definition name="encode/queue" extends="home">
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/encode/processes.jsp" />
+			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
 	</definition>
 
-	<definition name="encode/list-processes/fragment" extends="ui-content">
+	<definition name="encode/queue/fragment" extends="ui-content">
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/encode/processes.jsp" />
+			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
 	</definition>
 	
 	<definition name="photo" extends="home">

@@ -790,6 +790,7 @@ ul.playlist-items div.icons-right{
 }
 
 #information-box {
+	display: none;
 	border: 1px solid #38c;
 	background-image: url("../images/information-icon.png");
 	background-position: 5px 5px;
@@ -798,4 +799,5 @@ ul.playlist-items div.icons-right{
 	margin-bottom: 1em;
 	min-height: 35px;	
 }
+
 
