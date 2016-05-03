@@ -8,7 +8,7 @@
 			listProcesses();
 		}, 5000);
 		
-		$("div.processes-container").on("click", "ul.items li a.delete", function(){
+		$("p.processes-container").on("click", "ul.items li a.delete", function(){
 			var id = $(this).closest("li").attr("id")
 			var mediaItemId = parseId(id, "media-id");
 			var mediaContentType = id.replace(/.*content-type-/g, "");
@@ -26,13 +26,13 @@
 	function listProcesses() {
 		$.get("<c:url value="/app/encode/queue/live-update" />", function(
 				data) {
-			$("div.processes-container").html(data);
+			$("p.processes-container").html(data);
 		});
 	}
 </script>
 
 
-<div class="processes-container">
+<p class="processes-container">
 
-</div>
+</p>
 

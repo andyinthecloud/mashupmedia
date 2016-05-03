@@ -16,6 +16,16 @@
             return false;
         });
 
+        $(window).scroll(function() {
+
+            if ($(this).scrollTop() >= 100) {
+
+                $("ul.index-letters").addClass("sticky");
+            } else {
+                $("ul.index-letters").removeClass("sticky");
+            }
+        });
+
     });
 </script>
 
@@ -57,10 +67,9 @@
 			</c:otherwise>
 		</c:choose>
 
-		<li id="${rowIndex}"><a
-			href="<c:url value="/app/music#address-artist-${artist.id}"/>"
-			rel="address:/address-artist-${artist.id}"
-			id="artist-id-${artist.id}"><c:out value="${artist.name}" /></a></li>
+		<li id="${rowIndex}"><a rel="internal"
+			href="<c:url value="/app/music/artist/${artist.id}"/>"><c:out
+					value="${artist.name}" /></a></li>
 	</c:forEach>
 </ul>
 

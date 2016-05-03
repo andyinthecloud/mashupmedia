@@ -300,7 +300,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	@Override
 	public List<Album> getAlbumsByArtist(List<Long> groupIds, long artistId) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g where a.artist.id = :artistId ");
+				"select distinct a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g where a.artist.id = :artistId ");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by a.name");
 

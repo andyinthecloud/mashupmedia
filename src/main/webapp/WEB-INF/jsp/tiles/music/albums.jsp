@@ -112,8 +112,8 @@
 
 			<div class="album-title">
 				<div class="artist-name">
-					<a href="javascript:;"
-						rel="address:/address-artist-${album.artist.id}">${album.artist.name}</a>
+					<a rel="internal"
+						href="<c:url value="/app/music/artist/${album.artist.id}" />">${album.artist.name}</a>
 				</div>
 				<div class="album-name">
 					<a rel="internal"

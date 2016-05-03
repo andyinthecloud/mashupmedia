@@ -22,11 +22,7 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.Playlist.PlaylistType;
-import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MediaManager;
-import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
@@ -57,9 +53,6 @@ public class StreamingController {
 	@Autowired
 	private MediaManager mediaManager;
 
-//	@Autowired
-//	private ConnectionManager connectionManager;
-	
 	@RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.HEAD)
 	public ModelAndView getMediaStreamHead(@PathVariable("mediaItemId") Long mediaItemId,
 			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model)
@@ -126,11 +119,15 @@ public class StreamingController {
 
 		
 		
-//		File tempFile = FileHelper.createEncodedMediaFile(mediaItem, mediaContentType);
 		File mediaFile = FileHelper.getMediaFile(mediaItem, mediaEncoding);
+		if (!mediaFile.exists()) {
+			mediaFile = new File(mediaItem.getPath());
+		}
+		
+		
 		MediaContentType mediaContentType = mediaEncoding.getMediaContentType();
 		final String contentType = mediaContentType.getMimeContentType();
-		final File file = mediaFile;
+		File file = mediaFile;
 
 		ModelAndView modelAndView = new ModelAndView(new View() {
 

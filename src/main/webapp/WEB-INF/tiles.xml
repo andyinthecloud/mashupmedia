@@ -218,6 +218,19 @@
 			value="/WEB-INF/jsp/tiles/music/artists.jsp" />
 	</definition>	
 
+
+	<definition name="music/artist" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/artist.jsp" />
+	</definition>
+
+	<definition name="music/artist/fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/artist.jsp" />
+	</definition>	
+
+
 	<definition name="playlist/music" extends="home">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/playlist/music-playlist.jsp" />

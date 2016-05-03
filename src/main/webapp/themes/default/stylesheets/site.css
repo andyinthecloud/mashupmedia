@@ -459,6 +459,11 @@ div.information {
 	margin: 10px 0;
 }
 
+#remote div.profile a.artist-profile {
+	float: left;
+	padding-right: 1em;
+}
+
 #remote ul.images {
 	list-style: none;	
 	padding: 0;
@@ -488,13 +493,14 @@ div.information {
 	clear: both;
 }
 
-div#remote.teaser-on {
-	height: 80px;
-	overflow: hidden;
+div#remote.teaser-on ul.images{
+	display: none;
+	
 }
 
-div#remote.teaser-off {
-	overflow: visible;
+div#remote.teaser-off ul.images{
+	clear: both;
+	display: block;
 }
 
 
@@ -731,4 +737,15 @@ ul.items div.icons-right{
 	min-height: 35px;	
 }
 
+.sticky {
+    top: 70px;
+    left: 0;
+    right: 0;
+    position: fixed;
+    z-index: 1;
+}
+
+.sticky li {
+	background-color: white;
+}
 

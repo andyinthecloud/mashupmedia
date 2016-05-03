@@ -18,7 +18,7 @@ public class RestfulSong extends RestfulMediaItem {
 		
 		Artist artist = song.getArtist();
 		this.artistName = artist.getName();
-		this.artistUrl = getContextPath() + "/app/music/artist/id/" + artist.getId();
+		this.artistUrl = getContextPath() + "/app/music/artist/" + artist.getId();
 
 		Album album = song.getAlbum();
 		this.albumName = album.getName();

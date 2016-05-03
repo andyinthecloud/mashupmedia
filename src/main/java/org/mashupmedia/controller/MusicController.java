@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.music.Album;
@@ -19,6 +20,7 @@ import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.service.AlbumArtManager;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
@@ -33,6 +35,7 @@ import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.view.MediaItemImageView;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.AlbumPage;
+import org.mashupmedia.web.page.ArtistPage;
 import org.mashupmedia.web.page.ArtistsPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -75,6 +78,10 @@ public class MusicController extends BaseController {
 
 	@Autowired
 	private PlaylistManager playlistManager;
+	
+	@Autowired
+	private AlbumArtManager albumArtManager;
+	
 
 	@Override
 	public String getPageTitleMessageKey() {
@@ -108,10 +115,10 @@ public class MusicController extends BaseController {
 	}
 
 	@Override
-	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {		
+	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		breadcrumbs.add(getMusicBreadcrumb());
 	}
-	
+
 	protected Breadcrumb getMusicBreadcrumb() {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music/albums");
 		return breadcrumb;
@@ -223,15 +230,18 @@ public class MusicController extends BaseController {
 		return pagePath;
 	}
 
-	/*
-	 * @RequestMapping(value = "/append-latest-albums", method =
-	 * RequestMethod.GET) public String
-	 * getAppendLatestAlbums(@RequestParam(value = PAGE_NUMBER_PARAM, required =
-	 * true) int pageNumber, Model model) { List<Album> albums =
-	 * musicManager.getLatestAlbums(pageNumber, MAX_ALBUMS);
-	 * model.addAttribute("isAppend", true); model.addAttribute("albums",
-	 * albums); return "/tiles/music/albums"; }
-	 */
+	@RequestMapping(value = "/artist/{artistId}", method = RequestMethod.GET)
+	public String getArtist(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
+			@PathVariable("artistId") Long artistId, Model model) {
+		Artist artist = musicManager.getArtist(artistId);
+		ArtistPage artistPage = new ArtistPage();
+		artistPage.setArtist(artist);
+
+		model.addAttribute(artistPage);
+
+		String pagePath = getPath(isFragment, "music/artist");
+		return pagePath;
+	}
 
 	@RequestMapping(value = "/album-art/{imageType}/{albumId}", method = RequestMethod.GET)
 	public ModelAndView getAlbumArt(@PathVariable("imageType") String imageTypeValue,
@@ -248,6 +258,8 @@ public class MusicController extends BaseController {
 			logger.error("Unable to find album id: " + albumId);
 			return null;
 		}
+		
+		
 
 		AlbumArtImage albumArtImage = album.getAlbumArtImage();
 
@@ -255,6 +267,17 @@ public class MusicController extends BaseController {
 
 		try {
 			imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage, imageType);
+			if (imageBytes == null || imageBytes.length == 0) {
+				// Try to regenerate the album art if the image is empty
+				List<Song> songs = album.getSongs();
+				if (songs != null && !songs.isEmpty()) {
+					Song song = songs.get(0);
+					MusicLibrary musicLibrary = (MusicLibrary) song.getLibrary();
+					albumArtImage = albumArtManager.getAlbumArtImage(musicLibrary, song);
+					imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage, imageType);					
+				}				
+			}
+			
 		} catch (IOException e) {
 			logger.info("Unable to read album art: " + albumArtImage.getUrl(), e);
 		}
@@ -309,7 +332,7 @@ public class MusicController extends BaseController {
 	public String populateMediaType() {
 		return "music";
 	}
-	
+
 	protected List<Breadcrumb> prepareBreadcrumbs() {
 		List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();
 		breadcrumbs.add(getHomeBreadcrumb());
@@ -326,12 +349,12 @@ public class MusicController extends BaseController {
 		albumPage.setAlbum(album);
 		albumPage.setSongs(songs);
 		model.addAttribute(albumPage);
-		
+
 		List<Breadcrumb> breadcrumbs = prepareBreadcrumbs();
-		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.music.album")));		
+		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.music.album")));
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
-		
-//		prepareBreadcrumbs(breadcrumbs);
+
+		// prepareBreadcrumbs(breadcrumbs);
 
 		String pagePath = getPath(isFragment, "music/album");
 		return pagePath;

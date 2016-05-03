@@ -13,7 +13,7 @@
 
         window.scrollTo(0, 0);
         showFooterTabs("music", "music-playlist");
-        
+
         $("ul.playlist-items").sortable();
 
         <c:if test="${canSavePlaylist}">
@@ -47,11 +47,11 @@
                 copyPlaylist()
             } else if (action == "delete") {
                 deletePlaylist();
-            } else if (action == "playlists") {                                
+            } else if (action == "playlists") {
                 var url = "<c:url value="/app/playlist/list/music" />";
-                loadInternalPage("<spring:message code="playlists.title" />", url);                
+                loadInternalPage("<spring:message code="playlists.title" />", url);
             }
-            
+
             return false;
 
         });
@@ -65,7 +65,7 @@
         $("div.dynamic-content").on("click", "#playlist ul.playlist-items li a.play", function() {
 
             $("#playlist ul.playlist-items li").removeClass("playing");
-            
+
             var songRow = $(this).closest("li");
             $(songRow).addClass("playing");
 
@@ -122,6 +122,9 @@
         $.post("<c:url value="/app/restful/playlist/music/save-playlist" />", {
             playlistId: playlistId,
             mediaItemIds: mediaItemIds
+        }, function(data) {
+            var url = "<c:url value="/app/playlist/list/music" />";
+            loadInternalPage("<spring:message code="playlists.title" />", url)
         });
 
     }

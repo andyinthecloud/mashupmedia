@@ -29,13 +29,24 @@
     });
 
     function displayRemoteArtistInformation(data) {
-        $("#remote div.profile").html(data.introduction);
         if (data.error) { 
             return; 
         }
+        
+        var introduction = "";
+        if (data.remoteImages.length > 0) {
+            var firstArtistImage = data.remoteImages[0];
+            introduction = "<a class=\"swipebox artist-profile\" href=\"" + mashupMedia.contextUrl + firstArtistImage.imageUrl +"\"><img alt=\"image\" src=\"" + mashupMedia.contextUrl + firstArtistImage.thumbUrl + "\"></a>";
+        }
+        
+        introduction += data.introduction;
+        
+        $("#remote div.profile").html(introduction);        
 
         $.each(data.remoteImages, function(index, remoteImage) {
-        	$("#remote ul.images").append("<li class=\"box\"><a class=\"swipebox\" href=\""+mashupMedia.contextUrl + remoteImage.imageUrl +"\"><img alt=\"image\" src=\"" + mashupMedia.contextUrl + remoteImage.thumbUrl + "\"></a></li>");
+            if (index > 0) {
+        		$("#remote ul.images").append("<li class=\"box\"><a class=\"swipebox\" href=\"" + mashupMedia.contextUrl + remoteImage.imageUrl +"\"><img alt=\"image\" src=\"" + mashupMedia.contextUrl + remoteImage.thumbUrl + "\"></a></li>");
+        	}
 		});
 
         $("#remote div.disclaimer").show();

@@ -84,7 +84,7 @@ public class RestfulEncodeController {
 		Album album = musicManager.getAlbum(albumId);
 
 		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
-		encodeMusicAlbum(album, messageKeys, musicEncodingMediaContentType);
+		encodeMusicAlbum(album.getId(), messageKeys, musicEncodingMediaContentType);
 
 		String messageKey = getMostImportantMessageKey(messageKeys);
 
@@ -93,41 +93,38 @@ public class RestfulEncodeController {
 	}
 
 	@RequestMapping(value = "/music-artist", method = RequestMethod.POST)
-	public String encodeMusicArtist(@RequestParam(value = "id") long albumId) {
+	public String encodeMusicArtist(@RequestParam(value = "id") long artistId) {
 
-		Artist artist = musicManager.getArtist(albumId);
+		Artist artist = musicManager.getArtist(artistId);
 		if (artist == null) {
 			return MessageHelper.getMessage("encode.message.media-item-not-found");
 		}
 
+		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
 		List<Album> albums = artist.getAlbums();
 		for (Album album : albums) {
-			if (album == null) {
-				continue;
-			}
+			encodeMusicAlbum(album.getId(), messageKeys, musicEncodingMediaContentType);
 
 		}
-
-		Album album = musicManager.getAlbum(albumId);
-		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
-		encodeMusicAlbum(album, messageKeys, musicEncodingMediaContentType);
 
 		String messageKey = getMostImportantMessageKey(messageKeys);
 		String message = MessageHelper.getMessage(messageKey, new String[] { WebHelper.getContextPath() });
 		return message;
 	}
 
-	protected void encodeMusicAlbum(Album album, Map<EncodeMessageType, String> messageKeys,
+	protected void encodeMusicAlbum(Long albumId, Map<EncodeMessageType, String> messageKeys,
 			MediaContentType mediaContentType) {
 		if (messageKeys == null) {
 			messageKeys = new HashMap<EncodeMessageType, String>();
 		}
 
+		// Reinitialise album to get containing songs
+		Album album = musicManager.getAlbum(albumId);
 		if (album == null) {
 			messageKeys.put(EncodeMessageType.ERROR, "encode.message.media-item-not-found");
 			return;
 		}
-
+		
 		List<Song> songs = album.getSongs();
 		for (Song song : songs) {
 			encodeMediaItem(messageKeys, mediaContentType, song);

@@ -2,6 +2,7 @@
 
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+
 var isLoadingContent = false;
 var currentPage = "";
 
@@ -104,6 +105,7 @@ var mashupMedia = new function() {
 	//this.jPlayerContainerId = "#jp_container_1";
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
+	this.jPlayerSwfPath = "";
 	
 	this.showMessage = function(message) {
 	    $("#information-box").html(message);
@@ -200,7 +202,7 @@ var mashupMedia = new function() {
 
         var albumName = song.artistName + " - " + song.albumName;
         $("#music-player .album-art").html("<a rel=\"internal\" href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
-        $("#music-player .artist-name").text(song.artistName);
+        $("#music-player .artist-name").html("<a rel=\"internal\" href=\"" + song.artistUrl + "\">" + song.artistName + "</a>");        
         $("#music-player .title").text(song.title);
         mashupMedia.songId = song.id;
         setupJPlayer(song.streamFormat, song.streamUrl);
@@ -363,7 +365,9 @@ function setupJPlayer(streamFormat, streamUrl) {
         ended: function(event) {
             mashupMedia.playNextSong(true);
         },
-        swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
+        
+        
+        swfPath: mashupMedia.jPlayerSwfPath,
         supplied: streamFormat,
         cssSelectorAncestor: "#music-player",
         cssSelector: {
@@ -375,7 +379,7 @@ function setupJPlayer(streamFormat, streamUrl) {
         },
         error: function(event) {
             var errorType = event.jPlayer.error.type;
-            if (errorType == "e_no_solution") {
+            if (errorType == "e_no_solution" || errorType == "e_url") {
                 $.post("<c:url value="/app/restful/encode/song" />", { id: mashupMedia.songId })
                     .done(function( data ) {
                         mashupMedia.showMessage(data);          
@@ -693,73 +697,4 @@ function loadInternalPage(title, url) {
     });    
     
 }
-	
-
-	
-function setupMusicPlayer(isAutoPlay) {
-    /*
-    $(mashupMedia.jPlayerId).jPlayer("destroy");
-    var bubble = {
-        ${streamingFormat}: "<c:url value="${streamingUrl}" />"
-    };
-
-    var jPlayerStatus = "load";
-    if (isAutoPlay) {
-        jPlayerStatus = "play";
-    }
-    */
-    
-    
-    /*
-    $("#jquery_jplayer_1").jPlayer({
-        ready: function(event) {
-            $(this).jPlayer("setMedia", {
-                title: "Bubble",
-                m4a: "http://jplayer.org/audio/m4a/Miaow-07-Bubble.m4a",
-                oga: "http://jplayer.org/audio/ogg/Miaow-07-Bubble.ogg"
-            });
-        },
-        swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
-        supplied: "m4a, oga",
-        // wmode: "window",
-        cssSelectorAncestor: "#music-player",
-        cssSelector: {
-            title: "div.information span.title",
-            play: "div.controls a.play",
-            pause: "div.controls a.pause",
-            seekBar: "div.progress",
-            playBar: "div.play-bar"
-        }
-    });
-    
-    
-    var options = {         
-        ready: function (event) {
-            myAndroidFix.setMedia(bubble);
-            if (isAutoPlay) {
-                myAndroidFix.play();
-            }               
-        },          
-        swfPath: "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />",
-        supplied: "${streamingFormat}",
-        wmode: "window",
-        useStateClassSkin: true,
-        autoBlur: false,
-        smoothPlayBar: true,
-        keyEnabled: true,
-        remainingDuration: true,
-        toggleDuration: true,
-        ended: function() { 
-            mashupMedia.playNextSong();             
-        },          
-        preload: "auto"
-    };
-    
-    var myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, bubble, options);
-    // var albumUrl = "<c:url value="/app/ajax/music/album/${song.album.id}" />";      
-    //mashupMedia.showSongInfo("${song.displayTitle}", "${song.artist.name}", true, ${song.album.id}, ${song.id}, "${playlist.name}", ${playlist.id}, ${song.artist.id});
-    */
-}
-
-	
 	

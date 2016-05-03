@@ -2,6 +2,7 @@ package org.mashupmedia.service;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
@@ -19,9 +20,10 @@ import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.ImageHelper;
-import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.util.FileHelper.FileType;
+import org.mashupmedia.util.ImageHelper;
+import org.mashupmedia.util.ImageHelper.ImageType;
+import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,10 +36,10 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 	public static final String DEFAULT_MIME_TYPE = "jpg";
 
 	@Autowired
-	private ConnectionManager connectionManager;
-
-	@Autowired
 	MusicManager musicManager;
+	
+	@Autowired
+	private ConnectionManager connectionManager;
 
 	@Override
 	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
@@ -82,12 +84,21 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		if (albumArtImage == null) {
 			return true;
 		}
-
+		
 		if (StringUtils.isBlank(albumArtImage.getUrl())) {
 			return true;
 		}
 
-		return false;
+		try {
+			byte[] imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage, ImageType.ORIGINAL);
+			if (imageBytes != null && imageBytes.length > 0) {
+				return false;
+			}
+		} catch (IOException e) {
+			logger.error("Error getting album art image", e);
+		}
+
+		return true;
 	}
 
 	private AlbumArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
@@ -154,7 +165,8 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 
 			@Override
 			public boolean accept(File file, String fileName) {
-				if (FileHelper.isSupportedImage(fileName) && FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
+				if (FileHelper.isSupportedImage(fileName)
+						&& FileHelper.isMatchingFileNamePattern(fileName, albumArtImagePattern)) {
 					return true;
 				}
 				return false;

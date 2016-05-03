@@ -182,6 +182,8 @@
 
         mashupMedia.loadLastAccessedPlaylist();
         
+        mashupMedia.jPlayerSwfPath = "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />";
+        
     });
 
     function togglePlayPause(action) {

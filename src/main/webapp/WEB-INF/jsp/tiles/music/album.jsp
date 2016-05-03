@@ -60,8 +60,7 @@
 	<h1 class="edit" id="album-id-${albumPage.album.id}">${albumPage.album.name}</h1>
 
 	<h2>
-		- <a href="javascript:;"
-			rel="address:/address-artist-${albumPage.album.artist.id}">${albumPage.album.artist.name}</a>
+		- <a rel="internal" href="<c:url value="/app/music/artist/${albumPage.album.artist.id}" />">${albumPage.album.artist.name}</a>
 	</h2>
 
 
