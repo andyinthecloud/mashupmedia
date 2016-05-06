@@ -24,17 +24,20 @@ $(document).ready(function() {
     
 	$("body, a").removeClass("cursor-progress");
 		
-	$("div.dynamic-content").on("click", "div.albums div.album-control a.play", function() {					    
+	/*
+	$("div.dynamic-content").off().on("click", "div.albums div.album-control a.play", function() {		
+	    alert("play");
 		var albumId = $(this).closest("div.album").attr("id");
 		albumId = parseId(albumId, "album-id");
 		mashupMedia.playAlbum(albumId);
 	});
 
-	$("div.dynamic-content").on("click", "div.albums div.album-control a.add", function() {
+	$("div.dynamic-content").off().on("click", "div.albums div.album-control a.add", function() {
 		var albumId = $(this).closest("div.album").attr("id");
 		albumId = parseId(albumId, "album-id");
 		mashupMedia.appendAlbum(albumId);
 	});	
+	*/
     
 	$(document).ajaxComplete(function(e, xhr, settings) {
 		var responseHtml = xhr.responseText;

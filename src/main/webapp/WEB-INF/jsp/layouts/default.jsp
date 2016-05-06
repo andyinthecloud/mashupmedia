@@ -74,9 +74,7 @@
 	src="<c:url value="/jquery-plugins/jeditable/1.7.1/jquery.jeditable.min.js" />"
 	type="text/javascript" charset="utf-8"></script>
 
-<!--  script type="text/javascript" src="<c:url value="/scripts/jplayer-android-fix.js" />"></script -->
-<script type="text/javascript"
-	src="<c:url value="${themePath}/scripts/theme.js"/>"></script>
+
 
 <script type="text/javascript">
     $(function() {
@@ -140,7 +138,8 @@
                 pageType: "internal"
             }, title, link);
 
-        });        
+        });
+        
 
         var jPlayerVersion = "${jPlayerVersion}";
         <c:if test="${isTransparentBackground}">
@@ -150,11 +149,13 @@
         $("#log-out").click(function() {
             $("#form-log-out").submit();
         });
-
+        
+        
+/*
         $("#nav-panel").on("click", "a", function() {
             $("#nav-panel a[data-rel=close]").click();
         });
-
+*/
         document.title = "${headPageTitle}";
 
         $("#music-player").on("click", ".controls a.play", function() {

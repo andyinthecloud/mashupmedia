@@ -127,7 +127,7 @@ public class StreamingController {
 		
 		MediaContentType mediaContentType = mediaEncoding.getMediaContentType();
 		final String contentType = mediaContentType.getMimeContentType();
-		File file = mediaFile;
+		final File file = mediaFile;
 
 		ModelAndView modelAndView = new ModelAndView(new View() {
 

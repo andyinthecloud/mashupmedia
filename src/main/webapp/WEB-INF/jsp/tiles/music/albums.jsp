@@ -10,7 +10,13 @@
             $("div.dynamic-content").off("mouseout", "div.albums div.album");
             $("div.dynamic-content").off("change", "input[name=albums-view]");
             $("div.dynamic-content").off("click", "ul.index-letters a");
-
+            /*
+            $("div.dynamic-content").on("click", "#albums-view", function() {
+            	alert("click");    
+            
+            });
+            */
+            
             mashupMedia.filterAlbumsSearchLetter = "";
 
             $(window).unbind("scroll");
@@ -23,6 +29,7 @@
                 if ($("div.albums div.album").length == 0) { return; }
                 appendContentsOnScroll("${musicAlbumListType.className}");
             });
+            
 
             $("div.dynamic-content").on("click", "ul.index-letters a", function() {
                 mashupMedia.filterAlbumsSearchLetter = $(this).text();
@@ -36,8 +43,10 @@
                 $(this).removeClass("highlight");
             });
 
-            $("div.dynamic-content").on("change", "input[name=albums-view]", function() {
+
+            $("input[name=albums-view]").click(function() {
                 var albumView = $(this).val();
+                
                 var url = "<c:url value="/app/music/latest-albums" />";
                 var title = "<spring:message code="music.title.latest" />";
 
@@ -51,6 +60,20 @@
 
                 loadInternalPage(title, url);
             });
+
+            $("div.dynamic-content").on("click", "div.albums div.album-control a.play", function() {
+            	alert("play");    
+            
+                var albumId = $(this).closest("div.album").attr("id");
+                albumId = parseId(albumId, "album-id");
+                mashupMedia.playAlbum(albumId);
+            });
+            
+        	$("div.dynamic-content").off().on("click", "div.albums div.album-control a.add", function() {
+        		var albumId = $(this).closest("div.album").attr("id");
+        		albumId = parseId(albumId, "album-id");
+        		mashupMedia.appendAlbum(albumId);
+        	});	            
 
             //$("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
 
@@ -121,7 +144,7 @@
 				</div>
 			</div>
 
-			<div class="album-control">
+			<div class="album-control">			
 				<a class="play" href="javascript:;"
 					title="<spring:message code="action.play" />"><img
 					alt="<spring:message code="action.play"/>"
