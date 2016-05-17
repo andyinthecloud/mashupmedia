@@ -151,11 +151,11 @@
         });
         
         
-/*
-        $("#nav-panel").on("click", "a", function() {
-            $("#nav-panel a[data-rel=close]").click();
+
+        $("#nav-panel li a").click(function() {
+            $("#nav-panel").panel("close");
         });
-*/
+
         document.title = "${headPageTitle}";
 
         $("#music-player").on("click", ".controls a.play", function() {
@@ -262,8 +262,10 @@
 <script src="<c:url value="/jquery-plugins/swipebox/1.4.1/jquery.swipebox.js" />"></script>
 	
 
-<link rel="icon" type="image/ico"
-	href="<c:url value="${themePath}/images/favicon.ico"/>">
+	
+<link rel="icon" type="image/png"
+	href="<c:url value="/images/icon.png"/>">
+	
 
 <title>${headPageTitle}</title>
 

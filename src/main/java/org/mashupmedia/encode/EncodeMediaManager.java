@@ -19,8 +19,6 @@ package org.mashupmedia.encode;
 
 public interface EncodeMediaManager {
 
-//	public void processQueue();
-	
 	public void encodeMedia(ProcessQueueItem processQueueItem);
 
 }

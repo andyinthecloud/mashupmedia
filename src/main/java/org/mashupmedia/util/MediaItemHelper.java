@@ -17,8 +17,11 @@
 
 package org.mashupmedia.util;
 
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
+import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 
@@ -180,6 +183,20 @@ public class MediaItemHelper {
 			return true;
 		}
 
+		return false;
+	}
+
+	public static boolean hasMediaEncoding(MediaItem mediaItem, MediaContentType mediaContentType) {
+		Set<MediaEncoding> mediaEncodings =  mediaItem.getMediaEncodings();
+		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
+			return false;
+		}
+		
+		for (MediaEncoding mediaEncoding : mediaEncodings) {
+			if (mediaContentType.equals(mediaEncoding.getMediaContentType())) {
+				return true;
+			}
+		}
 		return false;
 	}
 

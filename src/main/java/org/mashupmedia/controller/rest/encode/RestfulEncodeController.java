@@ -14,6 +14,7 @@ import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
+import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.WebHelper;
@@ -31,7 +32,8 @@ public class RestfulEncodeController {
 		ERROR, INFO, WARNING
 	}
 
-	private MediaContentType musicEncodingMediaContentType = MediaContentType.MP3;
+	private MediaContentType[] musicEncodingMediaContentTypes = new MediaContentType[] { MediaContentType.MP3,
+			MediaContentType.OGA };
 
 	@Autowired
 	private MediaManager mediaManager;
@@ -49,7 +51,7 @@ public class RestfulEncodeController {
 			return "encode.message.media-item-not-found";
 		}
 		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
-		encodeMediaItem(messageKeys, musicEncodingMediaContentType, mediaItem);
+		encodeMediaItem(messageKeys, musicEncodingMediaContentTypes, mediaItem);
 
 		String messageKey = getMostImportantMessageKey(messageKeys);
 		String message = MessageHelper.getMessage(messageKey, new String[] { WebHelper.getContextPath() });
@@ -84,7 +86,7 @@ public class RestfulEncodeController {
 		Album album = musicManager.getAlbum(albumId);
 
 		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
-		encodeMusicAlbum(album.getId(), messageKeys, musicEncodingMediaContentType);
+		encodeMusicAlbum(album.getId(), messageKeys, musicEncodingMediaContentTypes);
 
 		String messageKey = getMostImportantMessageKey(messageKeys);
 
@@ -103,7 +105,7 @@ public class RestfulEncodeController {
 		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
 		List<Album> albums = artist.getAlbums();
 		for (Album album : albums) {
-			encodeMusicAlbum(album.getId(), messageKeys, musicEncodingMediaContentType);
+			encodeMusicAlbum(album.getId(), messageKeys, musicEncodingMediaContentTypes);
 
 		}
 
@@ -113,7 +115,7 @@ public class RestfulEncodeController {
 	}
 
 	protected void encodeMusicAlbum(Long albumId, Map<EncodeMessageType, String> messageKeys,
-			MediaContentType mediaContentType) {
+			MediaContentType[] mediaContentType) {
 		if (messageKeys == null) {
 			messageKeys = new HashMap<EncodeMessageType, String>();
 		}
@@ -124,32 +126,38 @@ public class RestfulEncodeController {
 			messageKeys.put(EncodeMessageType.ERROR, "encode.message.media-item-not-found");
 			return;
 		}
-		
+
 		List<Song> songs = album.getSongs();
 		for (Song song : songs) {
 			encodeMediaItem(messageKeys, mediaContentType, song);
 		}
 	}
 
-	protected void encodeMediaItem(Map<EncodeMessageType, String> messageKeys, MediaContentType mediaContentType,
+	protected void encodeMediaItem(Map<EncodeMessageType, String> messageKeys, MediaContentType[] mediaContentTypes,
 			MediaItem mediaItem) {
-		if (mediaContentType == null || mediaContentType == MediaContentType.UNSUPPORTED) {
+		if (mediaContentTypes == null || mediaContentTypes.length == 0) {
 			messageKeys.put(EncodeMessageType.ERROR, "encode.message.unsupported-format");
 			return;
 		}
 
-		try {
-			encodeMediaItemTaskManager.processMediaItemForEncoding(mediaItem, mediaContentType);
-		} catch (MediaItemEncodeException e) {
-			EncodeExceptionType encodeExceptionType = e.getEncodeExceptionType();
-			if (encodeExceptionType == EncodeExceptionType.ENCODER_NOT_CONFIGURED) {
-				messageKeys.put(EncodeMessageType.WARNING, "encode.message.not-installed");
-			} else if (encodeExceptionType == EncodeExceptionType.UNSUPPORTED_ENCODING_FORMAT) {
-				messageKeys.put(EncodeMessageType.ERROR, "encode.message.unsupported-format");
-			} else {
-				messageKeys.put(EncodeMessageType.ERROR, "encode.message.error");
+		for (MediaContentType mediaContentType : mediaContentTypes) {
+			try {
+				// Only encode media item if missing
+				if (MediaItemHelper.hasMediaEncoding(mediaItem, mediaContentType)) {
+					continue;
+				}
+				
+				encodeMediaItemTaskManager.processMediaItemForEncoding(mediaItem, mediaContentType);
+			} catch (MediaItemEncodeException e) {
+				EncodeExceptionType encodeExceptionType = e.getEncodeExceptionType();
+				if (encodeExceptionType == EncodeExceptionType.ENCODER_NOT_CONFIGURED) {
+					messageKeys.put(EncodeMessageType.WARNING, "encode.message.not-installed");
+				} else if (encodeExceptionType == EncodeExceptionType.UNSUPPORTED_ENCODING_FORMAT) {
+					messageKeys.put(EncodeMessageType.ERROR, "encode.message.unsupported-format");
+				} else {
+					messageKeys.put(EncodeMessageType.ERROR, "encode.message.error");
+				}
 			}
-			return;
 		}
 
 		messageKeys.put(EncodeMessageType.INFO, "encode.message.queued");

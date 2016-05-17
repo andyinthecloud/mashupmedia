@@ -81,18 +81,6 @@ public class RestfulSong extends RestfulMediaItem {
 		builder.append(albumUrl);
 		builder.append(", albumArtUrl=");
 		builder.append(albumArtUrl);
-		builder.append(", getTitle()=");
-		builder.append(getTitle());
-		builder.append(", getStreamUrl()=");
-		builder.append(getStreamUrl());
-		builder.append(", getStreamFormat()=");
-		builder.append(getStreamFormat());
-		builder.append(", toString()=");
-		builder.append(super.toString());
-		builder.append(", getClass()=");
-		builder.append(getClass());
-		builder.append(", hashCode()=");
-		builder.append(hashCode());
 		builder.append("]");
 		return builder.toString();
 	}

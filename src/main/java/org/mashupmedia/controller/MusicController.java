@@ -88,11 +88,6 @@ public class MusicController extends BaseController {
 		return "music.title";
 	}
 
-	// @Override
-	// @ModelAttribute("isTransparentBackground")
-	// public boolean isTransparentBackground() {
-	// return false;
-	// }
 
 	@ModelAttribute(MashUpMediaConstants.MODEL_KEY_IS_PLAYLIST_OWNER)
 	public boolean isPlaylistOwner() {
@@ -124,13 +119,6 @@ public class MusicController extends BaseController {
 		return breadcrumb;
 	}
 
-	/*
-	 * @RequestMapping(method = RequestMethod.GET) public String
-	 * getMusic(@RequestParam(value = FRAGMENT_PARAM, required = false) Boolean
-	 * isFragment, Model model) { String pagePath = getPath(isFragment,
-	 * PAGE_PATH); return pagePath; }
-	 */
-
 	protected void addBreadcrumbsToModel(Model model, String messageKey) {
 		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage(messageKey));
@@ -154,14 +142,6 @@ public class MusicController extends BaseController {
 
 		return pagePath;
 	}
-
-	/*
-	 * @RequestMapping(value = "/append-random-albums", method =
-	 * RequestMethod.GET) public String getAppendRandomAlbums(Model model) {
-	 * List<Album> albums = musicManager.getRandomAlbums(MAX_ALBUMS);
-	 * model.addAttribute("isAppend", true); model.addAttribute("albums",
-	 * albums); return "/tiles/music/albums"; }
-	 */
 
 	@RequestMapping(value = "/latest-albums", method = RequestMethod.GET)
 	public String getLatestAlbums(

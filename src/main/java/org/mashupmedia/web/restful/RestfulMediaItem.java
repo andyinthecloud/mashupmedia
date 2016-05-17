@@ -1,22 +1,49 @@
 package org.mashupmedia.web.restful;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.util.WebHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 public class RestfulMediaItem {
 
 	private long id;
 	private String title;
-	private String streamUrl;
-	private String streamFormat;
 	private String contextPath;
+	private RestfulStream[] streams;
 
 	public RestfulMediaItem(MediaItem mediaItem) {
 		this.id = mediaItem.getId();
 		this.contextPath = WebHelper.getContextPath();
 		this.title = mediaItem.getDisplayTitle();
-		this.streamUrl = contextPath + "/app/streaming/media/" + mediaItem.getId();
-		this.streamFormat = mediaItem.getBestMediaEncoding().getMediaContentType().getjPlayerContentType();
+
+		prepareStreams(mediaItem);
+
+	}
+
+	private void prepareStreams(MediaItem mediaItem) {
+		Set<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
+		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
+			return;
+		}
+
+		List<RestfulStream> restfulStreamList = new ArrayList<RestfulStream>();
+		for (MediaEncoding mediaEncoding : mediaEncodings) {
+			MediaContentType mediaContentType = mediaEncoding.getMediaContentType();
+			String format = mediaContentType.getjPlayerContentType();
+			String url = contextPath + "/app/streaming/media/" + mediaItem.getId() + "?mediaContentType=" + format;
+			RestfulStream restfulStream = new RestfulStream(format, url);
+			restfulStreamList.add(restfulStream);
+		}
+
+		streams = new RestfulStream[restfulStreamList.size()];
+		streams = restfulStreamList.toArray(streams);
+
 	}
 
 	public long getId() {
@@ -43,31 +70,26 @@ public class RestfulMediaItem {
 		this.title = title;
 	}
 
-	public String getStreamUrl() {
-		return streamUrl;
+
+	public RestfulStream[] getStreams() {
+		return streams;
 	}
 
-	public void setStreamUrl(String streamUrl) {
-		this.streamUrl = streamUrl;
-	}
-
-	public String getStreamFormat() {
-		return streamFormat;
-	}
-
-	public void setStreamFormat(String streamFormat) {
-		this.streamFormat = streamFormat;
+	public void setStreams(RestfulStream[] streams) {
+		this.streams = streams;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("RestfulMediaItem [title=");
+		builder.append("RestfulMediaItem [id=");
+		builder.append(id);
+		builder.append(", title=");
 		builder.append(title);
-		builder.append(", streamUrl=");
-		builder.append(streamUrl);
-		builder.append(", streamFormat=");
-		builder.append(streamFormat);
+		builder.append(", contextPath=");
+		builder.append(contextPath);
+		builder.append(", streams=");
+		builder.append(Arrays.toString(streams));
 		builder.append("]");
 		return builder.toString();
 	}

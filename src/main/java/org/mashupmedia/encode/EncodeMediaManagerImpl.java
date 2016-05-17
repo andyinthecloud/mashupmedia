@@ -36,18 +36,12 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 	private MediaManager mediaManager;
 
 	@Autowired
-	private FfMpegManager encodeManager;
-
-	@Autowired
 	private ProcessManager processManager;
-
-	@Autowired
-	private FfMpegManager ffMpegManager;
 
 	@Override
 	public void encodeMedia(ProcessQueueItem processQueueItem) {
 
-		long mediaItemId = processQueueItem.getMediaItemId();		
+		long mediaItemId = processQueueItem.getMediaItemId();
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		MediaContentType mediaContentType = processQueueItem.getMediaContentType();
 
@@ -56,7 +50,7 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 			if (processQueueItem.getProcess() != null) {
 				isCurrentlyEncoding = true;
 			}
-			
+
 			if (isCurrentlyEncoding) {
 				logger.info("Media file is being encoded, exiting...");
 				return;
@@ -73,16 +67,14 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 			Set<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
 			if (mediaEncodings == null) {
 				mediaEncodings = new HashSet<MediaEncoding>();
-				mediaItem.setMediaEncodings(mediaEncodings);;
+				mediaItem.setMediaEncodings(mediaEncodings);
 			}
-			mediaEncodings.add(mediaEncoding);			
+			mediaEncodings.add(mediaEncoding);
 			mediaManager.saveMediaItem(mediaItem);
 		} catch (Exception e) {
 			logger.error("Error encoding media item: " + mediaItemId, e);
 		}
 
 	}
-
-
 
 }

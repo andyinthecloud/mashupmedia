@@ -164,12 +164,14 @@ public class FfMpegManager {
 
 		if (mediaContentType == MediaContentType.MP3) {
 			commands = queueEncodeAudioToMp3(pathToFfMpeg, inputFile, outputFile);
+		} else if (mediaContentType == MediaContentType.OGA) {
+			commands = queueEncodeAudioToOga(pathToFfMpeg, inputFile, outputFile);
 		} else if (mediaContentType == MediaContentType.MP4) {
 			commands = queueEncodeVideoToMp4(pathToFfMpeg, inputFile, outputFile);
 		} else if (mediaContentType == MediaContentType.WEBM) {
 			commands = queueEncodeVideoToWebM(pathToFfMpeg, inputFile, outputFile);
 		} else if (mediaContentType == MediaContentType.OGV) {
-			commands = queueEncodeVideoToOGV(pathToFfMpeg, inputFile, outputFile);
+			commands = queueEncodeVideoToOgv(pathToFfMpeg, inputFile, outputFile);
 		} else {
 			throw new MediaItemEncodeException(EncodeExceptionType.UNSUPPORTED_ENCODING_FORMAT,
 					mediaContentType.name() + " not supported");
@@ -192,6 +194,23 @@ public class FfMpegManager {
 		commands.add("192k");
 		commands.add("-f");
 		commands.add("mp3");
+		commands.add(outputFile.getAbsolutePath());
+
+		return commands;
+	}
+	
+	
+	private List<String> queueEncodeAudioToOga(String pathToFfMpeg, File inputFile, File outputFile) {
+
+		List<String> commands = new ArrayList<String>();
+		commands.add(pathToFfMpeg);
+		commands.add("-y");
+		commands.add("-i");
+		commands.add(inputFile.getAbsolutePath());
+		commands.add("-codec:a");
+		commands.add("libvorbis");
+		commands.add("-f");
+		commands.add("oga");
 		commands.add(outputFile.getAbsolutePath());
 
 		return commands;
@@ -251,7 +270,7 @@ public class FfMpegManager {
 		return commands;
 	}
 
-	private List<String> queueEncodeVideoToOGV(String pathToFfMpeg, File inputFile, File outputFile) {
+	private List<String> queueEncodeVideoToOgv(String pathToFfMpeg, File inputFile, File outputFile) {
 
 		// ffmpeg -y -i input.mp4 -sn -codec:v libtheora -qscale:v 7 -codec:a
 		// libvorbis -qscale:a 5 output.ogv

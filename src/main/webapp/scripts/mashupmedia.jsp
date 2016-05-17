@@ -109,6 +109,7 @@ var mashupMedia = new function() {
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
 	this.jPlayerSwfPath = "";
+	this.musicStreams = { };
 	
 	this.showMessage = function(message) {
 	    $("#information-box").html(message);
@@ -208,7 +209,7 @@ var mashupMedia = new function() {
         $("#music-player .artist-name").html("<a rel=\"internal\" href=\"" + song.artistUrl + "\">" + song.artistName + "</a>");        
         $("#music-player .title").text(song.title);
         mashupMedia.songId = song.id;
-        setupJPlayer(song.streamFormat, song.streamUrl);
+        setupJPlayer(song.streams);
         mashupMedia.showMusicPlayer(true);
 
     };
@@ -345,16 +346,24 @@ var mashupMedia = new function() {
 
 var myAndroidFix = null;
 
-function setupJPlayer(streamFormat, streamUrl) {
+function setupJPlayer(streams) {
         
-    var mediaStream = { };        
-    mediaStream[streamFormat] = streamUrl;
+    var streamFormats = "";
+    for (i = 0; i < streams.length; i++) {
+        mashupMedia.musicStreams[streams[i].format] = streams[i].url;
+
+        if (i > 0) {
+            streamFormats += ",";
+        }
+        streamFormats += streams[i].format;
+    }
+    
 
     if (myAndroidFix) {
         var isPlaying = mashupMedia.isMusicPlaying();
-        myAndroidFix.setMedia(mediaStream);
+        myAndroidFix.setMedia(mashupMedia.musicStream);
         if (isPlaying) {
-            myAndroidFix.play();    
+            myAndroidFix.play();
         }        
         return;
     }
@@ -363,15 +372,13 @@ function setupJPlayer(streamFormat, streamUrl) {
     
     var options = {
         ready: function(event) {
-            myAndroidFix.setMedia(mediaStream);
+            myAndroidFix.setMedia(mashupMedia.musicStream);
         },
         ended: function(event) {
             mashupMedia.playNextSong(true);
         },
-        
-        
         swfPath: mashupMedia.jPlayerSwfPath,
-        supplied: streamFormat,
+        supplied: streamFormats,
         cssSelectorAncestor: "#music-player",
         cssSelector: {
             title: ".information span.title",
@@ -380,7 +387,9 @@ function setupJPlayer(streamFormat, streamUrl) {
             seekBar: "div.progress",
             playBar: "div.play-bar"
         },
+        volume: 1,
         error: function(event) {
+            console.log(event);
             var errorType = event.jPlayer.error.type;
             if (errorType == "e_no_solution" || errorType == "e_url") {
                 $.post("<c:url value="/app/restful/encode/song" />", { id: mashupMedia.songId })
@@ -391,7 +400,7 @@ function setupJPlayer(streamFormat, streamUrl) {
         }
     };
     
-    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, mediaStream, options);        
+    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, mashupMedia.musicStreams, options);        
 }
 
 
