@@ -20,8 +20,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="icon" type="image/ico"
-	href="<c:url value="${themePath}/default/images/favicon.ico"/>">
+<link rel="icon" type="image/png"
+	href="<c:url value="/images/icon.png"/>">
+	
 
 <title><spring:message code="page.title.prefix" /> <spring:message
 		code="login.title" /></title>

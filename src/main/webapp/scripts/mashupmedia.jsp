@@ -109,7 +109,6 @@ var mashupMedia = new function() {
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
 	this.jPlayerSwfPath = "";
-	this.musicStreams = { };
 	
 	this.showMessage = function(message) {
 	    $("#information-box").html(message);
@@ -346,33 +345,33 @@ var mashupMedia = new function() {
 
 var myAndroidFix = null;
 
-function setupJPlayer(streams) {
-        
+function setupJPlayer(streams) {        
     var streamFormats = "";
+    var media = {};
+    
     for (i = 0; i < streams.length; i++) {
-        mashupMedia.musicStreams[streams[i].format] = streams[i].url;
-
+        media[streams[i].format] = streams[i].url;
+        
         if (i > 0) {
             streamFormats += ",";
-        }
-        streamFormats += streams[i].format;
+        } 
+        streamFormats += streams[i].format; 
     }
     
+    console.log(media);
 
     if (myAndroidFix) {
         var isPlaying = mashupMedia.isMusicPlaying();
-        myAndroidFix.setMedia(mashupMedia.musicStream);
+        myAndroidFix.setMedia(media);
         if (isPlaying) {
             myAndroidFix.play();
         }        
         return;
     }
     
-    
-    
     var options = {
         ready: function(event) {
-            myAndroidFix.setMedia(mashupMedia.musicStream);
+            myAndroidFix.setMedia(media);
         },
         ended: function(event) {
             mashupMedia.playNextSong(true);
@@ -390,17 +389,14 @@ function setupJPlayer(streams) {
         volume: 1,
         error: function(event) {
             console.log(event);
-            var errorType = event.jPlayer.error.type;
-            if (errorType == "e_no_solution" || errorType == "e_url") {
-                $.post("<c:url value="/app/restful/encode/song" />", { id: mashupMedia.songId })
-                    .done(function( data ) {
-                        mashupMedia.showMessage(data);          
-                });                   
-            }            
+            $.post("<c:url value="/app/restful/encode/song" />", { id: mashupMedia.songId })
+                .done(function( data ) {
+                    mashupMedia.showMessage(data);          
+            });                   
         }
     };
     
-    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, mashupMedia.musicStreams, options);        
+    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);        
 }
 
 
