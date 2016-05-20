@@ -46,22 +46,29 @@
 
                 loadInternalPage(title, url);
             });
-
-            $("div.dynamic-content div.albums").off().on("click", "div.album-control a.play", function() {
-                var albumId = $(this).closest("div.album").attr("id");
-                albumId = parseId(albumId, "album-id");
-                mashupMedia.playAlbum(albumId);
-            });
+			
+            
+            $("div.dynamic-content").off().on("click", "div.albums div.album-control a.play", function() {
+                playAlbum(this);
+			});
 
             $("div.dynamic-content div.albums").off().on("click", "div.albums div.album-control a.add", function() {
-                var albumId = $(this).closest("div.album").attr("id");
-                albumId = parseId(albumId, "album-id");
-                mashupMedia.appendAlbum(albumId);
+                appendAlbum(this);
             });
 
-            //$("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
-
         });
+            
+        function playAlbum(element) {
+            var albumId = $(element).closest("div.album").attr("id");
+            albumId = parseId(albumId, "album-id");
+            mashupMedia.playAlbum(albumId);
+        }
+        
+        function appendAlbum(element) {
+            var albumId = $(element).closest("div.album").attr("id");
+            albumId = parseId(albumId, "album-id");
+            mashupMedia.appendAlbum(albumId);
+        }
     </script>
 
 	<div class="ui-field-contain">
