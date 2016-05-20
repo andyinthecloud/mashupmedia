@@ -388,7 +388,7 @@ function setupJPlayer(streams) {
         },
         volume: 1,
         error: function(event) {
-            console.log(event);
+            togglePlayPause("stop");
             $.post("<c:url value="/app/restful/encode/song" />", { id: mashupMedia.songId })
                 .done(function( data ) {
                     mashupMedia.showMessage(data);          

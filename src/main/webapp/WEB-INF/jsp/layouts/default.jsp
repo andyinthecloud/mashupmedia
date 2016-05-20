@@ -315,7 +315,7 @@
 								src="<c:url value="${themePath}/images/media-player/next.png"/>" /></a>
 						</td>
 						<td class="album-art"></td>
-						<td>
+						<td class="song-info">
 							<div class="artist-name"></div>
 							<div class="title"></div>
 						</td>

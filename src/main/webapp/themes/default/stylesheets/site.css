@@ -617,7 +617,7 @@ a.image-next {
 
 #music-player {
 	padding: 5px;
-	visibility: hidden;
+	visibility: hidden;	
 }
 
 #music-player .controls{
@@ -653,6 +653,11 @@ a.image-next {
 #music-player .artist-name {
 	font-size: 0.8em;
 	font-weight: normal;
+}
+
+#music-player .song-info div{
+	max-height: 2.2em;
+	overflow: hidden;
 }
 
 #music-player .controls a img {

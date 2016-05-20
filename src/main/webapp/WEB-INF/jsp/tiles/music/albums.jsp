@@ -5,18 +5,6 @@
 	<script type="text/javascript">
         $(document).ready(function() {
 
-            // Unbind declared event handlers
-            $("div.dynamic-content").off("mouseover", "div.albums div.album");
-            $("div.dynamic-content").off("mouseout", "div.albums div.album");
-            $("div.dynamic-content").off("change", "input[name=albums-view]");
-            $("div.dynamic-content").off("click", "ul.index-letters a");
-            /*
-            $("div.dynamic-content").on("click", "#albums-view", function() {
-            	alert("click");    
-            
-            });
-            */
-            
             mashupMedia.filterAlbumsSearchLetter = "";
 
             $(window).unbind("scroll");
@@ -29,24 +17,22 @@
                 if ($("div.albums div.album").length == 0) { return; }
                 appendContentsOnScroll("${musicAlbumListType.className}");
             });
-            
 
-            $("div.dynamic-content").on("click", "ul.index-letters a", function() {
+            $("div.dynamic-content").off().on("click", "ul.index-letters a", function() {
                 mashupMedia.filterAlbumsSearchLetter = $(this).text();
             });
 
-            $("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
+            $("div.dynamic-content").off().on("mouseover", "div.albums div.album", function() {
                 $(this).addClass("highlight");
             });
 
-            $("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
+            $("div.dynamic-content").off().on("mouseout", "div.albums div.album", function() {
                 $(this).removeClass("highlight");
             });
 
-
             $("input[name=albums-view]").click(function() {
                 var albumView = $(this).val();
-                
+
                 var url = "<c:url value="/app/music/latest-albums" />";
                 var title = "<spring:message code="music.title.latest" />";
 
@@ -61,19 +47,17 @@
                 loadInternalPage(title, url);
             });
 
-            $("div.dynamic-content").on("click", "div.albums div.album-control a.play", function() {
-            	alert("play");    
-            
+            $("div.dynamic-content div.albums").off().on("click", "div.album-control a.play", function() {
                 var albumId = $(this).closest("div.album").attr("id");
                 albumId = parseId(albumId, "album-id");
                 mashupMedia.playAlbum(albumId);
             });
-            
-        	$("div.dynamic-content").off().on("click", "div.albums div.album-control a.add", function() {
-        		var albumId = $(this).closest("div.album").attr("id");
-        		albumId = parseId(albumId, "album-id");
-        		mashupMedia.appendAlbum(albumId);
-        	});	            
+
+            $("div.dynamic-content div.albums").off().on("click", "div.albums div.album-control a.add", function() {
+                var albumId = $(this).closest("div.album").attr("id");
+                albumId = parseId(albumId, "album-id");
+                mashupMedia.appendAlbum(albumId);
+            });
 
             //$("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
 
@@ -136,15 +120,17 @@
 			<div class="album-title">
 				<div class="artist-name">
 					<a rel="internal"
+						title="<spring:message code="music.title" /> - ${album.artist.name}"
 						href="<c:url value="/app/music/artist/${album.artist.id}" />">${album.artist.name}</a>
 				</div>
 				<div class="album-name">
 					<a rel="internal"
+						title="<spring:message code="music.title" /> - ${album.name}"
 						href="<c:url value="/app/music/album/${album.id}" />">${album.name}</a>
 				</div>
 			</div>
 
-			<div class="album-control">			
+			<div class="album-control">
 				<a class="play" href="javascript:;"
 					title="<spring:message code="action.play" />"><img
 					alt="<spring:message code="action.play"/>"

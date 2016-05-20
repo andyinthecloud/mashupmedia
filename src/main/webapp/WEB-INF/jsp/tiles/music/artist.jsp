@@ -10,6 +10,7 @@
         $("div.dynamic-content").off("click", "#add-all");
         $("div.dynamic-content").off("click", "div.title-with-player-control div.re-encode a");
         
+        $(window).unbind("scroll");
 		window.scrollTo(0, 0);
 		showFooterTabs("music", "music-artists");
 		
