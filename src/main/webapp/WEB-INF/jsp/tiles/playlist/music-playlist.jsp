@@ -5,16 +5,10 @@
 
     $(document).ready(function() {
 
-        // Unbind declared event handlers
-        $("div.dynamic-content").off("click", "#playlist ul.playlist-items li a.play");
-        $("div.dynamic-content").off("sortstop", "ul.playlist-items");
-        $("div.dynamic-content").off("click", "#playlist ul.playlist-items a.delete");
-        $("div.dynamic-content").off("change", "#playlist-actions");
-
         window.scrollTo(0, 0);
         showFooterTabs("music", "music-playlist");
 
-        $("ul.playlist-items").sortable();
+        $("ul.items").sortable();
 
         <c:if test="${canSavePlaylist}">
         $("h1.edit").editable("<c:url value="/app/restful/playlist/music/save-playlist-name" />", {
@@ -22,26 +16,27 @@
         });
         </c:if>
 
-        $("div.dynamic-content").on("sortstop", "ul.playlist-items", function(event, ui) {
+        $("div.dynamic-content ul.items").on("sortstop", function(event, ui) {
             var playlistId = $("#playlist input[name=playlistId]").val();
             var mediaItemIds = [];
             savePlaylist();
         });
-
-        $("div.dynamic-content").on("click", "#playlist ul.playlist-items a.delete", function() {
+        
+/*
+        $("div.dynamic-content").off().on("click", "#playlist ul.items a.delete", function() {
             var songRow = $(this).closest("li");
             $(songRow).remove();
             savePlaylist();
         });
-
-        $("div.dynamic-content").on("change", "#playlist-actions", function() {
+*/
+        $("#playlist-actions").change(function() {
             var action = $(this).val();
 
             if (action == "clear") {
-                $("#playlist ul.playlist-items li").remove();
+                $("#playlist ul.items li").remove();
                 savePlaylist();
             } else if (action == "new") {
-                $("#playlist ul.playlist-items li").remove();
+                $("#playlist ul.items li").remove();
                 newPlaylist();
             } else if (action == "copy") {
                 copyPlaylist()
@@ -56,15 +51,14 @@
 
         });
 
-        $("div.dynamic-content").on("click", "#playlist ul.playlist-items a.delete", function() {
+        $("#playlist ul.items li a.delete").click(function() {
             var songRow = $(this).closest("li");
             $(songRow).remove();
             savePlaylist();
         });
 
-        $("div.dynamic-content").on("click", "#playlist ul.playlist-items li a.play", function() {
-
-            $("#playlist ul.playlist-items li").removeClass("playing");
+        $("#playlist ul.items li a.play").click(function() {
+            $("#playlist ul.items li").removeClass("playing");
 
             var songRow = $(this).closest("li");
             $(songRow).addClass("playing");
@@ -123,7 +117,7 @@
             playlistId: playlistId,
             mediaItemIds: mediaItemIds
         }, function(data) {
-            var url = "<c:url value="/app/playlist/list/music" />";
+            var url = "<c:url value="/app/playlist/music" />?playlist=" + playlistId;
             loadInternalPage("<spring:message code="playlists.title" />", url)
         });
 
@@ -132,7 +126,7 @@
     function getMediaItemIds() {
         var mediaItemIds = [];
 
-        $("#playlist ul.playlist-items li").each(function(index) {
+        $("#playlist ul.items li").each(function(index) {
             var mediaItemId = parseId($(this).attr("id"), "media-item-id");
             mediaItemIds.push(mediaItemId);
         });
