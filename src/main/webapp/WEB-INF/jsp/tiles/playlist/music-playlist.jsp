@@ -8,7 +8,9 @@
         window.scrollTo(0, 0);
         showFooterTabs("music", "music-playlist");
 
-        $("ul.items").sortable();
+        $("ul.items").sortable({
+            delay: 1000
+        });
 
         <c:if test="${canSavePlaylist}">
         $("h1.edit").editable("<c:url value="/app/restful/playlist/music/save-playlist-name" />", {

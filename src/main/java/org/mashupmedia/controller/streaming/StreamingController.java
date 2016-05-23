@@ -126,6 +126,7 @@ public class StreamingController {
 		
 		
 		MediaContentType mediaContentType = mediaEncoding.getMediaContentType();
+		final long contentDuration = MediaItemHelper.getMediaContentDuration(mediaItem);
 		final String contentType = mediaContentType.getMimeContentType();
 		final File file = mediaFile;
 
@@ -273,6 +274,7 @@ public class StreamingController {
 
 				response.setBufferSize(DEFAULT_BUFFER_SIZE);
 				response.setHeader("Content-Disposition", disposition + ";filename=\"" + fileName + "\"");
+				response.setHeader("Content-Duration", String.valueOf(contentDuration));
 				response.setHeader("Accept-Ranges", "bytes");
 				response.setHeader("ETag", eTag);
 				response.setDateHeader("Last-Modified", lastModified);

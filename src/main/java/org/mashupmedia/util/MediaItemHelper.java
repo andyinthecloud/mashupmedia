@@ -26,6 +26,8 @@ import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.web.restful.RestfulStream;
 
 public class MediaItemHelper {
@@ -222,6 +224,24 @@ public class MediaItemHelper {
 		}
 		
 		return false;
+	}
+
+	public static long getMediaContentDuration(MediaItem mediaItem) {
+		long duration = 0;
+		if (mediaItem == null) {
+			return duration;
+		}
+		
+		if (mediaItem instanceof Song) {			
+			duration = ((Song) mediaItem).getTrackLength();
+			return duration;
+		}
+		
+		if (mediaItem instanceof Video) {
+//			duration = ((Video) mediaItem.get);
+		}
+		
+		return duration;
 	}
 
 }
