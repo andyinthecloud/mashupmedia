@@ -23,26 +23,6 @@ public abstract class RestfulMediaItem {
 
 	protected abstract void prepareStreams(MediaItem mediaItem);
 	
-//	private void prepareStreams(MediaItem mediaItem) {
-//		Set<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
-//		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
-//			return;
-//		}
-//
-//		List<RestfulStream> restfulStreamList = new ArrayList<RestfulStream>();
-//		for (MediaEncoding mediaEncoding : mediaEncodings) {
-//			MediaContentType mediaContentType = mediaEncoding.getMediaContentType();
-//			String format = mediaContentType.getjPlayerContentType();
-//			String url = contextPath + "/app/streaming/media/" + mediaItem.getId() + "?mediaContentType=" + format;
-//			RestfulStream restfulStream = new RestfulStream(format, url);
-//			restfulStreamList.add(restfulStream);
-//		}
-//
-//		streams = new RestfulStream[restfulStreamList.size()];
-//		streams = restfulStreamList.toArray(streams);
-//
-//	}
-
 	public long getId() {
 		return id;
 	}

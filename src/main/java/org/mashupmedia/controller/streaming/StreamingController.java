@@ -44,7 +44,7 @@ public class StreamingController {
 
 	private Logger logger = Logger.getLogger(getClass());
 
-	private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1
+//	private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1
 																// week.
 	private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
 
@@ -276,9 +276,11 @@ public class StreamingController {
 				response.setHeader("Content-Disposition", disposition + ";filename=\"" + fileName + "\"");
 				response.setHeader("Content-Duration", String.valueOf(contentDuration));
 				response.setHeader("Accept-Ranges", "bytes");
+				/*
 				response.setHeader("ETag", eTag);
 				response.setDateHeader("Last-Modified", lastModified);
 				response.setDateHeader("Expires", System.currentTimeMillis() + DEFAULT_EXPIRE_TIME);
+				*/
 
 				RandomAccessFile input = null;
 				OutputStream output = null;

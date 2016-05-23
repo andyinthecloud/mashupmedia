@@ -195,8 +195,15 @@ public class MediaItemHelper {
 	}
 
 	public static String prepareUrlStream(String contextPath, long mediaItemId, String format) {
-		String url = contextPath + "/app/streaming/media/" + mediaItemId + "?mediaContentType=" + format;
-		return url;
+		StringBuilder urlBuilder = new StringBuilder(contextPath);
+		urlBuilder.append("/app/streaming/media/");
+		urlBuilder.append(mediaItemId);
+		urlBuilder.append("?mediaContentType=");
+		urlBuilder.append(format);		
+		urlBuilder.append("&dt=");
+		urlBuilder.append(System.currentTimeMillis());
+		
+		return urlBuilder.toString();
 	}
 
 	public static void addEssentialStreamUrls(LibraryType libraryType, String contextPath, long mediaItemId,

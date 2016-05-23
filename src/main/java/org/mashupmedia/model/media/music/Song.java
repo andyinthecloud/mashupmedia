@@ -15,7 +15,6 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Year;
-import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;

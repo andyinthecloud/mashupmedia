@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.jaudiotagger.audio.mp4.atom.Mp4HdlrBox.MediaDataType;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
