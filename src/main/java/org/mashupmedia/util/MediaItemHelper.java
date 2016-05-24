@@ -198,10 +198,10 @@ public class MediaItemHelper {
 		StringBuilder urlBuilder = new StringBuilder(contextPath);
 		urlBuilder.append("/app/streaming/media/");
 		urlBuilder.append(mediaItemId);
-		urlBuilder.append("?mediaContentType=");
-		urlBuilder.append(format);		
-		urlBuilder.append("&dt=");
+		urlBuilder.append("?dt=");
 		urlBuilder.append(System.currentTimeMillis());
+		urlBuilder.append("&mediaContentType=");
+		urlBuilder.append(format);		
 		
 		return urlBuilder.toString();
 	}

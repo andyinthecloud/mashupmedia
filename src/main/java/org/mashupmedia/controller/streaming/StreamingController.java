@@ -53,17 +53,7 @@ public class StreamingController {
 	@Autowired
 	private MediaManager mediaManager;
 
-	@RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.HEAD)
-	public ModelAndView getMediaStreamHead(@PathVariable("mediaItemId") Long mediaItemId,
-			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model)
-			throws Exception {
-		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		MediaEncoding mediaEncoding = getMediaContentType(mediaItem, mediaContentTypeValue);
-		ModelAndView modelAndView = prepareModelAndView(mediaItem, mediaEncoding, false);
-		return modelAndView;
-	}
-
-	@RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/media/{mediaItemId}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
 			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue, Model model)
 			throws Exception {

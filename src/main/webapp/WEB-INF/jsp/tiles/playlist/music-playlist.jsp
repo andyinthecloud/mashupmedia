@@ -9,7 +9,8 @@
         showFooterTabs("music", "music-playlist");
 
         $("ul.items").sortable({
-            delay: 1000
+            delay: 1000,
+            handle: "img.cursor-move"
         });
 
         <c:if test="${canSavePlaylist}">
