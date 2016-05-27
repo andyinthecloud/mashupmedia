@@ -49,6 +49,8 @@ public class StreamingController {
 	private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
 
 	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+	
+	public static final MediaContentType[] ESSENTIAL_MUSIC_STREAMING_CONTENT_TYPES = new MediaContentType[]{ MediaContentType.MP3 };
 
 	@Autowired
 	private MediaManager mediaManager;

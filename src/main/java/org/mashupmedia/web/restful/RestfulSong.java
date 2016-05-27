@@ -1,17 +1,9 @@
 package org.mashupmedia.web.restful;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.mashupmedia.model.library.Library.LibraryType;
-import org.mashupmedia.model.media.MediaEncoding;
-import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.util.ImageHelper.ImageType;
-import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 public class RestfulSong extends RestfulMediaItem {
@@ -22,9 +14,9 @@ public class RestfulSong extends RestfulMediaItem {
 	private String albumUrl;
 	private String albumArtUrl;
 
-	public RestfulSong(Song song) {
-		super(song);
-		
+	public RestfulSong(Song song, MediaContentType[] supppliedMediaContentTypes) {
+		super(song, supppliedMediaContentTypes);
+
 		Artist artist = song.getArtist();
 		this.artistName = artist.getName();
 		this.artistUrl = getContextPath() + "/app/music/artist/" + artist.getId();
@@ -35,30 +27,6 @@ public class RestfulSong extends RestfulMediaItem {
 		this.albumArtUrl = getContextPath() + "/app/music/album-art/" + ImageType.THUMBNAIL.name().toLowerCase() + "/"
 				+ album.getId();
 
-	}
-	
-	@Override
-	protected void prepareStreams(MediaItem mediaItem) {
-		Set<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
-		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
-			return;
-		}
-
-		long mediaItemId = mediaItem.getId();
-		List<RestfulStream> restfulStreamList = new ArrayList<RestfulStream>();
-		for (MediaEncoding mediaEncoding : mediaEncodings) {
-			MediaContentType mediaContentType = mediaEncoding.getMediaContentType();
-			String format = mediaContentType.getjPlayerContentType();
-			String url = MediaItemHelper.prepareUrlStream(contextPath, mediaItemId, format);
-			RestfulStream restfulStream = new RestfulStream(format, url);
-			restfulStreamList.add(restfulStream);
-		}
-		
-		MediaItemHelper.addEssentialStreamUrls(LibraryType.MUSIC, contextPath, mediaItemId, restfulStreamList);
-		
-		RestfulStream[] streams = new RestfulStream[restfulStreamList.size()];
-		streams = restfulStreamList.toArray(streams);
-		setStreams(streams);
 	}
 
 	public String getAlbumArtUrl() {
@@ -117,7 +85,5 @@ public class RestfulSong extends RestfulMediaItem {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

@@ -4,6 +4,7 @@ import org.mashupmedia.model.Configuration;
 
 public interface ConfigurationManager {
 	
+
 	public Configuration getConfiguration(String key);
 	
 	public void saveConfiguration(Configuration configuration);

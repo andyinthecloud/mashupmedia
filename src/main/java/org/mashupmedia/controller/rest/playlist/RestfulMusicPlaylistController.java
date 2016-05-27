@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mashupmedia.exception.PageNotFoundException;
+import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Song;
@@ -13,6 +14,7 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.web.restful.RestfulMediaItem;
 import org.mashupmedia.web.restful.RestfulSong;
@@ -32,7 +34,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 
 	@Autowired
 	private MusicManager musicManager;
-	
+
 	@Autowired
 	private MediaManager mediaManager;
 
@@ -48,7 +50,9 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
 		Song song = (Song) playlistMediaItem.getMediaItem();
 
-		RestfulSong restfulSong = new RestfulSong(song);
+		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
+				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
 		return restfulSong;
 	}
 
@@ -64,7 +68,10 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
 
 		Song song = (Song) playlistMediaItem.getMediaItem();
-		RestfulSong restfulSong = new RestfulSong(song);
+
+		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
+				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
 		return restfulSong;
 	}
 
@@ -88,7 +95,10 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
 
 		Song song = (Song) playlistMediaItem.getMediaItem();
-		RestfulSong restfulSong = new RestfulSong(song);
+
+		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
+				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
 		return restfulSong;
 	}
 
@@ -112,16 +122,17 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
 
 		Song song = (Song) playlistMediaItem.getMediaItem();
-		RestfulSong restfulSong = new RestfulSong(song);
+
+		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
+				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
 		return restfulSong;
 	}
-	
+
 	@RequestMapping(value = "/play-song", method = RequestMethod.GET)
 	public RestfulSong playSong(@RequestParam("songId") Long songId, Model model) {
-		Playlist playlist = playlistManager
-				.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
+		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
-		
 		MediaItem mediaItem = mediaManager.getMediaItem(songId);
 		if (!(mediaItem instanceof Song)) {
 			return null;
@@ -132,14 +143,15 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.replacePlaylist(playlist, song);
 		savePlaylist(playlist);
 
-		RestfulSong restfulSong = new RestfulSong(song);
+		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
+				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
 		return restfulSong;
 	}
 
 	@RequestMapping(value = "/append-song", method = RequestMethod.GET)
 	public RestfulSong appendSong(@RequestParam("songId") Long songId, Model model) {
-		Playlist playlist = playlistManager
-				.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		MediaItem mediaItem = mediaManager.getMediaItem(songId);
 		if (!(mediaItem instanceof Song)) {
@@ -150,22 +162,12 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.appendPlaylist(playlist, song);
 		savePlaylist(playlist);
 
-		RestfulSong restfulSong = new RestfulSong(song);
+		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
+				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
 		return restfulSong;
 
 	}
-	
-
-	// @RequestMapping(value = "/play/current", method = RequestMethod.GET)
-	// public RestfulSong playCurrentUserMusicPlaylist(Model model) {
-	// Playlist playlist =
-	// playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-	//
-	// PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(0,
-	// playlist);
-	// RestfulSong restfulSong = convertToRestfulMediaItem(playlistMediaItem);
-	// return restfulSong;
-	// }
 
 	@Override
 	protected PlaylistType getPlaylistType() {
@@ -179,64 +181,11 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		}
 
 		Song song = (Song) playlistMediaItem.getMediaItem();
-		RestfulSong restfulSong = new RestfulSong(song);
+
+		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
+				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
 		return restfulSong;
 	}
-
-	// @RequestMapping(value = "/play/previous", method = RequestMethod.GET)
-	// public RestfulSong playPreviousSong(Model model) {
-	// Playlist playlist =
-	// playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-	// PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1,
-	// playlist);
-	// if (playlistMediaItem == null) {
-	// return null;
-	// }
-	//
-	// User user = AdminHelper.getLoggedInUser();
-	// playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-	// RestfulSong restfulSong = convertToResfulMediaItem(playlistMediaItem);
-	// return restfulSong;
-	// }
-
-	// protected void savePlaylist(Playlist playlist) {
-	// playlistManager.savePlaylist(playlist);
-	// List<PlaylistMediaItem> accessiblePlaylistMediaItems =
-	// playlist.getPlaylistMediaItems();
-	// playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
-	// }
-
-	// @RequestMapping(value = "/id/{playlistId}", method = RequestMethod.GET)
-	// public String handleGetPlaylist(
-	// @PathVariable Long playlistId,
-	// @RequestParam(value = "webFormatType", required = false) String
-	// webFormatTypeValue,
-	// @RequestParam(value = "updateLastAccessedToNow", required = false)
-	// Boolean isUpdateLastAccessedToNow,
-	// Model model) {
-	// Playlist playlist = playlistManager.getPlaylist(playlistId);
-	// PlaylistHelper.initialiseCurrentlyPlaying(playlist);
-	//
-	// if (isUpdateLastAccessedToNow != null && isUpdateLastAccessedToNow) {
-	// playlistManager.savePlaylist(playlist);
-	// }
-	//
-	// model.addAttribute("playlist", playlist);
-	//
-	// boolean canSavePlaylist = PlaylistHelper.canSavePlaylist(playlist);
-	// if (playlistId == 0) {
-	// canSavePlaylist = true;
-	// }
-	//
-	// model.addAttribute("canSavePlaylist", canSavePlaylist);
-	//
-	// WebContentType webFormatType = WebHelper.getWebContentType(
-	// webFormatTypeValue, WebContentType.HTML);
-	// if (webFormatType == WebContentType.JSON) {
-	// return "ajax/json/playlist";
-	// }
-	//
-	// return "ajax/playlist/music-playlist";
-	// }
 
 }

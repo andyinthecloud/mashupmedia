@@ -16,6 +16,8 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 import org.springframework.web.util.UriUtils;
 
 public class StringHelper {
+	public static final String TEXT_DELIMITER = ";";
+
 	private static Logger logger = Logger.getLogger(StringHelper.class);
 
 	public static String[] STOP_WORDS = new String[] { "the", "a" };

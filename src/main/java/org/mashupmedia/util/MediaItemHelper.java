@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
-import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
@@ -206,26 +205,22 @@ public class MediaItemHelper {
 		return urlBuilder.toString();
 	}
 
-	public static void addEssentialStreamUrls(LibraryType libraryType, String contextPath, long mediaItemId,
+	public static void addSuppliedStreamUrls(MediaContentType[] suppliedMediaContentTypes, String contextPath, long mediaItemId,
 			List<RestfulStream> restfulStreamList) {
 		
-		String[] essentialFormats = new String[]{};
-		if (libraryType.equals(LibraryType.MUSIC)){
-			essentialFormats = new String[]{MediaContentType.MP3.name, MediaContentType.OGA.name};
-		}
-		
-		for (String essentialFormat : essentialFormats) {
-			if (!isFormatPresent(restfulStreamList, essentialFormat)) {
-				restfulStreamList.add(new RestfulStream(essentialFormat, prepareUrlStream(contextPath, mediaItemId, essentialFormat)));
+		for (MediaContentType suppliedMediaContentType : suppliedMediaContentTypes) {
+			if (!isFormatPresent(restfulStreamList, suppliedMediaContentType)) {
+				String jPlayerContentType = suppliedMediaContentType.getjPlayerContentType();
+				restfulStreamList.add(new RestfulStream(jPlayerContentType, prepareUrlStream(contextPath, mediaItemId, jPlayerContentType)));
 			}			
 		}
-		
 
 	}
 
-	private static boolean isFormatPresent(List<RestfulStream> restfulStreamList, String essentialFormat) {
+	private static boolean isFormatPresent(List<RestfulStream> restfulStreamList, MediaContentType mediaContentType) {
 		for (RestfulStream restfulStream : restfulStreamList) {
-			if (restfulStream.getFormat().equalsIgnoreCase(essentialFormat)) {
+			String name = mediaContentType.getjPlayerContentType();
+			if (restfulStream.getFormat().equalsIgnoreCase(name)) {
 				return true;
 			}
 		}

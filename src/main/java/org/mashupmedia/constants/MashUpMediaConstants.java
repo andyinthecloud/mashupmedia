@@ -61,6 +61,7 @@ public interface MashUpMediaConstants {
 	public final static String SYSTEM_USER_DEFAULT_PASSWORD = "system";
 	public static final String LATEST_RELEASE_FINAL_VERSION = "latest.release.version";
 	public static final String APPLICATION_VERSION = "application.version";
+	public static final String SUPPLIED_MUSIC_STREAMING_FORMATS = "suppliedMusicStreamingFormats";
 	
-
+	
 }

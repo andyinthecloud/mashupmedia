@@ -348,7 +348,7 @@ var myAndroidFix = null;
 function setupJPlayer(streams) {        
     var streamFormats = "";
     var media = {};
-    
+            
     for (i = 0; i < streams.length; i++) {
         media[streams[i].format] = streams[i].url;
         
@@ -368,6 +368,8 @@ function setupJPlayer(streams) {
         }        
         return;
     }
+    
+    
     
     var options = {
         ready: function(event) {
@@ -397,7 +399,22 @@ function setupJPlayer(streams) {
         }
     };
     
-    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);        
+    // initialise JPlayer with a silent mp3 file    
+    var silentMedia = {
+      mp3: mashupMedia.contextUrl + "jquery-plugins/jquery.jplayer/silent.mp3"
+    };
+        
+    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, silentMedia, options);
+    myAndroidFix.setMedia(silentMedia);
+    myAndroidFix.play();
+    setTimeout(function(){        
+        myAndroidFix.setMedia(media);
+        if (isPlaying) {
+            myAndroidFix.play();
+        }                
+    }, 1000);
+    
+    
 }
 
 

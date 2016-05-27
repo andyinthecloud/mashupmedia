@@ -29,7 +29,7 @@ var jPlayerAndroidFix = (function($) {
 					if(self.playFixRequired) {
 						self.playFixRequired = false;
 
-						// Enable the contols again
+						// Enable the controls again
 						// self.player.jPlayer('option', 'cssSelectorAncestor', self.cssSelectorAncestor);
 
 						// Play if required, otherwise it will wait for the normal GUI input.

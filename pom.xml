@@ -421,6 +421,7 @@
 					<nonFilteredFileExtensions>
 						<nonFilteredFileExtension>pdf</nonFilteredFileExtension>
 						<nonFilteredFileExtension>swf</nonFilteredFileExtension>
+						<nonFilteredFileExtension>mp3</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
 				</configuration>
 				<executions>
