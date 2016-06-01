@@ -236,6 +236,12 @@ var mashupMedia = new function() {
 	    }	    
 	}
 
+	this.playCurrentSong = function() {
+	    $.get(mashupMedia.contextUrl + "app/restful/playlist/music/play/current", function(data) {       
+	        mashupMedia.streamSong(data);          
+	    });
+	};
+	    
 	this.playNextSong = function() {
 	    $.get(mashupMedia.contextUrl + "app/restful/playlist/music/play/next", function(data) {       
 	        mashupMedia.streamSong(data);	       
@@ -343,9 +349,19 @@ var mashupMedia = new function() {
 	
 }
 
+var isJPlayerInitialised = false;
 var myAndroidFix = null;
 
-function setupJPlayer(streams) {        
+function setupJPlayer(streams) {       
+        
+    if (!isJPlayerInitialised) {
+        initialiseJPlayerWithSilentMp3();
+        return;
+    }
+    
+    
+    //alert("isJPlayerInitialised: " + isJPlayerInitialised);
+    
     var streamFormats = "";
     var media = {};
             
@@ -360,15 +376,14 @@ function setupJPlayer(streams) {
     
     console.log(media);
 
+    
     if (myAndroidFix) {
-        var isPlaying = mashupMedia.isMusicPlaying();
         myAndroidFix.setMedia(media);
-        if (isPlaying) {
+        if (mashupMedia.isMusicPlaying()) {
             myAndroidFix.play();
         }        
         return;
     }
-    
     
     
     var options = {
@@ -392,31 +407,40 @@ function setupJPlayer(streams) {
         error: function(event) {
             console.log(event);
             togglePlayPause("stop");
-            $.post("<c:url value="/app/restful/encode/song" />", { id: mashupMedia.songId })
+            $.post(mashupMedia.contextUrl + "app/restful/encode/song", { id: mashupMedia.songId })
                 .done(function( data ) {
                     mashupMedia.showMessage(data);          
             });                   
         }
     };
     
+        
+    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);
+}
+
+function initialiseJPlayerWithSilentMp3() {
+    
     // initialise JPlayer with a silent mp3 file    
     var silentMedia = {
       mp3: mashupMedia.contextUrl + "jquery-plugins/jquery.jplayer/silent.mp3"
     };
         
-    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, silentMedia, options);
-    myAndroidFix.setMedia(silentMedia);
-    myAndroidFix.play();
-    setTimeout(function(){        
-        myAndroidFix.setMedia(media);
-        if (isPlaying) {
-            myAndroidFix.play();
-        }                
-    }, 1000);
+    var options = {        
+       ready: function(event) {
+           silentJPlayer.setMedia(silentMedia);
+           silentJPlayer.play();
+        },                    
+        ended: function(event) {
+            mashupMedia.playCurrentSong(true);
+        },
+        swfPath: mashupMedia.jPlayerSwfPath,
+        supplied: "mp3",
+        cssSelectorAncestor: "#music-player"
+    };    
     
-    
+    silentJPlayer = new jPlayerAndroidFix(mashupMedia.jPlayerId, silentMedia, options);
+    isJPlayerInitialised = true;
 }
-
 
 
 
