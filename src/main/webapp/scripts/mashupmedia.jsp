@@ -64,7 +64,7 @@ $(document).ready(function() {
 	});
 		
 	
-
+	//initialiseJPlayer();
 
 });
 
@@ -349,16 +349,17 @@ var mashupMedia = new function() {
 	
 }
 
-var isJPlayerInitialised = false;
+//var isJPlayerInitialised = false;
 var myAndroidFix = null;
 
 function setupJPlayer(streams) {       
     //alert("isJPlayerInitialised: " + isJPlayerInitialised);
-        
+    /*    
     if (!isJPlayerInitialised) {
         initialiseJPlayerWithSilentMp3();
         return false;
     }
+    */
     
     
     
@@ -377,8 +378,9 @@ function setupJPlayer(streams) {
     console.log(media);
     
     if (myAndroidFix) {
-        
+        myAndroidFix.setMedia(media);
         if (mashupMedia.isMusicPlaying()) {
+            
             myAndroidFix.play();
         }        
         return;
@@ -417,7 +419,7 @@ function setupJPlayer(streams) {
     myAndroidFix.setMedia(media);
 }
 
-function initialiseJPlayerWithSilentMp3() {
+function initialiseJPlayer() {
     
     // initialise JPlayer with a silent mp3 file    
     var silentMedia = {
@@ -430,16 +432,17 @@ function initialiseJPlayerWithSilentMp3() {
            silentJPlayer.play();
         },                    
         ended: function(event) {
-            $(mashupMedia.jPlayerId).jPlayer("destroy");
-            mashupMedia.playCurrentSong(true);            
+            //$(mashupMedia.jPlayerId).jPlayer("destroy");
+            //mashupMedia.playCurrentSong(true);
         },
         swfPath: mashupMedia.jPlayerSwfPath,
         supplied: "mp3",
 //        cssSelectorAncestor: "#music-player"
     };    
     
-    isJPlayerInitialised = true;
+    //isJPlayerInitialised = true;
     var silentJPlayer = new jPlayerAndroidFix(mashupMedia.jPlayerId, silentMedia, options);
+    silentJPlayer.play();
    
 }
 
