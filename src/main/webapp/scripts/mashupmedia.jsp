@@ -353,7 +353,7 @@ var isJPlayerInitialised = false;
 var myAndroidFix = null;
 
 function setupJPlayer(streams) {       
-    alert("isJPlayerInitialised: " + isJPlayerInitialised);
+    //alert("isJPlayerInitialised: " + isJPlayerInitialised);
         
     if (!isJPlayerInitialised) {
         initialiseJPlayerWithSilentMp3();
@@ -435,7 +435,7 @@ function initialiseJPlayerWithSilentMp3() {
         },
         swfPath: mashupMedia.jPlayerSwfPath,
         supplied: "mp3",
-        cssSelectorAncestor: "#music-player"
+//        cssSelectorAncestor: "#music-player"
     };    
     
     isJPlayerInitialised = true;
