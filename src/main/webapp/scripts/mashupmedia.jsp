@@ -113,10 +113,12 @@ var mashupMedia = new function() {
 	this.showMessage = function(message) {
 	    $("#information-box").html(message);
 	    $("#information-box").show();
-	    
+	    /*
 	    setTimeout(function() {
 	        $("#information-box").fadeOut("slow");                  
-	    }, 10000);
+	    },
+	     10000);
+	     */
 	    
 	};
 	
