@@ -57,6 +57,17 @@ $(document).ready(function() {
 		$("#form-log-out").submit(); 
 	});
 		
+	 $(mashupMedia.jPlayerId).bind($.jPlayer.event.ended, function(event) {
+	     var media = event.jPlayer.status.media;
+	     var mp3 = media.mp3;
+	     if (mp3 && mp3.indexOf("silent.mp3") > -1) {
+	         mashupMedia.playCurrentSong();
+	     } else {
+	         mashupMedia.playNextSong();
+	     }
+	     
+	     
+	 });
 	
 	//initialiseJPlayer();
 
@@ -356,14 +367,47 @@ function setupJPlayer(streams) {
     
     if (myAndroidFix) {
         myAndroidFix.setMedia(media);
-        if (mashupMedia.isMusicPlaying()) {
-            
+        if (mashupMedia.isMusicPlaying()) {            
             myAndroidFix.play();
         }        
         return;
     }
     
+    
     var options = {
+        ended:  function(event) {
+            //playMusic(streamFormats, media);
+        },
+        swfPath: mashupMedia.jPlayerSwfPath,
+        supplied: "mp3",
+        cssSelectorAncestor: "#music-player",
+        cssSelector: {
+            title: ".information span.title",
+            play: ".controls a.play",
+            pause: ".controls a.pause",
+            seekBar: "div.progress",
+            playBar: "div.play-bar"
+        },
+        volume: 1,
+        error: function(event) {
+            console.log(event);
+            togglePlayPause("stop");
+            $.post(mashupMedia.contextUrl + "/app/restful/encode/song", { id: mashupMedia.songId })
+                .done(function( data ) {
+                    mashupMedia.showMessage(data);          
+            });                   
+        }
+    };    
+                    
+    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);
+    var silentMedia = {
+       mp3: mashupMedia.contextUrl + "/jquery-plugins/jquery.jplayer/silent.mp3"
+    };
+    myAndroidFix.setMedia(silentMedia);
+    myAndroidFix.play();
+    
+    /*
+    options = {
         ready: function(event) {
             //myAndroidFix.setMedia(media);
         },
@@ -393,8 +437,46 @@ function setupJPlayer(streams) {
         
     myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);
     myAndroidFix.setMedia(media);
+    */
 }
 
+/*
+function playMusic(streamFormats, media) {
+    var options = {
+                    ready: function(event) {
+                        //myAndroidFix.setMedia(media);
+                    },
+                    ended: function(event) {
+                        //mashupMedia.playNextSong(true);
+                    },
+                    swfPath: mashupMedia.jPlayerSwfPath,
+                    supplied: streamFormats,
+                    cssSelectorAncestor: "#music-player",
+                    cssSelector: {
+                        title: ".information span.title",
+                        play: ".controls a.play",
+                        pause: ".controls a.pause",
+                        seekBar: "div.progress",
+                        playBar: "div.play-bar"
+                    },
+                    volume: 1,
+                    error: function(event) {
+                        console.log(event);
+                        togglePlayPause("stop");
+                        $.post(mashupMedia.contextUrl + "/app/restful/encode/song", { id: mashupMedia.songId })
+                            .done(function( data ) {
+                                mashupMedia.showMessage(data);          
+                        });                   
+                    }
+    };
+                    
+    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);
+    myAndroidFix.setMedia(media);
+    myAndroidFix.play();
+}
+*/
+
+/*
 function initialiseJPlayer() {
     
     // initialise JPlayer with a silent mp3 file    
@@ -404,8 +486,8 @@ function initialiseJPlayer() {
         
     var options = {        
        ready: function(event) {
-           silentJPlayer.setMedia(silentMedia);
-           silentJPlayer.play();
+           //silentJPlayer.setMedia(silentMedia);
+           //silentJPlayer.play();
         },                    
         ended: function(event) {
             //$(mashupMedia.jPlayerId).jPlayer("destroy");
@@ -421,7 +503,7 @@ function initialiseJPlayer() {
     silentJPlayer.play();
    
 }
-
+*/
 
 
 
