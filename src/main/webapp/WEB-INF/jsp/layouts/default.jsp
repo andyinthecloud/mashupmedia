@@ -43,7 +43,7 @@
 
 
 <script type="text/javascript"
-	src="<c:url value="/scripts/mashupmedia.jsp" />"></script>
+	src="<c:url value="/scripts/mashupmedia.js" />"></script>
 
 
 <!-- script type="text/javascript"
