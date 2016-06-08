@@ -68,6 +68,8 @@ $(document).ready(function() {
 	     
 	     
 	 });
+	 
+	 setupJPlayer();
 	
 	//initialiseJPlayer();
 
@@ -206,7 +208,7 @@ var mashupMedia = new function() {
         $("#music-player .artist-name").html("<a rel=\"internal\" href=\"" + song.artistUrl + "\">" + song.artistName + "</a>");        
         $("#music-player .title").text(song.title);
         mashupMedia.songId = song.id;
-        setupJPlayer(song.streams);
+        playMusic(song.streams);
         mashupMedia.showMusicPlayer(true);
 
     };
@@ -347,10 +349,31 @@ var mashupMedia = new function() {
 	
 }
 
+
+function playMusic(streams) {
+//    var streamFormats = "";
+    var media = {};
+            
+    for (i = 0; i < streams.length; i++) {
+        media[streams[i].format] = streams[i].url;
+        /*
+        if (i > 0) {
+            streamFormats += ",";
+        } 
+        streamFormats += streams[i].format;
+        */ 
+    }
+    
+    myAndroidFix.setMedia(media);    
+    if (mashupMedia.isMusicPlaying()) { 
+        myAndroidFix.play();
+    }
+}
+
 //var isJPlayerInitialised = false;
 var myAndroidFix = null;
-
-function setupJPlayer(streams) {       
+function setupJPlayer() {
+    /*
     var streamFormats = "";
     var media = {};
             
@@ -365,6 +388,7 @@ function setupJPlayer(streams) {
     
     console.log(media);
     
+    
     if (myAndroidFix) {
         myAndroidFix.setMedia(media);
         if (mashupMedia.isMusicPlaying()) {            
@@ -372,7 +396,7 @@ function setupJPlayer(streams) {
         }        
         return;
     }
-    
+    */
     
     var options = {
         ended:  function(event) {
@@ -399,12 +423,13 @@ function setupJPlayer(streams) {
         }
     };    
                     
-    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);
-    var silentMedia = {
+    
+    var media = {
        mp3: mashupMedia.contextUrl + "/jquery-plugins/jquery.jplayer/silent.mp3"
     };
-    myAndroidFix.setMedia(silentMedia);
-    myAndroidFix.play();
+    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);
+    //myAndroidFix.setMedia(silentMedia);
+    //myAndroidFix.play();
     
     /*
     options = {
