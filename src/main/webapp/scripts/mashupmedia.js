@@ -67,7 +67,7 @@ $(document).ready(function() {
 	             return false;
 	         }
 	         mashupMedia.playNextSong();
-	         delayNextAction(50);
+	         delayNextAction();
 	     }
 	     
 	     
@@ -628,7 +628,7 @@ function loadAlbums(viewType) {
     }, function(data) {        
         var albums = $(data).filter("div.albums");
         $("div.dynamic-content div.albums").append(albums);
-        delayNextAction(1000);          
+        delayNextAction();          
     });
 }
 
@@ -651,7 +651,7 @@ function loadSongSearchResults(isAppend) {
 		} else {
 			$("div.panel div.content").html(data);
 		}				
-		delayNextAction(1000);		
+		delayNextAction();		
 	});				
 
 }
@@ -663,7 +663,7 @@ function loadLatestPhotos(isAppend) {
 	
 	$.get(mashupMedia.contextUrl + "/app/ajax/photo/load-latest-photos", { pageNumber: mashupMedia.filterPageNumber }, function( data ) {
 		$("body.photo div.sub-panel ul.photo-thumbnails").append( data );
-		delayNextAction(1000);
+		delayNextAction();
 	});	
 }
 
@@ -694,10 +694,10 @@ function loadArtist(artistId) {
 	});
 }
 
-function delayNextAction(milliseconds) {
+function delayNextAction() {
 	setTimeout(function() {
 		isNextActionDelayed = false;
-	}, milliseconds);	
+	}, 1000);	
 			
 }
 
