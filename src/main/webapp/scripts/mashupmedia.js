@@ -1,4 +1,4 @@
-var isLoadingContent = false;
+var isNextActionDelayed = false;
 var currentPage = "";
 
 /*
@@ -63,7 +63,11 @@ $(document).ready(function() {
 	     if (mp3 && mp3.indexOf("silent.mp3") > -1) {
 	         mashupMedia.playCurrentSong();
 	     } else {
+	         if (isNextActionDelayed) {
+	             return false;
+	         }
 	         mashupMedia.playNextSong();
+	         delayNextAction();
 	     }
 	     
 	     
@@ -602,10 +606,10 @@ function textStartsWith(text, startsWithValue) {
 }
 
 function loadAlbums(viewType) { 
-    if (isLoadingContent) {
+    if (isNextActionDelayed) {
         return;
     }
-    isLoadingContent = true;
+    isNextActionDelayed = true;
     mashupMedia.filterPageNumber++;
     
     var url = mashupMedia.contextUrl + "/app/music/albums";
@@ -624,17 +628,17 @@ function loadAlbums(viewType) {
     }, function(data) {        
         var albums = $(data).filter("div.albums");
         $("div.dynamic-content div.albums").append(albums);
-        pauseScrollLoadMore();          
+        delayNextAction();          
     });
 }
 
 
 function loadSongSearchResults(isAppend) {
-	if (isLoadingContent) {
+	if (isNextActionDelayed) {
 		return;
 	}
 	
-	isLoadingContent = true;
+	isNextActionDelayed = true;
 
 	var serialisedSearchForm = $("#quick-search").serialize();
 	
@@ -647,21 +651,20 @@ function loadSongSearchResults(isAppend) {
 		} else {
 			$("div.panel div.content").html(data);
 		}				
-		pauseScrollLoadMore();		
+		delayNextAction();		
 	});				
 
 }
 
 function loadLatestPhotos(isAppend) {
-	if (isLoadingContent) {
+	if (isNextActionDelayed) {
 		return;
 	}
 	
 	$.get(mashupMedia.contextUrl + "/app/ajax/photo/load-latest-photos", { pageNumber: mashupMedia.filterPageNumber }, function( data ) {
 		$("body.photo div.sub-panel ul.photo-thumbnails").append( data );
-		pauseScrollLoadMore();
-	});
-	
+		delayNextAction();
+	});	
 }
 
 
@@ -691,9 +694,9 @@ function loadArtist(artistId) {
 	});
 }
 
-function pauseScrollLoadMore() {
+function delayNextAction() {
 	setTimeout(function() {
-		isLoadingContent = false;
+		isNextActionDelayed = false;
 	}, 1000);	
 			
 }
