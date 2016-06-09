@@ -66,8 +66,7 @@ $(document).ready(function() {
 	         if (isNextActionDelayed) {
 	             return false;
 	         }
-	         mashupMedia.playNextSong();
-	         delayNextAction();
+	         mashupMedia.autoPlayNextSong();	         
 	     }
 	     
 	     
@@ -247,10 +246,18 @@ var mashupMedia = new function() {
 	};
 	    
 	this.playNextSong = function() {
-	    $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/next", function(data) {       
+	    $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/next", function(data) {	        
 	        mashupMedia.streamSong(data);	       
 		});
 	};
+	
+    this.autoPlayNextSong = function() {
+        $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/next", function(data) {            
+            mashupMedia.streamSong(data);          
+            delayNextAction();
+        });
+    };
+	
 
 	this.playPreviousSong = function() {
         $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/previous", function(data) {       
