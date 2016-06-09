@@ -57,26 +57,45 @@ $(document).ready(function() {
 		$("#form-log-out").submit(); 
 	});
 		
+	
+	bindEndedEventInMusicPlayer();
+	/*
 	 $(mashupMedia.jPlayerId).bind($.jPlayer.event.ended, function(event) {
+	     $(mashupMedia.jPlayerId).unbind($.jPlayer.event.ended);
 	     var media = event.jPlayer.status.media;
 	     var mp3 = media.mp3;
 	     if (mp3 && mp3.indexOf("silent.mp3") > -1) {
 	         mashupMedia.playCurrentSong();
 	     } else {
-	         if (isNextActionDelayed) {
-	             return false;
-	         }
-	         mashupMedia.autoPlayNextSong();	         
-	     }
-	     
-	     
+	         mashupMedia.playNextSong();	         
+	     }	     	     
 	 });
+	 */
 	 
 	 setupJPlayer();
 	
 	//initialiseJPlayer();
 
 });
+
+
+function bindEndedEventInMusicPlayer() {
+    $(mashupMedia.jPlayerId).bind($.jPlayer.event.ended, function(event) {
+        $(mashupMedia.jPlayerId).unbind($.jPlayer.event.ended);        
+        var media = event.jPlayer.status.media;
+        var mp3 = media.mp3;
+        if (mp3 && mp3.indexOf("silent.mp3") > -1) {
+            mashupMedia.playCurrentSong();
+        } else {
+            mashupMedia.playNextSong();             
+        }
+        
+        isNextActionDelayed = true;
+        
+        bindEndedEventInMusicPlayer();
+    });
+    
+}
 
 
 $(document).ajaxComplete(function() {
@@ -251,14 +270,6 @@ var mashupMedia = new function() {
 		});
 	};
 	
-    this.autoPlayNextSong = function() {
-        $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/next", function(data) {            
-            mashupMedia.streamSong(data);          
-            delayNextAction();
-        });
-    };
-	
-
 	this.playPreviousSong = function() {
         $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/previous", function(data) {       
             mashupMedia.streamSong(data);            
