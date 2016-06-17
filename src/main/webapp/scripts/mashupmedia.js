@@ -56,10 +56,13 @@ $(document).ready(function() {
 	$("#log-out").click(function() {
 		$("#form-log-out").submit(); 
 	});
+	
+	
+	
 		
 	
-	bindEndedEventInMusicPlayer();
 	/*
+	
 	 $(mashupMedia.jPlayerId).bind($.jPlayer.event.ended, function(event) {
 	     $(mashupMedia.jPlayerId).unbind($.jPlayer.event.ended);
 	     var media = event.jPlayer.status.media;
@@ -72,6 +75,7 @@ $(document).ready(function() {
 	 });
 	 */
 	 
+	 
 	 setupJPlayer();
 	
 	//initialiseJPlayer();
@@ -80,20 +84,7 @@ $(document).ready(function() {
 
 
 function bindEndedEventInMusicPlayer() {
-    $(mashupMedia.jPlayerId).bind($.jPlayer.event.ended, function(event) {
-        $(mashupMedia.jPlayerId).unbind($.jPlayer.event.ended);        
-        var media = event.jPlayer.status.media;
-        var mp3 = media.mp3;
-        if (mp3 && mp3.indexOf("silent.mp3") > -1) {
-            mashupMedia.playCurrentSong();
-        } else {
-            mashupMedia.playNextSong();             
-        }
-        
-        isNextActionDelayed = true;
-        
-        bindEndedEventInMusicPlayer();
-    });
+
     
 }
 
@@ -421,8 +412,19 @@ function setupJPlayer() {
     */
     
     var options = {
+        ready: function(event) {
+            
+        },
         ended:  function(event) {
             //playMusic(streamFormats, media);
+            var media = event.jPlayer.status.media;
+            var mp3 = media.mp3;
+            if (mp3 && mp3.indexOf("silent.mp3") > -1) {
+                mashupMedia.playCurrentSong();
+            } else {
+                mashupMedia.playNextSong();             
+            }                
+            
         },
         swfPath: mashupMedia.jPlayerSwfPath,
         supplied: "mp3",
@@ -450,8 +452,8 @@ function setupJPlayer() {
        mp3: mashupMedia.contextUrl + "/jquery-plugins/jquery.jplayer/silent.mp3"
     };
     myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);
-    //myAndroidFix.setMedia(silentMedia);
-    //myAndroidFix.play();
+    myAndroidFix.setMedia(media);
+    myAndroidFix.play();
     
     /*
     options = {
