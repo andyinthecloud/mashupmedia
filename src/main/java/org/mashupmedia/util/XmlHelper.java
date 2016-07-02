@@ -102,7 +102,7 @@ public class XmlHelper {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
 			if (nodeName.equalsIgnoreCase(node.getNodeName())) {
-				String text = node.getTextContent();
+				String text = node.getNodeValue();
 				text = StringUtils.trimToEmpty(text);
 				return text;
 			}

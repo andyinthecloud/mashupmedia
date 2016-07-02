@@ -22,7 +22,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/streaming")
@@ -34,9 +33,9 @@ public class StreamingController {
 	@Autowired
 	private MediaManager mediaManager;
 
-	@RequestMapping(value = "/media/{mediaItemId}", method = { RequestMethod.GET, RequestMethod.HEAD })
+	@RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public void getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
-			@RequestParam(value = "mediaContentType", required = false) String mediaContentTypeValue,
+			@PathVariable(value = "mediaContentType") String mediaContentTypeValue,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
