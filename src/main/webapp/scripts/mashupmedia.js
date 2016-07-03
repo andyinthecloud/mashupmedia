@@ -416,15 +416,14 @@ function setupJPlayer() {
             
         },
         ended:  function(event) {
-            //playMusic(streamFormats, media);
+        	//playMusic(streamFormats, media);
             var media = event.jPlayer.status.media;
             var mp3 = media.mp3;
             if (mp3 && mp3.indexOf("silent.mp3") > -1) {
                 mashupMedia.playCurrentSong();
             } else {
                 mashupMedia.playNextSong();             
-            }                
-            
+            }                                        
         },
         swfPath: mashupMedia.jPlayerSwfPath,
         supplied: "mp3",
