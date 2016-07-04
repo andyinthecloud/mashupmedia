@@ -229,11 +229,12 @@ var mashupMedia = new function() {
 	this.streamSong = function(song) {
 	    if (!song) {
 	        return;
-	    }	    	   	    
-	    
+	    }    	   	    
+	    	    
 	    mashupMedia.prepareSong(song);
         togglePlayPause("play");
-        myAndroidFix.play();  
+        $(mashupMedia.jPlayerId).jPlayer("play");
+        //myAndroidFix.play();  
 
 	};
 	
@@ -408,14 +409,16 @@ function playMusic(streams) {
         */ 
     }
     
-    myAndroidFix.setMedia(media);    
+    //myAndroidFix.setMedia(media);
+    $(mashupMedia.jPlayerId).jPlayer("setMedia", media);
     if (mashupMedia.isMusicPlaying()) { 
-        myAndroidFix.play();
+        //myAndroidFix.play();
+        $(mashupMedia.jPlayerId).jPlayer("play");
     }
 }
 
 //var isJPlayerInitialised = false;
-var myAndroidFix = null;
+//var myAndroidFix = null;
 function setupJPlayer() {
     /*
     var streamFormats = "";
@@ -453,7 +456,7 @@ function setupJPlayer() {
             if (mp3 && mp3.indexOf("silent.mp3") > -1) {
                 mashupMedia.playCurrentSong();
             } else {
-                mashupMedia.playNextSong();             
+                mashupMedia.playNextSong();
             }                                        
         },
         swfPath: mashupMedia.jPlayerSwfPath,
@@ -481,9 +484,16 @@ function setupJPlayer() {
     var media = {
        mp3: mashupMedia.contextUrl + "/jquery-plugins/jquery.jplayer/silent.mp3"
     };
+    
+    $(mashupMedia.jPlayerId).jPlayer(options);
+    $(mashupMedia.jPlayerId).jPlayer("setMedia", media);
+    $(mashupMedia.jPlayerId).jPlayer("play");
+    
+    /*
     myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);
     myAndroidFix.setMedia(media);
     myAndroidFix.play();
+    */
     
     /*
     options = {

@@ -160,7 +160,8 @@
 
         $("#music-player").on("click", ".controls a.play", function() {
             togglePlayPause("play");
-            myAndroidFix.play();
+            //myAndroidFix.play();
+            $(mashupMedia.jPlayerId).jPlayer("play");
         });
 
         $("#music-player").on("click", ".controls a.pause", function() {
