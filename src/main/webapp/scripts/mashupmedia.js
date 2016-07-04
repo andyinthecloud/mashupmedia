@@ -250,21 +250,52 @@ var mashupMedia = new function() {
 	}
 
 	this.playCurrentSong = function() {
+	    /*
 	    $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/current", function(data) {       
 	        mashupMedia.streamSong(data);          
 	    });
+	    */
+	    	    	    
+
+	    $.ajax({
+            method: "GET",
+            url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/current",
+            async: false
+        }).done(function(data) {
+            mashupMedia.streamSong(data);
+        });	    
 	};
 	    
 	this.playNextSong = function() {
+	    /*
 	    $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/next", function(data) {	        
 	        mashupMedia.streamSong(data);	       
 		});
+		*/
+        $.ajax({
+            method: "GET",
+            url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/next",
+            async: false
+        }).done(function(data) {
+            mashupMedia.streamSong(data);
+        });     
+	    
 	};
 	
 	this.playPreviousSong = function() {
+	    /*
         $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/previous", function(data) {       
             mashupMedia.streamSong(data);            
-        });	    
+        });
+        */
+        $.ajax({
+            method: "GET",
+            url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/previous",
+            async: false
+        }).done(function(data) {
+            mashupMedia.streamSong(data);
+        });     
+
 	};
 
 	
