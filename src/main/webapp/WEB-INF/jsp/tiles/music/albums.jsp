@@ -52,7 +52,7 @@
                 playAlbum(this);
 			});
 
-            $("div.dynamic-content div.albums").off().on("click", "div.albums div.album-control a.add", function() {
+            $("div.dynamic-content").off().on("click", "div.albums div.album-control a.add", function() {
                 appendAlbum(this);
             });
 

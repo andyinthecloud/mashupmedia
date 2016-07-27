@@ -3,12 +3,6 @@
 <script type="text/javascript">
     $(document).ready(function() {
         
-        // Unbind declared event handlers
-        $("div.dynamic-content").off("mouseover", "div.albums div.album");
-        $("div.dynamic-content").off("mouseout", "div.albums div.album");
-        $("div.dynamic-content").off("click", "#play-all");
-        $("div.dynamic-content").off("click", "#add-all");
-        $("div.dynamic-content").off("click", "div.title-with-player-control div.re-encode a");
         
         $(window).unbind("scroll");
 		window.scrollTo(0, 0);
@@ -18,21 +12,21 @@
             tooltip: "<spring:message code="action.click.edit" />"
         });
 		
-        $("div.dynamic-content").on("mouseover", "div.albums div.album", function() {
+        $("div.dynamic-content").off().on("mouseover", "div.albums div.album", function() {
             $(this).addClass("highlight");
         });
 
-        $("div.dynamic-content").on("mouseout", "div.albums div.album", function() {
+        $("div.dynamic-content").off().on("mouseout", "div.albums div.album", function() {
             $(this).removeClass("highlight");
         });
 	
-        $("div.dynamic-content").on("click", "#play-all", function() {
+        $("div.dynamic-content").off().on("click", "#play-all", function() {
 		    var artistId = $(this).closest("div.control-menu").attr("id");
 		    artistId = parseId(artistId, "artist-id");
 		    mashupMedia.playArtist(artistId);
         });        
         
-        $("div.dynamic-content").on("click", "#add-all", function() {
+        $("div.dynamic-content").off().on("click", "#add-all", function() {
 		    var artistId = $(this).closest("div.control-menu").attr("id");
 		    artistId = parseId(artistId, "artist-id");
 		    mashupMedia.appendArtist(artistId);
@@ -42,15 +36,34 @@
 			displayRemoteArtistInformation(data);			
 		});	
 
-        $("div.dynamic-content").on("click", "div.title-with-player-control div.re-encode a", function() {
+        $("div.dynamic-content").off().on("click", "div.title-with-player-control div.re-encode a", function() {
             $.post("<c:url value="/app/restful/encode/music-artist" />", { id: <c:out value="${artistPage.artist.id}" /> })
             .done(function( data ) {
                 mashupMedia.showMessage(data);          
             });            
-        });
+        });		
+        
+		$("div.dynamic-content").off().on("click", "div.albums div.album-control a.play", function() {
+			playAlbum(this);
+		});
 		
+		$("div.dynamic-content").off().on("click", "div.albums div.album-control a.add", function() {
+			appendAlbum(this);
+		});        
 
     });
+    
+    function playAlbum(element) {
+        var albumId = $(element).closest("div.album").attr("id");
+        albumId = parseId(albumId, "album-id");
+        mashupMedia.playAlbum(albumId);
+    }
+    
+    function appendAlbum(element) {
+        var albumId = $(element).closest("div.album").attr("id");
+        albumId = parseId(albumId, "album-id");
+        mashupMedia.appendAlbum(albumId);
+    }    
 
 
 </script>

@@ -666,10 +666,10 @@ function textStartsWith(text, startsWithValue) {
 }
 
 function loadAlbums(viewType) { 
-    if (isNextActionDelayed) {
+    if (this.isNextActionDelayed) {
         return;
     }
-    isNextActionDelayed = true;
+    this.isNextActionDelayed = true;
     mashupMedia.filterPageNumber++;
     
     var url = mashupMedia.contextUrl + "/app/music/albums";
@@ -694,11 +694,11 @@ function loadAlbums(viewType) {
 
 
 function loadSongSearchResults(isAppend) {
-	if (isNextActionDelayed) {
+	if (this.isNextActionDelayed) {
 		return;
 	}
 	
-	isNextActionDelayed = true;
+	this.isNextActionDelayed = true;
 
 	var serialisedSearchForm = $("#quick-search").serialize();
 	
@@ -717,7 +717,7 @@ function loadSongSearchResults(isAppend) {
 }
 
 function loadLatestPhotos(isAppend) {
-	if (isNextActionDelayed) {
+	if (this.isNextActionDelayed) {
 		return;
 	}
 	
@@ -756,7 +756,7 @@ function loadArtist(artistId) {
 
 function delayNextAction() {
 	setTimeout(function() {
-		isNextActionDelayed = false;
+		this.isNextActionDelayed = false;
 	}, 1000);	
 			
 }
