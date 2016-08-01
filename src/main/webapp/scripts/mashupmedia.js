@@ -793,7 +793,8 @@ function isValidNumber(value) {
 }
 
 function appendContentsOnScroll(contentType) {
-    if ($(window).scrollTop() >= $(document).height() - $(window).height()) {
+    // add 50 pixels margin of error
+    if ($(window).scrollTop() >= ($(document).height() - $(window).height() - 50)) {
         
 //		var pageNumber = mashupMedia.filterPageNumber + 1;
 //		mashupMedia.filterPageNumber = pageNumber;

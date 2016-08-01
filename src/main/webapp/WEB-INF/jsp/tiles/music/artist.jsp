@@ -12,21 +12,21 @@
             tooltip: "<spring:message code="action.click.edit" />"
         });
 		
-        $("div.dynamic-content").off().on("mouseover", "div.albums div.album", function() {
+        $("div.albums div.album").mouseover(function() {
             $(this).addClass("highlight");
         });
 
-        $("div.dynamic-content").off().on("mouseout", "div.albums div.album", function() {
+        $("div.dynamic-content div.albums div.album").mouseout(function() {
             $(this).removeClass("highlight");
         });
 	
-        $("div.dynamic-content").off().on("click", "#play-all", function() {
+        $("#play-all").click(function() {
 		    var artistId = $(this).closest("div.control-menu").attr("id");
 		    artistId = parseId(artistId, "artist-id");
 		    mashupMedia.playArtist(artistId);
         });        
         
-        $("div.dynamic-content").off().on("click", "#add-all", function() {
+        $("#add-all").click(function() {
 		    var artistId = $(this).closest("div.control-menu").attr("id");
 		    artistId = parseId(artistId, "artist-id");
 		    mashupMedia.appendArtist(artistId);
@@ -36,18 +36,18 @@
 			displayRemoteArtistInformation(data);			
 		});	
 
-        $("div.dynamic-content").off().on("click", "div.title-with-player-control div.re-encode a", function() {
+        $("div.dynamic-content div.title-with-player-control div.re-encode a").click(function() {
             $.post("<c:url value="/app/restful/encode/music-artist" />", { id: <c:out value="${artistPage.artist.id}" /> })
             .done(function( data ) {
                 mashupMedia.showMessage(data);          
             });            
         });		
         
-		$("div.dynamic-content").off().on("click", "div.albums div.album-control a.play", function() {
+		$("div.dynamic-content div.albums div.album-control a.play").click(function() {
 			playAlbum(this);
 		});
 		
-		$("div.dynamic-content").off().on("click", "div.albums div.album-control a.add", function() {
+		$("div.dynamic-content div.albums div.album-control a.add").click(function() {
 			appendAlbum(this);
 		});        
 

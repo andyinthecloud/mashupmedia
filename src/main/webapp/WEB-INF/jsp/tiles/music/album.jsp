@@ -38,7 +38,7 @@
             displayRemoteArtistInformation(data);
         });
 
-        $("div.dynamic-content").off().on("click", "div.title-with-player-control div.re-encode a", function() {
+        $("div.dynamic-content div.title-with-player-control div.re-encode a").click(function() {
             $.post("<c:url value="/app/restful/encode/music-album" />", { id: <c:out value="${albumPage.album.id}" /> })
             .done(function( data ) {
                 mashupMedia.showMessage(data);          
