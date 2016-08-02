@@ -66,10 +66,12 @@
 				<c:set var="rowIndex" value="" />
 			</c:otherwise>
 		</c:choose>
+		
+		<c:set var="artistId" value="${artist.id}"/>		
+		<jsp:include page="/WEB-INF/jsp/inc/remote-artist-thumb.jsp" />
 
-		<li id="${rowIndex}"><a rel="internal"
-			href="<c:url value="/app/music/artist/${artist.id}"/>"><c:out
-					value="${artist.name}" /></a></li>
+		<li id="${rowIndex}"><a rel="internal" id="artist-id-${artistId}"
+			href="<c:url value="/app/music/artist/${artist.id}"/>"><span class="thumb"></span>${artist.name}</a></li>
 	</c:forEach>
 </ul>
 
