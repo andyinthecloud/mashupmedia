@@ -16,9 +16,9 @@
 		width: auto;
 		padding: 0px 2px;
 	}
+	
 	div.albums div.album {
-		float: left;
-		
+		float: left;		
 		padding: 5px;
 		width: 150px;
 		height: 240px;
@@ -28,15 +28,16 @@
 		font-size: 0.9em;
 		overflow: hidden;
 	}
+	
+	div.albums div.highlight {
+		border-color: #E579E9;
+	}
 
 	div.albums div.album img, ul.items li a.album-cover img {
 		width: 150px;
 		height: 150px;
 	}
-	div.albums div.highlight {
-		border: 3px solid #E579E9;
-		padding: 3px;
-	}
+
 		
 	div.albums div.album-control {
 		position: absolute;

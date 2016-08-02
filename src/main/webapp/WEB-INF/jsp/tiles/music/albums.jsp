@@ -18,17 +18,19 @@
                 appendContentsOnScroll("${musicAlbumListType.className}");
             });
 
-            $("div.dynamic-content").off().on("click", "ul.index-letters a", function() {
+            $("div.dynamic-content ul.index-letters a").click(function() {
                 mashupMedia.filterAlbumsSearchLetter = $(this).text();
             });
 
-            $("div.dynamic-content").off().on("mouseover", "div.albums div.album", function() {
+            $("div.dynamic-content div.albums").off("mouseover", "div.album").on("mouseover", "div.album", function() {
                 $(this).addClass("highlight");
             });
 
-            $("div.dynamic-content").off().on("mouseout", "div.albums div.album", function() {
+            
+            $("div.dynamic-content div.albums").off("mouseout", "div.album").on("mouseout", "div.album", function() {
                 $(this).removeClass("highlight");
             });
+            
 
             $("input[name=albums-view]").click(function() {
                 var albumView = $(this).val();
@@ -47,14 +49,14 @@
                 loadInternalPage(title, url);
             });
 			
-            
-            $("div.dynamic-content").off().on("click", "div.albums div.album-control a.play", function() {
-                playAlbum(this);
-			});
-
-            $("div.dynamic-content").off().on("click", "div.albums div.album-control a.add", function() {
-                appendAlbum(this);
-            });
+           	$("div.dynamic-content div.albums").off("click", "div.album div.album-control a").on("click", "div.album div.album-control a", function() {
+           	 	if ($(this).hasClass("play")) {
+           	 		playAlbum(this);    
+           	 	} else if ($(this).hasClass("add")) {
+           	 		appendAlbum(this);    
+           	 	} 
+            	
+    		});
 
         });
             
