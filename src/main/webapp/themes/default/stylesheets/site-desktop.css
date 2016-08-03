@@ -16,9 +16,8 @@
 		width: auto;
 		padding: 0px 2px;
 	}
-	
 	div.albums div.album {
-		float: left;		
+		float: left;
 		padding: 5px;
 		width: 150px;
 		height: 240px;
@@ -28,17 +27,13 @@
 		font-size: 0.9em;
 		overflow: hidden;
 	}
-	
 	div.albums div.highlight {
 		border-color: #E579E9;
 	}
-
 	div.albums div.album img, ul.items li a.album-cover img {
 		width: 150px;
 		height: 150px;
 	}
-
-		
 	div.albums div.album-control {
 		position: absolute;
 		left: 5px;
@@ -58,16 +53,18 @@
 	div.albums div.album-control a {
 		padding: 0 5px;
 	}
-	
 	div.album div.album-art {
 		float: right;
 		width: 45%;
 		margin-left: 1em;
 		margin-bottom: 1em;
 	}
-	
 	div.album ul.tracks {
 		
 	}
-
+	ul.items li img.thumb {
+		width: 100px;
+		height: auto;
+		margin-right: 10px;
+	}
 }

@@ -36,4 +36,9 @@
 		width: 100%;
 		margin-top: 10px;
 	}
+	ul.items li img.thumb {
+		width: 70px;
+		height: auto;
+		margin-right: 10px;
+	}
 }

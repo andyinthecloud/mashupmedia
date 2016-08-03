@@ -709,14 +709,21 @@ div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HO
 ul.items {
 	list-style: none;
 	padding: 0; 
+	vertical-align: middle;
 }
 
 ul.items li{
 	position: relative;
 	clear: both;
 	border-bottom: 1px solid #e579e9;
-	padding: 5px 0;
-	
+	padding: 5px 0;	
+}
+
+ul.items li span.label{
+	}
+
+ul.items li img.thumb {
+	margin-right: 10px;
 }
 
 ul.items li.playing{
