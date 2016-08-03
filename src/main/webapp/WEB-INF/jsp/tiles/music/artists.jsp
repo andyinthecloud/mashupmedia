@@ -94,12 +94,12 @@
 
 		<li id="${rowIndex}"><a rel="internal"
 			id="artist-id-${artist.id}" 
-			href="<c:url value="/app/music/artist/${artist.id}"/>"><img
-				class="thumb" src="" title="${artist.name}" />
+			href="<c:url value="/app/music/artist/${artist.id}"/>"><!--  img
+				class="thumb" src="" title="${artist.name}" /-->
 				<span class="label">${artist.name}</span></a></li>
 
 		<script type="text/javascript">
-		showArtistThumb(${artist.id});
+		//showArtistThumb(${artist.id});
 		</script>
 
 
