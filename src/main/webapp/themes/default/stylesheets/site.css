@@ -716,14 +716,16 @@ ul.items li{
 	position: relative;
 	clear: both;
 	border-bottom: 1px solid #e579e9;
-	padding: 5px 0;	
+	padding: 5px 0;		
 }
 
 ul.items li span.label{
-	}
+	position: absolute;
+	top: 10px;
+}
 
 ul.items li img.thumb {
-	margin-right: 10px;
+	position: absolute;
 }
 
 ul.items li.playing{
@@ -772,7 +774,7 @@ ul.items div.icons-right{
 }
 
 .sticky {
-    top: 70px;
+    top: 90px;
     left: 0;
     right: 0;
     position: fixed;

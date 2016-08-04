@@ -28,6 +28,8 @@ public interface MusicManager {
 
 	public Artist getArtist(Long artistId);
 
+	public Artist getArtist(Long artistId, boolean isFullyInitialise);
+
 	public List<String> getAlbumIndexLetters();
 
 	public List<Album> getAlbumsByArtist(Long artistId);

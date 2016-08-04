@@ -26,49 +26,8 @@
 	    }
 	});
 
-	$("#remote-dialog input[type=button]").click(function() {
-	    var searchArtist = $("#remote-dialog input[type=text]").val();
-	    if (searchArtist == artistNameLabel) {
-		return;
-	    }
+	
 
-	    $.post("<c:url value="/app/ajax/remote/artist/search" />", {
-		name : searchArtist
-	    }).done(function(data) {
-		var artistsHtml = "";
-		$.each(data, function(index) {
-		    artistsHtml += "<li><a id=\"search-results-remote-id-" + data[index].remoteId + "\" href=\"javascript:;\">" + data[index].name + "</a></li>"
-		});
-		$("#remote-dialog ul.search-results").html(artistsHtml);
-	    });
-	});
-
-	$("#remote-dialog ul.search-results").on("click", "li a", function(event) {
-	    var remoteArtistId = $(this).attr("id");
-	    remoteArtistId = remoteArtistId.replace("search-results-remote-id-", "")	    
-	    var artistId = $("#artist-id").val();
-	    $.post("<c:url value="/app/ajax/remote/artist/save" />", {
-	    remoteArtistId : remoteArtistId,
-		artistId : artistId
-	    }).done(function(data) {
-		$.get("<c:url value="/app/ajax/music/artist/remote/" />" + artistId).done(function(data) {
-		    // console.log(data);
-		    $("div.music-sub-panel h1").html(data.name);
-		    $("div.music-sub-panel div.information div.profile").html(data.profile);
-
-		    var artistImagesHtml = "";
-		    $.each(data.remoteImages, function(index) {
-			var imageUrl = prepareImageUrl(data.remoteImages[index].imageUrl);
-			var thumbUrl = prepareImageUrl(data.remoteImages[index].thumbUrl);
-
-			artistImagesHtml += "<a class=\"fancybox\" rel=\"artist-images\" href=\"" + imageUrl + "\"><img src=\"" + thumbUrl + "\" /></a>";
-		    });
-		    $("div.music-sub-panel div.information div.images").html(artistImagesHtml);
-
-		});
-	    });
-
-	});
 	
 	$("#remote a.arrow-show-hide").click(function() {		
 		var overflow = "hidden";

@@ -180,12 +180,7 @@ var mashupMedia = new function() {
 		}
 		
 		
-		$.get(mashupMedia.contextUrl + "/app/ajax/music/play/media-item/" + mediaItemId, {
-			"playlistId" : playlistId
-		}, function(data) {
-			$("#media-player-script").html(data);
-			setupJPlayer(isAutoPlay);
-		});
+
 	};
 	*/
 	
@@ -300,15 +295,7 @@ var mashupMedia = new function() {
 	};
 
 	
-	this.showAlbum = function(albumId) {
-		if(!isValidNumber(albumId)) {
-			return;
-		}
-		
-		$.get(mashupMedia.contextUrl + "/app/ajax/music/album/" + albumId, function(data) {
-			$("div.panel div.content").html(data);
-		});
-	};
+
 	
     this.playSong = function(songId) {        
         $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play-song", {
@@ -728,11 +715,7 @@ function loadLatestPhotos(isAppend) {
 }
 
 
-function loadArtists() {
-	$.get(mashupMedia.contextUrl + "/app/ajax/music/artists", function(data) {
-		$("div.panel div.content").html(data);
-	});
-}
+
 
 function loadPlaylists() {
 	$.get(mashupMedia.contextUrl + "/app/ajax/playlist/list", {
@@ -748,11 +731,7 @@ function loadPlaylist(playlistId) {
 	});
 }
 
-function loadArtist(artistId) {
-	$.get(mashupMedia.contextUrl + "/app/ajax/music/artist/" + artistId, function(data) {
-		$("div.panel div.content").html(data);
-	});
-}
+
 
 function delayNextAction() {
 	setTimeout(function() {

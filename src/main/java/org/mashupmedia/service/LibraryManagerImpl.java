@@ -62,7 +62,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		User user = AdminHelper.getLoggedInUser();
 		if (user == null) {
 			logger.error("No user found in session, using system user...");
-			user = adminManager.getUser(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME);
+			user = adminManager.getSystemUser();
 		}
 
 		Date date = new Date();

@@ -27,30 +27,6 @@
         });
 
     });
-    
-    function showArtistThumb(artistId) {
-   		$.getJSON("<c:url value="/app/ajax/music/artist/remote/" />" + artistId, function( data ) {
-   			if (data.error) { 
-   			    return false; 
-   			}
-   			var artistImageUrl = getArtistImageUrl(data.remoteImages);   			
-   			$("#artist-id-" + artistId + " img.thumb").attr("src", artistImageUrl);
-   		});                
-    }
-    
-    
-    function getArtistImageUrl(remoteImages) {
-        var artistImageUrl = "";
-        if (!remoteImages.length || remoteImages.length == 0) {
-            return artistImage;
-        }
-        
-        var firstArtistImage = remoteImages[0];
-        artistImageUrl = mashupMedia.contextUrl + "/" + firstArtistImage.thumbUrl;
-        return artistImageUrl;
-    }
-    
-    
 </script>
 
 
@@ -93,15 +69,10 @@
 
 
 		<li id="${rowIndex}"><a rel="internal"
-			id="artist-id-${artist.id}" 
-			href="<c:url value="/app/music/artist/${artist.id}"/>"><!--  img
-				class="thumb" src="" title="${artist.name}" /-->
-				<span class="label">${artist.name}</span></a></li>
-
-		<script type="text/javascript">
-		//showArtistThumb(${artist.id});
-		</script>
-
+			id="artist-id-${artist.id}"
+			href="<c:url value="/app/music/artist/${artist.id}"/>"><img class="thumb"
+				src="<c:url value="/app/remote/music/artist/thumb/${artist.id} "/>"
+				title="${artist.name}" /> <span class="label">${artist.name}</span></a></li>
 
 	</c:forEach>
 </ul>

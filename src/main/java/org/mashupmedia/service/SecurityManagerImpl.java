@@ -36,24 +36,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class SecurityManagerImpl implements SecurityManager {
-	
+
 	@Autowired
 	private AdminManager adminManager;
-	
+
 	@Override
 	public List<Long> getLoggedInUserGroupIds() {
 		User user = AdminHelper.getLoggedInUser();
+		return getUserGroupIds(user);
+	}
+
+	@Override
+	public List<Long> getUserGroupIds(User user) {
 		if (user == null) {
 			return null;
 		}
-		
+
 		user = adminManager.getUser(user.getId());
-		
+
 		Set<Group> groups = user.getGroups();
 		if (user.isSystem() || user.isAdministrator()) {
 			groups = new HashSet<Group>(adminManager.getGroups());
 		}
-		
+
 		if (groups == null || groups.isEmpty()) {
 			return null;
 		}
@@ -66,13 +71,13 @@ public class SecurityManagerImpl implements SecurityManager {
 		return groupIds;
 
 	}
-	
+
 	@Override
 	public boolean isLoggedInUserInGroup(Collection<Group> groups) {
 		if (groups == null || groups.isEmpty()) {
 			return false;
 		}
-		
+
 		for (Group group : groups) {
 			long groupId = group.getId();
 			if (hasGroup(groupId)) {
@@ -80,15 +85,14 @@ public class SecurityManagerImpl implements SecurityManager {
 			}
 		}
 		return false;
-		}
-	
-	
+	}
+
 	protected boolean hasGroup(long groupId) {
 		List<Long> userGroupIds = getLoggedInUserGroupIds();
 		if (userGroupIds == null || userGroupIds.isEmpty()) {
 			return false;
 		}
-		
+
 		for (Long userGroupId : userGroupIds) {
 			if (userGroupId == groupId) {
 				return true;
@@ -96,8 +100,7 @@ public class SecurityManagerImpl implements SecurityManager {
 		}
 		return false;
 	}
-	
-	
+
 	@Override
 	public boolean canAccessPlaylistMediaItem(PlaylistMediaItem playlistMediaItem) {
 		List<Long> groupIds = getLoggedInUserGroupIds();
@@ -108,12 +111,12 @@ public class SecurityManagerImpl implements SecurityManager {
 		if (playlistMediaItem == null) {
 			return false;
 		}
-				
+
 		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		boolean canAccessMediaItem = canAccessMediaItem(mediaItem);
 		return canAccessMediaItem;
 	}
-	
+
 	@Override
 	public boolean canAccessMediaItem(MediaItem mediaItem) {
 		if (mediaItem == null) {
@@ -122,11 +125,11 @@ public class SecurityManagerImpl implements SecurityManager {
 
 		Library library = mediaItem.getLibrary();
 		Set<Group> groups = library.getGroups();
-		if (isLoggedInUserInGroup(groups) ) {
+		if (isLoggedInUserInGroup(groups)) {
 			return true;
 		}
 
 		return false;
 	}
-	
+
 }

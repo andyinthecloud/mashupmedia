@@ -34,7 +34,7 @@
             mashupMedia.appendSong(songId);
         });
 
-        $.getJSON("<c:url value="/app/ajax/music/artist/remote/${albumPage.album.artist.id}" />", function(data) {
+        $.getJSON("<c:url value="/app/remote/music/artist/${albumPage.album.artist.id}" />", function(data) {
             displayRemoteArtistInformation(data);
         });
 

@@ -32,7 +32,7 @@
 		    mashupMedia.appendArtist(artistId);
 		});
 		
-		$.getJSON("<c:url value="/app/ajax/music/artist/remote/${artistPage.artist.id}" />", function( data ) {
+		$.getJSON("<c:url value="/app/remote/music/artist/${artistPage.artist.id}" />", function( data ) {
 			displayRemoteArtistInformation(data);			
 		});	
 

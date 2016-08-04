@@ -62,9 +62,14 @@
 	div.album ul.tracks {
 		
 	}
+	ul.items li{
+		height: 100px;
+	}
+	ul.items li span.label {		
+		left: 110px;
+	}
 	ul.items li img.thumb {
 		width: 100px;
 		height: auto;
-		margin-right: 10px;
 	}
 }
