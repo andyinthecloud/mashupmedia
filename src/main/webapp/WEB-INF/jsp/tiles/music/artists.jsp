@@ -25,6 +25,38 @@
                 $("ul.index-letters").removeClass("sticky");
             }
         });
+        
+        $("div.dynamic-content div.artists").off("mouseover", "div.artist").on("mouseover", "div.artist", function() {
+            $(this).addClass("highlight");
+        });
+
+        
+        $("div.dynamic-content div.artists").off("mouseout", "div.artist").on("mouseout", "div.artist", function() {
+            $(this).removeClass("highlight");
+        });
+        
+       	$("div.dynamic-content div.artists").off("click", "div.artist div.artist-control a").on("click", "div.artist div.artist-control a", function() {
+       	 	if ($(this).hasClass("play")) {
+       	 		playArtist(this);    
+       	 	} else if ($(this).hasClass("add")) {
+       	 		appendArtist(this);    
+       	 	} 
+        	
+		}); 
+       	
+       	
+        function playArtist(element) {
+            var artistId = $(element).closest("div.artist-control").attr("id");
+            artistId = parseId(artistId, "artist-id");
+            mashupMedia.playArtist(artistId);
+        }
+        
+        function appendArtist(element) {
+            var artistId = $(element).closest("div.artist-control").attr("id");
+            artistId = parseId(artistId, "artist-id");
+            mashupMedia.appendAlbum(artistId);
+        }       	
+        
 
     });
 </script>
@@ -48,7 +80,7 @@
 	</c:forEach>
 </ul>
 
-<ul class="items">
+<div class="artists">
 	<c:set var="rowIndex" value="" />
 	<c:set var="indexLetter" value="" />
 	<c:forEach items="${artistsPage.artists}" var="artist">
@@ -68,13 +100,47 @@
 		</c:choose>
 
 
-		<li id="${rowIndex}"><a rel="internal"
-			id="artist-id-${artist.id}"
-			href="<c:url value="/app/music/artist/${artist.id}"/>"><img class="thumb"
+		<div class="artist" id="${rowIndex}">
+
+
+			<a rel="internal"
+				title="<spring:message code="music.title" /> - ${artist.name}"
+				href="<c:url value="/app/music/artist/${artist.id}"/>"> <img class="artist-art"
 				src="<c:url value="/app/remote/music/artist/thumb/${artist.id} "/>"
-				title="${artist.name}" /> <span class="label">${artist.name}</span></a></li>
+				title="${artist.name}" alt="${artist.name}" />
+			</a>
+
+
+			<div class="artist-title">
+				<div class="artist-name">
+					<a rel="internal"
+						title="<spring:message code="music.title" /> - ${artist.name}"
+						href="<c:url value="/app/music/artist/${artist.id}" />">${artist.name}</a>
+				</div>
+			</div>
+
+
+			<div class="artist-control" id="artist-id-${artist.id}">
+				<a class="play" href="javascript:;"
+					title="<spring:message code="action.play" />"><img
+					alt="<spring:message code="action.play"/>"
+					title="<spring:message code="action.play"/>"
+					src="<c:url value="${themePath}/images/controls/play.png"/>" /></a>
+				<c:if test="${isPlaylistOwner}">
+					<a class="add" href="javascript:;"
+						title="<spring:message code="action.add" />"><img
+						alt="<spring:message code="action.add"/>"
+						title="<spring:message code="action.add"/>"
+						src="<c:url value="${themePath}/images/controls/add.png"/>" /></a>
+				</c:if>
+			</div>
+
+
+
+
+		</div>
 
 	</c:forEach>
-</ul>
+</div>
 
 

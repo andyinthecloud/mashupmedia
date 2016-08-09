@@ -688,11 +688,11 @@ a.image-next {
 
 
 
-div.albums div.album {
+div.albums div.album, div.artists div.artist{
 	position: relative;
 }
 
-div.albums div.album div.artist-name {
+div.albums div.album div.artist-name, div.artists div.artist div.artist-name {
 	font-size: 0.8em;
 }
 
@@ -700,7 +700,7 @@ div.albums div.album div.album-name {
 	font-size: 1em;
 }
 
-div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HOVER
+div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HOVER, div.artists div.artist a, div.artists div.artist a:ACTIVE, div.artists div.artist a:HOVER
 	{
 	color: #606060 !important;
 	font-weight: normal !important;

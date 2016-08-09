@@ -1,35 +1,30 @@
 @media all and (max-width: 50em) {
-	div.albums div.album {
+	div.albums div.album, div.artists div.artist {
 		border-bottom: 1px solid #A0A0A0;
 		padding: 5px;
 	}
-	div.albums div.album img, ul.items li a.album-cover img {
+	div.albums div.album img, ul.items li a.album-cover img, div.artists div.artist img {
 		width: 60px;
 		height: 60px;
 	}
-	div.albums div.album-title {
+	div.albums div.album-title, div.artists div.artist-title {
 		position: absolute;
 		left: 75px;
 		top: 10px;
 		font-size: 1em;
 	}
-	div.albums div.album-control {
-		position: absolute;
-		right: 10px;
-		bottom: 0;
-	}
-	div.albums div.album-control {
+	div.albums div.album-control, div.artist div.artist-control {
 		position: absolute;
 		right: 0px;
 		bottom: 5px;
 		padding: 3px;
 	}
-	div.albums div.album-control img {
+	div.albums div.album-control img, div.artists div.artist-control img {
 		width: 16px;
 		height: auto;
 		padding: 5px;
 	}
-	div.albums div.album-control a {
+	div.albums div.album-control a, div.artists div.artist-control a {
 		padding: 5px;
 	}
 	div.album-art {
