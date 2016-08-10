@@ -130,7 +130,7 @@ var mashupMedia = new function() {
 	this.showMessage = function(message) {
 	    $("#information-box").html(message);
 	    $("#information-box").show();
-	    $("#information-box").delay(1000).fadeOut("slow");
+	    $("#information-box").delay(30000).fadeOut("slow");
 	};
 	
 	this.loadLastAccessedPlaylist = function() {	    
