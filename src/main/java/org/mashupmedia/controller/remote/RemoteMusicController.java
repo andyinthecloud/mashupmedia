@@ -37,18 +37,24 @@ public class RemoteMusicController extends AjaxBaseController {
 	@Qualifier("lastFm")
 	private MusicWebService musicWebService;
 
-	@RequestMapping(value = "/artist/thumb/{artistId}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-	public String getRemoteArtistThumbnail(@PathVariable("artistId") Long artistId, HttpServletRequest request) {
+	@RequestMapping(value = "/artist/image/{artistId}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+	public String getRemoteArtistImage(@PathVariable("artistId") Long artistId, HttpServletRequest request) {
+
+		String noArtistImageUrl = "redirect:/images/default-artist.png";
 
 		RemoteMediaMetaItem remoteMediaMetaItem = getRemoteArtistMeta(artistId, request);
 		List<RemoteImage> remoteImages = remoteMediaMetaItem.getRemoteImages();
 		if (remoteImages == null || remoteImages.isEmpty()) {
-			return null;
+			return noArtistImageUrl;
 		}
 
 		RemoteImage remoteImage = remoteImages.get(0);
-		String thumbUrl = remoteImage.getThumbUrl();
-		return "forward:/" + thumbUrl;
+		String imageUrl = StringUtils.trimToEmpty(remoteImage.getThumbUrl());
+		if (StringUtils.isEmpty(imageUrl)) {
+			return noArtistImageUrl;
+		}
+
+		return "forward:/" + imageUrl;
 	}
 
 	@RequestMapping(value = "/artist/{artistId}", method = RequestMethod.GET, produces = "application/json")

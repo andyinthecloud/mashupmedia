@@ -106,7 +106,7 @@
 			<a rel="internal"
 				title="<spring:message code="music.title" /> - ${artist.name}"
 				href="<c:url value="/app/music/artist/${artist.id}"/>"> <img class="artist-art"
-				src="<c:url value="/app/remote/music/artist/thumb/${artist.id} "/>"
+				src="<c:url value="/app/remote/music/artist/image/${artist.id} "/>"
 				title="${artist.name}" alt="${artist.name}" />
 			</a>
 

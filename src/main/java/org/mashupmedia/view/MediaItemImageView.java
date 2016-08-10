@@ -41,9 +41,9 @@ public class MediaItemImageView implements View {
 		if (FileHelper.isEmptyBytes(imageBytes)) {
 			String imageNotFound = "";
 			if (mediaType == MediaType.SONG) {
-				imageNotFound = "/images/no-album-art.png";
+				imageNotFound = "/images/default-album-art.png";
 			} else if (mediaType == MediaType.PHOTO) {
-				imageNotFound = "/images/no-photo-thumbnail.png";
+				imageNotFound = "/images/default-photo-thumbnail.png";
 
 			}
 			response.sendRedirect(request.getContextPath() + imageNotFound);
