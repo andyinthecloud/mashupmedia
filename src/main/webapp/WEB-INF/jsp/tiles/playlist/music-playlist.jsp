@@ -120,8 +120,6 @@
             playlistId: playlistId,
             mediaItemIds: mediaItemIds
         }, function(data) {
-            var url = "<c:url value="/app/playlist/music" />?playlist=" + playlistId;
-            loadInternalPage("<spring:message code="playlists.title" />", url)
         });
 
     }

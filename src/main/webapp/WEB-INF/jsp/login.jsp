@@ -22,7 +22,7 @@
 
 <link rel="icon" type="image/png"
 	href="<c:url value="/images/icon.png"/>">
-	
+
 
 <title><spring:message code="page.title.prefix" /> <spring:message
 		code="login.title" /></title>
@@ -40,9 +40,9 @@
 	rel="stylesheet" type="text/css" />
 
 <script type="text/javascript">
-$(document).ready(function() {
-	$("#username").focus();
-});
+    $(document).ready(function() {
+        $("#username").focus();
+    });
 </script>
 
 
@@ -55,10 +55,11 @@ $(document).ready(function() {
 
 	<div id="login-panel" class="center-panel border">
 
-		<img alt="Mashup Media"
-			src="<c:url value="/images/mashupmedia-logo.png"/>">
+		<a href="<c:url value="/"/>"><img alt="Mashup Media"
+			src="<c:url value="/images/mashupmedia-logo.png"/>"></a>
 
-		<form method="POST" action="<%=request.getContextPath()%>/login" data-ajax="false">
+		<form method="POST" action="<%=request.getContextPath()%>/login"
+			data-ajax="false">
 
 			<sec:csrfInput />
 
@@ -68,7 +69,7 @@ $(document).ready(function() {
 			<div class="error-box">
 				<spring:message code="login.error" />
 			</div>
-			
+
 			<%
 				session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
 				}
@@ -76,7 +77,8 @@ $(document).ready(function() {
 
 			<div class="new-line">
 				<label><spring:message code="login.username" /></label> <input
-					type="text" value="" name="username" id="username" data-clear-btn="true" />
+					type="text" value="" name="username" id="username"
+					data-clear-btn="true" />
 			</div>
 
 			<div class="new-line">
@@ -89,7 +91,7 @@ $(document).ready(function() {
 						code="login.remember-me" />
 				</label>
 			</div>
-			
+
 			<div class="new-line">
 				<input class="button" type="submit"
 					value="<spring:message code="login.button.login" />" name="submit">
