@@ -32,8 +32,7 @@ public class RestfulEncodeController {
 		ERROR, INFO, WARNING
 	}
 
-	private MediaContentType[] musicEncodingMediaContentTypes = new MediaContentType[] { MediaContentType.MP3,
-			MediaContentType.OGA };
+	private MediaContentType[] musicEncodingMediaContentTypes = new MediaContentType[] { MediaContentType.MP3 };
 
 	@Autowired
 	private MediaManager mediaManager;
@@ -115,7 +114,7 @@ public class RestfulEncodeController {
 	}
 
 	protected void encodeMusicAlbum(Long albumId, Map<EncodeMessageType, String> messageKeys,
-			MediaContentType[] mediaContentType) {
+			MediaContentType[] mediaContentTypes) {
 		if (messageKeys == null) {
 			messageKeys = new HashMap<EncodeMessageType, String>();
 		}
@@ -129,7 +128,7 @@ public class RestfulEncodeController {
 
 		List<Song> songs = album.getSongs();
 		for (Song song : songs) {
-			encodeMediaItem(messageKeys, mediaContentType, song);
+			encodeMediaItem(messageKeys, mediaContentTypes, song);
 		}
 	}
 
