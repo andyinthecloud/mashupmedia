@@ -1,12 +1,10 @@
 package org.mashupmedia.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.mashupmedia.comparator.MediaItemComparator;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.model.User;
@@ -90,8 +88,7 @@ public class MusicManagerImpl implements MusicManager {
 
 		List<Song> songs = album.getSongs();
 		Hibernate.initialize(songs);
-		Collections.sort(songs, new MediaItemComparator());
-		
+
 		return album;
 	}
 
