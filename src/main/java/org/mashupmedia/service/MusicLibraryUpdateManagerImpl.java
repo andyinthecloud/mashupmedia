@@ -441,8 +441,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			return null;
 		}
 
-		String discNumber = StringUtils.trimToEmpty(tag.getFirst(FieldKey.DISC_NO));
-		if (StringUtils.isEmpty(discNumber)) {
+		int discNumber = NumberUtils.toInt(tag.getFirst(FieldKey.DISC_NO));
+		// Only use the disc number if greater than 1
+		if (discNumber < 2) {
 			return albumName;
 		}
 
