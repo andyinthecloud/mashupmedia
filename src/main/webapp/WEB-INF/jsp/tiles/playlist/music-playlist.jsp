@@ -8,7 +8,7 @@
         window.scrollTo(0, 0);
         showFooterTabs("music", "music-playlist");
 
-        $("ul.items").sortable({
+        $("div.dynamic-content ul.items").sortable({
             delay: 1000,
             handle: "img.cursor-move"
         });
@@ -25,13 +25,6 @@
             savePlaylist();
         });
         
-/*
-        $("div.dynamic-content").off().on("click", "#playlist ul.items a.delete", function() {
-            var songRow = $(this).closest("li");
-            $(songRow).remove();
-            savePlaylist();
-        });
-*/
         $("#playlist-actions").change(function() {
             var action = $(this).val();
 
