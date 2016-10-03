@@ -279,13 +279,26 @@
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
 	</definition>
-	
-	<definition name="photo" extends="home">
+		
+	<!-- definition name="photos/list" extends="home">
 		<put-attribute name="bodyClass" value="photo" />
 		<put-attribute name="topBar"
 			value="/WEB-INF/jsp/tiles/photo/photo-top-bar.jsp" />
 		<put-attribute name="bodyClass" value="photo" />
+	</definition -->
+	
+	<definition name="photos/list" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/photos-list.jsp" />
 	</definition>
+
+	<definition name="photos/list/fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/photos-list.jsp" />
+	</definition>
+	
+	
 	
 	<definition name="photos-home" extends="photo">
 		<put-attribute name="body"

@@ -58,18 +58,6 @@
 
 
 
-<!-- script type="text/javascript"
-	src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/add-on/jplayer.playlist.min.js" />"></script -->
-
-
-<!-- link type="text/css"
-	href="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/skin/pink.flag/css/jplayer.pink.flag.min.css" />"
-	rel="stylesheet" / -->
-
-
-<!-- script type="text/javascript"
-	src="<c:url value="/jquery-plugins/datatables/${dataTablesVersion}/jquery.dataTables.min.js" />"></script -->
-
 <script
 	src="<c:url value="/jquery-plugins/jeditable/1.7.1/jquery.jeditable.min.js" />"
 	type="text/javascript" charset="utf-8"></script>
@@ -122,11 +110,10 @@
 
     $(document).ready(function() {
         // Unbind declared event handlers
-	    $("body").off("click", "a[rel='internal']");
+        $("body").off("click", "a[rel='internal']");
 
-        
         // Capture all the links to push their url to the history stack and trigger the StateChange Event
-        $("body").on("click", "a[rel='internal']", function(event) {            
+        $("body").on("click", "a[rel='internal']", function(event) {
             var pageTitlePrefix = "<spring:message code="page.default.title.prefix" />";
             var title = pageTitlePrefix + " " + $(this).attr("title");
             var link = $(this).attr("href");
@@ -139,7 +126,6 @@
             }, title, link);
 
         });
-        
 
         var jPlayerVersion = "${jPlayerVersion}";
         <c:if test="${isTransparentBackground}">
@@ -149,8 +135,6 @@
         $("#log-out").click(function() {
             $("#form-log-out").submit();
         });
-        
-        
 
         $("#nav-panel li a").click(function() {
             $("#nav-panel").panel("close");
@@ -183,9 +167,9 @@
         });
 
         mashupMedia.loadLastAccessedPlaylist();
-        
+
         mashupMedia.jPlayerSwfPath = "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />";
-        
+
     });
 
     function togglePlayPause(action) {
@@ -259,14 +243,16 @@
 	src="<c:url value="/jquery-plugins/fancybox/2.1.4/jquery.fancybox.pack.js" />"></script>
  -->
 
-<link rel="stylesheet" href="<c:url value="/jquery-plugins/swipebox/1.4.1/swipebox.css" />">
-<script src="<c:url value="/jquery-plugins/swipebox/1.4.1/jquery.swipebox.js" />"></script>
-	
+<link rel="stylesheet"
+	href="<c:url value="/jquery-plugins/swipebox/1.4.1/swipebox.css" />">
+<script
+	src="<c:url value="/jquery-plugins/swipebox/1.4.1/jquery.swipebox.js" />"></script>
 
-	
+
+
 <link rel="icon" type="image/png"
 	href="<c:url value="/images/icon.png"/>">
-	
+
 
 <title>${headPageTitle}</title>
 
@@ -340,7 +326,7 @@
 
 
 		<div role="main" class="ui-content jqm-content jqm-fullwidth">
-		
+
 			<div id="information-box"></div>
 
 			<div class="dynamic-content">
@@ -385,8 +371,9 @@
 			<div class="tabs music" data-role="navbar">
 				<ul>
 
-					<li><a rel="internal" href="<c:url value="/app/music/random-albums" />" class="music-albums"
-						data-media="music"
+					<li><a rel="internal"
+						href="<c:url value="/app/music/random-albums" />"
+						class="music-albums" data-media="music"
 						title="<spring:message code="footer.music.albums"/>"><img
 							alt="<spring:message code="footer.music.albums"/>"
 							src="<c:url value="${themePath}/images/link-icons/album.png"/>" /></a></li>
@@ -425,8 +412,9 @@
 					data-media="music"><spring:message code="top-bar.music" /></a></li>
 				<li><a href="<c:url value="/app/videos" />"><spring:message
 							code="top-bar.videos" /></a></li>
-				<li><a href="<c:url value="/app/photo/list" />"><spring:message
-							code="top-bar.photos" /></a></li>
+				<li><a title="<spring:message code="list-photos.title" />"
+					rel="internal" href="<c:url value="/app/photo/list" />"
+					data-media="photos"><spring:message code="top-bar.photos" /></a></li>
 				<sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
 					<li><a rel="internal"
 						title="<spring:message code ="configuration.title" />"

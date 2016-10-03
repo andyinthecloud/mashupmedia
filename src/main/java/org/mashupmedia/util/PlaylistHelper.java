@@ -80,8 +80,6 @@ public class PlaylistHelper {
 		}
 
 		playlistMediaItems.addAll(appendPlaylistMediaItems);
-
-		playlistMediaItems.get(0).setPlaying(true);
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 	}
 
