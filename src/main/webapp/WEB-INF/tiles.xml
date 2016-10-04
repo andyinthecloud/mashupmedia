@@ -5,9 +5,7 @@
 <tiles-definitions>
 
 	<definition name="home" template="/WEB-INF/jsp/layouts/default.jsp">
-		<put-attribute name="bodyClass" value="default" />
 		<put-attribute name="topBar" value="/WEB-INF/jsp/tiles/top-bar.jsp" />
-		<put-attribute name="backgroundImageType" value="default" />
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/home.jsp" />
 	</definition>
 
@@ -261,7 +259,6 @@
 	</definition>
 
 	<definition name="videos" extends="video">
-		<put-attribute name="bodyClass" value="video" />
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/video/list-videos.jsp" />
 	</definition>
@@ -281,10 +278,8 @@
 	</definition>
 		
 	<!-- definition name="photos/list" extends="home">
-		<put-attribute name="bodyClass" value="photo" />
 		<put-attribute name="topBar"
 			value="/WEB-INF/jsp/tiles/photo/photo-top-bar.jsp" />
-		<put-attribute name="bodyClass" value="photo" />
 	</definition -->
 	
 	<definition name="photos/list" extends="home">
