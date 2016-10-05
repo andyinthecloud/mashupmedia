@@ -249,7 +249,8 @@
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/playlist/list-playlists.jsp" />
 	</definition>
-
+	
+	<!-- 
 
 	<definition name="video" extends="home">
 		<put-attribute name="topBar"
@@ -309,5 +310,5 @@
 			value="/WEB-INF/jsp/tiles/photo/album.jsp" />
 	</definition>
 	
-	
+	 -->
 </tiles-definitions>
