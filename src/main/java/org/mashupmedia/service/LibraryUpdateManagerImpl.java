@@ -73,10 +73,12 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			lastSuccessfulScanOn = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);			
 		}
 
+		
 		if (library.getLibraryStatusType() != LibraryStatusType.OK && date.before(lastSuccessfulScanOn)) {
 			logger.info("Library is already updating, exiting:" + library.toString());
 			return;
 		}
+		
 
 		try {
 			library.setLastSuccessfulScanOn(new Date());

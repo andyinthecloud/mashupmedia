@@ -16,9 +16,6 @@ public class LibraryUpdateTaskManager {
 	@Autowired
 	private LibraryUpdateManager libraryUpdateManager;
 
-	@Autowired
-	private LibraryManager libraryManager;
-
 	public void updateLibrary(Library library) {
 		libraryUpdateThreadPoolTaskExecutor.execute(new LibraryUpdateTask(library));
 	}
