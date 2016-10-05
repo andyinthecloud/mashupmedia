@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.configuration.llibrary;
+package org.mashupmedia.controller.configuration.library;
 
 import java.util.HashSet;
 import java.util.List;

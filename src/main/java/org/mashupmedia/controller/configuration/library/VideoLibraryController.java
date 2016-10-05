@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.configuration.llibrary;
+package org.mashupmedia.controller.configuration.library;
 
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;

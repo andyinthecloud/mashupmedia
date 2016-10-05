@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.configuration.llibrary;
+package org.mashupmedia.controller.configuration.library;
 
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
