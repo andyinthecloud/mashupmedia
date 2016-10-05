@@ -183,7 +183,6 @@
 			value="/WEB-INF/jsp/tiles/configuration/administration/edit-group.jsp" />
 	</definition>
 	  
-
 	<definition name="music.albums" extends="home">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/music/albums.jsp" />
