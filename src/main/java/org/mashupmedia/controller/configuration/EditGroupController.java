@@ -50,7 +50,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/configuration/administration")
 public class EditGroupController extends BaseController {
 
-	private final static String PAGE_PATH = "configuration/administration/edit-group";
+	private final static String PAGE_PATH = "configuration.administration.edit-group";
 
 	@Autowired
 	private AdminManager adminManager;

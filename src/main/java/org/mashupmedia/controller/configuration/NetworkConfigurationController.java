@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class NetworkConfigurationController extends BaseController {
 
 	private final static String PAGE_NAME = "network";
-	private final static String PAGE_PATH = "configuration/" + PAGE_NAME;
-	private final static String PAGE_URL = "/" + PAGE_PATH;
+	private final static String PAGE_PATH = "configuration." + PAGE_NAME;
+	private final static String PAGE_URL = "/configuration/" + PAGE_NAME;
 	private final static String PAGE_FRAGMENT_PATH = PAGE_PATH  + FRAGMENT_APPEND_PATH;
 
 	@Autowired

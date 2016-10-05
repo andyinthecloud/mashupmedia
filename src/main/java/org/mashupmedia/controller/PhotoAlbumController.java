@@ -45,7 +45,7 @@ public class PhotoAlbumController extends BaseController {
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
 				
 		model.addAttribute("album", album);
-		return "photo/album/show";
+		return "photo.album.show";
 	}
 
 }

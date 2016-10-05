@@ -63,7 +63,7 @@ public class ListRemoteLibrariesController extends BaseController {
 		listRemoteLibrariesPage.setRemoteLibraries(remoteLibraries);
 
 		model.addAttribute("listRemoteLibrariesPage", listRemoteLibrariesPage);
-		return "configuration/list-remote-libraries";
+		return "configuration.list-remote-libraries";
 	}
 
 

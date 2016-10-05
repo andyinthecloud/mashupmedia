@@ -35,7 +35,7 @@ public abstract class AbstractListPlaylistsController extends BaseController {
 	}
 
 	protected String getPlaylistPath() {
-		return "playlist/list";
+		return "playlist.list";
 	}
 
 	@Override

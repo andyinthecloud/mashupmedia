@@ -46,7 +46,7 @@ public class ListEncodingProcessesController extends BaseController {
 	}
 
 	public String postEncodingProcessesPage(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
-		String path = getPath(isFragment, "encode/list-processes");
+		String path = getPath(isFragment, "encode.list-processes");
 		return path;
 		
 	}
@@ -60,7 +60,7 @@ public class ListEncodingProcessesController extends BaseController {
 		model.addAttribute("encodingProcessesPage", encodingProcessesPage);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_RELOAD, false);
 
-		String path = getPath(isFragment, "encode/queue");
+		String path = getPath(isFragment, "encode.queue");
 		return path;
 	}
 

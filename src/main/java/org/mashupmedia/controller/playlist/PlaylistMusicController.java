@@ -14,7 +14,7 @@ public class PlaylistMusicController extends AbstractPlaylistController {
 
 	@Override
 	protected String getPlaylistPath() {
-		return "playlist/music";
+		return "playlist.music";
 	}
 
 	@Override

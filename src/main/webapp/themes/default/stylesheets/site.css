@@ -545,49 +545,7 @@ ul.items a.ui-icon {
 	margin-right: 10px;
 }
 
-body.photo ul.photo-thumbnails {
-	list-style: none;
-}
 
-body.photo ul.photo-thumbnails li {
-	display: inline-block;
-	padding: 2px;
-	margin: 2px;
-	width: 200px;
-	vertical-align: middle;
-}
-
-body.photo ul.photo-thumbnails li a img {
-	border: 5px solid transparent;
-	width: 100%;
-}
-
-body.photo ul.photo-thumbnails li a img.photo-highlight {
-	border-color: #e579e9;
-}
-
-body.photo table.photo-container {
-	width: 100%;
-	border-collapse: collapse;
-}
-
-body.photo table.photo-container td.photo-previous, table.photo-container td.photo-next
-	{
-	text-align: center;
-}
-
-body.photo table.photo-container td.photo {
-	width: 100%;
-	text-align: center;
-	height: 800px;
-}
-
-body.photo table.photo-container td.photo img {
-	width: auto;
-	height: auto;
-	max-width: 100%;
-	max-height: 800px;
-}
 
 a.arrow {
 	display: block;

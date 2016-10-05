@@ -27,7 +27,7 @@ public class VideoLibraryController extends AbstractLibraryController {
 
 	@Override
 	protected String getLibraryPath() {
-		return "configuration/library/video";
+		return "configuration.library.video";
 	}
 
 	@Override

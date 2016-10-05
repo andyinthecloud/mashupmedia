@@ -128,7 +128,7 @@ public class PhotoController extends BaseController {
 		photoPage.setNextPhoto(nextPhoto);
 
 		model.addAttribute("photoPage", photoPage);
-		return "photo/show";
+		return "photo.show";
 	}
 
 }

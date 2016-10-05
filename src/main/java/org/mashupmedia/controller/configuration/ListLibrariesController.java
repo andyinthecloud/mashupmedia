@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class ListLibrariesController extends BaseController {
 
-	private final static String LIST_LIBRARIES_PAGE_PATH = "configuration/list-libraries";
-	private final static String CHOOSE_LIBRARY_PAGE_PATH = "configuration/choose-library-type";
+	private final static String LIST_LIBRARIES_PAGE_PATH = "configuration.list-libraries";
+	private final static String CHOOSE_LIBRARY_PAGE_PATH = "configuration.choose-library-type";
 
 	@Autowired
 	private LibraryManager libraryManager;

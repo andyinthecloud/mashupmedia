@@ -101,7 +101,7 @@ public class VideoController extends BaseController {
 		videoPage.setPosterUrl(posterUrl);
 
 		model.addAttribute("videoPage", videoPage);
-		return "video/show";
+		return "video.show";
 	}
 
 	protected void processReencodeRequest(Boolean isReencode, Video video) throws MediaItemEncodeException {

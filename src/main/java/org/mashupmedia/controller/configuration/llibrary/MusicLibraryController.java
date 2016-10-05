@@ -26,7 +26,7 @@ public class MusicLibraryController extends AbstractLibraryController {
 
 	@Override
 	protected String getLibraryPath() {
-		return "configuration/library/music";
+		return "configuration.library.music";
 	}
 
 	@Override

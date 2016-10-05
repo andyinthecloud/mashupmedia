@@ -48,8 +48,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 public class EncodingConfigurationController extends BaseController {
 
 	private final static String PAGE_NAME = "encoding";
-	private final static String PAGE_PATH = "configuration/" + PAGE_NAME;
-	private final static String PAGE_URL = "/" + PAGE_PATH;
+	private final static String PAGE_PATH = "configuration." + PAGE_NAME;
+	private final static String PAGE_URL = "/configuration/" + PAGE_NAME;
 
 	private Logger logger = Logger.getLogger(getClass());
 

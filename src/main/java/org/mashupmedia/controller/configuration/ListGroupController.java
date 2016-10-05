@@ -60,7 +60,7 @@ public class ListGroupController extends BaseController {
 		listGroupsPage.setGroups(groups);
 		model.addAttribute("listGroupsPage", listGroupsPage);
 
-		String path = getPath(isFragment, "configuration/administration/list-groups");
+		String path = getPath(isFragment, "configuration.administration.list-groups");
 		return path;
 	}
 

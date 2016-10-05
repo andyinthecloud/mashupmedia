@@ -138,7 +138,7 @@ public class MusicController extends BaseController {
 		model.addAttribute("albums", albums);
 		model.addAttribute(MusicAlbumListType.RANDOM);
 
-		String pagePath = getPath(isFragment, "music/albums");
+		String pagePath = getPath(isFragment, "music.albums");
 
 		return pagePath;
 	}
@@ -160,7 +160,7 @@ public class MusicController extends BaseController {
 
 		model.addAttribute(MusicAlbumListType.LATEST);
 
-		String pagePath = getPath(isFragment, "music/albums");
+		String pagePath = getPath(isFragment, "music.albums");
 		return pagePath;
 	}
 
@@ -193,7 +193,7 @@ public class MusicController extends BaseController {
 
 		model.addAttribute(MusicAlbumListType.ALPHABETICAL);
 
-		String pagePath = getPath(isFragment, "music/albums");
+		String pagePath = getPath(isFragment, "music.albums");
 		return pagePath;
 	}
 
@@ -206,7 +206,7 @@ public class MusicController extends BaseController {
 		artistsPage.setArtists(artists);
 		model.addAttribute(artistsPage);
 
-		String pagePath = getPath(isFragment, "music/artists");
+		String pagePath = getPath(isFragment, "music.artists");
 		return pagePath;
 	}
 
@@ -219,7 +219,7 @@ public class MusicController extends BaseController {
 
 		model.addAttribute(artistPage);
 
-		String pagePath = getPath(isFragment, "music/artist");
+		String pagePath = getPath(isFragment, "music.artist");
 		return pagePath;
 	}
 
@@ -336,7 +336,7 @@ public class MusicController extends BaseController {
 
 		// prepareBreadcrumbs(breadcrumbs);
 
-		String pagePath = getPath(isFragment, "music/album");
+		String pagePath = getPath(isFragment, "music.album");
 		return pagePath;
 	}
 

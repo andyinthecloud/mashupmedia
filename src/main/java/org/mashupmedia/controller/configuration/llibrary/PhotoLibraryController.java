@@ -22,7 +22,7 @@ public class PhotoLibraryController extends AbstractLibraryController {
 
 	@Override
 	protected String getLibraryPath() {
-		return "configuration/library/photo";
+		return "configuration.library.photo";
 	}
 
 	@Override

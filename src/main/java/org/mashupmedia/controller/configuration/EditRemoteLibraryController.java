@@ -111,7 +111,7 @@ public class EditRemoteLibraryController extends BaseController {
 		}
 
 		model.addAttribute("editRemoteLibraryPage", editRemoteLibraryPage);
-		return "configuration/edit-remote-library";
+		return "configuration.edit-remote-library";
 	}
 
 	@RequestMapping(value = "/configuration/new-remote-library", method = RequestMethod.GET)
@@ -119,7 +119,7 @@ public class EditRemoteLibraryController extends BaseController {
 		EditRemoteLibraryPage editRemoteLibraryPage = new EditRemoteLibraryPage();
 		LibraryType libraryType = LibraryHelper.getRemoteLibraryType(remoteLibraryUrl);
 		if (libraryType == null) {
-			return "configuration/url-error-remote-library";
+			return "configuration.url-error-remote-library";
 		}
 
 		editRemoteLibraryPage.setUrl(remoteLibraryUrl);
@@ -127,7 +127,7 @@ public class EditRemoteLibraryController extends BaseController {
 		editRemoteLibraryPage.setEnabled(true);
 
 		model.addAttribute("editRemoteLibraryPage", editRemoteLibraryPage);
-		return "configuration/edit-remote-library";
+		return "configuration.edit-remote-library";
 	}
 
 	@RequestMapping(value = "/configuration/delete-remote-library", method = RequestMethod.GET)
@@ -143,7 +143,7 @@ public class EditRemoteLibraryController extends BaseController {
 		editRemoteLibraryPageValidator.validate(editRemoteLibraryPage, result);
 		
 		if (result.hasErrors()) {
-			return "configuration/edit-remote-library";
+			return "configuration.edit-remote-library";
 		}
 
 		String libraryType = editRemoteLibraryPage.getLibraryTypeValue();

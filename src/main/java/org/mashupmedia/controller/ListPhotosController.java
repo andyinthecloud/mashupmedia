@@ -42,7 +42,7 @@ public class ListPhotosController extends BaseController {
 			@RequestParam(value = PARAM_PAGE_NUMBER, required = false) Integer pageNumber, Model model) {
 		List<Photo> photos = photoManager.getLatestPhotos(pageNumber, MAXIMUM_PHOTOS);
 		model.addAttribute(ATTRIBUTE_PHOTOS, photos);
-		String pagePath = getPath(isFragment, "photos/list-photos");
+		String pagePath = getPath(isFragment, "photos.list-photos");
 		return pagePath;
 	}
 

@@ -62,7 +62,7 @@ public class ListUsersController extends BaseController {
 
 		model.addAttribute("listUsersPage", listUsersPage);
 
-		String path = getPath(isFragment, "configuration/administration/list-users");
+		String path = getPath(isFragment, "configuration.administration.list-users");
 		return path;
 	}
 

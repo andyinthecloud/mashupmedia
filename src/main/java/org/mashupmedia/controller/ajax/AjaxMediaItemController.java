@@ -147,7 +147,7 @@ public class AjaxMediaItemController {
 		String format = mediaItem.getFormat();
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
 		model.addAttribute("jPlayerFormat", mediaContentType.getjPlayerContentType());
-		return "ajax/media/media-item";
+		return "ajax.media.media-item";
 	}
 
 	@RequestMapping(value = "/ffmpeg/status", method = RequestMethod.GET, produces = "application/json")

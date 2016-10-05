@@ -23,7 +23,7 @@ public class ListPhotoAlbumsController extends BaseController {
 	public String handleGetPhotoAlbumList(Model model) {
 		List<Album> albums = photoManager.getAlbums();
 		model.addAttribute("albums", albums);
-		return "photo/album/list";
+		return "photo.album.list";
 	}
 
 	@Override
