@@ -93,7 +93,6 @@
 	</definition>
 
 
-
 	<definition name="configuration.library.music.panel"
 		template="/WEB-INF/jsp/tiles/configuration/library.jsp">
 		<put-attribute name="additionalConfiguration" value="" />
