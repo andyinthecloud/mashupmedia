@@ -250,7 +250,6 @@
 			value="/WEB-INF/jsp/tiles/playlist/list-playlists.jsp" />
 	</definition>
 
-<!--
 
 	<definition name="video" extends="home">
 		<put-attribute name="topBar"
@@ -275,14 +274,7 @@
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
 	</definition>
-		
-<<<<<<< HEAD
-=======
-	<!-- definition name="photos/list" extends="home">
-		<put-attribute name="topBar"
-			value="/WEB-INF/jsp/tiles/photo/photo-top-bar.jsp" />
-	</definition -->
->>>>>>> branch 'master' of https://github.com/andyinthecloud/mashupmedia.git
+
 	
 	<definition name="photos.list" extends="home">
 		<put-attribute name="body"
@@ -317,5 +309,5 @@
 			value="/WEB-INF/jsp/tiles/photo/album.jsp" />
 	</definition>
 	
-	 -->
+	
 </tiles-definitions>
