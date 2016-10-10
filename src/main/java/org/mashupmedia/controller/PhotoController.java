@@ -1,9 +1,11 @@
 package org.mashupmedia.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.photo.Album;
@@ -24,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -31,6 +34,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class PhotoController extends BaseController {
 
 	private Logger logger = Logger.getLogger(getClass());
+	
+	public static int MAXIMUM_PHOTOS = 50;
+	private static String ATTRIBUTE_PHOTOS = "photos";
+
 
 	@Autowired
 	private MediaManager mediaManager;
@@ -43,19 +50,48 @@ public class PhotoController extends BaseController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
+//		Breadcrumb albumsBreadcrumb = new Breadcrumb(
+//				MessageHelper.getMessage("breadcrumb.photo.albums"),
+//				"/app/photo/album/list");
+//		breadcrumbs.add(albumsBreadcrumb);
 
-		Breadcrumb albumsBreadcrumb = new Breadcrumb(
-				MessageHelper.getMessage("breadcrumb.photo.albums"),
-				"/app/photo/album/list");
-		breadcrumbs.add(albumsBreadcrumb);
-
+		breadcrumbs.add(getLatestPhotoBreadcrumb());
+		
 	}
+	
+	protected Breadcrumb getLatestPhotoBreadcrumb() {
+		Breadcrumb breadcrumb = new Breadcrumb("breadcrumb.photo", "/app/photo/album/list");
+		return breadcrumb;
+	}
+	
+	protected List<Breadcrumb> getLatestPhotoBreadcrumbs() {
+		List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();
+		breadcrumbs.add(getHomeBreadcrumb());
+		breadcrumbs.add(getLatestPhotoBreadcrumb());
+		return breadcrumbs;
+	}
+	
 
 	@Override
 	public String getPageTitleMessageKey() {
 		return "photo.title";
 	}
 
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public String handleGetPhotoList(
+			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) Boolean isAppend,
+			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
+			@RequestParam(value = PARAM_PAGE_NUMBER, required = false) Integer pageNumber, Model model) {
+		
+		model.addAttribute(MODEL_KEY_BREADCRUMBS, getLatestPhotoBreadcrumbs());
+		
+		List<Photo> photos = photoManager.getLatestPhotos(pageNumber, MAXIMUM_PHOTOS);
+		model.addAttribute(ATTRIBUTE_PHOTOS, photos);
+		String pagePath = getPath(isFragment, "photos.list-photos");
+		return pagePath;
+	}	
+	
 	@RequestMapping(value = "/thumbnail/{photoId}", method = RequestMethod.GET)
 	public ModelAndView getThumbnail(@PathVariable("photoId") Long photoId,
 			Model model) throws Exception {

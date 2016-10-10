@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.Tag;
-import org.jaudiotagger.tag.datatype.Artwork;
+import org.jaudiotagger.tag.images.Artwork;
 import org.mashupmedia.comparator.FileSizeComparator;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.library.MusicLibrary;
@@ -37,7 +37,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 
 	@Autowired
 	MusicManager musicManager;
-	
+
 	@Autowired
 	private ConnectionManager connectionManager;
 
@@ -84,7 +84,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		if (albumArtImage == null) {
 			return true;
 		}
-		
+
 		if (StringUtils.isBlank(albumArtImage.getUrl())) {
 			return true;
 		}
