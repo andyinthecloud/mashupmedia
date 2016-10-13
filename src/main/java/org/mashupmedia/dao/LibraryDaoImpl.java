@@ -193,8 +193,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	@Override
 	public void reinitialiseLibrary(Library library) {		
 		Query query = sessionFactory.getCurrentSession().createQuery("update MediaItem set fileLastModifiedOn = :fileLastModifiedOn where library.id = :libraryId");
-		query.setParameter("fileLastModifiedOn", 0);
-		query.setParameter("libraryId", library.getId());
+		query.setLong("fileLastModifiedOn", 0);
+		query.setLong("libraryId", library.getId());
 		int totalItemsUpdated = query.executeUpdate();
 		logger.info("Total media items reinitialised: " + totalItemsUpdated);		
 	}

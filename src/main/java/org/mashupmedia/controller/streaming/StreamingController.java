@@ -12,8 +12,11 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.ImageHelper;
+import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
@@ -33,14 +36,40 @@ public class StreamingController {
 	@Autowired
 	private MediaManager mediaManager;
 
-	@RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = { RequestMethod.GET, RequestMethod.HEAD })
+	@RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = { RequestMethod.GET,
+			RequestMethod.HEAD })
 	public void getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
-			@PathVariable(value = "mediaContentType") String mediaContentTypeValue,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
+			@PathVariable(value = "mediaContentType") String mediaContentTypeValue, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+		if (mediaItem.getClass().isAssignableFrom(Photo.class)) {
+			Photo photo = (Photo) mediaItem;
+			getImageStream(photo, mediaContentTypeValue, request, response);
+			return;
+		}
+
+		
+		
 		MediaEncoding mediaEncoding = getMediaContentType(mediaItem, mediaContentTypeValue);
 		prepareModelAndView(mediaItem, mediaEncoding, request, response);
+	}
+
+	protected void getImageStream(Photo photo,
+			String imageTypeValue, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+
+		ImageType imageType = ImageHelper.getImageType(imageTypeValue);
+
+		String filePath = photo.getPath();
+		if (imageType == ImageType.THUMBNAIL) {
+			filePath = photo.getThumbnailPath();
+		} else if (imageType == ImageType.WEB_OPTIMISED) {
+			filePath = photo.getWebOptimisedImagePath();
+		}
+
+		File mediaFile = new File(filePath);
+		StreamingMediaHandler.fromFile(mediaFile).with(request).with(response).serveResource();
 	}
 
 	protected MediaEncoding getMediaContentType(MediaItem mediaItem, String mediaContentTypeValue) {
@@ -93,7 +122,6 @@ public class StreamingController {
 		}
 
 		StreamingMediaHandler.fromFile(mediaFile).with(request).with(response).serveResource();
-
 	}
 
 }

@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.AlbumArtImage;
-import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.StringHelper.Encoding;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,39 +41,42 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	@Autowired
 	private MediaManager mediaManager;
 
-	@Autowired
-	private MusicLibraryUpdateManager musicLibraryUpdateManager;
-
 	protected boolean isProxyEnabled() {
-		boolean isProxyEnabled = BooleanUtils.toBoolean(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
+		boolean isProxyEnabled = BooleanUtils
+				.toBoolean(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
 		return isProxyEnabled;
 
 	}
 
 	private String getProxyUrl() {
-		String proxyUrl = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_URL));
+		String proxyUrl = StringUtils
+				.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_URL));
 		return proxyUrl;
 	}
 
 	private int getProxyPort() {
-		String proxyPortValue = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_PORT));
+		String proxyPortValue = StringUtils
+				.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_PORT));
 		int proxyPort = NumberUtils.toInt(proxyPortValue);
 		return proxyPort;
 	}
 
 	private String getProxyUsername() {
-		String proxyUsername = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_USERNAME));
+		String proxyUsername = StringUtils
+				.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_USERNAME));
 		return proxyUsername;
 	}
 
 	private String getProxyPassword() {
-		String proxyPassword = StringUtils.trimToEmpty(configurationManager.getConfigurationDecryptedValue(MashUpMediaConstants.PROXY_PASSWORD));
+		String proxyPassword = StringUtils
+				.trimToEmpty(configurationManager.getConfigurationDecryptedValue(MashUpMediaConstants.PROXY_PASSWORD));
 		return proxyPassword;
 	}
 
 	public InputStream connect(String link) {
 
-		String proxyEnabledValue = StringUtils.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
+		String proxyEnabledValue = StringUtils
+				.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
 		boolean isProxyEnabled = BooleanUtils.toBoolean(proxyEnabledValue);
 
 		DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -131,41 +133,21 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		} else {
 			filePath = image.getUrl();
 		}
-		
-		byte[] bytes = getFileBytes(filePath);
-		return bytes;
-	}
-	
-	@Override
-	public byte[] getPhotoBytes(Photo photo, ImageType imageType) throws IOException {
-		String filePath = photo.getPath();
-		if (imageType == ImageType.THUMBNAIL) {
-			filePath = photo.getThumbnailPath();
-		} else if (imageType == ImageType.WEB_OPTIMISED) {
-			filePath = photo.getWebOptimisedImagePath();			
-		}
-		
-		byte[] bytes = getFileBytes(filePath);
-		if (bytes == null || bytes.length == 0) {
-			logger.error("Cannot find image of type: " + imageType + " for file: " + filePath);
-			filePath = photo.getPath();
-			bytes = getFileBytes(filePath);
-		}
-				
-		return bytes;
 
+		byte[] bytes = getFileBytes(filePath);
+		return bytes;
 	}
 
 	private byte[] getFileBytes(String filePath) throws IOException {
 		if (StringUtils.isBlank(filePath)) {
 			return null;
 		}
-		
+
 		File file = new File(filePath);
 		if (!file.exists()) {
 			return null;
 		}
-		
+
 		FileInputStream fileInputStream = new FileInputStream(file);
 		byte[] bytes = IOUtils.toByteArray(fileInputStream);
 		IOUtils.closeQuietly(fileInputStream);
@@ -185,32 +167,31 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		long size = file.length();
 		return size;
 	}
-	
+
 	@Override
-	public String proceessRemoteLibraryConnection(String remoteLibraryUrl) {		
-		
+	public String proceessRemoteLibraryConnection(String remoteLibraryUrl) {
+
 		File file = new File(remoteLibraryUrl);
 		if (file.exists()) {
 			try {
 				String xml = FileUtils.readFileToString(file);
-				return xml;	
+				return xml;
 			} catch (IOException e) {
 				logger.error("Error reading remoteLibraryFile at: " + file.getAbsolutePath(), e);
-			}			
+			}
 		}
-		
-		
+
 		InputStream inputStream = connect(remoteLibraryUrl);
 		StringWriter stringWriter = new StringWriter();
 		try {
 			IOUtils.copy(inputStream, stringWriter, Encoding.UTF8.getEncodingString());
 		} catch (IOException e) {
 			logger.error(e);
-		} 
-		
+		}
+
 		IOUtils.closeQuietly(stringWriter);
 		IOUtils.closeQuietly(inputStream);
-		
+
 		return stringWriter.toString();
 	}
 

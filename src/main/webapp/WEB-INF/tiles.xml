@@ -249,6 +249,16 @@
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/playlist/list-playlists.jsp" />
 	</definition>
+
+	<definition name="photos.list-photos" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/list-photos.jsp" />
+	</definition>
+
+	<definition name="photos.list-photos.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/list-photos.jsp" />
+	</definition>
 	
 	<!-- 
 
@@ -277,16 +287,7 @@
 	</definition>
 
 	
-	<definition name="photos.list" extends="home">
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/photo/photos-list.jsp" />
-	</definition>
 
-	<definition name="photos.list.fragment"
-		extends="ui-content">
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/photo/photos-list.jsp" />
-	</definition>
 	
 	
 	
