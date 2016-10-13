@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
@@ -25,15 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LibraryManagerImpl implements LibraryManager {
 	private Logger logger = Logger.getLogger(getClass());
 	@Autowired
-	private MediaManager mediaManager;
-	@Autowired
 	private LibraryDao libraryDao;
-	@Autowired
-	private MusicManager musicManager;
-	@Autowired
-	private PlaylistManager playlistManager;
-	@Autowired
-	private VoteManager voteManager;
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 	@Autowired
@@ -93,6 +84,13 @@ public class LibraryManagerImpl implements LibraryManager {
 
 		libraryDao.saveLibrary(library, isFlushSession);
 
+	}
+
+	
+	@Override
+	public void saveAndRebuildLibrary(Library library) {
+		saveLibrary(library);
+		libraryDao.reinitialiseLibrary(library);
 	}
 	
 	@Override

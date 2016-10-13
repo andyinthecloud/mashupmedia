@@ -32,6 +32,8 @@ public interface LibraryManager {
 	public boolean hasRemoteLibrary(String url);
 
 	public List<Library> getLibraries(LibraryType libraryType);
+
+	public void saveAndRebuildLibrary(Library library);
 	
 	
 
