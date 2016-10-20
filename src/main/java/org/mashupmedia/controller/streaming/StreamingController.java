@@ -64,8 +64,10 @@ public class StreamingController {
 		ImageType imageType = ImageHelper.getImageType(imageTypeValue);
 
 		String filePath = photo.getPath();
+		String defaultImagePath = MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO;
 		if (imageType == ImageType.THUMBNAIL) {
 			filePath = photo.getThumbnailPath();
+			defaultImagePath = MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO_THUMBNAIL;
 		} else if (imageType == ImageType.WEB_OPTIMISED) {
 			filePath = photo.getWebOptimisedImagePath();
 		}
@@ -79,7 +81,7 @@ public class StreamingController {
 		}
 		
 		// No image found so showing default
-		WebHelper.writeResourceToResponse(MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO, request, response);				
+		WebHelper.writeResourceToResponse(defaultImagePath, request, response);				
 	}
 
 	protected MediaEncoding getMediaContentType(MediaItem mediaItem, String mediaContentTypeValue) {

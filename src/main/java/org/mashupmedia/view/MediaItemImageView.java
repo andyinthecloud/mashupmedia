@@ -16,6 +16,7 @@ public class MediaItemImageView implements View {
 
 	public static final String IMAGE_PATH_DEFAULT_ALBUM_ART = "/images/default-album-art.png";
 	public static final String IMAGE_PATH_DEFAULT_PHOTO = "/images/default-photo.png";
+	public static final String IMAGE_PATH_DEFAULT_PHOTO_THUMBNAIL = "/images/default-photo-thumbnail.png";
 	
 	private byte[] imageBytes;
 	private MediaContentType mediaContentType;
