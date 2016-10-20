@@ -1,20 +1,26 @@
 package org.mashupmedia.util;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class WebHelper {
-	
+
 	private static String CONTEXT_URL;
 	private static String CONTEXT_PATH;
 
 	public enum WebContentType {
-		HTML("text/html; charset=utf-8"), JSON("application/json; charset=utf-8"), XML("text/xml; charset=utf-8"), FLASH(
-				"application/x-shockwave-flash");
+		HTML("text/html; charset=utf-8"), JSON("application/json; charset=utf-8"), XML(
+				"text/xml; charset=utf-8"), FLASH("application/x-shockwave-flash");
 
 		WebContentType(String contentType) {
 			this.contentType = contentType;
@@ -60,9 +66,7 @@ public class WebHelper {
 				return webContentType;
 			}
 		}
-		
 
-		
 		return defaultWebContentType;
 	}
 
@@ -73,8 +77,8 @@ public class WebHelper {
 	public static String getContextUrl(HttpServletRequest request) {
 		if (CONTEXT_URL != null) {
 			return CONTEXT_URL;
-		}		
-		
+		}
+
 		StringBuilder contextUrlBuilder = new StringBuilder();
 		contextUrlBuilder.append(request.getScheme());
 		contextUrlBuilder.append("://");
@@ -85,31 +89,31 @@ public class WebHelper {
 		CONTEXT_URL = contextUrlBuilder.toString();
 		return CONTEXT_URL;
 	}
-	
+
 	public static String getContextPath(HttpServletRequest request) {
 		if (CONTEXT_PATH != null) {
 			return CONTEXT_PATH;
-		}		
-		
+		}
+
 		String contextPath = request.getContextPath();
 		CONTEXT_PATH = contextPath;
 		return contextPath;
 	}
-	
+
 	public static String getContextPath() {
 		if (CONTEXT_URL != null) {
 			return CONTEXT_URL;
-		}		
-		
+		}
+
 		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 		if (requestAttributes == null) {
 			return null;
 		}
-		
+
 		if (!(requestAttributes instanceof ServletRequestAttributes)) {
 			return null;
 		}
-		
+
 		ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
 		HttpServletRequest request = servletRequestAttributes.getRequest();
 		return getContextPath(request);
@@ -120,18 +124,13 @@ public class WebHelper {
 		return parameter;
 	}
 
-//	public static WebContentType getWebContentType(AlbumArtImage albumArtImage) {
-//		if (albumArtImage == null) {
-//			return WebContentType.PNG;
-//		}
-//
-//		String contentType = albumArtImage.getContentType();
-//		WebContentType webContentType = WebHelper.getWebContentType(contentType, WebContentType.PNG);
-//		return webContentType;
-//	}
-
-
-
-
+	public static void writeResourceToResponse(String resourcePath, HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		InputStream inputStream = request.getSession().getServletContext().getResourceAsStream(resourcePath);
+		OutputStream outputStream = response.getOutputStream();
+		IOUtils.copy(inputStream, outputStream);
+		IOUtils.closeQuietly(inputStream);
+		IOUtils.closeQuietly(outputStream);
+	}
 
 }

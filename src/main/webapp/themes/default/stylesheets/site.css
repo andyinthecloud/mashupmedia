@@ -1,4 +1,5 @@
 @import url("site-mobile.css");
+
 @import url("site-desktop.css");
 
 html, body {
@@ -52,7 +53,6 @@ h1 {
 h2 {
 	font-size: 1.1em;
 }
-
 
 img {
 	border: none;
@@ -231,14 +231,14 @@ ul.main-menu li a.library-music {
 	background-repeat: no-repeat;
 }
 
-div.panel ul.main-menu li a.library-video {
+ul.main-menu li a.library-video {
 	padding-left: 30px;
 	background-image: url("../images/library/video.png");
 	background-position: 5px center;
 	background-repeat: no-repeat;
 }
 
-div.panel ul.main-menu li a.library-photo {
+ul.main-menu li a.library-photo {
 	padding-left: 30px;
 	background-image: url("../images/library/photo.png");
 	background-position: 5px center;
@@ -252,15 +252,14 @@ div.panel ul.main-menu a:HOVER {
 }
 
 div.title-with-player-control h1, div.title-with-player-control h2, div.title-with-player-control div.control-menu,
-	div.title-with-player-control div.re-encode{
+	div.title-with-player-control div.re-encode {
 	display: inline-block;
 	margin-left: 10px;
 }
 
-div.title-with-player-control h1 form{
+div.title-with-player-control h1 form {
 	display: inline;
 }
-
 
 div.control-menu img {
 	width: 16px;
@@ -268,7 +267,7 @@ div.control-menu img {
 	margin-right: 5px;
 }
 
-div.album ul.tracks{
+div.album ul.tracks {
 	margin: 0;
 	padding: 0;
 }
@@ -276,20 +275,18 @@ div.album ul.tracks{
 div.album ul.tracks li {
 	list-style: none;
 	padding: 5px 0;
-	margin: 0;	
+	margin: 0;
 }
 
 div.album ul.tracks li div.controls {
 	display: inline;
-		
 }
 
-div.album ul.tracks li div.controls img{
+div.album ul.tracks li div.controls img {
 	width: 16px;
-	height: auto;	
+	height: auto;
 	margin-right: 0.5em;
 }
-
 
 div.album ul.tracks li div.meta {
 	display: inline;
@@ -297,8 +294,6 @@ div.album ul.tracks li div.meta {
 	margin-left: 20px;
 	font-size: 0.8em;
 }
-
-
 
 div.album div.album-art img {
 	width: 100%;
@@ -348,7 +343,6 @@ ul.ui-autocomplete {
 	display: none;
 }
 
-
 #current-song .vote img {
 	background-color: #C8C0CE;
 	padding: 2px;
@@ -371,10 +365,6 @@ ul.ui-autocomplete {
 	vertical-align: bottom;
 }
 
-
-
-
-
 .ui-autocomplete {
 	z-index: 1000;
 }
@@ -383,8 +373,6 @@ ul.ui-autocomplete {
 	padding-top: 40px;
 	vertical-align: top;
 }
-
-
 
 .controls .ui-icon {
 	background-color: white;
@@ -443,8 +431,6 @@ div.index-letter {
 	margin-bottom: 10px;
 }
 
-
-
 .icon {
 	width: 16px;
 	height: 16px;
@@ -465,16 +451,13 @@ div.information {
 }
 
 #remote ul.images {
-	list-style: none;	
+	list-style: none;
 	padding: 0;
-
 }
 
-#remote ul.images li{
-	display: inline;	
-
+#remote ul.images li {
+	display: inline;
 }
-
 
 #remote ul.images img {
 	height: 90px;
@@ -493,16 +476,14 @@ div.information {
 	clear: both;
 }
 
-div#remote.teaser-on ul.images{
+div#remote.teaser-on ul.images {
 	display: none;
-	
 }
 
-div#remote.teaser-off ul.images{
+div#remote.teaser-off ul.images {
 	clear: both;
 	display: block;
 }
-
 
 #remote div.disclaimer {
 	display: block;
@@ -545,8 +526,6 @@ ul.items a.ui-icon {
 	margin-right: 10px;
 }
 
-
-
 a.arrow {
 	display: block;
 	width: 0;
@@ -572,18 +551,14 @@ a.image-next {
 }
 
 /* New stuff */
-
-
 #music-player {
 	padding: 5px;
-	visibility: hidden;	
+	visibility: hidden;
 }
 
-
-#music-player .controls{
+#music-player .controls {
 	white-space: nowrap;
 }
-
 
 #music-player div.progress {
 	height: 5px;
@@ -604,14 +579,12 @@ a.image-next {
 	padding: 0 10px;
 }
 
-
 #music-player .album-art img {
 	width: 30px;
 	height: auto;
 }
 
-
-#music-player .song-info div{
+#music-player .song-info div {
 	overflow: hidden;
 }
 
@@ -627,30 +600,28 @@ a.image-next {
 	max-height: 2.5em;
 }
 
-
-
-
 #music-player td.controls img {
 	vertical-align: middle;
 	padding: 0px 2px;
 	width: auto;
 }
 
-#music-player .controls a.previous img, #music-player .controls a.next img {
+#music-player .controls a.previous img, #music-player .controls a.next img
+	{
 	height: 20px;
 }
 
-#music-player .controls a.play img, #music-player .controls a.pause img {
+#music-player .controls a.play img, #music-player .controls a.pause img
+	{
 	height: 32px;
 }
 
-
-
-div.albums div.album, div.artists div.artist{
+div.albums div.album, div.artists div.artist, div.photos div.photo {
 	position: relative;
 }
 
-div.albums div.album div.artist-name, div.artists div.artist div.artist-name {
+div.albums div.album div.artist-name, div.artists div.artist div.artist-name,
+	div.photos div.photo div.photo-name {
 	font-size: 0.8em;
 }
 
@@ -658,7 +629,9 @@ div.albums div.album div.album-name {
 	font-size: 1em;
 }
 
-div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HOVER, div.artists div.artist a, div.artists div.artist a:ACTIVE, div.artists div.artist a:HOVER
+div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HOVER,
+	div.artists div.artist a, div.artists div.artist a:ACTIVE, div.artists div.artist a:HOVER,
+	div.photos div.photo a, div.photos div.photo a:ACTIVE, div.photos div.photo a:HOVER
 	{
 	color: #606060 !important;
 	font-weight: normal !important;
@@ -666,18 +639,18 @@ div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HO
 
 ul.items {
 	list-style: none;
-	padding: 0; 
+	padding: 0;
 	vertical-align: middle;
 }
 
-ul.items li{
+ul.items li {
 	position: relative;
 	clear: both;
 	border-bottom: 1px solid #e579e9;
-	padding: 5px 0;		
+	padding: 5px 0;
 }
 
-ul.items li span.label{
+ul.items li span.label {
 	position: absolute;
 	top: 10px;
 }
@@ -686,7 +659,7 @@ ul.items li img.thumb {
 	position: absolute;
 }
 
-ul.items li.playing{
+ul.items li.playing {
 	font-weight: bold;
 }
 
@@ -695,30 +668,28 @@ ul.items a.play {
 	margin-right: 1em;
 }
 
-
 ul.items a.delete {
 	vertical-align: middle;
 }
 
 ul.items div.item {
-	display: inline-block; 
+	display: inline-block;
 }
 
-ul.items div.item div.title{
-	font-size: 1.1em;  	
+ul.items div.item div.title {
+	font-size: 1.1em;
 }
 
-ul.items div.item div.meta{
-	font-size: 0.8em;  	
+ul.items div.item div.meta {
+	font-size: 0.8em;
 }
 
-ul.items div.icons-right{
+ul.items div.icons-right {
 	position: absolute;
-	right: 0; 
-	top: 40%; 
+	right: 0;
+	top: 40%;
 	white-space: nowrap;
 }
-
 
 #information-box {
 	display: none;
@@ -728,15 +699,15 @@ ul.items div.icons-right{
 	background-repeat: no-repeat;
 	padding: 5px 5px 5px 45px;
 	margin-bottom: 1em;
-	min-height: 35px;	
+	min-height: 35px;
 }
 
 .sticky {
-    top: 90px;
-    left: 0;
-    right: 0;
-    position: fixed;
-    z-index: 1;
+	top: 90px;
+	left: 0;
+	right: 0;
+	position: fixed;
+	z-index: 1;
 }
 
 .sticky li {
@@ -746,3 +717,7 @@ ul.items div.icons-right{
 #playlist ul.items li {
 	height: 50px;
 }
+ul
+
+
+#

@@ -24,7 +24,8 @@ public class FileHelper {
 
 	public enum FileType {
 		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM_UNPROCESSED(
-				"media-item-stream"), MEDIA_ITEM_STREAM_ENCODED("media-item-encoded"), PHOTO_THUMBNAIL("photo-thumbnail"), PHOTO_WEB_OPTIMISED("photo-web-optimised");
+				"media-item-stream"), MEDIA_ITEM_STREAM_ENCODED("media-item-encoded"), PHOTO_THUMBNAIL(
+						"photo-thumbnail"), PHOTO_WEB_OPTIMISED("photo-web-optimised");
 
 		private String folderName;
 
@@ -83,7 +84,6 @@ public class FileHelper {
 		return file;
 	}
 
-
 	public static File createMediaItemFile(long libraryId, FileType fileType) {
 		File libraryFolder = getLibraryFolder(libraryId);
 		File thumbnailFolder = new File(libraryFolder, fileType.getFolderName());
@@ -91,7 +91,6 @@ public class FileHelper {
 		File thumbnailFile = new File(thumbnailFolder, String.valueOf(System.nanoTime()));
 		return thumbnailFile;
 	}
-	
 
 	public static boolean isSupportedSong(String fileName) {
 		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
@@ -124,6 +123,8 @@ public class FileHelper {
 		}
 
 		if (fileName.endsWith(".tif")) {
+			return true;
+		} else if (fileName.endsWith(".tiff")) {
 			return true;
 		} else if (fileName.endsWith(".jpg")) {
 			return true;
@@ -207,7 +208,8 @@ public class FileHelper {
 			if (!applicationHomeFolder.isDirectory()) {
 				logger.error("Unable to create Mashup Media folder in the user home: "
 						+ applicationHomeFolder.getAbsolutePath());
-				logger.error("Will default to temp directory but please set the system property MASHUP_MEDIA_HOME variable as files inside this folder are deleted regualary by the system.");
+				logger.error(
+						"Will default to temp directory but please set the system property MASHUP_MEDIA_HOME variable as files inside this folder are deleted regualary by the system.");
 				applicationHomePath = System.getProperty("java.io.tmpdir");
 				applicationHomeFolder = new File(applicationHomePath, ".mashup_media");
 			}
@@ -313,7 +315,8 @@ public class FileHelper {
 	public static void deleteProcessedVideo(long libraryId, long videoId) {
 
 		if (libraryId == 0 || videoId == 0) {
-			logger.info("Unable to delete video files from libray, libraryId = " + libraryId + ", videoId = " + videoId);
+			logger.info(
+					"Unable to delete video files from libray, libraryId = " + libraryId + ", videoId = " + videoId);
 			return;
 		}
 
@@ -332,11 +335,11 @@ public class FileHelper {
 	}
 
 	public static void deletePhotoThumbnail(String thumbnailPath) {
-		File thumbnailFile = new File(thumbnailPath);		
+		File thumbnailFile = new File(thumbnailPath);
 		boolean isDeleted = thumbnailFile.delete();
-		logger.info("Photo thumbnail delete status = " + isDeleted);		
+		logger.info("Photo thumbnail delete status = " + isDeleted);
 	}
-	
+
 	public static boolean isEmptyBytes(byte[] bytes) {
 		if (bytes == null || bytes.length == 0) {
 			return true;

@@ -773,11 +773,7 @@ function isValidNumber(value) {
 
 function appendContentsOnScroll(contentType) {
     // add 50 pixels margin of error
-    if ($(window).scrollTop() >= ($(document).height() - $(window).height() - 50)) {
-        
-//		var pageNumber = mashupMedia.filterPageNumber + 1;
-//		mashupMedia.filterPageNumber = pageNumber;
-		
+    if ($(window).scrollTop() >= ($(document).height() - $(window).height() - 50)) {		
 		if (contentType == "music-random-albums") {
 		    loadAlbums("random");
 		} else if (contentType == "music-latest-albums") {

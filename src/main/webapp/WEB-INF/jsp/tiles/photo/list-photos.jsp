@@ -5,13 +5,13 @@
 		<spring:message code="list-photos.empty" />
 	</c:when>
 	<c:otherwise>
-		<ul class="photo-thumbnails">
+		<div class="photos">
 			<c:forEach items="${photos}" var="photo">
-				<li><a href="<c:url value="/app/photo/show/${photo.id}/" />">
+				<div class="photo"><a href="<c:url value="/app/photo/show/${photo.id}/" />">
 						<img alt="${photo.displayTitle}" title="${photo.displayTitle}"
 						src="<c:url value="/app/streaming/media/${photo.id}/thumbnail" />" />
-				</a></li>
+				</a></div>
 			</c:forEach>
-		</ul>
+		</div>
 	</c:otherwise>
 </c:choose>

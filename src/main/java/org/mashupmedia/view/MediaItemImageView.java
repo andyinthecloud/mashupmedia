@@ -14,6 +14,9 @@ import org.springframework.web.servlet.View;
 
 public class MediaItemImageView implements View {
 
+	public static final String IMAGE_PATH_DEFAULT_ALBUM_ART = "/images/default-album-art.png";
+	public static final String IMAGE_PATH_DEFAULT_PHOTO = "/images/default-photo.png";
+	
 	private byte[] imageBytes;
 	private MediaContentType mediaContentType;
 	private MediaType mediaType;
@@ -41,9 +44,9 @@ public class MediaItemImageView implements View {
 		if (FileHelper.isEmptyBytes(imageBytes)) {
 			String imageNotFound = "";
 			if (mediaType == MediaType.SONG) {
-				imageNotFound = "/images/default-album-art.png";
+				imageNotFound = IMAGE_PATH_DEFAULT_ALBUM_ART;
 			} else if (mediaType == MediaType.PHOTO) {
-				imageNotFound = "/images/default-photo-thumbnail.png";
+				imageNotFound = IMAGE_PATH_DEFAULT_PHOTO;
 
 			}
 			response.sendRedirect(request.getContextPath() + imageNotFound);

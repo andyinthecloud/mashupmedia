@@ -19,10 +19,10 @@
 	div.albums div.album {
 		height: 240px;	
 	}
-	div.artists div.artist {
+	div.artists div.artist, div.photos div.photo {
 		height: 210px;
 	} 	
-	div.albums div.album, div.artists div.artist {
+	div.albums div.album, div.artists div.artist, div.photos div.photo {
 		float: left;
 		padding: 5px;
 		width: 150px;
@@ -32,11 +32,11 @@
 		font-size: 0.9em;
 		overflow: hidden;
 	}
-	div.albums div.highlight, div.artists div.highlight {
+	div.albums div.highlight, div.artists div.highlight, div.photos div.highlight {
 		/*border-color: #E579E9;*/
 		border: 1px solid #E579E9;
 	}
-	div.albums div.album img, ul.items li a.album-cover img, div.artists div.artist img {
+	div.albums div.album img, div.artists div.artist img, div.photos div.photo img {
 		width: 150px;
 		height: 150px;
 	}

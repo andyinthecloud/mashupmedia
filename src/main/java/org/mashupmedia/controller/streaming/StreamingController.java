@@ -20,6 +20,8 @@ import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.mashupmedia.util.WebHelper;
+import org.mashupmedia.view.MediaItemImageView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,9 +69,17 @@ public class StreamingController {
 		} else if (imageType == ImageType.WEB_OPTIMISED) {
 			filePath = photo.getWebOptimisedImagePath();
 		}
-
+		
+		filePath = StringUtils.trimToEmpty(filePath);		
+		
 		File mediaFile = new File(filePath);
-		StreamingMediaHandler.fromFile(mediaFile).with(request).with(response).serveResource();
+		if (mediaFile.isFile()) {
+			StreamingMediaHandler.fromFile(mediaFile).with(request).with(response).serveResource();
+			return;
+		}
+		
+		// No image found so showing default
+		WebHelper.writeResourceToResponse(MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO, request, response);				
 	}
 
 	protected MediaEncoding getMediaContentType(MediaItem mediaItem, String mediaContentTypeValue) {

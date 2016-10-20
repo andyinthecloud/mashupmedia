@@ -73,8 +73,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	}
 
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	protected void processPhotos(Long totalPhotosSaved, File file, Date date,
-			String albumName, PhotoLibrary library) {
+	protected void processPhotos(Long totalPhotosSaved, File file, Date date, String albumName, PhotoLibrary library) {
 
 		if (file.isDirectory()) {
 			if (StringUtils.isNotBlank(albumName)) {
@@ -90,8 +89,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 			Arrays.sort(files);
 			for (File childFile : files) {
-				processPhotos(totalPhotosSaved, childFile, date, albumName,
-						library);
+				processPhotos(totalPhotosSaved, childFile, date, albumName, library);
 			}
 		}
 
@@ -102,22 +100,12 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		String path = file.getAbsolutePath();
 		Photo photo = getPhotoByAbsolutePath(path);
 
-		boolean isCreatePhoto = false;
-		if (photo == null) {
-			isCreatePhoto = true;
-		} else {
-			if (file.length() != photo.getSizeInBytes()) {
-				isCreatePhoto = true;
-			}
-		}
-
-		if (isCreatePhoto) {
+		if (isCreatePhoto(file, photo)) {
 			photo = new Photo();
 			photo.setCreatedOn(date);
 			photo.setAlbum(album);
 			String fileExtension = FileHelper.getFileExtension(fileName);
-			MediaContentType mediaContentType = MediaItemHelper
-					.getMediaContentType(fileExtension);
+			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
 
 			if (!MediaItemHelper.isCompatiblePhotoFormat(mediaContentType)) {
 				return;
@@ -143,32 +131,25 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				Metadata metadata = ImageMetadataReader.readMetadata(file);
 				String metadataText = processPhotoMetadata(metadata);
 				photo.setMetadata(metadataText);
-				imageRotationType = getPhotoOrientation(metadata);				 
+				imageRotationType = getPhotoOrientation(metadata);
 
 			} catch (ImageProcessingException e) {
-				logger.info(
-						"Unable to read image meta data for photo: "
-								+ file.getAbsolutePath(), e);
+				logger.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
 			} catch (IOException e) {
-				logger.info(
-						"Unable to read image meta data for photo: "
-								+ file.getAbsolutePath(), e);
+				logger.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
 			}
 
 			try {
-				String thumbnailPath = ImageHelper.generateAndSaveImage(
-						library.getId(), path, ImageType.THUMBNAIL, imageRotationType);
+				String thumbnailPath = ImageHelper.generateAndSaveImage(library.getId(), path, ImageType.THUMBNAIL,
+						imageRotationType);
 				photo.setThumbnailPath(thumbnailPath);
-				
-				String webOptimisedImagePath = ImageHelper.generateAndSaveImage(
-						library.getId(), path, ImageType.WEB_OPTIMISED, imageRotationType);
+
+				String webOptimisedImagePath = ImageHelper.generateAndSaveImage(library.getId(), path,
+						ImageType.WEB_OPTIMISED, imageRotationType);
 				photo.setWebOptimisedImagePath(webOptimisedImagePath);
-				
-				
+
 			} catch (Exception e) {
-				logger.error(
-						"Unable to create thumbnail of photo: "
-								+ file.getAbsolutePath(), e);
+				logger.error("Unable to create thumbnail of photo: " + file.getAbsolutePath(), e);
 			}
 
 			photo.setLibrary(library);
@@ -190,19 +171,36 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	}
 
+	private boolean isCreatePhoto(File file, Photo photo) {
+
+		if (photo == null) {
+			return true;
+		}
+
+		if (file.lastModified() != photo.getFileLastModifiedOn()) {
+			return true;
+		}
+
+		if (file.length() != photo.getSizeInBytes()) {
+			return true;
+		}
+		
+		return false;
+	}
+
 	protected ImageRotationType getPhotoOrientation(Metadata metadata) {
 		Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
 		if (directory == null) {
 			return null;
 		}
-		
+
 		int exifTagOrientation = 0;
 		try {
 			exifTagOrientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
 		} catch (MetadataException me) {
 			logger.warn("Could not get orientation");
 		}
-		
+
 		ImageRotationType imageRotationType = ImageHelper.getImageRotationType(exifTagOrientation);
 		return imageRotationType;
 	}
