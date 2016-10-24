@@ -3,6 +3,7 @@ package org.mashupmedia.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.media.MediaItem;
@@ -31,6 +32,21 @@ public class PhotoController extends BaseController {
 	public static int MAXIMUM_PHOTOS = 50;
 	private static String MODEL_KEY_PHOTOS = "photos";
 
+	
+	public enum PhotoListType {
+		LATEST("photo-list-latest");
+
+		private PhotoListType(String className) {
+			this.className = className;
+		}
+		
+		private String className;
+
+		public String getClassName() {
+			return className;
+		}
+	}
+	
 	@Autowired
 	private MediaManager mediaManager;
 
@@ -70,7 +86,10 @@ public class PhotoController extends BaseController {
 		if (pageNumber == null) {
 			pageNumber = 0;
 		}
-
+		
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
+		model.addAttribute(PhotoListType.LATEST);
+		
 		List<Photo> photos = photoManager.getLatestPhotos(pageNumber, MAXIMUM_PHOTOS);
 		model.addAttribute(MODEL_KEY_PHOTOS, photos);
 		String pagePath = getPath(isFragment, "photos.list-photos");

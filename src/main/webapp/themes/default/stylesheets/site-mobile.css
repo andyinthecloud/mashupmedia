@@ -42,4 +42,12 @@
 		width: 70px;
 		height: auto;
 	}
+	ul.photos li{
+		width: 100px;
+		height: 100px;				
+	}
+	ul.photos li img {
+		clip: rect(0px, 100px, 100px, 0px);
+	}	
+	
 }

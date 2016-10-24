@@ -636,7 +636,7 @@ div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HO
 }
 
 
-div.photos {
+ul.photos {
 	list-style: none;
 	padding: 0;
 	vertical-align: middle;
@@ -648,10 +648,7 @@ ul.photos li {
 }
 
 ul.photos img{
-	width: auto;
-	height: auto;
-	min-width: 100%;
-	min-height: 100%;
+	position: absolute;
 }
 
 ul.items {

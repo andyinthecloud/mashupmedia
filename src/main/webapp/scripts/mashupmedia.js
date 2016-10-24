@@ -679,6 +679,27 @@ function loadAlbums(viewType) {
     });
 }
 
+function loadPhotos(viewType) {
+    if (this.isNextActionDelayed) {
+        return;
+    }
+    this.isNextActionDelayed = true;
+    mashupMedia.filterPageNumber++;
+    
+    var url = mashupMedia.contextUrl + "/app/photo/list?order=" + viewType;
+    
+    $.get(url, {
+        append: true,
+        fragment: true,
+        pageNumber : mashupMedia.filterPageNumber,
+        searchLetter: mashupMedia.filterAlbumsSearchLetter
+    }, function(data) {        
+        var photos = $(data).filter("ul.photos");
+        $("div.dynamic-content ul.photos").append(photos);
+        delayNextAction();          
+    });
+}
+
 
 function loadSongSearchResults(isAppend) {
 	if (this.isNextActionDelayed) {
@@ -780,11 +801,18 @@ function appendContentsOnScroll(contentType) {
 		    loadAlbums("latest");
 		} else if (contentType == "music-alphabetical-albums") {
 		    loadAlbums("alphabetical");
-		} else if (textStartsWith(currentPage, addressQuickSearchMediaItems)) {
+		} else if (contentType == "photo-list-latest") {
+            loadPhotos("latest");
+        } 
+		
+		
+		/*
+		else if (textStartsWith(currentPage, addressQuickSearchMediaItems)) {
 		    loadSongSearchResults(true);    
 		}  else if (textStartsWith(currentPage, addressListPhotos)) {
 			loadLatestPhotos(true);			
-		} 		
+		}
+		*/		
 		
     }
 }

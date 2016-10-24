@@ -1,5 +1,18 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+<c:if test="${!isAppend}">
+	<script type="text/javascript">
+	
+    $(window).scroll(function() {
+        if ($("div.albums div.album").length == 0) { return; }
+        appendContentsOnScroll("${photoListType.className}");
+    });	
+	
+	</script>
+	
+</c:if>		
+
+
 <c:choose>
 	<c:when test="${fn:length(photos) == 0}">
 		<spring:message code="list-photos.empty" />
