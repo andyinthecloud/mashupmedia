@@ -33,15 +33,14 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
-import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 @Service
 @Transactional
 public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager {
 
 	private final int PHOTOS_SAVE_AMOUNT_MAX_SIZE = 10;
-	private final String NEW_LINE = "\n";
 
 	private Logger logger = Logger.getLogger(getClass());
 
@@ -126,18 +125,18 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setPath(path);
 			photo.setSizeInBytes(file.length());
 
-			ImageRotationType imageRotationType = null;
 			try {
-				Metadata metadata = ImageMetadataReader.readMetadata(file);
-				String metadataText = processPhotoMetadata(metadata);
-				photo.setMetadata(metadataText);
-				imageRotationType = getPhotoOrientation(metadata);
-
+				processPhotoMetadata(file, photo);
 			} catch (ImageProcessingException e) {
 				logger.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
 			} catch (IOException e) {
 				logger.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
+			} catch (MetadataException e) {
+				logger.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
 			}
+
+			int orientation = photo.getOrientation();
+			ImageRotationType imageRotationType = ImageHelper.getImageRotationType(orientation);
 
 			try {
 				String thumbnailPath = ImageHelper.generateAndSaveImage(library.getId(), path, ImageType.THUMBNAIL,
@@ -184,39 +183,30 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		if (file.length() != photo.getSizeInBytes()) {
 			return true;
 		}
-		
+
 		return false;
 	}
 
-	protected ImageRotationType getPhotoOrientation(Metadata metadata) {
-		Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
-		if (directory == null) {
-			return null;
-		}
-
-		int exifTagOrientation = 0;
-		try {
-			exifTagOrientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-		} catch (MetadataException me) {
-			logger.warn("Could not get orientation");
-		}
-
-		ImageRotationType imageRotationType = ImageHelper.getImageRotationType(exifTagOrientation);
-		return imageRotationType;
-	}
-
-	protected String processPhotoMetadata(Metadata metadata) {
-		StringBuilder metadataBuilder = new StringBuilder();
+	protected void processPhotoMetadata(File file, Photo photo)
+			throws ImageProcessingException, IOException, MetadataException {
+		Metadata metadata = ImageMetadataReader.readMetadata(file);
 		for (Directory directory : metadata.getDirectories()) {
-			for (Tag tag : directory.getTags()) {
-				if (metadataBuilder.length() > 0) {
-					metadataBuilder.append(NEW_LINE);
+			if (directory == null) {
+				continue;
+			}
+			if (directory instanceof ExifSubIFDDirectory) {
+				ExifSubIFDDirectory exifSubIFDDirectory = (ExifSubIFDDirectory) directory;
+				Date date = exifSubIFDDirectory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+				if (date != null) {
+					photo.setCreatedOn(date);
 				}
-				metadataBuilder.append(tag.toString());
+
+			} else if (directory instanceof ExifIFD0Directory) {
+				ExifIFD0Directory exifIFD0Directory = (ExifIFD0Directory) directory;
+				int orientation = exifIFD0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+				photo.setOrientation(orientation);
 			}
 		}
-
-		return metadataBuilder.toString();
 	}
 
 	protected void savePhoto(Photo photo, boolean isSessionFlush) {

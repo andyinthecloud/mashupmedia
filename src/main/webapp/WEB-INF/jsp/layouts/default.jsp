@@ -412,8 +412,8 @@
 					data-media="music"><spring:message code="top-bar.music" /></a></li>
 				<li><a href="<c:url value="/app/videos" />"><spring:message
 							code="top-bar.videos" /></a></li>
-				<li><a title="<spring:message code="list-photos.title" />"
-					rel="internal" href="<c:url value="/app/photo/list" />"
+				<li><a title="<spring:message code="photos.title" />"
+					rel="internal" href="<c:url value="/app/photo/photos" />"
 					data-media="photos"><spring:message code="top-bar.photos" /></a></li>
 				<sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
 					<li><a rel="internal"

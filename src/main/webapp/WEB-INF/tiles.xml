@@ -250,15 +250,47 @@
 			value="/WEB-INF/jsp/tiles/playlist/list-playlists.jsp" />
 	</definition>
 
-	<definition name="photos.list-photos" extends="home">
+	<definition name="photos.photos" extends="home">
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/photo/list-photos.jsp" />
+			value="/WEB-INF/jsp/tiles/photo/photos.jsp" />
 	</definition>
 
-	<definition name="photos.list-photos.fragment" extends="ui-content">
+	<definition name="photos.photos.fragment" extends="ui-content">
 		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/photo/list-photos.jsp" />
+			value="/WEB-INF/jsp/tiles/photo/photos.jsp" />
 	</definition>
+	
+	<definition name="photo.show" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/photo.jsp" />
+	</definition>
+	
+	<definition name="photo.show.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/photo.jsp" />
+	</definition>	
+	
+	<definition name="photo.album" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/album.jsp" />
+	</definition>	
+
+	<definition name="photo.album.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/album.jsp" />
+	</definition>	
+
+	<definition name="photo.albums" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/albums.jsp" />
+	</definition>		
+
+	<definition name="photo.albums.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/albums.jsp" />
+	</definition>		
+
+
 	
 	<!-- 
 

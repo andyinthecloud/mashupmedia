@@ -1,54 +1,40 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
-<%
- 	pageContext.setAttribute("newLine", "\n");
-%>
-
-
 <script type="text/javascript">
-	$(document).ready(function() {
-		$("#meta-section a").click(function() {
-			$("#meta-section p.hide").toggle("slow", function() {
-				// Animation complete.
-			});
-		});
-	});
+    $(document).ready(function() {
+
+    });
 </script>
 
-<div class="sub-panel">
+<c:set var="photo" value="${photoPage.photo }" />
 
-	<c:set var="photo" value="${photoPage.photo }" />
+<h1>${photo.album.name}/${photo.displayTitle}</h1>
 
-	<h1>${photo.album.name} / ${photo.displayTitle}</h1>
+<c:if test="${not empty photoPage.previousPhoto.id}">
+	<div id="photo-previous">
+		<a rel="internal" title="${photoPage.previousPhoto.displayTitle}"
+			href="<c:url value="/app/photo/show/${photoPage.previousPhoto.id}" />"
+			class="arrow image-previous"></a>
+	</div>
+</c:if>
 
-	<table class="photo-container">
-		<tr>
-			<td class="photo-previous"><c:if
-					test="${not empty photoPage.previousPhoto.id}">
-					<a
-						href="<c:url value="/app/photo/show/${photoPage.previousPhoto.id}" />"
-						class="arrow image-previous"></a>
-				</c:if></td>
-			<td class="photo"><img
-				alt="${photo.displayTitle}" title="${photo.displayTitle}"
-				src="<c:url value="/app/photo/web-optimised/${photo.id}" />" /></td>
-			<td class="photo-next"><c:if
-					test="${not empty photoPage.nextPhoto.id}">
-					<a
-						href="<c:url value="/app/photo/show/${photoPage.nextPhoto.id}" />"
-						class="arrow image-next"></a>
-				</c:if></td>
-		</tr>
-	</table>
+<c:if test="${not empty photoPage.nextPhoto.id}">
+	<div id="photo-next">
+		<a rel="internal" title="${photoPage.nextPhoto.displayTitle}"
+			href="<c:url value="/app/photo/show/${photoPage.nextPhoto.id}" />"
+			target="_blank" class="arrow image-next"></a>
+	</div>
+</c:if>
 
-	<ul class="items">
-		<li><a href="<c:url value="/app/photo/original/${photo.id}" />"><spring:message
-					code="photo.original" /></a></li>
-					
-		<li id="meta-section"><a href="javascript:;"><spring:message
-					code="photo.meta" /></a> 
-			<p class="hide">${fn:replace(photo.metadata, newLine, "<br />")}</p>
-		</li>
-	</ul>
-
+<div class="photo">
+	<img alt="${photo.displayTitle}" title="${photo.displayTitle}"
+		src="<c:url value="/app/streaming/media/${photo.id}/web_optimised" />" />
 </div>
+
+<ul class="items">
+	<li><a rel="external"
+		href="<c:url value="/app/streaming/media/${photo.id}/original" />"><spring:message
+				code="photo.original" /></a></li>
+
+</ul>
+

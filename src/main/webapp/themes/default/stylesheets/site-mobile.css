@@ -44,10 +44,12 @@
 	}
 	ul.photos li{
 		width: 100px;
-		height: 100px;				
+		height: 100px;
+		line-height: 100px;	
 	}
 	ul.photos li img {
 		clip: rect(0px, 100px, 100px, 0px);
+		width: 100px;		
 	}	
 	
 }

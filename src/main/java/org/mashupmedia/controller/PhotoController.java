@@ -31,22 +31,22 @@ public class PhotoController extends BaseController {
 
 	public static int MAXIMUM_PHOTOS = 50;
 	private static String MODEL_KEY_PHOTOS = "photos";
+	private static String MODEL_KEY_ALBUM = "album";
 
-	
 	public enum PhotoListType {
 		LATEST("photo-list-latest");
 
 		private PhotoListType(String className) {
 			this.className = className;
 		}
-		
+
 		private String className;
 
 		public String getClassName() {
 			return className;
 		}
 	}
-	
+
 	@Autowired
 	private MediaManager mediaManager;
 
@@ -55,18 +55,45 @@ public class PhotoController extends BaseController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		breadcrumbs.add(getLatestPhotoBreadcrumb());
+		breadcrumbs.add(getLatestPhotosBreadcrumb());
 	}
 
-	protected Breadcrumb getLatestPhotoBreadcrumb() {
-		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.photo"), "/app/photo/album/list");
+	protected Breadcrumb getListAlbumsBreadcrumb() {
+		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.photo.albums"),
+				"/app/photo/albums");
 		return breadcrumb;
 	}
 
-	protected List<Breadcrumb> getLatestPhotoBreadcrumbs() {
+	protected Breadcrumb getLatestPhotosBreadcrumb() {
+		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.photo.latest-photos"),
+				"/app/photo/photos");
+		return breadcrumb;
+	}
+
+	protected Breadcrumb getAlbumBreadcrumb(Album album) {
+		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.photo-album"),
+				"/app/photo/album/" + album.getId());
+		return breadcrumb;
+	}
+
+	protected List<Breadcrumb> getListAlbumsBreadcrumbs() {
 		List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();
 		breadcrumbs.add(getHomeBreadcrumb());
-		breadcrumbs.add(getLatestPhotoBreadcrumb());
+		breadcrumbs.add(getListAlbumsBreadcrumb());
+		return breadcrumbs;
+	}
+
+	protected List<Breadcrumb> getLatestPhotosBreadcrumbs() {
+		List<Breadcrumb> breadcrumbs = new ArrayList<Breadcrumb>();
+		breadcrumbs.add(getHomeBreadcrumb());
+		breadcrumbs.add(getLatestPhotosBreadcrumb());
+		return breadcrumbs;
+	}
+
+	protected List<Breadcrumb> getAlbumBreadcrumbs(Album album) {
+		List<Breadcrumb> breadcrumbs = getListAlbumsBreadcrumbs();
+		Breadcrumb albumBreadcrumb = getAlbumBreadcrumb(album);
+		breadcrumbs.add(albumBreadcrumb);
 		return breadcrumbs;
 	}
 
@@ -75,29 +102,30 @@ public class PhotoController extends BaseController {
 		return "photo.title";
 	}
 
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	@RequestMapping(value = "/photos", method = RequestMethod.GET)
 	public String handleGetPhotoList(
 			@RequestParam(value = MashUpMediaConstants.PARAM_IS_APPEND, required = false) Boolean isAppend,
 			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			@RequestParam(value = PARAM_PAGE_NUMBER, required = false) Integer pageNumber, Model model) {
 
-		model.addAttribute(MODEL_KEY_BREADCRUMBS, getLatestPhotoBreadcrumbs());
+		model.addAttribute(MODEL_KEY_BREADCRUMBS, getLatestPhotosBreadcrumbs());
 
 		if (pageNumber == null) {
 			pageNumber = 0;
 		}
-		
+
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
 		model.addAttribute(PhotoListType.LATEST);
-		
+
 		List<Photo> photos = photoManager.getLatestPhotos(pageNumber, MAXIMUM_PHOTOS);
 		model.addAttribute(MODEL_KEY_PHOTOS, photos);
-		String pagePath = getPath(isFragment, "photos.list-photos");
+		String pagePath = getPath(isFragment, "photos.photos");
 		return pagePath;
 	}
 
 	@RequestMapping(value = "/show/{photoId}", method = RequestMethod.GET)
-	public String getPhotoPage(@PathVariable("photoId") Long photoId, Model model) throws Exception {
+	public String getPhotoPage(@PathVariable("photoId") Long photoId,
+			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) throws Exception {
 		MediaItem mediaItem = mediaManager.getMediaItem(photoId);
 		if (!(mediaItem instanceof Photo)) {
 			logger.error("Expecting a photo got " + mediaItem.getClass() + " from id = " + mediaItem.getId());
@@ -105,13 +133,11 @@ public class PhotoController extends BaseController {
 		}
 
 		Photo photo = (Photo) mediaItem;
-
-		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
 		Album album = photo.getAlbum();
-		Breadcrumb albumBreadcrumb = new Breadcrumb(album.getName(), "/app/photo/album/show/" + album.getId());
-		breadcrumbs.add(albumBreadcrumb);
-		Breadcrumb photoBreadcrumb = new Breadcrumb(photo.getDisplayTitle());
-		breadcrumbs.add(photoBreadcrumb);
+
+		List<Breadcrumb> breadcrumbs = getAlbumBreadcrumbs(album);
+		Breadcrumb photoBreadCrumb = new Breadcrumb(photo.getDisplayTitle());
+		breadcrumbs.add(photoBreadCrumb);
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
 
 		Photo previousPhoto = photoManager.getPhotoInSequence(photo, PhotoSequenceType.PREVIOUS);
@@ -123,7 +149,40 @@ public class PhotoController extends BaseController {
 		photoPage.setNextPhoto(nextPhoto);
 
 		model.addAttribute("photoPage", photoPage);
-		return "photo.show";
+
+		String pagePath = getPath(isFragment, "photo.show");
+		return pagePath;
+	}
+
+	@RequestMapping(value = "/album/{albumId}", method = RequestMethod.GET)
+	public String handleGetPhotoAlbum(@PathVariable("albumId") long albumId,
+			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
+
+		Album album = photoManager.getAlbum(albumId);
+		List<Breadcrumb> breadcrumbs = getAlbumBreadcrumbs(album);
+		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
+		
+		model.addAttribute(MODEL_KEY_ALBUM, album);
+		
+		List<Photo> photos = album.getPhotos();
+		model.addAttribute(MODEL_KEY_PHOTOS, photos);
+		
+		String pagePath = getPath(isFragment, "photos.photos");
+		return pagePath;
+	}
+
+	@RequestMapping(value = "/albums", method = RequestMethod.GET)
+	public String handleGetPhotoAlbumList(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
+			Model model) {
+		
+		List<Breadcrumb> breadcrumbs = getListAlbumsBreadcrumbs();
+		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
+		
+		List<Album> albums = photoManager.getAlbums();
+		model.addAttribute("albums", albums);
+
+		String pagePath = getPath(isFragment, "photo.albums");
+		return pagePath;
 	}
 
 }

@@ -616,11 +616,12 @@ a.image-next {
 	height: 32px;
 }
 
-div.albums div.album, div.artists div.artist{
+div.albums div.album, div.artists div.artist {
 	position: relative;
 }
 
-div.albums div.album div.artist-name, div.artists div.artist div.artist-name {
+div.albums div.album div.artist-name, div.artists div.artist div.artist-name
+	{
 	font-size: 0.8em;
 }
 
@@ -635,7 +636,6 @@ div.albums div.album a, div.albums div.album a:ACTIVE, div.albums div.album a:HO
 	font-weight: normal !important;
 }
 
-
 ul.photos {
 	list-style: none;
 	padding: 0;
@@ -645,10 +645,13 @@ ul.photos {
 ul.photos li {
 	display: inline-block;
 	overflow: hidden;
+	border: 1px solid #a0a0a0;
+	padding: 2px;
 }
 
-ul.photos img{
-	position: absolute;
+ul.photos img {
+	height: auto;
+	vertical-align: middle;
 }
 
 ul.items {
@@ -660,7 +663,7 @@ ul.items {
 ul.items li {
 	position: relative;
 	clear: both;
-	border-bottom: 1px solid #e579e9;
+	/*border-bottom: 1px solid #e579e9;*/
 	padding: 5px 0;
 }
 
@@ -731,7 +734,30 @@ ul.items div.icons-right {
 #playlist ul.items li {
 	height: 50px;
 }
-ul
 
+div.photo {	
+	margin-left: 30px;
+	margin-right: 30px;
+}
 
-#
+div.photo img {
+	width: 100%;
+}
+
+#photo-previous, #photo-next {
+	position: fixed;
+	top: 50%;
+}
+
+#photo-previous {
+	left: 10px;
+}
+
+#photo-next {
+	right: 10px;
+}
+
+table.photo-container td.photo img {
+	width: 100%;
+	height: auto;
+}

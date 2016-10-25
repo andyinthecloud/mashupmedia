@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.media.MediaItem;
@@ -24,8 +23,17 @@ public class Photo extends MediaItem {
 	private Album album;
 	private String thumbnailPath;
 	private String webOptimisedImagePath;
-	@Type(type = "text")
-	private String metadata;
+	private int orientation;
+		
+	
+	
+	public int getOrientation() {
+		return orientation;
+	}
+
+	public void setOrientation(int orientation) {
+		this.orientation = orientation;
+	}
 
 	public Album getAlbum() {
 		return album;
@@ -33,14 +41,6 @@ public class Photo extends MediaItem {
 
 	public void setAlbum(Album album) {
 		this.album = album;
-	}
-
-	public String getMetadata() {
-		return metadata;
-	}
-
-	public void setMetadata(String metadata) {
-		this.metadata = metadata;
 	}
 
 	public String getThumbnailPath() {
