@@ -231,7 +231,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			musicDao.saveSong(song, isSessionFlush);
 			writeSongToXml(libraryId, song);
 
-			encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(song, MediaContentType.MP3);
+//			encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(song, MediaContentType.MP3);
 
 			totalSongsSaved++;
 
