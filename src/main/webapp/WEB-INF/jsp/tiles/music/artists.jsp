@@ -6,7 +6,7 @@
         $("div.dynamic-content").off("click", "ul.index-letters a");
 
         window.scrollTo(0, 0);
-        showFooterTabs("music", "music-artists");
+        showFooterTabs("music-artists");
 
         $("div.dynamic-content").on("click", "ul.index-letters a", function() {
             var anchor = $(this).attr("href");

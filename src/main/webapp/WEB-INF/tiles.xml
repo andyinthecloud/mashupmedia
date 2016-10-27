@@ -290,7 +290,15 @@
 			value="/WEB-INF/jsp/tiles/photo/albums.jsp" />
 	</definition>		
 
+	<definition name="encode.queue" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
+	</definition>
 
+	<definition name="encode.queue.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
+	</definition>
 	
 	<!-- 
 
@@ -308,15 +316,7 @@
 		<put-attribute name="body" value="/WEB-INF/jsp/tiles/video/video.jsp" />
 	</definition>
 
-	<definition name="encode.queue" extends="home">
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
-	</definition>
 
-	<definition name="encode.queue.fragment" extends="ui-content">
-		<put-attribute name="body"
-			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
-	</definition>
 
 	
 

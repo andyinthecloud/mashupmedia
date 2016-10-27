@@ -148,7 +148,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				photo.setWebOptimisedImagePath(webOptimisedImagePath);
 
 			} catch (Exception e) {
-				logger.error("Unable to create thumbnail of photo: " + file.getAbsolutePath(), e);
+				logger.error("Will not save photo, unable to create thumbnail: " + file.getAbsolutePath(), e);
 				return;
 			}
 

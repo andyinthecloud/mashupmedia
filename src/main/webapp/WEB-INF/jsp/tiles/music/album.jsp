@@ -4,7 +4,7 @@
     $(document).ready(function() {
 
         window.scrollTo(0, 0);
-        showFooterTabs("music", "music-albums");
+        showFooterTabs("music-albums");
 
         $("h1.edit").editable("<c:url value="/app/restful/media/music/save-album-name" />", {
             tooltip: "<spring:message code="action.click.edit" />"

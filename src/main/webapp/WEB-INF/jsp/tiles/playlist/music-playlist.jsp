@@ -6,7 +6,7 @@
     $(document).ready(function() {
 
         window.scrollTo(0, 0);
-        showFooterTabs("music", "music-playlist");
+        showFooterTabs("music-playlist");
 
         $("div.dynamic-content ul.items").sortable({
             delay: 1000,

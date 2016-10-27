@@ -11,7 +11,7 @@
 
             mashupMedia.reinitialiseInfinitePage();
 
-            showFooterTabs("music", "music-albums");
+            showFooterTabs("music-albums");
 
             $(window).scroll(function() {
                 if ($("div.albums div.album").length == 0) { return; }

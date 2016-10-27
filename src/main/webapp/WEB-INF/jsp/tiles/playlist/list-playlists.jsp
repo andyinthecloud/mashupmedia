@@ -3,7 +3,7 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-	showFooterTabs("music", "music-playlist");
+	showFooterTabs("music-playlist");
 });
 
 </script>

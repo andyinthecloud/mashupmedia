@@ -6,7 +6,7 @@
         
         $(window).unbind("scroll");
 		window.scrollTo(0, 0);
-		showFooterTabs("music", "music-artists");
+		showFooterTabs("music-artists");
 		
         $("h1.edit").editable("<c:url value="/app/restful/media/music/save-artist-name" />", {
             tooltip: "<spring:message code="action.click.edit" />"

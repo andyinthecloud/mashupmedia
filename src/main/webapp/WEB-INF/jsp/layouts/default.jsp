@@ -202,7 +202,16 @@
         controlElement.addClass(nextAction);
     }
 
-    function showFooterTabs(mediaType, highlight) {
+    // enter the highlighted class name, the media type is determined
+    // from <mediaType>-<className>
+    function showFooterTabs(highlight) {
+        
+        if (highlight === undefined) {
+            $("#footer").hide();
+            return;
+        }
+        
+        var mediaType = highlight.replace(/-.*/g, "");
 
         if (mediaType === undefined) {
             $("#footer").hide();
@@ -210,27 +219,30 @@
         }
 
         $("#footer div.tabs").hide();
+        $("#footer ul").hide();
 
         var isShowFooter = false;
 
         mediaType = mediaType.toLowerCase();
 
         if (mediaType == "music") {
-            $("#footer div.music").show();
             isShowFooter = true;
-        } else if (mediaType == "photos") {
+        } else if (mediaType == "photo") {
             isShowFooter = true;
 
         }
 
         if (isShowFooter) {
+            
+            $("#footer ul." + mediaType).show();
+            $("#footer div.tabs").show();
             $("#footer").show();
         } else {
             $("#footer").hide();
         }
 
-        $("#footer div.music li a").removeClass("ui-btn-active");
-        $("#footer div.music li a." + highlight).addClass("ui-btn-active");
+        $("#footer ul." + mediaType + " li a").removeClass("ui-btn-active");
+        $("#footer ul." + mediaType + " li a." + highlight).addClass("ui-btn-active");
 
     }
 </script>
@@ -368,15 +380,14 @@
 		<div id="footer"
 			class="ui-footer ui-bar-inherit ui-footer-fixed slideup"
 			data-role="footer" data-position-fixed="true">
-			<div class="tabs music" data-role="navbar">
-				<ul>
-
+			<div class="tabs" data-role="navbar">
+				<ul class="music">
 					<li><a rel="internal"
 						href="<c:url value="/app/music/random-albums" />"
 						class="music-albums" data-media="music"
 						title="<spring:message code="footer.music.albums"/>"><img
 							alt="<spring:message code="footer.music.albums"/>"
-							src="<c:url value="${themePath}/images/link-icons/album.png"/>" /></a></li>
+							src="<c:url value="${themePath}/images/link-icons/music-album.png"/>" /></a></li>
 
 					<li><a rel="internal"
 						href="<c:url value="/app/music/artists" />" class="music-artists"
@@ -392,7 +403,27 @@
 							alt="<spring:message code="footer.music.playlist"/>"
 							src="<c:url value="${themePath}/images/link-icons/playlist.png"/>" /></a></li>
 				</ul>
+				
+				<ul class="photo">
+					<li><a rel="internal"
+						href="<c:url value="/app/photo/photos" />" class="photo-photos"
+						data-media="photo"
+						title="<spring:message code="footer.photo.photos"/>"><img
+							alt="<spring:message code="footer.photo.photos"/>"
+							src="<c:url value="${themePath}/images/link-icons/photo.png"/>" /></a></li>
+
+					<li><a rel="internal"
+						href="<c:url value="/app/photo/albums" />" class="photo-albums"
+						data-media="photo"
+						title="<spring:message code="footer.photo.albums"/>"><img
+							alt="<spring:message code="footer.photo.albums"/>"
+							src="<c:url value="${themePath}/images/link-icons/photo-album.png"/>" /></a></li>
+
+				</ul>				
+				
 			</div>
+
+
 		</div>
 
 		<div data-role="panel" data-position="right"
@@ -414,7 +445,7 @@
 							code="top-bar.videos" /></a></li>
 				<li><a title="<spring:message code="photos.title" />"
 					rel="internal" href="<c:url value="/app/photo/photos" />"
-					data-media="photos"><spring:message code="top-bar.photos" /></a></li>
+					data-media="photo"><spring:message code="top-bar.photos" /></a></li>
 				<sec:authorize access="hasRole('ROLE_ADMINISTRATOR')">
 					<li><a rel="internal"
 						title="<spring:message code ="configuration.title" />"

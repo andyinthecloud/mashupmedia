@@ -686,7 +686,7 @@ function loadPhotos(viewType) {
     this.isNextActionDelayed = true;
     mashupMedia.filterPageNumber++;
     
-    var url = mashupMedia.contextUrl + "/app/photo/list?order=" + viewType;
+    var url = mashupMedia.contextUrl + "/app/photo/photos?order=" + viewType;
     
     $.get(url, {
         append: true,

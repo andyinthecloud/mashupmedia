@@ -11,7 +11,6 @@
 
 	<c:otherwise>
 		<ul class="main-menu ui-listview-inset ui-corner-all ui-shadow" data-role="listview">
-
 			<c:forEach items="${listLibrariesPage.libraries}" var="library">
 				<li><a class="library-${library.libraryTypeValue}"
 					href="<c:url value="/app/configuration/library/${library.libraryTypeValue}/" />?id=<c:out value="${library.id}" />"><c:out

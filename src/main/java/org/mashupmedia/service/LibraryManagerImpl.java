@@ -29,6 +29,8 @@ public class LibraryManagerImpl implements LibraryManager {
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 	@Autowired
 	private AdminManager adminManager;
+	@Autowired	
+	private LibraryUpdateManager libraryUpdateManager;
 
 	@Override
 	public List<Library> getLocalLibraries(LibraryType libraryType) {
@@ -91,6 +93,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	public void saveAndRebuildLibrary(Library library) {
 		saveLibrary(library);
 		libraryDao.reinitialiseLibrary(library);
+		libraryUpdateManager.updateLibrary(library);
 	}
 	
 	@Override

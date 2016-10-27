@@ -7,6 +7,10 @@
                 if ($("ul.photos li").length == 0) { return; }
                 appendContentsOnScroll("${photoListType.className}");
             });
+            
+            
+            showFooterTabs("photo-photos");
+            
         });
     </script>
 
