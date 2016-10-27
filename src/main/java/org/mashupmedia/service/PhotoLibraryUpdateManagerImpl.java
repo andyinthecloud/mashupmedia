@@ -149,6 +149,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 			} catch (Exception e) {
 				logger.error("Unable to create thumbnail of photo: " + file.getAbsolutePath(), e);
+				return;
 			}
 
 			photo.setLibrary(library);
