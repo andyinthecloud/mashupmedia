@@ -5,10 +5,9 @@ import java.util.List;
 
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
-import org.mashupmedia.service.PhotoManager.PhotoSequenceType;
+import org.mashupmedia.util.MediaItemHelper.MediaItemSequenceType;
 
 public interface PhotoDao {
-
 
 	public void savePhoto(Photo photo, boolean isSessionFlush);
 
@@ -26,6 +25,16 @@ public interface PhotoDao {
 
 	public Album getAlbum(List<Long> groupIds, long albumId);
 
-	public Photo getPhotoInSequence(List<Long> groupIds, Long photoId, Date photoCreatedOn, Long albumId,PhotoSequenceType photoSequenceType);
+	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, Date createdOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType);
+
+	public Photo getNextPhotoInSequence(List<Long> userGroupIds, Date createdOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType);
+
+	public Photo getFirstPhotoInSequence(List<Long> userGroupIds, Date createdOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType);
+
+	public Photo getLastPhotoInSequence(List<Long> userGroupIds, Date createdOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType);
 
 }

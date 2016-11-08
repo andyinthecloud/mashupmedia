@@ -126,7 +126,7 @@ public abstract class AbstractLibraryController extends BaseController {
 		if (groups != null) {
 			library.setGroups(new HashSet<Group>(groups));
 		}
-
+		
 		long libraryId = library.getId();
 		if (libraryId > 0) {
 			// link the remote shares
@@ -134,7 +134,7 @@ public abstract class AbstractLibraryController extends BaseController {
 			List<RemoteShare> remoteShares = savedLibrary.getRemoteShares();
 			library.setRemoteShares(remoteShares);
 		}
-
+		
 		libraryManager.saveAndRebuildLibrary(library);
 	}
 

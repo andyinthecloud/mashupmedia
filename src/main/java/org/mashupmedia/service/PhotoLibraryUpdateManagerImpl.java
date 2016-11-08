@@ -64,14 +64,12 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void updateLibrary(PhotoLibrary library, File folder, Date date) {
 		Long totalPhotosSaved = Long.valueOf(0);
 		processPhotos(totalPhotosSaved, folder, date, null, library);
 		logger.info("Total photos saved:" + totalPhotosSaved);
 	}
 
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	protected void processPhotos(Long totalPhotosSaved, File file, Date date, String albumName, PhotoLibrary library) {
 
 		if (file.isDirectory()) {
@@ -91,6 +89,8 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				processPhotos(totalPhotosSaved, childFile, date, albumName, library);
 			}
 		}
+		
+		totalPhotosSaved++;
 
 		Album album = getAlbum(albumName, date);
 		album.setUpdatedOn(date);
@@ -100,8 +100,11 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		Photo photo = getPhotoByAbsolutePath(path);
 
 		if (isCreatePhoto(file, photo)) {
-			photo = new Photo();
-			photo.setCreatedOn(date);
+			if (photo == null) {
+				photo = new Photo();	
+				photo.setCreatedOn(new Date());
+			}
+			
 			photo.setAlbum(album);
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
@@ -157,7 +160,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setDisplayTitle(title);
 			photo.setSearchText(album.getName() + " " + title);
 			// photos.add(photo);
-			totalPhotosSaved = Long.valueOf(totalPhotosSaved++);
+			
 		}
 
 		photo.setUpdatedOn(date);
@@ -166,9 +169,10 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		if (totalPhotosSaved % PHOTOS_SAVE_AMOUNT_MAX_SIZE == 0) {
 			isSessionFlush = true;
 		}
+		isSessionFlush = true;
 
-		savePhoto(photo, isSessionFlush);
-
+//		savePhoto(photo, isSessionFlush);
+		photoDao.savePhoto(photo, isSessionFlush);
 	}
 
 	private boolean isCreatePhoto(File file, Photo photo) {
@@ -208,10 +212,6 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				photo.setOrientation(orientation);
 			}
 		}
-	}
-
-	protected void savePhoto(Photo photo, boolean isSessionFlush) {
-		photoDao.savePhoto(photo, isSessionFlush);
 	}
 
 	protected Photo getPhotoByAbsolutePath(String path) {

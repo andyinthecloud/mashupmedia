@@ -1,12 +1,12 @@
 package org.mashupmedia.web.page;
 
 import org.mashupmedia.model.media.photo.Photo;
+import org.mashupmedia.util.MediaItemHelper.MediaItemSequenceType;
 
 public class PhotoPage {
 
+	private MediaItemSequenceType mediaItemSequenceType;
 	private Photo photo;
-	private Photo previousPhoto;
-	private Photo nextPhoto;
 
 	public Photo getPhoto() {
 		return photo;
@@ -16,20 +16,12 @@ public class PhotoPage {
 		this.photo = photo;
 	}
 
-	public Photo getPreviousPhoto() {
-		return previousPhoto;
+	public MediaItemSequenceType getMediaItemSequenceType() {
+		return mediaItemSequenceType;
 	}
 
-	public void setPreviousPhoto(Photo previousPhoto) {
-		this.previousPhoto = previousPhoto;
-	}
-
-	public Photo getNextPhoto() {
-		return nextPhoto;
-	}
-
-	public void setNextPhoto(Photo nextPhoto) {
-		this.nextPhoto = nextPhoto;
+	public void setMediaItemSequenceType(MediaItemSequenceType mediaItemSequenceType) {
+		this.mediaItemSequenceType = mediaItemSequenceType;
 	}
 
 }

@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
-import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.PhotoManager;
-import org.mashupmedia.service.PhotoManager.PhotoSequenceType;
+import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaItemSequenceType;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.PhotoPage;
@@ -26,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/photo")
 public class PhotoController extends BaseController {
-
-	private Logger logger = Logger.getLogger(getClass());
 
 	public static int MAXIMUM_PHOTOS = 50;
 	private static String MODEL_KEY_PHOTOS = "photos";
@@ -46,9 +42,6 @@ public class PhotoController extends BaseController {
 			return className;
 		}
 	}
-
-	@Autowired
-	private MediaManager mediaManager;
 
 	@Autowired
 	private PhotoManager photoManager;
@@ -125,28 +118,22 @@ public class PhotoController extends BaseController {
 
 	@RequestMapping(value = "/show/{photoId}", method = RequestMethod.GET)
 	public String getPhotoPage(@PathVariable("photoId") Long photoId,
-			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) throws Exception {
-		MediaItem mediaItem = mediaManager.getMediaItem(photoId);
-		if (!(mediaItem instanceof Photo)) {
-			logger.error("Expecting a photo got " + mediaItem.getClass() + " from id = " + mediaItem.getId());
-			return null;
-		}
+			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
+			@RequestParam(value = PARAM_SEQUENCE_TYPE, required = false) String sequenceTypeValue, Model model)
+			throws Exception {
 
-		Photo photo = (Photo) mediaItem;
+		MediaItemSequenceType sequenceType = MediaItemHelper.getSequenceType(sequenceTypeValue);
+		Photo photo = photoManager.getPhoto(photoId, sequenceType);
+
 		Album album = photo.getAlbum();
-
 		List<Breadcrumb> breadcrumbs = getAlbumBreadcrumbs(album);
 		Breadcrumb photoBreadCrumb = new Breadcrumb(photo.getDisplayTitle());
 		breadcrumbs.add(photoBreadCrumb);
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
 
-		Photo previousPhoto = photoManager.getPhotoInSequence(photo, PhotoSequenceType.PREVIOUS);
-		Photo nextPhoto = photoManager.getPhotoInSequence(photo, PhotoSequenceType.NEXT);
-
 		PhotoPage photoPage = new PhotoPage();
 		photoPage.setPhoto(photo);
-		photoPage.setPreviousPhoto(previousPhoto);
-		photoPage.setNextPhoto(nextPhoto);
+		photoPage.setMediaItemSequenceType(sequenceType);
 
 		model.addAttribute("photoPage", photoPage);
 
@@ -161,12 +148,12 @@ public class PhotoController extends BaseController {
 		Album album = photoManager.getAlbum(albumId);
 		List<Breadcrumb> breadcrumbs = getAlbumBreadcrumbs(album);
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
-		
+
 		model.addAttribute(MODEL_KEY_ALBUM, album);
-		
+
 		List<Photo> photos = album.getPhotos();
 		model.addAttribute(MODEL_KEY_PHOTOS, photos);
-		
+
 		String pagePath = getPath(isFragment, "photos.photos");
 		return pagePath;
 	}
@@ -174,10 +161,10 @@ public class PhotoController extends BaseController {
 	@RequestMapping(value = "/albums", method = RequestMethod.GET)
 	public String handleGetPhotoAlbumList(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			Model model) {
-		
+
 		List<Breadcrumb> breadcrumbs = getListAlbumsBreadcrumbs();
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
-		
+
 		List<Album> albums = photoManager.getAlbums();
 		model.addAttribute("albums", albums);
 

@@ -4,6 +4,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.search.annotations.Indexed;
@@ -17,6 +18,7 @@ import org.mashupmedia.model.media.MediaItem;
 public class Photo extends MediaItem {
 
 	private static final long serialVersionUID = -2278500438492214953L;
+	
 
 	@IndexedEmbedded
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -24,9 +26,32 @@ public class Photo extends MediaItem {
 	private String thumbnailPath;
 	private String webOptimisedImagePath;
 	private int orientation;
-		
+
+	@Transient
+	private Photo previousPhoto;	
+	
+	@Transient
+	private Photo nextPhoto;		
 	
 	
+	
+	
+	public Photo getPreviousPhoto() {
+		return previousPhoto;
+	}
+
+	public void setPreviousPhoto(Photo previousPhoto) {
+		this.previousPhoto = previousPhoto;
+	}
+
+	public Photo getNextPhoto() {
+		return nextPhoto;
+	}
+
+	public void setNextPhoto(Photo nextPhoto) {
+		this.nextPhoto = nextPhoto;
+	}
+
 	public int getOrientation() {
 		return orientation;
 	}

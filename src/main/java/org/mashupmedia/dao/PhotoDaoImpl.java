@@ -7,19 +7,21 @@ import org.hibernate.Query;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
-import org.mashupmedia.service.PhotoManager.PhotoSequenceType;
 import org.mashupmedia.util.DaoHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaItemSequenceType;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
+	private enum PhotoSequenceType {
+		ALBUM_PREVIOUS, ALBUM_NEXT, PREVIOUS, NEXT, ALBUM_FIRST, ALBUM_LAST, FIRST, LAST;
+	}
+
 	@Override
 	public List<Album> getAlbums(String albumName) {
-		Query query = sessionFactory
-				.getCurrentSession()
-				.createQuery(
-						"from org.mashupmedia.model.media.photo.Album a where a.name = :albumName");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("from org.mashupmedia.model.media.photo.Album a where a.name = :albumName");
 
 		query.setString("albumName", albumName);
 		query.setCacheable(true);
@@ -42,8 +44,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		StringBuilder queryBuilder = new StringBuilder("select p from Photo p");
 		queryBuilder.append(" where p.path = :path");
 
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		query.setString("path", path);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -54,7 +55,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		}
 
 		if (photos.size() > 1) {
-			logger.error("Duplicate photos found for the same file. Attempting to remove files");
+			logger.error("Duplicate photos found for the same file. Attempting to remove files. Path = " + path);
 			Photo photo = photos.get(0);
 			photos.remove(photo);
 			deletePhotos(photos);
@@ -78,16 +79,13 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public List<Photo> getLatestPhotos(List<Long> groupIds, int pageNumber,
-			int totalItems) {
+	public List<Photo> getLatestPhotos(List<Long> groupIds, int pageNumber, int totalItems) {
 
-		StringBuilder queryBuilder = new StringBuilder(
-				"select distinct p from Photo p join p.library.groups g");
+		StringBuilder queryBuilder = new StringBuilder("select distinct p from Photo p join p.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by p.createdOn desc, p.fileLastModifiedOn desc");
 
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				queryBuilder.toString());
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		query.setCacheable(true);
 
 		int firstResult = pageNumber * totalItems;
@@ -101,10 +99,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public List<Album> getAlbums() {
-		Query query = sessionFactory
-				.getCurrentSession()
-				.createQuery(
-						"select a from org.mashupmedia.model.media.photo.Album a order by a.name");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("select a from org.mashupmedia.model.media.photo.Album a order by a.name");
 
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -114,10 +110,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public List<Photo> getObsoletePhotos(long libraryId, Date date) {
-		Query query = sessionFactory
-				.getCurrentSession()
-				.createQuery(
-						"from Photo p where p.updatedOn < :date and p.library.id = :libraryId");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("from Photo p where p.updatedOn < :date and p.library.id = :libraryId");
 		query.setDate("date", date);
 		query.setLong("libraryId", libraryId);
 		query.setCacheable(true);
@@ -128,10 +122,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public int removeObsoletePhotos(long libraryId, Date date) {
-		Query query = sessionFactory
-				.getCurrentSession()
-				.createQuery(
-						"delete Photo p where p.updatedOn < :date and p.library.id = :libraryId");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("delete Photo p where p.updatedOn < :date and p.library.id = :libraryId");
 		query.setDate("date", date);
 		query.setLong("libraryId", libraryId);
 		int totalDeletedPhotos = query.executeUpdate();
@@ -141,10 +133,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	@Override
 	public Album getAlbum(List<Long> groupIds, long albumId) {
 
-		Query albumQuery = sessionFactory
-				.getCurrentSession()
-				.createQuery(
-						"from org.mashupmedia.model.media.photo.Album a where a.id = :albumId");
+		Query albumQuery = sessionFactory.getCurrentSession()
+				.createQuery("from org.mashupmedia.model.media.photo.Album a where a.id = :albumId");
 		albumQuery.setLong("albumId", albumId);
 		albumQuery.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -154,8 +144,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		}
 
 		if (albums.size() > 1) {
-			throw new MashupMediaRuntimeException("Error - " + albums.size()
-					+ " share the same id");
+			throw new MashupMediaRuntimeException("Error - " + albums.size() + " share the same id");
 		}
 
 		Album album = albums.get(0);
@@ -164,9 +153,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 				"select distinct p from Photo p join p.library.groups g");
 		listPhotosQueryBuilder.append(" where p.album.id = :albumId");
 		DaoHelper.appendGroupFilter(listPhotosQueryBuilder, groupIds);
-		listPhotosQueryBuilder.append(" order by p.displayTitle");
-		Query listPhotosQuery = sessionFactory.getCurrentSession().createQuery(
-				listPhotosQueryBuilder.toString());
+		listPhotosQueryBuilder.append(" order by p.createdOn");
+		Query listPhotosQuery = sessionFactory.getCurrentSession().createQuery(listPhotosQueryBuilder.toString());
 		listPhotosQuery.setLong("albumId", albumId);
 		listPhotosQuery.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -178,29 +166,115 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getPhotoInSequence(List<Long> groupIds, Long photoId, Date photoCreatedOn,
-			Long albumId, PhotoSequenceType photoSequenceType) {
-		
-//		List nextItems = sessionFactory.getCurrentSession().createQuery("select distinct(p) from Photo p join p.library.groups g where p.album.id = 1 and g.id in (2,1) and p.createdOn <= '2015-05-04 15:35:37.331' order by p.id desc, ").list();
-//		List previousItems = sessionFactory.getCurrentSession().createQuery("select distinct(p) from Photo p join p.library.groups g where p.album.id = 2 and g.id in (2,1) and p.createdOn <= '2015-05-04 15:35:37.331' order by p.id asc").list();
+	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, Date createdOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType) {
 
-	
-		StringBuilder photoQueryBuilder = new StringBuilder();
-		photoQueryBuilder.append(" select distinct(p) from Photo p join p.library.groups g");
-		photoQueryBuilder.append(" where p.album.id = :albumId");
-		DaoHelper.appendGroupFilter(photoQueryBuilder, groupIds);
-		
-		if (photoSequenceType == PhotoSequenceType.PREVIOUS) {
-			preparePreviousPhotoSql(photoQueryBuilder, groupIds);
-		} else if (photoSequenceType == PhotoSequenceType.NEXT) {
-			prepareNextPhotoSql(photoQueryBuilder, groupIds);
+		Photo photo = null;
+
+		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
+			photo = getPhotoInSequence(userGroupIds, createdOn, albumId, PhotoSequenceType.PREVIOUS);
+		} else if (mediaItemSequenceType == MediaItemSequenceType.PHOTO_ALBUM) {
+			photo = getPhotoInSequence(userGroupIds, createdOn, albumId, PhotoSequenceType.ALBUM_PREVIOUS);
 		}
 
-		Query photoQuery = sessionFactory.getCurrentSession().createQuery(
-				photoQueryBuilder.toString());
-		photoQuery.setLong("photoId", photoId);
-		photoQuery.setLong("albumId", albumId);
-		photoQuery.setTimestamp("createdOn", photoCreatedOn);
+		return photo;
+	}
+
+	@Override
+	public Photo getNextPhotoInSequence(List<Long> userGroupIds, Date createdOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType) {
+
+		Photo photo = null;
+
+		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
+			photo = getPhotoInSequence(userGroupIds, createdOn, albumId, PhotoSequenceType.NEXT);
+		} else if (mediaItemSequenceType == MediaItemSequenceType.PHOTO_ALBUM) {
+			photo = getPhotoInSequence(userGroupIds, createdOn, albumId, PhotoSequenceType.ALBUM_NEXT);
+		}
+
+		return photo;
+	}
+
+	@Override
+	public Photo getFirstPhotoInSequence(List<Long> userGroupIds, Date createdOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType) {
+		Photo photo = null;
+
+		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
+			photo = getPhotoInSequence(userGroupIds, createdOn, albumId, PhotoSequenceType.FIRST);
+		} else if (mediaItemSequenceType == MediaItemSequenceType.PHOTO_ALBUM) {
+			photo = getPhotoInSequence(userGroupIds, createdOn, albumId, PhotoSequenceType.ALBUM_FIRST);
+		}
+
+		return photo;
+	}
+
+	@Override
+	public Photo getLastPhotoInSequence(List<Long> userGroupIds, Date createdOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType) {
+		Photo photo = null;
+
+		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
+			photo = getPhotoInSequence(userGroupIds, createdOn, albumId, PhotoSequenceType.LAST);
+		} else if (mediaItemSequenceType == MediaItemSequenceType.PHOTO_ALBUM) {
+			photo = getPhotoInSequence(userGroupIds, createdOn, albumId, PhotoSequenceType.ALBUM_LAST);
+		}
+
+		return photo;
+	}
+
+	public Photo getPhotoInSequence(List<Long> groupIds, Date photoCreatedOn, Long albumId,
+			PhotoSequenceType photoSequenceType) {
+		
+		boolean hasAlbumParameter = false;
+		boolean hasCreatedOnParameter = false;
+
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append(" select distinct(p) from Photo p join p.library.groups g");
+		queryBuilder.append(" where 1 = 1");
+
+		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+
+		if (photoSequenceType == PhotoSequenceType.ALBUM_PREVIOUS) {
+			queryBuilder.append(" and p.album.id = :albumId");
+			hasAlbumParameter = true;
+			preparePreviousPhotoSql(queryBuilder);
+			hasCreatedOnParameter = true;
+		} else if (photoSequenceType == PhotoSequenceType.ALBUM_NEXT) {
+			queryBuilder.append(" and p.album.id = :albumId");
+			hasAlbumParameter = true;
+			prepareNextPhotoSql(queryBuilder);
+			hasCreatedOnParameter = true;
+		} else if (photoSequenceType == PhotoSequenceType.PREVIOUS) {
+			preparePreviousPhotoSql(queryBuilder);
+			hasCreatedOnParameter = true;
+		} else if (photoSequenceType == PhotoSequenceType.NEXT) {
+			prepareNextPhotoSql(queryBuilder);
+			hasCreatedOnParameter = true;
+		} else if (photoSequenceType == PhotoSequenceType.ALBUM_FIRST) {
+			queryBuilder.append(" and p.album.id = :albumId");
+			hasAlbumParameter = true;
+			prepareFirstPhotoSql(queryBuilder);
+		} else if (photoSequenceType == PhotoSequenceType.FIRST) {
+			prepareFirstPhotoSql(queryBuilder);
+		} else if (photoSequenceType == PhotoSequenceType.ALBUM_LAST) {
+			queryBuilder.append(" and p.album.id = :albumId");
+			hasAlbumParameter = true;
+			prepareLastPhotoSql(queryBuilder);
+		} else if (photoSequenceType == PhotoSequenceType.LAST) {
+			prepareLastPhotoSql(queryBuilder);
+		}
+
+		Query photoQuery = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		
+		if (hasAlbumParameter) {
+			photoQuery.setLong("albumId", albumId);	
+		}
+		
+		if (hasCreatedOnParameter) {
+			photoQuery.setTimestamp("createdOn", photoCreatedOn);	
+		}
+		
 		photoQuery.setCacheable(true);
 		photoQuery.setFirstResult(0);
 		photoQuery.setMaxResults(1);
@@ -215,18 +289,23 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		return photos.get(0);
 	}
 
-	protected void preparePreviousPhotoSql(StringBuilder queryBuilder,
-			List<Long> groupIds) {
-		queryBuilder.append(" and p.createdOn <= :createdOn");
-		queryBuilder.append(" and p.id < :photoId");
-		queryBuilder.append(" order by p.id desc");
+	protected void prepareLastPhotoSql(StringBuilder queryBuilder) {
+		queryBuilder.append(" order by p.createdOn desc");
+
 	}
 
-	protected void prepareNextPhotoSql(StringBuilder queryBuilder,
-			List<Long> groupIds) {
-		queryBuilder.append(" and p.createdOn >= :createdOn");
-		queryBuilder.append(" and p.id > :photoId");
-		queryBuilder.append(" order by p.id asc");
+	protected void prepareFirstPhotoSql(StringBuilder queryBuilder) {
+		queryBuilder.append(" order by p.createdOn asc");
+	}
+
+	protected void preparePreviousPhotoSql(StringBuilder queryBuilder) {
+		queryBuilder.append(" and p.createdOn < :createdOn");
+		queryBuilder.append(" order by p.createdOn desc");
+	}
+
+	protected void prepareNextPhotoSql(StringBuilder queryBuilder) {
+		queryBuilder.append(" and p.createdOn > :createdOn");
+		queryBuilder.append(" order by p.createdOn asc");
 	}
 
 }

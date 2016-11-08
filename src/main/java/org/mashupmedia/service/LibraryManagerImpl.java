@@ -92,7 +92,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	@Override
 	public void saveAndRebuildLibrary(Library library) {
 		saveLibrary(library);
-		libraryDao.reinitialiseLibrary(library);
+		libraryDao.reinitialiseLibrary(library);			
 		libraryUpdateManager.updateLibrary(library);
 	}
 	

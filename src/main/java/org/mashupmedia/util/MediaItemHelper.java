@@ -69,6 +69,12 @@ public class MediaItemHelper {
 		}
 
 	}
+	
+	
+	public enum MediaItemSequenceType {
+		PHOTO_ALBUM, LATEST
+	}
+
 
 	public static MediaType getMediaType(String mediaTypeValue) {
 		if (mediaTypeValue == null) {
@@ -242,6 +248,22 @@ public class MediaItemHelper {
 		}
 		
 		return duration;
+	}
+
+	public static MediaItemSequenceType getSequenceType(String sequenceTypeValue) {
+		sequenceTypeValue = StringUtils.trimToEmpty(sequenceTypeValue);
+		if (StringUtils.isEmpty(sequenceTypeValue)) {
+			return MediaItemSequenceType.LATEST;
+		}
+		
+		MediaItemSequenceType[]  mediaItemSequenceTypes = MediaItemSequenceType.values();
+		for (MediaItemSequenceType mediaItemSequenceType : mediaItemSequenceTypes) {
+			if (sequenceTypeValue.equalsIgnoreCase(mediaItemSequenceType.name())) {
+				return mediaItemSequenceType;
+			}
+		}
+		
+		return MediaItemSequenceType.LATEST;	
 	}
 
 }

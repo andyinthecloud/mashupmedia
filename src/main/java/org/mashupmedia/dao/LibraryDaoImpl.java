@@ -61,7 +61,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		long id = library.getId();
 
 		if (id > 0) {
-			sessionFactory.getCurrentSession().merge(library);
+//			sessionFactory.getCurrentSession().merge(library);
+			sessionFactory.getCurrentSession().update(library);
 		} else {
 			sessionFactory.getCurrentSession().save(library);
 		}
@@ -191,7 +192,12 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	}
 	
 	@Override
-	public void reinitialiseLibrary(Library library) {		
+	public void reinitialiseLibrary(Library library) {			
+		long totalMediaItems = getTotalMediaItemsFromLibrary(library.getId());
+		if (totalMediaItems == 0) {
+			return;
+		}
+		
 		Query query = sessionFactory.getCurrentSession().createQuery("update MediaItem set fileLastModifiedOn = :fileLastModifiedOn where library.id = :libraryId");
 		query.setLong("fileLastModifiedOn", 0);
 		query.setLong("libraryId", library.getId());
@@ -199,4 +205,16 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		logger.info("Total media items reinitialised: " + totalItemsUpdated);		
 	}
 
+	
+	private long getTotalMediaItemsFromLibrary(long libraryId) {
+		StringBuilder queryBuilder = new StringBuilder(
+				"select count(mi.id) from MediaItem mi where mi.library.id = :libraryId ");
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		query.setCacheable(true);
+		query.setLong("libraryId", libraryId);
+		Long totalMediaItems = (Long) query.uniqueResult();
+		return totalMediaItems;
+	}
+
+	
 }

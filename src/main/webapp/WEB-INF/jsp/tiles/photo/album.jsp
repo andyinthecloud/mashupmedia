@@ -10,7 +10,7 @@
 		<c:otherwise>
 			<ul class="photo-thumbnails">
 				<c:forEach items="${album.photos}" var="photo">
-					<li><a href="<c:url value="/app/photo/show/${photo.id}/" />">
+					<li><a href="<c:url value="/app/photo/show/${photo.id}?sequenceType=photo_album" />">
 							<img alt="${photo.displayTitle}" title="${photo.displayTitle}"
 							src="<c:url value="/app/photo/thumbnail/${photo.id}" />" />
 					</a></li>

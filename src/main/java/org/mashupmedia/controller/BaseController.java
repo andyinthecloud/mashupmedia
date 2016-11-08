@@ -26,6 +26,8 @@ public abstract class BaseController {
 	protected final static String PARAM_FRAGMENT = "fragment";
 	protected final static String FRAGMENT_APPEND_PATH = ".fragment";
 	protected final static String PARAM_PAGE_NUMBER = "pageNumber";
+	protected final static String PARAM_SEQUENCE_TYPE = "sequenceType";
+
 
 	@Autowired
 	private PlaylistManager playlistManager;

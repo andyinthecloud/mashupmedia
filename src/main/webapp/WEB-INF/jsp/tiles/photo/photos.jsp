@@ -30,7 +30,7 @@
 			<c:forEach items="${photos}" var="photo">
 				<li class="photo"><a rel="internal"
 					title="${photo.displayTitle}"
-					href="<c:url value="/app/photo/show/${photo.id}/" />"> <img
+					href="<c:url value="/app/photo/show/${photo.id}?sequenceType=latest" />"> <img
 						alt="${photo.displayTitle}" title="${photo.displayTitle}"
 						src="<c:url value="/app/streaming/media/${photo.id}/thumbnail" />" />
 				</a></li>
