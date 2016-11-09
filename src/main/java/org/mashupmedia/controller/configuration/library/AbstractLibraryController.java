@@ -135,7 +135,7 @@ public abstract class AbstractLibraryController extends BaseController {
 			library.setRemoteShares(remoteShares);
 		}
 		
-		libraryManager.saveAndRebuildLibrary(library);
+		libraryManager.saveAndReinitialiseLibrary(library);
 	}
 
 	private void processDeleteAction(LibraryPage libraryPage) {

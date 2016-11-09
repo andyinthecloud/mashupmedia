@@ -33,7 +33,7 @@ public interface LibraryManager {
 
 	public List<Library> getLibraries(LibraryType libraryType);
 
-	public void saveAndRebuildLibrary(Library library);
+	public void saveAndReinitialiseLibrary(Library library);
 	
 	
 

@@ -17,8 +17,11 @@
 </c:if>
 
 
+<c:set var="sequence" value="latest" />
+
 <c:if test="${!empty album}">
 	<h1>${album.name}</h1>
+	<c:set var="sequence" value="photo_album" />
 </c:if>
 
 <c:choose>
@@ -30,7 +33,7 @@
 			<c:forEach items="${photos}" var="photo">
 				<li class="photo"><a rel="internal"
 					title="${photo.displayTitle}"
-					href="<c:url value="/app/photo/show/${photo.id}?sequenceType=latest" />"> <img
+					href="<c:url value="/app/photo/show/${photo.id}?sequenceType=${sequence}" />"> <img
 						alt="${photo.displayTitle}" title="${photo.displayTitle}"
 						src="<c:url value="/app/streaming/media/${photo.id}/thumbnail" />" />
 				</a></li>

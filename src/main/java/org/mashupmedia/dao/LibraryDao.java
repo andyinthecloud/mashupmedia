@@ -33,5 +33,7 @@ public interface LibraryDao {
 	public List<Library> getLibraries(LibraryType libraryType);
 
 	public void reinitialiseLibrary(Library library);
+	
+	public long getTotalMediaItemsFromLibrary(long libraryId);
 
 }

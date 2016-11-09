@@ -73,7 +73,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	@Override
 	public Library getLibrary(long id) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from Library where id = :id");
-		query.setLong("id", id);
+		query.setParameter("id", id);
 		query.setCacheable(true);
 		Library library = (Library) query.uniqueResult();
 		return library;
@@ -102,7 +102,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	@Override
 	public boolean hasRemoteLibrary(String path) {
 		Query query = sessionFactory.getCurrentSession().createQuery("select l from Library l where l.location.path = :path");
-		query.setString("path", path);
+		query.setParameter("path", path);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Library> libraries = query.list();
@@ -129,12 +129,12 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 		Query deleteVotesQuery = sessionFactory.getCurrentSession().createQuery(
 				"delete Vote v where id in (select id from Vote v where v.mediaItem.library.id = :libraryId)");
-		deleteVotesQuery.setLong("libraryId", libraryId);
+		deleteVotesQuery.setParameter("libraryId", libraryId);
 		deleteVotesQuery.executeUpdate();
 
 		Query deletePlaylistMediaQuery = sessionFactory.getCurrentSession().createQuery(
 				"delete PlaylistMediaItem where id in (select pmi.id from PlaylistMediaItem pmi where pmi.mediaItem.library.id = :libraryId)");
-		deletePlaylistMediaQuery.setLong("libraryId", libraryId);
+		deletePlaylistMediaQuery.setParameter("libraryId", libraryId);
 		deletePlaylistMediaQuery.executeUpdate();
 
 //		if (library instanceof MusicLibrary) {
@@ -149,7 +149,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		
 		Query deleteMediaItemsQuery = sessionFactory.getCurrentSession().createQuery(
 				"delete MediaItem where id in (select mi.id from MediaItem mi where mi.library.id = :libraryId)");
-		deleteMediaItemsQuery.setLong("libraryId", libraryId);
+		deleteMediaItemsQuery.setParameter("libraryId", libraryId);
 		deleteMediaItemsQuery.executeUpdate();
 
 		
@@ -161,7 +161,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	@Override
 	public List<Library> getLibrariesForGroup(long groupId) {
 		Query query = sessionFactory.getCurrentSession().createQuery("select l from Library l inner join l.groups g where g.id = :groupId order by l.name");		
-		query.setLong("groupId", groupId);
+		query.setParameter("groupId", groupId);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Library> libraries = (List<Library>) query.list();
@@ -171,7 +171,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	@Override
 	public RemoteShare getRemoteShare(Long remoteShareId) {
 		Query query = sessionFactory.getCurrentSession().createQuery("from RemoteShare where id = :remoteShareId");
-		query.setLong("remoteShareId", remoteShareId);
+		query.setParameter("remoteShareId", remoteShareId);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<RemoteShare> remoteShares = (List<RemoteShare>) query.list();
@@ -199,19 +199,20 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		}
 		
 		Query query = sessionFactory.getCurrentSession().createQuery("update MediaItem set fileLastModifiedOn = :fileLastModifiedOn where library.id = :libraryId");
-		query.setLong("fileLastModifiedOn", 0);
-		query.setLong("libraryId", library.getId());
+		query.setParameter("fileLastModifiedOn", 0);
+		query.setParameter("libraryId", library.getId());
 		int totalItemsUpdated = query.executeUpdate();
 		logger.info("Total media items reinitialised: " + totalItemsUpdated);		
 	}
 
 	
-	private long getTotalMediaItemsFromLibrary(long libraryId) {
+	@Override
+	public long getTotalMediaItemsFromLibrary(long libraryId) {
 		StringBuilder queryBuilder = new StringBuilder(
 				"select count(mi.id) from MediaItem mi where mi.library.id = :libraryId ");
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		query.setCacheable(true);
-		query.setLong("libraryId", libraryId);
+		query.setParameter("libraryId", libraryId);
 		Long totalMediaItems = (Long) query.uniqueResult();
 		return totalMediaItems;
 	}

@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.dao.PhotoDao;
 import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.library.PhotoLibrary;
@@ -25,7 +26,6 @@ import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -40,14 +40,15 @@ import com.drew.metadata.exif.ExifSubIFDDirectory;
 @Transactional
 public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager {
 
-	private final int PHOTOS_SAVE_AMOUNT_MAX_SIZE = 10;
-
 	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private PhotoDao photoDao;
 
 	private ProcessManager processManager;
+	
+	@Autowired
+	private LibraryDao libraryDao;
 
 	@Override
 	public void deleteObsoletePhotos(long libraryId, Date date) {
@@ -65,12 +66,13 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	@Override
 	public void updateLibrary(PhotoLibrary library, File folder, Date date) {
-		Long totalPhotosSaved = Long.valueOf(0);
-		processPhotos(totalPhotosSaved, folder, date, null, library);
-		logger.info("Total photos saved:" + totalPhotosSaved);
+		processPhotos(folder, date, null, library);
+		
+		long totalMediaItems = libraryDao.getTotalMediaItemsFromLibrary(library.getId());
+		logger.info("Total photos saved:" + totalMediaItems);
 	}
 
-	protected void processPhotos(Long totalPhotosSaved, File file, Date date, String albumName, PhotoLibrary library) {
+	protected void processPhotos(File file, Date date, String albumName, PhotoLibrary library) {
 
 		if (file.isDirectory()) {
 			if (StringUtils.isNotBlank(albumName)) {
@@ -86,11 +88,10 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 			Arrays.sort(files);
 			for (File childFile : files) {
-				processPhotos(totalPhotosSaved, childFile, date, albumName, library);
+				processPhotos(childFile, date, albumName, library);
 			}
 		}
 		
-		totalPhotosSaved++;
 
 		Album album = getAlbum(albumName, date);
 		album.setUpdatedOn(date);
@@ -165,14 +166,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 		photo.setUpdatedOn(date);
 
-		boolean isSessionFlush = false;
-		if (totalPhotosSaved % PHOTOS_SAVE_AMOUNT_MAX_SIZE == 0) {
-			isSessionFlush = true;
-		}
-		isSessionFlush = true;
-
-//		savePhoto(photo, isSessionFlush);
-		photoDao.savePhoto(photo, isSessionFlush);
+		photoDao.savePhoto(photo, true);
 	}
 
 	private boolean isCreatePhoto(File file, Photo photo) {
