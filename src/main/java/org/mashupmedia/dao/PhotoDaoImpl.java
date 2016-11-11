@@ -83,7 +83,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 		StringBuilder queryBuilder = new StringBuilder("select distinct p from Photo p join p.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" order by p.createdOn desc, p.fileLastModifiedOn desc");
+		queryBuilder.append(" order by p.createdOn desc");
 
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		query.setCacheable(true);
@@ -98,9 +98,16 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public List<Album> getAlbums() {
-		Query query = sessionFactory.getCurrentSession()
-				.createQuery("select a from org.mashupmedia.model.media.photo.Album a order by a.name");
+	public List<Album> getAlbums(MediaItemSequenceType mediaItemSequenceType) {
+
+		StringBuilder queryBuilder = new StringBuilder("select a from org.mashupmedia.model.media.photo.Album a");
+		if (mediaItemSequenceType == MediaItemSequenceType.ALPHABETICAL) {
+			queryBuilder.append(" order by a.name");
+		} else {
+			queryBuilder.append(" order by a.createdOn");
+		}
+
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -225,7 +232,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	public Photo getPhotoInSequence(List<Long> groupIds, Date photoCreatedOn, Long albumId,
 			PhotoSequenceType photoSequenceType) {
-		
+
 		boolean hasAlbumParameter = false;
 		boolean hasCreatedOnParameter = false;
 
@@ -266,15 +273,15 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		}
 
 		Query photoQuery = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
-		
+
 		if (hasAlbumParameter) {
-			photoQuery.setLong("albumId", albumId);	
+			photoQuery.setLong("albumId", albumId);
 		}
-		
+
 		if (hasCreatedOnParameter) {
-			photoQuery.setTimestamp("createdOn", photoCreatedOn);	
+			photoQuery.setTimestamp("createdOn", photoCreatedOn);
 		}
-		
+
 		photoQuery.setCacheable(true);
 		photoQuery.setFirstResult(0);
 		photoQuery.setMaxResults(1);

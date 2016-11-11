@@ -72,7 +72,7 @@ public class MediaItemHelper {
 	
 	
 	public enum MediaItemSequenceType {
-		PHOTO_ALBUM, LATEST
+		PHOTO_ALBUM, LATEST, ALPHABETICAL
 	}
 
 

@@ -17,7 +17,7 @@ public interface PhotoDao {
 
 	public List<Photo> getLatestPhotos(List<Long> groupIds, int firstResult, int totalItems);
 
-	public List<Album> getAlbums();
+	public List<Album> getAlbums(MediaItemSequenceType mediaItemSequenceType);
 
 	public List<Photo> getObsoletePhotos(long libraryId, Date date);
 

@@ -1,15 +1,29 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+        window.scrollTo(0, 0);
+		
+        $("#photo-albums-view input[name='photo-albums-sort']").click(function() {
+            loadInternalPage(document.title, "<c:url value='/app/photo/albums?sort=' />" + $(this).val());
+        });
+        
+        showFooterTabs("photo-photos");
+
+    });
+</script>
+
+
 <div class="ui-field-contain">
 	<fieldset data-role="controlgroup" data-type="horizontal"
 		id="photo-albums-view">
 		<input name="photo-albums-sort" id="photo-albums-sort-latest"
 			value="latest" type="radio"
-			<c:if test="${photoListType == 'LATEST'}">checked="checked"</c:if> />
+			<c:if test="${mediaItemSequenceType == 'LATEST'}">checked="checked"</c:if> />
 		<label for="photo-albums-sort-latest"><spring:message
 				code="photo-albums.sort.latest" /></label> <input name="photo-albums-sort"
 			id="photo-albums-sort-alphabetical" value="alphabetical" type="radio"
-			<c:if test="${photoListType == 'ALPHABETICAL'}">checked="checked"</c:if> />
+			<c:if test="${mediaItemSequenceType == 'ALPHABETICAL'}">checked="checked"</c:if> />
 		<label for="photo-albums-sort-alphabetical"><spring:message
 				code="photo-albums.sort.alphabetical" /></label>
 	</fieldset>

@@ -160,7 +160,6 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			String title = StringUtils.trimToEmpty(fileName);
 			photo.setDisplayTitle(title);
 			photo.setSearchText(album.getName() + " " + title);
-			// photos.add(photo);
 			
 		}
 

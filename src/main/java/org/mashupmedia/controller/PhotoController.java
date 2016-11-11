@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
@@ -30,7 +31,7 @@ public class PhotoController extends BaseController {
 	private static String MODEL_KEY_ALBUM = "album";
 
 	public enum PhotoListType {
-		LATEST("photo-list-latest");
+		LATEST("photo-list-latest"), ALBUM("photo-list-album");
 
 		private PhotoListType(String className) {
 			this.className = className;
@@ -148,7 +149,7 @@ public class PhotoController extends BaseController {
 		Album album = photoManager.getAlbum(albumId);
 		List<Breadcrumb> breadcrumbs = getAlbumBreadcrumbs(album);
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
-
+		model.addAttribute(PhotoListType.ALBUM);
 		model.addAttribute(MODEL_KEY_ALBUM, album);
 
 		List<Photo> photos = album.getPhotos();
@@ -160,16 +161,21 @@ public class PhotoController extends BaseController {
 
 	@RequestMapping(value = "/albums", method = RequestMethod.GET)
 	public String handleGetPhotoAlbumList(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
-			Model model) {
+			@RequestParam(value = PARAM_SEQUENCE_TYPE, required = false) String sequenceTypeValue, Model model) {
 
 		List<Breadcrumb> breadcrumbs = getListAlbumsBreadcrumbs();
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
-
-		List<Album> albums = photoManager.getAlbums();
+				
+		MediaItemSequenceType sequenceType = MediaItemHelper.getSequenceType(sequenceTypeValue);
+		model.addAttribute(sequenceType);
+		
+		List<Album> albums = photoManager.getAlbums(sequenceType);
 		model.addAttribute("albums", albums);
 
 		String pagePath = getPath(isFragment, "photo.albums");
 		return pagePath;
 	}
+
+
 
 }

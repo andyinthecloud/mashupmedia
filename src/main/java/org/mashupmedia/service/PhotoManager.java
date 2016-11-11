@@ -10,7 +10,7 @@ public interface PhotoManager {
 	
 	public List<Photo> getLatestPhotos(int pageNumber, int totalItems);
 
-	public List<Album> getAlbums();
+	public List<Album> getAlbums(MediaItemSequenceType sequenceType);
 
 	public Album getAlbum(long albumId);
 
