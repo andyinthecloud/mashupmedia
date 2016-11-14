@@ -1,5 +1,7 @@
 package org.mashupmedia.model.media.photo;
 
+import java.util.Date;
+
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -18,7 +20,6 @@ import org.mashupmedia.model.media.MediaItem;
 public class Photo extends MediaItem {
 
 	private static final long serialVersionUID = -2278500438492214953L;
-	
 
 	@IndexedEmbedded
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -26,16 +27,22 @@ public class Photo extends MediaItem {
 	private String thumbnailPath;
 	private String webOptimisedImagePath;
 	private int orientation;
+	private Date takenOn;
 
 	@Transient
-	private Photo previousPhoto;	
-	
+	private Photo previousPhoto;
+
 	@Transient
-	private Photo nextPhoto;		
-	
-	
-	
-	
+	private Photo nextPhoto;
+
+	public Date getTakenOn() {
+		return takenOn;
+	}
+
+	public void setTakenOn(Date takenOn) {
+		this.takenOn = takenOn;
+	}
+
 	public Photo getPreviousPhoto() {
 		return previousPhoto;
 	}

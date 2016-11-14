@@ -5,7 +5,7 @@
         window.scrollTo(0, 0);
 		
         $("#photo-albums-view input[name='photo-albums-sort']").click(function() {
-            loadInternalPage(document.title, "<c:url value='/app/photo/albums?sort=' />" + $(this).val());
+            loadInternalPage(document.title, "<c:url value='/app/photo/albums?sequenceType=' />" + $(this).val());
         });
         
         showFooterTabs("photo-photos");

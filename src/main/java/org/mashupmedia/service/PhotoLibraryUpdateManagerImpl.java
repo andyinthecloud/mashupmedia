@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
@@ -46,7 +45,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	private PhotoDao photoDao;
 
 	private ProcessManager processManager;
-	
+
 	@Autowired
 	private LibraryDao libraryDao;
 
@@ -67,7 +66,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	@Override
 	public void updateLibrary(PhotoLibrary library, File folder, Date date) {
 		processPhotos(folder, date, null, library);
-		
+
 		long totalMediaItems = libraryDao.getTotalMediaItemsFromLibrary(library.getId());
 		logger.info("Total photos saved:" + totalMediaItems);
 	}
@@ -91,7 +90,6 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				processPhotos(childFile, date, albumName, library);
 			}
 		}
-		
 
 		Album album = getAlbum(albumName, date);
 		album.setUpdatedOn(date);
@@ -102,10 +100,10 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 		if (isCreatePhoto(file, photo)) {
 			if (photo == null) {
-				photo = new Photo();	
+				photo = new Photo();
 				photo.setCreatedOn(new Date());
 			}
-			
+
 			photo.setAlbum(album);
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
@@ -114,7 +112,12 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				return;
 			}
 
-			Set<MediaEncoding> mediaEncodings = new HashSet<MediaEncoding>();
+			
+			Set<MediaEncoding> mediaEncodings = photo.getMediaEncodings();
+			if (mediaEncodings == null) {
+				mediaEncodings = new HashSet<MediaEncoding>();
+			}
+			mediaEncodings.clear();
 			MediaEncoding mediaEncoding = new MediaEncoding();
 			mediaEncoding.setMediaContentType(mediaContentType);
 			mediaEncoding.setOriginal(true);
@@ -160,7 +163,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			String title = StringUtils.trimToEmpty(fileName);
 			photo.setDisplayTitle(title);
 			photo.setSearchText(album.getName() + " " + title);
-			
+
 		}
 
 		photo.setUpdatedOn(date);
@@ -187,24 +190,46 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	protected void processPhotoMetadata(File file, Photo photo)
 			throws ImageProcessingException, IOException, MetadataException {
-		Metadata metadata = ImageMetadataReader.readMetadata(file);
-		for (Directory directory : metadata.getDirectories()) {
-			if (directory == null) {
-				continue;
-			}
-			if (directory instanceof ExifSubIFDDirectory) {
-				ExifSubIFDDirectory exifSubIFDDirectory = (ExifSubIFDDirectory) directory;
-				Date date = exifSubIFDDirectory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
-				if (date != null) {
-					photo.setCreatedOn(date);
-				}
 
-			} else if (directory instanceof ExifIFD0Directory) {
-				ExifIFD0Directory exifIFD0Directory = (ExifIFD0Directory) directory;
-				int orientation = exifIFD0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-				photo.setOrientation(orientation);
+		Metadata metadata = ImageMetadataReader.readMetadata(file);
+
+		Date takenOn = getTakenOnDatefromMeta(file, metadata);
+		photo.setTakenOn(takenOn);
+
+		int orientation = getOrientatonFromMeta(metadata);
+		photo.setOrientation(orientation);
+	}
+
+	protected int getOrientatonFromMeta(Metadata metadata) throws MetadataException {
+		int orientation = 0;
+		ExifIFD0Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
+		if (directory != null) {
+			orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+		}
+
+		return orientation;
+
+	}
+
+	protected Date getTakenOnDatefromMeta(File file, Metadata metadata) {
+		ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
+		if (exifIFD0Directory != null) {
+			Date date = exifIFD0Directory.getDate(ExifIFD0Directory.TAG_DATETIME);
+			if (date != null) {
+				return date;
 			}
 		}
+
+		ExifSubIFDDirectory subDir = metadata.getDirectory(ExifSubIFDDirectory.class);
+		if (subDir != null) {
+			Date date = subDir.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+			if (date != null) {
+				return date;
+			}
+		}
+
+		Date date = new Date(file.lastModified());
+		return date;
 	}
 
 	protected Photo getPhotoByAbsolutePath(String path) {
