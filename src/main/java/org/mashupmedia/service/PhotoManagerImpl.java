@@ -62,18 +62,18 @@ public class PhotoManagerImpl implements PhotoManager {
 
 	protected void preparePhotoSequence(Photo photo, MediaItemSequenceType mediaItemSequenceType) {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		Date createdOn = photo.getCreatedOn();
+		Date takenOn = photo.getTakenOn();
 		Long albumId = photo.getAlbum().getId();
 
-		Photo previousPhoto = photoDao.getPreviousPhotoInSequence(userGroupIds, createdOn, albumId, mediaItemSequenceType);
+		Photo previousPhoto = photoDao.getPreviousPhotoInSequence(userGroupIds, takenOn, albumId, mediaItemSequenceType);
 		if (previousPhoto == null) {
-			previousPhoto = photoDao.getLastPhotoInSequence(userGroupIds, createdOn, albumId, mediaItemSequenceType);
+			previousPhoto = photoDao.getLastPhotoInSequence(userGroupIds, takenOn, albumId, mediaItemSequenceType);
 		}
 		photo.setPreviousPhoto(previousPhoto);
 		
-		Photo nextPhoto = photoDao.getNextPhotoInSequence(userGroupIds, createdOn, albumId, mediaItemSequenceType);
+		Photo nextPhoto = photoDao.getNextPhotoInSequence(userGroupIds, takenOn, albumId, mediaItemSequenceType);
 		if (nextPhoto == null) {
-			nextPhoto = photoDao.getFirstPhotoInSequence(userGroupIds, createdOn, albumId, mediaItemSequenceType);
+			nextPhoto = photoDao.getFirstPhotoInSequence(userGroupIds, takenOn, albumId, mediaItemSequenceType);
 		}		
 		photo.setNextPhoto(nextPhoto);
 		

@@ -83,7 +83,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 		StringBuilder queryBuilder = new StringBuilder("select distinct p from Photo p join p.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" order by p.createdOn desc");
+		queryBuilder.append(" order by p.takenOn desc");
 
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		query.setCacheable(true);
@@ -104,7 +104,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		if (mediaItemSequenceType == MediaItemSequenceType.ALPHABETICAL) {
 			queryBuilder.append(" order by a.name");
 		} else {
-			queryBuilder.append(" order by a.createdOn");
+			queryBuilder.append(" order by a.updatedOn");
 		}
 
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
@@ -160,7 +160,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 				"select distinct p from Photo p join p.library.groups g");
 		listPhotosQueryBuilder.append(" where p.album.id = :albumId");
 		DaoHelper.appendGroupFilter(listPhotosQueryBuilder, groupIds);
-		listPhotosQueryBuilder.append(" order by p.createdOn");
+		listPhotosQueryBuilder.append(" order by p.takenOn");
 		Query listPhotosQuery = sessionFactory.getCurrentSession().createQuery(listPhotosQueryBuilder.toString());
 		listPhotosQuery.setLong("albumId", albumId);
 		listPhotosQuery.setCacheable(true);
@@ -173,15 +173,15 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, Date createdOn, Long albumId,
+	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType) {
 
 		Photo photo = null;
 
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
-			photo = getPhotoInSequence(userGroupIds, createdOn, albumId, PhotoSequenceType.PREVIOUS);
+			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.PREVIOUS);
 		} else if (mediaItemSequenceType == MediaItemSequenceType.PHOTO_ALBUM) {
-			photo = getPhotoInSequence(userGroupIds, createdOn, albumId, PhotoSequenceType.ALBUM_PREVIOUS);
+			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.ALBUM_PREVIOUS);
 		}
 
 		return photo;
@@ -230,7 +230,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		return photo;
 	}
 
-	public Photo getPhotoInSequence(List<Long> groupIds, Date photoCreatedOn, Long albumId,
+	public Photo getPhotoInSequence(List<Long> groupIds, Date takenOn, Long albumId,
 			PhotoSequenceType photoSequenceType) {
 
 		boolean hasAlbumParameter = false;
@@ -279,7 +279,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		}
 
 		if (hasCreatedOnParameter) {
-			photoQuery.setTimestamp("createdOn", photoCreatedOn);
+			photoQuery.setTimestamp("takenOn", takenOn);
 		}
 
 		photoQuery.setCacheable(true);
