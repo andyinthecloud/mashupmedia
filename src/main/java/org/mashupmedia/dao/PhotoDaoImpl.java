@@ -1,6 +1,8 @@
 package org.mashupmedia.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -99,13 +101,29 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public List<Album> getAlbums(MediaItemSequenceType mediaItemSequenceType) {
+		List<Album> albums = null;
+		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
+			albums = getAlbums();
+		} else {
+			albums = getLatestAlbums();
+		}
+
+		return albums;
+	}
+
+	protected List<Album> getLatestAlbums() {
+		StringBuilder queryBuilder = new StringBuilder("select a from Photo p join p.album a order by p.takenOn desc");
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<Album> albums = new ArrayList<Album>(new LinkedHashSet<Album>(query.list()));
+		return albums;
+	}
+
+	protected List<Album> getAlbums() {
 
 		StringBuilder queryBuilder = new StringBuilder("select a from org.mashupmedia.model.media.photo.Album a");
-		if (mediaItemSequenceType == MediaItemSequenceType.ALPHABETICAL) {
-			queryBuilder.append(" order by a.name");
-		} else {
-			queryBuilder.append(" order by a.updatedOn");
-		}
+		queryBuilder.append(" order by a.name");
 
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 

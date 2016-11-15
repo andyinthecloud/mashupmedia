@@ -111,7 +111,6 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			if (!MediaItemHelper.isCompatiblePhotoFormat(mediaContentType)) {
 				return;
 			}
-
 			
 			Set<MediaEncoding> mediaEncodings = photo.getMediaEncodings();
 			if (mediaEncodings == null) {
