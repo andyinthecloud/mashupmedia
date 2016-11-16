@@ -42,10 +42,11 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager {
 	private final int BATCH_INSERT_ITEMS = 20;
 

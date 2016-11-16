@@ -276,6 +276,11 @@ public class FileHelper {
 		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
 		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
+	
+	public static boolean deleteFile(String filePath) {		
+		File file = new File(filePath);
+		return deleteFile(file);				
+	}
 
 	public static boolean deleteFile(File file) {
 		if (file.isDirectory()) {
@@ -334,11 +339,7 @@ public class FileHelper {
 		}
 	}
 
-	public static void deletePhotoThumbnail(String thumbnailPath) {
-		File thumbnailFile = new File(thumbnailPath);
-		boolean isDeleted = thumbnailFile.delete();
-		logger.info("Photo thumbnail delete status = " + isDeleted);
-	}
+
 
 	public static boolean isEmptyBytes(byte[] bytes) {
 		if (bytes == null || bytes.length == 0) {

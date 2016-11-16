@@ -26,6 +26,7 @@ import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -36,7 +37,7 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 @Service
-@Transactional
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager {
 
 	private Logger logger = Logger.getLogger(getClass());
@@ -56,8 +57,8 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 		for (Photo photo : photos) {
 			processManager.killProcesses(photo.getId());
-			photo.getThumbnailPath();
-			FileHelper.deletePhotoThumbnail(photo.getThumbnailPath());
+			FileHelper.deleteFile(photo.getThumbnailPath());
+			FileHelper.deleteFile(photo.getWebOptimisedImagePath());
 		}
 
 		logger.info(totalDeletedPhotos + " obsolete photos deleted.");
