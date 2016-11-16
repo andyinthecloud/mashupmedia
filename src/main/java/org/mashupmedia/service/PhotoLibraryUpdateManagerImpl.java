@@ -73,11 +73,18 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	protected void processPhotos(File file, Date date, String albumName, PhotoLibrary library) {
 
+		String fileName = file.getName();
+		
 		if (file.isDirectory()) {
-			if (StringUtils.isNotBlank(albumName)) {
-				albumName += " / " + file.getName();
+			
+			if (fileName.startsWith(".")) {
+				return;
+			}
+			
+			if (StringUtils.isNotBlank(fileName)) {
+				albumName += " / " + fileName;
 			} else {
-				albumName = file.getName();
+				albumName = fileName;
 			}
 
 			File[] files = file.listFiles();
@@ -94,7 +101,6 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		Album album = getAlbum(albumName, date);
 		album.setUpdatedOn(date);
 
-		String fileName = file.getName();
 		String path = file.getAbsolutePath();
 		Photo photo = getPhotoByAbsolutePath(path);
 

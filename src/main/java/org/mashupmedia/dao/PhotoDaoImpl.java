@@ -103,9 +103,9 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	public List<Album> getAlbums(MediaItemSequenceType mediaItemSequenceType) {
 		List<Album> albums = null;
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
-			albums = getAlbums();
-		} else {
 			albums = getLatestAlbums();
+		} else {
+			albums = getAlbums();
 		}
 
 		return albums;

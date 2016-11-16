@@ -10,7 +10,7 @@
             });
             
             
-            showFooterTabs("photo-photos");
+            showFooterTabs("photo-albums");
             
         });
     </script>

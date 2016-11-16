@@ -8,7 +8,7 @@
             loadInternalPage(document.title, "<c:url value='/app/photo/albums?sequenceType=' />" + $(this).val());
         });
         
-        showFooterTabs("photo-photos");
+        showFooterTabs("photo-albums");
 
     });
 </script>
