@@ -94,7 +94,7 @@ public class ImageHelper {
 			throws IOException {
 
 		if (StringUtils.isBlank(imageFilePath)) {
-			return null;
+			throw new IOException("Unable to read image file path is empty");
 		}
 
 		FileType fileType = FileType.PHOTO_THUMBNAIL;
@@ -115,7 +115,7 @@ public class ImageHelper {
 			ImageRotationType imageRotationType) throws IOException {
 		File imageFile = new File(imageFilePath);
 		if (!imageFile.exists()) {
-			return null;
+			throw new IOException("Unable to read image file path is empty");
 		}
 
 		FileInputStream imageFileInputStream = new FileInputStream(imageFile);
@@ -125,7 +125,7 @@ public class ImageHelper {
 
 		BufferedImage bufferedImage = processImage(image, width, height, imageRotationType);
 		if (bufferedImage == null) {
-			return null;
+			throw new IOException("Unable to read image");
 		}
 		
 		FileOutputStream outputStream = new FileOutputStream(file);

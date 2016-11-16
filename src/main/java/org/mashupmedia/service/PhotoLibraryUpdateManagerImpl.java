@@ -37,7 +37,7 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 @Service
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Transactional(propagation = Propagation.REQUIRED)
 public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager {
 
 	private Logger logger = Logger.getLogger(getClass());
@@ -82,7 +82,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				return;
 			}
 			
-			if (StringUtils.isNotBlank(fileName)) {
+			if (StringUtils.isNotBlank(albumName) && StringUtils.isNotBlank(fileName)) {
 				albumName += " / " + fileName;
 			} else {
 				albumName = fileName;
