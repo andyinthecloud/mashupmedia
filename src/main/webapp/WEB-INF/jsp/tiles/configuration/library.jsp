@@ -5,16 +5,16 @@
     $(document).ready(function() {
         var locationType = $("#location input:radio[name=locationType]:checked").val();
 
-        $("div.ui-content form").on("click", "#location input[name='locationType']", function() {
+        $("#location input[name='locationType']").click(function() {
             var locationType = $(this).attr("value");
             showLocation(locationType);
         });
 
-        $("div.ui-content form").on("click", "#remote-share-panel", function() {
+        $("#remote-share-panel").click(function() {
             $(this).select();
         });
 
-        $("div.ui-content form").on("click", "#location div.check-location a", function() {
+        $("#location div.check-location a").click(function() {
             var path = $("#folderLocation-path").val();
             if (path.length == 0) { return; }
 
@@ -33,29 +33,20 @@
 
         showRemoteShares();
 
-        $("#libraryPage input:submit").click(function() {
+        $("#libraryPage input.submit").click(function() {
             var action = $(this).attr("name");
             $("#action").val(action);
+            submitAjaxForm($("#libraryPage"), "<spring:message code ="list-libraries.title" />", "<c:url value="/app/configuration/list-libraries" />");
         });
 
-        $("div.ui-content").on("click", "#libraryPage input:submit", function() {
-            var action = $(this).attr("name");
-            $("#action").val(action);
-
-        });
-
-        $("div.ui-content #libraryPage").submit(function(event) {
-            event.preventDefault();
-            submitAjaxForm($(this), "<spring:message code ="list-libraries.title" />", "<c:url value="/app/configuration/list-libraries" />");
-        });
 
         $("#remote-share-panel").hide();
 
-        $("div.ui-content form").on("click", "#remote-share", function() {
+        $("#remote-share").click(function() {
             $("#remote-share-panel").toggle();
         });
 
-        $("div.ui-content form").on("click", "#create-remote-link", function() {
+        $("#create-remote-link").click(function() {
             $.ajax({
                 url: "<c:url value="/app/ajax/library/add-remote-share"/>",
                 type: "post",
@@ -68,7 +59,7 @@
             });
         });
 
-        $("div.ui-content form").on("click", "#save-library-remote-connections", function() {
+        $("#save-library-remote-connections").click(function() {
             var remoteShareIds = new Array();
             $("#remote-share-panel > table > tbody > tr").each(function() {
                 if ($(this).find("input[type='checkbox']").is(":checked")) {
@@ -268,10 +259,10 @@
 
 
 	<div class="button-panel">
-		<input class="button" name="save" type="submit"
+		<input class="button submit" name="save" type="button"
 			value="<spring:message code="action.save" />" />
 		<c:if test="${libraryPage.isExists}">
-			<input class="button" name="delete" type="submit"
+			<input class="button submit" name="delete" type="button"
 				value="<spring:message code="action.delete" />" />
 		</c:if>
 	</div>
