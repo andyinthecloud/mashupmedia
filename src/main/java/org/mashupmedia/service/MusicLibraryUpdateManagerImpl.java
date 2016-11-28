@@ -46,7 +46,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(propagation = Propagation.REQUIRED)
+@Transactional(propagation = Propagation.NEVER)
 public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager {
 	private final int BATCH_INSERT_ITEMS = 20;
 
@@ -85,6 +85,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void deleteObsoleteSongs(long libraryId, Date date) {
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
 		for (Song song : songsToDelete) {
@@ -119,12 +120,14 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs, Date date) {
 		if (songs == null || songs.isEmpty()) {
 			return;
 		}
 
-		List<Long> groupIds = groupDao.getGroupIds();
+		List<Long> groupIds = getGroupIds();
+		
 		long libraryId = musicLibrary.getId();
 		long totalSongsSaved = 0;
 
@@ -137,13 +140,13 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			File file = new File(songPath);
 			long fileLastModifiedOn = file.lastModified();
 			song.setFileLastModifiedOn(fileLastModifiedOn);
-			Song savedSong = musicDao.getSong(groupIds, libraryId, songPath, fileLastModifiedOn);
+			Song savedSong = getSavedSong(groupIds, libraryId, songPath, fileLastModifiedOn);
 
 			if (savedSong != null) {
 				long savedSongId = savedSong.getId();
 				song.setId(savedSongId);
 				savedSong.setUpdatedOn(song.getUpdatedOn());
-				musicDao.saveSong(savedSong);
+				saveSong(savedSong, false);
 				logger.info("Song is already in database, updated song date.");
 				writeSongToXml(libraryId, savedSong);
 				encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedSong,
@@ -229,7 +232,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			searchText = StringHelper.normaliseTextForDatabase(searchText);
 			song.setSearchText(searchText);
 
-			musicDao.saveSong(song, isSessionFlush);
+			saveSong(song, isSessionFlush);			
 			writeSongToXml(libraryId, song);
 
 //			encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(song, MediaContentType.MP3);
@@ -242,6 +245,23 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	}
 
+	@Transactional
+	private void saveSong(Song song, boolean isSessionFlush) {
+		musicDao.saveSong(song, isSessionFlush);
+	}
+	
+	@Transactional
+	private List<Long> getGroupIds() {
+		List<Long> groupIds = groupDao.getGroupIds();
+		return groupIds;
+	}
+
+	@Transactional
+	private Song getSavedSong(List<Long> groupIds, long libraryId, String songPath, long fileLastModifiedOn) {
+		Song savedSong = musicDao.getSong(groupIds, libraryId, songPath, fileLastModifiedOn);
+		return savedSong;
+	}
+
 	protected void writeSongToXml(long libraryId, Song song) {
 		try {
 			mapperManager.writeSongToXml(libraryId, song);
@@ -251,6 +271,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	}
 
+	@Transactional
 	private Genre prepareGenre(Genre genre) {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
 			return null;
@@ -266,6 +287,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return genre;
 	}
 
+	@Transactional
 	private Year prepareYear(Year year) {
 		if (year == null || year.getYear() == 0) {
 			return null;
@@ -503,6 +525,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return artist;
 	}
 
+	@Transactional
 	private Album prepareAlbum(List<Long> userGroupIds, Album album) {
 		Artist artist = album.getArtist();
 		String albumName = album.getName();
@@ -544,38 +567,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
+	@Transactional
 	public void deleteEmpty() {
 		musicDao.deleteEmptyAlbums();
 		musicDao.deleteEmptyArtists();
-
-		// musicDao.deleteEmptyArt();
-
-		// List<Artist> artists = getArtists();
-		// for (Artist artist : artists) {
-		// List<Album> albums = musicDao.getAlbumsByArtist(groupIds,
-		// artist.getId());
-		// if (albums == null || albums.isEmpty()) {
-		// musicDao.deleteArtist(artist);
-		// continue;
-		// }
-		//
-		// for (Album album : albums) {
-		// List<Song> songs = musicDao.getSongs(groupIds, album.getId());
-		// if (songs == null || songs.isEmpty()) {
-		// musicDao.deleteAlbum(album);
-		//
-		// }
-		// }
-		// }
 	}
-
-	// private List<Artist> getArtists() {
-	// List<Long> groupIds = groupDao.getGroupIds();
-	// List<Artist> artists = musicDao.getArtists(groupIds);
-	// for (Artist artist : artists) {
-	// Hibernate.initialize(artist.getAlbums());
-	// }
-	// return artists;
-	// }
 
 }

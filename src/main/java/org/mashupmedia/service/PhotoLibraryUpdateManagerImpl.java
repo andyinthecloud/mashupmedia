@@ -37,7 +37,7 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 @Service
-@Transactional(propagation = Propagation.REQUIRED)
+@Transactional(propagation = Propagation.NEVER)
 public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager {
 
 	private Logger logger = Logger.getLogger(getClass());
@@ -173,10 +173,14 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		}
 
 		photo.setUpdatedOn(date);
-
-		photoDao.savePhoto(photo, true);
+		savePhoto(photo);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED)
+	protected void savePhoto(Photo photo) {
+		photoDao.savePhoto(photo, true);
+	}
+	
 	private boolean isCreatePhoto(File file, Photo photo) {
 
 		if (photo == null) {
@@ -238,28 +242,33 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		return date;
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED)
 	protected Photo getPhotoByAbsolutePath(String path) {
 		Photo photo = photoDao.getPhotoByAbsolutePath(path);
 		return photo;
 	}
-
+	
 	protected Album getAlbum(String albumName, Date date) {
 		albumName = StringUtils.trimToEmpty(albumName);
-
-		Album album = null;
-		if (StringUtils.isEmpty(albumName)) {
-			album = createAlbum(albumName, date);
-			return album;
+		
+		Album savedAlbum = getAlbum(albumName);
+		if (savedAlbum != null) {
+			return savedAlbum;
 		}
-
+		
+		Album album = createAlbum(albumName, date);
+		return album;
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	protected Album getAlbum(String albumName) {
 		List<Album> albums = photoDao.getAlbums(albumName);
 		if (albums != null && !albums.isEmpty()) {
 			return albums.get(0);
 		}
-
-		album = createAlbum(albumName, date);
-		return album;
+		return null;
 	}
+	
 
 	protected Album createAlbum(String albumName, Date date) {
 		Album album = new Album();

@@ -34,7 +34,7 @@
 		<property name="queueCapacity" value="50" />
 	</bean>
 
-	<tx:annotation-driven transaction-manager="transactionManager" />
+	<tx:annotation-driven transaction-manager="transactionManager"/>
 
 	<bean id="sessionFactory" factory-bean="serviceLocator"
 		factory-method="createSessionFactory" />

@@ -4,22 +4,14 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		
-		$("div.ui-content").on("click", "#choose-library-type a.ui-btn", function() {
+		$("#choose-library-type a.ui-btn").click(function() {
 			var checkedLibraryTypeElement = $("#choose-library-type input[name=libraryType]:checked");
 			
 			if (checkedLibraryTypeElement) {
 				var libraryType = $("#choose-library-type input[name=libraryType]:checked").val();
 				var libraryUrl = "<c:url value="/app/configuration/library/" />" + libraryType;
-								
-				$.get(libraryUrl + "?fragment=true", function(data) {
-					var uiContentElement = $("div.ui-content");
-					uiContentElement.html(data);
-					uiContentElement.enhanceWithin();
-					
-					History.pushState({
-						pageType : "internal"
-					}, checkedLibraryTypeElement.attr("title"), libraryUrl);					
-				});
+				var title = checkedLibraryTypeElement.attr("title");				
+				loadInternalPage(title, libraryUrl);
 			}
 		});
 	});

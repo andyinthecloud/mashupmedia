@@ -29,8 +29,6 @@ public class LibraryManagerImpl implements LibraryManager {
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 	@Autowired
 	private AdminManager adminManager;
-	@Autowired	
-	private LibraryUpdateManager libraryUpdateManager;
 
 	@Override
 	public List<Library> getLocalLibraries(LibraryType libraryType) {

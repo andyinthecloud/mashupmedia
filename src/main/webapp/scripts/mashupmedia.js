@@ -183,13 +183,6 @@ var mashupMedia = new function() {
 	}
 
 	this.playCurrentSong = function() {
-	    /*
-	    $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/current", function(data) {       
-	        mashupMedia.streamSong(data);          
-	    });
-	    */
-	    	    	    
-
 	    $.ajax({
             method: "GET",
             url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/current",
@@ -200,11 +193,6 @@ var mashupMedia = new function() {
 	};
 	    
 	this.playNextSong = function() {
-	    /*
-	    $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/next", function(data) {	        
-	        mashupMedia.streamSong(data);	       
-		});
-		*/
         $.ajax({
             method: "GET",
             url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/next",
@@ -216,11 +204,6 @@ var mashupMedia = new function() {
 	};
 	
 	this.playPreviousSong = function() {
-	    /*
-        $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/previous", function(data) {       
-            mashupMedia.streamSong(data);            
-        });
-        */
         $.ajax({
             method: "GET",
             url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/previous",
@@ -821,18 +804,20 @@ function submitAjaxForm(formElement, pushTitle, pushUrl) {
 }
 	
 function loadInternalPage(title, url) {    
+    url = prepareInternalUrlFragment(url);
+    
     History.pushState({
         pageType: "internal"
     }, title, url);
     
-    url = prepareInternalUrlFragment(url);
-    
+    /*
     $.get(url, function(data) {
         var uiContentElement = $("div.ui-content div.dynamic-content");
         uiContentElement.html(data);
         uiContentElement.enhanceWithin();
         
-    });    
+    });
+    */    
     
 }
 	
