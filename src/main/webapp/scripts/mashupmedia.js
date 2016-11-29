@@ -247,18 +247,6 @@ var mashupMedia = new function() {
 	    this.filterPageNumber = 0;
 	};
 	
-	/*
-	this.playSong = function(songId) {
-		$.get(mashupMedia.contextUrl + "/app/ajax/playlist/play-song", {
-			"songId" : songId
-		}, function(data) {
-			var mediaItemId = data.mediaItem.id;
-			var playlistId = data.mediaItem.playlistId;
-			mashupMedia.loadSongFromPlaylist(playlistId, mediaItemId, true);
-		});
-	};
-	*/
-
     this.playSongSearchResults = function() {    	
 		loadSearchResults(true);    
     };

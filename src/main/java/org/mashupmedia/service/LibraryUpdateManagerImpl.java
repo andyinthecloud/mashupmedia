@@ -74,10 +74,10 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		}
 
 		
-		if (library.getLibraryStatusType() != LibraryStatusType.OK && date.before(lastSuccessfulScanOn)) {
-			logger.info("Library is already updating, exiting:" + library.toString());
-			return;
-		}
+//		if (library.getLibraryStatusType() != LibraryStatusType.OK && date.before(lastSuccessfulScanOn)) {
+//			logger.info("Library is already updating, exiting:" + library.toString());
+//			return;
+//		}
 		
 
 		try {

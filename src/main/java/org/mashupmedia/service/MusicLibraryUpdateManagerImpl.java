@@ -137,9 +137,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			song.setLibrary(musicLibrary);
 
 			String songPath = song.getPath();
-			File file = new File(songPath);
-			long fileLastModifiedOn = file.lastModified();
-			song.setFileLastModifiedOn(fileLastModifiedOn);
+			long fileLastModifiedOn = song.getFileLastModifiedOn();
 			Song savedSong = getSavedSong(groupIds, libraryId, songPath, fileLastModifiedOn);
 
 			if (savedSong != null) {
@@ -154,7 +152,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				continue;
 			}
 
-			String fileName = file.getName();
+			String fileName = song.getFileName();
 			String fileExtension = FileHelper.getFileExtension(fileName);
 
 			MediaEncoding mediaEncoding = new MediaEncoding();
@@ -204,10 +202,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			genre = prepareGenre(genre);
 			song.setGenre(genre);
 
-			boolean isSessionFlush = false;
-			if (i % BATCH_INSERT_ITEMS == 0 || i == (songs.size() - 1)) {
-				isSessionFlush = true;
-			}
+			boolean isSessionFlush = true;
+//			if (i % BATCH_INSERT_ITEMS == 0 || i == (songs.size() - 1)) {
+//				isSessionFlush = true;
+//			}
 
 			StringBuilder searchTextBuilder = new StringBuilder();
 			if (artist != null) {
@@ -410,6 +408,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			song.setPath(file.getAbsolutePath());
 			song.setLibrary(musicLibrary);
 			song.setSizeInBytes(file.length());
+			song.setFileLastModifiedOn(file.lastModified());
 
 			if (yearValue > 0) {
 				Year year = new Year();

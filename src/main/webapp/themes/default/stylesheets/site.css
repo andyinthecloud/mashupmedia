@@ -643,7 +643,8 @@ ul.photos {
 }
 
 ul.photos li {
-	display: inline-block;
+	float: left;
+    margin: 0 5px 5px 0;
 	overflow: hidden;
 	border: 1px solid #a0a0a0;
 	padding: 2px;

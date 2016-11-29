@@ -64,8 +64,7 @@ public class PhotoController extends BaseController {
 	}
 
 	protected Breadcrumb getAlbumBreadcrumb(Album album) {
-		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.photo-album"),
-				"/app/photo/album/" + album.getId());
+		Breadcrumb breadcrumb = new Breadcrumb(album.getName(), "/app/photo/album/" + album.getId());
 		return breadcrumb;
 	}
 
@@ -164,17 +163,15 @@ public class PhotoController extends BaseController {
 
 		List<Breadcrumb> breadcrumbs = getListAlbumsBreadcrumbs();
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
-				
+
 		MediaItemSequenceType sequenceType = MediaItemHelper.getSequenceType(sequenceTypeValue);
 		model.addAttribute(sequenceType);
-		
+
 		List<Album> albums = photoManager.getAlbums(sequenceType);
 		model.addAttribute("albums", albums);
 
 		String pagePath = getPath(isFragment, "photo.albums");
 		return pagePath;
 	}
-
-
 
 }
