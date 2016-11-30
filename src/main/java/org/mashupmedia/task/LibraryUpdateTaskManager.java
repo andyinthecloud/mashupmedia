@@ -1,7 +1,6 @@
 package org.mashupmedia.task;
 
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -15,7 +14,7 @@ public class LibraryUpdateTaskManager {
 
 	@Autowired
 	private LibraryUpdateManager libraryUpdateManager;
-
+	
 	public void updateLibrary(Library library) {
 		libraryUpdateThreadPoolTaskExecutor.execute(new LibraryUpdateTask(library));
 	}
@@ -49,5 +48,6 @@ public class LibraryUpdateTaskManager {
 			libraryUpdateManager.updateRemoteLibrary(library);
 		}
 	}
+
 
 }

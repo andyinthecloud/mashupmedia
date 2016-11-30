@@ -92,7 +92,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		libraryDao.reinitialiseLibrary(library);
 
 		Date date = new Date();
-		libraryUpdateManager.deleteObsoleteMediaItems(library, date);
+		libraryUpdateManager.deleteObsoleteMediaItems(library, date);		
 	}
 
 	@Override

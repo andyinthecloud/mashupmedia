@@ -26,7 +26,6 @@ import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -37,7 +36,7 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 @Service
-@Transactional(propagation = Propagation.NEVER)
+@Transactional
 public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager {
 
 	private Logger logger = Logger.getLogger(getClass());
@@ -176,7 +175,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		savePhoto(photo);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional
 	protected void savePhoto(Photo photo) {
 		photoDao.savePhoto(photo, true);
 	}
@@ -242,7 +241,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		return date;
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional
 	protected Photo getPhotoByAbsolutePath(String path) {
 		Photo photo = photoDao.getPhotoByAbsolutePath(path);
 		return photo;
@@ -260,7 +259,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		return album;
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional
 	protected Album getAlbum(String albumName) {
 		List<Album> albums = photoDao.getAlbums(albumName);
 		if (albums != null && !albums.isEmpty()) {

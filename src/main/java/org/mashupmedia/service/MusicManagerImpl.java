@@ -16,10 +16,11 @@ import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.util.AdminHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(isolation = Isolation.READ_UNCOMMITTED)
 public class MusicManagerImpl implements MusicManager {
 
 	private Logger logger = Logger.getLogger(getClass());
