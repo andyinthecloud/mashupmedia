@@ -70,15 +70,13 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 		Date lastSuccessfulScanOn = library.getLastSuccessfulScanOn();
 		if (lastSuccessfulScanOn == null) {
-			lastSuccessfulScanOn = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);			
+			lastSuccessfulScanOn = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);
 		}
 
-		
-//		if (library.getLibraryStatusType() != LibraryStatusType.OK && date.before(lastSuccessfulScanOn)) {
-//			logger.info("Library is already updating, exiting:" + library.toString());
-//			return;
-//		}
-		
+		if (library.getLibraryStatusType() != LibraryStatusType.OK && date.before(lastSuccessfulScanOn)) {
+			logger.info("Library is already updating, exiting:" + library.toString());
+			return;
+		}
 
 		try {
 			library.setLastSuccessfulScanOn(new Date());
@@ -134,7 +132,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	}
 
-	protected void deleteObsoleteMediaItems(Library library, Date date) {
+	@Override
+	public void deleteObsoleteMediaItems(Library library, Date date) {
 		long libraryId = library.getId();
 		if (library instanceof MusicLibrary) {
 			musicLibraryUpdateManager.deleteObsoleteSongs(libraryId, date);

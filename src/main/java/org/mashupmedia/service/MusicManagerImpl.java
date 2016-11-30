@@ -1,6 +1,7 @@
 package org.mashupmedia.service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -87,7 +88,9 @@ public class MusicManagerImpl implements MusicManager {
 		}
 
 		List<Song> songs = album.getSongs();
-		Hibernate.initialize(songs);
+		if (songs == null || songs.isEmpty()) {
+			return null;
+		}		
 
 		return album;
 	}

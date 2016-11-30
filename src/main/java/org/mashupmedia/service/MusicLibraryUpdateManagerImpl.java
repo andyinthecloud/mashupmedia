@@ -243,18 +243,15 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	}
 
-	@Transactional
 	private void saveSong(Song song, boolean isSessionFlush) {
 		musicDao.saveSong(song, isSessionFlush);
 	}
 	
-	@Transactional
 	private List<Long> getGroupIds() {
 		List<Long> groupIds = groupDao.getGroupIds();
 		return groupIds;
 	}
 
-	@Transactional
 	private Song getSavedSong(List<Long> groupIds, long libraryId, String songPath, long fileLastModifiedOn) {
 		Song savedSong = musicDao.getSong(groupIds, libraryId, songPath, fileLastModifiedOn);
 		return savedSong;
@@ -269,7 +266,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	}
 
-	@Transactional
 	private Genre prepareGenre(Genre genre) {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
 			return null;
@@ -285,7 +281,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return genre;
 	}
 
-	@Transactional
 	private Year prepareYear(Year year) {
 		if (year == null || year.getYear() == 0) {
 			return null;
@@ -524,7 +519,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return artist;
 	}
 
-	@Transactional
 	private Album prepareAlbum(List<Long> userGroupIds, Album album) {
 		Artist artist = album.getArtist();
 		String albumName = album.getName();

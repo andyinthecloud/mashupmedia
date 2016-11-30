@@ -43,7 +43,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		int firstResult = getFirstResult(pageNumber, maxResults);
 		StringBuilder queryBuilder = new StringBuilder(
 				"select distinct a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g");
-		searchLetter = StringUtils.trimToEmpty(searchLetter);				
+		searchLetter = StringUtils.trimToEmpty(searchLetter);
 		if (StringUtils.isNotEmpty(searchLetter)) {
 			queryBuilder.append(" where a.indexLetter = '" + searchLetter.toLowerCase() + "'");
 		}
@@ -155,13 +155,28 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public Album getAlbum(List<Long> groupIds, long albumId) {
-		StringBuilder queryBuilder = new StringBuilder(
-				"select a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g where id = :id");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
-		query.setCacheable(true);
-		query.setLong("id", albumId);
-		Album album = (Album) query.uniqueResult();
+
+		StringBuilder albumQueryBuilder = new StringBuilder(
+				"from org.mashupmedia.model.media.music.Album a where id = :id");
+		Query albumQuery = sessionFactory.getCurrentSession().createQuery(albumQueryBuilder.toString());
+		albumQuery.setCacheable(true);
+		albumQuery.setLong("id", albumId);
+		Album album = (Album) albumQuery.uniqueResult();
+
+		StringBuilder songsQueryBuilder = new StringBuilder(
+				"select distinct s from Song s join s.library.groups g where s.album.id = :id and s.enabled = true");
+		DaoHelper.appendGroupFilter(songsQueryBuilder, groupIds);
+		Query songsQuery = sessionFactory.getCurrentSession().createQuery(songsQueryBuilder.toString());
+		songsQuery.setCacheable(true);
+		songsQuery.setLong("id", albumId);
+		@SuppressWarnings("unchecked")
+		List<Song> songs = (List<Song>) songsQuery.list();
+		if (songs == null || songs.isEmpty()) {
+			return null;
+		}
+
+		album.setSongs(songs);
+
 		return album;
 	}
 

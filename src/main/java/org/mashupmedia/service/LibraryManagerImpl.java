@@ -10,7 +10,6 @@ import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
-import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
@@ -26,7 +25,8 @@ public class LibraryManagerImpl implements LibraryManager {
 	@Autowired
 	private LibraryDao libraryDao;
 	@Autowired
-	private MusicLibraryUpdateManager musicLibraryUpdateManager;
+	private LibraryUpdateManager libraryUpdateManager;
+
 	@Autowired
 	private AdminManager adminManager;
 
@@ -86,16 +86,18 @@ public class LibraryManagerImpl implements LibraryManager {
 
 	}
 
-	
 	@Override
 	public void saveAndReinitialiseLibrary(Library library) {
 		saveLibrary(library);
-		libraryDao.reinitialiseLibrary(library);			
+		libraryDao.reinitialiseLibrary(library);
+
+		Date date = new Date();
+		libraryUpdateManager.deleteObsoleteMediaItems(library, date);
 	}
-	
+
 	@Override
 	public void saveLibrary(Library library) {
-		saveLibrary(library, false);		
+		saveLibrary(library, false);
 	}
 
 	@Override
@@ -132,10 +134,6 @@ public class LibraryManagerImpl implements LibraryManager {
 	@Override
 	public void deleteLibrary(Library library) {
 		libraryDao.deleteLibrary(library);
-		if (library instanceof MusicLibrary) {
-			musicLibraryUpdateManager.deleteEmpty();
-		}
-
 		long libraryId = library.getId();
 		FileHelper.deleteLibrary(libraryId);
 	}
