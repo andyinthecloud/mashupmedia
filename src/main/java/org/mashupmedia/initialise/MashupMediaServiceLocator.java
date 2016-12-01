@@ -60,8 +60,8 @@ public class MashupMediaServiceLocator {
 		dataSource.setJdbcUrl("jdbc:hsqldb:file:" + applicationFolderPath + "/db;shutdown=true;hsqldb.write_delay_millis=0");
 		dataSource.setUser("sa");
 		dataSource.setPassword("");
-		dataSource.setMinPoolSize(2);
-		dataSource.setMaxPoolSize(5);
+		dataSource.setMinPoolSize(10);
+		dataSource.setMaxPoolSize(100);
 		dataSource.setMaxIdleTime(600);
 
 		return dataSource;

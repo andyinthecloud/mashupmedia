@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional (isolation = Isolation.READ_UNCOMMITTED)
 public class PhotoManagerImpl implements PhotoManager {
 
 	@Autowired
@@ -27,14 +27,14 @@ public class PhotoManagerImpl implements PhotoManager {
 	@Autowired
 	private PhotoDao photoDao;
 
-	@Override
+	@Override	
 	public List<Photo> getLatestPhotos(int pageNumber, int totalItems) {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
 		List<Photo> photos = photoDao.getLatestPhotos(userGroupIds, pageNumber, totalItems);
 		return photos;
 	}
 
-	@Override
+	@Override	
 	public List<Album> getAlbums(MediaItemSequenceType mediaItemSequenceType) {
 		List<Album> albums = photoDao.getAlbums(mediaItemSequenceType);
 		return albums;

@@ -74,13 +74,13 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	protected void processPhotos(File file, Date date, String albumName, PhotoLibrary library) {
 
 		String fileName = file.getName();
-		
+
 		if (file.isDirectory()) {
-			
+
 			if (fileName.startsWith(".")) {
 				return;
 			}
-			
+
 			if (StringUtils.isNotBlank(albumName) && StringUtils.isNotBlank(fileName)) {
 				albumName += " / " + fileName;
 			} else {
@@ -117,7 +117,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			if (!MediaItemHelper.isCompatiblePhotoFormat(mediaContentType)) {
 				return;
 			}
-			
+
 			Set<MediaEncoding> mediaEncodings = photo.getMediaEncodings();
 			if (mediaEncodings == null) {
 				mediaEncodings = new HashSet<MediaEncoding>();
@@ -175,11 +175,10 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		savePhoto(photo);
 	}
 
-	@Transactional
 	protected void savePhoto(Photo photo) {
 		photoDao.savePhoto(photo, true);
 	}
-	
+
 	private boolean isCreatePhoto(File file, Photo photo) {
 
 		if (photo == null) {
@@ -241,25 +240,23 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		return date;
 	}
 
-	@Transactional
 	protected Photo getPhotoByAbsolutePath(String path) {
 		Photo photo = photoDao.getPhotoByAbsolutePath(path);
 		return photo;
 	}
-	
+
 	protected Album getAlbum(String albumName, Date date) {
 		albumName = StringUtils.trimToEmpty(albumName);
-		
+
 		Album savedAlbum = getAlbum(albumName);
 		if (savedAlbum != null) {
 			return savedAlbum;
 		}
-		
+
 		Album album = createAlbum(albumName, date);
 		return album;
 	}
-	
-	@Transactional
+
 	protected Album getAlbum(String albumName) {
 		List<Album> albums = photoDao.getAlbums(albumName);
 		if (albums != null && !albums.isEmpty()) {
@@ -267,7 +264,6 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		}
 		return null;
 	}
-	
 
 	protected Album createAlbum(String albumName, Date date) {
 		Album album = new Album();

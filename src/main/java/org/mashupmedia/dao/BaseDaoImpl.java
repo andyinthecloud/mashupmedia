@@ -67,7 +67,7 @@ public class BaseDaoImpl {
 		if (!isFlushSession) {
 			return;
 		}
-		
+				
 		sessionFactory.getCurrentSession().flush();
 		sessionFactory.getCurrentSession().clear();
 		logger.debug("Flushed and cleared session.");
