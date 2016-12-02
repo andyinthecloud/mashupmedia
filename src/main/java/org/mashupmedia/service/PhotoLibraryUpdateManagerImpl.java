@@ -43,7 +43,8 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	@Autowired
 	private PhotoDao photoDao;
-
+	
+	@Autowired
 	private ProcessManager processManager;
 
 	@Autowired

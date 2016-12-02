@@ -166,6 +166,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		StringBuilder songsQueryBuilder = new StringBuilder(
 				"select distinct s from Song s join s.library.groups g where s.album.id = :id and s.enabled = true");
 		DaoHelper.appendGroupFilter(songsQueryBuilder, groupIds);
+		songsQueryBuilder.append(" order by s.trackNumber");
 		Query songsQuery = sessionFactory.getCurrentSession().createQuery(songsQueryBuilder.toString());
 		songsQuery.setCacheable(true);
 		songsQuery.setLong("id", albumId);
