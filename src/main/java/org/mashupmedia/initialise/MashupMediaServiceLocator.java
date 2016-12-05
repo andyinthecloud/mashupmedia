@@ -33,13 +33,11 @@ public class MashupMediaServiceLocator {
 
 	private DataSource dataSource;
 
-	
 	public MashupMediaServiceLocator() {
-		File logFolder = new File(FileHelper.getApplicationFolder(), "log");		
+		File logFolder = new File(FileHelper.getApplicationFolder(), "log");
 		System.setProperty("log.path", logFolder.getAbsolutePath());
-		
 	}
-	
+
 	public DataSource getDataSource() {
 		return dataSource;
 	}
@@ -51,13 +49,12 @@ public class MashupMediaServiceLocator {
 	public DataSource createDataSource() {
 		ComboPooledDataSource dataSource = new ComboPooledDataSource();
 		try {
-			dataSource.setDriverClass("org.hsqldb.jdbcDriver");
+			dataSource.setDriverClass("org.h2.Driver");
 		} catch (PropertyVetoException e) {
 			throw new MashupMediaRuntimeException(e.getMessage());
 		}
 		String applicationFolderPath = FileHelper.getApplicationFolder().getAbsolutePath();
-//		dataSource.setJdbcUrl("jdbc:hsqldb:file:" + applicationFolderPath + "/db;shutdown=true;hsqldb.write_delay_millis=0;hsqldb.tx=mvcc");
-		dataSource.setJdbcUrl("jdbc:hsqldb:file:" + applicationFolderPath + "/db;shutdown=true;hsqldb.write_delay_millis=0");
+		dataSource.setJdbcUrl("jdbc:h2:file:" + applicationFolderPath + "/db");
 		dataSource.setUser("sa");
 		dataSource.setPassword("");
 		dataSource.setMinPoolSize(10);
@@ -73,10 +70,12 @@ public class MashupMediaServiceLocator {
 		localSessionFactoryBean.setAnnotatedPackages(new String[] { "org.mashupmedia.model" });
 
 		Properties hibernateProperties = new Properties();
-		hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
+		hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+
 		hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "update");
 		hibernateProperties.setProperty("hibernate.jdbc.batch_size", "20");
-		hibernateProperties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory");
+		hibernateProperties.setProperty("hibernate.cache.region.factory_class",
+				"org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory");
 		hibernateProperties.setProperty("hibernate.cache.use_query_cache", "true");
 		hibernateProperties.setProperty("hibernate.query.substitutions", "true '1', false '0'");
 		hibernateProperties.setProperty("hibernate.cache.use_second_level_cache", "true");
@@ -85,14 +84,8 @@ public class MashupMediaServiceLocator {
 		hibernateProperties.setProperty("hibernate.search.default.indexBase", indexBaseFolder.getAbsolutePath());
 		localSessionFactoryBean.setHibernateProperties(hibernateProperties);
 
-		Properties packagesToScanProperties = new Properties();
-		packagesToScanProperties.setProperty("", "");
-		packagesToScanProperties.setProperty("", "");
-		packagesToScanProperties.setProperty("", "");
-		packagesToScanProperties.setProperty("", "");
-		packagesToScanProperties.setProperty("", "");
-		localSessionFactoryBean.setPackagesToScan("org.mashupmedia.model", "org.mashupmedia.model.library", "org.mashupmedia.model.location",
-				"org.mashupmedia.model.media", "org.mashupmedia.model.playlist");
+		localSessionFactoryBean.setPackagesToScan("org.mashupmedia.model", "org.mashupmedia.model.library",
+				"org.mashupmedia.model.location", "org.mashupmedia.model.media", "org.mashupmedia.model.playlist");
 
 		return localSessionFactoryBean;
 	}
