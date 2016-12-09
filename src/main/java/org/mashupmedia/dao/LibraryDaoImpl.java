@@ -33,7 +33,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		}
 
 		Query query = sessionFactory.getCurrentSession()
-				.createQuery("from " + libraryClassName + " where remote = false order by name");
+				.createQuery("from " + libraryClassName + " where remote = false and enabled = true order by name");
+		
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Library> libraries = (List<Library>) query.list();
