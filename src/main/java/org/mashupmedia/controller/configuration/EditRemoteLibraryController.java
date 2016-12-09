@@ -132,8 +132,7 @@ public class EditRemoteLibraryController extends BaseController {
 
 	@RequestMapping(value = "/configuration/delete-remote-library", method = RequestMethod.GET)
 	public String deleteRemoteLibrary(@RequestParam(value = "libraryId", required = true) Long libraryId, Model model) {
-		Library library = libraryManager.getLibrary(libraryId);
-		libraryManager.deleteLibrary(library);
+		libraryUpdateTaskManager.deleteLibrary(libraryId);
 		return "redirect:/app/configuration/list-remote-libraries";
 	}
 

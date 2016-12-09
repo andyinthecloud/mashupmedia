@@ -32,7 +32,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 			libraryClassName = Library.class.getName();
 		}
 
-		Query query = sessionFactory.getCurrentSession().createQuery("from " + libraryClassName + " where remote = false order by name");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("from " + libraryClassName + " where remote = false order by name");
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Library> libraries = (List<Library>) query.list();
@@ -57,17 +58,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	}
 
 	@Override
-	public void saveLibrary(Library library, boolean isFlushSession) {
-		long id = library.getId();
-
-		if (id > 0) {
-//			sessionFactory.getCurrentSession().merge(library);
-			sessionFactory.getCurrentSession().update(library);
-		} else {
-			sessionFactory.getCurrentSession().save(library);
-		}
-		
-		flushSession(isFlushSession);
+	public void saveLibrary(Library library) {
+		saveOrUpdate(library);
 	}
 
 	@Override
@@ -81,8 +73,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 	@Override
 	public Library getRemoteLibrary(String uniqueName) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"select l from Library l inner join l.remoteShares rs where rs.uniqueName = :uniqueName");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("select l from Library l inner join l.remoteShares rs where rs.uniqueName = :uniqueName");
 		query.setString("uniqueName", uniqueName);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -101,7 +93,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 	@Override
 	public boolean hasRemoteLibrary(String path) {
-		Query query = sessionFactory.getCurrentSession().createQuery("select l from Library l where l.location.path = :path");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("select l from Library l where l.location.path = :path");
 		query.setString("path", path);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -137,22 +130,22 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		deletePlaylistMediaQuery.setLong("libraryId", libraryId);
 		deletePlaylistMediaQuery.executeUpdate();
 
-//		if (library instanceof MusicLibrary) {
-//			Query deleteSongsQuery = sessionFactory.getCurrentSession().createQuery(
-//					"delete Song where id in (select s.id from Song s where s.library.id = :libraryId)");
-//			deleteSongsQuery.setLong("libraryId", libraryId);
-//			deleteSongsQuery.executeUpdate();
-//		} else if (library instanceof VideoLibrary) {
-//			
-//		}
+		// if (library instanceof MusicLibrary) {
+		// Query deleteSongsQuery =
+		// sessionFactory.getCurrentSession().createQuery(
+		// "delete Song where id in (select s.id from Song s where s.library.id
+		// = :libraryId)");
+		// deleteSongsQuery.setLong("libraryId", libraryId);
+		// deleteSongsQuery.executeUpdate();
+		// } else if (library instanceof VideoLibrary) {
+		//
+		// }
 
-		
 		Query deleteMediaItemsQuery = sessionFactory.getCurrentSession().createQuery(
 				"delete MediaItem where id in (select mi.id from MediaItem mi where mi.library.id = :libraryId)");
 		deleteMediaItemsQuery.setLong("libraryId", libraryId);
 		deleteMediaItemsQuery.executeUpdate();
 
-		
 		sessionFactory.getCurrentSession().evict(library);
 		library = getLibrary(libraryId);
 		sessionFactory.getCurrentSession().delete(library);
@@ -160,7 +153,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 	@Override
 	public List<Library> getLibrariesForGroup(long groupId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("select l from Library l inner join l.groups g where g.id = :groupId order by l.name");		
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("select l from Library l inner join l.groups g where g.id = :groupId order by l.name");
 		query.setLong("groupId", groupId);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -190,22 +184,22 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 		sessionFactory.getCurrentSession().merge(remoteShare);
 	}
-	
+
 	@Override
-	public void reinitialiseLibrary(Library library) {			
+	public void reinitialiseLibrary(Library library) {
 		long totalMediaItems = getTotalMediaItemsFromLibrary(library.getId());
 		if (totalMediaItems == 0) {
 			return;
 		}
-		
-		Query query = sessionFactory.getCurrentSession().createQuery("update MediaItem set fileLastModifiedOn = :fileLastModifiedOn where library.id = :libraryId");
+
+		Query query = sessionFactory.getCurrentSession().createQuery(
+				"update MediaItem set fileLastModifiedOn = :fileLastModifiedOn where library.id = :libraryId");
 		query.setLong("fileLastModifiedOn", 0);
 		query.setLong("libraryId", library.getId());
 		int totalItemsUpdated = query.executeUpdate();
-		logger.info("Total media items reinitialised: " + totalItemsUpdated);		
+		logger.info("Total media items reinitialised: " + totalItemsUpdated);
 	}
 
-	
 	@Override
 	public long getTotalMediaItemsFromLibrary(long libraryId) {
 		StringBuilder queryBuilder = new StringBuilder(
@@ -217,5 +211,4 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		return totalMediaItems;
 	}
 
-	
 }

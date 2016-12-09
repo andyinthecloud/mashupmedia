@@ -141,7 +141,9 @@ public abstract class AbstractLibraryController extends BaseController {
 
 	private void processDeleteAction(LibraryPage libraryPage) {
 		Library library = libraryPage.getLibrary();
-		libraryManager.deleteLibrary(library);
+		long libraryId = library.getId();
+		libraryManager.deactivateLibrary(libraryId);
+		libraryUpdateTaskManager.deleteLibrary(libraryId);
 	}
 
 	@InitBinder

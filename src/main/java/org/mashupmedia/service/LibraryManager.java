@@ -13,8 +13,6 @@ public interface LibraryManager {
 
 	public Library getLibrary(long id);
 
-	public void deleteLibrary(Library library);
-
 	public void saveLibrary(Library library);
 
 	public void saveLibrary(Library library, boolean isFlushSession);
@@ -34,6 +32,10 @@ public interface LibraryManager {
 	public List<Library> getLibraries(LibraryType libraryType);
 
 	public void saveAndReinitialiseLibrary(Library library);
+
+	public void deactivateLibrary(long libraryId);
+
+	public void deleteLibrary(long libraryId);
 	
 	
 

@@ -30,6 +30,7 @@ import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.location.Location;
+import org.mashupmedia.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -174,6 +175,11 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			libraryManager.saveLibrary(library);
 		}
 
+	}
+
+	@Override
+	public void deleteLibrary(long libraryId) {
+		libraryManager.deleteLibrary(libraryId);
 	}
 
 }

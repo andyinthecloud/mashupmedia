@@ -238,7 +238,7 @@ public class FileHelper {
 		try {
 			FileUtils.deleteDirectory(libraryFolder);
 		} catch (IOException e) {
-			logger.error("Unable to delete library", e);
+			logger.error("Unable to delete library folder", e);
 		}
 
 	}

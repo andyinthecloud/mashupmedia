@@ -82,7 +82,7 @@ public class LibraryManagerImpl implements LibraryManager {
 			}
 		}
 
-		libraryDao.saveLibrary(library, isFlushSession);
+		libraryDao.saveLibrary(library);
 
 	}
 
@@ -92,7 +92,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		libraryDao.reinitialiseLibrary(library);
 
 		Date date = new Date();
-		libraryUpdateManager.deleteObsoleteMediaItems(library, date);		
+		libraryUpdateManager.deleteObsoleteMediaItems(library, date);
 	}
 
 	@Override
@@ -132,10 +132,12 @@ public class LibraryManagerImpl implements LibraryManager {
 	}
 
 	@Override
-	public void deleteLibrary(Library library) {
-		libraryDao.deleteLibrary(library);
-		long libraryId = library.getId();
-		FileHelper.deleteLibrary(libraryId);
+	public void deactivateLibrary(long libraryId) {
+		Library library = libraryDao.getLibrary(libraryId);
+		library.setEnabled(false);
+		libraryDao.saveLibrary(library);
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -163,6 +165,13 @@ public class LibraryManagerImpl implements LibraryManager {
 	public List<Library> getRemoteLibraries() {
 		List<Library> remoteLibraries = libraryDao.getRemoteLibraries();
 		return remoteLibraries;
+	}
+	
+	@Override
+	public void deleteLibrary(long libraryId) {
+		FileHelper.deleteLibrary(libraryId);
+		Library library = libraryDao.getLibrary(libraryId);
+		libraryDao.deleteLibrary(library);
 	}
 
 }

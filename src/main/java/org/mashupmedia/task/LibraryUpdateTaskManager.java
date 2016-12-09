@@ -14,7 +14,7 @@ public class LibraryUpdateTaskManager {
 
 	@Autowired
 	private LibraryUpdateManager libraryUpdateManager;
-	
+
 	public void updateLibrary(Library library) {
 		libraryUpdateThreadPoolTaskExecutor.execute(new LibraryUpdateTask(library));
 	}
@@ -49,5 +49,23 @@ public class LibraryUpdateTaskManager {
 		}
 	}
 
+	private class DeleteLibraryTask implements Runnable {
+		private long libraryId;
+
+		public DeleteLibraryTask(long libraryId) {
+			this.libraryId = libraryId;
+		}
+
+		@Override
+		public void run() {
+			libraryUpdateManager.deleteLibrary(libraryId);
+		}
+
+	}
+
+	public void deleteLibrary(long libraryId) {
+		libraryUpdateThreadPoolTaskExecutor.execute(new DeleteLibraryTask(libraryId));
+
+	}
 
 }

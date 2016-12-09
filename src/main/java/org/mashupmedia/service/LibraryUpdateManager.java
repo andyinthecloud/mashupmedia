@@ -29,4 +29,6 @@ public interface LibraryUpdateManager {
 	
 	public void deleteObsoleteMediaItems(Library library, Date date);
 
+	public void deleteLibrary(long libraryId);
+
 }

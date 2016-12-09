@@ -75,7 +75,7 @@ public class TestMusicLibraryUpdateManager extends TestBaseService {
 		musicLibrary2.setEnabled(true);
 		musicLibrary2.setRemote(true);
 
-		libraryManager.deleteLibrary(musicLibrary);
+		libraryManager.deleteLibrary(musicLibrary.getId());
 
 		libraryManager.saveLibrary(musicLibrary2);
 		

@@ -10,7 +10,7 @@ public interface LibraryDao {
 
 	public List<Library> getLocalLibraries(LibraryType libraryType);
 
-	public void saveLibrary(Library musicLibrary, boolean isFlushSession);
+	public void saveLibrary(Library library);
 
 	public Library getLibrary(long id);
 
