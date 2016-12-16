@@ -7,8 +7,6 @@ import org.mashupmedia.model.library.Library.LibraryType;
 
 public interface LibraryManager {
 
-
-
 	public List<Library> getLocalLibraries(LibraryType libraryType);
 
 	public Library getLibrary(long id);
@@ -36,7 +34,7 @@ public interface LibraryManager {
 	public void deactivateLibrary(long libraryId);
 
 	public void deleteLibrary(long libraryId);
-	
-	
+
+	public void saveMediaItemLastUpdated(long libraryId);
 
 }

@@ -3,6 +3,7 @@ package org.mashupmedia.service;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.dao.ConfigurationDao;
 import org.mashupmedia.model.Configuration;
 import org.mashupmedia.util.EncryptionHelper;
@@ -69,5 +70,21 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 	@Override
 	public void indexMediaItems() {
 		configurationDao.indexMediaItems();
+	}
+	
+	@Override
+	public Date getConfigurationDate(String configurationKey) {
+		String value = StringUtils.trimToEmpty(getConfigurationValue(configurationKey));
+		if (StringUtils.isEmpty(value)) {
+			return null;
+		}
+		
+		long timestamp = NumberUtils.toLong(value);
+		if (timestamp == 0) {
+			return null;
+		}
+		
+		Date date = new Date(timestamp);
+		return date;
 	}
 }

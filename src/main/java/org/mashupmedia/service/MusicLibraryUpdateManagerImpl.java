@@ -42,7 +42,6 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -75,6 +74,9 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Autowired
 	private ProcessManager processManager;
+	
+	@Autowired
+	private LibraryManager libraryManager;
 
 	private MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
@@ -85,7 +87,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
 	public void deleteObsoleteSongs(long libraryId, Date date) {
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
 		for (Song song : songsToDelete) {
@@ -120,7 +121,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
 	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs, Date date) {
 		if (songs == null || songs.isEmpty()) {
 			return;
@@ -202,10 +202,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			genre = prepareGenre(genre);
 			song.setGenre(genre);
 
-			boolean isSessionFlush = true;
-//			if (i % BATCH_INSERT_ITEMS == 0 || i == (songs.size() - 1)) {
-//				isSessionFlush = true;
-//			}
+			boolean isSessionFlush = false;
+			if (i % BATCH_INSERT_ITEMS == 0 || i == (songs.size() - 1)) {
+				isSessionFlush = true;
+			}
 
 			StringBuilder searchTextBuilder = new StringBuilder();
 			if (artist != null) {
@@ -321,6 +321,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				}
 				saveSongs(musicLibrary, songs, date);
 				songs.clear();
+				libraryManager.saveMediaItemLastUpdated(musicLibrary.getId());				
 				folderArtistName = "";
 			} else {
 				if (StringUtils.isBlank(folderAlbumName)) {
@@ -560,7 +561,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
-	@Transactional
 	public void deleteEmpty() {
 		musicDao.deleteEmptyAlbums();
 		musicDao.deleteEmptyArtists();

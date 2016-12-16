@@ -30,7 +30,7 @@ import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.location.Location;
-import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.LibraryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +55,9 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	@Autowired
 	private LibraryManager libraryManager;
+	
+	@Autowired
+	private ConfigurationManager configurationManager; 
 
 	@Override
 	public void updateLibrary(Library library) {
@@ -69,12 +72,12 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		Date date = new Date();
 		date = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);
 
-		Date lastSuccessfulScanOn = library.getLastSuccessfulScanOn();
-		if (lastSuccessfulScanOn == null) {
-			lastSuccessfulScanOn = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);
+		Date lastSavedMediaItemOn = configurationManager.getConfigurationDate(LibraryHelper.getConfigurationLastUpdatedKey(library.getId()));
+		if (lastSavedMediaItemOn == null) {
+			lastSavedMediaItemOn = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);
 		}
 
-		if (library.getLibraryStatusType() != LibraryStatusType.OK && date.before(lastSuccessfulScanOn)) {
+		if (library.getLibraryStatusType() != LibraryStatusType.OK && date.before(lastSavedMediaItemOn)) {
 			logger.info("Library is already updating, exiting:" + library.toString());
 			return;
 		}

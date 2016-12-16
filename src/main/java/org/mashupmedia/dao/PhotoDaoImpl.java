@@ -7,14 +7,19 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.DaoHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaItemSequenceType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
+	
+	@Autowired
+	private LibraryDao libraryDao;
 
 	private enum PhotoSequenceType {
 		ALBUM_PREVIOUS, ALBUM_NEXT, PREVIOUS, NEXT, ALBUM_FIRST, ALBUM_LAST, FIRST, LAST;
@@ -33,11 +38,14 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public void savePhoto(Photo photo, boolean isSessionFlush) {
+	public void savePhoto(Photo photo, boolean isSessionFlush) {		
 		Album album = photo.getAlbum();
 		saveOrUpdate(album);
 		saveOrUpdate(photo);
+		Library library = photo.getLibrary();
+		libraryDao.saveLibrary(library);
 		flushSession(isSessionFlush);
+		logger.debug("Saved photo. id: " + photo.getId() + ", path: " + photo.getPath());
 	}
 
 	@Override

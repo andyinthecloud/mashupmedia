@@ -26,6 +26,8 @@ public class LibraryManagerImpl implements LibraryManager {
 	private LibraryDao libraryDao;
 	@Autowired
 	private LibraryUpdateManager libraryUpdateManager;
+	@Autowired	
+	private ConfigurationManager configurationManager; 
 
 	@Autowired
 	private AdminManager adminManager;
@@ -172,6 +174,13 @@ public class LibraryManagerImpl implements LibraryManager {
 		FileHelper.deleteLibrary(libraryId);
 		Library library = libraryDao.getLibrary(libraryId);
 		libraryDao.deleteLibrary(library);
+	}
+	
+	@Override
+	public void saveMediaItemLastUpdated(long libraryId) {
+		String key = LibraryHelper.getConfigurationLastUpdatedKey(libraryId);
+		String value = String.valueOf(System.currentTimeMillis());
+		configurationManager.saveConfiguration(key, value);		
 	}
 
 }

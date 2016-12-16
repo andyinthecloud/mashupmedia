@@ -17,8 +17,11 @@
 
 package org.mashupmedia.util;
 
+import java.util.Date;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 
 public class LibraryHelper {
@@ -75,5 +78,11 @@ public class LibraryHelper {
 		remotePath = getRemotePath(remotePath, "album-art");
 		return remotePath;
 	}
+
+	public static String getConfigurationLastUpdatedKey(long id) {
+		return "lastUpdated_" + Library.class.getName() + "_" + id;
+	}
+
+
 
 }

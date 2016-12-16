@@ -2,6 +2,7 @@ package org.mashupmedia.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -43,12 +44,17 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	@Autowired
 	private PhotoDao photoDao;
-	
+
 	@Autowired
 	private ProcessManager processManager;
 
 	@Autowired
 	private LibraryDao libraryDao;
+	
+	@Autowired
+	private LibraryManager libraryManager;
+
+	private final int BATCH_INSERT_ITEMS = 20;
 
 	@Override
 	public void deleteObsoletePhotos(long libraryId, Date date) {
@@ -66,13 +72,14 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	@Override
 	public void updateLibrary(PhotoLibrary library, File folder, Date date) {
-		processPhotos(folder, date, null, library);
+		List<Photo> photos = new ArrayList<Photo>();
+		processPhotos(folder, date, null, library, photos);
 
 		long totalMediaItems = libraryDao.getTotalMediaItemsFromLibrary(library.getId());
 		logger.info("Total photos saved:" + totalMediaItems);
 	}
 
-	protected void processPhotos(File file, Date date, String albumName, PhotoLibrary library) {
+	protected void processPhotos(File file, Date date, String albumName, PhotoLibrary library, List<Photo> photos) {
 
 		String fileName = file.getName();
 
@@ -95,8 +102,15 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 			Arrays.sort(files);
 			for (File childFile : files) {
-				processPhotos(childFile, date, albumName, library);
+				processPhotos(childFile, date, albumName, library, photos);
 			}
+
+			savePhotos(photos);
+
+			photos.clear();
+			
+			libraryManager.saveMediaItemLastUpdated(library.getId());
+			
 		}
 
 		Album album = getAlbum(albumName, date);
@@ -173,12 +187,30 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		}
 
 		photo.setUpdatedOn(date);
-		savePhoto(photo);
 	}
 
-	protected void savePhoto(Photo photo) {
-		photoDao.savePhoto(photo, true);
+	private void savePhotos(List<Photo> photos) {
+
+		if (photos == null || photos.isEmpty()) {
+			return;
+		}
+
+		int totalPhotos = photos.size();
+		
+		for (int i = 0; i < totalPhotos; i++) {
+			Photo photo = photos.get(i);
+
+			boolean isSessionFlush = false;
+			if (i % BATCH_INSERT_ITEMS == 0 || (i == totalPhotos - 1)) {
+				isSessionFlush = true;
+			} 
+
+			photoDao.savePhoto(photo, isSessionFlush);
+
+		}
+
 	}
+
 
 	private boolean isCreatePhoto(File file, Photo photo) {
 

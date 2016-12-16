@@ -15,6 +15,7 @@ import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Year;
@@ -24,10 +25,14 @@ import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.util.DaoHelper;
 import org.mashupmedia.util.StringHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
+	
+	@Autowired
+	private LibraryDao libraryDao;
 
 	// Used for remote library synchronisation
 	private final static int NUMBER_OF_DAYS_TO_KEEP_DISABLED_SONGS = 1;
@@ -242,6 +247,9 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		saveOrMerge(song.getYear());
 		saveOrMerge(song.getGenre());
 		saveOrUpdate(song);
+		
+		Library library = song.getLibrary();		
+		libraryDao.saveLibrary(library);
 
 		flushSession(isSessionFlush);
 

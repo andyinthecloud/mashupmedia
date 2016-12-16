@@ -56,14 +56,15 @@ public abstract class Library implements Serializable {
 	private List<RemoteShare> remoteShares;
 	private boolean remote;
 	private String status;
-	
+
 	public enum LibraryType {
 		ALL, MUSIC, VIDEO, PHOTO
 	}
+
 	public enum LibraryStatusType {
 		NONE, WORKING, ERROR, UNABLE_TO_CONNECT_TO_REMOTE_LIBRARY, OK;
 	}
-	
+
 	public abstract LibraryType getLibraryType();
 
 	public LibraryStatusType getLibraryStatusType() {
@@ -188,8 +189,6 @@ public abstract class Library implements Serializable {
 	public void setScanMinutesInterval(String scanMinutesInterval) {
 		this.scanMinutesInterval = scanMinutesInterval;
 	}
-	
-	
 
 	public Date getLastSuccessfulScanOn() {
 		return lastSuccessfulScanOn;

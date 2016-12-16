@@ -1,5 +1,7 @@
 package org.mashupmedia.service;
 
+import java.util.Date;
+
 import org.mashupmedia.model.Configuration;
 
 public interface ConfigurationManager {
@@ -18,5 +20,7 @@ public interface ConfigurationManager {
 	public void saveEncryptedConfiguration(String key, String value);
 
 	public void indexMediaItems();
+
+	public Date getConfigurationDate(String configurationKey);
 
 }
