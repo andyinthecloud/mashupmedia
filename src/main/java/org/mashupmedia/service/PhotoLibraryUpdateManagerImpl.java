@@ -147,11 +147,18 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 			photo.setFormat(mediaContentType.getName());
 			photo.setEnabled(true);
-			photo.setFileLastModifiedOn(file.lastModified());
+			long lastModified = file.lastModified();
+			photo.setFileLastModifiedOn(lastModified);
+			
+			// Default taken on to last modified, override later to get the actual taken on
+			// from the meta data if possible
+			Date lastModifiedOn = new Date(lastModified);
+			photo.setTakenOn(lastModifiedOn);
+			
 			photo.setFileName(fileName);
 			photo.setMediaType(MediaType.PHOTO);
 			photo.setPath(path);
-			photo.setSizeInBytes(file.length());
+			photo.setSizeInBytes(file.length());			
 
 			try {
 				processPhotoMetadata(file, photo);
@@ -244,7 +251,9 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		Metadata metadata = ImageMetadataReader.readMetadata(file);
 
 		Date takenOn = getTakenOnDatefromMeta(file, metadata);
-		photo.setTakenOn(takenOn);
+		if (takenOn != null) {
+			photo.setTakenOn(takenOn);
+		}
 
 		int orientation = getOrientatonFromMeta(metadata);
 		photo.setOrientation(orientation);
@@ -277,9 +286,9 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				return date;
 			}
 		}
+		
+		return null;
 
-		Date date = new Date(file.lastModified());
-		return date;
 	}
 
 	protected Photo getPhotoByAbsolutePath(String path) {
