@@ -35,7 +35,6 @@ import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Song;
-import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
@@ -68,9 +67,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Autowired
 	private GroupDao groupDao;
-
-	@Autowired
-	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 
 	@Autowired
 	private ProcessManager processManager;
@@ -147,8 +143,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				saveSong(savedSong, false);
 				logger.info("Song is already in database, updated song date.");
 				writeSongToXml(libraryId, savedSong);
-				encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedSong,
-						MediaContentType.MP3);
+//				encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedSong,
+//						MediaContentType.MP3);
 				continue;
 			}
 

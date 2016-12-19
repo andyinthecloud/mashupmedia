@@ -113,7 +113,8 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			
 		}
 
-		Album album = getAlbum(albumName, date);
+		Album album = new Album();
+		album.setName(albumName);
 		album.setUpdatedOn(date);
 
 		String path = file.getAbsolutePath();
@@ -187,6 +188,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		}
 
 		photo.setUpdatedOn(date);
+		photos.add(photo);
 	}
 
 	private void savePhotos(List<Photo> photos) {
@@ -199,6 +201,13 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		
 		for (int i = 0; i < totalPhotos; i++) {
 			Photo photo = photos.get(i);
+			
+			
+			Album album = photo.getAlbum();
+			String albumName = album.getName();
+			Date updatedOn  = album.getUpdatedOn();
+			album = getAlbum(albumName, updatedOn);
+			photo.setAlbum(album);
 
 			boolean isSessionFlush = false;
 			if (i % BATCH_INSERT_ITEMS == 0 || (i == totalPhotos - 1)) {
