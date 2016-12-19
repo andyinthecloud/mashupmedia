@@ -39,7 +39,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	private Logger logger = Logger.getLogger(getClass());
 
-	private final int LIBRARY_UPDATE_TIMEOUT_HOURS = 6;
+	private final int LIBRARY_UPDATE_TIMEOUT_HOURS = 1;
 
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
