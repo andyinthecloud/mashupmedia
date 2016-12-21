@@ -199,7 +199,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, long takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType) {
 
 		Photo photo = null;
@@ -214,7 +214,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getNextPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getNextPhotoInSequence(List<Long> userGroupIds, long takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType) {
 
 		Photo photo = null;
@@ -229,7 +229,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getFirstPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getFirstPhotoInSequence(List<Long> userGroupIds, long takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType) {
 		Photo photo = null;
 
@@ -243,7 +243,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getLastPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getLastPhotoInSequence(List<Long> userGroupIds, long takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType) {
 		Photo photo = null;
 
@@ -256,7 +256,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		return photo;
 	}
 
-	public Photo getPhotoInSequence(List<Long> groupIds, Date takenOn, Long albumId,
+	public Photo getPhotoInSequence(List<Long> groupIds, long takenOn, Long albumId,
 			PhotoSequenceType photoSequenceType) {
 
 		boolean hasAlbumParameter = false;
@@ -305,7 +305,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		}
 
 		if (hasCreatedOnParameter) {
-			photoQuery.setTimestamp("takenOn", takenOn);
+			photoQuery.setLong("takenOn", takenOn);
 		}
 
 		photoQuery.setCacheable(true);

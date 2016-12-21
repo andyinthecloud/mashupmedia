@@ -25,16 +25,16 @@ public interface PhotoDao {
 
 	public Album getAlbum(List<Long> groupIds, long albumId);
 
-	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, long takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType);
 
-	public Photo getNextPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getNextPhotoInSequence(List<Long> userGroupIds, long takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType);
 
-	public Photo getFirstPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getFirstPhotoInSequence(List<Long> userGroupIds, long takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType);
 
-	public Photo getLastPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getLastPhotoInSequence(List<Long> userGroupIds, long takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType);
 
 }
