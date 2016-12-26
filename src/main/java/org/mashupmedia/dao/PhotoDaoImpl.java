@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.apache.commons.collections.list.SetUniqueList;
+import org.apache.commons.collections.set.ListOrderedSet;
 import org.hibernate.Query;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
@@ -101,9 +103,10 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		int firstResult = pageNumber * totalItems;
 		query.setMaxResults(totalItems);
 		query.setFirstResult(firstResult);
-
+		
 		@SuppressWarnings("unchecked")
-		List<Photo> photos = query.list();
+		List<Photo> photos = SetUniqueList.decorate(query.list());
+		
 		return photos;
 	}
 
