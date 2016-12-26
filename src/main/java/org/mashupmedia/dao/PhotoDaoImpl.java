@@ -105,8 +105,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		query.setFirstResult(firstResult);
 		
 		@SuppressWarnings("unchecked")
-		List<Photo> photos = SetUniqueList.decorate(query.list());
-		
+		List<Photo> photos = SetUniqueList.decorate(query.list());		
 		return photos;
 	}
 
