@@ -6,7 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.commons.collections.list.SetUniqueList;
-import org.apache.commons.collections.set.ListOrderedSet;
 import org.hibernate.Query;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
