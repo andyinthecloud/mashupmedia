@@ -22,6 +22,9 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	@Autowired
 	private LibraryDao libraryDao;
 
+	@Autowired
+	private GroupDao groupDao;
+
 	private enum PhotoSequenceType {
 		ALBUM_PREVIOUS, ALBUM_NEXT, PREVIOUS, NEXT, ALBUM_FIRST, ALBUM_LAST, FIRST, LAST;
 	}
@@ -88,6 +91,11 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	}
 
+	protected int getTotalGroups() {
+		int totalGroups = groupDao.getGroupIds().size();
+		return totalGroups;
+	}
+
 	@Override
 	public List<Photo> getLatestPhotos(List<Long> groupIds, int pageNumber, int totalItems) {
 
@@ -99,7 +107,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		query.setCacheable(true);
 
 		int firstResult = pageNumber * totalItems;
-		query.setMaxResults(totalItems);
+		int totalGroups = getTotalGroups();
+		query.setMaxResults(totalItems * totalGroups);
 		query.setFirstResult(firstResult);
 
 		@SuppressWarnings("unchecked")

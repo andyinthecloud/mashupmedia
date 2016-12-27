@@ -55,7 +55,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		}
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 
-		queryBuilder.append(" order by indexText");
+		queryBuilder.append(" order by a.indexText");
 
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		query.setFirstResult(firstResult);
