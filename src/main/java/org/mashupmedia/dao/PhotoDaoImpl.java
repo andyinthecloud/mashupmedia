@@ -264,7 +264,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		boolean hasCreatedOnParameter = false;
 
 		StringBuilder queryBuilder = new StringBuilder();
-		queryBuilder.append(" select distinct(p) from Photo p join p.library.groups g");
+		queryBuilder.append(" select p from Photo p join p.library.groups g");
 		queryBuilder.append(" where 1 = 1");
 
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
@@ -315,7 +315,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		photoQuery.setFetchSize(1);
 
 		@SuppressWarnings("unchecked")
-		List<Photo> photos = photoQuery.list();
+		List<Photo> photos = SetUniqueList.decorate(photoQuery.list());
+		
 		if (photos == null || photos.isEmpty()) {
 			return null;
 		}
