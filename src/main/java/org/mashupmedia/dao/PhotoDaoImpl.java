@@ -311,8 +311,10 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 		photoQuery.setCacheable(true);
 		photoQuery.setFirstResult(0);
-		photoQuery.setMaxResults(1);
-		photoQuery.setFetchSize(1);
+		
+		int maxResults = getTotalGroups();		
+		photoQuery.setMaxResults(maxResults);
+		photoQuery.setFetchSize(maxResults);
 
 		@SuppressWarnings("unchecked")
 		List<Photo> photos = SetUniqueList.decorate(photoQuery.list());
