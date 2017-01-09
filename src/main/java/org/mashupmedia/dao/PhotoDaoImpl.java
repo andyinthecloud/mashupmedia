@@ -83,6 +83,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		if (photos == null || photos.isEmpty()) {
 			return;
 		}
+		
 
 		for (Photo photo : photos) {
 			logger.info("Deleting photo: " + photo.getPath());
