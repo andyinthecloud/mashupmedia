@@ -1,5 +1,6 @@
 package org.mashupmedia.service;
 
+import java.io.File;
 import java.util.List;
 
 import org.mashupmedia.model.library.Library;
@@ -36,5 +37,11 @@ public interface LibraryManager {
 	public void deleteLibrary(long libraryId);
 
 	public void saveMediaItemLastUpdated(long libraryId);
+
+	public void saveMedia(long librayId, File file);
+
+	public void deleteMedia(long librayId, File file);
+
+	public void registerWatchLibraryListeners();
 
 }

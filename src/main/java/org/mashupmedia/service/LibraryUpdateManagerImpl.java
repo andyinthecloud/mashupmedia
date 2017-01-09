@@ -109,7 +109,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	}
 
 	protected void processLibrary(Library library) throws Exception {
-		Date date = new Date();
+		Date updatingOn = new Date();
 		long libraryId = library.getId();
 		LibraryType libraryType = library.getLibraryType();
 		mapperManager.writeStartRemoteMusicLibraryXml(libraryId, libraryType);
@@ -121,17 +121,17 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		for (File file : files) {
 			if (library instanceof MusicLibrary) {
 				MusicLibrary musicLibrary = (MusicLibrary) library;
-				musicLibraryUpdateManager.updateLibrary(musicLibrary, file, date);
+				musicLibraryUpdateManager.updateLibrary(musicLibrary, file, updatingOn);
 			} else if (library instanceof VideoLibrary) {
 				VideoLibrary videoLibrary = (VideoLibrary) library;
-				videoLibraryUpdateManager.updateLibrary(videoLibrary, file, date);
+				videoLibraryUpdateManager.updateLibrary(videoLibrary, file, updatingOn);
 			} else if (library instanceof PhotoLibrary) {
 				PhotoLibrary photoLibrary = (PhotoLibrary) library;
-				photoLibraryUpdateManager.updateLibrary(photoLibrary, file, date);
+				photoLibraryUpdateManager.updateLibrary(photoLibrary, file, updatingOn);
 			}
 		}
 
-		deleteObsoleteMediaItems(library, date);
+		deleteObsoleteMediaItems(library, updatingOn);
 		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
 
 	}
