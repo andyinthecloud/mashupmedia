@@ -25,7 +25,7 @@
 	<context:component-scan base-package="org.mashupmedia.restful" />
 	<context:component-scan base-package="org.mashupmedia.validator" />
 	<context:component-scan base-package="org.mashupmedia.encode" />
-	
+	<context:component-scan base-package="org.mashupmedia.initialise" />
 
 	<bean id="localDownloadTaskExecutor"
 		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">

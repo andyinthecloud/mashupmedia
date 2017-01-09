@@ -1,9 +1,13 @@
 package org.mashupmedia.model.media.photo;
 
+import java.util.Date;
+
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -25,7 +29,8 @@ public class Photo extends MediaItem {
 	private String thumbnailPath;
 	private String webOptimisedImagePath;
 	private int orientation;
-	private long takenOn;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date takenOn;
 
 	@Transient
 	private Photo previousPhoto;
@@ -33,11 +38,11 @@ public class Photo extends MediaItem {
 	@Transient
 	private Photo nextPhoto;
 
-	public long getTakenOn() {
+	public Date getTakenOn() {
 		return takenOn;
 	}
 
-	public void setTakenOn(long takenOn) {
+	public void setTakenOn(Date takenOn) {
 		this.takenOn = takenOn;
 	}
 

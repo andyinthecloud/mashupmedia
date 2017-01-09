@@ -152,7 +152,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			
 			// Default taken on to last modified, override later to get the actual taken on
 			// from the meta data if possible
-			photo.setTakenOn(lastModified);
+			photo.setTakenOn(new Date(lastModified));
 			
 			photo.setFileName(fileName);
 			photo.setMediaType(MediaType.PHOTO);
@@ -249,9 +249,8 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 		Metadata metadata = ImageMetadataReader.readMetadata(file);
 
-		Date takenOnDate = getTakenOnDatefromMeta(file, metadata);		
-		if (takenOnDate != null) {
-			long takenOn = takenOnDate.getTime();
+		Date takenOn = getTakenOnDatefromMeta(file, metadata);		
+		if (takenOn != null) {
 			photo.setTakenOn(takenOn);
 		}
 

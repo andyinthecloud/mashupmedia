@@ -16,7 +16,7 @@
 
 	<task:scheduler id="taskScheduler" pool-size="3" />
 	<task:scheduled-tasks scheduler="taskScheduler">
-		<task:scheduled ref="libraryTaskScheduler" method="updateLibraries" fixed-delay="18000000" />
+		<task:scheduled ref="libraryTaskScheduler" method="updateLibraries" cron="0 * 2 * * *" />
 		<task:scheduled ref="metaTaskScheduler" method="getMashupMediaLatestReleaseInformation" fixed-delay="36000000" />
 	</task:scheduled-tasks>
 

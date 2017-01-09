@@ -96,12 +96,7 @@ public class LibraryManagerImpl implements LibraryManager {
 
 		removeWatchLibraryListener(libraryId);
 		libraryDao.saveLibrary(library);
-
-		if (!library.isRemote()) {
-			String path = library.getLocation().getPath();
-			registerWatchLibraryListener(libraryId, path);
-		}
-
+		registerWatchLibraryListener(library);
 	}
 
 	@Override
@@ -190,6 +185,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		FileHelper.deleteLibrary(libraryId);
 		Library library = libraryDao.getLibrary(libraryId);
 		libraryDao.deleteLibrary(library);
+		removeWatchLibraryListener(libraryId);
 	}
 
 	@Override
@@ -223,14 +219,8 @@ public class LibraryManagerImpl implements LibraryManager {
 		for (Library library : libraries) {
 			// Try to remove listener just in case it is already registered
 			long libraryId = library.getId();
-			Location location = library.getLocation();
-			String path = location.getPath();
-
 			removeWatchLibraryListener(libraryId);
-
-			if (!library.isRemote()) {
-				registerWatchLibraryListener(libraryId, path);
-			}
+			registerWatchLibraryListener(library);
 
 		}
 
@@ -250,6 +240,19 @@ public class LibraryManagerImpl implements LibraryManager {
 				return;
 			}
 		}
+	}
+
+	private void registerWatchLibraryListener(Library library) {
+
+		if (library.isRemote()) {
+			return;
+		}
+
+		long libraryId = library.getId();
+		Location location = library.getLocation();
+		String path = location.getPath();
+		registerWatchLibraryListener(libraryId, path);
+
 	}
 
 	private void registerWatchLibraryListener(long libraryId, String pathValue) {

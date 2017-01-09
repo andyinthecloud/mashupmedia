@@ -2,10 +2,7 @@ package org.mashupmedia.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
@@ -14,11 +11,7 @@ import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
-import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.library.Library.LibraryType;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.watch.WatchLibraryListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,11 +30,6 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	@Autowired
 	private FfMpegManager ffMpegManager;
 
-	@Autowired
-	private LibraryManager librayManager;
-	
-	
-
 	@Override
 	public void initialiseApplication() {
 		User user = adminManager.getUser(MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME);
@@ -55,9 +43,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		initialiseFirstRoles();
 		adminManager.initialiseAdminUser();
 		adminManager.initialiseSystemUser();
-		initialiseEncoder();
-		librayManager.registerWatchLibraryListeners();
-		
+		initialiseEncoder();		
 	}
 
 	
