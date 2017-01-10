@@ -25,18 +25,10 @@ import org.mashupmedia.service.LibraryManager;
 public class WatchLibraryListener {
 
 	private Logger logger = Logger.getLogger(getClass());
-
 	private LibraryManager libraryManager;
-
-	private final WatchService watcher;
-	private final Map<WatchKey, Path> keys;
-	private boolean trace = false;
+	private WatchService watcher;
+	private Map<WatchKey, Path> keys;
 	private long librayId;
-
-	@SuppressWarnings("unchecked")
-	static <T> WatchEvent<T> cast(WatchEvent<?> event) {
-		return (WatchEvent<T>) event;
-	}
 
 	/**
 	 * Register the given directory with the WatchService
@@ -45,14 +37,12 @@ public class WatchLibraryListener {
 		WatchKey key = folder.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
 				StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
 
-		if (trace) {
-			Path prev = keys.get(key);
-			if (prev == null) {
-				logger.info("register: " + folder);
-			} else {
-				if (!folder.equals(prev)) {
-					logger.info("update: " + prev + " -> " + folder);
-				}
+		Path prev = keys.get(key);
+		if (prev == null) {
+			logger.info("register: " + folder);
+		} else {
+			if (!folder.equals(prev)) {
+				logger.info("update: " + prev + " -> " + folder);
 			}
 		}
 		keys.put(key, folder);
@@ -86,14 +76,12 @@ public class WatchLibraryListener {
 		registerAll(dir);
 		logger.debug("Done.");
 
-		// enable trace after initial registration
-		this.trace = true;
 	}
 
 	/**
 	 * Process all events for keys queued to the watcher
 	 */
-	void processEvents() {
+	public void processEvents() {
 		for (;;) {
 
 			// wait for key to be signalled
@@ -111,6 +99,7 @@ public class WatchLibraryListener {
 			}
 
 			for (WatchEvent<?> event : key.pollEvents()) {
+				@SuppressWarnings("rawtypes")
 				WatchEvent.Kind kind = event.kind();
 
 				// TBD - provide example of how OVERFLOW event is handled
@@ -119,7 +108,9 @@ public class WatchLibraryListener {
 				}
 
 				// Context for directory entry event is the file name of entry
-				WatchEvent<Path> ev = cast(event);
+				@SuppressWarnings("unchecked")
+				WatchEvent<Path> ev = (WatchEvent<Path>) event;
+
 				Path name = ev.context();
 				Path child = dir.resolve(name);
 
@@ -158,6 +149,7 @@ public class WatchLibraryListener {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void processFileEvent(File file, Kind kind) {
 		if (kind == StandardWatchEventKinds.ENTRY_CREATE || kind == StandardWatchEventKinds.ENTRY_MODIFY) {
 			libraryManager.saveMedia(librayId, file);
@@ -176,7 +168,7 @@ public class WatchLibraryListener {
 		}
 
 		Collection<WatchKey> watchKeys = keys.keySet();
-		for (Iterator iterator = watchKeys.iterator(); iterator.hasNext();) {
+		for (Iterator<WatchKey> iterator = watchKeys.iterator(); iterator.hasNext();) {
 			WatchKey watchKey = (WatchKey) iterator.next();
 			watchKey.cancel();
 			watchKeys.remove(watchKey);

@@ -260,7 +260,8 @@ public class LibraryManagerImpl implements LibraryManager {
 		Path path = Paths.get(pathValue);
 
 		try {
-			WatchLibraryListener watchLibraryListener = new WatchLibraryListener(libraryId, path, this);
+			WatchLibraryListener watchLibraryListener = new WatchLibraryListener(libraryId, path, this);			
+			watchLibraryListener.processEvents();
 			addWatchLibraryListener(watchLibraryListener);
 		} catch (IOException e) {
 			logger.error("Error creating watch library", e);
