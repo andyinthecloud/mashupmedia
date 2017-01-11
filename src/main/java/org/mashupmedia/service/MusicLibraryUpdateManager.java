@@ -21,4 +21,8 @@ public interface MusicLibraryUpdateManager {
 
 	public void deleteObsoleteSongs(long libraryId, Date date);
 
+	public void saveSongFile(MusicLibrary library, File file, Date date);
+
+	public void deleteSongFile(MusicLibrary library, File file);
+
 }

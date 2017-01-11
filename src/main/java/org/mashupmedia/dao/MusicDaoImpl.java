@@ -216,6 +216,27 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		return songs.get(0);
 	}
+	
+	@Override
+	public Song getSong(String path) {
+		StringBuilder queryBuilder = new StringBuilder(
+				"from Song s where s.path = :path");
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		query.setCacheable(true);
+		query.setString("path", path);
+
+		@SuppressWarnings("unchecked")
+		List<Song> songs = query.list();
+		if (songs.size() > 1) {
+			logger.error("Returning duplicate songs, using first in list...");
+		}
+
+		if (songs.isEmpty()) {
+			return null;
+		}
+
+		return songs.get(0);
+	}
 
 	@Override
 	public List<Song> getSongsToDelete(long libraryId, Date date) {

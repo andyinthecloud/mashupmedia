@@ -68,6 +68,8 @@ public interface MusicDao {
 	public void deleteEmptyArtists();
 
 	public List<Album> getLatestAlbums(List<Long> userGroupIds, int pageNumber, int maxResults);
+
+	public Song getSong(String path);
 	
 	
 }
