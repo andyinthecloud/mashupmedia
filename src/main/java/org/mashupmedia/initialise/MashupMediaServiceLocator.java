@@ -19,10 +19,13 @@ package org.mashupmedia.initialise;
 
 import java.beans.PropertyVetoException;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.util.FileHelper;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -30,6 +33,8 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class MashupMediaServiceLocator {
+	
+	private Logger logger = Logger.getLogger(getClass());
 
 	private DataSource dataSource;
 
@@ -60,7 +65,6 @@ public class MashupMediaServiceLocator {
 		dataSource.setMinPoolSize(3);
 		dataSource.setMaxPoolSize(20);
 		dataSource.setMaxIdleTime(600);
-
 		return dataSource;
 	}
 
@@ -89,5 +93,28 @@ public class MashupMediaServiceLocator {
 
 		return localSessionFactoryBean;
 	}
+	
+	
+	public void shutdown() {
+		// Shut down the database cleanly
+        try {
+        	Connection connection = dataSource.getConnection();
+            Statement statement = connection.createStatement();
+            statement.execute("SHUTDOWN");
+            statement.close();
+        } catch (Exception e) {
+        	logger.error("Error shutting down", e);
+        }
+        
+        try {
+        	Connection connection = dataSource.getConnection();
+            connection.close();
+        } catch (Exception e) {
+        	logger.error("Error shutting down", e);
+        }
+	}
+	
+	
+	
 
 }

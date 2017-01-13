@@ -1,8 +1,8 @@
 <web-app version="2.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://java.sun.com/xml/ns/j2ee" xsi:schemalocation="http:/java.sun.com/dtd/web-app_2_5.dtd">
-	
-	
-	
+
+
+
 	<context-param>
 		<param-name>log4jConfigLocation</param-name>
 		<param-value>/WEB-INF/classes/log4j.xml</param-value>
@@ -12,9 +12,14 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
 			/WEB-INF/applicationContext.xml
-			/WEB-INF/dataSource.xml			
+			/WEB-INF/dataSource.xml
 		</param-value>
 	</context-param>
+
+	<listener>
+		<listener-class>org.h2.server.web.DbStarter</listener-class>
+	</listener>
+
 
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener
@@ -53,32 +58,32 @@
 	</servlet-mapping>
 
 	<session-config>
-	  <session-timeout>60</session-timeout>
+		<session-timeout>60</session-timeout>
 	</session-config>
 
-	
+
 	<!-- Audio mime types -->
-    <mime-mapping>
-        <extension>oga</extension>
-        <mime-type>audio/ogg</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>ogg</extension>
-        <mime-type>audio/ogg</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>mp3</extension>
-        <mime-type>audio/mpeg</mime-type>
-    </mime-mapping>
-    
+	<mime-mapping>
+		<extension>oga</extension>
+		<mime-type>audio/ogg</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>ogg</extension>
+		<mime-type>audio/ogg</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>mp3</extension>
+		<mime-type>audio/mpeg</mime-type>
+	</mime-mapping>
+
 	<!-- Video mime types -->
-    <mime-mapping>
-        <extension>ogv</extension>
-        <mime-type>video/ogg</mime-type>
-    </mime-mapping>
-    <mime-mapping>
-        <extension>webm</extension>
-        <mime-type>video/webm</mime-type>
-    </mime-mapping>
-    
+	<mime-mapping>
+		<extension>ogv</extension>
+		<mime-type>video/ogg</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>webm</extension>
+		<mime-type>video/webm</mime-type>
+	</mime-mapping>
+
 </web-app>

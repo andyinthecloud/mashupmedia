@@ -37,7 +37,7 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />	
 
 	<bean id="sessionFactory" factory-bean="serviceLocator"
-		factory-method="createSessionFactory" />
+		factory-method="createSessionFactory"/>
 
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
@@ -57,7 +57,7 @@
 		<property name="cacheSeconds" value="${message.cache.seconds}" />
 	</bean>
 
-	<bean id="serviceLocator" class="org.mashupmedia.initialise.MashupMediaServiceLocator">
+	<bean id="serviceLocator" class="org.mashupmedia.initialise.MashupMediaServiceLocator" destroy-method="shutdown">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
