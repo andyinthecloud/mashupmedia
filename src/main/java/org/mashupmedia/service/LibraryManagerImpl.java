@@ -99,9 +99,7 @@ public class LibraryManagerImpl implements LibraryManager {
 			}
 		}
 
-		removeWatchLibraryListener(libraryId);
 		libraryDao.saveLibrary(library);
-		registerWatchLibraryListener(library);
 	}
 
 	@Override
