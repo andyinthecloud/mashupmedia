@@ -17,7 +17,7 @@
 
 package org.mashupmedia.util;
 
-import java.util.Date;
+import java.io.File;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -83,6 +83,15 @@ public class LibraryHelper {
 		return "lastUpdated_" + Library.class.getName() + "_" + id;
 	}
 
+	
+	public static String[] getRelativeFolders(File libraryFolder, File file) {
+		String libraryFolderPath = libraryFolder.getPath();
+		String filePath = file.getPath();
+		
+		String path = filePath.replaceFirst(libraryFolderPath, "");
+		String[] parts = path.split("/");
+		return parts;
+	}
 
 
 }

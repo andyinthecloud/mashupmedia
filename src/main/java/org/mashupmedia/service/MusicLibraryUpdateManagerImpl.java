@@ -36,6 +36,7 @@ import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.StringHelper;
@@ -99,7 +100,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 	
 	@Override
-	public void deleteSongFile(MusicLibrary library, File file) {
+	public void deleteFile(MusicLibrary library, File file) {
 		
 		String path = file.getPath();
 		Song song = musicDao.getSong(path);
@@ -311,7 +312,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 	
 	@Override
-	public void saveSongFile(MusicLibrary library, File file, Date date) {
+	public void saveFile(MusicLibrary library, File file, Date date) {
 		
 		if (!file.exists()) {
 			return;
@@ -337,7 +338,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	private String getFolderAlbum(File libraryFolder, File musicFile) {
-		String parts[] = getFolders(libraryFolder, musicFile);
+		String parts[] =  LibraryHelper.getRelativeFolders(libraryFolder, musicFile);
 		
 		if (parts == null || parts.length < 2) {
 			return parts[0];
@@ -347,7 +348,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	private String getFolderArtist(File libraryFolder, File musicFile) {		
-		String parts[] = getFolders(libraryFolder, musicFile);
+		String parts[] = LibraryHelper.getRelativeFolders(libraryFolder, musicFile);
 		
 		if (parts == null || parts.length < 2) {
 			return parts[0];
@@ -356,14 +357,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return parts[0];
 	}
 
-	private String[] getFolders(File libraryFolder, File musicFile) {
-		String libraryFolderPath = libraryFolder.getPath();
-		String musicFilePath = musicFile.getPath();
-		
-		String path = musicFilePath.replaceFirst(libraryFolderPath, "");
-		String[] parts = path.split("/");
-		return parts;
-	}
+
 
 	protected void prepareSongs(Date date, List<Song> songs, File file,
 			MusicLibrary musicLibrary, String folderArtistName,

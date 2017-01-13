@@ -17,8 +17,9 @@ import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.location.Location;
+import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.library.RemoteShare;
+import org.mashupmedia.model.location.Location;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
@@ -39,7 +40,8 @@ public class LibraryManagerImpl implements LibraryManager {
 	private ConfigurationManager configurationManager;	
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
-
+	@Autowired
+	private PhotoLibraryUpdateManager photoLibraryUpdateManager;	
 	@Autowired
 	private AdminManager adminManager;
 
@@ -204,9 +206,9 @@ public class LibraryManagerImpl implements LibraryManager {
 		
 		Date date = new Date();		
 		if (libraryType == LibraryType.MUSIC) {			
-			musicLibraryUpdateManager.saveSongFile((MusicLibrary) library, file, date);
+			musicLibraryUpdateManager.saveFile((MusicLibrary) library, file, date);
 		} else if (libraryType == LibraryType.PHOTO) {
-
+			photoLibraryUpdateManager.saveFile((PhotoLibrary) library, file, date);
 		} else if (libraryType == LibraryType.VIDEO) {
 
 		}
@@ -219,10 +221,9 @@ public class LibraryManagerImpl implements LibraryManager {
 		Library library = libraryDao.getLibrary(librayId);
 		LibraryType libraryType = library.getLibraryType();
 		if (libraryType == LibraryType.MUSIC) {
-			musicLibraryUpdateManager.deleteSongFile((MusicLibrary) library, file);
-
+			musicLibraryUpdateManager.deleteFile((MusicLibrary) library, file);
 		} else if (libraryType == LibraryType.PHOTO) {
-
+			photoLibraryUpdateManager.deleteFile((PhotoLibrary) library, file);
 		} else if (libraryType == LibraryType.VIDEO) {
 
 		}

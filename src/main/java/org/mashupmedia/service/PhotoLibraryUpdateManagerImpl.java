@@ -21,6 +21,7 @@ import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
+import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.ImageHelper.ImageRotationType;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.MediaItemHelper;
@@ -50,7 +51,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	@Autowired
 	private LibraryDao libraryDao;
-	
+
 	@Autowired
 	private LibraryManager libraryManager;
 
@@ -62,13 +63,27 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		int totalDeletedPhotos = photoDao.removeObsoletePhotos(libraryId, date);
 
 		for (Photo photo : photos) {
-			processManager.killProcesses(photo.getId());
-			FileHelper.deleteFile(photo.getThumbnailPath());
-			FileHelper.deleteFile(photo.getWebOptimisedImagePath());
+			deletePhoto(photo);
 		}
 
 		logger.info(totalDeletedPhotos + " obsolete photos deleted.");
 	}
+	
+	
+	private void deletePhoto(Photo photo) {
+		processManager.killProcesses(photo.getId());
+		FileHelper.deleteFile(photo.getThumbnailPath());
+		FileHelper.deleteFile(photo.getWebOptimisedImagePath());		
+	}
+	
+	
+	@Override
+	public void deleteFile(PhotoLibrary library, File file) {		
+		String path = file.getAbsolutePath();
+		Photo photo = photoDao.getPhotoByAbsolutePath(path);
+		deletePhoto(photo);
+	}
+	
 
 	@Override
 	public void updateLibrary(PhotoLibrary library, File folder, Date date) {
@@ -108,11 +123,128 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			savePhotos(photos);
 
 			photos.clear();
-			
+
 			libraryManager.saveMediaItemLastUpdated(library.getId());
-			
+
 		}
 
+//		Album album = new Album();
+//		album.setName(albumName);
+//		album.setUpdatedOn(date);
+//
+//		String path = file.getAbsolutePath();
+//		Photo photo = getPhotoByAbsolutePath(path);
+//
+//		if (isCreatePhoto(file, photo)) {
+//			if (photo == null) {
+//				photo = new Photo();
+//				photo.setCreatedOn(new Date());
+//			}
+//
+//			photo.setAlbum(album);
+//			String fileExtension = FileHelper.getFileExtension(fileName);
+//			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
+//
+//			if (!MediaItemHelper.isCompatiblePhotoFormat(mediaContentType)) {
+//				return;
+//			}
+//
+//			Set<MediaEncoding> mediaEncodings = photo.getMediaEncodings();
+//			if (mediaEncodings == null) {
+//				mediaEncodings = new HashSet<MediaEncoding>();
+//			}
+//			mediaEncodings.clear();
+//			MediaEncoding mediaEncoding = new MediaEncoding();
+//			mediaEncoding.setMediaContentType(mediaContentType);
+//			mediaEncoding.setOriginal(true);
+//			mediaEncodings.add(mediaEncoding);
+//			photo.setMediaEncodings(mediaEncodings);
+//
+//			photo.setFormat(mediaContentType.getName());
+//			photo.setEnabled(true);
+//			long lastModified = file.lastModified();
+//			photo.setFileLastModifiedOn(lastModified);
+//
+//			// Default taken on to last modified, override later to get the
+//			// actual taken on
+//			// from the meta data if possible
+//			photo.setTakenOn(new Date(lastModified));
+//
+//			photo.setFileName(fileName);
+//			photo.setMediaType(MediaType.PHOTO);
+//			photo.setPath(path);
+//			photo.setSizeInBytes(file.length());
+//
+//			try {
+//				processPhotoMetadata(file, photo);
+//			} catch (ImageProcessingException e) {
+//				logger.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
+//			} catch (IOException e) {
+//				logger.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
+//			} catch (MetadataException e) {
+//				logger.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
+//			}
+//
+//			int orientation = photo.getOrientation();
+//			ImageRotationType imageRotationType = ImageHelper.getImageRotationType(orientation);
+//
+//			try {
+//				String thumbnailPath = ImageHelper.generateAndSaveImage(library.getId(), path, ImageType.THUMBNAIL,
+//						imageRotationType);
+//				photo.setThumbnailPath(thumbnailPath);
+//
+//				String webOptimisedImagePath = ImageHelper.generateAndSaveImage(library.getId(), path,
+//						ImageType.WEB_OPTIMISED, imageRotationType);
+//				photo.setWebOptimisedImagePath(webOptimisedImagePath);
+//
+//			} catch (Exception e) {
+//				logger.error("Will not save photo, unable to create thumbnail: " + file.getAbsolutePath(), e);
+//				return;
+//			}
+//
+//			photo.setLibrary(library);
+//			String title = StringUtils.trimToEmpty(fileName);
+//			photo.setDisplayTitle(title);
+//			photo.setSearchText(album.getName() + " " + title);
+//
+//		}
+//
+//		photo.setUpdatedOn(date);
+		
+		
+		Photo photo = preparePhoto(file, library, albumName, date);
+		if (photo != null) {
+			photos.add(photo);	
+		}
+	}
+
+	@Override
+	public void saveFile(PhotoLibrary library, File file, Date date) {
+		
+		File libraryFolder = new File(library.getLocation().getPath());
+		String[] parts = LibraryHelper.getRelativeFolders(libraryFolder, file);
+		StringBuilder albumNameBuilder = new StringBuilder();
+		for (String part : parts) {
+			if (albumNameBuilder.length() > 0) {
+				albumNameBuilder.append(" / ");
+			}
+			albumNameBuilder.append(part);
+		}
+		
+		Photo photo = preparePhoto(file, library, albumNameBuilder.toString(), date);
+		List<Photo> photos = new ArrayList<>();
+		if (photo != null) {
+			photos.add(photo);	
+		}
+		
+		savePhotos(photos);
+	}
+	
+	
+	public Photo preparePhoto(File file, PhotoLibrary library, String albumName, Date date) {
+		
+		String fileName = file.getName();
+		
 		Album album = new Album();
 		album.setName(albumName);
 		album.setUpdatedOn(date);
@@ -131,7 +263,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
 
 			if (!MediaItemHelper.isCompatiblePhotoFormat(mediaContentType)) {
-				return;
+				return null;
 			}
 
 			Set<MediaEncoding> mediaEncodings = photo.getMediaEncodings();
@@ -149,15 +281,16 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setEnabled(true);
 			long lastModified = file.lastModified();
 			photo.setFileLastModifiedOn(lastModified);
-			
-			// Default taken on to last modified, override later to get the actual taken on
+
+			// Default taken on to last modified, override later to get the
+			// actual taken on
 			// from the meta data if possible
 			photo.setTakenOn(new Date(lastModified));
-			
+
 			photo.setFileName(fileName);
 			photo.setMediaType(MediaType.PHOTO);
 			photo.setPath(path);
-			photo.setSizeInBytes(file.length());			
+			photo.setSizeInBytes(file.length());
 
 			try {
 				processPhotoMetadata(file, photo);
@@ -183,7 +316,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 			} catch (Exception e) {
 				logger.error("Will not save photo, unable to create thumbnail: " + file.getAbsolutePath(), e);
-				return;
+				return null;
 			}
 
 			photo.setLibrary(library);
@@ -194,8 +327,10 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		}
 
 		photo.setUpdatedOn(date);
-		photos.add(photo);
+		
+		return photo;		
 	}
+	
 
 	private void savePhotos(List<Photo> photos) {
 
@@ -204,28 +339,26 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		}
 
 		int totalPhotos = photos.size();
-		
+
 		for (int i = 0; i < totalPhotos; i++) {
 			Photo photo = photos.get(i);
-			
-			
+
 			Album album = photo.getAlbum();
 			String albumName = album.getName();
-			Date updatedOn  = album.getUpdatedOn();
+			Date updatedOn = album.getUpdatedOn();
 			album = getAlbum(albumName, updatedOn);
 			photo.setAlbum(album);
 
 			boolean isSessionFlush = false;
 			if (i % BATCH_INSERT_ITEMS == 0 || (i == totalPhotos - 1)) {
 				isSessionFlush = true;
-			} 
+			}
 
 			photoDao.savePhoto(photo, isSessionFlush);
 
 		}
 
 	}
-
 
 	private boolean isCreatePhoto(File file, Photo photo) {
 
@@ -249,7 +382,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 		Metadata metadata = ImageMetadataReader.readMetadata(file);
 
-		Date takenOn = getTakenOnDatefromMeta(file, metadata);		
+		Date takenOn = getTakenOnDatefromMeta(file, metadata);
 		if (takenOn != null) {
 			photo.setTakenOn(takenOn);
 		}
@@ -285,7 +418,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				return date;
 			}
 		}
-		
+
 		return null;
 
 	}
