@@ -81,6 +81,10 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	public void deleteFile(PhotoLibrary library, File file) {		
 		String path = file.getAbsolutePath();
 		Photo photo = photoDao.getPhotoByAbsolutePath(path);
+		if (photo == null) {
+			return;
+		}
+		
 		deletePhoto(photo);
 	}
 	
@@ -222,15 +226,20 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	public void saveFile(PhotoLibrary library, File file, Date date) {
 		
 		File libraryFolder = new File(library.getLocation().getPath());
-		String[] parts = LibraryHelper.getRelativeFolders(libraryFolder, file);
+		List<File> relativeFolders = LibraryHelper.getRelativeFolders(libraryFolder, file);
+		if (relativeFolders == null || relativeFolders.isEmpty()) {
+			relativeFolders.add(libraryFolder);
+		}
+		
 		StringBuilder albumNameBuilder = new StringBuilder();
-		for (String part : parts) {
+		for (File relativeFolder : relativeFolders) {
 			if (albumNameBuilder.length() > 0) {
 				albumNameBuilder.append(" / ");
 			}
-			albumNameBuilder.append(part);
+			albumNameBuilder.append(relativeFolder.getName());
+			
 		}
-		
+				
 		Photo photo = preparePhoto(file, library, albumNameBuilder.toString(), date);
 		List<Photo> photos = new ArrayList<>();
 		if (photo != null) {

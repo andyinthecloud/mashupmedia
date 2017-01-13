@@ -18,6 +18,9 @@
 package org.mashupmedia.util;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -84,13 +87,22 @@ public class LibraryHelper {
 	}
 
 	
-	public static String[] getRelativeFolders(File libraryFolder, File file) {
-		String libraryFolderPath = libraryFolder.getPath();
-		String filePath = file.getPath();
+	public static List<File> getRelativeFolders(File libraryFolder, File file) {
 		
-		String path = filePath.replaceFirst(libraryFolderPath, "");
-		String[] parts = path.split("/");
-		return parts;
+		List<File> folders = new ArrayList<>();
+		if (libraryFolder == null || file == null) {
+			return folders;
+		}		
+		
+		File parentFolder = file.getParentFile();
+		
+		while(parentFolder != null && !libraryFolder.equals(parentFolder)) {
+			folders.add(parentFolder);
+			parentFolder = parentFolder.getParentFile();
+		}
+		
+		Collections.reverse(folders);		
+		return folders;
 	}
 
 

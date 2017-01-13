@@ -326,9 +326,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 		
 		File libraryFolder = new File(library.getLocation().getPath());
-		
-		String folderArtistName = getFolderArtist(libraryFolder, file);
-		String folderAlbumName = getFolderAlbum(libraryFolder, file);
+		List<File> relativeFolders = LibraryHelper.getRelativeFolders(libraryFolder, file);
+				
+		String folderArtistName = getFolderArtist(relativeFolders, file);
+		String folderAlbumName = getFolderAlbum(relativeFolders, file);
 		Song song = prepareSong(file, date, 1, library, folderArtistName, folderAlbumName);
 		
 		List<Song> songs = new ArrayList<>();
@@ -337,24 +338,36 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		
 	}
 
-	private String getFolderAlbum(File libraryFolder, File musicFile) {
-		String parts[] =  LibraryHelper.getRelativeFolders(libraryFolder, musicFile);
-		
-		if (parts == null || parts.length < 2) {
-			return parts[0];
+	private String getFolderAlbum(List<File> relativeFolders, File musicFile) {
+		String musicFileName = musicFile.getName();
+		if (relativeFolders == null || relativeFolders.isEmpty()) {
+			return musicFileName;
 		}
 		
-		return parts[1];
+		if (relativeFolders.size() < 2) {
+			return musicFileName;
+		}
+		
+		StringBuilder albumNameBuilder = new StringBuilder();
+		for (File relativeFolder : relativeFolders) {
+			if (albumNameBuilder.length() > 0) {
+				albumNameBuilder.append(" - ");
+			}
+			albumNameBuilder.append(relativeFolder.getName());
+		}
+		
+		
+		return albumNameBuilder.toString();
 	}
 
-	private String getFolderArtist(File libraryFolder, File musicFile) {		
-		String parts[] = LibraryHelper.getRelativeFolders(libraryFolder, musicFile);
+	private String getFolderArtist(List<File> relativeFolders, File musicFile) {		
+		String musicFileName = musicFile.getName();
+		if (relativeFolders == null || relativeFolders.isEmpty()) {
+			return musicFileName;
+		}		
 		
-		if (parts == null || parts.length < 2) {
-			return parts[0];
-		}
-		
-		return parts[0];
+		File artistFolder = relativeFolders.get(0);		
+		return artistFolder.getName();
 	}
 
 

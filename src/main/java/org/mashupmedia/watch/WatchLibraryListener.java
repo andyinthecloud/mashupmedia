@@ -129,11 +129,8 @@ public class WatchLibraryListener {
 						// ignore to keep sample readbale
 					}
 				}
-
-				if (Files.isRegularFile(child, LinkOption.NOFOLLOW_LINKS)) {
-					processFileEvent(child.toFile(), kind);
-				}
-
+				
+				processFileEvent(child.toFile(), kind);
 			}
 
 			// reset key and remove from set if directory no longer accessible
