@@ -3,7 +3,10 @@ package org.mashupmedia.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -30,7 +33,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
-	
+
 	@Autowired
 	private LibraryDao libraryDao;
 
@@ -216,11 +219,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		return songs.get(0);
 	}
-	
+
 	@Override
 	public Song getSong(String path) {
-		StringBuilder queryBuilder = new StringBuilder(
-				"from Song s where s.path = :path");
+		StringBuilder queryBuilder = new StringBuilder("from Song s where s.path = :path");
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		query.setCacheable(true);
 		query.setString("path", path);
@@ -268,8 +270,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		saveOrMerge(song.getYear());
 		saveOrMerge(song.getGenre());
 		saveOrUpdate(song);
-		
-		Library library = song.getLibrary();		
+
+		Library library = song.getLibrary();
 		libraryDao.saveLibrary(library);
 
 		flushSession(isSessionFlush);
@@ -289,11 +291,13 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<Album> getRandomAlbums(List<Long> groupIds, int numberOfAlbums) {
+
+		int seed = RandomUtils.nextInt();
 		StringBuilder queryBuilder = new StringBuilder(
 				"select a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g");
 		queryBuilder.append(" where s.library.enabled = true");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" order by rand()");
+		queryBuilder.append(" order by rand(" + seed + ") limit 1");
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		@SuppressWarnings("unchecked")
 		List<Album> albums = query.setMaxResults(numberOfAlbums).list();
