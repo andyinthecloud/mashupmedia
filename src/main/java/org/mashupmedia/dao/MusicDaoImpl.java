@@ -3,10 +3,9 @@ package org.mashupmedia.dao;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.list.SetUniqueList;
 import org.apache.commons.lang.math.RandomUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -26,6 +25,7 @@ import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.DaoHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,9 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Autowired
 	private LibraryDao libraryDao;
+	
+	@Autowired
+	private GroupDao groupDao;
 
 	// Used for remote library synchronisation
 	private final static int NUMBER_OF_DAYS_TO_KEEP_DISABLED_SONGS = 1;
@@ -291,18 +294,29 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<Album> getRandomAlbums(List<Long> groupIds, int numberOfAlbums) {
-
 		int seed = RandomUtils.nextInt();
 		StringBuilder queryBuilder = new StringBuilder(
 				"select a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g");
 		queryBuilder.append(" where s.library.enabled = true");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" order by rand(" + seed + ") limit 1");
+		queryBuilder.append(" order by random(" + seed + ")");
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		
+		int totalGroups = getTotalGroups();
+		query.setMaxResults(numberOfAlbums * totalGroups);
+		
 		@SuppressWarnings("unchecked")
-		List<Album> albums = query.setMaxResults(numberOfAlbums).list();
+		List<Album> albums = SetUniqueList.decorate(query.list());
+		
 		return albums;
 	}
+	
+	
+	protected int getTotalGroups() {
+		int totalGroups = groupDao.getGroupIds().size();
+		return totalGroups;
+	}
+
 
 	@Override
 	public List<Album> getLatestAlbums(List<Long> groupIds, int pageNumber, int maxResults) {
