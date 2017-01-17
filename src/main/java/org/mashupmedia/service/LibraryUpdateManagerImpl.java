@@ -105,6 +105,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		} finally {
 			libraryManager.saveLibrary(library);
 		}
+		
+		libraryManager.registerWatchLibraryListeners();
 
 	}
 
