@@ -1,10 +1,13 @@
 package org.mashupmedia.dao;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.collections.list.SetUniqueList;
-import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.search.Sort;
@@ -25,7 +28,6 @@ import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Song;
-import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.DaoHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -294,16 +296,22 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<Album> getRandomAlbums(List<Long> groupIds, int numberOfAlbums) {
-		int seed = RandomUtils.nextInt();
+		
+		int totalGroups = getTotalGroups();
+		int maxResults = numberOfAlbums * totalGroups;
+		
+		Collection<Integer> randomAlbumIds = getRandomAlbumIds(maxResults, groupIds);
+		
+//		int seed = RandomUtils.nextInt();
 		StringBuilder queryBuilder = new StringBuilder(
 				"select a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g");
 		queryBuilder.append(" where s.library.enabled = true");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" order by random(" + seed + ")");
+//		queryBuilder.append(" order by random(" + seed + ")");
+		queryBuilder.append(" and a.id in (:albumIds)");
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
-		
-		int totalGroups = getTotalGroups();
-		query.setMaxResults(numberOfAlbums * totalGroups);
+		query.setParameterList("albumIds", randomAlbumIds);		
+		query.setMaxResults(maxResults);
 		
 		@SuppressWarnings("unchecked")
 		List<Album> albums = SetUniqueList.decorate(query.list());
@@ -312,6 +320,34 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 	
 	
+	private Collection<Integer> getRandomAlbumIds(int maxResults, List<Long> groupIds) {
+		
+		StringBuilder queryBuilder = new StringBuilder(
+				"select max(a.id) from Album a join a.songs s join s.library.groups g");
+		queryBuilder.append(" where s.library.enabled = true");
+		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+		
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		query.setCacheable(true);
+		@SuppressWarnings("unused")
+		Long maxAlbumId = (Long) query.uniqueResult();
+
+		
+		int maximum = maxResults + 1;
+		int minimum = 1;
+		
+		Random random = new Random(System.currentTimeMillis());
+		
+		Set<Integer> randomAlbumIds = new HashSet<>();
+		
+		while(randomAlbumIds.size() < maxResults) {
+			int randomAlbumId = random.nextInt(maximum - minimum) + minimum;
+			randomAlbumIds.add(randomAlbumId);
+		}
+		
+		return randomAlbumIds;
+	}
+
 	protected int getTotalGroups() {
 		int totalGroups = groupDao.getGroupIds().size();
 		return totalGroups;
