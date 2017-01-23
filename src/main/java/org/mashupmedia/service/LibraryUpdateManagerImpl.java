@@ -55,9 +55,12 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	@Autowired
 	private LibraryManager libraryManager;
-	
+
 	@Autowired
-	private ConfigurationManager configurationManager; 
+	private ConfigurationManager configurationManager;
+
+	@Autowired
+	private LibraryWatchManager libraryWatchManager;
 
 	@Override
 	public void updateLibrary(Library library) {
@@ -72,7 +75,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		Date date = new Date();
 		date = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);
 
-		Date lastSavedMediaItemOn = configurationManager.getConfigurationDate(LibraryHelper.getConfigurationLastUpdatedKey(library.getId()));
+		Date lastSavedMediaItemOn = configurationManager
+				.getConfigurationDate(LibraryHelper.getConfigurationLastUpdatedKey(library.getId()));
 		if (lastSavedMediaItemOn == null) {
 			lastSavedMediaItemOn = DateUtils.addHours(date, -LIBRARY_UPDATE_TIMEOUT_HOURS);
 		}
@@ -105,8 +109,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		} finally {
 			libraryManager.saveLibrary(library);
 		}
-		
-		libraryManager.registerWatchLibraryListeners();
+
+		libraryWatchManager.registerWatchLibraryListeners();
 
 	}
 

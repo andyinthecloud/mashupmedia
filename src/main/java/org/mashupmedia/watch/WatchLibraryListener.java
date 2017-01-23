@@ -52,15 +52,29 @@ public class WatchLibraryListener {
 	 * Register the given directory, and all its sub-directories, with the
 	 * WatchService.
 	 */
-	private void registerAll(final Path start) throws IOException {
-		// register directory and sub-directories
-		Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
+	private synchronized void registerAll(final Path start) {
+
+		new Thread() {
 			@Override
-			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-				register(dir);
-				return FileVisitResult.CONTINUE;
+			public void run() {
+				try {
+					// register directory and sub-directories
+					Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
+						@Override
+						public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+								throws IOException {
+							register(dir);
+							return FileVisitResult.CONTINUE;
+						}
+					});
+
+				} catch (IOException e) {
+					logger.error("Error watching folders", e);
+				}
+
 			}
-		});
+		}.start();
+
 	}
 
 	/**
@@ -120,16 +134,12 @@ public class WatchLibraryListener {
 				// if directory is created, and watching recursively, then
 				// register it and its sub-directories
 				if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
-					try {
-						if (Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS)) {
-							registerAll(child);
-						}
-
-					} catch (IOException x) {
-						// ignore to keep sample readbale
+					if (Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS)) {
+						registerAll(child);
 					}
+
 				}
-				
+
 				processFileEvent(child.toFile(), kind);
 			}
 

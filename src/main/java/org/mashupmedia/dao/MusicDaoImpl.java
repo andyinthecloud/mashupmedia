@@ -1,11 +1,10 @@
 package org.mashupmedia.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.collections.list.SetUniqueList;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +37,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Autowired
 	private LibraryDao libraryDao;
-	
+
 	@Autowired
 	private GroupDao groupDao;
 
@@ -296,63 +295,70 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<Album> getRandomAlbums(List<Long> groupIds, int numberOfAlbums) {
-		
+
 		int totalGroups = getTotalGroups();
 		int maxResults = numberOfAlbums * totalGroups;
-		
-		Collection<Integer> randomAlbumIds = getRandomAlbumIds(maxResults, groupIds);
-		
-//		int seed = RandomUtils.nextInt();
-		StringBuilder queryBuilder = new StringBuilder(
-				"select a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g");
-		queryBuilder.append(" where s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-//		queryBuilder.append(" order by random(" + seed + ")");
-		queryBuilder.append(" and a.id in (:albumIds)");
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
-		query.setParameterList("albumIds", randomAlbumIds);		
-		query.setMaxResults(maxResults);
-		
-		@SuppressWarnings("unchecked")
-		List<Album> albums = SetUniqueList.decorate(query.list());
-		
-		return albums;
-	}
-	
-	
-	private Collection<Integer> getRandomAlbumIds(int maxResults, List<Long> groupIds) {
-		
-		StringBuilder queryBuilder = new StringBuilder(
-				"select max(a.id) from Album a join a.songs s join s.library.groups g");
-		queryBuilder.append(" where s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
-		query.setCacheable(true);
-		@SuppressWarnings("unused")
-		Long maxAlbumId = (Long) query.uniqueResult();
 
-		
-		int maximum = maxResults + 1;
-		int minimum = 1;
-		
-		Random random = new Random(System.currentTimeMillis());
-		
-		Set<Integer> randomAlbumIds = new HashSet<>();
-		
-		while(randomAlbumIds.size() < maxResults) {
-			int randomAlbumId = random.nextInt(maximum - minimum) + minimum;
+		// List<Long> albumIds = getAlbumIds(groupIds);
+		Collection<Long> randomAlbumIds = getRandomAlbumIds(maxResults, groupIds);
+
+		StringBuilder viewableAlbumIdsQueryBuilder = new StringBuilder(
+				"select distinct(a.id) from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g");
+		viewableAlbumIdsQueryBuilder.append(" where s.library.enabled = true");
+		DaoHelper.appendGroupFilter(viewableAlbumIdsQueryBuilder, groupIds);
+		viewableAlbumIdsQueryBuilder.append(" and a.id in (:albumIds)");
+		Query query = sessionFactory.getCurrentSession().createQuery(viewableAlbumIdsQueryBuilder.toString());
+		query.setParameterList("albumIds", randomAlbumIds);
+		query.setMaxResults(maxResults);
+
+		@SuppressWarnings("unchecked")
+		List<Long> allowedAlbumIds = query.list();
+
+		StringBuilder randomAlbumsQueryBuilder = new StringBuilder(
+				"select a from org.mashupmedia.model.media.music.Album a where a.id in (:albumIds) order by rand()");
+		Query randomAlbumsQuery = sessionFactory.getCurrentSession().createQuery(randomAlbumsQueryBuilder.toString());
+		randomAlbumsQuery.setParameterList("albumIds", allowedAlbumIds);
+		randomAlbumsQuery.setMaxResults(maxResults);
+		@SuppressWarnings("unchecked")
+		List<Album> randomAlbums = randomAlbumsQuery.list();
+
+		return randomAlbums;
+	}
+
+	private Collection<Long> getRandomAlbumIds(int maxResults, List<Long> groupIds) {
+		List<Long> albumIds = getAlbumIds(groupIds);
+		List<Long> randomAlbumIds = new ArrayList<>();
+		if (albumIds == null || albumIds.isEmpty()) {
+			return randomAlbumIds;
+		}
+
+		while (randomAlbumIds.size() < maxResults) {
+			int randomIndex = ThreadLocalRandom.current().nextInt(albumIds.size());
+			long randomAlbumId = albumIds.get(randomIndex);
 			randomAlbumIds.add(randomAlbumId);
 		}
-		
+
 		return randomAlbumIds;
+	}
+
+	private List<Long> getAlbumIds(List<Long> groupIds) {
+		StringBuilder queryBuilder = new StringBuilder(
+				"select a.id from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g");
+		queryBuilder.append(" where s.library.enabled = true");
+		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		query.setCacheable(true);
+
+		@SuppressWarnings("unchecked")
+		List<Long> albumIds = SetUniqueList.decorate(query.list());
+		return albumIds;
 	}
 
 	protected int getTotalGroups() {
 		int totalGroups = groupDao.getGroupIds().size();
 		return totalGroups;
 	}
-
 
 	@Override
 	public List<Album> getLatestAlbums(List<Long> groupIds, int pageNumber, int maxResults) {

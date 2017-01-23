@@ -1,12 +1,7 @@
 package org.mashupmedia.service;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,11 +14,9 @@ import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.library.RemoteShare;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
-import org.mashupmedia.watch.WatchLibraryListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +37,10 @@ public class LibraryManagerImpl implements LibraryManager {
 	private PhotoLibraryUpdateManager photoLibraryUpdateManager;	
 	@Autowired
 	private AdminManager adminManager;
+	@Autowired	
+	private LibraryWatchManager libraryWatchManager;
 
-	private List<WatchLibraryListener> watchLibraryListeners;
+	
 
 	@Override
 	public List<Library> getLocalLibraries(LibraryType libraryType) {
@@ -185,8 +180,8 @@ public class LibraryManagerImpl implements LibraryManager {
 	public void deleteLibrary(long libraryId) {
 		FileHelper.deleteLibrary(libraryId);
 		Library library = libraryDao.getLibrary(libraryId);
-		libraryDao.deleteLibrary(library);
-		removeWatchLibraryListener(libraryId);
+		libraryDao.deleteLibrary(library);		
+		libraryWatchManager.removeWatchLibraryListener(libraryId);
 	}
 
 	@Override
@@ -228,71 +223,5 @@ public class LibraryManagerImpl implements LibraryManager {
 
 	}
 
-	@Override
-	public void registerWatchLibraryListeners() {
-		List<Library> libraries = getLocalLibraries(LibraryType.ALL);
-		if (libraries == null || libraries.isEmpty()) {
-			return;
-		}
 
-		for (Library library : libraries) {
-			// Try to remove listener just in case it is already registered
-			long libraryId = library.getId();
-			removeWatchLibraryListener(libraryId);
-			registerWatchLibraryListener(library);
-
-		}
-
-	}
-
-	private void removeWatchLibraryListener(long libraryId) {
-		if (watchLibraryListeners == null || watchLibraryListeners.isEmpty()) {
-			return;
-		}
-
-		for (Iterator<WatchLibraryListener> iterator = watchLibraryListeners.iterator(); iterator.hasNext();) {
-			WatchLibraryListener watchLibrary = (WatchLibraryListener) iterator.next();
-			if (libraryId == watchLibrary.getLibrayId()) {
-				watchLibrary.cancel();
-				watchLibraryListeners.remove(watchLibrary);
-				logger.info("Watch libray removed. Library id = " + libraryId);
-				return;
-			}
-		}
-	}
-
-	private void registerWatchLibraryListener(Library library) {
-
-		if (library.isRemote()) {
-			return;
-		}
-
-		long libraryId = library.getId();
-		Location location = library.getLocation();
-		String path = location.getPath();
-		registerWatchLibraryListener(libraryId, path);
-
-	}
-
-	private void registerWatchLibraryListener(long libraryId, String pathValue) {
-
-		Path path = Paths.get(pathValue);
-
-		try {
-			WatchLibraryListener watchLibraryListener = new WatchLibraryListener(libraryId, path, this);
-			watchLibraryListener.processEvents();
-			addWatchLibraryListener(watchLibraryListener);
-		} catch (IOException e) {
-			logger.error("Error creating watch library", e);
-		}
-
-	}
-
-	private void addWatchLibraryListener(WatchLibraryListener watchLibraryListener) {
-		if (watchLibraryListeners == null) {
-			watchLibraryListeners = new ArrayList<>();
-		}
-
-		watchLibraryListeners.add(watchLibraryListener);
-	}
 }

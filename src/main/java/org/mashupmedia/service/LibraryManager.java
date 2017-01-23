@@ -42,6 +42,5 @@ public interface LibraryManager {
 
 	public void deleteMedia(long librayId, File file);
 
-	public void registerWatchLibraryListeners();
 
 }
