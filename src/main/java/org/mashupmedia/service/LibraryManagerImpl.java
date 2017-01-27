@@ -192,7 +192,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	}
 
 	@Override
-	public void saveMedia(long librayId, File file) {
+	public synchronized void saveMedia(long librayId, File file) {
 		logger.info("Saving media file: " + file.getAbsolutePath());
 		Library library = libraryDao.getLibrary(librayId);
 		LibraryType libraryType = library.getLibraryType();
@@ -209,7 +209,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	}
 
 	@Override
-	public void deleteMedia(long librayId, File file) {
+	public synchronized void deleteMedia(long librayId, File file) {
 		logger.info("Deleting media file: " + file.getAbsolutePath());
 		Library library = libraryDao.getLibrary(librayId);
 		LibraryType libraryType = library.getLibraryType();

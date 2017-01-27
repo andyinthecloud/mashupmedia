@@ -636,19 +636,6 @@ function loadSongSearchResults(isAppend) {
 
 }
 
-function loadLatestPhotos(isAppend) {
-	if (this.isNextActionDelayed) {
-		return;
-	}
-	
-	$.get(mashupMedia.contextUrl + "/app/ajax/photo/load-latest-photos", { pageNumber: mashupMedia.filterPageNumber }, function( data ) {
-		$("body.photo div.sub-panel ul.photo-thumbnails").append( data );
-		delayNextAction();
-	});	
-}
-
-
-
 
 function loadPlaylists() {
 	$.get(mashupMedia.contextUrl + "/app/ajax/playlist/list", {

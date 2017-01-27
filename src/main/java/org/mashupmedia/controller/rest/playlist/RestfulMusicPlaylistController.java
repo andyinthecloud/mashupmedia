@@ -59,13 +59,17 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 	@RequestMapping(value = "/append-album", method = RequestMethod.GET)
 	public RestfulSong appendAlbum(@RequestParam("albumId") Long albumId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
 
 		Album album = musicManager.getAlbum(albumId);
 		List<Song> songs = album.getSongs();
 		PlaylistHelper.appendPlaylist(playlist, songs);
 		savePlaylist(playlist);
-
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		
+		// if playlist was empty get the first song in the new list 
+		if (playlistMediaItem == null) {
+			playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		}
 
 		Song song = (Song) playlistMediaItem.getMediaItem();
 
