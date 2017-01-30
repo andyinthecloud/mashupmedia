@@ -4,12 +4,12 @@
     $(document).ready(function() {
         window.scrollTo(0, 0);
         showFooterTabs("photo-photos");
+
     });
 </script>
 
 <c:set var="photo" value="${photoPage.photo}" />
 
-<h1>${photo.album.name}/${photo.displayTitle}</h1>
 
 <c:if test="${not empty photo.previousPhoto.id}">
 	<div id="photo-previous">
@@ -28,13 +28,18 @@
 </c:if>
 
 <div class="photo">
+	<h1 class="text">${photo.album.name}/${photo.displayTitle}</h1>
+
 	<img alt="${photo.displayTitle}" title="${photo.displayTitle}"
 		src="<c:url value="/app/streaming/media/${photo.id}/web_optimised" />" />
+
+	<ul class="photo-meta text">
+		<li><a rel="external"
+			href="<c:url value="/app/streaming/media/${photo.id}/original" />"><spring:message
+					code="photo.original" /></a></li>
+	</ul>
+
+
 </div>
 
-<ul class="items">
-	<li><a rel="external"
-		href="<c:url value="/app/streaming/media/${photo.id}/original" />"><spring:message
-				code="photo.original" /></a></li>
-</ul>
 

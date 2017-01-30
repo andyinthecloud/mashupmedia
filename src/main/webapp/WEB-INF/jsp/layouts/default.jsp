@@ -247,18 +247,10 @@
     }
 </script>
 
-<!-- 
 <link rel="stylesheet"
-	href="<c:url value="/jquery-plugins/fancybox/2.1.4/jquery.fancybox.css" />"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="<c:url value="/jquery-plugins/fancybox/2.1.4/jquery.fancybox.pack.js" />"></script>
- -->
-
-<link rel="stylesheet"
-	href="<c:url value="/jquery-plugins/swipebox/1.4.1/swipebox.css" />">
+	href="<c:url value="/jquery-plugins/swipebox/1.4.4/css/swipebox.min.css" />">
 <script
-	src="<c:url value="/jquery-plugins/swipebox/1.4.1/jquery.swipebox.js" />"></script>
+	src="<c:url value="/jquery-plugins/swipebox/1.4.4/js/jquery.swipebox.min.js" />"></script>
 
 
 

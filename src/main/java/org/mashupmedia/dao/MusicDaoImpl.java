@@ -361,7 +361,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	public List<Album> getLatestAlbums(List<Long> groupIds, int pageNumber, int maxResults) {
 		StringBuilder queryBuilder = new StringBuilder(
 				"select distinct a from org.mashupmedia.model.media.music.Album a join a.songs s join s.library.groups g");
-		queryBuilder.append(" and s.library.enabled = true");
+		queryBuilder.append(" where s.library.enabled = true");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by a.updatedOn desc");
 
@@ -369,9 +369,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		int firstResult = getFirstResult(pageNumber, maxResults);
 		query.setFirstResult(firstResult);
 		query.setMaxResults(maxResults);
-
+		
+		
 		@SuppressWarnings("unchecked")
-		List<Album> albums = query.list();
+		List<Album> albums  = query.list();
 		return albums;
 	}
 

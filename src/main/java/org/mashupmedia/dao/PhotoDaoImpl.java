@@ -211,7 +211,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		Photo photo = null;
 
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
-			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.PREVIOUS);
+			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.NEXT);
 		} else if (mediaItemSequenceType == MediaItemSequenceType.PHOTO_ALBUM) {
 			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.ALBUM_PREVIOUS);
 		}
@@ -225,7 +225,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		Photo photo = null;
 
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
-			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.NEXT);
+			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.PREVIOUS);
 		} else if (mediaItemSequenceType == MediaItemSequenceType.PHOTO_ALBUM) {
 			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.ALBUM_NEXT);
 		}

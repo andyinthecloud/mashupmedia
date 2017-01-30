@@ -644,7 +644,7 @@ ul.photos {
 
 ul.photos li {
 	float: left;
-    margin: 0 5px 5px 0;
+	margin: 0 5px 5px 0;
 	overflow: hidden;
 	border: 1px solid #a0a0a0;
 	padding: 2px;
@@ -736,9 +736,36 @@ ul.items div.icons-right {
 	height: 50px;
 }
 
-div.photo {	
-	margin-left: 30px;
-	margin-right: 30px;
+div.photo {
+	position: relative;
+}
+
+div.photo .text {
+	position: absolute;
+	background-color: white;
+	padding: 0.2em;
+	opacity: 0.6;
+	text-shadow: none;
+}
+
+div.photo h1 {
+	text-shadow: none;
+	top: 1em;
+	left: 1em;
+	
+	font-size: 1em;
+}
+
+
+div.photo ul.photo-meta {
+	bottom: 1em;
+	left: 1em;
+	list-style: none;
+	padding: 0;
+}
+
+div.photo ul.photo-meta li{
+	padding: 0.2em;
 }
 
 div.photo img {
@@ -748,6 +775,8 @@ div.photo img {
 #photo-previous, #photo-next {
 	position: fixed;
 	top: 50%;
+	z-index: 1;
+	opacity: 0.6;
 }
 
 #photo-previous {

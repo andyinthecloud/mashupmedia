@@ -88,8 +88,6 @@ public class PlaylistMediaItem implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		PlaylistMediaItem other = (PlaylistMediaItem) obj;
-		if (id != other.id)
-			return false;
 		if (mediaItem == null) {
 			if (other.mediaItem != null)
 				return false;

@@ -69,17 +69,14 @@ public class PlaylistHelper {
 
 		int totalPlaylistItems = playlistMediaItems.size();
 
-		List<PlaylistMediaItem> appendPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
-
 		for (int i = 0; i < mediaItems.size(); i++) {
 			PlaylistMediaItem playlistMediaItem = new PlaylistMediaItem();
 			playlistMediaItem.setMediaItem(mediaItems.get(i));
 			playlistMediaItem.setRanking(totalPlaylistItems + i);
 			playlistMediaItem.setPlaylist(playlist);
-			appendPlaylistMediaItems.add(playlistMediaItem);
+			playlistMediaItems.add(playlistMediaItem);
 		}
 
-		playlistMediaItems.addAll(appendPlaylistMediaItems);
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 	}
 
