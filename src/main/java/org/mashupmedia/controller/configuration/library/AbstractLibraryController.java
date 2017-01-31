@@ -46,6 +46,7 @@ public abstract class AbstractLibraryController extends BaseController {
 
 	@Autowired
 	protected LibraryUpdateTaskManager libraryUpdateTaskManager;
+	
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
@@ -136,7 +137,6 @@ public abstract class AbstractLibraryController extends BaseController {
 		
 		libraryManager.saveAndReinitialiseLibrary(library);
 		libraryUpdateTaskManager.updateLibrary(library);
-		
 	}
 
 	private void processDeleteAction(LibraryPage libraryPage) {

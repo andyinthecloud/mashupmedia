@@ -313,11 +313,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	
 	@Override
 	public void saveFile(MusicLibrary library, File file, Date date) {
-		
-		if (!file.exists()) {
-			return;
-		}
-		
+				
 		String fileName = file.getName();
 		
 		if (!FileHelper.isSupportedSong(fileName)) {
@@ -413,118 +409,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 
 		if (FileHelper.isSupportedSong(fileName)) {
-			musicFileCount++;
-			
+			musicFileCount++;			
 			Song song = prepareSong(file, date, musicFileCount, musicLibrary, folderArtistName, folderAlbumName);
-			
-//			
-//
-//			Tag tag = null;
-//			long bitRate = 0;
-//			String format = FileHelper.getFileExtension(fileName);
-//			int trackLength = 0;
-//			String tagSongTitle = null;
-//			int trackNumber = 0;
-//			String tagArtistName = null;
-//			String tagAlbumName = null;
-//			String genreValue = null;
-//			int yearValue = 0;
-//
-//			try {
-//				AudioFile audioFile = AudioFileIO.read(file);
-//				AudioHeader audioHeader = audioFile.getAudioHeader();
-//				bitRate = audioHeader.getBitRateAsNumber();
-//				format = audioHeader.getFormat();
-//				trackLength = audioHeader.getTrackLength();
-//				tag = audioFile.getTag();
-//
-//			} catch (Exception e) {
-//				logger.info(e);
-//			}
-//
-//			if (tag != null) {
-//				tagSongTitle = StringUtils.trimToEmpty(tag
-//						.getFirst(FieldKey.TITLE));
-//				trackNumber = NumberUtils.toInt(tag.getFirst(FieldKey.TRACK));
-//				tagArtistName = StringUtils.trimToEmpty(tag
-//						.getFirst(FieldKey.ALBUM_ARTIST));
-//				tagAlbumName = processAlbumName(tag);				
-//				genreValue = StringUtils.trimToEmpty(tag
-//						.getFirst(FieldKey.GENRE));
-//				yearValue = NumberUtils.toInt(tag.getFirst(FieldKey.YEAR));
-//			} else {
-//				logger.info("Unable to read tag info for music file: "
-//						+ file.getAbsolutePath());
-//			}
-//
-//			Song song = new Song();
-//			song.setUpdatedOn(date);
-//
-//			if (trackNumber == 0) {
-//				trackNumber = musicFileCount;
-//			}
-//			song.setTrackNumber(trackNumber);
-//
-//			if (StringUtils.isEmpty(tagSongTitle)) {
-//				tagSongTitle = file.getName();
-//			} else {
-//				logger.debug("Found song title for music file: "
-//						+ file.getAbsolutePath());
-//				song.setReadableTag(true);
-//			}
-//
-//			song.setTitle(tagSongTitle);
-//			song.setFormat(format);
-//			song.setTrackLength(trackLength);
-//			song.setBitRate(bitRate);
-//			song.setFileName(file.getName());
-//			song.setPath(file.getAbsolutePath());
-//			song.setLibrary(musicLibrary);
-//			song.setSizeInBytes(file.length());
-//			song.setFileLastModifiedOn(file.lastModified());
-//
-//			if (yearValue > 0) {
-//				Year year = new Year();
-//				year.setYear(yearValue);
-//				song.setYear(year);
-//			}
-//
-//			if (StringUtils.isNotEmpty(genreValue)) {
-//				Genre genre = new Genre();
-//				genre.setName(genreValue);
-//				song.setGenre(genre);
-//			}
-//
-//			Album album = new Album();
-//			if (StringUtils.isEmpty(tagAlbumName)) {
-//				tagAlbumName = folderAlbumName;
-//			}
-//			if (StringUtils.isBlank(folderAlbumName)) {
-//				logger.info("Unable to add song to the library. No album found for artist = "
-//						+ folderArtistName + ", song title = " + tagSongTitle);
-//			}
-//			album.setName(tagAlbumName);
-//			album.setFolderName(folderAlbumName);
-//			song.setAlbum(album);
-//
-//			Artist artist = new Artist();
-//			if (StringUtils.isEmpty(tagArtistName)) {
-//				tagArtistName = folderArtistName;
-//			}
-//			artist.setName(tagArtistName);
-//			artist.setFolderName(folderArtistName);
-//			artist.setAlbums(new ArrayList<Album>());
-//			album.setArtist(artist);
-//			song.setArtist(artist);
-//
-//			StringBuilder displayTitleBuilder = new StringBuilder();
-//			displayTitleBuilder.append(song.getDisplayTrackNumber());
-//			displayTitleBuilder.append(Song.TITLE_SEPERATOR);
-//			displayTitleBuilder.append(song.getTitle());
-//
-//			String displayTitle = prepareDisplayTitle(song);
-//			song.setDisplayTitle(displayTitle);
-
 			songs.add(song);
 
 		}

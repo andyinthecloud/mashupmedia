@@ -34,8 +34,28 @@ public class LibraryWatchManagerImpl implements LibraryWatchManager {
 			watchThread = new WatchThread();
 		}
 
-		watchThread.start();
+		if (watchThread.isAlive()) {
+			watchThread.registerWatchLibraries();	
+			return;
+		}
+		
+		watchThread.start();		
 	}
+	
+	
+	@Override
+	public void removeWatchLibraryListeners() {
+		if (watchThread == null) {
+			return;
+		}
+
+		if (!watchThread.isAlive()) {
+			return;
+		}
+		
+		watchThread.removeWatchLibraries();
+	}
+	
 
 	@Override
 	public void removeWatchLibraryListener(long libraryId) {
@@ -90,10 +110,9 @@ public class LibraryWatchManagerImpl implements LibraryWatchManager {
 	}
 
 	private class WatchThread extends Thread {
-
-		@Override
-		public void run() {
-
+		
+		
+		private void registerWatchLibraries() {
 			List<Library> libraries = libraryManager.getLocalLibraries(LibraryType.ALL);
 			if (libraries == null || libraries.isEmpty()) {
 				return;
@@ -107,6 +126,25 @@ public class LibraryWatchManagerImpl implements LibraryWatchManager {
 
 			}
 
+		}
+		
+
+		private void removeWatchLibraries() {
+			List<Library> libraries = libraryManager.getLocalLibraries(LibraryType.ALL);
+			if (libraries == null || libraries.isEmpty()) {
+				return;
+			}
+			
+			for (Library library : libraries) {
+				long libraryId = library.getId();
+				removeWatchLibraryListener(libraryId);				
+			}
+		}
+
+
+		@Override
+		public void run() {
+			registerWatchLibraries();
 		}
 
 	}

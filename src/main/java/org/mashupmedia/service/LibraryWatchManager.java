@@ -6,4 +6,6 @@ public interface LibraryWatchManager {
 	
 	public void removeWatchLibraryListener(long libraryId);
 
+	public void removeWatchLibraryListeners();
+
 }

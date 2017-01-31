@@ -101,9 +101,6 @@ public class LibraryManagerImpl implements LibraryManager {
 	public void saveAndReinitialiseLibrary(Library library) {
 		saveLibrary(library);
 		libraryDao.reinitialiseLibrary(library);
-
-		Date date = new Date();
-		libraryUpdateManager.deleteObsoleteMediaItems(library, date);
 	}
 
 	@Override
@@ -194,10 +191,24 @@ public class LibraryManagerImpl implements LibraryManager {
 	@Override
 	public synchronized void saveMedia(long librayId, File file) {
 		logger.info("Saving media file: " + file.getAbsolutePath());
-		Library library = libraryDao.getLibrary(librayId);
-		LibraryType libraryType = library.getLibraryType();
 		
 		Date date = new Date();		
+		
+		if (!file.exists()) {
+			return;
+		}
+		
+		if (file.isDirectory()) {
+			File[] filesInFolder = file.listFiles();
+			for (File fileInFolder : filesInFolder) {
+				saveMedia(librayId, fileInFolder);
+			}
+		}
+		
+		
+		Library library = libraryDao.getLibrary(librayId);
+		LibraryType libraryType = library.getLibraryType();		
+		
 		if (libraryType == LibraryType.MUSIC) {			
 			musicLibraryUpdateManager.saveFile((MusicLibrary) library, file, date);
 		} else if (libraryType == LibraryType.PHOTO) {

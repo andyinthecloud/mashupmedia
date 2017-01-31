@@ -144,6 +144,9 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	@Override
 	public void deleteObsoleteMediaItems(Library library, Date date) {
+		
+		libraryWatchManager.removeWatchLibraryListeners();
+		
 		long libraryId = library.getId();
 		if (library instanceof MusicLibrary) {
 			musicLibraryUpdateManager.deleteObsoleteSongs(libraryId, date);
@@ -152,6 +155,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		} else if (library instanceof PhotoLibrary) {
 			photoLibraryUpdateManager.deleteObsoletePhotos(libraryId, date);
 		}
+		
+		libraryWatchManager.registerWatchLibraryListeners();
 	}
 
 	@Override
