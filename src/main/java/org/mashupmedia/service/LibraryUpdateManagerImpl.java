@@ -63,7 +63,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	private LibraryWatchManager libraryWatchManager;
 
 	@Override
-	public void updateLibrary(Library library) {
+	public synchronized void updateLibrary(Library library) {
 
 		library = libraryManager.getLibrary(library.getId());
 

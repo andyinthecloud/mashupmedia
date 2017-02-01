@@ -1,6 +1,11 @@
 package org.mashupmedia.task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.Library.LibraryType;
+import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -15,20 +20,45 @@ public class LibraryUpdateTaskManager {
 	@Autowired
 	private LibraryUpdateManager libraryUpdateManager;
 
+	@Autowired
+	private LibraryManager libraryManager;
+
 	public void updateLibrary(Library library) {
-		libraryUpdateThreadPoolTaskExecutor.execute(new LibraryUpdateTask(library));
+		LibraryUpdateTask libraryUpdateTask = new LibraryUpdateTask();
+		libraryUpdateTask.addLibrary(library);
+		libraryUpdateThreadPoolTaskExecutor.execute(libraryUpdateTask);
+	}
+
+	public void updateLibraries() {
+		LibraryUpdateTask libraryUpdateTask = new LibraryUpdateTask();
+		List<Library> libraries = libraryManager.getLibraries(LibraryType.ALL);
+		libraryUpdateTask.setLibraries(libraries);
+		libraryUpdateThreadPoolTaskExecutor.execute(libraryUpdateTask);
 	}
 
 	private class LibraryUpdateTask implements Runnable {
 
-		private Library library;
+		private List<Library> libraries;
 
-		public LibraryUpdateTask(Library library) {
-			this.library = library;
+		private void setLibraries(List<Library> libraries) {
+			this.libraries = libraries;
+		}
+
+		private void addLibrary(Library library) {
+			if (this.libraries == null) {
+				this.libraries = new ArrayList<>();
+			}
+			this.libraries.add(library);
 		}
 
 		public void run() {
-			libraryUpdateManager.updateLibrary(library);
+			if (this.libraries == null || this.libraries.isEmpty()) {
+				return;
+			}
+
+			for (Library library : libraries) {
+				libraryUpdateManager.updateLibrary(library);
+			}
 		}
 	}
 
