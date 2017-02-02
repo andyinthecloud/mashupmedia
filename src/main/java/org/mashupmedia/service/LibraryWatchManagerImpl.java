@@ -32,14 +32,11 @@ public class LibraryWatchManagerImpl implements LibraryWatchManager {
 
 		if (watchThread == null) {
 			watchThread = new WatchThread();
-		}
-
-		if (watchThread.isAlive()) {
-			watchThread.registerWatchLibraries();	
+			watchThread.start();
 			return;
 		}
 		
-		watchThread.start();		
+		watchThread.run();
 	}
 	
 	

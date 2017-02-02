@@ -7,6 +7,7 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
+import org.mashupmedia.service.LibraryWatchManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,9 @@ public class LibraryTaskScheduler {
 	@Autowired
 	private LibraryUpdateManager libraryUpdateManager;
 	
+	@Autowired
+	private LibraryWatchManager libraryWatchManager;
+	
 	
 	public void updateLibraries() {
 		List<Library> libraries = libraryManager.getLocalLibraries(LibraryType.ALL);
@@ -31,6 +35,8 @@ public class LibraryTaskScheduler {
 			libraryUpdateManager.updateLibrary(library);
 			logger.info("Library updated: " + library.getName());
 		}
+		
+		libraryWatchManager.registerWatchLibraryListeners();
 	}
 
 }
