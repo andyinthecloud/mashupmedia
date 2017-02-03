@@ -29,6 +29,15 @@ public class WatchLibraryListener {
 	private WatchService watcher;
 	private Map<WatchKey, Path> keys;
 	private long librayId;
+	private boolean active;
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 
 	/**
 	 * Register the given directory with the WatchService
@@ -96,7 +105,8 @@ public class WatchLibraryListener {
 	 * Process all events for keys queued to the watcher
 	 */
 	public void processEvents() {
-		for (;;) {
+
+		while (isActive()) {
 
 			// wait for key to be signalled
 			WatchKey key;
@@ -170,6 +180,7 @@ public class WatchLibraryListener {
 	}
 
 	public void cancel() {
+				
 		if (keys == null || keys.isEmpty()) {
 			return;
 		}
@@ -178,9 +189,9 @@ public class WatchLibraryListener {
 		for (Iterator<WatchKey> iterator = watchKeys.iterator(); iterator.hasNext();) {
 			WatchKey watchKey = (WatchKey) iterator.next();
 			watchKey.cancel();
-			watchKeys.remove(watchKey);
 		}
-
+		
+		keys.clear();
 	}
 
 }

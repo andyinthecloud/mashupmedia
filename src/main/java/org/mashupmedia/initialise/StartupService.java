@@ -1,7 +1,6 @@
 package org.mashupmedia.initialise;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.service.LibraryWatchManager;
 import org.mashupmedia.task.LibraryUpdateTaskManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -13,9 +12,6 @@ import org.springframework.stereotype.Component;
 public class StartupService {
 
 	@Autowired
-	private LibraryWatchManager libraryWatchManager;
-	
-	@Autowired
 	private LibraryUpdateTaskManager libraryUpdateTaskManager;		
 
 	@EventListener
@@ -24,7 +20,6 @@ public class StartupService {
 		String id = StringUtils.trimToEmpty(applicationContext.getId());
 		if (id.endsWith("dispatcher")) {
 			libraryUpdateTaskManager.updateLibraries();
-			libraryWatchManager.registerWatchLibraryListeners();	
 		}
 	}
 

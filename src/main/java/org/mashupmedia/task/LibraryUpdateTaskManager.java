@@ -1,6 +1,5 @@
 package org.mashupmedia.task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -30,48 +29,40 @@ public class LibraryUpdateTaskManager {
 	@Autowired
 	private LibraryWatchManager libraryWatchManager;
 
+
+
 	public void updateLibrary(Library library) {
-		LibraryUpdateTask libraryUpdateTask = new LibraryUpdateTask();
-		libraryUpdateTask.addLibrary(library);
-		libraryUpdateThreadPoolTaskExecutor.execute(libraryUpdateTask);
+		LibraryUpdateTask libraryUpdateTask = new LibraryUpdateTask(library);
+		libraryUpdateThreadPoolTaskExecutor.execute(libraryUpdateTask);				
 		libraryWatchManager.registerWatchLibraryListeners();
 	}
 
 	public void updateLibraries() {
-		LibraryUpdateTask libraryUpdateTask = new LibraryUpdateTask();
 		List<Library> libraries = libraryManager.getLibraries(LibraryType.ALL);
-		libraryUpdateTask.setLibraries(libraries);
-		libraryUpdateThreadPoolTaskExecutor.execute(libraryUpdateTask);
-		
+		for (Library library : libraries) {
+			updateLibrary(library);
+		}
 	}
 
-	private class LibraryUpdateTask extends Thread {
+	private class LibraryUpdateTask implements Runnable{
 
-		private List<Library> libraries;
+		private Library library;
 
-		private void setLibraries(List<Library> libraries) {
-			this.libraries = libraries;
+		public LibraryUpdateTask(Library library) {
+			this.library = library;
 		}
+		
+		
 
-		private void addLibrary(Library library) {
-			if (this.libraries == null) {
-				this.libraries = new ArrayList<>();
-			}
-			this.libraries.add(library);
-		}
 
 		@Override
 		public void run() {
-			if (this.libraries == null || this.libraries.isEmpty()) {
+
+			if (this.library == null) {
 				return;
 			}
-
-			for (Library library : this.libraries) {
-				libraryUpdateManager.updateLibrary(library);
-			}
-
-			logger.info("updated library(ies)");
-
+			libraryUpdateManager.updateLibrary(library);
+			logger.info("updated library");
 		}
 
 	}
