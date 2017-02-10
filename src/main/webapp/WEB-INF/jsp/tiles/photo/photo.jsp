@@ -28,18 +28,27 @@
 </c:if>
 
 <div class="photo">
-	<h1 class="text">${photo.album.name}/${photo.displayTitle}</h1>
-
-	<img alt="${photo.displayTitle}" title="${photo.displayTitle}"
-		src="<c:url value="/app/streaming/media/${photo.id}/web_optimised" />" />
+	<h1 class="text">
+		<a rel="internal"
+			title="<spring:message code="photo-album.title" /> - ${photo.album.name}"
+			href="<c:url value="/app/photo/album/${photo.album.id}"/>">${photo.album.name}</a>
+		/${photo.displayTitle}
+	</h1>
 
 	<ul class="photo-meta text">
 		<li><a rel="external"
-			href="<c:url value="/app/streaming/media/${photo.id}/original" />"><spring:message
-					code="photo.original" /></a></li>
+			href="<c:url value="/app/streaming/media/${photo.id}/original" />"
+			target="_blank"><spring:message code="photo.original" /></a></li>
 	</ul>
 
 
 </div>
 
+
+<div id="full-screen">
+
+	<img alt="${photo.displayTitle}" title="${photo.displayTitle}"
+		src="<c:url value="/app/streaming/media/${photo.id}/web_optimised" />" />
+
+</div>
 
