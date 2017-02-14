@@ -1,14 +1,26 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
+<c:set var="photo" value="${photoPage.photo}" />
+
+
 <script type="text/javascript">
+
     $(document).ready(function() {
         window.scrollTo(0, 0);
         showFooterTabs("photo-photos");
-
+        
+        $("div.dynamic-content div.photo").on("swipeleft", function(event, ui) {
+            loadInternalPage("${photo.previousPhoto.displayTitle}", "<c:url value="/app/photo/show/${photo.previousPhoto.id}?sequenceType=${photoPage.mediaItemSequenceType}" />");
+        });
+        
+        $("div.dynamic-content div.photo").on("swiperight", function(event, ui) {
+            loadInternalPage("${photo.nextPhoto.displayTitle}", "<c:url value="/app/photo/show/${photo.nextPhoto.id}?sequenceType=${photoPage.mediaItemSequenceType}" />");
+        });
     });
+    
 </script>
 
-<c:set var="photo" value="${photoPage.photo}" />
+
 
 
 <c:if test="${not empty photo.previousPhoto.id}">
@@ -28,12 +40,10 @@
 </c:if>
 
 <div class="photo">
-	<h1 class="text">
-		<a rel="internal"
-			title="<spring:message code="photo-album.title" /> - ${photo.album.name}"
-			href="<c:url value="/app/photo/album/${photo.album.id}"/>">${photo.album.name}</a>
-		/${photo.displayTitle}
-	</h1>
+	<h1 class="text">${photo.displayTitle}</h1>
+
+	<img alt="${photo.displayTitle}" title="${photo.displayTitle}"
+		src="<c:url value="/app/streaming/media/${photo.id}/web_optimised" />" />
 
 	<ul class="photo-meta text">
 		<li><a rel="external"

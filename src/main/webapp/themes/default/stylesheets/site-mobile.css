@@ -42,14 +42,16 @@
 		width: 70px;
 		height: auto;
 	}
-	ul.photos li{
+	ul.photos li {
 		width: 95px;
 		height: 95px;
-		line-height: 95px;	
+		line-height: 95px;
 	}
 	ul.photos li img {
 		clip: rect(0px, 95px, 95px, 0px);
-		width: 95px;		
-	}	
-	
+		width: 95px;
+	}
+	#photo-previous, #photo-next {
+		display: none;
+	}
 }
