@@ -10,11 +10,11 @@
         showFooterTabs("photo-photos");
         
         $("div.dynamic-content div.photo").on("swipeleft", function(event, ui) {
-            loadInternalPage("${photo.previousPhoto.displayTitle}", "<c:url value="/app/photo/show/${photo.previousPhoto.id}?sequenceType=${photoPage.mediaItemSequenceType}" />");
+            loadInternalPage("${photo.nextPhoto.displayTitle}", "<c:url value="/app/photo/show/${photo.nextPhoto.id}?sequenceType=${photoPage.mediaItemSequenceType}" />");
         });
         
         $("div.dynamic-content div.photo").on("swiperight", function(event, ui) {
-            loadInternalPage("${photo.nextPhoto.displayTitle}", "<c:url value="/app/photo/show/${photo.nextPhoto.id}?sequenceType=${photoPage.mediaItemSequenceType}" />");
+            loadInternalPage("${photo.previousPhoto.displayTitle}", "<c:url value="/app/photo/show/${photo.previousPhoto.id}?sequenceType=${photoPage.mediaItemSequenceType}" />");
         });
     });
     
