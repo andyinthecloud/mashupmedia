@@ -31,7 +31,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public List<Album> getAlbums(String albumName) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from org.mashupmedia.model.media.photo.Album a where a.name = :albumName");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("from org.mashupmedia.model.media.photo.Album a where a.name = :albumName");
 
 		query.setString("albumName", albumName);
 		query.setCacheable(true);
@@ -83,7 +84,6 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		if (photos == null || photos.isEmpty()) {
 			return;
 		}
-		
 
 		for (Photo photo : photos) {
 			logger.info("Deleting photo: " + photo.getPath());
@@ -119,19 +119,18 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public List<Album> getAlbums(MediaItemSequenceType mediaItemSequenceType) {
-		List<Album> albums = null;
+	public List<Album> getAlbums(List<Long> groupIds, MediaItemSequenceType mediaItemSequenceType) {
+		StringBuilder queryBuilder = new StringBuilder("select a from Photo p join p.album a");
+		queryBuilder.append(" join p.library.groups g");
+		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
-			albums = getLatestAlbums();
+			queryBuilder.append(" order by p.takenOn desc");
 		} else {
-			albums = getAlbums();
+			queryBuilder.append(" order by a.name");
 		}
 
-		return albums;
-	}
 
-	protected List<Album> getLatestAlbums() {
-		StringBuilder queryBuilder = new StringBuilder("select a from Photo p join p.album a order by p.takenOn desc");
 		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -139,22 +138,10 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		return albums;
 	}
 
-	protected List<Album> getAlbums() {
-
-		StringBuilder queryBuilder = new StringBuilder("select a from org.mashupmedia.model.media.photo.Album a");
-		queryBuilder.append(" order by a.name");
-
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
-
-		query.setCacheable(true);
-		@SuppressWarnings("unchecked")
-		List<Album> albums = query.list();
-		return albums;
-	}
-
 	@Override
 	public List<Photo> getObsoletePhotos(long libraryId, Date date) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Photo p where p.updatedOn < :date and p.library.id = :libraryId");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("from Photo p where p.updatedOn < :date and p.library.id = :libraryId");
 		query.setDate("date", date);
 		query.setLong("libraryId", libraryId);
 		query.setCacheable(true);
@@ -165,7 +152,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public int removeObsoletePhotos(long libraryId, Date date) {
-		Query query = sessionFactory.getCurrentSession().createQuery("delete Photo p where p.updatedOn < :date and p.library.id = :libraryId");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("delete Photo p where p.updatedOn < :date and p.library.id = :libraryId");
 		query.setDate("date", date);
 		query.setLong("libraryId", libraryId);
 		int totalDeletedPhotos = query.executeUpdate();
@@ -175,7 +163,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	@Override
 	public Album getAlbum(List<Long> groupIds, long albumId) {
 
-		Query albumQuery = sessionFactory.getCurrentSession().createQuery("from org.mashupmedia.model.media.photo.Album a where a.id = :albumId");
+		Query albumQuery = sessionFactory.getCurrentSession()
+				.createQuery("from org.mashupmedia.model.media.photo.Album a where a.id = :albumId");
 		albumQuery.setLong("albumId", albumId);
 		albumQuery.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -190,7 +179,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 		Album album = albums.get(0);
 
-		StringBuilder listPhotosQueryBuilder = new StringBuilder("select distinct p from Photo p join p.library.groups g");
+		StringBuilder listPhotosQueryBuilder = new StringBuilder(
+				"select distinct p from Photo p join p.library.groups g");
 		listPhotosQueryBuilder.append(" where p.album.id = :albumId");
 		DaoHelper.appendGroupFilter(listPhotosQueryBuilder, groupIds);
 		listPhotosQueryBuilder.append(" order by p.takenOn");
@@ -206,7 +196,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId, MediaItemSequenceType mediaItemSequenceType) {
+	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType) {
 
 		Photo photo = null;
 
@@ -220,7 +211,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getNextPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId, MediaItemSequenceType mediaItemSequenceType) {
+	public Photo getNextPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType) {
 
 		Photo photo = null;
 
@@ -234,7 +226,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getFirstPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId, MediaItemSequenceType mediaItemSequenceType) {
+	public Photo getFirstPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType) {
 		Photo photo = null;
 
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
@@ -247,7 +240,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getLastPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId, MediaItemSequenceType mediaItemSequenceType) {
+	public Photo getLastPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+			MediaItemSequenceType mediaItemSequenceType) {
 		Photo photo = null;
 
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
@@ -259,7 +253,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		return photo;
 	}
 
-	public Photo getPhotoInSequence(List<Long> groupIds, Date takenOn, Long albumId, PhotoSequenceType photoSequenceType) {
+	public Photo getPhotoInSequence(List<Long> groupIds, Date takenOn, Long albumId,
+			PhotoSequenceType photoSequenceType) {
 
 		boolean hasAlbumParameter = false;
 		boolean hasCreatedOnParameter = false;
@@ -312,14 +307,14 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 		photoQuery.setCacheable(true);
 		photoQuery.setFirstResult(0);
-		
-		int maxResults = getTotalGroups();		
+
+		int maxResults = getTotalGroups();
 		photoQuery.setMaxResults(maxResults);
 		photoQuery.setFetchSize(maxResults);
 
 		@SuppressWarnings("unchecked")
 		List<Photo> photos = SetUniqueList.decorate(photoQuery.list());
-		
+
 		if (photos == null || photos.isEmpty()) {
 			return null;
 		}

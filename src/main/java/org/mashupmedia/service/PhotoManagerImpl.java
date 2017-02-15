@@ -36,7 +36,8 @@ public class PhotoManagerImpl implements PhotoManager {
 
 	@Override	
 	public List<Album> getAlbums(MediaItemSequenceType mediaItemSequenceType) {
-		List<Album> albums = photoDao.getAlbums(mediaItemSequenceType);
+		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
+		List<Album> albums = photoDao.getAlbums(userGroupIds, mediaItemSequenceType);
 		return albums;
 	}
 

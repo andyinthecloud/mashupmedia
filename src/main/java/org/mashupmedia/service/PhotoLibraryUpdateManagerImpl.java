@@ -131,6 +131,11 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			libraryManager.saveMediaItemLastUpdated(library.getId());
 
 		}
+		
+		if (StringUtils.isEmpty(albumName)) {
+			saveFile(library, file, date);
+			return;
+		}
 
 		Photo photo = preparePhoto(file, library, albumName, date);
 		if (photo != null) {

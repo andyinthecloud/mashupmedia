@@ -779,20 +779,10 @@ function submitAjaxForm(formElement, pushTitle, pushUrl) {
 }
 	
 function loadInternalPage(title, url) {    
-    url = prepareInternalUrlFragment(url);
+//    url = prepareInternalUrlFragment(url);
     
     History.pushState({
         pageType: "internal"
-    }, title, url);
-    
-    /*
-    $.get(url, function(data) {
-        var uiContentElement = $("div.ui-content div.dynamic-content");
-        uiContentElement.html(data);
-        uiContentElement.enhanceWithin();
-        
-    });
-    */    
-    
+    }, title, url);    
 }
 	
