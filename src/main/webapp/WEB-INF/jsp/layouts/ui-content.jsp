@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/inc/taglibs.jsp"%>
 
 
-<c:if test="${fn:length(breadcrumbs) > 1}">
+<c:if test="${fn:length(breadcrumbs) > 1 && !isAppend}">
 	<div class="breadcrumbs">
 		<c:forEach items="${breadcrumbs}" var="breadcrumb" varStatus="status">
 			<span> <c:choose>

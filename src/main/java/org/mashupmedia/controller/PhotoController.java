@@ -100,13 +100,17 @@ public class PhotoController extends BaseController {
 			@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			@RequestParam(value = PARAM_PAGE_NUMBER, required = false) Integer pageNumber, Model model) {
 
-		model.addAttribute(MODEL_KEY_BREADCRUMBS, getLatestPhotosBreadcrumbs());
-
+		boolean isAppendPrimitive = BooleanUtils.toBoolean(isAppend);		
+				
+		if (!isAppendPrimitive) {
+			model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, isAppendPrimitive);			
+		}
+			
 		if (pageNumber == null) {
 			pageNumber = 0;
 		}
 
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, BooleanUtils.toBoolean(isAppend));
+		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, isAppendPrimitive);
 		model.addAttribute(PhotoListType.LATEST);
 
 		List<Photo> photos = photoManager.getLatestPhotos(pageNumber, MAXIMUM_PHOTOS);
