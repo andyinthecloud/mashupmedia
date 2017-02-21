@@ -581,8 +581,7 @@ function loadAlbums(viewType) {
         pageNumber : mashupMedia.filterPageNumber,
         searchLetter: mashupMedia.filterAlbumsSearchLetter
     }, function(data) {        
-        var albums = $(data).filter("div.albums");
-        $("div.dynamic-content div.albums").append(albums);
+        $("div.dynamic-content div.albums").append(data);
         delayNextAction();          
     });
 }
@@ -605,9 +604,8 @@ function loadPhotos(viewType) {
         fragment: true,
         pageNumber : mashupMedia.filterPageNumber,
         searchLetter: mashupMedia.filterAlbumsSearchLetter
-    }, function(data) {        
-        var photos = $(data).filter("ul.photos");
-        $("div.dynamic-content ul.photos").append(photos);
+    }, function(data) {
+        $("div.dynamic-content ul.photos").append(data);
         delayNextAction();          
     });
 }

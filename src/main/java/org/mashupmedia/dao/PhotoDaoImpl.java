@@ -100,7 +100,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	@Override
 	public List<Photo> getLatestPhotos(List<Long> groupIds, int pageNumber, int totalItems) {
 
-		StringBuilder queryBuilder = new StringBuilder("select p from Photo p join p.library.groups g");
+		StringBuilder queryBuilder = new StringBuilder("select distinct p from Photo p join p.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by p.takenOn desc");
 
@@ -108,12 +108,11 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		query.setCacheable(true);
 
 		int firstResult = pageNumber * totalItems;
-		int totalGroups = getTotalGroups();
-		query.setMaxResults(totalItems * totalGroups);
+		query.setMaxResults(totalItems);
 		query.setFirstResult(firstResult);
 
 		@SuppressWarnings("unchecked")
-		List<Photo> photos = SetUniqueList.decorate(query.list());
+		List<Photo> photos = query.list();
 
 		return photos;
 	}
