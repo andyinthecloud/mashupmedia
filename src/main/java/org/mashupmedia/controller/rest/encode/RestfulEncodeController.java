@@ -11,8 +11,12 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
+import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
@@ -41,6 +45,9 @@ public class RestfulEncodeController {
 	private MusicManager musicManager;
 
 	@Autowired
+	private PlaylistManager playlistManager;
+
+	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 
 	@RequestMapping(value = "/song", method = RequestMethod.POST)
@@ -51,6 +58,48 @@ public class RestfulEncodeController {
 		}
 		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
 		encodeMediaItem(messageKeys, musicEncodingMediaContentTypes, mediaItem);
+
+		String messageKey = getMostImportantMessageKey(messageKeys);
+		String message = MessageHelper.getMessage(messageKey, new String[] { WebHelper.getContextPath() });
+		return message;
+	}
+
+	@RequestMapping(value = "/playlist", method = RequestMethod.POST)
+	public String encodePlaylist(@RequestParam(value = "mediaItemId") long mediaItemId) {
+
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
+		
+		if (playlist == null) {
+			return "encode.message.media-item-not-found";
+		}
+
+		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
+		boolean isUpToPositionNowPlaying = false;
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			MediaItem mediaItem = playlistMediaItem.getMediaItem();
+			if (!isUpToPositionNowPlaying && mediaItem.getId() == mediaItemId) {
+				isUpToPositionNowPlaying = true;
+			}
+			
+			if (!isUpToPositionNowPlaying) {
+				continue;
+			}
+
+			MediaContentType[] mediaContentTypes = null;
+			if (mediaItem.getClass().isAssignableFrom(Song.class)) {
+				mediaContentTypes = musicEncodingMediaContentTypes;
+			}
+
+			encodeMediaItem(messageKeys, mediaContentTypes, mediaItem);
+		}
+
+//		MediaItem mediaItem = mediaManager.getMediaItem(playlistId);
+//		if (mediaItem == null) {
+//			return "encode.message.media-item-not-found";
+//		}
+//		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
+//		encodeMediaItem(messageKeys, musicEncodingMediaContentTypes, mediaItem);
 
 		String messageKey = getMostImportantMessageKey(messageKeys);
 		String message = MessageHelper.getMessage(messageKey, new String[] { WebHelper.getContextPath() });
@@ -145,7 +194,7 @@ public class RestfulEncodeController {
 				if (MediaItemHelper.hasMediaEncoding(mediaItem, mediaContentType)) {
 					continue;
 				}
-				
+
 				encodeMediaItemTaskManager.processMediaItemForEncoding(mediaItem, mediaContentType);
 			} catch (MediaItemEncodeException e) {
 				EncodeExceptionType encodeExceptionType = e.getEncodeExceptionType();

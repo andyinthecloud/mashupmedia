@@ -368,7 +368,7 @@ function setupJPlayer() {
         error: function(event) {
             console.log(event);
             togglePlayPause("stop");
-            $.post(mashupMedia.contextUrl + "/app/restful/encode/song", { id: mashupMedia.songId })
+            $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                 .done(function( data ) {
                     mashupMedia.showMessage(data);          
             });                   
