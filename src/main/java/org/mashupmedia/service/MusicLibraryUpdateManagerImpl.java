@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.LogManager;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -462,7 +464,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		song.setUpdatedOn(date);
 
 		if (trackNumber == 0) {
-			trackNumber = musicFileCount;
+			trackNumber = processTrackNumber(fileName, musicFileCount);
+//			trackNumber = musicFileCount;
 		}
 		song.setTrackNumber(trackNumber);
 
@@ -529,6 +532,14 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return song;
 	}
 	
+
+	private int processTrackNumber(String fileName, int musicFileCount) {		
+		Pattern pattern = Pattern.compile("\\d+");
+		Matcher matcher = pattern.matcher(fileName);
+		String trackNumberValue = matcher.group(1);
+		int trackNumber = NumberUtils.toInt(trackNumberValue, musicFileCount);
+		return trackNumber;
+	}
 
 	private String processAlbumName(Tag tag) {
 		String albumName = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM));

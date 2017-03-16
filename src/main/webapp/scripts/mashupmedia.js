@@ -315,31 +315,6 @@ function playMusic(streams) {
 //var isJPlayerInitialised = false;
 //var myAndroidFix = null;
 function setupJPlayer() {
-    /*
-    var streamFormats = "";
-    var media = {};
-            
-    for (i = 0; i < streams.length; i++) {
-        media[streams[i].format] = streams[i].url;
-        
-        if (i > 0) {
-            streamFormats += ",";
-        } 
-        streamFormats += streams[i].format; 
-    }
-    
-    console.log(media);
-    
-    
-    if (myAndroidFix) {
-        myAndroidFix.setMedia(media);
-        if (mashupMedia.isMusicPlaying()) {            
-            myAndroidFix.play();
-        }        
-        return;
-    }
-    */
-    
     var options = {
         ready: function(event) {
             
@@ -383,111 +358,7 @@ function setupJPlayer() {
     $(mashupMedia.jPlayerId).jPlayer(options);
     $(mashupMedia.jPlayerId).jPlayer("setMedia", media);
     $(mashupMedia.jPlayerId).jPlayer("play");
-    
-    /*
-    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);
-    myAndroidFix.setMedia(media);
-    myAndroidFix.play();
-    */
-    
-    /*
-    options = {
-        ready: function(event) {
-            //myAndroidFix.setMedia(media);
-        },
-        ended: function(event) {
-            mashupMedia.playNextSong(true);
-        },
-        swfPath: mashupMedia.jPlayerSwfPath,
-        supplied: streamFormats,
-        cssSelectorAncestor: "#music-player",
-        cssSelector: {
-            title: ".information span.title",
-            play: ".controls a.play",
-            pause: ".controls a.pause",
-            seekBar: "div.progress",
-            playBar: "div.play-bar"
-        },
-        volume: 1,
-        error: function(event) {
-            console.log(event);
-            togglePlayPause("stop");
-            $.post(mashupMedia.contextUrl + "/app/restful/encode/song", { id: mashupMedia.songId })
-                .done(function( data ) {
-                    mashupMedia.showMessage(data);          
-            });                   
-        }
-    };    
-        
-    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);
-    myAndroidFix.setMedia(media);
-    */
 }
-
-/*
-function playMusic(streamFormats, media) {
-    var options = {
-                    ready: function(event) {
-                        //myAndroidFix.setMedia(media);
-                    },
-                    ended: function(event) {
-                        //mashupMedia.playNextSong(true);
-                    },
-                    swfPath: mashupMedia.jPlayerSwfPath,
-                    supplied: streamFormats,
-                    cssSelectorAncestor: "#music-player",
-                    cssSelector: {
-                        title: ".information span.title",
-                        play: ".controls a.play",
-                        pause: ".controls a.pause",
-                        seekBar: "div.progress",
-                        playBar: "div.play-bar"
-                    },
-                    volume: 1,
-                    error: function(event) {
-                        console.log(event);
-                        togglePlayPause("stop");
-                        $.post(mashupMedia.contextUrl + "/app/restful/encode/song", { id: mashupMedia.songId })
-                            .done(function( data ) {
-                                mashupMedia.showMessage(data);          
-                        });                   
-                    }
-    };
-                    
-    myAndroidFix = new jPlayerAndroidFix(mashupMedia.jPlayerId, media, options);
-    myAndroidFix.setMedia(media);
-    myAndroidFix.play();
-}
-*/
-
-/*
-function initialiseJPlayer() {
-    
-    // initialise JPlayer with a silent mp3 file    
-    var silentMedia = {
-      mp3: mashupMedia.contextUrl + "jquery-plugins/jquery.jplayer/silent.mp3"
-    };
-        
-    var options = {        
-       ready: function(event) {
-           //silentJPlayer.setMedia(silentMedia);
-           //silentJPlayer.play();
-        },                    
-        ended: function(event) {
-            //$(mashupMedia.jPlayerId).jPlayer("destroy");
-            //mashupMedia.playCurrentSong(true);
-        },
-        swfPath: mashupMedia.jPlayerSwfPath,
-        supplied: "mp3",
-//        cssSelectorAncestor: "#music-player"
-    };    
-    
-    //isJPlayerInitialised = true;
-    var silentJPlayer = new jPlayerAndroidFix(mashupMedia.jPlayerId, silentMedia, options);
-    silentJPlayer.play();
-   
-}
-*/
 
 
 
