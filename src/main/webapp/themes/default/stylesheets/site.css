@@ -664,8 +664,9 @@ ul.items {
 ul.items li {
 	position: relative;
 	clear: both;
-	/*border-bottom: 1px solid #e579e9;*/
-	padding: 5px 0;
+	border-bottom: 1px solid #e579e9;
+	padding: 0.5em;
+	display: inline-table;
 }
 
 ul.items li span.label {
@@ -684,6 +685,7 @@ ul.items li.playing {
 ul.items a.play {
 	vertical-align: middle;
 	margin-right: 1em;
+	display: table-cell;
 }
 
 ul.items a.delete {
@@ -691,7 +693,10 @@ ul.items a.delete {
 }
 
 ul.items div.item {
-	display: inline-block;
+	display: table-cell;
+	padding-left: 1em;
+	padding-right: 2em;
+	
 }
 
 ul.items div.item div.title {

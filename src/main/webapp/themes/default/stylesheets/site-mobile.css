@@ -2,6 +2,8 @@
 	div.albums div.album, div.artists div.artist, div.photos div.photo {
 		border-bottom: 1px solid #A0A0A0;
 		padding: 5px;
+		height: 3.8em;
+		overflow: hidden;
 	}
 	div.albums div.album img, div.artists div.artist img, div.photos div.photo img
 		{
@@ -13,6 +15,7 @@
 		left: 75px;
 		top: 10px;
 		font-size: 1em;
+		margin-right: 70px;
 	}
 	div.albums div.album-control, div.artist div.artist-control {
 		position: absolute;
@@ -31,9 +34,6 @@
 	div.album-art {
 		width: 100%;
 		margin-top: 10px;
-	}
-	ul.items li {
-		height: 70px;
 	}
 	ul.items li span.label {
 		left: 80px;
