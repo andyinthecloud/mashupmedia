@@ -39,10 +39,11 @@
         });
 
         $("div.dynamic-content div.title-with-player-control div.re-encode a").click(function() {
-            $.post("<c:url value="/app/restful/encode/music-album" />", { id: <c:out value="${albumPage.album.id}" /> })
-            .done(function( data ) {
-                mashupMedia.showMessage(data);          
-            });            
+            $.post("<c:url value="/app/restful/encode/music-album" />", {
+                id: <c:out value="${albumPage.album.id}" />
+            }).done(function(data) {
+                mashupMedia.showMessage(data);
+            });
         });
 
     });
@@ -60,11 +61,9 @@
 	<h1 class="edit" id="album-id-${albumPage.album.id}">${albumPage.album.name}</h1>
 
 	<h2>
-		- <a rel="internal" href="<c:url value="/app/music/artist/${albumPage.album.artist.id}" />">${albumPage.album.artist.name}</a>
+		- <a rel="internal"
+			href="<c:url value="/app/music/artist/${albumPage.album.artist.id}" />">${albumPage.album.artist.name}</a>
 	</h2>
-
-
-
 
 	<div class="control-menu"
 		id="album-id-<c:out value="${albumPage.album.id}" />">
@@ -77,14 +76,12 @@
 			<a href="javascript:;" id="add-all"
 				title="<spring:message code="action.add" />"><img
 				src="<c:url value="${themePath}/images/controls/add.png"/>" /></a>
-
 		</c:if>
-	</div>
 
-	<div class="re-encode">
 		<a href="javascript:;"
 			title="<spring:message code="action.re-encode.tip" />"><spring:message
 				code="action.re-encode" /></a>
+
 	</div>
 </div>
 
@@ -108,6 +105,10 @@
 			src="<c:url value="/app/music/album-art/original/${albumPage.album.id}" />"
 			title="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />"
 			alt="<c:out value="${albumPage.album.artist.name}" /> - <c:out value="${albumPage.album.name}" />" />
+
+
+
+
 	</div>
 
 	<ul class="tracks">

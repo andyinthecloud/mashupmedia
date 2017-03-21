@@ -27,7 +27,7 @@ import org.springframework.stereotype.Repository;
 public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 
 	@Override
-	public List<MediaItem> getMedia(long libraryId) {
+	public List<MediaItem> getMediaItems(long libraryId) {
 		Query query = sessionFactory.getCurrentSession().createQuery(
 				"from MediaItem where library.id = :libraryId order by title");
 		query.setLong("libraryId", libraryId);
@@ -76,6 +76,16 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		}
 
 		return mediaItems.get(0);
+	}
+	
+	@Override
+	public List<MediaItem> getMediaItems(String path) {
+		Query query = sessionFactory.getCurrentSession().createQuery("from MediaItem where path = :path");
+		query.setString("path", path);
+		query.setCacheable(true);
+		@SuppressWarnings("unchecked")
+		List<MediaItem> mediaItems = (List<MediaItem>) query.list();
+		return mediaItems;
 	}
 
 	@Override

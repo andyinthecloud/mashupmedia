@@ -24,6 +24,7 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.mashupmedia.dao.GroupDao;
+import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.encode.ProcessManager;
@@ -31,6 +32,8 @@ import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaEncoding;
+import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
@@ -73,9 +76,12 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Autowired
 	private ProcessManager processManager;
-	
+
 	@Autowired
 	private LibraryManager libraryManager;
+
+	@Autowired
+	private MediaDao mediaDao;
 
 	private MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
@@ -88,7 +94,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	@Override
 	public void deleteObsoleteSongs(long libraryId, Date date) {
 		List<Song> songsToDelete = musicDao.getSongsToDelete(libraryId, date);
-		for (Song song : songsToDelete) {			
+		for (Song song : songsToDelete) {
 			deleteSong(song);
 		}
 
@@ -100,23 +106,23 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		deleteEmpty();
 		logger.info("Cleaned library.");
 	}
-	
+
 	@Override
 	public void deleteFile(MusicLibrary library, File file) {
-		
+
 		String path = file.getPath();
 		Song song = musicDao.getSong(path);
 		if (song == null) {
 			return;
 		}
-		
+
 		deleteSong(song);
 		deleteEmpty();
 	}
 
-	private void deleteSong(Song song) {		
+	private void deleteSong(Song song) {
 		playlistDao.deletePlaylistMediaItem(song);
-		musicDao.deleteObsoleteSong(song);		
+		musicDao.deleteObsoleteSong(song);
 	}
 
 	@Override
@@ -143,7 +149,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 
 		List<Long> groupIds = getGroupIds();
-		
+
 		long libraryId = musicLibrary.getId();
 		long totalSongsSaved = 0;
 
@@ -160,11 +166,12 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				long savedSongId = savedSong.getId();
 				song.setId(savedSongId);
 				savedSong.setUpdatedOn(song.getUpdatedOn());
+				savedSong.setEnabled(true);
 				musicDao.saveSong(savedSong, false);
-				logger.info("Song is already in database, updated song date.");
+				logger.info("Song is already in database, updated song date.");				
 				writeSongToXml(libraryId, savedSong);
-//				encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedSong,
-//						MediaContentType.MP3);
+				// encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedSong,
+				// MediaContentType.MP3);
 				continue;
 			}
 
@@ -249,7 +256,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			musicDao.saveSong(song, isSessionFlush);
 			writeSongToXml(libraryId, song);
 
-//			encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(song, MediaContentType.MP3);
+			// encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(song,
+			// MediaContentType.MP3);
 
 			totalSongsSaved++;
 
@@ -259,8 +267,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	}
 
-
-	
 	private List<Long> getGroupIds() {
 		List<Long> groupIds = groupDao.getGroupIds();
 		return groupIds;
@@ -312,28 +318,36 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		List<Song> songs = new ArrayList<Song>();
 		prepareSongs(date, songs, folder, musicLibrary, null, null);
 	}
-	
+
 	@Override
 	public void saveFile(MusicLibrary library, File file, Date date) {
-				
+
 		String fileName = file.getName();
-		
+
 		if (!FileHelper.isSupportedSong(fileName)) {
 			logger.info("File is not a supported format: " + fileName);
 			return;
 		}
-		
+
+		// Clean up
+		List<MediaItem> duplicateMediaItems = mediaDao.getMediaItems(file.getPath());
+		for (MediaItem duplicateMediaItem : duplicateMediaItems) {
+			if (duplicateMediaItem.getMediaType().equals(MediaType.SONG)) {
+				Song duplicateSong = (Song) duplicateMediaItem;
+				deleteSong(duplicateSong);
+			}
+		}
+
 		File libraryFolder = new File(library.getLocation().getPath());
 		List<File> relativeFolders = LibraryHelper.getRelativeFolders(libraryFolder, file);
-				
+
 		String folderArtistName = getFolderArtist(relativeFolders, file);
 		String folderAlbumName = getFolderAlbum(relativeFolders, file);
 		Song song = prepareSong(file, date, 1, library, folderArtistName, folderAlbumName);
-		
+
 		List<Song> songs = new ArrayList<>();
-		songs.add(song);		
+		songs.add(song);
 		saveSongs(library, songs, date);
-		
 	}
 
 	private String getFolderAlbum(List<File> relativeFolders, File musicFile) {
@@ -341,11 +355,11 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		if (relativeFolders == null || relativeFolders.isEmpty()) {
 			return musicFileName;
 		}
-		
+
 		if (relativeFolders.size() < 2) {
 			return musicFileName;
 		}
-		
+
 		StringBuilder albumNameBuilder = new StringBuilder();
 		for (File relativeFolder : relativeFolders) {
 			if (albumNameBuilder.length() > 0) {
@@ -353,27 +367,23 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			}
 			albumNameBuilder.append(relativeFolder.getName());
 		}
-		
-		
+
 		return albumNameBuilder.toString();
 	}
 
-	private String getFolderArtist(List<File> relativeFolders, File musicFile) {		
+	private String getFolderArtist(List<File> relativeFolders, File musicFile) {
 		String musicFileName = musicFile.getName();
 		if (relativeFolders == null || relativeFolders.isEmpty()) {
 			return musicFileName;
-		}		
-		
-		File artistFolder = relativeFolders.get(0);		
+		}
+
+		File artistFolder = relativeFolders.get(0);
 		return artistFolder.getName();
 	}
 
-
-
-	protected void prepareSongs(Date date, List<Song> songs, File file,
-			MusicLibrary musicLibrary, String folderArtistName,
-			String folderAlbumName) throws CannotReadException, IOException,
-			TagException, ReadOnlyFileException, InvalidAudioFrameException {
+	protected void prepareSongs(Date date, List<Song> songs, File file, MusicLibrary musicLibrary,
+			String folderArtistName, String folderAlbumName)
+			throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
 
 		int musicFileCount = 0;
 
@@ -387,12 +397,11 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				folderArtistName = fileName;
 				File[] files = file.listFiles();
 				for (File childFile : files) {
-					prepareSongs(date, songs, childFile, musicLibrary,
-							folderArtistName, folderAlbumName);
+					prepareSongs(date, songs, childFile, musicLibrary, folderArtistName, folderAlbumName);
 				}
 				saveSongs(musicLibrary, songs, date);
 				songs.clear();
-				libraryManager.saveMediaItemLastUpdated(musicLibrary.getId());				
+				libraryManager.saveMediaItemLastUpdated(musicLibrary.getId());
 				folderArtistName = "";
 			} else {
 				if (StringUtils.isBlank(folderAlbumName)) {
@@ -402,8 +411,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				}
 				File[] files = file.listFiles();
 				for (File childFile : files) {
-					prepareSongs(date, songs, childFile, musicLibrary,
-							folderArtistName, folderAlbumName);
+					prepareSongs(date, songs, childFile, musicLibrary, folderArtistName, folderAlbumName);
 				}
 				folderAlbumName = "";
 			}
@@ -411,17 +419,18 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 
 		if (FileHelper.isSupportedSong(fileName)) {
-			musicFileCount++;			
+			musicFileCount++;
 			Song song = prepareSong(file, date, musicFileCount, musicLibrary, folderArtistName, folderAlbumName);
 			songs.add(song);
 
 		}
 	}
-	
-	private Song prepareSong(File file, Date date, int musicFileCount, MusicLibrary musicLibrary, String folderArtistName, String folderAlbumName) {
-		
+
+	private Song prepareSong(File file, Date date, int musicFileCount, MusicLibrary musicLibrary,
+			String folderArtistName, String folderAlbumName) {
+
 		String fileName = file.getName();
-		
+
 		Tag tag = null;
 		long bitRate = 0;
 		String format = FileHelper.getFileExtension(fileName);
@@ -446,18 +455,14 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 
 		if (tag != null) {
-			tagSongTitle = StringUtils.trimToEmpty(tag
-					.getFirst(FieldKey.TITLE));
+			tagSongTitle = StringUtils.trimToEmpty(tag.getFirst(FieldKey.TITLE));
 			trackNumber = NumberUtils.toInt(tag.getFirst(FieldKey.TRACK));
-			tagArtistName = StringUtils.trimToEmpty(tag
-					.getFirst(FieldKey.ALBUM_ARTIST));
-			tagAlbumName = processAlbumName(tag);				
-			genreValue = StringUtils.trimToEmpty(tag
-					.getFirst(FieldKey.GENRE));
+			tagArtistName = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM_ARTIST));
+			tagAlbumName = processAlbumName(tag);
+			genreValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.GENRE));
 			yearValue = NumberUtils.toInt(tag.getFirst(FieldKey.YEAR));
 		} else {
-			logger.info("Unable to read tag info for music file: "
-					+ file.getAbsolutePath());
+			logger.info("Unable to read tag info for music file: " + file.getAbsolutePath());
 		}
 
 		Song song = new Song();
@@ -465,15 +470,14 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		if (trackNumber == 0) {
 			trackNumber = processTrackNumber(fileName, musicFileCount);
-//			trackNumber = musicFileCount;
+			// trackNumber = musicFileCount;
 		}
 		song.setTrackNumber(trackNumber);
 
 		if (StringUtils.isEmpty(tagSongTitle)) {
 			tagSongTitle = file.getName();
 		} else {
-			logger.debug("Found song title for music file: "
-					+ file.getAbsolutePath());
+			logger.debug("Found song title for music file: " + file.getAbsolutePath());
 			song.setReadableTag(true);
 		}
 
@@ -504,8 +508,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			tagAlbumName = folderAlbumName;
 		}
 		if (StringUtils.isBlank(folderAlbumName)) {
-			logger.info("Unable to add song to the library. No album found for artist = "
-					+ folderArtistName + ", song title = " + tagSongTitle);
+			logger.info("Unable to add song to the library. No album found for artist = " + folderArtistName
+					+ ", song title = " + tagSongTitle);
 		}
 		album.setName(tagAlbumName);
 		album.setFolderName(folderAlbumName);
@@ -531,9 +535,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		return song;
 	}
-	
 
-	private int processTrackNumber(String fileName, int musicFileCount) {		
+	private int processTrackNumber(String fileName, int musicFileCount) {
 		Pattern pattern = Pattern.compile("\\d+");
 		Matcher matcher = pattern.matcher(fileName);
 		String trackNumberValue = matcher.group(1);

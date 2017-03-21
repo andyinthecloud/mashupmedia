@@ -125,18 +125,22 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 			song.setEnabled(false);
 			sessionFactory.getCurrentSession().merge(song);
 		} else {
-			Genre genre = song.getGenre();
-			deleteGenre(genre);
-			sessionFactory.getCurrentSession().delete(song);
+			deleteSong(song);
 		}
-
 	}
 
 	@Override
 	public void deleteSong(Song song) {
 		Genre genre = song.getGenre();
 		deleteGenre(genre);
-		sessionFactory.getCurrentSession().delete(song);
+		
+		String path = song.getPath();
+		
+		StringBuilder queryBuilder = new StringBuilder("delete from Song  where path = :path");
+		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		query.setString("path", path);
+		query.executeUpdate();
+		flushSession(true);
 	}
 
 	private void deleteGenre(Genre genre) {

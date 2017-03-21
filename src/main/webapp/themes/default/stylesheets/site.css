@@ -251,21 +251,14 @@ div.panel ul.main-menu a:HOVER {
 	color: white;
 }
 
-div.title-with-player-control h1, div.title-with-player-control h2, div.title-with-player-control div.control-menu,
-	div.title-with-player-control div.re-encode {
+div.title-with-player-control h1, div.title-with-player-control h2{
 	display: inline-block;
-	margin-left: 10px;
 }
 
 div.title-with-player-control h1 form {
 	display: inline;
 }
 
-div.control-menu img {
-	width: 16px;
-	height: auto;
-	margin-right: 5px;
-}
 
 div.album ul.tracks {
 	margin: 0;
@@ -295,7 +288,20 @@ div.album ul.tracks li div.meta {
 	font-size: 0.8em;
 }
 
-div.album div.album-art img {
+
+div.control-menu {
+	vertical-align: middle;	
+}
+
+div.control-menu img {
+	width: 16px;
+	height: auto;
+	margin-right: 1em;
+}
+
+
+
+div.album div.album-art > img {
 	width: 100%;
 	height: auto;
 }
@@ -659,14 +665,14 @@ ul.items {
 	list-style: none;
 	padding: 0;
 	vertical-align: middle;
+	display: inline-table;
 }
 
 ul.items li {
 	position: relative;
-	clear: both;
-	border-bottom: 1px solid #e579e9;
+	clear: both;	
 	padding: 0.5em;
-	display: inline-table;
+	display: table-row;	
 }
 
 ul.items li span.label {
@@ -686,6 +692,7 @@ ul.items a.play {
 	vertical-align: middle;
 	margin-right: 1em;
 	display: table-cell;
+	border-bottom: 1px solid #e579e9;
 }
 
 ul.items a.delete {
@@ -694,9 +701,9 @@ ul.items a.delete {
 
 ul.items div.item {
 	display: table-cell;
-	padding-left: 1em;
-	padding-right: 2em;
-	
+	padding: 0.5em;
+	width: 100%;
+	border-bottom: 1px solid #e579e9;
 }
 
 ul.items div.item div.title {
@@ -707,12 +714,18 @@ ul.items div.item div.meta {
 	font-size: 0.8em;
 }
 
-ul.items div.icons-right {
-	position: absolute;
-	right: 0;
-	top: 40%;
+ul.items div.icons-right {	
 	white-space: nowrap;
+	display: table-cell;
+	vertical-align: middle;
+	border-bottom: 1px solid #e579e9;
 }
+
+
+ul.items div.icons-right img {
+	padding: 0.5em;
+}
+	
 
 #information-box {
 	display: none;

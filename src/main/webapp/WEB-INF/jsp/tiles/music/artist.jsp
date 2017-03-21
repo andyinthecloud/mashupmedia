@@ -90,13 +90,13 @@
 				src="<c:url value="${themePath}/images/controls/add.png"/>" /></a>
 
 		</c:if>
-	</div>
-
-	<div class="re-encode">
+		
 		<a href="javascript:;"
 			title="<spring:message code="action.re-encode.tip" />"><spring:message
 				code="action.re-encode" /></a>
+		
 	</div>
+
 </div>
 
 
