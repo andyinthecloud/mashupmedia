@@ -92,34 +92,7 @@ var mashupMedia = new function() {
 		});
 	};
 	
-//	this.playSong = function(song) {
-//	    mashupMedia.streamSong(song);
-//	    togglePlayPause("play");
-//	    myAndroidFix.play();  
-//	};
 
-	/*
-	this.loadSongFromPlaylist = function(playlistId, mediaItemId, isAutoPlay) {
-		if (playlistId.length == 0 || isNaN(playlistId) || playlistId < 1) {
-			return;
-		}
-		
-		if (mediaItemId.length == 0 || isNaN(mediaItemId) || mediaItemId < 1) {
-			$.get(mashupMedia.contextUrl + "/app/ajax/playlist/id/" + playlistId, {
-				"webFormatType" : "json",
-				"updateLastAccessedToNow" : true
-			}, function(data) {
-				var playlistId = data.playlist.id;
-				var playlistName = data.playlist.name;				
-				mashupMedia.showSongInfo("", "", false, 0, 0, playlistName, playlistId, 0);
-			});
-			return;
-		}
-		
-		
-
-	};
-	*/
 	
 	this.isMusicPlaying = function() {
 	    if($(mashupMedia.jPlayerId) == false) {
@@ -165,8 +138,8 @@ var mashupMedia = new function() {
 	    	    
 	    mashupMedia.prepareSong(song);
         togglePlayPause("play");
+        $(mashupMedia.jPlayerId).jPlayer("load");
         $(mashupMedia.jPlayerId).jPlayer("play");
-        //myAndroidFix.play();  
 
 	};
 	
@@ -291,17 +264,10 @@ var mashupMedia = new function() {
 
 
 function playMusic(streams) {
-//    var streamFormats = "";
     var media = {};
             
     for (i = 0; i < streams.length; i++) {
         media[streams[i].format] = streams[i].url;
-        /*
-        if (i > 0) {
-            streamFormats += ",";
-        } 
-        streamFormats += streams[i].format;
-        */ 
     }
     
     //myAndroidFix.setMedia(media);
@@ -345,7 +311,8 @@ function setupJPlayer() {
             togglePlayPause("stop");
             $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                 .done(function( data ) {
-                    mashupMedia.showMessage(data);          
+                    mashupMedia.showMessage(data);
+                    $(mashupMedia.jPlayerId).jPlayer("play");
             });                   
         }
     };    
