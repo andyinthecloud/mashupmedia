@@ -1,7 +1,9 @@
 package org.mashupmedia.controller.streaming;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,13 +14,19 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.photo.Photo;
+import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MediaManager;
+import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.view.MediaItemImageView;
@@ -38,6 +46,9 @@ public class StreamingController {
 	@Autowired
 	private MediaManager mediaManager;
 
+	@Autowired
+	private PlaylistManager playlistManager;
+
 	@RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = { RequestMethod.GET,
 			RequestMethod.HEAD })
 	public void getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
@@ -45,20 +56,35 @@ public class StreamingController {
 			HttpServletResponse response) throws Exception {
 
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		if (mediaItem.getClass().isAssignableFrom(Photo.class)) {
+		MediaType mediaType = mediaItem.getMediaType();
+		if (mediaType == MediaType.PHOTO) {
 			Photo photo = (Photo) mediaItem;
 			getImageStream(photo, mediaContentTypeValue, request, response);
 			return;
 		}
 
-		
-		
-		MediaEncoding mediaEncoding = getMediaContentType(mediaItem, mediaContentTypeValue);
+		MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 		prepareModelAndView(mediaItem, mediaEncoding, request, response);
 	}
 
-	protected void getImageStream(Photo photo,
-			String imageTypeValue, HttpServletRequest request,
+	@RequestMapping(value = "/playlist/{mediaTypeValue}/{mediaContentType}", method = { RequestMethod.GET,
+			RequestMethod.HEAD })
+	public void getCurrentPlaylistStream(@PathVariable(value = "mediaContentType") String mediaTypeValue,
+			@PathVariable(value = "mediaContentType") String mediaContentTypeValue, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+
+		MediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
+		PlaylistType playlistType = PlaylistType.ALL;
+		if (mediaType == MediaType.SONG) {
+			playlistType = PlaylistType.MUSIC;
+		}
+
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(playlistType);
+		prepareModelAndView(playlist, mediaContentTypeValue, request, response);
+
+	}
+
+	protected void getImageStream(Photo photo, String imageTypeValue, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
 		ImageType imageType = ImageHelper.getImageType(imageTypeValue);
@@ -71,20 +97,21 @@ public class StreamingController {
 		} else if (imageType == ImageType.WEB_OPTIMISED) {
 			filePath = photo.getWebOptimisedImagePath();
 		}
-		
-		filePath = StringUtils.trimToEmpty(filePath);		
-		
+
+		filePath = StringUtils.trimToEmpty(filePath);
+
 		File mediaFile = new File(filePath);
+		long lastModified = mediaFile.lastModified();
 		if (mediaFile.isFile()) {
-			StreamingMediaHandler.fromFile(mediaFile).with(request).with(response).serveResource();
+			StreamingMediaHandler.fromFile(mediaFile, lastModified).with(request).with(response).serveResource();
 			return;
 		}
-		
+
 		// No image found so showing default
-		WebHelper.writeResourceToResponse(defaultImagePath, request, response);				
+		WebHelper.writeResourceToResponse(defaultImagePath, request, response);
 	}
 
-	protected MediaEncoding getMediaContentType(MediaItem mediaItem, String mediaContentTypeValue) {
+	protected MediaEncoding getMediaEncoding(MediaItem mediaItem, String mediaContentTypeValue) {
 
 		mediaContentTypeValue = StringUtils.trimToEmpty(mediaContentTypeValue);
 		if (StringUtils.isBlank(mediaContentTypeValue)) {
@@ -105,6 +132,47 @@ public class StreamingController {
 		}
 
 		return null;
+	}
+
+	protected void prepareModelAndView(Playlist playlist, String mediaContentTypeValue, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+
+		List<File> mediaFiles = new ArrayList<File>();
+		int offset = 0;
+		boolean isEndOfPlaylist = false;
+
+		MediaEncoding mediaEncoding = null;
+
+		while (isEndOfPlaylist == false) {
+			PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist,
+					offset);
+			if (playlistMediaItem == null || playlistMediaItem.getId() == 0) {
+				isEndOfPlaylist = true;
+				continue;
+			}
+
+			MediaItem mediaItem = playlistMediaItem.getMediaItem();
+			if (mediaEncoding == null) {
+				mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
+			}
+
+			File mediaFile = getMediaFile(mediaItem, mediaEncoding);
+			mediaFiles.add(mediaFile);
+
+			offset++;
+		}
+
+		long lastModified = playlist.getUpdatedOn().getTime();
+		StreamingMediaHandler.fromFiles(mediaFiles, lastModified).with(request).with(response).serveResource();
+
+	}
+
+	private File getMediaFile(MediaItem mediaItem, MediaEncoding mediaEncoding) {
+		File mediaFile = FileHelper.getMediaFile(mediaItem, mediaEncoding);
+		if (!mediaFile.exists()) {
+			mediaFile = new File(mediaItem.getPath());
+		}
+		return mediaFile;
 	}
 
 	protected void prepareModelAndView(MediaItem mediaItem, MediaEncoding mediaEncoding, HttpServletRequest request,
@@ -128,12 +196,10 @@ public class StreamingController {
 			}
 		}
 
-		File mediaFile = FileHelper.getMediaFile(mediaItem, mediaEncoding);
-		if (!mediaFile.exists()) {
-			mediaFile = new File(mediaItem.getPath());
-		}
+		File mediaFile = getMediaFile(mediaItem, mediaEncoding);
+		long lastModified = mediaFile.lastModified();
 
-		StreamingMediaHandler.fromFile(mediaFile).with(request).with(response).serveResource();
+		StreamingMediaHandler.fromFile(mediaFile, lastModified).with(request).with(response).serveResource();
 	}
 
 }

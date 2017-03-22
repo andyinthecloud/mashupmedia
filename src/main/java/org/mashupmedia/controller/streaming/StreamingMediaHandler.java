@@ -71,10 +71,23 @@ public class StreamingMediaHandler {
 	// MultiPartFileSenderImpl(mimeTypeService).setFilepath(Paths.get(uri));
 	// }
 
-	public static MultiPartFileSenderImpl fromFile(File file) {
+	public static MultiPartFileSenderImpl fromFile(File file, long lastModified) {
+		Path path = file.toPath();		
+		List<Path> paths = new ArrayList<Path>();		
+		paths.add(path);
 
-		return new MultiPartFileSenderImpl().setFilepath(file.toPath());
+		return new MultiPartFileSenderImpl().setFilePaths(paths, lastModified);
 	}
+	
+	public static MultiPartFileSenderImpl fromFiles(List<File> mediaFiles, long lastModified) {
+		List<Path> paths = new ArrayList<Path>();
+		for (File file : mediaFiles) {
+			paths.add(file.toPath());
+		}
+		
+		return new MultiPartFileSenderImpl().setFilePaths(paths, lastModified);
+	}
+
 
 	public static class MultiPartFileSenderImpl {
 
@@ -82,7 +95,9 @@ public class StreamingMediaHandler {
 		// MediaItem mediaItem;
 		// File file;
 		MediaContentType mediaContentType;
-		Path filepath;
+		List<Path> filePaths;
+		long length;
+		long lastModified;
 		HttpServletRequest request;
 		HttpServletResponse response;
 		String disposition = CONTENT_DISPOSITION_INLINE;
@@ -117,13 +132,25 @@ public class StreamingMediaHandler {
 		}
 
 		// ** internal setter **//
-		private MultiPartFileSenderImpl setFilepath(Path filePath) {
-			this.filepath = filePath;
-			this.mediaContentType = getMediaContentType(filePath);
+		private MultiPartFileSenderImpl setFilePaths(List<Path> filePaths, long lastModified) {
+			this.filePaths = filePaths;
+			this.mediaContentType = getMediaContentType(filePaths);
+			this.lastModified = lastModified;
+			
+			for (Path filePath : filePaths) {
+				try {
+					this.length += Files.size(filePath);
+				} catch (IOException e) {
+					logger.error("Unable to get file length", e);
+				}
+			}
+			
 			return this;
 		}
 
-		private MediaContentType getMediaContentType(Path filePath) {
+		private MediaContentType getMediaContentType(List<Path> filePaths) {
+			Path filePath = this.filePaths.get(0);			
+			
 			String fileName = filePath.getFileName().toString();
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
@@ -139,15 +166,21 @@ public class StreamingMediaHandler {
 				return;
 			}
 
-			if (!Files.exists(filepath)) {
-				logger.error("File doesn't exist at URI : " + filepath.toAbsolutePath().toString());
-				response.sendError(HttpServletResponse.SC_NOT_FOUND);
-				return;
-			}
+//			if (!Files.exists(filepath)) {
+//				logger.error("File doesn't exist at URI : " + filepath.toAbsolutePath().toString());
+//				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+//				return;
+//			}
 
-			Long length = Files.size(filepath);
-			String fileName = filepath.getFileName().toString();
-			long lastModified = Files.getLastModifiedTime(filepath).toMillis();
+			
+			
+//			Long length = Files.size(filepath);
+//			String fileName = filepath.getFileName().toString();
+			String fileName = "Mashup Media stream";
+			
+//			long lastModified = Files.getLastModifiedTime(filepath).toMillis();
+			
+			
 			// String contentType = mimeTypeService.probeContentType(filepath);
 			String contentType = mediaContentType.getMimeContentType();
 
@@ -297,6 +330,14 @@ public class StreamingMediaHandler {
 			// Send requested file (part(s)) to client
 			// ------------------------------------------------
 
+			for (Path filePath : filePaths) {
+				prepareStream(filePath, response, contentType, ranges, full);
+			}
+
+
+		}
+		
+		protected void prepareStream(Path filepath, HttpServletResponse response, String contentType, List<Range> ranges, Range full) throws IOException {
 			// Prepare streams.
 			try (InputStream input = new BufferedInputStream(Files.newInputStream(filepath));
 					OutputStream output = response.getOutputStream()) {
@@ -353,10 +394,12 @@ public class StreamingMediaHandler {
 					sos.println("--" + MULTIPART_BOUNDARY + "--");
 				}
 			}
-
 		}
 	}
 
+	
+	
+	
 	private static class Range {
 		long start;
 		long end;
@@ -428,5 +471,6 @@ public class StreamingMediaHandler {
 		Arrays.sort(matchValues);
 		return Arrays.binarySearch(matchValues, toMatch) > -1 || Arrays.binarySearch(matchValues, "*") > -1;
 	}
+
 
 }
