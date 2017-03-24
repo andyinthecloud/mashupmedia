@@ -264,11 +264,15 @@ var mashupMedia = new function() {
 
 
 function playMusic(streams) {
-    var media = {};
-            
+//    var media = {};
+    var media = {mp3: mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3"};
+        
+ /*   
     for (i = 0; i < streams.length; i++) {
         media[streams[i].format] = streams[i].url;
     }
+   */ 
+    
     
     //myAndroidFix.setMedia(media);
     $(mashupMedia.jPlayerId).jPlayer("setMedia", media);
@@ -294,6 +298,14 @@ function setupJPlayer() {
             } else {
                 mashupMedia.playNextSong();
             }                                        
+        },
+        timeupdate: function(event) {
+            if (event.jPlayer.status.currentTime % 10) {
+                $.post(mashupMedia.contextUrl + "/app/restful/playlist/update", { seconds: event.jPlayer.status.currentTime })
+            }
+            
+            
+            //console.log(event.jPlayer.status.currentTime);
         },
         swfPath: mashupMedia.jPlayerSwfPath,
         supplied: "mp3",

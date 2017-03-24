@@ -5,10 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.SequenceInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.util.DateHelper;
+import org.mashupmedia.util.DateHelper.DateFormatType;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
@@ -72,22 +77,21 @@ public class StreamingMediaHandler {
 	// }
 
 	public static MultiPartFileSenderImpl fromFile(File file, long lastModified) {
-		Path path = file.toPath();		
-		List<Path> paths = new ArrayList<Path>();		
+		Path path = file.toPath();
+		List<Path> paths = new ArrayList<Path>();
 		paths.add(path);
 
 		return new MultiPartFileSenderImpl().setFilePaths(paths, lastModified);
 	}
-	
+
 	public static MultiPartFileSenderImpl fromFiles(List<File> mediaFiles, long lastModified) {
 		List<Path> paths = new ArrayList<Path>();
 		for (File file : mediaFiles) {
 			paths.add(file.toPath());
 		}
-		
+
 		return new MultiPartFileSenderImpl().setFilePaths(paths, lastModified);
 	}
-
 
 	public static class MultiPartFileSenderImpl {
 
@@ -136,7 +140,7 @@ public class StreamingMediaHandler {
 			this.filePaths = filePaths;
 			this.mediaContentType = getMediaContentType(filePaths);
 			this.lastModified = lastModified;
-			
+
 			for (Path filePath : filePaths) {
 				try {
 					this.length += Files.size(filePath);
@@ -144,13 +148,13 @@ public class StreamingMediaHandler {
 					logger.error("Unable to get file length", e);
 				}
 			}
-			
+
 			return this;
 		}
 
 		private MediaContentType getMediaContentType(List<Path> filePaths) {
-			Path filePath = this.filePaths.get(0);			
-			
+			Path filePath = this.filePaths.get(0);
+
 			String fileName = filePath.getFileName().toString();
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
@@ -166,21 +170,20 @@ public class StreamingMediaHandler {
 				return;
 			}
 
-//			if (!Files.exists(filepath)) {
-//				logger.error("File doesn't exist at URI : " + filepath.toAbsolutePath().toString());
-//				response.sendError(HttpServletResponse.SC_NOT_FOUND);
-//				return;
-//			}
+			// if (!Files.exists(filepath)) {
+			// logger.error("File doesn't exist at URI : " +
+			// filepath.toAbsolutePath().toString());
+			// response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			// return;
+			// }
 
-			
-			
-//			Long length = Files.size(filepath);
-//			String fileName = filepath.getFileName().toString();
-			String fileName = "Mashup Media stream";
-			
-//			long lastModified = Files.getLastModifiedTime(filepath).toMillis();
-			
-			
+			// Long length = Files.size(filepath);
+			// String fileName = filepath.getFileName().toString();
+			String fileName = "Mashup Media stream generated: " + DateHelper.parseToText(new Date(), DateFormatType.SHORT_DISPLAY_WITH_TIME);
+
+			// long lastModified =
+			// Files.getLastModifiedTime(filepath).toMillis();
+
 			// String contentType = mimeTypeService.probeContentType(filepath);
 			String contentType = mediaContentType.getMimeContentType();
 
@@ -330,17 +333,91 @@ public class StreamingMediaHandler {
 			// Send requested file (part(s)) to client
 			// ------------------------------------------------
 
+			
+			List<InputStream> inputStreams = new ArrayList<InputStream>();
+			
+//			BufferedInputStream inputStream = null;
 			for (Path filePath : filePaths) {
-				prepareStream(filePath, response, contentType, ranges, full);
+
+					InputStream inputStream = new BufferedInputStream(Files.newInputStream(filePath));
+					inputStreams.add(inputStream);
+					
+					
+//					OutputStream output = response.getOutputStream();
+
+//				prepareStream(filePath, response, contentType, ranges, full);
 			}
+			
+			SequenceInputStream sequenceInputStream = new SequenceInputStream(Collections.enumeration(inputStreams));
+			OutputStream output = response.getOutputStream();
 
+			
+//			try (InputStream input = new BufferedInputStream(Files.newInputStream(filepath));
+//					OutputStream output = response.getOutputStream()) {
 
+				if (ranges.isEmpty() || ranges.get(0) == full) {
+
+					// Return full file.
+					logger.info("Return full file");
+					response.setContentType(contentType);
+					response.setHeader(CONTENT_RANGE,
+							String.format(BYTES_RANGE_FORMAT, full.start, full.end, full.total));
+					response.setHeader(CONTENT_LENGTH, String.valueOf(full.length));
+					Range.copy(sequenceInputStream, output, length, full.start, full.length);
+
+				} else if (ranges.size() == 1) {
+
+					// Return single part of file.
+					Range r = ranges.get(0);
+					logger.info("Return 1 part of file : from (" + r.start + ") to (" + r.end + ")");
+					response.setContentType(contentType);
+					response.setHeader(CONTENT_RANGE, String.format(BYTES_RANGE_FORMAT, r.start, r.end, r.total));
+					response.setHeader(CONTENT_LENGTH, String.valueOf(r.length));
+					response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
+
+					// Copy single part range.
+					Range.copy(sequenceInputStream, output, length, r.start, r.length);
+
+				} else {
+
+					// Return multiple parts of file.
+					response.setContentType(CONTENT_TYPE_MULTITYPE_WITH_BOUNDARY);
+					response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
+
+					// Cast back to ServletOutputStream to get the easy println
+					// methods.
+					ServletOutputStream sos = (ServletOutputStream) output;
+
+					// Copy multi part range.
+					for (Range r : ranges) {
+						logger.info("Return multi part of file : from (" + r.start + ") to (" + r.end + ")");
+						// Add multipart boundary and header fields for every
+						// range.
+						sos.println();
+						sos.println("--" + MULTIPART_BOUNDARY);
+						sos.println(CONTENT_TYPE + ": " + contentType);
+						sos.println(CONTENT_RANGE + ": " + String.format(BYTES_RANGE_FORMAT, r.start, r.end, r.total));
+
+						// Copy single part range of multi part range.
+						Range.copy(sequenceInputStream, output, length, r.start, r.length);
+					}
+
+					// End with multipart boundary.
+					sos.println();
+					sos.println("--" + MULTIPART_BOUNDARY + "--");
+				}
+//			}
+			
+			
 		}
-		
-		protected void prepareStream(Path filepath, HttpServletResponse response, String contentType, List<Range> ranges, Range full) throws IOException {
+
+		protected void prepareStream(Path filePath, HttpServletResponse response, String contentType,
+				List<Range> ranges, Range full) throws IOException {
 			// Prepare streams.
-			try (InputStream input = new BufferedInputStream(Files.newInputStream(filepath));
+			try (InputStream input = new BufferedInputStream(Files.newInputStream(filePath));
 					OutputStream output = response.getOutputStream()) {
+				
+				logger.info("reading: " + filePath.toString());
 
 				if (ranges.isEmpty() || ranges.get(0) == full) {
 
@@ -397,9 +474,6 @@ public class StreamingMediaHandler {
 		}
 	}
 
-	
-	
-	
 	private static class Range {
 		long start;
 		long end;
@@ -471,6 +545,5 @@ public class StreamingMediaHandler {
 		Arrays.sort(matchValues);
 		return Arrays.binarySearch(matchValues, toMatch) > -1 || Arrays.binarySearch(matchValues, "*") > -1;
 	}
-
 
 }
