@@ -9,8 +9,6 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MediaType;
-import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
@@ -192,20 +190,5 @@ public abstract class AbstractRestfulPlaylistController {
 		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
 		return restfulMediaItem;
 	}
-	
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public RestfulMediaItem playingMediaItem(@RequestParam("seconds") long seconds, @RequestParam(value = "mediaItemId") Long mediaItemId, Model model) {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-		
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			Song song = (Song) playlistMediaItem.getMediaItem();
-			if (mediaItemId == song.getId()) {
-				long trackLength = song.getTrackLength();
-			}
-		}
-
-	}
-
 
 }

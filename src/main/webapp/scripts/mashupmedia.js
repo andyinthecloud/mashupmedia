@@ -187,9 +187,6 @@ var mashupMedia = new function() {
 
 	};
 
-	
-
-	
     this.playSong = function(songId) {        
         $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play-song", {
             "songId" : songId
@@ -301,11 +298,16 @@ function setupJPlayer() {
         },
         timeupdate: function(event) {
             if (event.jPlayer.status.currentTime % 10) {
-                $.post(mashupMedia.contextUrl + "/app/restful/playlist/update", { seconds: event.jPlayer.status.currentTime })
+                $.post(mashupMedia.contextUrl + "/app/restful/playlist/music/update", { 
+                    seconds: event.jPlayer.status.currentTime,
+                    songId: mashupMedia.songId
+                    })
+                .done(function( data ) {
+                    mashupMedia.prepareSong(data);
+            });                   
+                
+            
             }
-            
-            
-            //console.log(event.jPlayer.status.currentTime);
         },
         swfPath: mashupMedia.jPlayerSwfPath,
         supplied: "mp3",

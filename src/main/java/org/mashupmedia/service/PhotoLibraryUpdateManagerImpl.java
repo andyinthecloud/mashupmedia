@@ -175,9 +175,6 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		
 		String fileName = file.getName();
 		
-		Album album = new Album();
-		album.setName(albumName);
-		album.setUpdatedOn(date);
 
 		String path = file.getAbsolutePath();
 		Photo photo = getPhotoByAbsolutePath(path);
@@ -186,9 +183,13 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			if (photo == null) {
 				photo = new Photo();
 				photo.setCreatedOn(new Date());
+
+				Album album = new Album();
+				album.setName(albumName);
+				album.setUpdatedOn(date);
+				photo.setAlbum(album);
 			}
 
-			photo.setAlbum(album);
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
 
@@ -252,7 +253,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setLibrary(library);
 			String title = StringUtils.trimToEmpty(fileName);
 			photo.setDisplayTitle(title);
-			photo.setSearchText(album.getName() + " " + title);
+			photo.setSearchText(albumName + " " + title);
 
 		}
 
