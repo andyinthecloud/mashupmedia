@@ -67,12 +67,13 @@ public class StreamingController {
 		prepareModelAndView(mediaItem, mediaEncoding, request, response);
 	}
 
-	@RequestMapping(value = "/playlist/{playlistTypeValue}/{mediaContentType}", method = { RequestMethod.GET,
-			RequestMethod.HEAD })
+	@RequestMapping(value = "/playlist/{playlistTypeValue}/{mediaContentType}/{timestamp}", method = {
+			RequestMethod.GET, RequestMethod.HEAD })
 	public void getCurrentPlaylistStream(@PathVariable(value = "playlistTypeValue") String playlistTypeValue,
-			@PathVariable(value = "mediaContentType") String mediaContentTypeValue, HttpServletRequest request,
+			@PathVariable(value = "mediaContentType") String mediaContentTypeValue,
+			@PathVariable(value = "timestamp") String timestamp, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		
+
 		PlaylistType playlistType = PlaylistHelper.getPlaylistType(playlistTypeValue);
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(playlistType);
 		prepareModelAndView(playlist, mediaContentTypeValue, request, response);

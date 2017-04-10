@@ -17,6 +17,7 @@ $(document).ready(function() {
 	});
 		
 	 setupJPlayer();
+	 
 });
 
 
@@ -119,6 +120,16 @@ var mashupMedia = new function() {
     this.prepareSong = function(song) {
         if (!song) {
             return;
+        }
+        
+        mashupMedia.displaySong(song);
+        playMusic(song.streams);
+        mashupMedia.showMusicPlayer(true);
+    };
+    
+    this.displaySong = function(song) {
+        if (!song) {
+            return;
         }                           
 
         var albumName = song.artistName + " - " + song.albumName;
@@ -126,10 +137,9 @@ var mashupMedia = new function() {
         $("#music-player .artist-name").html("<a rel=\"internal\" href=\"" + song.artistUrl + "\">" + song.artistName + "</a>");        
         $("#music-player .title").text(song.title);
         mashupMedia.songId = song.id;
-        playMusic(song.streams);
-        mashupMedia.showMusicPlayer(true);
 
     };
+    
     
 	this.streamSong = function(song) {
 	    if (!song) {
@@ -261,27 +271,31 @@ var mashupMedia = new function() {
 
 
 function playMusic(streams) {
-//    var media = {};
-    var media = {mp3: mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3"};
-        
- /*   
-    for (i = 0; i < streams.length; i++) {
-        media[streams[i].format] = streams[i].url;
+    var media = {};
+
+    var isDesktop = $("#music-player div.progress").is(":visible");
+
+    if (isDesktop === true) {
+        for (i = 0; i < streams.length; i++) {
+            media[streams[i].format] = streams[i].url;
+        }
+    } else {
+        var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();
+        media = {
+            mp3: url
+        };
     }
-   */ 
-    
-    
-    //myAndroidFix.setMedia(media);
+
     $(mashupMedia.jPlayerId).jPlayer("setMedia", media);
-    if (mashupMedia.isMusicPlaying()) { 
-        //myAndroidFix.play();
+    if (mashupMedia.isMusicPlaying()) {
         $(mashupMedia.jPlayerId).jPlayer("play");
     }
 }
 
-//var isJPlayerInitialised = false;
+// var isJPlayerInitialised = false;
 //var myAndroidFix = null;
 function setupJPlayer() {
+    var timeUpdateCounter = 0;
     var options = {
         ready: function(event) {
             
@@ -297,17 +311,20 @@ function setupJPlayer() {
             }                                        
         },
         timeupdate: function(event) {
-            if (event.jPlayer.status.currentTime % 10) {
+            
+            timeUpdateCounter++;
+            
+            if (timeUpdateCounter % 10 == 0) {             
                 $.post(mashupMedia.contextUrl + "/app/restful/playlist/music/update", { 
                     seconds: event.jPlayer.status.currentTime,
                     songId: mashupMedia.songId
                     })
                 .done(function( data ) {
-                    mashupMedia.prepareSong(data);
-            });                   
+                    mashupMedia.displaySong(data);
+                });                
                 
-            
             }
+            
         },
         swfPath: mashupMedia.jPlayerSwfPath,
         supplied: "mp3",

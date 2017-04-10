@@ -60,7 +60,12 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 	@Override
 	public void saveLibrary(Library library) {
-		saveOrUpdate(library);
+		long libaryId = library.getId();
+		if (libaryId > 0) {
+			sessionFactory.getCurrentSession().merge(library);
+		} else {
+			sessionFactory.getCurrentSession().save(library);
+		}
 	}
 
 	@Override
