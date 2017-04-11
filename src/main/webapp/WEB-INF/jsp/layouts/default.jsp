@@ -126,8 +126,7 @@
             }, title, link);
 
         });
-
-        var jPlayerVersion = "${jPlayerVersion}";
+        
         <c:if test="${isTransparentBackground}">
         $("#contextUrl").val("<c:url value="/" />");
         </c:if>
@@ -166,9 +165,8 @@
             mashupMedia.playNextSong();
         });
 
+        
         mashupMedia.loadLastAccessedPlaylist();
-
-        mashupMedia.jPlayerSwfPath = "<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer" />";
 
     });
 

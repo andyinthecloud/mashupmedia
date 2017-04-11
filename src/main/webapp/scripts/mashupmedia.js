@@ -39,9 +39,6 @@ $(function () {
 	});
 });
 
-	
-	
-	
 
 var mashupMedia = new function() {
 	this.contextUrl = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2));
@@ -63,7 +60,6 @@ var mashupMedia = new function() {
 	//this.jPlayerContainerId = "#jp_container_1";
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
-	this.jPlayerSwfPath = "";
 	
 	this.showMessage = function(message) {
 	    $("#information-box").html(message);
@@ -130,14 +126,17 @@ var mashupMedia = new function() {
     this.displaySong = function(song) {
         if (!song) {
             return;
-        }                           
+        }         
+        
+        if (mashupMedia.songId == song.id) {
+            return;
+        }
 
         var albumName = song.artistName + " - " + song.albumName;
         $("#music-player .album-art").html("<a rel=\"internal\" href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
         $("#music-player .artist-name").html("<a rel=\"internal\" href=\"" + song.artistUrl + "\">" + song.artistName + "</a>");        
         $("#music-player .title").text(song.title);
         mashupMedia.songId = song.id;
-
     };
     
     
@@ -271,22 +270,24 @@ var mashupMedia = new function() {
 
 
 function playMusic(streams) {
+    
     var media = {};
 
     var isDesktop = $("#music-player div.progress").is(":visible");
-
+    
     if (isDesktop === true) {
         for (i = 0; i < streams.length; i++) {
             media[streams[i].format] = streams[i].url;
         }
     } else {
-        var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();
+        var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();        
         media = {
             mp3: url
         };
     }
 
     $(mashupMedia.jPlayerId).jPlayer("setMedia", media);
+    
     if (mashupMedia.isMusicPlaying()) {
         $(mashupMedia.jPlayerId).jPlayer("play");
     }
@@ -296,6 +297,7 @@ function playMusic(streams) {
 //var myAndroidFix = null;
 function setupJPlayer() {
     var timeUpdateCounter = 0;
+    var jPlayerVersion = "2.9.2";
     var options = {
         ready: function(event) {
             
@@ -326,7 +328,7 @@ function setupJPlayer() {
             }
             
         },
-        swfPath: mashupMedia.jPlayerSwfPath,
+        swfPath: mashupMedia.contextUrl + "/jquery-plugins/jquery.jplayer/" + jPlayerVersion + "/jplayer",
         supplied: "mp3",
         cssSelectorAncestor: "#music-player",
         cssSelector: {
@@ -340,10 +342,11 @@ function setupJPlayer() {
         error: function(event) {
             console.log(event);
             togglePlayPause("stop");
+                        
             $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                 .done(function( data ) {
                     mashupMedia.showMessage(data);
-                    $(mashupMedia.jPlayerId).jPlayer("play");
+                    //$(mashupMedia.jPlayerId).jPlayer("play");
             });                   
         }
     };    
