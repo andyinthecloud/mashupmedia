@@ -342,11 +342,13 @@ function setupJPlayer() {
         error: function(event) {
             console.log(event);
             togglePlayPause("stop");
+            $(mashupMedia.jPlayerId).jPlayer("stop");
                         
             $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                 .done(function( data ) {
                     mashupMedia.showMessage(data);
-                    //$(mashupMedia.jPlayerId).jPlayer("play");
+                    
+                    //mashupMedia.loadLastAccessedPlaylist();
             });                   
         }
     };    

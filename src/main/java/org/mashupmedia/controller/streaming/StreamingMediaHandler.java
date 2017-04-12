@@ -450,6 +450,7 @@ public class StreamingMediaHandler {
 
 					// Cast back to ServletOutputStream to get the easy println
 					// methods.
+					@SuppressWarnings("resource")
 					ServletOutputStream sos = (ServletOutputStream) output;
 
 					// Copy multi part range.
