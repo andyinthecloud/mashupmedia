@@ -68,8 +68,9 @@ var mashupMedia = new function() {
 	};
 	
 	this.loadLastAccessedPlaylist = function() {	    
-		$.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/current", function(data) {		    
-		    mashupMedia.prepareSong(data);
+		$.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/current", function(song) {		    
+		    mashupMedia.prepareSong(song);
+		    mashupMedia.playMusic(song.streams);
 		});
 	};
 	
@@ -119,7 +120,7 @@ var mashupMedia = new function() {
         }
         
         mashupMedia.displaySong(song);
-        playMusic(song.streams);
+        //playMusic(song.streams);
         mashupMedia.showMusicPlayer(true);
     };
     
@@ -139,7 +140,7 @@ var mashupMedia = new function() {
         mashupMedia.songId = song.id;
     };
     
-    
+    /*
 	this.streamSong = function(song) {
 	    if (!song) {
 	        return;
@@ -151,6 +152,32 @@ var mashupMedia = new function() {
         $(mashupMedia.jPlayerId).jPlayer("play");
 
 	};
+	*/
+    
+    this.playMusic = function(streams) {
+        
+        var media = {};
+
+        var isDesktop = $("#music-player div.progress").is(":visible");
+        
+        if (isDesktop === true) {
+            for (i = 0; i < streams.length; i++) {
+                media[streams[i].format] = streams[i].url;
+            }
+        } else {
+            var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();        
+            media = {
+                mp3: url
+            };
+        }
+
+        $(mashupMedia.jPlayerId).jPlayer("setMedia", media);
+        
+        //if (mashupMedia.isMusicPlaying()) {
+            $(mashupMedia.jPlayerId).jPlayer("play");
+        //}
+    };
+    
 	
 	this.showMusicPlayer = function(isShow) {
 	    if (isShow === true) {
@@ -168,9 +195,10 @@ var mashupMedia = new function() {
 	    $.ajax({
             method: "GET",
             url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/current",
-            async: false
-        }).done(function(data) {
-            mashupMedia.streamSong(data);
+            async: true
+        }).done(function(song) {
+            mashupMedia.prepareSong(song);
+            mashupMedia.playMusic(song.streams);            
         });	    
 	};
 	    
@@ -178,9 +206,10 @@ var mashupMedia = new function() {
         $.ajax({
             method: "GET",
             url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/next",
-            async: false
-        }).done(function(data) {
-            mashupMedia.streamSong(data);
+            async: true
+        }).done(function(song) {
+            mashupMedia.prepareSong(song);
+            mashupMedia.playMusic(song.streams);
         });     
 	    
 	};
@@ -189,9 +218,10 @@ var mashupMedia = new function() {
         $.ajax({
             method: "GET",
             url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/previous",
-            async: false
-        }).done(function(data) {
-            mashupMedia.streamSong(data);
+            async: true
+        }).done(function(song) {
+            mashupMedia.prepareSong(song);
+            mashupMedia.playMusic(song.streams);            
         });     
 
 	};
@@ -199,8 +229,9 @@ var mashupMedia = new function() {
     this.playSong = function(songId) {        
         $.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play-song", {
             "songId" : songId
-        }, function(data) {
-            mashupMedia.streamSong(data);
+        }, function(song) {
+            mashupMedia.prepareSong(song);
+            mashupMedia.playMusic(song.streams);            
         });     
     };
 	
@@ -208,16 +239,18 @@ var mashupMedia = new function() {
 	this.playArtist = function(artistId) {		
 		$.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play-artist", {
 			"artistId" : artistId
-		}, function(data) {
-		    mashupMedia.streamSong(data);
+		}, function(song) {
+		    mashupMedia.prepareSong(song);
+		    mashupMedia.playMusic(song.streams);		    
 		});		
 	};
 
 	this.playAlbum = function(albumId) {
 		$.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play-album", {
 			"albumId" : albumId
-		}, function(data) {		    
-            mashupMedia.streamSong(data);
+		}, function(song) {		    
+		    mashupMedia.prepareSong(song);
+		    mashupMedia.playMusic(song.streams);            
 		});		
 	};
 	
@@ -266,31 +299,6 @@ var mashupMedia = new function() {
 		mashupMedia.showEmptySongInfo();
 	};
 	
-}
-
-
-function playMusic(streams) {
-    
-    var media = {};
-
-    var isDesktop = $("#music-player div.progress").is(":visible");
-    
-    if (isDesktop === true) {
-        for (i = 0; i < streams.length; i++) {
-            media[streams[i].format] = streams[i].url;
-        }
-    } else {
-        var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();        
-        media = {
-            mp3: url
-        };
-    }
-
-    $(mashupMedia.jPlayerId).jPlayer("setMedia", media);
-    
-    if (mashupMedia.isMusicPlaying()) {
-        $(mashupMedia.jPlayerId).jPlayer("play");
-    }
 }
 
 // var isJPlayerInitialised = false;
@@ -342,7 +350,7 @@ function setupJPlayer() {
         error: function(event) {
             console.log(event);
             togglePlayPause("stop");
-            $(mashupMedia.jPlayerId).jPlayer("stop");
+            //$(mashupMedia.jPlayerId).jPlayer("stop");
                         
             $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                 .done(function( data ) {
