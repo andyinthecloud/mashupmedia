@@ -67,12 +67,14 @@ var mashupMedia = new function() {
 	    $("#information-box").delay(30000).fadeOut("slow");
 	};
 	
+	/*
 	this.loadLastAccessedPlaylist = function() {	    
-		$.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/current", function(song) {		    
+		$.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/current", function(song) {
 		    mashupMedia.prepareSong(song);
 		    mashupMedia.playMusic(song.streams);
 		});
 	};
+	*/
 	
 	this.loadPlaylist = function(playlistId) {
 		$.get(mashupMedia.contextUrl + "/app/ajax/playlist/play/id/" + playlistId, function(data) {
@@ -93,6 +95,9 @@ var mashupMedia = new function() {
 
 	
 	this.isMusicPlaying = function() {
+	    
+	    alert();
+	    
 	    if($(mashupMedia.jPlayerId) == false) {
 	        return false;
 	    }
@@ -119,8 +124,7 @@ var mashupMedia = new function() {
             return;
         }
         
-        mashupMedia.displaySong(song);
-        //playMusic(song.streams);
+        mashupMedia.displaySong(song);        
         mashupMedia.showMusicPlayer(true);
     };
     
@@ -139,20 +143,6 @@ var mashupMedia = new function() {
         $("#music-player .title").text(song.title);
         mashupMedia.songId = song.id;
     };
-    
-    /*
-	this.streamSong = function(song) {
-	    if (!song) {
-	        return;
-	    }    	   	    
-	    	    
-	    mashupMedia.prepareSong(song);
-        togglePlayPause("play");
-        $(mashupMedia.jPlayerId).jPlayer("load");
-        $(mashupMedia.jPlayerId).jPlayer("play");
-
-	};
-	*/
     
     this.playMusic = function(streams) {
         
@@ -173,9 +163,10 @@ var mashupMedia = new function() {
 
         $(mashupMedia.jPlayerId).jPlayer("setMedia", media);
         
-        //if (mashupMedia.isMusicPlaying()) {
+        if (mashupMedia.isMusicPlaying()) {
             $(mashupMedia.jPlayerId).jPlayer("play");
-        //}
+        }
+        
     };
     
 	
@@ -198,7 +189,7 @@ var mashupMedia = new function() {
             async: true
         }).done(function(song) {
             mashupMedia.prepareSong(song);
-            mashupMedia.playMusic(song.streams);            
+            mashupMedia.playMusic(song.streams);       
         });	    
 	};
 	    

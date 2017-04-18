@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mashupmedia.exception.PageNotFoundException;
-import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
@@ -16,7 +15,6 @@ import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
-import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.web.restful.RestfulMediaItem;
 import org.mashupmedia.web.restful.RestfulSong;
@@ -197,41 +195,6 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 	
 
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public RestfulMediaItem playingMediaItem(@RequestParam("seconds") double seconds,
-			@RequestParam(value = "songId") long songId, Model model) {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
-		long playlistSeconds = 0;
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-			return null;
-		}
-
-		RestfulMediaItem restfulMediaItem = null;
-		boolean hasReachedNowPlaying = false;
-
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			Song song = (Song) playlistMediaItem.getMediaItem();
-			if (songId == song.getId()) {
-				hasReachedNowPlaying = true;
-			}
-			
-			if (hasReachedNowPlaying) {
-				long trackLength = song.getTrackLength();
-				playlistSeconds += trackLength;
-			}			
-
-			if (playlistSeconds > seconds) {
-				User user = AdminHelper.getLoggedInUser();
-				playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-				restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
-				break;
-			}
-		}
-
-		return restfulMediaItem;
-
-	}
 
 }

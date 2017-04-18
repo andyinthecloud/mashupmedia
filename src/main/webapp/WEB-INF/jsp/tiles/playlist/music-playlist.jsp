@@ -64,10 +64,12 @@
 
             $.post("<c:url value="/app/restful/playlist/music/play" />", {
                 playlist: playlistId,
-                mediaItem: mediaItemId
-            }, function(data) {
-                mashupMedia.streamSong(data);
-                mashupMedia.playSong();
+                mediaItemId: mediaItemId
+            }, function(song) {
+                mashupMedia.prepareSong(song);
+                mashupMedia.playMusic(song.streams);            
+                
+                
             });
         });
 

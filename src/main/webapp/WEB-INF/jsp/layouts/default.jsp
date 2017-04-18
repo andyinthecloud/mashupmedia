@@ -166,7 +166,7 @@
         });
 
         
-        mashupMedia.loadLastAccessedPlaylist();
+        //mashupMedia.loadLastAccessedPlaylist();
 
     });
 

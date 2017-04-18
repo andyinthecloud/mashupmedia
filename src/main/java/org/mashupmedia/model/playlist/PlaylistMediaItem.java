@@ -73,9 +73,9 @@ public class PlaylistMediaItem implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((mediaItem == null) ? 0 : mediaItem.hashCode());
 		result = prime * result + ((playlist == null) ? 0 : playlist.hashCode());
+		result = prime * result + ranking;
 		return result;
 	}
 
@@ -97,6 +97,8 @@ public class PlaylistMediaItem implements Serializable {
 			if (other.playlist != null)
 				return false;
 		} else if (!playlist.equals(other.playlist))
+			return false;
+		if (ranking != other.ranking)
 			return false;
 		return true;
 	}
