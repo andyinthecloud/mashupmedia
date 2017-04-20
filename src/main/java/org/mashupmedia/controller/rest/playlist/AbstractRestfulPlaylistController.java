@@ -77,8 +77,8 @@ public abstract class AbstractRestfulPlaylistController {
 	}
 
 	protected PlaylistMediaItem getMediaItemFromPlaylist(int relativePosition, Playlist playlist) {
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist,
-				relativePosition);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist,
+				relativePosition, true);
 		if (playlistMediaItem == null || playlistMediaItem.getId() < 1) {
 			return null;
 		}

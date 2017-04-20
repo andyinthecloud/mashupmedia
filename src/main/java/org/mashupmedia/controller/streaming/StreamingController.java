@@ -140,8 +140,8 @@ public class StreamingController {
 		MediaEncoding mediaEncoding = null;
 
 		while (isEndOfPlaylist == false) {
-			PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist,
-					offset);
+			PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist,
+					offset, false);
 			if (playlistMediaItem == null || playlistMediaItem.getId() == 0) {
 				isEndOfPlaylist = true;
 				continue;

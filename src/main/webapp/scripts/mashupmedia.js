@@ -96,18 +96,15 @@ var mashupMedia = new function() {
 	
 	this.isMusicPlaying = function() {
 	    
-	    alert();
-	    
 	    if($(mashupMedia.jPlayerId) == false) {
 	        return false;
 	    }
 	    
-	    
-	    if($(mashupMedia.jPlayerId).data().jPlayer.status.paused == false){
-	       return true;
+	    if ($("#music-player td.controls a.play").length) {
+	        return false;
 	    }
 	    
-	    return false;    
+	    return true;    
 	}
 	
 	this.isMusicPlayerInitialised = function() {
@@ -342,7 +339,7 @@ function setupJPlayer() {
             console.log(event);
             togglePlayPause("stop");
             //$(mashupMedia.jPlayerId).jPlayer("stop");
-                        
+            
             $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                 .done(function( data ) {
                     mashupMedia.showMessage(data);

@@ -132,7 +132,7 @@ public class AjaxSearchController extends AjaxBaseController {
 		long playlistId = playlist.getId();
 		playlist = playlistManager.getPlaylist(playlistId);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
 		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM, mediaItem);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST, playlist);

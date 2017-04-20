@@ -47,7 +47,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
 		Song song = (Song) playlistMediaItem.getMediaItem();
 
 		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
@@ -65,11 +65,11 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.appendPlaylist(playlist, songs);
 		savePlaylist(playlist);
 		
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
 
 		// if playlist was empty get the first song in the new list 
 		if (playlistMediaItem == null) {
-			playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+			playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
 		}
 
 		Song song = (Song) playlistMediaItem.getMediaItem();
@@ -97,7 +97,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
 
 		Song song = (Song) playlistMediaItem.getMediaItem();
 
@@ -124,7 +124,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.appendPlaylist(playlist, songs);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
 
 		Song song = (Song) playlistMediaItem.getMediaItem();
 

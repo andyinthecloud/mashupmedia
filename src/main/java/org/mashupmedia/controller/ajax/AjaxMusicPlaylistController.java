@@ -5,16 +5,12 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.exception.PageNotFoundException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MediaManager;
-import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.PlaylistHelper;
@@ -36,8 +32,6 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 	@Autowired
 	private PlaylistManager playlistManager;
 
-	@Autowired
-	private MusicManager musicManager;
 
 	@Autowired
 	private MediaManager mediaManager;
@@ -50,7 +44,7 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 		model.addAttribute("playlist", playlist);
 
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper
-				.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+				.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
 		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM,
 				mediaItem);
@@ -245,7 +239,7 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 		savePlaylist(playlist);
 
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper
-				.getRelativePlayingMediaItemFromPlaylist(playlist, 0);
+				.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
 		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM,
 				mediaItem);

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
@@ -113,7 +114,10 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	public void savePlaylist(Playlist playlist) {
 		long playlistId = playlist.getId();
 		Playlist savedPlaylist = getPlaylist(playlistId);
-		List<PlaylistMediaItem> savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
+		List<PlaylistMediaItem> savedPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
+		if (savedPlaylist != null) {
+			savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
+		}
 		List<PlaylistMediaItem> newPlaylistMediaItems = playlist.getPlaylistMediaItems();
 		synchronisePlaylistMediaItems(savedPlaylistMediaItems, newPlaylistMediaItems);
 		saveOrMerge(playlist);
@@ -147,15 +151,16 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 		String hqlPlaylistMediaIds = DaoHelper.convertToHqlParameters(savedPlaylistMediaItemIds);
 
-		Query resetUserPlaylistMediaItemQuery = sessionFactory.getCurrentSession()
-				.createQuery("update User u set u.playlistMediaItemId = 0 where u.playlistMediaItemId in ("
-						+ hqlPlaylistMediaIds + ")");
-		resetUserPlaylistMediaItemQuery.executeUpdate();
+		if (StringUtils.isNotBlank(hqlPlaylistMediaIds)) {
+			Query resetUserPlaylistMediaItemQuery = sessionFactory.getCurrentSession()
+					.createQuery("update User u set u.playlistMediaItemId = 0 where u.playlistMediaItemId in ("
+							+ hqlPlaylistMediaIds + ")");
+			resetUserPlaylistMediaItemQuery.executeUpdate();
 
-		Query deletePlaylistMediaItemQuery = sessionFactory.getCurrentSession()
-				.createQuery("delete PlaylistMediaItem where id in (" + hqlPlaylistMediaIds + ")");
-		deletePlaylistMediaItemQuery.executeUpdate();
-
+			Query deletePlaylistMediaItemQuery = sessionFactory.getCurrentSession()
+					.createQuery("delete PlaylistMediaItem where id in (" + hqlPlaylistMediaIds + ")");
+			deletePlaylistMediaItemQuery.executeUpdate();
+		}
 		for (PlaylistMediaItem newPlaylistMediaItem : newPlaylistMediaItems) {
 			saveOrUpdate(newPlaylistMediaItem);
 		}

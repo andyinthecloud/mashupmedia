@@ -100,7 +100,7 @@ public class PlaylistHelper {
 		appendPlaylist(playlist, mediaItems);
 	}
 
-	public static PlaylistMediaItem getRelativePlayingMediaItemFromPlaylist(Playlist playlist, int relativeOffset) {
+	public static PlaylistMediaItem processRelativePlayingMediaItemFromPlaylist(Playlist playlist, int relativeOffset, boolean isSetPlayingStatus) {
 
 		PlaylistMediaItem emptyPlaylistMediaItem = new PlaylistMediaItem();
 		emptyPlaylistMediaItem.setPlaylist(playlist);
@@ -120,7 +120,10 @@ public class PlaylistHelper {
 			if (playlistMediaItem.equals(currentPlaylistMediaItem)) {
 				playingIndex = i;
 			}
-			playlistMediaItem.setPlaying(false);
+			
+			if (isSetPlayingStatus) {
+				playlistMediaItem.setPlaying(false);
+			}
 		}
 
 		int newPlayingIndex = playingIndex + relativeOffset;
@@ -130,7 +133,9 @@ public class PlaylistHelper {
 		}
 
 		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(newPlayingIndex);
-		playlistMediaItem.setPlaying(true);
+		if (isSetPlayingStatus) {
+			playlistMediaItem.setPlaying(true);
+		}
 		return playlistMediaItem;
 	}
 
