@@ -137,9 +137,9 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 		for (Iterator<PlaylistMediaItem> iterator = newPlaylistMediaItems.iterator(); iterator.hasNext();) {
 			PlaylistMediaItem newPlaylistMediaItem = (PlaylistMediaItem) iterator.next();
-			if (savedPlaylistMediaItems.contains(newPlaylistMediaItem)) {
+			if (savedPlaylistMediaItems.remove(newPlaylistMediaItem)) {
 				iterator.remove();
-				savedPlaylistMediaItems.remove(newPlaylistMediaItem);
+				continue;
 			}
 			saveOrMerge(newPlaylistMediaItem);
 		}

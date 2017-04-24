@@ -153,7 +153,11 @@ public class StreamingMediaHandler {
 		}
 
 		private MediaContentType getMediaContentType(List<Path> filePaths) {
-			Path filePath = this.filePaths.get(0);
+			if (filePaths == null || filePaths.isEmpty()) {
+				return null;
+			}
+			
+			Path filePath = filePaths.get(0);
 
 			String fileName = filePath.getFileName().toString();
 			String fileExtension = FileHelper.getFileExtension(fileName);
@@ -185,6 +189,10 @@ public class StreamingMediaHandler {
 			// Files.getLastModifiedTime(filepath).toMillis();
 
 			// String contentType = mimeTypeService.probeContentType(filepath);
+			if (mediaContentType == null) {
+				return;
+			}
+			
 			String contentType = mediaContentType.getMimeContentType();
 
 			// Validate request headers for caching
