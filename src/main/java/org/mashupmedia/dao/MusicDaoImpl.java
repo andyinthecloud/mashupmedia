@@ -58,7 +58,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		queryBuilder.append(" where s.library.enabled = true");
 		searchLetter = StringUtils.trimToEmpty(searchLetter);
 		if (StringUtils.isNotEmpty(searchLetter)) {
-			queryBuilder.append(" where a.indexLetter = '" + searchLetter.toLowerCase() + "'");
+			queryBuilder.append(" and a.indexLetter = '" + searchLetter.toLowerCase() + "'");
 		}
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 
