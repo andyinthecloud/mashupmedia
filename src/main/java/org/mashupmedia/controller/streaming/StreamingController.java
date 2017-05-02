@@ -127,7 +127,7 @@ public class StreamingController {
 			}
 		}
 
-		return null;
+		return mediaItem.getBestMediaEncoding();
 	}
 
 	protected void prepareModelAndView(Playlist playlist, String mediaContentTypeValue, HttpServletRequest request,

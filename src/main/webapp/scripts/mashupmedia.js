@@ -298,32 +298,27 @@ var mashupMedia = new function() {
 function setupJPlayer() {
     var timeUpdateCounter = 0;
     var jPlayerVersion = "2.9.2";
+    var seconds = 0;
     var options = {
         ready: function(event) {
-            
+            mashupMedia.playCurrentSong();            
         },
         ended:  function(event) {
-        	//playMusic(streamFormats, media);
-            var media = event.jPlayer.status.media;
-            var mp3 = media.mp3;
-            if (mp3 && mp3.indexOf("silent.mp3") > -1) {
-                mashupMedia.playCurrentSong();
-            } else {
-                mashupMedia.playNextSong();
-            }                                        
+            mashupMedia.playNextSong();                                  
         },
         timeupdate: function(event) {
             
-            timeUpdateCounter++;
-            console.log(timeUpdateCounter);
+            var s = Math.round(event.jPlayer.status.currentTime);
+            console.log(s);
             
-            if (timeUpdateCounter % 10 == 0) {             
+            if (s % 10 == 0 && s != seconds) {         
                 $.post(mashupMedia.contextUrl + "/app/restful/playlist/music/update", { 
-                    seconds: event.jPlayer.status.currentTime,
+                    seconds: s,
                     songId: mashupMedia.songId
                     })
                 .done(function( data ) {
                     mashupMedia.displaySong(data);
+                    seconds = s;
                 });                
                 
             }
@@ -343,25 +338,15 @@ function setupJPlayer() {
         error: function(event) {
             console.log(event);
             togglePlayPause("stop");
-            //$(mashupMedia.jPlayerId).jPlayer("stop");
             
             $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                 .done(function( data ) {
-                    mashupMedia.showMessage(data);
-                    
-                    //mashupMedia.loadLastAccessedPlaylist();
+                    mashupMedia.showMessage(data);                    
             });                   
         }
     };    
                     
-    
-    var media = {
-       mp3: mashupMedia.contextUrl + "/jquery-plugins/jquery.jplayer/silent.mp3"
-    };
-    
     $(mashupMedia.jPlayerId).jPlayer(options);
-    $(mashupMedia.jPlayerId).jPlayer("setMedia", media);
-    $(mashupMedia.jPlayerId).jPlayer("play");
 }
 
 
