@@ -60,6 +60,7 @@ var mashupMedia = new function() {
 	//this.jPlayerContainerId = "#jp_container_1";
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
+	this.audioSecondsPlayed = 0;
 	
 	this.showMessage = function(message) {
 	    $("#information-box").html(message);
@@ -147,6 +148,7 @@ var mashupMedia = new function() {
     
     this.playMusic = function(streams) {
         
+        mashupMedia.audioSecondsPlayed = 0;
         var media = {};
 
         var isDesktop = $("#music-player div.progress").is(":visible");
@@ -296,9 +298,7 @@ var mashupMedia = new function() {
 // var isJPlayerInitialised = false;
 //var myAndroidFix = null;
 function setupJPlayer() {
-    var timeUpdateCounter = 0;
     var jPlayerVersion = "2.9.2";
-    var seconds = 0;
     var options = {
         ready: function(event) {
             mashupMedia.playCurrentSong();            
@@ -309,16 +309,20 @@ function setupJPlayer() {
         timeupdate: function(event) {
             
             var s = Math.round(event.jPlayer.status.currentTime);
-            console.log(s);
             
-            if (s % 10 == 0 && s != seconds) {         
+            
+            if (s % 10 == 0 && s != mashupMedia.audioSecondsPlayed) {
+                console.log(mashupMedia.audioSecondsPlayed);
                 $.post(mashupMedia.contextUrl + "/app/restful/playlist/music/update", { 
                     seconds: s,
                     songId: mashupMedia.songId
                     })
                 .done(function( data ) {
                     mashupMedia.displaySong(data);
-                    seconds = s;
+                    mashupMedia.audioSecondsPlayed = s;
+                })
+                .fail(function(event) {
+                    console.log(event);
                 });                
                 
             }
