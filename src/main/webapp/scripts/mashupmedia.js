@@ -60,7 +60,7 @@ var mashupMedia = new function() {
 	//this.jPlayerContainerId = "#jp_container_1";
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
-	this.audioSecondsPlayed = 0;
+	this.audioTrackSecondsPlayed = 0;
 	
 	this.showMessage = function(message) {
 	    $("#information-box").html(message);
@@ -144,11 +144,12 @@ var mashupMedia = new function() {
         $("#music-player .artist-name").html("<a rel=\"internal\" href=\"" + song.artistUrl + "\">" + song.artistName + "</a>");        
         $("#music-player .title").text(song.title);
         mashupMedia.songId = song.id;
+        mashupMedia.audioTrackSecondsPlayed = 0;
     };
     
     this.playMusic = function(streams) {
         
-        mashupMedia.audioSecondsPlayed = 0;
+        mashupMedia.audioTrackSecondsPlayed = 0;
         var media = {};
 
         var isDesktop = $("#music-player div.progress").is(":visible");
@@ -158,7 +159,7 @@ var mashupMedia = new function() {
                 media[streams[i].format] = streams[i].url;
             }
         } else {
-            var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();        
+            var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();
             media = {
                 mp3: url
             };
@@ -299,6 +300,7 @@ var mashupMedia = new function() {
 //var myAndroidFix = null;
 function setupJPlayer() {
     var jPlayerVersion = "2.9.2";
+    var seconds = 0;
     var options = {
         ready: function(event) {
             mashupMedia.playCurrentSong();            
@@ -308,18 +310,17 @@ function setupJPlayer() {
         },
         timeupdate: function(event) {
             
-            var s = Math.round(event.jPlayer.status.currentTime);
+            var s = Math.round(event.jPlayer.status.currentTime);            
             
-            
-            if (s % 10 == 0 && s != mashupMedia.audioSecondsPlayed) {
-                console.log(mashupMedia.audioSecondsPlayed);
+            if (s % 10 == 0 && s != seconds) {
+                console.log(mashupMedia.audioTrackSecondsPlayed);
                 $.post(mashupMedia.contextUrl + "/app/restful/playlist/music/update", { 
-                    seconds: s,
+                    seconds: mashupMedia.audioTrackSecondsPlayed,
                     songId: mashupMedia.songId
                     })
                 .done(function( data ) {
                     mashupMedia.displaySong(data);
-                    mashupMedia.audioSecondsPlayed = s;
+                    seconds = s;
                 })
                 .fail(function(event) {
                     console.log(event);
