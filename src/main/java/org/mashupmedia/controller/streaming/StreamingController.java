@@ -31,10 +31,12 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.view.MediaItemImageView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 @RequestMapping("/streaming")
@@ -69,6 +71,7 @@ public class StreamingController {
 
 	@RequestMapping(value = "/playlist/{playlistTypeValue}/{mediaContentType}/{timestamp}", method = {
 			RequestMethod.GET, RequestMethod.HEAD })
+	@ResponseStatus(HttpStatus.PARTIAL_CONTENT)
 	public void getCurrentPlaylistStream(@PathVariable(value = "playlistTypeValue") String playlistTypeValue,
 			@PathVariable(value = "mediaContentType") String mediaContentTypeValue,
 			@PathVariable(value = "timestamp") String timestamp, HttpServletRequest request,
