@@ -22,8 +22,6 @@ $(document).ready(function() {
 
 
 function bindEndedEventInMusicPlayer() {
-
-    
 }
 
 
@@ -60,7 +58,7 @@ var mashupMedia = new function() {
 	//this.jPlayerContainerId = "#jp_container_1";
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
-	this.audioTrackSecondsPlayed = 0;
+	this.songSecondsPlayed = 0;
 	
 	this.showMessage = function(message) {
 	    $("#information-box").html(message);
@@ -144,17 +142,19 @@ var mashupMedia = new function() {
         $("#music-player .artist-name").html("<a rel=\"internal\" href=\"" + song.artistUrl + "\">" + song.artistName + "</a>");        
         $("#music-player .title").text(song.title);
         mashupMedia.songId = song.id;
-        mashupMedia.audioTrackSecondsPlayed = 0;
+        mashupMedia.songSecondsPlayed = 0;
+        var newSongEvent = document.createEvent("Event");
+        newSongEvent.initEvent("playing-new-song", true, true);
+        document.dispatchEvent(newSongEvent);
+        
     };
     
     this.playMusic = function(streams) {
         
-        mashupMedia.audioTrackSecondsPlayed = 0;
+        mashupMedia.songSecondsPlayed = 0;
         var media = {};
-
-        var isDesktop = $("#music-player div.progress").is(":visible");
         
-        if (isDesktop === true) {
+        if (isDesktopMode()) {
             for (i = 0; i < streams.length; i++) {
                 media[streams[i].format] = streams[i].url;
             }
@@ -312,19 +312,19 @@ function setupJPlayer() {
             
             var s = Math.round(event.jPlayer.status.currentTime);            
             
-            if (s % 10 == 0 && s != seconds) {
-                console.log(mashupMedia.audioTrackSecondsPlayed);
+            if (s % 10 == 0 && s != mashupMedia.songSecondsPlayed) {
+                console.log(mashupMedia.songSecondsPlayed);
                 $.post(mashupMedia.contextUrl + "/app/restful/playlist/music/update", { 
-                    seconds: mashupMedia.audioTrackSecondsPlayed,
+                    seconds: mashupMedia.songSecondsPlayed,
                     songId: mashupMedia.songId
                     })
                 .done(function( data ) {
+                    mashupMedia.songSecondsPlayed = s;                    
                     mashupMedia.displaySong(data);
-                    seconds = s;
                 })
                 .fail(function(event) {
                     console.log(event);
-                });                
+                });
                 
             }
             
@@ -354,7 +354,10 @@ function setupJPlayer() {
     $(mashupMedia.jPlayerId).jPlayer(options);
 }
 
-
+function isDesktopMode() {
+    var isDesktop = $("#music-player div.progress").is(":visible");
+    return isDesktop;
+}
 
 function showSongInPlaylistIfEmpty(playlistId, mediaItemId) {
 	var currentSongId = $("#current-song-id").val();

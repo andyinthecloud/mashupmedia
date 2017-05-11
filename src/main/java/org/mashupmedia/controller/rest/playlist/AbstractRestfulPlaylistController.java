@@ -193,7 +193,7 @@ public abstract class AbstractRestfulPlaylistController {
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public RestfulMediaItem playingMediaItem(@RequestParam("seconds") double seconds,
+	public RestfulMediaItem playingMediaItem(@RequestParam("seconds") long seconds,
 			@RequestParam(value = "songId") long songId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 

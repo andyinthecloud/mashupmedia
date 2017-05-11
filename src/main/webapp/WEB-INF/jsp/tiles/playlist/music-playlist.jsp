@@ -72,6 +72,19 @@
                 
             });
         });
+        
+		document.addEventListener("playing-new-song", function(event){
+		    $("ul.items li").each(function(index) {
+		    	var songId = getNumberFromText(($(this).attr("id")));
+		    	console.log(songId);
+		    	if (songId == mashupMedia.songId) {
+		    		console.log("match");
+		    		$("ul.items li").removeClass("playing");
+		    		$("#media-item-id-" + songId).addClass("playing");
+		    		return false;
+		    	}
+		    });	     
+		}, false);
 
     });
 
