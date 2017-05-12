@@ -26,7 +26,7 @@
                                         function(event) {
                                             event.preventDefault();
                                             submitAjaxForm($(this), "<spring:message code ="configuration.administration.list-users.title" />",
-                                                            "<c:url value="/app/configuration/administration/ist-users" />");
+                                                            "<c:url value="/app/configuration/administration/list-users" />");
                                         });
 
                     });
