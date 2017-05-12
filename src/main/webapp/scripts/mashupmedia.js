@@ -192,8 +192,10 @@ var mashupMedia = new function() {
             url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/current",
             async: true
         }).done(function(song) {
-            mashupMedia.prepareSong(song);
-            mashupMedia.playMusic(song.streams);
+            if (!isEmpty(song)) {
+                mashupMedia.prepareSong(song);
+                mashupMedia.playMusic(song.streams);                
+            }
         });	    
 	};
 	    
@@ -296,11 +298,18 @@ var mashupMedia = new function() {
 	
 }
 
+function isEmpty(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+    return true;
+}
+
 // var isJPlayerInitialised = false;
 //var myAndroidFix = null;
 function setupJPlayer() {
     var jPlayerVersion = "2.9.2";
-    var seconds = 0;
     var options = {
         ready: function(event) {
             mashupMedia.playCurrentSong();            
