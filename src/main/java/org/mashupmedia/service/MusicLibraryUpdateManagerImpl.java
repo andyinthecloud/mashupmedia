@@ -539,7 +539,13 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	private int processTrackNumber(String fileName, int musicFileCount) {
 		Pattern pattern = Pattern.compile("\\d+");
 		Matcher matcher = pattern.matcher(fileName);
-		String trackNumberValue = matcher.group(1);
+		String trackNumberValue = null;		
+		try {
+			trackNumberValue = matcher.group(1);
+		} catch (IllegalStateException e) {
+			logger.info("Unable to get track number from file name: " + fileName, e);
+		}
+		
 		int trackNumber = NumberUtils.toInt(trackNumberValue, musicFileCount);
 		return trackNumber;
 	}

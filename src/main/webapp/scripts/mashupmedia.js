@@ -306,6 +306,10 @@ function isEmpty(obj) {
     return true;
 }
 
+function setSongSecondsPlayed(seconds) {
+    mashupMedia.songSecondsPlayed = seconds;
+}
+
 // var isJPlayerInitialised = false;
 //var myAndroidFix = null;
 function setupJPlayer() {
@@ -328,7 +332,7 @@ function setupJPlayer() {
                     songId: mashupMedia.songId
                     })
                 .done(function( data ) {
-                    mashupMedia.songSecondsPlayed = s;                    
+                    setSongSecondsPlayed(s);
                     mashupMedia.displaySong(data);
                 })
                 .fail(function(event) {

@@ -217,7 +217,7 @@ public abstract class AbstractRestfulPlaylistController {
 				playlistSeconds += trackLength;
 			}			
 
-			if (playlistSeconds > seconds) {
+			if (playlistSeconds >= seconds) {
 				User user = AdminHelper.getLoggedInUser();
 				playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
 				restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
