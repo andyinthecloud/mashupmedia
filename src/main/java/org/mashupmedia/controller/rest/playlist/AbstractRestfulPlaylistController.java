@@ -194,38 +194,27 @@ public abstract class AbstractRestfulPlaylistController {
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public RestfulMediaItem playingMediaItem(@RequestParam("seconds") long seconds,
-			@RequestParam(value = "songId") long songId, Model model) {
+			Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
-		long playlistSeconds = 0;
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
 			return null;
 		}
 
 		RestfulMediaItem restfulMediaItem = null;
-		boolean hasReachedNowPlaying = false;
-
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			Song song = (Song) playlistMediaItem.getMediaItem();
-			if (songId == song.getId()) {
-				hasReachedNowPlaying = true;
-			}
-			
-			if (hasReachedNowPlaying) {
-				long trackLength = song.getTrackLength();
-				playlistSeconds += trackLength;
-			}			
-
-			if (playlistSeconds >= seconds) {
-				User user = AdminHelper.getLoggedInUser();
-				playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-				restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
-				break;
-			}
+		PlaylistMediaItem currentPlaylistMediaItem = getMediaItemFromPlaylist(0, playlist);
+		Song song = (Song) currentPlaylistMediaItem.getMediaItem();
+		long trackLength = song.getTrackLength();
+		if (seconds < trackLength) {
+			restfulMediaItem = convertToRestfulMediaItem(currentPlaylistMediaItem);
+			return restfulMediaItem;
 		}
-
+		
+		PlaylistMediaItem nextPlaylistMediaItem = getMediaItemFromPlaylist(1, playlist);
+		User user = AdminHelper.getLoggedInUser();
+		playlistManager.saveUserPlaylistMediaItem(user, nextPlaylistMediaItem);
+		restfulMediaItem = convertToRestfulMediaItem(nextPlaylistMediaItem);
 		return restfulMediaItem;
-
 	}
 }

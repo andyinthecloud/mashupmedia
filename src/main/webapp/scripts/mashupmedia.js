@@ -58,7 +58,6 @@ var mashupMedia = new function() {
 	//this.jPlayerContainerId = "#jp_container_1";
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
-	this.songSecondsPlayed = 0;
 	
 	this.showMessage = function(message) {
 	    $("#information-box").html(message);
@@ -142,7 +141,6 @@ var mashupMedia = new function() {
         $("#music-player .artist-name").html("<a rel=\"internal\" href=\"" + song.artistUrl + "\">" + song.artistName + "</a>");        
         $("#music-player .title").text(song.title);
         mashupMedia.songId = song.id;
-        mashupMedia.songSecondsPlayed = 0;
         var newSongEvent = document.createEvent("Event");
         newSongEvent.initEvent("playing-new-song", true, true);
         document.dispatchEvent(newSongEvent);
@@ -151,7 +149,8 @@ var mashupMedia = new function() {
     
     this.playMusic = function(streams) {
         
-        mashupMedia.songSecondsPlayed = 0;
+        secondsTrackPlayed = 0;
+        
         var media = {};
         
         if (isDesktopMode()) {
@@ -306,14 +305,14 @@ function isEmpty(obj) {
     return true;
 }
 
-function setSongSecondsPlayed(seconds) {
-    mashupMedia.songSecondsPlayed = seconds;
-}
+
 
 // var isJPlayerInitialised = false;
 //var myAndroidFix = null;
 function setupJPlayer() {
     var jPlayerVersion = "2.9.2";
+    var secondsPlayed = 0;
+    var secondsTrackPlayed = 0;
     var options = {
         ready: function(event) {
             mashupMedia.playCurrentSong();            
@@ -325,20 +324,27 @@ function setupJPlayer() {
             
             var s = Math.round(event.jPlayer.status.currentTime);            
             
-            if (s % 10 == 0 && s != mashupMedia.songSecondsPlayed) {
-                console.log(mashupMedia.songSecondsPlayed);
-                $.post(mashupMedia.contextUrl + "/app/restful/playlist/music/update", { 
-                    seconds: mashupMedia.songSecondsPlayed,
-                    songId: mashupMedia.songId
-                    })
-                .done(function( data ) {
-                    setSongSecondsPlayed(s);
-                    mashupMedia.displaySong(data);
+            if (s % 10 == 0 && s != secondsPlayed) {
+                console.log(secondsTrackPlayed);
+                $.ajax({
+                    url: mashupMedia.contextUrl + "/app/restful/playlist/music/update",
+                    type: "post",
+                    data: {
+                        seconds: secondsTrackPlayed
+                    },
+                    async: true
+                })
+                .done(function(song) {
+                    secondsPlayed = s;
+                    secondsTrackPlayed += 10;
+                    if (mashupMedia.songId != song.id) {
+                        secondsTrackPlayed = 0;
+                        mashupMedia.displaySong(song);
+                    }
                 })
                 .fail(function(event) {
                     console.log(event);
-                });
-                
+                });                
             }
             
         },
