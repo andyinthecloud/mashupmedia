@@ -309,10 +309,11 @@ function isEmpty(obj) {
 
 // var isJPlayerInitialised = false;
 //var myAndroidFix = null;
+var secondsTrackPlayed = 0;
+
 function setupJPlayer() {
     var jPlayerVersion = "2.9.2";
     var secondsPlayed = 0;
-    var secondsTrackPlayed = 0;
     var options = {
         ready: function(event) {
             mashupMedia.playCurrentSong();            
