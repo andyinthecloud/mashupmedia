@@ -256,13 +256,17 @@ public class StreamingMediaHandler {
 				// not, then return 416.
 				if (!range.matches("^bytes=\\d*-\\d*(,\\d*-\\d*)*$")) {
 					logger.error("Range header should match format \"bytes=n-n,n-n,n-n...\". If not, then return 416.");
+					range = "";
+					/*					
 					response.setHeader(CONTENT_RANGE, String.format(BYTES_DINVALID_BYTE_RANGE_FORMAT, length)); // Required
 																												// in
 																												// 416.
-					response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+					
+					response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);			
 					return;
+					*/
 				}
-
+				
 				String ifRange = request.getHeader(IF_RANGE);
 				if (Objects.nonNull(ifRange) && !ifRange.equals(fileName)) {
 					try {

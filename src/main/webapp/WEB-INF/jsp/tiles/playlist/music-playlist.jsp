@@ -24,7 +24,7 @@
             var mediaItemIds = [];
             savePlaylist();
         });
-        
+
         $("#playlist-actions").change(function() {
             var action = $(this).val();
 
@@ -67,25 +67,22 @@
                 mediaItemId: mediaItemId
             }, function(song) {
                 mashupMedia.prepareSong(song);
-                mashupMedia.playMusic(song.streams);            
-                
-                
+                mashupMedia.playMusic(song.streams);
+
             });
         });
         
-		document.addEventListener("playing-new-song", function(event){
-		    $("ul.items li").each(function(index) {
-		    	var songId = getNumberFromText(($(this).attr("id")));
-		    	console.log(songId);
-		    	if (songId == mashupMedia.songId) {
-		    		console.log("match");
-		    		$("ul.items li").removeClass("playing");
-		    		$("#media-item-id-" + songId).addClass("playing");
-		    		return false;
-		    	}
-		    });	     
-		}, false);
-
+        $("#music-player").on("music-player:playing-new-song", function( event ) {
+            $("ul.items li").each(function(index) {
+                var songId = getNumberFromText(($(this).attr("id")));
+                if (songId == mashupMedia.songId) {
+                    $("ul.items li").removeClass("playing");
+                    $("#media-item-id-" + songId).addClass("playing");
+                    return false;
+                }                
+            });               
+        });
+        
     });
 
     function newPlaylist() {

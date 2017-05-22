@@ -140,10 +140,8 @@ var mashupMedia = new function() {
         $("#music-player .album-art").html("<a rel=\"internal\" href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
         $("#music-player .artist-name").html("<a rel=\"internal\" href=\"" + song.artistUrl + "\">" + song.artistName + "</a>");        
         $("#music-player .title").text(song.title);
-        mashupMedia.songId = song.id;
-        var newSongEvent = document.createEvent("Event");
-        newSongEvent.initEvent("playing-new-song", true, true);
-        document.dispatchEvent(newSongEvent);
+        mashupMedia.songId = song.id;        
+        $("#music-player").trigger("music-player:playing-new-song");
         
     };
     
@@ -362,12 +360,19 @@ function setupJPlayer() {
         volume: 1,
         error: function(event) {
             console.log(event);
-            togglePlayPause("stop");
             
-            $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
-                .done(function( data ) {
-                    mashupMedia.showMessage(data);                    
-            });                   
+            var errorType = event.jPlayer.error.type;
+            if (errorType == "e_url") {
+                $(mashupMedia.jPlayerId).jPlayer("play");
+            } else {
+                togglePlayPause("stop");
+                
+                $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
+                    .done(function( data ) {
+                        mashupMedia.showMessage(data);                    
+                });                                   
+            }
+            
         }
     };    
                     
