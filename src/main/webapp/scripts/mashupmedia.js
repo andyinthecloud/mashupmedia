@@ -363,7 +363,7 @@ function setupJPlayer() {
             
             var errorType = event.jPlayer.error.type;
             if (errorType == "e_url") {
-                $(mashupMedia.jPlayerId).jPlayer("play");
+                $(mashupMedia.jPlayerId).jPlayer("play", secondsTrackPlayed);
             } else {
                 togglePlayPause("stop");
                 
