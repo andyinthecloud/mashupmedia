@@ -57,7 +57,6 @@ public class StreamingMediaHandler {
 	private static final String CONTENT_DISPOSITION_FORMAT = "%s;filename=\"%s\"";
 	private static final String BYTES_DINVALID_BYTE_RANGE_FORMAT = "bytes */%d";
 	private static final int DEFAULT_BUFFER_SIZE = 20480; // ..bytes = 20KB.
-	private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1
 																// week.
 
 	// final MimeTypeService mimeTypeService;
@@ -325,7 +324,10 @@ public class StreamingMediaHandler {
 			response.setHeader(ACCEPT_RANGES, BYTES);
 			response.setHeader(ETAG, fileName);
 			response.setDateHeader(LAST_MODIFIED, lastModified);
-			response.setDateHeader(EXPIRES, System.currentTimeMillis() + DEFAULT_EXPIRE_TIME);
+			response.setHeader(EXPIRES, "0");			
+			response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+			response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+			
 
 			if (!StringUtils.isEmpty(disposition)) {
 				if (contentType == null) {
