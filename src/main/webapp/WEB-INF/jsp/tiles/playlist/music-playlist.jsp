@@ -42,9 +42,8 @@
                 var url = "<c:url value="/app/playlist/list/music" />";
                 loadInternalPage("<spring:message code="playlists.title" />", url);
             }
-
+            
             return false;
-
         });
 
         $("#playlist ul.items li a.delete").click(function() {
@@ -68,7 +67,6 @@
             }, function(song) {
                 mashupMedia.prepareSong(song);
                 mashupMedia.playMusic(song.streams);
-
             });
         });
         
@@ -79,10 +77,9 @@
                     $("ul.items li").removeClass("playing");
                     $("#media-item-id-" + songId).addClass("playing");
                     return false;
-                }                
-            });               
-        });
-        
+                }   
+            });
+        });        
     });
 
     function newPlaylist() {
