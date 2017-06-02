@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -55,9 +54,11 @@ public class StreamingMediaHandler {
 	private static final String CONTENT_LENGTH = "Content-Length";
 	private static final String BYTES_RANGE_FORMAT = "bytes %d-%d/%d";
 	private static final String CONTENT_DISPOSITION_FORMAT = "%s;filename=\"%s\"";
-	private static final String BYTES_DINVALID_BYTE_RANGE_FORMAT = "bytes */%d";
+	private static final String BYTES_INVALID_BYTE_RANGE_FORMAT = "bytes */%d";
 	private static final int DEFAULT_BUFFER_SIZE = 20480; // ..bytes = 20KB.
 															// week.
+	private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1
+																// week.
 
 	public static MultiPartFileSenderImpl fromFile(File file, long lastModified) {
 		Path path = file.toPath();
@@ -84,6 +85,7 @@ public class StreamingMediaHandler {
 		HttpServletRequest request;
 		HttpServletResponse response;
 		String disposition = CONTENT_DISPOSITION_INLINE;
+		boolean isPlaylist = false;
 
 		public MultiPartFileSenderImpl with(HttpServletRequest httpRequest) {
 			request = httpRequest;
@@ -122,6 +124,10 @@ public class StreamingMediaHandler {
 				} catch (IOException e) {
 					logger.error("Unable to get file length", e);
 				}
+			}
+
+			if (filePaths.size() > 1) {
+				this.isPlaylist = true;
 			}
 
 			return this;
@@ -221,7 +227,7 @@ public class StreamingMediaHandler {
 					logger.error("Range header should match format \"bytes=n-n,n-n,n-n...\". If not, then return 416.");
 					range = "";
 
-					response.setHeader(CONTENT_RANGE, String.format(BYTES_DINVALID_BYTE_RANGE_FORMAT, length)); // Required
+					response.setHeader(CONTENT_RANGE, String.format(BYTES_INVALID_BYTE_RANGE_FORMAT, length)); // Required
 																												// in
 																												// 416.
 
@@ -267,7 +273,7 @@ public class StreamingMediaHandler {
 						// return 416.
 						if (start > end) {
 							logger.info("Check if Range is syntactically valid. If not, then return 416.");
-							response.setHeader(CONTENT_RANGE, String.format(BYTES_DINVALID_BYTE_RANGE_FORMAT, length)); // Required
+							response.setHeader(CONTENT_RANGE, String.format(BYTES_INVALID_BYTE_RANGE_FORMAT, length)); // Required
 																														// in
 																														// 416.
 							response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
@@ -284,14 +290,20 @@ public class StreamingMediaHandler {
 			// Initialize response.
 			response.reset();
 			response.setBufferSize(DEFAULT_BUFFER_SIZE);
-			response.setHeader(CONTENT_TYPE, contentType);
 			response.setHeader(ACCEPT_RANGES, BYTES);
+			response.setHeader(CONTENT_TYPE, contentType);
 			response.setHeader(ETAG, fileName);
-			response.setDateHeader(LAST_MODIFIED, lastModified);
-			response.setHeader(EXPIRES, "0");
-			response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP
-																						// 1.1.
-			response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+
+			if (isPlaylist) {
+				response.setHeader(EXPIRES, "0");
+				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+				response.setHeader("Pragma", "no-cache");
+				response.setHeader("Transfer-Encoding", "chunked");
+
+			} else {
+				response.setDateHeader(EXPIRES, System.currentTimeMillis() + DEFAULT_EXPIRE_TIME);
+				response.setDateHeader(LAST_MODIFIED, lastModified);
+			}
 
 			if (!StringUtils.isEmpty(disposition)) {
 				if (contentType == null) {
@@ -325,25 +337,25 @@ public class StreamingMediaHandler {
 
 				// Return full file.
 				logger.info("Return full file");
-				response.setContentType(contentType);
-				response.setHeader(CONTENT_RANGE, String.format(BYTES_RANGE_FORMAT, full.start, full.end, full.total));
-				response.setHeader(CONTENT_LENGTH, String.valueOf(full.length + 1));
+				setContent(response, contentType, full);
 				Range.copy(sequenceInputStream, output, length, full.start, full.length);
 
 			} else if (ranges.size() == 1) {
-
-				// Return single part of file.
 				Range r = ranges.get(0);
-				logger.info("Return 1 part of file : from (" + r.start + ") to (" + r.end + ")");
-				response.setContentType(contentType);
-				response.setHeader(CONTENT_RANGE, String.format(BYTES_RANGE_FORMAT, r.start, r.end, r.total));
-				response.setHeader(CONTENT_LENGTH, String.valueOf(r.length));
-				response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
-
-				// Copy single part range.
+				if (isPlaylist) {
+					r = full;
+				} else {
+					logger.info("Return 1 part of file : from (" + r.start + ") to (" + r.end + ")");
+				}
+									
+				setContent(response, contentType, r);				
 				Range.copy(sequenceInputStream, output, length, r.start, r.length);
 
-			} else {
+			} 
+			
+			/*
+			
+			else {
 
 				// Return multiple parts of file.
 				response.setContentType(CONTENT_TYPE_MULTITYPE_WITH_BOUNDARY);
@@ -371,7 +383,20 @@ public class StreamingMediaHandler {
 				sos.println();
 				sos.println("--" + MULTIPART_BOUNDARY + "--");
 			}
-			
+			*/
+
+		}
+
+		protected void setContent(HttpServletResponse response, String contentType, Range range) {
+			response.setContentType(contentType);
+			if (isPlaylist) {
+				response.setHeader("Transfer-Encoding", "chunked");
+				return;
+			}
+
+			response.setHeader(CONTENT_RANGE, String.format(BYTES_RANGE_FORMAT, range.start, range.end, range.total));
+			response.setHeader(CONTENT_LENGTH, String.valueOf(range.length + 1));
+			response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
 		}
 
 		protected void prepareStream(Path filePath, HttpServletResponse response, String contentType,
@@ -386,26 +411,27 @@ public class StreamingMediaHandler {
 
 					// Return full file.
 					logger.info("Return full file");
-					response.setContentType(contentType);
-					response.setHeader(CONTENT_RANGE,
-							String.format(BYTES_RANGE_FORMAT, full.start, full.end, full.total));
-					response.setHeader(CONTENT_LENGTH, String.valueOf(full.length));
+					setContent(response, contentType, full);
 					Range.copy(input, output, length, full.start, full.length);
 
 				} else if (ranges.size() == 1) {
-
-					// Return single part of file.
 					Range r = ranges.get(0);
-					logger.info("Return 1 part of file : from (" + r.start + ") to (" + r.end + ")");
-					response.setContentType(contentType);
-					response.setHeader(CONTENT_RANGE, String.format(BYTES_RANGE_FORMAT, r.start, r.end, r.total));
-					response.setHeader(CONTENT_LENGTH, String.valueOf(r.length));
-					response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
+					if (isPlaylist) {
+						r = full;
+					} else {
+						logger.info("Return 1 part of file : from (" + r.start + ") to (" + r.end + ")");
+					}
+					
+
+					setContent(response, contentType, r);
 
 					// Copy single part range.
 					Range.copy(input, output, length, r.start, r.length);
 
-				} else {
+				} 
+				
+				/*
+				else {
 
 					// Return multiple parts of file.
 					response.setContentType(CONTENT_TYPE_MULTITYPE_WITH_BOUNDARY);
@@ -434,6 +460,7 @@ public class StreamingMediaHandler {
 					sos.println();
 					sos.println("--" + MULTIPART_BOUNDARY + "--");
 				}
+				*/
 			}
 		}
 	}

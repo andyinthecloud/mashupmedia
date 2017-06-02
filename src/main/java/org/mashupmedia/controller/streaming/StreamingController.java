@@ -71,7 +71,7 @@ public class StreamingController {
 
 	@RequestMapping(value = "/playlist/{playlistTypeValue}/{mediaContentType}/{timestamp}", method = {
 			RequestMethod.GET, RequestMethod.HEAD })
-	@ResponseStatus(HttpStatus.PARTIAL_CONTENT)
+	@ResponseStatus(HttpStatus.OK)
 	public void getCurrentPlaylistStream(@PathVariable(value = "playlistTypeValue") String playlistTypeValue,
 			@PathVariable(value = "mediaContentType") String mediaContentTypeValue,
 			@PathVariable(value = "timestamp") String timestamp, HttpServletRequest request,
