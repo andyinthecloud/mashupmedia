@@ -320,7 +320,9 @@ function setupJPlayer() {
             mashupMedia.playNextSong();                                  
         },
         timeupdate: function(event) {
-            
+            if (isDesktopMode()) {
+                return true;
+            }
             var s = Math.round(event.jPlayer.status.currentTime);            
             
             if (s % 10 == 0 && s != secondsPlayed) {
@@ -331,7 +333,7 @@ function setupJPlayer() {
                     data: {
                         seconds: secondsTrackPlayed
                     },
-                    async: true
+                    async: false
                 })
                 .done(function(song) {
                     secondsPlayed = s;

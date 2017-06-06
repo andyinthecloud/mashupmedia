@@ -29,9 +29,9 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 public class StreamingMediaHandler {
 	private static Logger logger = Logger.getLogger(StreamingMediaHandler.class);
 
-	private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
-	private static final String CONTENT_TYPE_MULTITYPE_WITH_BOUNDARY = "multipart/byteranges; boundary="
-			+ MULTIPART_BOUNDARY;
+//	private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
+//	private static final String CONTENT_TYPE_MULTITYPE_WITH_BOUNDARY = "multipart/byteranges; boundary="
+//			+ MULTIPART_BOUNDARY;
 	private static final String CONTENT_DISPOSITION_INLINE = "inline";
 	private static final String CONTENT_DISPOSITION_ATTACHMENT = "attachment";
 	private static final String IF_NONE_MATCH = "If-None-Match";
@@ -395,7 +395,7 @@ public class StreamingMediaHandler {
 			}
 
 			response.setHeader(CONTENT_RANGE, String.format(BYTES_RANGE_FORMAT, range.start, range.end, range.total));
-			response.setHeader(CONTENT_LENGTH, String.valueOf(range.length + 1));
+			response.setHeader(CONTENT_LENGTH, String.valueOf(range.length));
 			response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
 		}
 

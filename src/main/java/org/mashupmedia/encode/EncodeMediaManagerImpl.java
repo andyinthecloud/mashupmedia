@@ -17,6 +17,7 @@
 
 package org.mashupmedia.encode;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.service.MediaManager;
+import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -70,11 +72,28 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 				mediaItem.setMediaEncodings(mediaEncodings);
 			}
 			mediaEncodings.add(mediaEncoding);
+			
+			long sizeInBytes = getSizeInBytes(mediaItem, mediaEncoding);
+			mediaItem.setSizeInBytes(sizeInBytes);
 			mediaManager.saveMediaItem(mediaItem);
 		} catch (Exception e) {
 			logger.error("Error encoding media item: " + mediaItemId, e);
 		}
 
+	}
+
+	private long getSizeInBytes(MediaItem mediaItem, MediaEncoding mediaEncoding) {
+		File originalMediaFile =  new File(mediaItem.getPath());		
+		File encodedMediaFile = FileHelper.getMediaFile(mediaItem, mediaEncoding);
+		if (!encodedMediaFile.exists()) {
+			return originalMediaFile.length();			
+		}
+		
+		if (encodedMediaFile.length() == 0) {
+			return originalMediaFile.length();
+		}
+		
+		return encodedMediaFile.length();
 	}
 
 }
