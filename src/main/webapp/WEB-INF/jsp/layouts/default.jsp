@@ -176,7 +176,7 @@
 
         var text = null;
         var nextAction = null;
-
+        
         if (action == "play") {
             nextAction = "pause";
             imagePath = "<c:url value="${themePath}/images/media-player/pause.png"/>";

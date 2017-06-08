@@ -140,14 +140,19 @@ var mashupMedia = new function() {
         $("#music-player .album-art").html("<a rel=\"internal\" href=\"" + song.albumUrl + "\"><img title=\"" + albumName + "\" src=\"" + song.albumArtUrl + "\" /></a>");
         $("#music-player .artist-name").html("<a rel=\"internal\" href=\"" + song.artistUrl + "\">" + song.artistName + "</a>");        
         $("#music-player .title").text(song.title);
-        mashupMedia.songId = song.id;        
+        mashupMedia.songId = song.id;
         $("#music-player").trigger("music-player:playing-new-song");
         
     };
     
     this.playMusic = function(streams) {
-        
+                
         secondsTrackPlayed = 0;
+        
+        if (streams == null) {
+            $("#music-player .controls a.pause").trigger("click");
+            return;
+        }
         
         var media = {};
         
@@ -333,7 +338,7 @@ function setupJPlayer() {
                     data: {
                         seconds: secondsTrackPlayed
                     },
-                    async: false
+                    async: true
                 })
                 .done(function(song) {
                     secondsPlayed = s;
