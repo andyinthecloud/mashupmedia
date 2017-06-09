@@ -370,8 +370,10 @@ function setupJPlayer() {
             
             var errorType = event.jPlayer.error.type;
             if (errorType == "e_url") {
+                secondsTrackPlayed = 0;
                 $(mashupMedia.jPlayerId).jPlayer("play", secondsTrackPlayed);
             } else {
+                $("#music-player .controls a.pause").trigger("click");
                 togglePlayPause("stop");
                 
                 $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
