@@ -317,8 +317,10 @@ var secondsTrackPlayed = 0;
 function setupJPlayer() {
     var jPlayerVersion = "2.9.2";
     var secondsPlayed = 0;
+    var ready = false;
     var options = {
         ready: function(event) {
+            ready = true;
             mashupMedia.playCurrentSong();            
         },
         ended:  function(event) {
@@ -365,12 +367,14 @@ function setupJPlayer() {
             playBar: "div.play-bar"
         },
         volume: 1,
+        pause: function (event) {
+            $(mashupMedia.jPlayerId).jPlayer("clearMedia");
+        },
         error: function(event) {
             console.log(event);
             
             var errorType = event.jPlayer.error.type;
-            if (errorType == "e_url") {
-                secondsTrackPlayed = 0;
+            if (ready && errorType == "e_url") {
                 $(mashupMedia.jPlayerId).jPlayer("play", secondsTrackPlayed);
             } else {
                 $("#music-player .controls a.pause").trigger("click");
