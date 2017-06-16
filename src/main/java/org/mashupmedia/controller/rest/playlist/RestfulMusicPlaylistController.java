@@ -188,7 +188,8 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		Song song = (Song) playlistMediaItem.getMediaItem();
 
 		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
-				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);	
+		
 		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
 		return restfulSong;
 	}

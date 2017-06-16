@@ -40,7 +40,6 @@ public abstract class AbstractRestfulPlaylistController {
 	@RequestMapping(value = "/play/current", method = RequestMethod.GET)
 	public RestfulMediaItem playCurrentUserMusicPlaylist(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(getPlaylistType());
-
 		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(0, playlist);
 		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
 		return restfulMediaItem;
@@ -91,7 +90,7 @@ public abstract class AbstractRestfulPlaylistController {
 		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getPlaylistMediaItems();
 		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
 	}
-
+	
 	protected abstract RestfulMediaItem convertToRestfulMediaItem(PlaylistMediaItem playlistMediaItem);
 
 	@RequestMapping(value = "/save-playlist-name", method = RequestMethod.POST)

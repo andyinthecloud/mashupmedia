@@ -147,6 +147,7 @@ var mashupMedia = new function() {
     
     this.playMusic = function(streams) {
                 
+        console.log(streams);
         secondsTrackPlayed = 0;
         
         if (streams == null) {
@@ -167,12 +168,10 @@ var mashupMedia = new function() {
             };
         }
 
-        $(mashupMedia.jPlayerId).jPlayer("setMedia", media);
-        
-        if (mashupMedia.isMusicPlaying()) {
+        $(mashupMedia.jPlayerId).jPlayer("setMedia", media);        
+        if (mashupMedia.isMusicPlaying()) {            
             $(mashupMedia.jPlayerId).jPlayer("play");
-        }
-        
+        }        
     };
     
 	
@@ -193,7 +192,7 @@ var mashupMedia = new function() {
             method: "GET",
             url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/current",
             async: true
-        }).done(function(song) {
+        }).done(function(song) {            
             if (!isEmpty(song)) {
                 mashupMedia.prepareSong(song);
                 mashupMedia.playMusic(song.streams);                
@@ -371,21 +370,24 @@ function setupJPlayer() {
             $(mashupMedia.jPlayerId).jPlayer("clearMedia");
         },
         error: function(event) {
-            console.log(event);
-            
+            $("#music-player .controls a.pause").trigger("click");
+            togglePlayPause("stop");
+
             var errorType = event.jPlayer.error.type;
-            if (ready && errorType == "e_url") {
-                $(mashupMedia.jPlayerId).jPlayer("play", secondsTrackPlayed);
-            } else {
-                $("#music-player .controls a.pause").trigger("click");
-                togglePlayPause("stop");
-                
+            if (ready && errorType == $.jPlayer.error.URL) {
+                setTimeout(function(){
+                    console.log(event);
+                    $(mashupMedia.jPlayerId).jPlayer("clearMedia");
+                    mashupMedia.playCurrentSong();
+                    $(mashupMedia.jPlayerId).jPlayer("play", secondsTrackPlayed);
+                }, 1000);
+                return;
+            } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                
                 $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                     .done(function( data ) {
                         mashupMedia.showMessage(data);                    
                 });                                   
             }
-            
         }
     };    
                     

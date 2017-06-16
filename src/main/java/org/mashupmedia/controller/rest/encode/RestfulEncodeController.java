@@ -1,5 +1,6 @@
 package org.mashupmedia.controller.rest.encode;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +13,13 @@ import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
+import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.MessageHelper;
@@ -192,7 +194,10 @@ public class RestfulEncodeController {
 			try {
 				// Only encode media item if missing
 				if (MediaItemHelper.hasMediaEncoding(mediaItem, mediaContentType)) {
-					continue;
+					File file =  FileHelper.getEncodedMediaFile(mediaItem, mediaContentType);
+					if (file.exists()) {
+						continue;
+					}
 				}
 
 				encodeMediaItemTaskManager.processMediaItemForEncoding(mediaItem, mediaContentType);

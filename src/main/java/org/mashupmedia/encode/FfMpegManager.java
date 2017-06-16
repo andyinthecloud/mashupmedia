@@ -155,9 +155,8 @@ public class FfMpegManager {
 		boolean isDeleted = FileHelper.deleteFile(outputFile);
 
 		if (!isDeleted) {
-			String errorText = "Exiting, unable to delete encoded media file: " + outputFile.getAbsolutePath();
-			logger.info(errorText);
-			throw new MediaItemEncodeException(EncodeExceptionType.UNABLE_TO_DELETE_PREVIOUS_ENCODED_FILE, errorText);
+			String errorText = "Unable to delete encoded media file whil try when webserver stops: " + outputFile.getAbsolutePath();
+			logger.error(errorText);
 		}
 
 		List<String> commands = new ArrayList<String>();

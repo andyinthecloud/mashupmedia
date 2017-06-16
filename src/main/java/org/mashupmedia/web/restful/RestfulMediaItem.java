@@ -38,6 +38,10 @@ public abstract class RestfulMediaItem {
 		List<RestfulStream> restfulStreamList = new ArrayList<RestfulStream>();
 		for (MediaEncoding mediaEncoding : mediaEncodings) {
 			MediaContentType mediaContentType = mediaEncoding.getMediaContentType();
+			if (!isSupportedContentType(mediaContentType)) {
+				continue;
+			}
+			
 			String format = mediaContentType.getjPlayerContentType();
 			String url = MediaItemHelper.prepareUrlStream(contextPath, mediaItemId, format);
 			RestfulStream restfulStream = new RestfulStream(format, url);
@@ -51,6 +55,21 @@ public abstract class RestfulMediaItem {
 		setStreams(streams);
 	}	
 	
+	private boolean isSupportedContentType(MediaContentType mediaContentType) {
+		if (suppliedMediaContentTypes == null || suppliedMediaContentTypes.length == 0) {
+			return false;
+		}
+		
+		for (MediaContentType suppliedMediaContentType : suppliedMediaContentTypes) {
+			if (suppliedMediaContentType == mediaContentType) {
+				return true;
+			}			
+		}
+		
+		return false;
+	}
+
+
 	public long getId() {
 		return id;
 	}

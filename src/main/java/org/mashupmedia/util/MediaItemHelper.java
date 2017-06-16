@@ -192,7 +192,7 @@ public class MediaItemHelper {
 		}
 
 		for (MediaEncoding mediaEncoding : mediaEncodings) {
-			if (mediaContentType.equals(mediaEncoding.getMediaContentType())) {
+			if (mediaContentType  == mediaEncoding.getMediaContentType()) {
 				return true;
 			}
 		}

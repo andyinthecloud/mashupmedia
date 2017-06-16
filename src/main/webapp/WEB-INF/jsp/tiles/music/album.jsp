@@ -38,7 +38,7 @@
             displayRemoteArtistInformation(data);
         });
 
-        $("div.dynamic-content div.title-with-player-control div.re-encode a").click(function() {
+        $("#re-encode").click(function() {            
             $.post("<c:url value="/app/restful/encode/music-album" />", {
                 id: <c:out value="${albumPage.album.id}" />
             }).done(function(data) {
@@ -78,7 +78,7 @@
 				src="<c:url value="${themePath}/images/controls/add.png"/>" /></a>
 		</c:if>
 
-		<a href="javascript:;"
+		<a href="javascript:;" id="re-encode"
 			title="<spring:message code="action.re-encode.tip" />"><spring:message
 				code="action.re-encode" /></a>
 

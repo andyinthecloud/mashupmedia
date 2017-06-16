@@ -1,6 +1,9 @@
 package org.mashupmedia.controller.streaming;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,8 +29,8 @@ import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
-import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.view.MediaItemImageView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,7 +159,9 @@ public class StreamingController {
 			}
 
 			File mediaFile = getMediaFile(mediaItem, mediaEncoding);
-			mediaFiles.add(mediaFile);
+			if (mediaFile != null) {
+				mediaFiles.add(mediaFile);	
+			}			
 
 			offset++;
 		}
@@ -168,9 +173,11 @@ public class StreamingController {
 
 	private File getMediaFile(MediaItem mediaItem, MediaEncoding mediaEncoding) {
 		File mediaFile = FileHelper.getMediaFile(mediaItem, mediaEncoding);
-		if (!mediaFile.exists()) {
-			mediaFile = new File(mediaItem.getPath());
+		Path path = Paths.get(mediaFile.getAbsolutePath());
+		if (!Files.exists(path)) {
+			return null;
 		}
+		
 		return mediaFile;
 	}
 
