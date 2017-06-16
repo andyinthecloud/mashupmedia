@@ -482,13 +482,12 @@ function loadAlbums(viewType) {
         url = mashupMedia.contextUrl + "/app/music/random-albums"
     }
     
-    
     $.get(url, {
         append: true,
         fragment: true,
         pageNumber : mashupMedia.filterPageNumber,
         searchLetter: mashupMedia.filterAlbumsSearchLetter
-    }, function(data) {        
+    }, function(data) {
         $("div.dynamic-content div.albums").append(data);
         delayNextAction();          
     });

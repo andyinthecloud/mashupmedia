@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
@@ -64,11 +64,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		queryBuilder.append(" order by a.indexText");
 
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query<Album> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Album.class);
 		query.setFirstResult(firstResult);
 		query.setMaxResults(maxResults);
 		query.setCacheable(true);
-		@SuppressWarnings("unchecked")
 		List<Album> albums = (List<Album>) query.list();
 		return albums;
 	}
@@ -80,9 +79,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		queryBuilder.append(" where s.library.enabled = true");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by a.indexLetter");
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query<String> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), String.class);
 		query.setCacheable(true);
-		@SuppressWarnings("unchecked")
 		List<String> indexLetters = query.list();
 		return indexLetters;
 	}
@@ -94,9 +92,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		queryBuilder.append(" where s.library.enabled = true");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by a.indexText");
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query<Artist> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Artist.class);
 		query.setCacheable(true);
-		@SuppressWarnings("unchecked")
 		List<Artist> artists = (List<Artist>) query.list();
 		return artists;
 	}
@@ -109,9 +106,9 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		queryBuilder.append(" and s.library.enabled = true");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query<Artist> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Artist.class);
 		query.setCacheable(true);
-		query.setString("name", name.toLowerCase());
+		query.setParameter("name", name.toLowerCase());
 		Artist artist = (Artist) query.uniqueResult();
 		return artist;
 	}
