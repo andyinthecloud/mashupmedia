@@ -394,7 +394,7 @@ public class StreamingMediaHandler {
 //				response.setHeader("Transfer-Encoding", "chunked");
 				return;
 			}
-
+			
 			response.setHeader(CONTENT_RANGE, String.format(BYTES_RANGE_FORMAT, range.start, range.end, range.total));
 //			response.setHeader(CONTENT_LENGTH, String.valueOf(range.length));
 			response.setContentLength(Long.valueOf(range.length).intValue());
