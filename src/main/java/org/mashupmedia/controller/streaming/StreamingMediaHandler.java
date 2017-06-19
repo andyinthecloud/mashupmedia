@@ -26,6 +26,7 @@ import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
+
 public class StreamingMediaHandler {
 	private static Logger logger = Logger.getLogger(StreamingMediaHandler.class);
 
@@ -331,7 +332,7 @@ public class StreamingMediaHandler {
 			}
 
 			SequenceInputStream sequenceInputStream = new SequenceInputStream(Collections.enumeration(inputStreams));
-			OutputStream output = response.getOutputStream();
+			OutputStream output = response.getOutputStream();						
 
 			if (ranges.isEmpty() || ranges.get(0) == full) {
 
@@ -390,12 +391,13 @@ public class StreamingMediaHandler {
 		protected void setContent(HttpServletResponse response, String contentType, Range range) {
 			response.setContentType(contentType);
 			if (isPlaylist) {
-				response.setHeader("Transfer-Encoding", "chunked");
+//				response.setHeader("Transfer-Encoding", "chunked");
 				return;
 			}
 
 			response.setHeader(CONTENT_RANGE, String.format(BYTES_RANGE_FORMAT, range.start, range.end, range.total));
-			response.setHeader(CONTENT_LENGTH, String.valueOf(range.length));
+//			response.setHeader(CONTENT_LENGTH, String.valueOf(range.length));
+			response.setContentLength(Long.valueOf(range.length).intValue());
 			response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
 		}
 
@@ -518,7 +520,7 @@ public class StreamingMediaHandler {
 						break;
 					}
 				}
-			}
+			}			
 		}
 	}
 
