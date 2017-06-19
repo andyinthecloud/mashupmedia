@@ -370,7 +370,7 @@ function setupJPlayer() {
             $(mashupMedia.jPlayerId).jPlayer("clearMedia");
         },
         error: function(event) {
-            $("#music-player .controls a.pause").trigger("click");
+            //$("#music-player .controls a.pause").trigger("click");
             togglePlayPause("stop");
 
             var errorType = event.jPlayer.error.type;
