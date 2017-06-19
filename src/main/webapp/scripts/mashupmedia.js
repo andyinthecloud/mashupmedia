@@ -377,8 +377,6 @@ function setupJPlayer() {
             if (ready && errorType == $.jPlayer.error.URL) {
                 setTimeout(function(){
                     console.log(event);
-                    $(mashupMedia.jPlayerId).jPlayer("clearMedia");
-                    mashupMedia.playCurrentSong();
                     $(mashupMedia.jPlayerId).jPlayer("play", secondsTrackPlayed);
                 }, 1000);
                 return;
