@@ -367,7 +367,7 @@ function setupJPlayer() {
         },
         volume: 1,
         pause: function (event) {
-            $(mashupMedia.jPlayerId).jPlayer("clearMedia");
+            //$(mashupMedia.jPlayerId).jPlayer("clearMedia");
         },
         error: function(event) {
             //$("#music-player .controls a.pause").trigger("click");

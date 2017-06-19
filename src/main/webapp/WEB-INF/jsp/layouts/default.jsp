@@ -143,7 +143,6 @@
 
         $("#music-player").on("click", ".controls a.play", function() {
             togglePlayPause("play");
-            //myAndroidFix.play();
             $(mashupMedia.jPlayerId).jPlayer("play");
         });
 
