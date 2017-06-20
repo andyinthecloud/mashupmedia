@@ -580,7 +580,7 @@ public class StreamingMediaHandler {
 			Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
 			Date updatedOn = playlist.getUpdatedOn();
 			Date date = new Date();
-			long seconds = DateHelper.getDifferenceInSeconds(updatedOn, date);
+			long seconds = DateHelper.getDifferenceInSeconds(date, updatedOn);
 			if (seconds < DEFAULT_SAVE_PLAYLIST_MIN_INTERVAL) {
 				return;
 			}
