@@ -73,5 +73,18 @@ public class MediaItemSequenceInputStream {
 	public long getLength() {
 		return length;
 	}
+	
+	public boolean isPlaylist() {
+		if (mediaItems == null || mediaItems.isEmpty()) {
+			return false;
+		}
+		
+		if (mediaItems.size() == 1) {
+			return false;
+		}
+		
+		return true;
+		
+	}
 
 }
