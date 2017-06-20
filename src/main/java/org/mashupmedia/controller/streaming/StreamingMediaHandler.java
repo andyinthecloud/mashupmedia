@@ -580,7 +580,7 @@ public class StreamingMediaHandler {
 
 		private static void logFile(PlaylistManager playlistManager,
 				MediaItemSequenceInputStream pathSequenceInputStream, long totalRead, int logCount) throws IOException {
-			if (logCount % 5 == 0) {
+			if (logCount % 25 == 0) {
 				MediaItem mediaItem = pathSequenceInputStream.getMediaItem(totalRead);
 				long mediaItemId = mediaItem.getId();
 				Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
