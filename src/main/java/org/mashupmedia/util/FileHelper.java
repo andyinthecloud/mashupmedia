@@ -3,9 +3,9 @@ package org.mashupmedia.util;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
@@ -347,5 +347,15 @@ public class FileHelper {
 			return true;
 		}
 		return false;
+	}
+
+	public static Path getPath(MediaItem mediaItem) {
+		if (mediaItem == null) {
+			return null;
+		}
+		
+		File file = new File(mediaItem.getPath());
+		Path path = file.toPath();
+		return path;
 	}
 }

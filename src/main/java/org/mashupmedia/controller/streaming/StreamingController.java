@@ -105,7 +105,7 @@ public class StreamingController {
 		File mediaFile = new File(filePath);
 		long lastModified = mediaFile.lastModified();
 		if (mediaFile.isFile()) {
-			StreamingMediaHandler.fromFile(mediaFile, lastModified).with(request).with(response).serveResource();
+			StreamingMediaHandler.fromMediaItem(playlistManager, photo, lastModified).with(request).with(response).serveResource();
 			return;
 		}
 
@@ -139,7 +139,7 @@ public class StreamingController {
 	protected void prepareModelAndView(Playlist playlist, String mediaContentTypeValue, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-		List<File> mediaFiles = new ArrayList<File>();
+		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
 		int offset = 0;
 		boolean isEndOfPlaylist = false;
 
@@ -160,14 +160,14 @@ public class StreamingController {
 
 			File mediaFile = getMediaFile(mediaItem, mediaEncoding);
 			if (mediaFile != null) {
-				mediaFiles.add(mediaFile);	
+				mediaItems.add(mediaItem);	
 			}			
 
 			offset++;
 		}
 
 		long lastModified = playlist.getUpdatedOn().getTime();
-		StreamingMediaHandler.fromFiles(mediaFiles, lastModified).with(request).with(response).serveResource();
+		StreamingMediaHandler.fromMediaItems(playlistManager, mediaItems, lastModified).with(request).with(response).serveResource();
 
 	}
 
@@ -205,7 +205,7 @@ public class StreamingController {
 		File mediaFile = getMediaFile(mediaItem, mediaEncoding);
 		long lastModified = mediaFile.lastModified();
 
-		StreamingMediaHandler.fromFile(mediaFile, lastModified).with(request).with(response).serveResource();
+		StreamingMediaHandler.fromMediaItem(playlistManager, mediaItem, lastModified).with(request).with(response).serveResource();
 	}
 
 }

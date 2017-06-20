@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.music.Song;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
@@ -191,29 +190,11 @@ public abstract class AbstractRestfulPlaylistController {
 		return restfulMediaItem;
 	}
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public RestfulMediaItem playingMediaItem(@RequestParam("seconds") long seconds,
-			Model model) {
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
-
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-			return null;
-		}
-
-		RestfulMediaItem restfulMediaItem = null;
-		PlaylistMediaItem currentPlaylistMediaItem = getMediaItemFromPlaylist(0, playlist);
-		Song song = (Song) currentPlaylistMediaItem.getMediaItem();
-		long trackLength = song.getTrackLength();
-		if (seconds < trackLength) {
-			restfulMediaItem = convertToRestfulMediaItem(currentPlaylistMediaItem);
-			return restfulMediaItem;
-		}
-		
-		PlaylistMediaItem nextPlaylistMediaItem = getMediaItemFromPlaylist(1, playlist);
-		User user = AdminHelper.getLoggedInUser();
-		playlistManager.saveUserPlaylistMediaItem(user, nextPlaylistMediaItem);
-		restfulMediaItem = convertToRestfulMediaItem(nextPlaylistMediaItem);
+	@RequestMapping(value = "/playing", method = RequestMethod.GET)
+	public RestfulMediaItem playingMediaItem(Model model) {
+		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
+		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(0, playlist);
+		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
 		return restfulMediaItem;
 	}
 }

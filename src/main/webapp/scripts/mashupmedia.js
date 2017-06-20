@@ -148,7 +148,6 @@ var mashupMedia = new function() {
     this.playMusic = function(streams) {
                 
         console.log(streams);
-        secondsTrackPlayed = 0;
         
         if (streams == null) {
             $("#music-player .controls a.pause").trigger("click");
@@ -311,7 +310,6 @@ function isEmpty(obj) {
 
 // var isJPlayerInitialised = false;
 //var myAndroidFix = null;
-var secondsTrackPlayed = 0;
 
 function setupJPlayer() {
     var jPlayerVersion = "2.9.2";
@@ -332,20 +330,13 @@ function setupJPlayer() {
             var s = Math.round(event.jPlayer.status.currentTime);            
             
             if (s % 10 == 0 && s != secondsPlayed) {
-                console.log(secondsTrackPlayed);
                 $.ajax({
-                    url: mashupMedia.contextUrl + "/app/restful/playlist/music/update",
-                    type: "post",
-                    data: {
-                        seconds: secondsTrackPlayed
-                    },
+                    url: mashupMedia.contextUrl + "/app/restful/playlist/music/playing",
+                    type: "get",
                     async: true
                 })
                 .done(function(song) {
-                    secondsPlayed = s;
-                    secondsTrackPlayed += 10;
                     if (mashupMedia.songId != song.id) {
-                        secondsTrackPlayed = 0;
                         mashupMedia.displaySong(song);
                     }
                 })
@@ -377,7 +368,7 @@ function setupJPlayer() {
             if (ready && errorType == $.jPlayer.error.URL) {
                 setTimeout(function(){
                     console.log(event);
-                    $(mashupMedia.jPlayerId).jPlayer("play", secondsTrackPlayed);
+                    $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
                 }, 1000);
                 return;
             } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                

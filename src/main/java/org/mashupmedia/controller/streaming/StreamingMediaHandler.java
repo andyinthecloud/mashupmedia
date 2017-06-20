@@ -1,16 +1,12 @@
 package org.mashupmedia.controller.streaming;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -21,10 +17,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.mashupmedia.io.MediaItemSequenceInputStream;
+import org.mashupmedia.model.User;
+import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.DateHelper.DateFormatType;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 public class StreamingMediaHandler {
@@ -53,41 +58,38 @@ public class StreamingMediaHandler {
 	private static final String IMAGE = "image";
 	private static final String ACCEPT = "Accept";
 	private static final String CONTENT_DISPOSITION = "Content-Disposition";
-	private static final String CONTENT_LENGTH = "Content-Length";
 	private static final String BYTES_RANGE_FORMAT = "bytes %d-%d/%d";
 	private static final String CONTENT_DISPOSITION_FORMAT = "%s;filename=\"%s\"";
 	private static final String BYTES_INVALID_BYTE_RANGE_FORMAT = "bytes */%d";
 	private static final int DEFAULT_BUFFER_SIZE = 20480; // ..bytes = 20KB.
 															// week.
+
 	private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1
 																// week.
 
-	public static MultiPartFileSenderImpl fromFile(File file, long lastModified) {
-		Path path = file.toPath();
-		List<Path> paths = new ArrayList<Path>();
-		paths.add(path);
-
-		return new MultiPartFileSenderImpl().setFilePaths(paths, lastModified);
+	public static MultiPartFileSenderImpl fromMediaItem(PlaylistManager playlistManager, MediaItem mediaItem,
+			long lastModified) {
+		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
+		mediaItems.add(mediaItem);
+		return new MultiPartFileSenderImpl().setMediaItems(playlistManager, mediaItems, lastModified);
 	}
 
-	public static MultiPartFileSenderImpl fromFiles(List<File> mediaFiles, long lastModified) {
-		List<Path> paths = new ArrayList<Path>();
-		for (File file : mediaFiles) {
-			paths.add(file.toPath());
-		}
-
-		return new MultiPartFileSenderImpl().setFilePaths(paths, lastModified);
+	public static MultiPartFileSenderImpl fromMediaItems(PlaylistManager playlistManager, List<MediaItem> mediaItems,
+			long lastModified) {
+		return new MultiPartFileSenderImpl().setMediaItems(playlistManager, mediaItems, lastModified);
 	}
 
 	public static class MultiPartFileSenderImpl {
 		MediaContentType mediaContentType;
-		List<Path> filePaths;
+		MediaItemSequenceInputStream mediaItemSequenceInputStream;
+
 		long length;
 		long lastModified;
 		HttpServletRequest request;
 		HttpServletResponse response;
 		String disposition = CONTENT_DISPOSITION_INLINE;
 		boolean isPlaylist = false;
+		PlaylistManager playlistManager;
 
 		public MultiPartFileSenderImpl with(HttpServletRequest httpRequest) {
 			request = httpRequest;
@@ -115,34 +117,28 @@ public class StreamingMediaHandler {
 		}
 
 		// ** internal setter **//
-		private MultiPartFileSenderImpl setFilePaths(List<Path> filePaths, long lastModified) {
-			this.filePaths = filePaths;
-			this.mediaContentType = getMediaContentType(filePaths);
+		private MultiPartFileSenderImpl setMediaItems(PlaylistManager playlistManager, List<MediaItem> mediaItems,
+				long lastModified) {
+			this.playlistManager = playlistManager;
+			this.mediaItemSequenceInputStream = new MediaItemSequenceInputStream(mediaItems);
+			this.mediaContentType = getMediaContentType(mediaItems);
 			this.lastModified = lastModified;
+			this.length = mediaItemSequenceInputStream.getLength();
 
-			for (Path filePath : filePaths) {
-				try {
-					this.length += Files.size(filePath);
-				} catch (IOException e) {
-					logger.error("Unable to get file length", e);
-				}
-			}
-
-			if (filePaths.size() > 1) {
+			if (mediaItems.size() > 1) {
 				this.isPlaylist = true;
 			}
 
 			return this;
 		}
 
-		private MediaContentType getMediaContentType(List<Path> filePaths) {
-			if (filePaths == null || filePaths.isEmpty()) {
+		private MediaContentType getMediaContentType(List<MediaItem> mediaItems) {
+			if (mediaItems == null || mediaItems.isEmpty()) {
 				return null;
 			}
 
-			Path filePath = filePaths.get(0);
-
-			String fileName = filePath.getFileName().toString();
+			Path path = FileHelper.getPath(mediaItems.get(0));
+			String fileName = path.getFileName().toString();
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
 			return mediaContentType;
@@ -157,7 +153,7 @@ public class StreamingMediaHandler {
 				return;
 			}
 
-			SequenceInputStream sequenceInputStream = null;
+			// MediaItemSequenceInputStream pathSequenceInputStream = null;
 			List<InputStream> inputStreams = null;
 			try {
 
@@ -339,15 +335,20 @@ public class StreamingMediaHandler {
 				// Send requested file (part(s)) to client
 				// ------------------------------------------------
 
-				inputStreams = new ArrayList<InputStream>();
+				// pathSequenceInputStream = new
+				// MediaItemSequenceInputStream(filePaths);
 
-				for (Path filePath : filePaths) {
+				// inputStreams = new ArrayList<InputStream>();
+				//
+				// for (Path filePath : filePaths) {
+				// InputStream inputStream = new
+				// BufferedInputStream(Files.newInputStream(filePath));
+				// inputStreams.add(inputStream);
+				// }
+				//
+				// sequenceInputStream = new
+				// SequenceInputStream(Collections.enumeration(inputStreams));
 
-					InputStream inputStream = new BufferedInputStream(Files.newInputStream(filePath));
-					inputStreams.add(inputStream);
-				}
-
-				sequenceInputStream = new SequenceInputStream(Collections.enumeration(inputStreams));
 				OutputStream output = response.getOutputStream();
 
 				if (ranges.isEmpty() || ranges.get(0) == full) {
@@ -355,7 +356,7 @@ public class StreamingMediaHandler {
 					// Return full file.
 					logger.info("Return full file");
 					setContent(response, contentType, full);
-					Range.copy(sequenceInputStream, output, length, full.start, full.length);
+					Range.copy(playlistManager, mediaItemSequenceInputStream, output, length, full.start, full.length);
 
 				} else if (ranges.size() == 1) {
 					Range r = ranges.get(0);
@@ -366,7 +367,7 @@ public class StreamingMediaHandler {
 					}
 
 					setContent(response, contentType, r);
-					Range.copy(sequenceInputStream, output, length, r.start, r.length);
+					Range.copy(playlistManager, mediaItemSequenceInputStream, output, length, r.start, r.length);
 
 				}
 
@@ -380,8 +381,11 @@ public class StreamingMediaHandler {
 					}
 				}
 
-				if (sequenceInputStream != null) {
-					IOUtils.closeQuietly(sequenceInputStream);
+				if (mediaItemSequenceInputStream != null) {
+					SequenceInputStream sequenceInputStream = mediaItemSequenceInputStream.getSequenceInputStream();
+					if (sequenceInputStream != null) {
+						IOUtils.closeQuietly(sequenceInputStream);
+					}
 				}
 			}
 
@@ -527,34 +531,66 @@ public class StreamingMediaHandler {
 			return (substring.length() > 0) ? Long.parseLong(substring) : -1;
 		}
 
-		private static void copy(InputStream input, OutputStream output, long inputSize, long start, long length)
-				throws IOException {
+		private static void copy(PlaylistManager playlistManager, MediaItemSequenceInputStream pathSequenceInputStream,
+				OutputStream outputStream, long totalLength, long start, long length) throws IOException {
 			byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 			int read;
+			long totalRead = 0;
+			int logCount = 0;
 
-			if (inputSize == length) {
+			SequenceInputStream inputStream = pathSequenceInputStream.getSequenceInputStream();
+
+			if (totalLength == length) {
 				// Write full range.
-				while ((read = input.read(buffer)) > 0) {
-					output.write(buffer, 0, read);
-					output.flush();
+				while ((read = inputStream.read(buffer)) > 0) {
+					outputStream.write(buffer, 0, read);
+					outputStream.flush();
+
+					totalRead += read;
+					logCount++;
+					logFile(playlistManager, pathSequenceInputStream, totalRead, logCount);
 				}
 			} else {
-				input.skip(start);
+				inputStream.skip(start);
 				long toRead = length;
 
-				while ((read = input.read(buffer)) > 0) {
+				while ((read = inputStream.read(buffer)) > 0) {
 					if ((toRead -= read) > 0) {
-						output.write(buffer, 0, read);
-						output.flush();
+						outputStream.write(buffer, 0, read);
+						outputStream.flush();
+
+						totalRead += read;
+						logCount++;
+						logFile(playlistManager, pathSequenceInputStream, totalRead, logCount);
+
 					} else {
-						output.write(buffer, 0, (int) toRead + read);
-						output.flush();
+						outputStream.write(buffer, 0, (int) toRead + read);
+						outputStream.flush();
+
+						totalRead += read;
+						logCount++;
+						logFile(playlistManager, pathSequenceInputStream, totalRead, logCount);
+
 						break;
 					}
 				}
 			}
 
 		}
+
+		private static void logFile(PlaylistManager playlistManager,
+				MediaItemSequenceInputStream pathSequenceInputStream, long totalRead, int logCount) throws IOException {
+			if (logCount % 5 == 0) {
+				MediaItem mediaItem = pathSequenceInputStream.getMediaItem(totalRead);
+				long mediaItemId = mediaItem.getId();
+				Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
+				PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, mediaItemId);
+				User user = AdminHelper.getLoggedInUser();
+				playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
+				logger.info("Reading path: " + mediaItem.getPath());
+			}
+		}
+
 	}
 
 	private static boolean accepts(String acceptHeader, String toAccept) {
