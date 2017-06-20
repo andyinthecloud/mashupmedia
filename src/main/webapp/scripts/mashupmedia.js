@@ -147,7 +147,6 @@ var mashupMedia = new function() {
     
     this.playMusic = function(streams) {
                 
-        console.log(streams);
         
         if (streams == null) {
             $("#music-player .controls a.pause").trigger("click");
@@ -330,6 +329,7 @@ function setupJPlayer() {
             var s = Math.round(event.jPlayer.status.currentTime);            
             
             if (s % 10 == 0 && s != secondsPlayed) {
+            	secondsPlayed = s;
                 $.ajax({
                     url: mashupMedia.contextUrl + "/app/restful/playlist/music/playing",
                     type: "get",
