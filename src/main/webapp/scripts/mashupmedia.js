@@ -314,6 +314,12 @@ function setupJPlayer() {
     var jPlayerVersion = "2.9.2";
     var secondsPlayed = 0;
     var ready = false;
+    
+    var preloadOption = "none";
+    if (isDesktopMode()) {
+        preloadOption = "auto";
+    }
+    
     var options = {
         ready: function(event) {
             ready = true;
@@ -346,6 +352,7 @@ function setupJPlayer() {
             }
             
         },
+        preload: preloadOption,
         swfPath: mashupMedia.contextUrl + "/jquery-plugins/jquery.jplayer/" + jPlayerVersion + "/jplayer",
         supplied: "mp3",
         cssSelectorAncestor: "#music-player",

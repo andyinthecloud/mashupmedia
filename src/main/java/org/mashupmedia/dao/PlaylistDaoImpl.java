@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
@@ -39,10 +39,9 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		}
 		hqlBuilder.append(" order by name");
 
-		Query query = sessionFactory.getCurrentSession().createQuery(hqlBuilder.toString());
+		Query<Playlist> query = sessionFactory.getCurrentSession().createQuery(hqlBuilder.toString(), Playlist.class);
 		query.setCacheable(true);
 
-		@SuppressWarnings("unchecked")
 		List<Playlist> playlists = (List<Playlist>) query.list();
 		return playlists;
 	}
@@ -57,31 +56,31 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			hqlBuilder.append(" and playlistTypeValue = '" + playlistType.getValue() + "'");
 		}
 
-		Query query = sessionFactory.getCurrentSession().createQuery(hqlBuilder.toString());
+		Query<Playlist> query = sessionFactory.getCurrentSession().createQuery(hqlBuilder.toString(), Playlist.class);
 		query.setCacheable(true);
-		query.setLong("userId", userId);
-		@SuppressWarnings("unchecked")
-		List<Playlist> playlists = (List<Playlist>) query.list();
+		query.setParameter("userId", userId);
+		List<Playlist> playlists = query.list();
 		return playlists;
 	}
 
 	@Override
 	public Playlist getPlaylist(long id) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Playlist where id = :id");
+		Query<Playlist> query = sessionFactory.getCurrentSession().createQuery("from Playlist where id = :id",
+				Playlist.class);
 		query.setCacheable(true);
-		query.setLong("id", id);
+		query.setParameter("id", id);
 		Playlist playlist = (Playlist) query.uniqueResult();
 		return playlist;
 	}
 
 	@Override
 	public Playlist getLastAccessedPlaylist(long userId, PlaylistType playlistType) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from Playlist as p where p.updatedBy.id = :userId and p.playlistTypeValue = :playlistTypeValue and p.updatedOn = (select max(tmp.updatedOn) from Playlist as tmp)");
+		Query<Playlist> query = sessionFactory.getCurrentSession().createQuery(
+				"from Playlist as p where p.updatedBy.id = :userId and p.playlistTypeValue = :playlistTypeValue and p.updatedOn = (select max(tmp.updatedOn) from Playlist as tmp)",
+				Playlist.class);
 		query.setCacheable(true);
-		query.setLong("userId", userId);
-		query.setString("playlistTypeValue", PlaylistType.MUSIC.getValue());
-		@SuppressWarnings("unchecked")
+		query.setParameter("userId", userId);
+		query.setParameter("playlistTypeValue", PlaylistType.MUSIC.getValue());
 		List<Playlist> playlists = query.list();
 		if (playlists == null || playlists.isEmpty()) {
 			return null;
@@ -92,12 +91,12 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 	@Override
 	public Playlist getDefaultPlaylistForUser(long userId, PlaylistType playlistType) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"from Playlist where createdBy.id = :userId and userDefault = true and playlistTypeValue = :playlistTypeValue");
+		Query<Playlist> query = sessionFactory.getCurrentSession().createQuery(
+				"from Playlist where createdBy.id = :userId and userDefault = true and playlistTypeValue = :playlistTypeValue",
+				Playlist.class);
 		query.setCacheable(true);
-		query.setLong("userId", userId);
-		query.setString("playlistTypeValue", PlaylistType.MUSIC.getValue());
-		@SuppressWarnings("unchecked")
+		query.setParameter("userId", userId);
+		query.setParameter("playlistTypeValue", PlaylistType.MUSIC.getValue());
 		List<Playlist> playlists = query.list();
 		if (playlists == null || playlists.isEmpty()) {
 			return null;
@@ -152,14 +151,13 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		String hqlPlaylistMediaIds = DaoHelper.convertToHqlParameters(savedPlaylistMediaItemIds);
 
 		if (StringUtils.isNotBlank(hqlPlaylistMediaIds)) {
-			Query resetUserPlaylistMediaItemQuery = sessionFactory.getCurrentSession()
+			sessionFactory.getCurrentSession()
 					.createQuery("update User u set u.playlistMediaItemId = 0 where u.playlistMediaItemId in ("
-							+ hqlPlaylistMediaIds + ")");
-			resetUserPlaylistMediaItemQuery.executeUpdate();
+							+ hqlPlaylistMediaIds + ")")
+					.executeUpdate();
 
-			Query deletePlaylistMediaItemQuery = sessionFactory.getCurrentSession()
-					.createQuery("delete PlaylistMediaItem where id in (" + hqlPlaylistMediaIds + ")");
-			deletePlaylistMediaItemQuery.executeUpdate();
+			sessionFactory.getCurrentSession()
+					.createQuery("delete PlaylistMediaItem where id in (" + hqlPlaylistMediaIds + ")").executeUpdate();
 		}
 		for (PlaylistMediaItem newPlaylistMediaItem : newPlaylistMediaItems) {
 			saveOrUpdate(newPlaylistMediaItem);
@@ -170,10 +168,9 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 	@Override
 	public void deletePlaylist(Playlist playlist) {
-		Query query = sessionFactory.getCurrentSession()
-				.createQuery("delete PlaylistMediaItem pmi where pmi.playlist.id = :playlistId");
-		query.setLong("playlistId", playlist.getId());
-		query.executeUpdate();
+		sessionFactory.getCurrentSession()
+				.createQuery("delete PlaylistMediaItem pmi where pmi.playlist.id = :playlistId")
+				.setParameter("playlistId", playlist.getId()).executeUpdate();
 		sessionFactory.getCurrentSession().delete(playlist);
 	}
 
@@ -181,11 +178,10 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	public void deletePlaylistMediaItem(MediaItem mediaItem) {
 		long mediaItemId = mediaItem.getId();
 
-		Query query = sessionFactory.getCurrentSession()
-				.createQuery("from PlaylistMediaItem pmi where pmi.mediaItem.id = :mediaItemId");
-		query.setLong("mediaItemId", mediaItemId);
+		Query<PlaylistMediaItem> query = sessionFactory.getCurrentSession().createQuery(
+				"from PlaylistMediaItem pmi where pmi.mediaItem.id = :mediaItemId", PlaylistMediaItem.class);
+		query.setParameter("mediaItemId", mediaItemId);
 		query.setCacheable(true);
-		@SuppressWarnings("unchecked")
 		List<PlaylistMediaItem> playlistMediaItems = query.list();
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
 			return;
@@ -193,10 +189,10 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
 			long playlistMediaItemId = playlistMediaItem.getId();
-			Query userQuery = sessionFactory.getCurrentSession().createQuery(
-					"update User set playlistMediaItemId = 0 where playlistMediaItemId = :playlistMediaItemId");
-			userQuery.setLong("playlistMediaItemId", playlistMediaItemId);
-			userQuery.executeUpdate();
+			sessionFactory.getCurrentSession()
+					.createQuery(
+							"update User set playlistMediaItemId = 0 where playlistMediaItemId = :playlistMediaItemId")
+					.setParameter("playlistMediaItemId", playlistMediaItemId).executeUpdate();
 
 			sessionFactory.getCurrentSession().delete(playlistMediaItem);
 		}
@@ -207,15 +203,15 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		for (File encodedMediaFile : encodedMediaFiles) {
 			FileHelper.deleteFile(encodedMediaFile);
 		}
+		
 
 	}
 
 	@Override
 	public void deleteLibrary(long libraryId) {
-		Query query = sessionFactory.getCurrentSession()
-				.createQuery("from PlaylistMediaItem pmi where pmi.mediaItem.library.id = :libraryId");
-		query.setLong("libraryId", libraryId);
-		@SuppressWarnings("unchecked")
+		Query<PlaylistMediaItem> query = sessionFactory.getCurrentSession().createQuery(
+				"from PlaylistMediaItem pmi where pmi.mediaItem.library.id = :libraryId", PlaylistMediaItem.class);
+		query.setParameter("libraryId", libraryId);
 		List<PlaylistMediaItem> playlistMediaItems = query.list();
 		int deletedItems = playlistMediaItems.size();
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
@@ -231,10 +227,9 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			return null;
 		}
 
-		Query query = sessionFactory.getCurrentSession()
-				.createQuery("from PlaylistMediaItem where id = :playlistMediaItemId");
-		query.setLong("playlistMediaItemId", playlistMediaItemId);
-		@SuppressWarnings("unchecked")
+		Query<PlaylistMediaItem> query = sessionFactory.getCurrentSession()
+				.createQuery("from PlaylistMediaItem where id = :playlistMediaItemId", PlaylistMediaItem.class);
+		query.setParameter("playlistMediaItemId", playlistMediaItemId);
 		List<PlaylistMediaItem> playlistMediaItems = query.list();
 		if (playlistMediaItems.isEmpty()) {
 			return null;
