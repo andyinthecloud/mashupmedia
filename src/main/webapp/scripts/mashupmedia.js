@@ -364,21 +364,21 @@ function setupJPlayer() {
             playBar: "div.play-bar"
         },
         volume: 1,
-        pause: function (event) {
-            //$(mashupMedia.jPlayerId).jPlayer("clearMedia");
-        },
         error: function(event) {
-            $(mashupMedia.jPlayerId).jPlayer("stop");
-            togglePlayPause("stop");
 
             var errorType = event.jPlayer.error.type;
             if (ready && errorType == $.jPlayer.error.URL) {
+                $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
+                /*
                 setTimeout(function(){
                     console.log(event);
                     $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
-                }, 1000);
+                }, 1000);                
                 return;
+                */
             } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                
+                $(mashupMedia.jPlayerId).jPlayer("stop");
+                togglePlayPause("stop");
                 $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                     .done(function( data ) {
                         mashupMedia.showMessage(data);                    
