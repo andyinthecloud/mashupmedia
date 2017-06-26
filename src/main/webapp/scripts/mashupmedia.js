@@ -315,7 +315,7 @@ function setupJPlayer() {
     var secondsPlayed = 0;
     var ready = false;
     
-    var preloadOption = "none";
+    var preloadOption = "metadata";
     if (isDesktopMode()) {
         preloadOption = "auto";
     }
