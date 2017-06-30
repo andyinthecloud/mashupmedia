@@ -21,16 +21,16 @@ import org.mashupmedia.io.MediaItemSequenceInputStream;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.DateHelper.DateFormatType;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
-import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.mashupmedia.util.PlaylistHelper;
 
 public class StreamingMediaHandler {
 	private static Logger logger = Logger.getLogger(StreamingMediaHandler.class);
@@ -295,6 +295,14 @@ public class StreamingMediaHandler {
 				logger.debug("Content-Type : " + contentType);
 				// Initialize response.
 				response.reset();
+				OutputStream output = response.getOutputStream();
+				
+				if (MediaItemHelper.isCompatiblePhotoFormat(mediaContentType)) {
+					response.setContentType(mediaContentType.getMimeContentType());
+					IOUtils.copy(mediaItemSequenceInputStream.getSequenceInputStream() , output);
+					return;
+				}
+				
 				response.setBufferSize(DEFAULT_BUFFER_SIZE);
 				response.setHeader(ACCEPT_RANGES, BYTES);
 				response.setHeader(CONTENT_TYPE, contentType);
@@ -340,7 +348,7 @@ public class StreamingMediaHandler {
 				// sequenceInputStream = new
 				// SequenceInputStream(Collections.enumeration(inputStreams));
 
-				OutputStream output = response.getOutputStream();
+				
 
 				if (ranges.isEmpty() || ranges.get(0) == full) {
 

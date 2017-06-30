@@ -332,7 +332,7 @@ function setupJPlayer() {
             if (isDesktopMode()) {
                 return true;
             }
-            var s = Math.round(event.jPlayer.status.currentTime);            
+            var s = Math.round(event.jPlayer.status.currentTime);
             
             if (s % 10 == 0 && s != secondsPlayed) {
             	secondsPlayed = s;
@@ -365,17 +365,9 @@ function setupJPlayer() {
         },
         volume: 1,
         error: function(event) {
-
             var errorType = event.jPlayer.error.type;
             if (ready && errorType == $.jPlayer.error.URL) {
                 $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
-                /*
-                setTimeout(function(){
-                    console.log(event);
-                    $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
-                }, 1000);                
-                return;
-                */
             } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                
                 $(mashupMedia.jPlayerId).jPlayer("stop");
                 togglePlayPause("stop");
