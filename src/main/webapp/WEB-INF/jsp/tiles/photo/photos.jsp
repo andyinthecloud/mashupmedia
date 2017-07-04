@@ -4,11 +4,14 @@
 	<script type="text/javascript">
         $(document).ready(function() {
             window.scrollTo(0, 0);
-            $(window).scroll(function() {
-                if ($("ul.photos li").length == 0) { return; }
-                appendContentsOnScroll("${photoListType.className}");
-            });
-
+            
+            if ("${photoListType.className}" == "photo-list-latest") {
+                $(window).scroll(function() {
+                    if ($("ul.photos li").length == 0) { return; }
+                    appendContentsOnScroll("${photoListType.className}");
+                });
+            }
+            
             showFooterTabs("photo-photos");
 
         });
