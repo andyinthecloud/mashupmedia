@@ -126,7 +126,6 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 			queryBuilder.append(" order by a.name");
 		}
 
-
 		Query<Album> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Album.class);
 		query.setCacheable(true);
 		List<Album> albums = new ArrayList<Album>(new LinkedHashSet<Album>(query.list()));
@@ -146,11 +145,9 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public int removeObsoletePhotos(long libraryId, Date date) {
-		Query<Photo> query = sessionFactory.getCurrentSession()
-				.createQuery("delete Photo p where p.updatedOn < :date and p.library.id = :libraryId", Photo.class);
-		query.setParameter("date", date);
-		query.setParameter("libraryId", libraryId);
-		int totalDeletedPhotos = query.executeUpdate();
+		int totalDeletedPhotos = sessionFactory.getCurrentSession()
+				.createQuery("delete Photo p where p.updatedOn < :date and p.library.id = :libraryId")
+				.setParameter("date", date).setParameter("libraryId", libraryId).executeUpdate();
 		return totalDeletedPhotos;
 	}
 
@@ -177,7 +174,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		listPhotosQueryBuilder.append(" where p.album.id = :albumId");
 		DaoHelper.appendGroupFilter(listPhotosQueryBuilder, groupIds);
 		listPhotosQueryBuilder.append(" order by p.takenOn");
-		Query<Photo> listPhotosQuery = sessionFactory.getCurrentSession().createQuery(listPhotosQueryBuilder.toString(), Photo.class);
+		Query<Photo> listPhotosQuery = sessionFactory.getCurrentSession().createQuery(listPhotosQueryBuilder.toString(),
+				Photo.class);
 		listPhotosQuery.setParameter("albumId", albumId);
 		listPhotosQuery.setCacheable(true);
 		List<Photo> photos = listPhotosQuery.list();

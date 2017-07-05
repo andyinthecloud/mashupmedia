@@ -1,5 +1,7 @@
 package org.mashupmedia.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -131,6 +133,13 @@ public class WebHelper {
 		IOUtils.copy(inputStream, outputStream);
 		IOUtils.closeQuietly(inputStream);
 		IOUtils.closeQuietly(outputStream);
+	}
+
+	public static void writeFileToResponse(File file, HttpServletResponse response) throws IOException {
+		FileInputStream fileInputStream = new FileInputStream(file);		
+		OutputStream outputStream = response.getOutputStream();		
+		IOUtils.copy(fileInputStream, outputStream);
+		IOUtils.closeQuietly(fileInputStream);		
 	}
 
 }

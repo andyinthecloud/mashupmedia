@@ -297,12 +297,6 @@ public class StreamingMediaHandler {
 				response.reset();
 				OutputStream output = response.getOutputStream();
 				
-				if (MediaItemHelper.isCompatiblePhotoFormat(mediaContentType)) {
-					response.setContentType(mediaContentType.getMimeContentType());
-					IOUtils.copy(mediaItemSequenceInputStream.getSequenceInputStream() , output);
-					return;
-				}
-				
 				response.setBufferSize(DEFAULT_BUFFER_SIZE);
 				response.setHeader(ACCEPT_RANGES, BYTES);
 				response.setHeader(CONTENT_TYPE, contentType);

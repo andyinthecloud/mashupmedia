@@ -103,13 +103,17 @@ public class StreamingController {
 		filePath = StringUtils.trimToEmpty(filePath);
 
 		File mediaFile = new File(filePath);
-		long lastModified = mediaFile.lastModified();
-		if (mediaFile.isFile()) {
-			StreamingMediaHandler.fromMediaItem(playlistManager, photo, lastModified).with(request).with(response).serveResource();
+		
+		String format = photo.getFormat();
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
+		response.setContentType(mediaContentType.getMimeContentType());
+		
+		if (mediaFile.exists()) {
+			WebHelper.writeFileToResponse(mediaFile, response);
 			return;
 		}
 
-		// No image found so showing default
+		response.setContentType(MediaContentType.PNG.getMimeContentType());
 		WebHelper.writeResourceToResponse(defaultImagePath, request, response);
 	}
 
