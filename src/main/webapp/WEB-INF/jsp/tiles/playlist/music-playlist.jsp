@@ -213,7 +213,7 @@
 
 				<div class="item">
 					<div class="title">${song.displayTitle}</div>
-					<div class="meta">${song.artist.name}-${song.album.name}</div>
+					<div class="meta">${song.artist.name} - ${song.album.name}</div>
 				</div>
 
 				<div class="icons-right">
