@@ -1,6 +1,7 @@
 package org.mashupmedia.util;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -71,6 +72,13 @@ public class DateHelper {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatType.getPattern(), locale);
 		String text = simpleDateFormat.format(date);
 		return text;
+	}
+
+	public static long getTimeInAMonth() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, 1);
+		long timeInAMonth = calendar.getTimeInMillis();
+		return timeInAMonth;
 	}
 
 }

@@ -65,8 +65,6 @@ public class StreamingMediaHandler {
 															// week.
 	private static final long DEFAULT_SAVE_PLAYLIST_MIN_INTERVAL = 10; // seconds
 
-	private static final long DEFAULT_EXPIRE_TIME = 604800000L; // ..ms = 1
-																// week.
 
 	public static MultiPartFileSenderImpl fromMediaItem(PlaylistManager playlistManager, MediaItem mediaItem, long lastModified) {
 		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
@@ -301,18 +299,14 @@ public class StreamingMediaHandler {
 				response.setHeader(ACCEPT_RANGES, BYTES);
 				response.setHeader(CONTENT_TYPE, contentType);
 				response.setHeader(ETAG, fileName);
+				
+				long timeInAMonth = DateHelper.getTimeInAMonth();
+				response.setDateHeader(EXPIRES, timeInAMonth);
+				response.setDateHeader(LAST_MODIFIED, lastModified);
 
 				if (isPlaylist) {
-					response.setHeader(EXPIRES, "0");
-					response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-					response.setHeader("Pragma", "no-cache");
 					response.setHeader("Transfer-Encoding", "chunked");
-
-				} else {
-					response.setDateHeader(EXPIRES, System.currentTimeMillis() + DEFAULT_EXPIRE_TIME);
-					response.setDateHeader(LAST_MODIFIED, lastModified);
-				}
-
+				} 
 				if (!StringUtils.isEmpty(disposition)) {
 					if (contentType == null) {
 						contentType = APPLICATION_OCTET_STREAM;
