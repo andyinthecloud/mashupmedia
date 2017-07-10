@@ -366,11 +366,14 @@ function setupJPlayer() {
         volume: 1,
         error: function(event) {
             var errorType = event.jPlayer.error.type;
+            $(mashupMedia.jPlayerId).jPlayer("stop");
+            togglePlayPause("stop");
+
             if (ready && errorType == $.jPlayer.error.URL) {
+                mashupMedia.playCurrentSong();                
                 $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
+                togglePlayPause("play");
             } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                
-                $(mashupMedia.jPlayerId).jPlayer("stop");
-                togglePlayPause("stop");
                 $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                     .done(function( data ) {
                         mashupMedia.showMessage(data);                    
