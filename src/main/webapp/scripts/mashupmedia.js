@@ -368,9 +368,10 @@ function setupJPlayer() {
             var errorType = event.jPlayer.error.type;
             $(mashupMedia.jPlayerId).jPlayer("stop");
             togglePlayPause("stop");
-
+            console.log(event);
+            
             if (ready && errorType == $.jPlayer.error.URL) {
-                mashupMedia.playCurrentSong();                
+                mashupMedia.playCurrentSong();
                 $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
                 togglePlayPause("play");
             } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                
