@@ -97,16 +97,8 @@ var mashupMedia = new function() {
 	    if($(mashupMedia.jPlayerId) == false) {
 	        return false;
 	    }
-	    	    
-	    if ($("#music-player td.controls a.play").length) {
-	        return false;
-	    }
 	    
-        if ($("#music-player td.controls a.pause").is(":visible")) {
-            return true;
-        }
-
-	    return false;    
+	    return $(mashupMedia.jPlayerId).data().jPlayer.status.paused;
 	}
 	
 	this.isMusicPlayerInitialised = function() {
@@ -366,14 +358,12 @@ function setupJPlayer() {
         volume: 1,
         error: function(event) {
             var errorType = event.jPlayer.error.type;
-            $(mashupMedia.jPlayerId).jPlayer("stop");
-            togglePlayPause("stop");
+            $(mashupMedia.jPlayerId).jPlayer("pause");
             console.log(event);
             
             if (ready && errorType == $.jPlayer.error.URL) {
                 mashupMedia.playCurrentSong();
                 $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
-                togglePlayPause("play");
             } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                
                 $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                     .done(function( data ) {
