@@ -181,10 +181,9 @@ var mashupMedia = new function() {
 	    $.ajax({
             method: "GET",
             url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/current",
-//            beforeSend: function (xhr) {
-//                xhr.setRequestHeader('Accept', 'audio/mpeg');
-//            },
-            contentType: "audio/mpeg",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Accept', 'audio/mpeg');
+            },
             async: true
         }).done(function(song) {            
             if (!isEmpty(song)) {
