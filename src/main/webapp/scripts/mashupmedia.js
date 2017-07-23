@@ -354,8 +354,8 @@ function setupJPlayer() {
             playBar: "div.play-bar"
         },
         volume: 1,
-        errorAlerts: false
-        /*
+        //errorAlerts: false
+        
         error: function(event) {
             var errorType = event.jPlayer.error.type;
             $(mashupMedia.jPlayerId).jPlayer("pause");
@@ -363,7 +363,7 @@ function setupJPlayer() {
             
             if (ready && errorType == $.jPlayer.error.URL) {
                 mashupMedia.playCurrentSong();
-                //$(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
+                $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
             } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                
                 $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                     .done(function( data ) {
@@ -371,7 +371,7 @@ function setupJPlayer() {
                 });                                   
             }
         }
-        */
+        
     };    
                     
     $(mashupMedia.jPlayerId).jPlayer(options);
