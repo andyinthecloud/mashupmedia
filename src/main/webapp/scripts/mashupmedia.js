@@ -354,6 +354,8 @@ function setupJPlayer() {
             playBar: "div.play-bar"
         },
         volume: 1,
+        errorAlerts: false
+        /*
         error: function(event) {
             var errorType = event.jPlayer.error.type;
             $(mashupMedia.jPlayerId).jPlayer("pause");
@@ -369,6 +371,7 @@ function setupJPlayer() {
                 });                                   
             }
         }
+        */
     };    
                     
     $(mashupMedia.jPlayerId).jPlayer(options);
