@@ -181,6 +181,10 @@ var mashupMedia = new function() {
 	    $.ajax({
             method: "GET",
             url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/current",
+//            beforeSend: function (xhr) {
+//                xhr.setRequestHeader('Accept', 'audio/mpeg');
+//            },
+            contentType: "audio/mpeg",
             async: true
         }).done(function(song) {            
             if (!isEmpty(song)) {
@@ -362,7 +366,7 @@ function setupJPlayer() {
             console.log(event);
             
             if (ready && errorType == $.jPlayer.error.URL) {
-                mashupMedia.playCurrentSong();
+                mashupMedia.playCurrentSong();                
                 $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
             } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                
                 $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
