@@ -304,9 +304,6 @@ public class StreamingMediaHandler {
 				response.setDateHeader(EXPIRES, timeInAMonth);
 				response.setDateHeader(LAST_MODIFIED, lastModified);
 
-				if (isPlaylist) {
-					response.setHeader("Transfer-Encoding", "chunked");
-				} 
 				if (!StringUtils.isEmpty(disposition)) {
 					if (contentType == null) {
 						contentType = APPLICATION_OCTET_STREAM;
@@ -408,10 +405,10 @@ public class StreamingMediaHandler {
 
 		protected void setContent(HttpServletResponse response, String contentType, Range range) {
 			response.setContentType(contentType);
-			if (isPlaylist) {
-				// response.setHeader("Transfer-Encoding", "chunked");
-				return;
-			}
+//			if (isPlaylist) {
+//				 response.setHeader("Transfer-Encoding", "chunked");
+//				return;
+//			}
 
 			response.setHeader(CONTENT_RANGE, String.format(BYTES_RANGE_FORMAT, range.start, range.end, range.total));
 			// response.setHeader(CONTENT_LENGTH, String.valueOf(range.length));
