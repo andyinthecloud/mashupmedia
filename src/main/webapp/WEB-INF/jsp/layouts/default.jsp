@@ -287,10 +287,22 @@
 				class="ui-btn-right" href="#nav-panel" data-icon="bars"
 				data-iconpos="notext">Menu</a>
 
+
+
 			<div id="music-player">
 				<table>
 					<tr>
-						<td class="controls"><a class="previous" href="javascript:;">
+						<td>
+		
+						
+						</td>
+						
+						<td class="controls">
+						
+		
+						
+						
+						<a class="previous" href="javascript:;">
 						
 						<img
 								title="<spring:message code="action.previous"/>"
@@ -357,6 +369,14 @@
 				</c:if>
 
 				<div class="main-content">
+			<audio id="music-player-1" controls="controls" src="<c:url value="/jquery-plugins/jquery.jplayer/silent.mp3" />">
+<!-- 
+	<source id="music-player-1-mp3" src="<c:url value="/jquery-plugins/jquery.jplayer/silent.mp3" />" type="audio/mpeg"/>
+	 -->
+			</audio>
+		
+				
+				
 					<tiles:insertAttribute name="body" />
 				</div>
 			</div>

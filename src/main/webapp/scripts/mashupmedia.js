@@ -178,6 +178,26 @@ var mashupMedia = new function() {
         if (mashupMedia.isMusicPlaying()) {
             $(mashupMedia.jPlayerId).jPlayer("play");
         }
+        
+        
+        
+            var musicPlayer = document.getElementById("music-player-1"); 
+            //alert($("#music-player-1-mp3").attr("src"));
+            //$("#music-player-1-mp3").attr("src", url);
+            var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();
+            musicPlayer.src = url;
+            
+            
+            /****************/
+            musicPlayer.pause();
+            musicPlayer.load();//suspends and restores all audio element
+
+            //audio[0].play(); changed based on Sprachprofi's comment below
+            //musicPlayer[0].oncanplaythrough = musicPlayer[0].play();
+            /****************/
+                
+        
+        
     };
     
 	
