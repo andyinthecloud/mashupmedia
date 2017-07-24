@@ -382,7 +382,7 @@ function setupJPlayer() {
             } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                
                 $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                     .done(function( data ) {
-                        mashupMedia.showMessage(data);                    
+                        mashupMedia.showMessage(data);
                 });                                   
             }
         }
