@@ -369,12 +369,13 @@
 				</c:if>
 
 				<div class="main-content">
-			<audio id="music-player-1" controls="controls" src="<c:url value="/jquery-plugins/jquery.jplayer/silent.mp3" />">
 <!-- 
+			<audio id="music-player-1" controls="controls" src="<c:url value="/jquery-plugins/jquery.jplayer/silent.mp3" />">
+
 	<source id="music-player-1-mp3" src="<c:url value="/jquery-plugins/jquery.jplayer/silent.mp3" />" type="audio/mpeg"/>
-	 -->
+
 			</audio>
-		
+	 -->		
 				
 				
 					<tiles:insertAttribute name="body" />
