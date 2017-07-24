@@ -550,7 +550,7 @@ public class StreamingMediaHandler {
 					outputStream.flush();
 
 					totalRead += read;
-					logFile(playlistManager, pathSequenceInputStream, totalRead);
+//					logFile(playlistManager, pathSequenceInputStream, totalRead);
 
 					if (isAtEndOfStream) {
 						break;
