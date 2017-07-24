@@ -97,8 +97,26 @@ var mashupMedia = new function() {
 	    if($(mashupMedia.jPlayerId) == false) {
 	        return false;
 	    }
+
+	    /*
+        var isPaused = $(mashupMedia.jPlayerId).data().jPlayer.status.paused;
+        if (!isPaused) {
+            return true;
+        }
+        
+        return false;
+        */
+
 	    
-	    return $(mashupMedia.jPlayerId).data().jPlayer.status.paused;
+        if ($("#music-player td.controls a.play").length) {
+            return false;
+        }
+        
+        if ($("#music-player td.controls a.pause").is(":visible")) {
+            return true;
+        }	    
+	    
+	    
 	}
 	
 	this.isMusicPlayerInitialised = function() {

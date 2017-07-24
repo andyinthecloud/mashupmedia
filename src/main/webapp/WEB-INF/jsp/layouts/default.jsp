@@ -141,9 +141,10 @@
 
         document.title = "${headPageTitle}";
 
+        
+        
         $("#music-player").on("click", ".controls a.play", function() {
             togglePlayPause("play");
-            $(mashupMedia.jPlayerId).jPlayer("play");
         });
 
         $("#music-player").on("click", ".controls a.pause", function() {
@@ -174,8 +175,8 @@
         var imagePath = null;
 
         var text = null;
-        var nextAction = null;
-        
+        var nextAction = "";
+                
         if (action == "play") {
             nextAction = "pause";
             imagePath = "<c:url value="${themePath}/images/media-player/pause.png"/>";
@@ -195,7 +196,7 @@
         imageElement.attr("src", imagePath);
         imageElement.attr("alt", text);
         imageElement.attr("title", text);
-        controlElement.removeClass();
+        controlElement.removeClass(action);
         controlElement.addClass(nextAction);
     }
 
@@ -289,7 +290,9 @@
 			<div id="music-player">
 				<table>
 					<tr>
-						<td class="controls"><a class="previous" href="javascript:;"><img
+						<td class="controls"><a class="previous" href="javascript:;">
+						
+						<img
 								title="<spring:message code="action.previous"/>"
 								alt="<spring:message code="action.previous"/>"
 								src="<c:url value="${themePath}/images/media-player/previous.png"/>" /></a>
