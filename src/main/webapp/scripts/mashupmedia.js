@@ -362,8 +362,12 @@ function setupJPlayer() {
             console.log(event);
             
             if (ready && errorType == $.jPlayer.error.URL) {
+                mashupMedia.destroyPlayer();
                 mashupMedia.playCurrentSong();
-                $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
+                
+                
+//                mashupMedia.playCurrentSong();
+//                $(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
             } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                
                 $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
                     .done(function( data ) {
