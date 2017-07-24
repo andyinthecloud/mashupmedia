@@ -380,6 +380,7 @@ function setupJPlayer() {
             console.log(event);
             
             if (ready && errorType == $.jPlayer.error.URL) {
+                ready = false;
                 mashupMedia.destroyPlayer();
                 mashupMedia.playCurrentSong();
                 
