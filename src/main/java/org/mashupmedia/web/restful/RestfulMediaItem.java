@@ -42,14 +42,13 @@ public abstract class RestfulMediaItem {
 				continue;
 			}
 			
-			String format = mediaContentType.getjPlayerContentType();
-			String url = MediaItemHelper.prepareUrlStream(contextPath, mediaItemId, format);
+			String format = mediaContentType.getMimeContentType();
+			String name = mediaContentType.getName();
+			String url = MediaItemHelper.prepareUrlStream(contextPath, mediaItemId, name);
 			RestfulStream restfulStream = new RestfulStream(format, url);
 			restfulStreamList.add(restfulStream);
 		}
-		
-		MediaItemHelper.addSuppliedStreamUrls(suppliedMediaContentTypes, contextPath, mediaItemId, restfulStreamList);
-		
+				
 		RestfulStream[] streams = new RestfulStream[restfulStreamList.size()];
 		streams = restfulStreamList.toArray(streams);
 		setStreams(streams);

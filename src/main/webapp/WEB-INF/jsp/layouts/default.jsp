@@ -140,21 +140,19 @@
         });
 
         document.title = "${headPageTitle}";
-
-        
         
         $("#music-player").on("click", ".controls a.play", function() {
             togglePlayPause("play");
         });
 
         $("#music-player").on("click", ".controls a.pause", function() {
-            togglePlayPause("pause");
-            $(mashupMedia.jPlayerId).jPlayer("pause");
+            togglePlayPause("pause");            
+//            $(mashupMedia.jPlayerId).jPlayer("pause");
         });
 
         $("#music-player").on("click", ".controls a.stop", function() {
             togglePlayPause("stop");
-            $(mashupMedia.jPlayerId).jPlayer("stop");
+//            $(mashupMedia.jPlayerId).jPlayer("stop");
         });
 
         $("#music-player").on("click", ".controls a.previous", function() {
@@ -164,10 +162,9 @@
         $("#music-player").on("click", ".controls a.next", function() {
             mashupMedia.playNextSong();
         });
-
         
-        //mashupMedia.loadLastAccessedPlaylist();
-
+        mashupMedia.loadLastAccessedPlaylist();
+        
     });
 
     function togglePlayPause(action) {
@@ -198,6 +195,7 @@
         imageElement.attr("title", text);
         controlElement.removeClass(action);
         controlElement.addClass(nextAction);
+        mashupMedia.audioAction(action);
     }
 
     // enter the highlighted class name, the media type is determined

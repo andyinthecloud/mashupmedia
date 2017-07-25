@@ -15,8 +15,11 @@ $(document).ready(function() {
 	$("#log-out").click(function() {
 		$("#form-log-out").submit(); 
 	});
+	
+	setupAudio();
+	
 		
-	 setupJPlayer();
+	 //setupJPlayer();
 	 
 });
 
@@ -58,6 +61,7 @@ var mashupMedia = new function() {
 	//this.jPlayerContainerId = "#jp_container_1";
 	this.filterPageNumber = 0;
 	this.filterAlbumsSearchLetter = "";
+	this.audio = null;
 	
 	this.showMessage = function(message) {
 	    $("#information-box").html(message);
@@ -65,14 +69,14 @@ var mashupMedia = new function() {
 	    $("#information-box").delay(30000).fadeOut("slow");
 	};
 	
-	/*
+	
 	this.loadLastAccessedPlaylist = function() {	    
-		$.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/current", function(song) {
+		$.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/current", function(song) {		    
 		    mashupMedia.prepareSong(song);
 		    mashupMedia.playMusic(song.streams);
 		});
 	};
-	*/
+	
 	
 	this.loadPlaylist = function(playlistId) {
 		$.get(mashupMedia.contextUrl + "/app/ajax/playlist/play/id/" + playlistId, function(data) {
@@ -94,9 +98,11 @@ var mashupMedia = new function() {
 	
 	this.isMusicPlaying = function() {
 	    
+	    /*
 	    if($(mashupMedia.jPlayerId) == false) {
 	        return false;
 	    }
+	    */
 
 	    /*
         var isPaused = $(mashupMedia.jPlayerId).data().jPlayer.status.paused;
@@ -106,6 +112,16 @@ var mashupMedia = new function() {
         
         return false;
         */
+	    
+	    /*
+	    if (!mashupMedia.audio) {
+	        return false;
+	    }
+	    
+	    if (mashupMedia.audio.paused) {
+	        return false;
+	    }
+	    */
 
 	    
         if ($("#music-player td.controls a.play").length) {
@@ -116,17 +132,10 @@ var mashupMedia = new function() {
             return true;
         }	    
 	    
+        return false;
 	    
 	}
-	
-	this.isMusicPlayerInitialised = function() {
-	    if ($(mashupMedia.jPlayerId) == false) {
-	        return false;
-	    }
-	    
-	    var source = $(mashupMedia.jPlayerId).data().jPlayer.status.src;
-	    return true;
-	};
+
 	
     this.prepareSong = function(song) {
         if (!song) {
@@ -156,28 +165,51 @@ var mashupMedia = new function() {
     };
     
     this.playMusic = function(streams) {
+                
+        
+        mashupMedia.audio.removeAttribute("src");
+
         if (streams == null) {
             $("#music-player .controls a.pause").trigger("click");
             return;
         }
         
-        var media = {};
+        
+  //      var media = {};
         
         if (isDesktopMode()) {
             for (i = 0; i < streams.length; i++) {
-                media[streams[i].format] = streams[i].url;
+                if (mashupMedia.audio.canPlayType(streams[i].format)) {
+                    mashupMedia.audio.src = streams[i].url;
+                }                
             }
         } else {
             var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();
-            media = {
-                mp3: url
-            };
+            mashupMedia.audio.src = url;
         }
 
-        $(mashupMedia.jPlayerId).jPlayer("setMedia", media);        
+        mashupMedia.audio.load();
+        
+        //$(mashupMedia.jPlayerId).jPlayer("setMedia", media);        
         if (mashupMedia.isMusicPlaying()) {
-            $(mashupMedia.jPlayerId).jPlayer("play");
+            //$(mashupMedia.jPlayerId).jPlayer("play");
+            
+            mashupMedia.audio.play();
         }
+    };
+    
+    this.audioAction = function(action) {
+        
+        if (!mashupMedia.audio) {
+            return;
+        }
+        
+        if (action == "play") {
+            mashupMedia.audio.play();
+        } else if (action == "pause") {
+            mashupMedia.audio.pause();
+        } 
+        
     };
     
 	
@@ -191,7 +223,7 @@ var mashupMedia = new function() {
             $("#music-player").css("visibility", "hidden");
             $("#logo").show();	        
 	    }	    
-	}
+	};
 
 	this.playCurrentSong = function() {
 	    $.ajax({
@@ -310,6 +342,65 @@ function isEmpty(obj) {
 }
 
 
+function setupAudio() {
+    var progressElement = $("#music-player div.progress");
+    var playBarElement = $(progressElement).find("div.play-bar");
+    var secondsPlayed = 0;
+    $(playBarElement).css("width", 0);
+//    var progressTotal =  $("#music-player div.progress div.play-bar");    document.querySelector('#progress-bar').offsetWidth;
+    
+    mashupMedia.audio = document.createElement("audio");
+    
+    mashupMedia.audio.addEventListener("ended", function() {
+        mashupMedia.playNextSong();      
+    });
+    
+    mashupMedia.audio.addEventListener("timeupdate", function() {
+                
+        var currentTime = mashupMedia.audio.currentTime;
+        
+        
+        if (isDesktopMode()) {
+            var progressRatio = currentTime / mashupMedia.audio.duration * 100;
+            
+//            playBarElement.style.right = progressTotal - progressRatio * progressTotal + "px";
+            $(playBarElement).css("width", progressRatio + "%");
+
+            return true;
+        }
+        var s = Math.round(currentTime);
+        
+        if (s % 10 == 0 && s != secondsPlayed) {
+            secondsPlayed = s;
+            $.ajax({
+                url: mashupMedia.contextUrl + "/app/restful/playlist/music/playing",
+                type: "get",
+                async: true
+            })
+            .done(function(song) {
+                if (mashupMedia.songId != song.id) {
+                    mashupMedia.displaySong(song);
+                }
+            })
+            .fail(function(event) {
+                console.log(event);
+            });                
+        }
+        
+        
+    });
+    
+    
+    $(progressElement).click(function(event) {
+        var progressTotal = $(this).outerWidth();
+        var ratio = event.offsetX / progressTotal;
+        mashupMedia.audio.currentTime = ratio * mashupMedia.audio.duration;
+        
+    });
+    
+    
+    
+}
 
 // var isJPlayerInitialised = false;
 //var myAndroidFix = null;
