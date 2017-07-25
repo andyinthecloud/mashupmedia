@@ -573,6 +573,9 @@ public class StreamingMediaHandler {
 				return;
 			}
 			
+			if (1 == 1) {
+				return;
+			}
 
 			MediaItem mediaItem = pathSequenceInputStream.getMediaItem(totalRead);
 			long mediaItemId = mediaItem.getId();

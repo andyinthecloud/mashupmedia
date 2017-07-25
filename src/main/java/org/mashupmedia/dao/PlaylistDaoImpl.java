@@ -96,7 +96,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 				Playlist.class);
 		query.setCacheable(true);
 		query.setParameter("userId", userId);
-		query.setParameter("playlistTypeValue", PlaylistType.MUSIC.getValue());
+		query.setParameter("playlistTypeValue", playlistType.getValue());
 		List<Playlist> playlists = query.list();
 		if (playlists == null || playlists.isEmpty()) {
 			return null;
