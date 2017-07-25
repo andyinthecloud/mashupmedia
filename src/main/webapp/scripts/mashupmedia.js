@@ -165,45 +165,19 @@ var mashupMedia = new function() {
         
         if (isDesktopMode()) {
             for (i = 0; i < streams.length; i++) {
-//                media[streams[i].format] = streams[i].url;
-                
-                musicPlayer.src = streams[i].url;
+                media[streams[i].format] = streams[i].url;
             }
         } else {
-        	/*
             var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();
             media = {
                 mp3: url
             };
-            */
-            musicPlayer.src = url;
         }
 
         $(mashupMedia.jPlayerId).jPlayer("setMedia", media);        
         if (mashupMedia.isMusicPlaying()) {
-            //$(mashupMedia.jPlayerId).jPlayer("play");
-            musicPlayer.play();
+            $(mashupMedia.jPlayerId).jPlayer("play");
         }
-        
-        
-        
-        //    var musicPlayer = document.getElementById("music-player-1"); 
-            //alert($("#music-player-1-mp3").attr("src"));
-            //$("#music-player-1-mp3").attr("src", url);
-          //  var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();
-            //musicPlayer.src = url;
-            
-            
-            /****************/
-            //musicPlayer.pause();
-            //musicPlayer.load();//suspends and restores all audio element
-
-            //audio[0].play(); changed based on Sprachprofi's comment below
-            //musicPlayer[0].oncanplaythrough = musicPlayer[0].play();
-            /****************/
-                
-        
-        
     };
     
 	
@@ -340,15 +314,7 @@ function isEmpty(obj) {
 // var isJPlayerInitialised = false;
 //var myAndroidFix = null;
 
-var musicPlayer = null;
-
 function setupJPlayer() {
-	
-	var silentMp3 = mashupMedia.contextUrl + "/jquery-plugins/jquery.jplayer/silent.mp3";	
-	musicPlayer = new Audio(silentMp3);
-	musicPlayer.volume = 1;
-	
-/*	
     var jPlayerVersion = "2.9.2";
     var secondsPlayed = 0;
     var ready = false;
@@ -426,7 +392,6 @@ function setupJPlayer() {
     };    
                     
     $(mashupMedia.jPlayerId).jPlayer(options);
-*/    
 }
 
 function isDesktopMode() {
