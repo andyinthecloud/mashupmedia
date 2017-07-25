@@ -61,8 +61,8 @@ public class StreamingMediaHandler {
 	private static final String BYTES_RANGE_FORMAT = "bytes %d-%d/%d";
 	private static final String CONTENT_DISPOSITION_FORMAT = "%s;filename=\"%s\"";
 	private static final String BYTES_INVALID_BYTE_RANGE_FORMAT = "bytes */%d";
-	private static final int DEFAULT_BUFFER_SIZE = 50000; // ..bytes = 50KB.
-	private static final int LOG_BUFFER_SIZE = 500000; // ..bytes = 500KB.
+	private static final int DEFAULT_BUFFER_SIZE = 32000 ; // ..bytes = 32KB.
+	private static final int LOG_BUFFER_SIZE = 320000; // ..bytes = 320KB.
 															
 	private static final long DEFAULT_SAVE_PLAYLIST_MIN_INTERVAL = 10; // seconds
 
@@ -573,10 +573,6 @@ public class StreamingMediaHandler {
 				return;
 			}
 			
-			if (1 == 1) {
-				return;
-			}
-
 			MediaItem mediaItem = pathSequenceInputStream.getMediaItem(totalRead);
 			long mediaItemId = mediaItem.getId();
 			Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
