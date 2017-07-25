@@ -319,7 +319,7 @@ function setupJPlayer() {
     var secondsPlayed = 0;
     var ready = false;
     
-    var preloadOption = "metadata";
+    var preloadOption = "none";
     if (isDesktopMode()) {
         preloadOption = "auto";
     }
