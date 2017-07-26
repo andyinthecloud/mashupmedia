@@ -175,20 +175,21 @@ var mashupMedia = new function() {
         }
         
         
+        var preloadOption = "auto";
         
         if (isDesktopMode()) {
-            mashupMedia.audio.preload = auto;
             for (i = 0; i < streams.length; i++) {
                 if (mashupMedia.audio.canPlayType(streams[i].format)) {
                     mashupMedia.audio.src = streams[i].url;
                 }                
             }
         } else {
-            mashupMedia.audio.preload = none;
+            preloadOption = "none";
             var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();
             mashupMedia.audio.src = url;
         }
 
+        mashupMedia.audio.preload = preloadOption;
         mashupMedia.audio.load();
         
         //$(mashupMedia.jPlayerId).jPlayer("setMedia", media);        
