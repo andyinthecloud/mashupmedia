@@ -165,10 +165,7 @@ var mashupMedia = new function() {
     };
     
     this.playMusic = function(streams) {
-                
-        
-        mashupMedia.audio.removeAttribute("src");
-
+                        
         if (streams == null) {
             $("#music-player .controls a.pause").trigger("click");
             return;
@@ -391,6 +388,29 @@ function setupAudio() {
         
         
     });
+    
+    mashupMedia.audio.addEventListener("error", function failed(e) {
+        // audio playback failed - show a message saying why
+        // to get the source of the audio element use $(this).src
+        console.log(e);
+        switch (e.target.error.code) {
+          case e.target.error.MEDIA_ERR_ABORTED:
+            console.log('You aborted the video playback.');
+            break;
+          case e.target.error.MEDIA_ERR_NETWORK:
+            console.log('A network error caused the audio download to fail.');
+            break;
+          case e.target.error.MEDIA_ERR_DECODE:
+            console.log('The audio playback was aborted due to a corruption problem or because the video used features your browser did not support.');            
+            break;
+          case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+            console.log('The video audio not be loaded, either because the server or network failed or because the format is not supported.');
+            break;
+          default:
+            console.log('An unknown error occurred.');
+            break;
+        }
+      }, true);    
     
     
     $(progressElement).click(function(event) {
