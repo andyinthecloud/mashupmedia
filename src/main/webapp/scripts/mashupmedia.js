@@ -392,7 +392,8 @@ function setupAudio() {
     mashupMedia.audio.addEventListener("error", function failed(e) {
         // audio playback failed - show a message saying why
         // to get the source of the audio element use $(this).src
-        console.log(e);
+                
+        console.log(e.target.error);
         switch (e.target.error.code) {
           case e.target.error.MEDIA_ERR_ABORTED:
             console.log('You aborted the video playback.');
@@ -410,6 +411,10 @@ function setupAudio() {
             console.log('An unknown error occurred.');
             break;
         }
+        
+        mashupMedia.audio.currentTime = secondsPlayed;
+        mashupMedia.audio.play();
+        
       }, true);    
     
     
