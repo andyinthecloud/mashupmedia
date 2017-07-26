@@ -358,17 +358,13 @@ function setupAudio() {
                 
         var currentTime = mashupMedia.audio.currentTime;
         
-        
         if (isDesktopMode()) {
             var progressRatio = currentTime / mashupMedia.audio.duration * 100;
-            
-//            playBarElement.style.right = progressTotal - progressRatio * progressTotal + "px";
             $(playBarElement).css("width", progressRatio + "%");
-
             return true;
         }
-        var s = Math.round(currentTime);
         
+        var s = Math.round(currentTime);
         if (s % 10 == 0 && s != secondsPlayed) {
             secondsPlayed = s;
             $.ajax({
@@ -386,7 +382,10 @@ function setupAudio() {
             });                
         }
         
-        
+    });
+    
+    mashupMedia.audio.addEventListener("loadeddata", function() {
+        secondsPlayed = 0;
     });
     
     mashupMedia.audio.addEventListener("error", function failed(e) {
