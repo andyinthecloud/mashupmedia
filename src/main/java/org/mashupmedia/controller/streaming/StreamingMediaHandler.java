@@ -62,11 +62,8 @@ public class StreamingMediaHandler {
 	private static final String CONTENT_DISPOSITION_FORMAT = "%s;filename=\"%s\"";
 	private static final String BYTES_INVALID_BYTE_RANGE_FORMAT = "bytes */%d";
 	private static final int DEFAULT_BUFFER_SIZE = 32000 ; // ..bytes = 32KB.
-	private static final int LOG_BUFFER_SIZE = 320000; // ..bytes = 320KB.
-															
-	private static final long DEFAULT_SAVE_PLAYLIST_MIN_INTERVAL = 10; // seconds
-
-
+	private static final int DEFAULT_BUFFER_LOG_SIZE = 500000 ; 
+	
 	public static MultiPartFileSenderImpl fromMediaItem(PlaylistManager playlistManager, MediaItem mediaItem, long lastModified) {
 		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
 		mediaItems.add(mediaItem);
@@ -521,6 +518,7 @@ public class StreamingMediaHandler {
 			byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 			int read;
 			long totalRead = 0;
+			long lastReadLogged = 0;
 
 			SequenceInputStream inputStream = pathSequenceInputStream.getSequenceInputStream();
 
@@ -531,7 +529,7 @@ public class StreamingMediaHandler {
 					outputStream.flush();
 
 					totalRead += read;
-					logFile(playlistManager, pathSequenceInputStream, totalRead);
+					lastReadLogged = logFile(playlistManager, pathSequenceInputStream, totalRead, lastReadLogged);
 				}
 			} else {
 				inputStream.skip(start);
@@ -551,7 +549,7 @@ public class StreamingMediaHandler {
 					outputStream.flush();
 
 					totalRead += read;
-					logFile(playlistManager, pathSequenceInputStream, totalRead);
+					lastReadLogged = logFile(playlistManager, pathSequenceInputStream, totalRead, lastReadLogged);
 
 					if (isAtEndOfStream) {
 						break;
@@ -562,31 +560,32 @@ public class StreamingMediaHandler {
 
 		}
 
-		private static void logFile(PlaylistManager playlistManager, MediaItemSequenceInputStream pathSequenceInputStream, long totalRead)
+		private static long logFile(PlaylistManager playlistManager, MediaItemSequenceInputStream pathSequenceInputStream, long totalRead, long lastLoggedRead)
 				throws IOException {
 
 			if (!pathSequenceInputStream.isPlaylist()) {
-				return;
+				return lastLoggedRead;
 			}
 			
-			if (totalRead % LOG_BUFFER_SIZE != 0) {
-				return;
-			}
 			
+			if (totalRead - lastLoggedRead < DEFAULT_BUFFER_LOG_SIZE) {
+				return lastLoggedRead;
+			}
+						
 			MediaItem mediaItem = pathSequenceInputStream.getMediaItem(totalRead);
 			long mediaItemId = mediaItem.getId();
 			Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
-			Date updatedOn = playlist.getUpdatedOn();
-			Date date = new Date();
-			long seconds = DateHelper.getDifferenceInSeconds(date, updatedOn);
-			if (seconds < DEFAULT_SAVE_PLAYLIST_MIN_INTERVAL) {
-				return;
+			PlaylistMediaItem currentPlaylistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
+			
+			if (mediaItem.equals(currentPlaylistMediaItem.getMediaItem())) {
+				return totalRead;
 			}
-
-			PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, mediaItemId);
+			
 			User user = AdminHelper.getLoggedInUser();
+			PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, mediaItemId);
 			playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-			logger.info("Reading path: " + mediaItem.getPath());
+			logger.info("Updated playlist to media item: " + mediaItem.getPath());
+			return totalRead;
 		}
 
 	}
