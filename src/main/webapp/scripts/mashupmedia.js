@@ -17,10 +17,7 @@ $(document).ready(function() {
 	});
 	
 	setupAudio();
-	
-		
-	 //setupJPlayer();
-	 
+			
 });
 
 
@@ -98,32 +95,6 @@ var mashupMedia = new function() {
 	
 	this.isMusicPlaying = function() {
 	    
-	    /*
-	    if($(mashupMedia.jPlayerId) == false) {
-	        return false;
-	    }
-	    */
-
-	    /*
-        var isPaused = $(mashupMedia.jPlayerId).data().jPlayer.status.paused;
-        if (!isPaused) {
-            return true;
-        }
-        
-        return false;
-        */
-	    
-	    /*
-	    if (!mashupMedia.audio) {
-	        return false;
-	    }
-	    
-	    if (mashupMedia.audio.paused) {
-	        return false;
-	    }
-	    */
-
-	    
         if ($("#music-player td.controls a.play").length) {
             return false;
         }
@@ -189,10 +160,7 @@ var mashupMedia = new function() {
         mashupMedia.audio.preload = preloadOption;
         mashupMedia.audio.load();
         
-        //$(mashupMedia.jPlayerId).jPlayer("setMedia", media);        
         if (mashupMedia.isMusicPlaying()) {
-            //$(mashupMedia.jPlayerId).jPlayer("play");
-            
             mashupMedia.audio.play();
         }
     };
@@ -346,7 +314,6 @@ function setupAudio() {
     var playBarElement = $(progressElement).find("div.play-bar");
     var secondsPlayed = 0;
     $(playBarElement).css("width", 0);
-//    var progressTotal =  $("#music-player div.progress div.play-bar");    document.querySelector('#progress-bar').offsetWidth;
     
     mashupMedia.audio = document.createElement("audio");
     
@@ -428,9 +395,7 @@ function setupAudio() {
     
 }
 
-// var isJPlayerInitialised = false;
-//var myAndroidFix = null;
-
+/*
 function setupJPlayer() {
     var jPlayerVersion = "2.9.2";
     var secondsPlayed = 0;
@@ -510,6 +475,7 @@ function setupJPlayer() {
                     
     $(mashupMedia.jPlayerId).jPlayer(options);
 }
+*/
 
 function isDesktopMode() {
     var isDesktop = $("#music-player div.progress").is(":visible");

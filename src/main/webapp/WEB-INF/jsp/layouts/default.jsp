@@ -46,14 +46,6 @@
 	src="<c:url value="/scripts/mashupmedia.js" />"></script>
 
 
-<!-- script type="text/javascript"
-	src="<c:url value="/jquery-plugins/jquery.address/${jQueryAddressVersion}/jquery.address-${jQueryAddressVersion}.min.js" />"></script -->
-
-<script type="text/javascript"
-	src="<c:url value="/jquery-plugins/jquery.jplayer/${jPlayerVersion}/jplayer/jquery.jplayer.min.js" />"></script>
-
-<script type="text/javascript"
-	src="<c:url value="/scripts/jplayer-android-fix.js" />"></script>
 
 
 
@@ -147,12 +139,10 @@
 
         $("#music-player").on("click", ".controls a.pause", function() {
             togglePlayPause("pause");            
-//            $(mashupMedia.jPlayerId).jPlayer("pause");
         });
 
         $("#music-player").on("click", ".controls a.stop", function() {
             togglePlayPause("stop");
-//            $(mashupMedia.jPlayerId).jPlayer("stop");
         });
 
         $("#music-player").on("click", ".controls a.previous", function() {
@@ -259,8 +249,6 @@
 </head>
 
 <body>
-
-	<div id="jquery_jplayer_1" class="jp-jplayer"></div>
 
 
 	<div data-role="page">
