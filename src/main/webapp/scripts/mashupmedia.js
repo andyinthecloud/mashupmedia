@@ -340,6 +340,7 @@ function setupAudio() {
                 async: true
             })
             .done(function(song) {
+                console.log(song);
                 if (mashupMedia.songId != song.id) {
                     mashupMedia.displaySong(song);
                 }
