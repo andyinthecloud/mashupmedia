@@ -13,6 +13,9 @@
 	<task:executor id="encodeMediaItemThreadPoolTaskExecutor" pool-size="3" />
 
 	<task:executor id="libraryUpdateThreadPoolTaskExecutor" pool-size="3" />
+	
+	<task:executor id="playlistThreadPoolTaskExecutor" pool-size="1" />
+	
 
 	<task:scheduler id="taskScheduler" pool-size="3" />
 	<task:scheduled-tasks scheduler="taskScheduler">

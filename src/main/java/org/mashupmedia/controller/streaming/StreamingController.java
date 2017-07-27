@@ -24,6 +24,7 @@ import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.task.PlaylistTaskManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
@@ -51,6 +52,9 @@ public class StreamingController {
 
 	@Autowired
 	private PlaylistManager playlistManager;
+	
+	@Autowired
+	private PlaylistTaskManager playlistTaskManager;
 
 	@RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = { RequestMethod.GET,
 			RequestMethod.HEAD })
@@ -168,7 +172,7 @@ public class StreamingController {
 		}
 
 		long lastModified = playlist.getUpdatedOn().getTime();
-		StreamingMediaHandler.fromMediaItems(playlistManager, mediaItems, lastModified).with(request).with(response).serveResource();
+		StreamingMediaHandler.fromMediaItems(playlistManager, playlistTaskManager, mediaItems, lastModified).with(request).with(response).serveResource();
 
 	}
 
@@ -206,7 +210,7 @@ public class StreamingController {
 		File mediaFile = getMediaFile(mediaItem, mediaEncoding);
 		long lastModified = mediaFile.lastModified();
 
-		StreamingMediaHandler.fromMediaItem(playlistManager, mediaItem, lastModified).with(request).with(response).serveResource();
+		StreamingMediaHandler.fromMediaItem(playlistManager, playlistTaskManager, mediaItem, lastModified).with(request).with(response).serveResource();
 	}
 
 }

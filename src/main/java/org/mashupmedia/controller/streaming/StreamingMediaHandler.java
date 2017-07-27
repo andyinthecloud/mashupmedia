@@ -18,19 +18,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.io.MediaItemSequenceInputStream;
-import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.Playlist.PlaylistType;
-import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.PlaylistManager;
-import org.mashupmedia.util.AdminHelper;
+import org.mashupmedia.task.PlaylistTaskManager;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.DateHelper.DateFormatType;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
-import org.mashupmedia.util.PlaylistHelper;
 
 public class StreamingMediaHandler {
 	private static Logger logger = Logger.getLogger(StreamingMediaHandler.class);
@@ -64,14 +59,14 @@ public class StreamingMediaHandler {
 	private static final int DEFAULT_BUFFER_SIZE = 32000 ; // ..bytes = 32KB.
 	private static final int DEFAULT_BUFFER_LOG_SIZE = 500000 ; 
 	
-	public static MultiPartFileSenderImpl fromMediaItem(PlaylistManager playlistManager, MediaItem mediaItem, long lastModified) {
+	public static MultiPartFileSenderImpl fromMediaItem(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, MediaItem mediaItem, long lastModified) {
 		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
 		mediaItems.add(mediaItem);
-		return new MultiPartFileSenderImpl().setMediaItems(playlistManager, mediaItems, lastModified);
+		return new MultiPartFileSenderImpl().setMediaItems(playlistManager, playlistTaskManager, mediaItems, lastModified);
 	}
 
-	public static MultiPartFileSenderImpl fromMediaItems(PlaylistManager playlistManager, List<MediaItem> mediaItems, long lastModified) {
-		return new MultiPartFileSenderImpl().setMediaItems(playlistManager, mediaItems, lastModified);
+	public static MultiPartFileSenderImpl fromMediaItems(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, List<MediaItem> mediaItems, long lastModified) {
+		return new MultiPartFileSenderImpl().setMediaItems(playlistManager, playlistTaskManager, mediaItems, lastModified);
 	}
 
 	public static class MultiPartFileSenderImpl {
@@ -85,6 +80,7 @@ public class StreamingMediaHandler {
 		String disposition = CONTENT_DISPOSITION_INLINE;
 		boolean isPlaylist = false;
 		PlaylistManager playlistManager;
+		PlaylistTaskManager playlistTaskManager;
 
 		public MultiPartFileSenderImpl with(HttpServletRequest httpRequest) {
 			request = httpRequest;
@@ -112,8 +108,9 @@ public class StreamingMediaHandler {
 		}
 
 		// ** internal setter **//
-		private MultiPartFileSenderImpl setMediaItems(PlaylistManager playlistManager, List<MediaItem> mediaItems, long lastModified) {
+		private MultiPartFileSenderImpl setMediaItems(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, List<MediaItem> mediaItems, long lastModified) {
 			this.playlistManager = playlistManager;
+			this.playlistTaskManager = playlistTaskManager;
 			this.mediaItemSequenceInputStream = new MediaItemSequenceInputStream(mediaItems);
 			this.mediaContentType = getMediaContentType(mediaItems);
 			this.lastModified = lastModified;
@@ -338,7 +335,7 @@ public class StreamingMediaHandler {
 					// Return full file.
 					logger.info("Return full file");
 					setContent(response, contentType, full);
-					Range.copy(playlistManager, mediaItemSequenceInputStream, output, length, full.start, full.length);
+					Range.copy(playlistManager, playlistTaskManager, mediaItemSequenceInputStream, output, length, full.start, full.length);
 
 				} else if (ranges.size() == 1) {
 					Range r = ranges.get(0);
@@ -349,7 +346,7 @@ public class StreamingMediaHandler {
 					}
 
 					setContent(response, contentType, r);
-					Range.copy(playlistManager, mediaItemSequenceInputStream, output, length, r.start, r.length);
+					Range.copy(playlistManager, playlistTaskManager,mediaItemSequenceInputStream, output, length, r.start, r.length);
 
 				}
 
@@ -513,7 +510,7 @@ public class StreamingMediaHandler {
 			return (substring.length() > 0) ? Long.parseLong(substring) : -1;
 		}
 
-		private static void copy(PlaylistManager playlistManager, MediaItemSequenceInputStream pathSequenceInputStream, OutputStream outputStream,
+		private static void copy(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, MediaItemSequenceInputStream pathSequenceInputStream, OutputStream outputStream,
 				long totalLength, long start, long length) throws IOException {
 			byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 			int read;
@@ -529,7 +526,7 @@ public class StreamingMediaHandler {
 					outputStream.flush();
 
 					totalRead += read;
-					lastReadLogged = logFile(playlistManager, pathSequenceInputStream, totalRead, lastReadLogged);
+					lastReadLogged = logFile(playlistManager, playlistTaskManager,pathSequenceInputStream, totalRead, lastReadLogged);
 				}
 			} else {
 				inputStream.skip(start);
@@ -549,7 +546,7 @@ public class StreamingMediaHandler {
 					outputStream.flush();
 
 					totalRead += read;
-					lastReadLogged = logFile(playlistManager, pathSequenceInputStream, totalRead, lastReadLogged);
+					lastReadLogged = logFile(playlistManager, playlistTaskManager, pathSequenceInputStream, totalRead, lastReadLogged);
 
 					if (isAtEndOfStream) {
 						break;
@@ -560,7 +557,7 @@ public class StreamingMediaHandler {
 
 		}
 
-		private static long logFile(PlaylistManager playlistManager, MediaItemSequenceInputStream pathSequenceInputStream, long totalRead, long lastLoggedRead)
+		private static long logFile(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, MediaItemSequenceInputStream pathSequenceInputStream, long totalRead, long lastLoggedRead)
 				throws IOException {
 
 			if (!pathSequenceInputStream.isPlaylist()) {
@@ -571,20 +568,9 @@ public class StreamingMediaHandler {
 			if (totalRead - lastLoggedRead < DEFAULT_BUFFER_LOG_SIZE) {
 				return lastLoggedRead;
 			}
-						
+									
 			MediaItem mediaItem = pathSequenceInputStream.getMediaItem(totalRead);
-			long mediaItemId = mediaItem.getId();
-			Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
-			PlaylistMediaItem currentPlaylistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
-			
-			if (mediaItem.equals(currentPlaylistMediaItem.getMediaItem())) {
-				return totalRead;
-			}
-			
-			User user = AdminHelper.getLoggedInUser();
-			PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, mediaItemId);
-			playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-			logger.info("Updated playlist to media item: " + mediaItem.getPath());
+			playlistTaskManager.updateNowPlaying(mediaItem);
 			return totalRead;
 		}
 
