@@ -559,6 +559,11 @@ public class StreamingMediaHandler {
 
 		private static long logFile(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, MediaItemSequenceInputStream pathSequenceInputStream, long totalRead, long lastLoggedRead)
 				throws IOException {
+			
+			
+			if(true) {
+				return totalRead;
+			}
 
 			if (!pathSequenceInputStream.isPlaylist()) {
 				return lastLoggedRead;
