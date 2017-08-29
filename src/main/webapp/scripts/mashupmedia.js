@@ -380,7 +380,6 @@ function setupAudio() {
         }
         
         mashupMedia.audio.currentTime = secondsPlayed;
-        mashupMedia.audio.play();
         
       }, true);    
     
