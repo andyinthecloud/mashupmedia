@@ -1,11 +1,14 @@
 package org.mashupmedia.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
@@ -277,10 +280,10 @@ public class FileHelper {
 		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
 		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
-	
-	public static boolean deleteFile(String filePath) {		
+
+	public static boolean deleteFile(String filePath) {
 		File file = new File(filePath);
-		return deleteFile(file);				
+		return deleteFile(file);
 	}
 
 	public static boolean deleteFile(File file) {
@@ -340,8 +343,6 @@ public class FileHelper {
 		}
 	}
 
-
-
 	public static boolean isEmptyBytes(byte[] bytes) {
 		if (bytes == null || bytes.length == 0) {
 			return true;
@@ -353,9 +354,23 @@ public class FileHelper {
 		if (mediaItem == null) {
 			return null;
 		}
-		
+
 		File file = new File(mediaItem.getPath());
 		Path path = file.toPath();
 		return path;
+	}
+
+	public static File getResourceAsFile(String defaultImagePath) throws IOException {
+		
+		String extension = getFileExtension(defaultImagePath);
+		String name = StringHelper.find(defaultImagePath, "./.*?\\.");
+		name.replaceAll("/|\\.", "");
+		
+		File tempFile = File.createTempFile(name, extension);
+		tempFile.deleteOnExit();
+		FileInputStream inputStream = new FileInputStream(tempFile);
+		FileOutputStream outputStream = new FileOutputStream(tempFile);
+		IOUtils.copy(inputStream, outputStream);
+		return tempFile;
 	}
 }

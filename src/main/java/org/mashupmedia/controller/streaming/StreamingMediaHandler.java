@@ -56,7 +56,7 @@ public class StreamingMediaHandler {
 	private static final String BYTES_RANGE_FORMAT = "bytes %d-%d/%d";
 	private static final String CONTENT_DISPOSITION_FORMAT = "%s;filename=\"%s\"";
 	private static final String BYTES_INVALID_BYTE_RANGE_FORMAT = "bytes */%d";
-	private static final int DEFAULT_BUFFER_SIZE = 3200; // ..bytes = 32KB.
+	private static final int DEFAULT_BUFFER_SIZE = 10240; // ..bytes = 32KB.
 	private static final int DEFAULT_BUFFER_LOG_SIZE = 500000 ; 
 	
 	public static MultiPartFileSenderImpl fromMediaItem(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, MediaItem mediaItem, long lastModified) {
