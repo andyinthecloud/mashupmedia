@@ -147,7 +147,8 @@ public class StreamingController {
 	
 	private void setResponse(HttpServletResponse response, Long contentLength, MediaContentType mediaContentType,
 			String title) {
-		response.setContentLength(contentLength.intValue());
+//		response.setContentLength(contentLength.intValue());
+		response.setHeader("Transfer-Encoding", "chunked");
 		response.setContentType(mediaContentType.getMimeContentType());
 		response.setHeader("Content-Disposition", title);
 		
