@@ -23,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -39,6 +40,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 	private MediaManager mediaManager;
 
 	@RequestMapping(value = "/play-album", method = RequestMethod.GET)
+	@ResponseBody
 	public RestfulSong playAlbum(@RequestParam("albumId") Long albumId) {
 		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
@@ -57,6 +59,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 	}
 
 	@RequestMapping(value = "/append-album", method = RequestMethod.GET)
+	@ResponseBody
 	public RestfulSong appendAlbum(@RequestParam("albumId") Long albumId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
@@ -81,6 +84,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 	}
 
 	@RequestMapping(value = "/play-artist", method = RequestMethod.GET)
+	@ResponseBody
 	public RestfulSong playArtist(@RequestParam("artistId") Long artistId, Model model) {
 		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
@@ -108,6 +112,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 	}
 
 	@RequestMapping(value = "/append-artist", method = RequestMethod.GET)
+	@ResponseBody
 	public RestfulSong appendArtist(@RequestParam("artistId") Long artistId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
@@ -135,6 +140,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 	}
 
 	@RequestMapping(value = "/play-song", method = RequestMethod.GET)
+	@ResponseBody
 	public RestfulSong playSong(@RequestParam("songId") Long songId, Model model) {
 		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
@@ -155,6 +161,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 	}
 
 	@RequestMapping(value = "/append-song", method = RequestMethod.GET)
+	@ResponseBody
 	public RestfulSong appendSong(@RequestParam("songId") Long songId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 

@@ -23,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,6 +38,7 @@ public abstract class AbstractRestfulPlaylistController {
 	private MediaManager mediaManager;
 
 	@RequestMapping(value = "/play/current", method = RequestMethod.GET)
+	@ResponseBody
 	public RestfulMediaItem playCurrentUserMusicPlaylist(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(getPlaylistType());
 		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(0, playlist);
@@ -47,6 +49,7 @@ public abstract class AbstractRestfulPlaylistController {
 	protected abstract PlaylistType getPlaylistType();
 
 	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
+	@ResponseBody
 	public RestfulMediaItem playNextSong(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(getPlaylistType());
 		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(1, playlist);
@@ -61,6 +64,7 @@ public abstract class AbstractRestfulPlaylistController {
 	}
 
 	@RequestMapping(value = "/play/previous", method = RequestMethod.GET)
+	@ResponseBody
 	public RestfulMediaItem playPreviousSong(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);
@@ -93,6 +97,7 @@ public abstract class AbstractRestfulPlaylistController {
 	protected abstract RestfulMediaItem convertToRestfulMediaItem(PlaylistMediaItem playlistMediaItem);
 
 	@RequestMapping(value = "/save-playlist-name", method = RequestMethod.POST)
+	@ResponseBody
 	public String savePlaylistName(@RequestParam(value = "id") String id, @RequestParam(value = "value") String value) {
 		id = StringUtils.trimToEmpty(id);
 		if (StringUtils.isEmpty(id)) {
@@ -119,6 +124,7 @@ public abstract class AbstractRestfulPlaylistController {
 	}
 
 	@RequestMapping(value = "/save-playlist", method = RequestMethod.POST)
+	@ResponseBody
 	public RestfulMediaItem savePlaylist(@RequestParam("playlistId") Long playlistId,
 			@RequestParam(value = "mediaItemIds[]", required = false) Long[] mediaItemsIds, Model model) {
 
@@ -128,6 +134,7 @@ public abstract class AbstractRestfulPlaylistController {
 	}
 
 	@RequestMapping(value = "/play", method = RequestMethod.POST)
+	@ResponseBody
 	public RestfulMediaItem playingMediaItem(@RequestParam("playlist") Long playlistId,
 			@RequestParam(value = "mediaItemId") Long mediaItemId, Model model) {
 
@@ -150,6 +157,7 @@ public abstract class AbstractRestfulPlaylistController {
 	}
 
 	@RequestMapping(value = "/new-playlist", method = RequestMethod.POST)
+	@ResponseBody
 	public Long newPlaylist(@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "mediaItemIds[]", required = false) Long[] mediaItemsIds,
 
@@ -191,6 +199,7 @@ public abstract class AbstractRestfulPlaylistController {
 	}
 
 	@RequestMapping(value = "/playing", method = RequestMethod.GET)
+	@ResponseBody
 	public RestfulMediaItem playingMediaItem(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.ALL);
 		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(0, playlist);
