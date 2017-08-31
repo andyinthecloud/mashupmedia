@@ -54,7 +54,6 @@ public class StreamingController {
 	// private PlaylistTaskManager playlistTaskManager;
 
 	@RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = { RequestMethod.GET })
-	@ResponseBody
 	public void getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
 			@PathVariable(value = "mediaContentType") String mediaContentTypeValue, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
@@ -70,14 +69,14 @@ public class StreamingController {
 		MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 		File mediaFile = getMediaFile(mediaItem, mediaEncoding);
 
-		// Long contentLength = mediaFile.length();
+		Long contentLength = mediaFile.length();
 		// response.setContentLength(contentLength.intValue());
 		String format = mediaItem.getFormat();
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
 		// response.setContentType(mediaContentType.getMimeContentType());
 		// response.setHeader("Content-Disposition", mediaItem.getDisplayTitle());
 
-		setResponse(response, mediaContentType, mediaItem.getDisplayTitle());
+		setResponse(response, mediaContentType, mediaItem.getDisplayTitle(), contentLength);
 		WebHelper.writeFileToResponse(mediaFile, response);
 
 		// MediaStreamingResponseBody mediaStreamingResponseBody = new
@@ -130,8 +129,12 @@ public class StreamingController {
 	// prepareModelAndView(mediaItem, mediaEncoding, request, response);
 	// }
 
-	private void setResponse(HttpServletResponse response, MediaContentType mediaContentType, String title) {
-		// response.setContentLength(contentLength.intValue());
+	private void setResponse(HttpServletResponse response, MediaContentType mediaContentType, String title,
+			Long contentLength) {
+		if (contentLength != null) {
+			response.setContentLength(contentLength.intValue());
+		}
+
 		// response.setHeader("Transfer-Encoding", "chunked");
 		response.setContentType(mediaContentType.getMimeContentType());
 		response.setHeader("Content-Disposition", title);
@@ -139,8 +142,7 @@ public class StreamingController {
 	}
 
 	@RequestMapping(value = "/playlist/{playlistTypeValue}/{mediaContentType}/{timestamp}", method = {
-			RequestMethod.GET})
-	@ResponseBody
+			RequestMethod.GET })
 	public void getCurrentPlaylistStream(@PathVariable(value = "playlistTypeValue") String playlistTypeValue,
 			@PathVariable(value = "mediaContentType") String mediaContentTypeValue,
 			@PathVariable(value = "timestamp") String timestamp, HttpServletRequest request,
@@ -156,23 +158,19 @@ public class StreamingController {
 		// for (File mediaFile : mediaFiles) {
 		// contentLength += mediaFile.length();
 		// }
+		MediaItem firstMediaItem = PlaylistHelper.getFirstPlayListMediaItem(playlist).getMediaItem();
+		String format = firstMediaItem.getFormat();
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
+		setResponse(response, mediaContentType, playlist.getName(), null);
 
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
 			playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
-			// playlistManager.s
 			MediaItem mediaItem = playlistMediaItem.getMediaItem();
 			MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 			File mediaFile = getMediaFile(mediaItem, mediaEncoding);
 			WebHelper.writeFileToResponse(mediaFile, response);
 		}
 
-		// MediaItem mediaItem =
-		// PlaylistHelper.getFirstPlayListMediaItem(playlist).getMediaItem();
-		// String format = mediaItem.getFormat();
-		// MediaContentType mediaContentType =
-		// MediaItemHelper.getMediaContentType(format);
-		//
-		// setResponse(response, mediaContentType, playlist.getName());
 		// for (File mediaFile : mediaItems) {
 		// playlistTaskManager.updateNowPlaying(mediaItem);
 		// WebHelper.writeFileToResponse(mediaFile, response);

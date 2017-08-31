@@ -152,7 +152,7 @@ var mashupMedia = new function() {
                 }                
             }
         } else {
-            preloadOption = "none";
+//            preloadOption = "none";
             var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();
             mashupMedia.audio.src = url;
         }
