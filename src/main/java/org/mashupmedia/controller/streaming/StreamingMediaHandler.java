@@ -561,9 +561,6 @@ public class StreamingMediaHandler {
 				throws IOException {
 			
 			
-			if(true) {
-				return totalRead;
-			}
 
 			if (!pathSequenceInputStream.isPlaylist()) {
 				return lastLoggedRead;
