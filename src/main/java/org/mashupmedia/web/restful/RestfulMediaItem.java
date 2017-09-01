@@ -20,10 +20,16 @@ public abstract class RestfulMediaItem {
 	private MediaContentType[] suppliedMediaContentTypes;
 
 	public RestfulMediaItem(MediaItem mediaItem, MediaContentType[] suppliedMediaContentTypes) {
-		this.id = mediaItem.getId();
-		this.contextPath = WebHelper.getContextPath();
-		this.title = mediaItem.getDisplayTitle();
+		
 		this.suppliedMediaContentTypes = suppliedMediaContentTypes;
+		
+		this.id = mediaItem.getId();
+		if (this.id == 0) {
+			return;
+		}		
+
+		this.contextPath = WebHelper.getContextPath();
+		this.title = mediaItem.getDisplayTitle();		
 		prepareStreams(mediaItem);
 	}
 	

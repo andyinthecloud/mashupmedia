@@ -13,10 +13,16 @@ public class RestfulSong extends RestfulMediaItem {
 	private String albumName;
 	private String albumUrl;
 	private String albumArtUrl;
+	
+	
 
 	public RestfulSong(Song song, MediaContentType[] supppliedMediaContentTypes) {
 		super(song, supppliedMediaContentTypes);
 
+		if (getId() == 0) {
+			return;
+		}
+		
 		Artist artist = song.getArtist();
 		this.artistName = artist.getName();
 		this.artistUrl = getContextPath() + "/app/music/artist/" + artist.getId();

@@ -67,10 +67,10 @@ var mashupMedia = new function() {
 	};
 	
 	
-	this.loadLastAccessedPlaylist = function() {	    
+	this.loadLastAccessedPlaylist = function() {	    	    
 		$.get(mashupMedia.contextUrl + "/app/restful/playlist/music/play/current", function(song) {		    
 		    mashupMedia.prepareSong(song);
-		    mashupMedia.playMusic(song.streams);
+		    mashupMedia.playMusic(song.streams);		    
 		});
 	};
 	
@@ -136,12 +136,11 @@ var mashupMedia = new function() {
     };
     
     this.playMusic = function(streams) {
-                        
+
         if (streams == null) {
             $("#music-player .controls a.pause").trigger("click");
             return;
-        }
-        
+        }        
         
         var preloadOption = "auto";
         
@@ -197,7 +196,7 @@ var mashupMedia = new function() {
             method: "GET",
             url: mashupMedia.contextUrl + "/app/restful/playlist/music/play/current",
             async: true
-        }).done(function(song) {            
+        }).done(function(song) {
             if (!isEmpty(song)) {
                 mashupMedia.prepareSong(song);
                 mashupMedia.playMusic(song.streams);                
@@ -301,6 +300,11 @@ var mashupMedia = new function() {
 }
 
 function isEmpty(obj) {
+    if (obj == null ) {
+        return true;
+    }
+    
+    
     for(var prop in obj) {
         if(obj.hasOwnProperty(prop))
             return false;

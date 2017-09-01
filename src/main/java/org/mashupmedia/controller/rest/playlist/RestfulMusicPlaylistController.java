@@ -49,7 +49,8 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
+				true);
 		Song song = (Song) playlistMediaItem.getMediaItem();
 
 		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
@@ -67,10 +68,11 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		List<Song> songs = album.getSongs();
 		PlaylistHelper.appendPlaylist(playlist, songs);
 		savePlaylist(playlist);
-		
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
 
-		// if playlist was empty get the first song in the new list 
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
+				true);
+
+		// if playlist was empty get the first song in the new list
 		if (playlistMediaItem == null) {
 			playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
 		}
@@ -101,7 +103,8 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.replacePlaylist(playlist, songs);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
+				true);
 
 		Song song = (Song) playlistMediaItem.getMediaItem();
 
@@ -129,7 +132,8 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.appendPlaylist(playlist, songs);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
+				true);
 
 		Song song = (Song) playlistMediaItem.getMediaItem();
 
@@ -188,21 +192,17 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 
 	@Override
 	protected RestfulMediaItem convertToRestfulMediaItem(PlaylistMediaItem playlistMediaItem) {
-		if (playlistMediaItem == null) {
-			return null;
+
+		Song song = new Song();
+		MediaContentType[] suppliedStreamingMediaContentTypes = new MediaContentType[] { MediaContentType.UNSUPPORTED };
+
+		if (playlistMediaItem != null) {
+			song = (Song) playlistMediaItem.getMediaItem();
+			suppliedStreamingMediaContentTypes = mediaManager.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
 		}
 
-		Song song = (Song) playlistMediaItem.getMediaItem();
-
-		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
-				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);	
-		
 		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
 		return restfulSong;
 	}
-	
-
-
-
 
 }

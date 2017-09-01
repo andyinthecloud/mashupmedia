@@ -131,6 +131,7 @@ public class WebHelper {
 		InputStream inputStream = request.getSession().getServletContext().getResourceAsStream(resourcePath);
 		OutputStream outputStream = response.getOutputStream();
 		IOUtils.copy(inputStream, outputStream);
+		outputStream.flush();
 		IOUtils.closeQuietly(inputStream);
 	}
 
@@ -138,6 +139,7 @@ public class WebHelper {
 		FileInputStream fileInputStream = new FileInputStream(file);		
 		OutputStream outputStream = response.getOutputStream();	
 		IOUtils.copy(fileInputStream, outputStream);
+		outputStream.flush();
 		IOUtils.closeQuietly(fileInputStream);		
 	}
 
