@@ -12,9 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.model.User;
+import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
@@ -25,6 +29,7 @@ import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
+import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.PlaylistHelper;
@@ -35,7 +40,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/streaming")
@@ -50,92 +54,82 @@ public class StreamingController {
 	@Autowired
 	private PlaylistManager playlistManager;
 
-	// @Autowired
-	// private PlaylistTaskManager playlistTaskManager;
-
 	@RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = { RequestMethod.GET })
 	public void getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
 			@PathVariable(value = "mediaContentType") String mediaContentTypeValue, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		// MediaType mediaType = mediaItem.getMediaType();
-		// if (mediaType == MediaType.PHOTO) {
-		// Photo photo = (Photo) mediaItem;
-		// getImageStream(photo, mediaContentTypeValue, request, response);
-		// return;
-		// }
+
+		Library library = mediaItem.getLibrary();
+		if (library.isRemote()) {
+			Location location = library.getLocation();
+			String path = location.getPath();
+			path = LibraryHelper.getRemoteStreamingPath(path);
+			long remoteMediaItemId = NumberUtils.toLong(mediaItem.getPath());
+			if (StringUtils.isNotBlank(path) && remoteMediaItemId > 0) {
+				response.encodeRedirectURL(path + "/" + remoteMediaItemId);
+				return;
+			}
+		}
+		
+		
+		MediaType mediaType = mediaItem.getMediaType();
+		if (mediaType == MediaType.PHOTO) {
+			Photo photo = (Photo) mediaItem;
+			writeImageStream(photo, mediaContentTypeValue, request, response);
+			return;
+		}
+
 
 		MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 		File mediaFile = getMediaFile(mediaItem, mediaEncoding);
 
 		Long contentLength = mediaFile.length();
-		// response.setContentLength(contentLength.intValue());
 		String format = mediaItem.getFormat();
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
-		// response.setContentType(mediaContentType.getMimeContentType());
-		// response.setHeader("Content-Disposition", mediaItem.getDisplayTitle());
 
 		setResponse(response, mediaContentType, mediaItem.getDisplayTitle(), contentLength);
 		WebHelper.writeFileToResponse(mediaFile, response);
-
-		// MediaStreamingResponseBody mediaStreamingResponseBody = new
-		// MediaStreamingResponseBody(mediaFile);
-		// mediaStreamingResponseBody.writeTo(response.getOutputStream());
-		// return mediaStreamingResponseBody;
-
 	}
 
-	// protected SequenceInputStream prepareInputStream(List<File> files) throws
-	// IOException {
-	// if (files == null || files.isEmpty()) {
-	// return null;
-	// }
-	//
-	// List<BufferedInputStream> bufferedInputStreams = new
-	// ArrayList<BufferedInputStream>();
-	// for (File file : files) {
-	// Path path = file.toPath();
-	//
-	// BufferedInputStream bufferedInputStream = new
-	// BufferedInputStream(Files.newInputStream(path));
-	// bufferedInputStreams.add(bufferedInputStream);
-	//
-	// }
-	//
-	// SequenceInputStream sequenceInputStream = new SequenceInputStream(
-	// Collections.enumeration(bufferedInputStreams));
-	// return sequenceInputStream;
-	// }
+	
+	protected void writeImageStream(Photo photo, String imageTypeValue, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
-	// @RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = {
-	// RequestMethod.GET,
-	// RequestMethod.HEAD })
-	// public void getMediaStreamAndy(@PathVariable("mediaItemId") Long mediaItemId,
-	// @PathVariable(value = "mediaContentType") String mediaContentTypeValue,
-	// HttpServletRequest request,
-	// HttpServletResponse response) throws Exception {
-	//
-	// MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-	// MediaType mediaType = mediaItem.getMediaType();
-	// if (mediaType == MediaType.PHOTO) {
-	// Photo photo = (Photo) mediaItem;
-	// getImageStream(photo, mediaContentTypeValue, request, response);
-	// return;
-	// }
-	//
-	// MediaEncoding mediaEncoding = getMediaEncoding(mediaItem,
-	// mediaContentTypeValue);
-	// prepareModelAndView(mediaItem, mediaEncoding, request, response);
-	// }
+		ImageType imageType = ImageHelper.getImageType(imageTypeValue);
 
+		String filePath = photo.getPath();
+		String defaultImagePath = MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO;
+		if (imageType == ImageType.THUMBNAIL) {
+			filePath = photo.getThumbnailPath();
+			defaultImagePath = MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO_THUMBNAIL;
+		} else if (imageType == ImageType.WEB_OPTIMISED) {
+			filePath = photo.getWebOptimisedImagePath();
+		}
+
+		filePath = StringUtils.trimToEmpty(filePath);
+
+		File mediaFile = new File(filePath);
+		
+		String format = photo.getFormat();
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
+		response.setContentType(mediaContentType.getMimeContentType());
+		
+		if (mediaFile.exists()) {
+			WebHelper.writeFileToResponse(mediaFile, response);
+			return;
+		}
+
+		response.setContentType(MediaContentType.PNG.getMimeContentType());
+		WebHelper.writeResourceToResponse(defaultImagePath, request, response);
+	}
+	
 	private void setResponse(HttpServletResponse response, MediaContentType mediaContentType, String title,
 			Long contentLength) {
 		if (contentLength != null) {
 			response.setContentLength(contentLength.intValue());
 		}
-
-		// response.setHeader("Transfer-Encoding", "chunked");
 		response.setContentType(mediaContentType.getMimeContentType());
 		response.setHeader("Content-Disposition", title);
 
@@ -154,10 +148,6 @@ public class StreamingController {
 
 		List<PlaylistMediaItem> playlistMediaItems = getPlaylistMediaItems(playlist);
 
-		// long contentLength = 0;
-		// for (File mediaFile : mediaFiles) {
-		// contentLength += mediaFile.length();
-		// }
 		MediaItem firstMediaItem = PlaylistHelper.getFirstPlayListMediaItem(playlist).getMediaItem();
 		String format = firstMediaItem.getFormat();
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
@@ -171,107 +161,7 @@ public class StreamingController {
 			WebHelper.writeFileToResponse(mediaFile, response);
 		}
 
-		// for (File mediaFile : mediaItems) {
-		// playlistTaskManager.updateNowPlaying(mediaItem);
-		// WebHelper.writeFileToResponse(mediaFile, response);
-		// }
-
-		// MediaStreamingResponseBody mediaStreamingResponseBody = new
-		// MediaStreamingResponseBody(mediaFiles);
-		// mediaStreamingResponseBody.writeTo(response.getOutputStream());;
-
-		// prepareModelAndView(playlist, mediaContentTypeValue, request, response);
-
 	}
-
-	// @RequestMapping(value =
-	// "/playlist/{playlistTypeValue}/{mediaContentType}/{timestamp}", method = {
-	// RequestMethod.GET, RequestMethod.HEAD })
-	// public void getCurrentPlaylistStream(@PathVariable(value =
-	// "playlistTypeValue") String playlistTypeValue,
-	// @PathVariable(value = "mediaContentType") String mediaContentTypeValue,
-	// @PathVariable(value = "timestamp") String timestamp, HttpServletRequest
-	// request,
-	// HttpServletResponse response) throws Exception {
-	//
-	// PlaylistType playlistType =
-	// PlaylistHelper.getPlaylistType(playlistTypeValue);
-	// Playlist playlist =
-	// playlistManager.getLastAccessedPlaylistForCurrentUser(playlistType);
-	// prepareModelAndView(playlist, mediaContentTypeValue, request, response);
-	//
-	// }
-
-	protected File getImageFile(Photo photo, String imageTypeValue, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-
-		ImageType imageType = ImageHelper.getImageType(imageTypeValue);
-
-		String filePath = photo.getPath();
-		String defaultImagePath = MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO;
-		if (imageType == ImageType.THUMBNAIL) {
-			filePath = photo.getThumbnailPath();
-			defaultImagePath = MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO_THUMBNAIL;
-		} else if (imageType == ImageType.WEB_OPTIMISED) {
-			filePath = photo.getWebOptimisedImagePath();
-		}
-
-		filePath = StringUtils.trimToEmpty(filePath);
-
-		File mediaFile = new File(filePath);
-
-		// String format = photo.getFormat();
-		// MediaContentType mediaContentType =
-		// MediaItemHelper.getMediaContentType(format);
-		// response.setContentType(mediaContentType.getMimeContentType());
-
-		if (mediaFile.exists()) {
-			return mediaFile;
-			// WebHelper.writeFileToResponse(mediaFile, response);
-			// return;
-		}
-
-		mediaFile = FileHelper.getResourceAsFile(defaultImagePath);
-		return mediaFile;
-
-		// mediaFile = new File(pathname)
-
-		// response.setContentType(MediaContentType.PNG.getMimeContentType());
-		// WebHelper.writeResourceToResponse(defaultImagePath, request, response);
-	}
-
-	// protected void getImageStream(Photo photo, String imageTypeValue,
-	// HttpServletRequest request,
-	// HttpServletResponse response) throws Exception {
-	//
-	// ImageType imageType = ImageHelper.getImageType(imageTypeValue);
-	//
-	// String filePath = photo.getPath();
-	// String defaultImagePath = MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO;
-	// if (imageType == ImageType.THUMBNAIL) {
-	// filePath = photo.getThumbnailPath();
-	// defaultImagePath = MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO_THUMBNAIL;
-	// } else if (imageType == ImageType.WEB_OPTIMISED) {
-	// filePath = photo.getWebOptimisedImagePath();
-	// }
-	//
-	// filePath = StringUtils.trimToEmpty(filePath);
-	//
-	// File mediaFile = new File(filePath);
-	//
-	// String format = photo.getFormat();
-	// MediaContentType mediaContentType =
-	// MediaItemHelper.getMediaContentType(format);
-	// response.setContentType(mediaContentType.getMimeContentType());
-	//
-	// if (mediaFile.exists()) {
-	// WebHelper.writeFileToResponse(mediaFile, response);
-	// return;
-	// }
-	//
-	// response.setContentType(MediaContentType.PNG.getMimeContentType());
-	// WebHelper.writeResourceToResponse(defaultImagePath, request, response);
-	// }
 
 	protected MediaEncoding getMediaEncoding(MediaItem mediaItem, String mediaContentTypeValue) {
 
@@ -296,56 +186,14 @@ public class StreamingController {
 		return mediaItem.getBestMediaEncoding();
 	}
 
-	// protected void prepareModelAndView(Playlist playlist, String
-	// mediaContentTypeValue, HttpServletRequest request,
-	// HttpServletResponse response) throws Exception {
-	//
-	// List<MediaItem> mediaItems = new ArrayList<MediaItem>();
-	// int offset = 0;
-	// boolean isEndOfPlaylist = false;
-	//
-	// MediaEncoding mediaEncoding = null;
-	//
-	// while (isEndOfPlaylist == false) {
-	// PlaylistMediaItem playlistMediaItem =
-	// PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist,
-	// offset, false);
-	// if (playlistMediaItem == null || playlistMediaItem.getId() == 0) {
-	// isEndOfPlaylist = true;
-	// continue;
-	// }
-	//
-	// MediaItem mediaItem = playlistMediaItem.getMediaItem();
-	// if (mediaEncoding == null) {
-	// mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
-	// }
-	//
-	// File mediaFile = getMediaFile(mediaItem, mediaEncoding);
-	// if (mediaFile != null) {
-	// mediaItems.add(mediaItem);
-	// }
-	//
-	// offset++;
-	// }
-	//
-	// long lastModified = playlist.getUpdatedOn().getTime();
-	//
-	//
-	//
-	//// StreamingMediaHandler.fromMediaItems(playlistManager, playlistTaskManager,
-	// mediaItems, lastModified).with(request).with(response).serveResource();
-	//
-	// }
 
 	protected List<PlaylistMediaItem> getPlaylistMediaItems(Playlist playlist) throws Exception {
 
-		// List<MediaItem> mediaItems = new ArrayList<MediaItem>();
 		List<PlaylistMediaItem> playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 
 		int offset = 0;
 		boolean isEndOfPlaylist = false;
 
-		// MediaEncoding mediaEncoding = null;
 
 		while (isEndOfPlaylist == false) {
 			PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist,
@@ -355,28 +203,9 @@ public class StreamingController {
 				continue;
 			}
 
-			// MediaItem mediaItem = playlistMediaItem.getMediaItem();
-
 			playlistMediaItems.add(playlistMediaItem);
-
-			//
-			// if (mediaEncoding == null) {
-			// mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
-			// }
-			//
-			// File mediaFile = getMediaFile(mediaItem, mediaEncoding);
-			// if (mediaFile != null) {
-			// mediaFiles.add(mediaFile);
-			//// mediaItems.add(mediaItem);
-			// }
-
 			offset++;
 		}
-
-		// long lastModified = playlist.getUpdatedOn().getTime();
-
-		// StreamingMediaHandler.fromMediaItems(playlistManager, playlistTaskManager,
-		// mediaItems, lastModified).with(request).with(response).serveResource();
 
 		return playlistMediaItems;
 	}
@@ -391,33 +220,6 @@ public class StreamingController {
 		return mediaFile;
 	}
 
-	// protected void prepareModelAndView(MediaItem mediaItem, MediaEncoding
-	// mediaEncoding, HttpServletRequest request,
-	// HttpServletResponse response) throws Exception {
-	//
-	// if (mediaEncoding == null) {
-	// return;
-	// }
-	//
-	// Library library = mediaItem.getLibrary();
-	//
-	// if (library.isRemote()) {
-	// Location location = library.getLocation();
-	// String path = location.getPath();
-	// path = LibraryHelper.getRemoteStreamingPath(path);
-	// long remoteMediaItemId = NumberUtils.toLong(mediaItem.getPath());
-	//
-	// if (StringUtils.isNotBlank(path) && remoteMediaItemId > 0) {
-	// response.encodeRedirectURL(path + "/" + remoteMediaItemId);
-	// return;
-	// }
-	// }
-	//
-	// File mediaFile = getMediaFile(mediaItem, mediaEncoding);
-	// long lastModified = mediaFile.lastModified();
-	//
-	// StreamingMediaHandler.fromMediaItem(playlistManager, playlistTaskManager,
-	// mediaItem, lastModified).with(request).with(response).serveResource();
-	// }
+
 
 }

@@ -1,9 +1,10 @@
 package org.mashupmedia.controller.streaming;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.SequenceInputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,10 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.mashupmedia.io.MediaItemSequenceInputStream;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.service.PlaylistManager;
-import org.mashupmedia.task.PlaylistTaskManager;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.DateHelper.DateFormatType;
 import org.mashupmedia.util.FileHelper;
@@ -56,31 +54,20 @@ public class StreamingMediaHandler {
 	private static final String BYTES_RANGE_FORMAT = "bytes %d-%d/%d";
 	private static final String CONTENT_DISPOSITION_FORMAT = "%s;filename=\"%s\"";
 	private static final String BYTES_INVALID_BYTE_RANGE_FORMAT = "bytes */%d";
-	private static final int DEFAULT_BUFFER_SIZE = 10240; // ..bytes = 32KB.
-	private static final int DEFAULT_BUFFER_LOG_SIZE = 500000 ; 
-	
-	public static MultiPartFileSenderImpl fromMediaItem(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, MediaItem mediaItem, long lastModified) {
-		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
-		mediaItems.add(mediaItem);
-		return new MultiPartFileSenderImpl().setMediaItems(playlistManager, playlistTaskManager, mediaItems, lastModified);
-	}
+	private static final int DEFAULT_BUFFER_SIZE = 20480;
 
-	public static MultiPartFileSenderImpl fromMediaItems(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, List<MediaItem> mediaItems, long lastModified) {
-		return new MultiPartFileSenderImpl().setMediaItems(playlistManager, playlistTaskManager, mediaItems, lastModified);
+	public static MultiPartFileSenderImpl fromMediaItem(MediaItem mediaItem, long lastModified) {
+		return new MultiPartFileSenderImpl().setMediaItem(mediaItem);
 	}
 
 	public static class MultiPartFileSenderImpl {
 		MediaContentType mediaContentType;
-		MediaItemSequenceInputStream mediaItemSequenceInputStream;
-
+		File file;
 		long length;
 		long lastModified;
 		HttpServletRequest request;
 		HttpServletResponse response;
 		String disposition = CONTENT_DISPOSITION_INLINE;
-		boolean isPlaylist = false;
-		PlaylistManager playlistManager;
-		PlaylistTaskManager playlistTaskManager;
 
 		public MultiPartFileSenderImpl with(HttpServletRequest httpRequest) {
 			request = httpRequest;
@@ -108,31 +95,17 @@ public class StreamingMediaHandler {
 		}
 
 		// ** internal setter **//
-		private MultiPartFileSenderImpl setMediaItems(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, List<MediaItem> mediaItems, long lastModified) {
-			this.playlistManager = playlistManager;
-			this.playlistTaskManager = playlistTaskManager;
-			this.mediaItemSequenceInputStream = new MediaItemSequenceInputStream(mediaItems);
-			this.mediaContentType = getMediaContentType(mediaItems);
-			this.lastModified = lastModified;
-			this.length = mediaItemSequenceInputStream.getLength();
+		private MultiPartFileSenderImpl setMediaItem(MediaItem mediaItem) {
 
-			if (mediaItems.size() > 1) {
-				this.isPlaylist = true;
-			}
-
-			return this;
-		}
-
-		private MediaContentType getMediaContentType(List<MediaItem> mediaItems) {
-			if (mediaItems == null || mediaItems.isEmpty()) {
-				return null;
-			}
-
-			Path path = FileHelper.getPath(mediaItems.get(0));
+			Path path = FileHelper.getPath(mediaItem);
+			this.file = path.toFile();
+			this.length = this.file.length();
 			String fileName = path.getFileName().toString();
 			String fileExtension = FileHelper.getFileExtension(fileName);
 			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
-			return mediaContentType;
+			this.mediaContentType = mediaContentType;
+			this.lastModified = mediaItem.getUpdatedOn().getTime();
+			return this;
 		}
 
 		private void forceDisposition(String disposition) {
@@ -145,10 +118,17 @@ public class StreamingMediaHandler {
 			}
 
 			// MediaItemSequenceInputStream pathSequenceInputStream = null;
-			List<InputStream> inputStreams = null;
+			// List<InputStream> inputStreams = null;
+
+			if (!this.file.isFile()) {
+				return;
+			}
+
+			FileInputStream fileInputStream = new FileInputStream(this.file);
 			try {
 
-				String fileName = "Mashup Media stream generated: " + DateHelper.parseToText(new Date(), DateFormatType.SHORT_DISPLAY_WITH_TIME);
+				String fileName = "Mashup Media stream generated: "
+						+ DateHelper.parseToText(new Date(), DateFormatType.SHORT_DISPLAY_WITH_TIME);
 
 				if (mediaContentType == null) {
 					return;
@@ -175,7 +155,8 @@ public class StreamingMediaHandler {
 				// specified.
 				long ifModifiedSince = request.getDateHeader(IF_MODIFIED_SINCE);
 				if (Objects.isNull(ifNoneMatch) && ifModifiedSince != -1 && ifModifiedSince + 1000 > lastModified) {
-					logger.error("If-Modified-Since header should be greater than LastModified. If so, then return 304.");
+					logger.error(
+							"If-Modified-Since header should be greater than LastModified. If so, then return 304.");
 					response.setHeader(ETAG, fileName); // Required in 304.
 					response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
 					return;
@@ -199,7 +180,8 @@ public class StreamingMediaHandler {
 				// If not, then return 412.
 				long ifUnmodifiedSince = request.getDateHeader(IF_UNMODIFIED_SINCE);
 				if (ifUnmodifiedSince != -1 && ifUnmodifiedSince + 1000 <= lastModified) {
-					logger.error("If-Unmodified-Since header should be greater than LastModified. If not, then return 412.");
+					logger.error(
+							"If-Unmodified-Since header should be greater than LastModified. If not, then return 412.");
 					response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
 					return;
 				}
@@ -221,7 +203,8 @@ public class StreamingMediaHandler {
 					// If
 					// not, then return 416.
 					if (!range.matches("^bytes=\\d*-\\d*(,\\d*-\\d*)*$")) {
-						logger.error("Range header should match format \"bytes=n-n,n-n,n-n...\". If not, then return 416.");
+						logger.error(
+								"Range header should match format \"bytes=n-n,n-n,n-n...\". If not, then return 416.");
 						range = "";
 
 						response.setHeader(CONTENT_RANGE, String.format(BYTES_INVALID_BYTE_RANGE_FORMAT, length)); // Required
@@ -272,9 +255,10 @@ public class StreamingMediaHandler {
 							// return 416.
 							if (start > end) {
 								logger.info("Check if Range is syntactically valid. If not, then return 416.");
-								response.setHeader(CONTENT_RANGE, String.format(BYTES_INVALID_BYTE_RANGE_FORMAT, length)); // Required
-																															// in
-																															// 416.
+								response.setHeader(CONTENT_RANGE,
+										String.format(BYTES_INVALID_BYTE_RANGE_FORMAT, length)); // Required
+																									// in
+																									// 416.
 								response.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
 								return;
 							}
@@ -289,12 +273,12 @@ public class StreamingMediaHandler {
 				// Initialize response.
 				response.reset();
 				OutputStream output = response.getOutputStream();
-				
+
 				response.setBufferSize(DEFAULT_BUFFER_SIZE);
 				response.setHeader(ACCEPT_RANGES, BYTES);
 				response.setHeader(CONTENT_TYPE, contentType);
 				response.setHeader(ETAG, fileName);
-				
+
 				long timeInAMonth = DateHelper.getTimeInAMonth();
 				response.setDateHeader(EXPIRES, timeInAMonth);
 				response.setDateHeader(LAST_MODIFIED, lastModified);
@@ -304,10 +288,12 @@ public class StreamingMediaHandler {
 						contentType = APPLICATION_OCTET_STREAM;
 					} else if (!contentType.startsWith(IMAGE)) {
 						String accept = request.getHeader(ACCEPT);
-						disposition = accept != null && accepts(accept, contentType) ? CONTENT_DISPOSITION_INLINE : CONTENT_DISPOSITION_ATTACHMENT;
+						disposition = accept != null && accepts(accept, contentType) ? CONTENT_DISPOSITION_INLINE
+								: CONTENT_DISPOSITION_ATTACHMENT;
 					}
 
-					response.setHeader(CONTENT_DISPOSITION, String.format(CONTENT_DISPOSITION_FORMAT, disposition, fileName));
+					response.setHeader(CONTENT_DISPOSITION,
+							String.format(CONTENT_DISPOSITION_FORMAT, disposition, fileName));
 					logger.debug("Content-Disposition : " + disposition);
 				}
 
@@ -328,25 +314,19 @@ public class StreamingMediaHandler {
 				// sequenceInputStream = new
 				// SequenceInputStream(Collections.enumeration(inputStreams));
 
-				
-
 				if (ranges.isEmpty() || ranges.get(0) == full) {
 
 					// Return full file.
 					logger.info("Return full file");
 					setContent(response, contentType, full);
-					Range.copy(playlistManager, playlistTaskManager, mediaItemSequenceInputStream, output, length, full.start, full.length);
+					Range.copy(fileInputStream, output, length, full.start, full.length);
 
 				} else if (ranges.size() == 1) {
 					Range r = ranges.get(0);
-					if (isPlaylist) {
-						r = full;
-					} else {
-						logger.info("Return 1 part of file : from (" + r.start + ") to (" + r.end + ")");
-					}
+					logger.info("Return 1 part of file : from (" + r.start + ") to (" + r.end + ")");
 
 					setContent(response, contentType, r);
-					Range.copy(playlistManager, playlistTaskManager,mediaItemSequenceInputStream, output, length, r.start, r.length);
+					Range.copy(fileInputStream, output, length, r.start, r.length);
 
 				}
 
@@ -354,18 +334,10 @@ public class StreamingMediaHandler {
 
 			finally {
 
-				if (inputStreams != null && !inputStreams.isEmpty()) {
-					for (InputStream inputStream : inputStreams) {
-						IOUtils.closeQuietly(inputStream);
-					}
+				if (fileInputStream != null) {
+					IOUtils.closeQuietly(fileInputStream);
 				}
 
-				if (mediaItemSequenceInputStream != null) {
-					SequenceInputStream sequenceInputStream = mediaItemSequenceInputStream.getSequenceInputStream();
-					if (sequenceInputStream != null) {
-						IOUtils.closeQuietly(sequenceInputStream);
-					}
-				}
 			}
 
 			/*
@@ -374,23 +346,20 @@ public class StreamingMediaHandler {
 			 * 
 			 * // Return multiple parts of file.
 			 * response.setContentType(CONTENT_TYPE_MULTITYPE_WITH_BOUNDARY);
-			 * response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); //
-			 * 206.
+			 * response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
 			 * 
-			 * // Cast back to ServletOutputStream to get the easy println //
-			 * methods. ServletOutputStream sos = (ServletOutputStream) output;
+			 * // Cast back to ServletOutputStream to get the easy println // methods.
+			 * ServletOutputStream sos = (ServletOutputStream) output;
 			 * 
 			 * // Copy multi part range. for (Range r : ranges) {
-			 * logger.info("Return multi part of file : from (" + r.start +
-			 * ") to (" + r.end + ")"); // Add multipart boundary and header
-			 * fields for every // range. sos.println(); sos.println("--" +
-			 * MULTIPART_BOUNDARY); sos.println(CONTENT_TYPE + ": " +
-			 * contentType); sos.println(CONTENT_RANGE + ": " +
-			 * String.format(BYTES_RANGE_FORMAT, r.start, r.end, r.total));
+			 * logger.info("Return multi part of file : from (" + r.start + ") to (" + r.end
+			 * + ")"); // Add multipart boundary and header fields for every // range.
+			 * sos.println(); sos.println("--" + MULTIPART_BOUNDARY);
+			 * sos.println(CONTENT_TYPE + ": " + contentType); sos.println(CONTENT_RANGE +
+			 * ": " + String.format(BYTES_RANGE_FORMAT, r.start, r.end, r.total));
 			 * 
 			 * // Copy single part range of multi part range.
-			 * Range.copy(sequenceInputStream, output, length, r.start,
-			 * r.length); }
+			 * Range.copy(sequenceInputStream, output, length, r.start, r.length); }
 			 * 
 			 * // End with multipart boundary. sos.println(); sos.println("--" +
 			 * MULTIPART_BOUNDARY + "--"); }
@@ -400,10 +369,10 @@ public class StreamingMediaHandler {
 
 		protected void setContent(HttpServletResponse response, String contentType, Range range) {
 			response.setContentType(contentType);
-//			if (isPlaylist) {
-//				 response.setHeader("Transfer-Encoding", "chunked");
-//				return;
-//			}
+			// if (isPlaylist) {
+			// response.setHeader("Transfer-Encoding", "chunked");
+			// return;
+			// }
 
 			response.setHeader(CONTENT_RANGE, String.format(BYTES_RANGE_FORMAT, range.start, range.end, range.total));
 			// response.setHeader(CONTENT_LENGTH, String.valueOf(range.length));
@@ -510,14 +479,10 @@ public class StreamingMediaHandler {
 			return (substring.length() > 0) ? Long.parseLong(substring) : -1;
 		}
 
-		private static void copy(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, MediaItemSequenceInputStream pathSequenceInputStream, OutputStream outputStream,
-				long totalLength, long start, long length) throws IOException {
+		private static void copy(InputStream inputStream, OutputStream outputStream, long totalLength, long start,
+				long length) throws IOException {
 			byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 			int read;
-			long totalRead = 0;
-			long lastReadLogged = 0;
-
-			SequenceInputStream inputStream = pathSequenceInputStream.getSequenceInputStream();
 
 			if (totalLength == length) {
 				// Write full range.
@@ -525,8 +490,6 @@ public class StreamingMediaHandler {
 					outputStream.write(buffer, 0, read);
 					outputStream.flush();
 
-					totalRead += read;
-					lastReadLogged = logFile(playlistManager, playlistTaskManager,pathSequenceInputStream, totalRead, lastReadLogged);
 				}
 			} else {
 				inputStream.skip(start);
@@ -545,9 +508,6 @@ public class StreamingMediaHandler {
 
 					outputStream.flush();
 
-					totalRead += read;
-					lastReadLogged = logFile(playlistManager, playlistTaskManager, pathSequenceInputStream, totalRead, lastReadLogged);
-
 					if (isAtEndOfStream) {
 						break;
 					}
@@ -557,32 +517,14 @@ public class StreamingMediaHandler {
 
 		}
 
-		private static long logFile(PlaylistManager playlistManager, PlaylistTaskManager playlistTaskManager, MediaItemSequenceInputStream pathSequenceInputStream, long totalRead, long lastLoggedRead)
-				throws IOException {
-			
-			
-
-			if (!pathSequenceInputStream.isPlaylist()) {
-				return lastLoggedRead;
-			}
-			
-			
-			if (totalRead - lastLoggedRead < DEFAULT_BUFFER_LOG_SIZE) {
-				return lastLoggedRead;
-			}
-									
-			MediaItem mediaItem = pathSequenceInputStream.getMediaItem(totalRead);
-			playlistTaskManager.updateNowPlaying(mediaItem);
-			return totalRead;
-		}
-
 	}
 
 	private static boolean accepts(String acceptHeader, String toAccept) {
 		String[] acceptValues = acceptHeader.split("\\s*(,|;)\\s*");
 		Arrays.sort(acceptValues);
 
-		return Arrays.binarySearch(acceptValues, toAccept) > -1 || Arrays.binarySearch(acceptValues, toAccept.replaceAll("/.*$", "/*")) > -1
+		return Arrays.binarySearch(acceptValues, toAccept) > -1
+				|| Arrays.binarySearch(acceptValues, toAccept.replaceAll("/.*$", "/*")) > -1
 				|| Arrays.binarySearch(acceptValues, "*/*") > -1;
 	}
 

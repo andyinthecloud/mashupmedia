@@ -137,7 +137,7 @@ public class WebHelper {
 	public static void writeFileToResponse(File file, HttpServletResponse response) throws IOException {
 		FileInputStream fileInputStream = new FileInputStream(file);		
 		OutputStream outputStream = response.getOutputStream();	
-		IOUtils.copyLarge(fileInputStream, outputStream);
+		IOUtils.copy(fileInputStream, outputStream);
 		IOUtils.closeQuietly(fileInputStream);		
 	}
 
