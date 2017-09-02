@@ -23,6 +23,7 @@ import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.AdminHelper;
@@ -53,6 +54,10 @@ public class StreamingController {
 
 	@Autowired
 	private PlaylistManager playlistManager;
+	
+	@Autowired
+	private AdminManager adminManager;
+	
 
 	@RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = { RequestMethod.GET })
 	public void getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
@@ -154,7 +159,8 @@ public class StreamingController {
 		setResponse(response, mediaContentType, playlist.getName(), null);
 
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
+			user.setPlaylistMediaItem(playlistMediaItem);
+			adminManager.updateUser(user);
 			MediaItem mediaItem = playlistMediaItem.getMediaItem();
 			MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 			File mediaFile = getMediaFile(mediaItem, mediaEncoding);
