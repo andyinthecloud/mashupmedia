@@ -136,6 +136,7 @@ public class StreamingController {
 			response.setContentLength(contentLength.intValue());
 		}
 		response.setContentType(mediaContentType.getMimeContentType());
+		response.setHeader("Keep-Alive", "timeout=60 max=100");		
 		response.setHeader("Content-Disposition", title);
 
 	}
@@ -164,6 +165,9 @@ public class StreamingController {
 			MediaItem mediaItem = playlistMediaItem.getMediaItem();
 			MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 			File mediaFile = getMediaFile(mediaItem, mediaEncoding);
+			
+//			Files.write(new Path('/path/to/file'), byteArray, StandardOpenOption.APPEND);
+			
 			WebHelper.writeFileToResponse(mediaFile, response);
 		}
 
