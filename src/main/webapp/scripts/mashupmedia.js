@@ -383,6 +383,7 @@ function setupAudio() {
             break;
         }
         
+        mashupMedia.audioAction("pause");
         mashupMedia.audio.currentTime = secondsPlayed;
         
       }, true);    
@@ -399,87 +400,6 @@ function setupAudio() {
     
 }
 
-/*
-function setupJPlayer() {
-    var jPlayerVersion = "2.9.2";
-    var secondsPlayed = 0;
-    var ready = false;
-    
-    var preloadOption = "none";
-    if (isDesktopMode()) {
-        preloadOption = "auto";
-    }
-    
-    var options = {
-        ready: function(event) {
-            ready = true;
-            mashupMedia.playCurrentSong();            
-        },
-        ended:  function(event) {
-            mashupMedia.playNextSong();                                  
-        },
-        timeupdate: function(event) {
-            if (isDesktopMode()) {
-                return true;
-            }
-            var s = Math.round(event.jPlayer.status.currentTime);
-            
-            if (s % 10 == 0 && s != secondsPlayed) {
-            	secondsPlayed = s;
-                $.ajax({
-                    url: mashupMedia.contextUrl + "/app/restful/playlist/music/playing",
-                    type: "get",
-                    async: true
-                })
-                .done(function(song) {
-                    if (mashupMedia.songId != song.id) {
-                        mashupMedia.displaySong(song);
-                    }
-                })
-                .fail(function(event) {
-                    console.log(event);
-                });                
-            }
-            
-        },
-        preload: preloadOption,
-        swfPath: mashupMedia.contextUrl + "/jquery-plugins/jquery.jplayer/" + jPlayerVersion + "/jplayer",
-        supplied: "mp3",
-        cssSelectorAncestor: "#music-player",
-        cssSelector: {
-            title: ".information span.title",
-            play: ".controls a.play",
-            pause: ".controls a.pause",
-            seekBar: "div.progress",
-            playBar: "div.play-bar"
-        },
-        volume: 1,
-        //errorAlerts: false
-        
-        error: function(event) {
-            var errorType = event.jPlayer.error.type;
-            $(mashupMedia.jPlayerId).jPlayer("pause");
-            console.log(event);
-            
-            if (ready && errorType == $.jPlayer.error.URL) {
-                //ready = false;
-                //mashupMedia.playCurrentSong();
-            	if (mashupMedia.isMusicPlaying()) {
-            		$(mashupMedia.jPlayerId).jPlayer("play", secondsPlayed);
-            	}
-            } else if (errorType == $.jPlayer.error.NO_SUPPORT) {                
-                $.post(mashupMedia.contextUrl + "/app/restful/encode/playlist", { mediaItemId: mashupMedia.songId })
-                    .done(function( data ) {
-                        mashupMedia.showMessage(data);
-                });                                   
-            }
-        }
-        
-    };    
-                    
-    $(mashupMedia.jPlayerId).jPlayer(options);
-}
-*/
 
 function isDesktopMode() {
     var isDesktop = $("#music-player div.progress").is(":visible");
