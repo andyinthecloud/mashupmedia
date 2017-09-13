@@ -103,14 +103,13 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		queryBuilder.append(" order by p.takenOn desc");
 
 		Query<Photo> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Photo.class);
-		query.setCacheable(false);
+		query.setCacheable(true);
 
 		int firstResult = pageNumber * totalItems;
 		query.setMaxResults(totalItems);
 		query.setFirstResult(firstResult);
 
 		List<Photo> photos = query.list();
-
 		return photos;
 	}
 
