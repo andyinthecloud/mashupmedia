@@ -2,6 +2,7 @@ package org.mashupmedia.controller.streaming;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -129,13 +130,14 @@ public class StreamingController {
 	}
 
 	private void setResponse(HttpServletResponse response, MediaContentType mediaContentType, String title,
-			Long contentLength) {
+			Long contentLength) throws IOException {
 		if (contentLength != null) {
 			response.setContentLength(contentLength.intValue());
 		}
 		response.setContentType(mediaContentType.getMimeContentType());
 		response.setHeader("Keep-Alive", "timeout=60 max=100");
 		response.setHeader("Content-Disposition", title);
+		response.flushBuffer();
 
 	}
 
@@ -168,7 +170,6 @@ public class StreamingController {
 				FileInputStream fileInputStream = new FileInputStream(mediaFile);
 				fileInputStreams.add(fileInputStream);
 				IOUtils.copy(fileInputStream, response.getOutputStream());
-
 				// WebHelper.writeFileToResponse(mediaFile, response);
 			}
 		} finally {
