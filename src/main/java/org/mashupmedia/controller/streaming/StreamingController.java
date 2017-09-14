@@ -1,6 +1,7 @@
 package org.mashupmedia.controller.streaming;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +12,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.model.User;
@@ -54,10 +56,9 @@ public class StreamingController {
 
 	@Autowired
 	private PlaylistManager playlistManager;
-	
+
 	@Autowired
 	private AdminManager adminManager;
-	
 
 	@RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = { RequestMethod.GET })
 	public void getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
@@ -77,15 +78,13 @@ public class StreamingController {
 				return;
 			}
 		}
-		
-		
+
 		MediaType mediaType = mediaItem.getMediaType();
 		if (mediaType == MediaType.PHOTO) {
 			Photo photo = (Photo) mediaItem;
 			writeImageStream(photo, mediaContentTypeValue, request, response);
 			return;
 		}
-
 
 		MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 		File mediaFile = getMediaFile(mediaItem, mediaEncoding);
@@ -98,7 +97,6 @@ public class StreamingController {
 		WebHelper.writeFileToResponse(mediaFile, response);
 	}
 
-	
 	protected void writeImageStream(Photo photo, String imageTypeValue, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
@@ -116,11 +114,11 @@ public class StreamingController {
 		filePath = StringUtils.trimToEmpty(filePath);
 
 		File mediaFile = new File(filePath);
-		
+
 		String format = photo.getFormat();
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
 		response.setContentType(mediaContentType.getMimeContentType());
-		
+
 		if (mediaFile.exists()) {
 			WebHelper.writeFileToResponse(mediaFile, response);
 			return;
@@ -129,14 +127,14 @@ public class StreamingController {
 		response.setContentType(MediaContentType.PNG.getMimeContentType());
 		WebHelper.writeResourceToResponse(defaultImagePath, request, response);
 	}
-	
+
 	private void setResponse(HttpServletResponse response, MediaContentType mediaContentType, String title,
 			Long contentLength) {
 		if (contentLength != null) {
 			response.setContentLength(contentLength.intValue());
 		}
 		response.setContentType(mediaContentType.getMimeContentType());
-		response.setHeader("Keep-Alive", "timeout=60 max=100");		
+		response.setHeader("Keep-Alive", "timeout=60 max=100");
 		response.setHeader("Content-Disposition", title);
 
 	}
@@ -159,16 +157,27 @@ public class StreamingController {
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
 		setResponse(response, mediaContentType, playlist.getName(), null);
 
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			user.setPlaylistMediaItem(playlistMediaItem);
-			adminManager.updateUser(user);
-			MediaItem mediaItem = playlistMediaItem.getMediaItem();
-			MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
-			File mediaFile = getMediaFile(mediaItem, mediaEncoding);
-			
-//			Files.write(new Path('/path/to/file'), byteArray, StandardOpenOption.APPEND);
-			
-			WebHelper.writeFileToResponse(mediaFile, response);
+		List<FileInputStream> fileInputStreams = new ArrayList<FileInputStream>();
+		try {
+			for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+				user.setPlaylistMediaItem(playlistMediaItem);
+				adminManager.updateUser(user);
+				MediaItem mediaItem = playlistMediaItem.getMediaItem();
+				MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
+				File mediaFile = getMediaFile(mediaItem, mediaEncoding);
+				FileInputStream fileInputStream = new FileInputStream(mediaFile);
+				fileInputStreams.add(fileInputStream);
+				IOUtils.copy(fileInputStream, response.getOutputStream());
+
+				// WebHelper.writeFileToResponse(mediaFile, response);
+			}
+		} finally {
+			if (fileInputStreams == null || fileInputStreams.isEmpty()) {
+				return;
+			}
+			for (FileInputStream fileInputStream : fileInputStreams) {
+				IOUtils.closeQuietly(fileInputStream);
+			}
 		}
 
 	}
@@ -196,14 +205,12 @@ public class StreamingController {
 		return mediaItem.getBestMediaEncoding();
 	}
 
-
 	protected List<PlaylistMediaItem> getPlaylistMediaItems(Playlist playlist) throws Exception {
 
 		List<PlaylistMediaItem> playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 
 		int offset = 0;
 		boolean isEndOfPlaylist = false;
-
 
 		while (isEndOfPlaylist == false) {
 			PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist,
@@ -229,7 +236,5 @@ public class StreamingController {
 
 		return mediaFile;
 	}
-
-
 
 }
