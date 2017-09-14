@@ -170,6 +170,7 @@ public class StreamingController {
 				FileInputStream fileInputStream = new FileInputStream(mediaFile);
 				fileInputStreams.add(fileInputStream);
 				IOUtils.copy(fileInputStream, response.getOutputStream());
+				response.flushBuffer();
 				// WebHelper.writeFileToResponse(mediaFile, response);
 			}
 		} finally {
