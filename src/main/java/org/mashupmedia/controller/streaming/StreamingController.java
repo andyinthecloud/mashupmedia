@@ -131,7 +131,7 @@ public class StreamingController {
 
 	private void setResponse(HttpServletResponse response, MediaContentType mediaContentType, String title,
 			Long contentLength) throws IOException {
-		if (contentLength != null) {
+		if (contentLength != null && contentLength > 0) {
 			response.setContentLength(contentLength.intValue());
 		}
 		response.setContentType(mediaContentType.getMimeContentType());
@@ -157,7 +157,9 @@ public class StreamingController {
 		MediaItem firstMediaItem = PlaylistHelper.getFirstPlayListMediaItem(playlist).getMediaItem();
 		String format = firstMediaItem.getFormat();
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
-		setResponse(response, mediaContentType, playlist.getName(), null);
+
+		long contentLength = getContentLength(playlistMediaItems, mediaContentTypeValue);
+		setResponse(response, mediaContentType, playlist.getName(), contentLength);
 
 		List<FileInputStream> fileInputStreams = new ArrayList<FileInputStream>();
 		try {
@@ -182,6 +184,23 @@ public class StreamingController {
 			}
 		}
 
+	}
+
+	private long getContentLength(List<PlaylistMediaItem> playlistMediaItems, String mediaContentTypeValue) {
+		long contentLength = 0;
+
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return contentLength;
+		}
+
+		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+			MediaItem mediaItem = playlistMediaItem.getMediaItem();
+			MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
+			File mediaFile = getMediaFile(mediaItem, mediaEncoding);
+			contentLength += mediaFile.length();
+		}
+
+		return contentLength;
 	}
 
 	protected MediaEncoding getMediaEncoding(MediaItem mediaItem, String mediaContentTypeValue) {
