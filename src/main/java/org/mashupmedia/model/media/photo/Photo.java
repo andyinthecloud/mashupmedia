@@ -11,8 +11,12 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DateBridge;
+import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Resolution;
 import org.mashupmedia.model.media.MediaItem;
 
 @Entity
@@ -30,6 +34,8 @@ public class Photo extends MediaItem {
 	private String webOptimisedImagePath;
 	private int orientation;
 	@Temporal(TemporalType.TIMESTAMP)
+	@Field(analyze = Analyze.NO)
+	@DateBridge(resolution = Resolution.MILLISECOND)
 	private Date takenOn;
 
 	@Transient

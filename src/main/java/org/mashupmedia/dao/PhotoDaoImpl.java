@@ -1,13 +1,19 @@
 package org.mashupmedia.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.apache.commons.collections.list.SetUniqueList;
 import org.hibernate.query.Query;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
@@ -97,8 +103,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public List<Photo> getLatestPhotos(List<Long> groupIds, int pageNumber, int totalItems) {
-
-		StringBuilder queryBuilder = new StringBuilder("select distinct p from Photo p join p.library.groups g");
+		
+		StringBuilder queryBuilder = new StringBuilder("select distinct p from Photo p inner join p.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by p.takenOn desc");
 
@@ -115,6 +121,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public List<Album> getAlbums(List<Long> groupIds, MediaItemSequenceType mediaItemSequenceType) {
+		
 		StringBuilder queryBuilder = new StringBuilder("select a from Photo p join p.album a");
 		queryBuilder.append(" join p.library.groups g");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
