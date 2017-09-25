@@ -106,7 +106,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		
 //		StringBuilder queryBuilder = new StringBuilder("select distinct p from Photo p inner join p.library.groups g");
 
-		StringBuilder queryBuilder = new StringBuilder("select distinct p.id from Photo p inner join p.library.groups g");
+		StringBuilder queryBuilder = new StringBuilder("select distinct p.id, p.takenOn from Photo p inner join p.library.groups g");
 		
 		/*
 		 * select city
@@ -119,17 +119,27 @@ order by upper(trim(city.name))
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by p.takenOn desc");
 
-		Query<Long> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Long.class);
+		Query<Object[]> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Object[].class);
 		query.setCacheable(true);
 
 		int firstResult = pageNumber * totalItems;
 		query.setMaxResults(totalItems);
 		query.setFirstResult(firstResult);
 
-		List<Long> photoIds = query.list();
+		List<Object[]> photoIds = query.list();
+		
+		StringBuilder photoIdsBuilder = new StringBuilder();
+		for (Object[] objects : photoIds) {
+			if (photoIdsBuilder.length() > 0) {
+				photoIdsBuilder.append(", ");
+			}
+				
+			photoIdsBuilder.append(objects[0]);
+			
+		}
 		
 		StringBuilder photoQueryBuilder = new StringBuilder("from Photo p where p.id in (");
-		photoQueryBuilder.append(DaoHelper.convertToHqlParameters(photoIds));
+		photoQueryBuilder.append(photoIdsBuilder);
 		photoQueryBuilder.append(")");
 		
 		Query<Photo> photoQuery = sessionFactory.getCurrentSession().createQuery(photoQueryBuilder.toString(), Photo.class);
