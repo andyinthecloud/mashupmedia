@@ -13,7 +13,6 @@
             }
             
             showFooterTabs("photo-photos");
-
         });
     </script>
 
@@ -36,12 +35,27 @@
 			<ul class="photos">
 		</c:if>
 		<c:forEach items="${photos}" var="photo">
-			<li class="photo"><a rel="internal"
-				title="${photo.displayTitle}"
-				href="<c:url value="/app/photo/show/${photo.id}?sequenceType=${sequence}" />">
-					<img alt="${photo.displayTitle}" title="${photo.displayTitle}"
-					src="<c:url value="/app/streaming/media/${photo.id}/thumbnail" />" />
-			</a></li>
+		
+<li>
+	<h2 class="text">${photo.displayTitle}</h2>
+
+	<img alt="${photo.displayTitle}" title="${photo.displayTitle}"
+		src="<c:url value="/app/streaming/media/${photo.id}/web_optimised" />" />
+
+	<ul class="photo-meta text">
+		<li><a rel="external"
+			href="<c:url value="/app/streaming/media/${photo.id}/original" />"
+			target="_blank"><spring:message code="photo.original" /></a></li>
+	</ul>
+
+</li>
+		
+		
+		
+		
+			
+			
+			
 		</c:forEach>
 		<c:if test="${!isAppend}">
 			</ul>

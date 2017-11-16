@@ -71,13 +71,7 @@
 		width: 100px;
 		height: auto;
 	}
-	ul.photos li{
-		width: 200px;
-		height: 200px;				
-	}		
-	ul.photos li img {
-		clip: rect(0px, 200px, 200px, 0px);
-		width: 200px;
-	}
+	
+
 	
 }

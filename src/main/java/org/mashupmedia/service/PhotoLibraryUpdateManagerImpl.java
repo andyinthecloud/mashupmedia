@@ -324,8 +324,8 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	protected int getOrientatonFromMeta(Metadata metadata) throws MetadataException {
 		int orientation = 0;
-		ExifIFD0Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
-		if (directory != null) {
+		ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+		if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
 			orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
 		}
 
@@ -334,7 +334,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	}
 
 	protected Date getTakenOnDatefromMeta(File file, Metadata metadata) {
-		ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
+		ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
 		if (exifIFD0Directory != null) {
 			Date date = exifIFD0Directory.getDate(ExifIFD0Directory.TAG_DATETIME);
 			if (date != null) {
@@ -342,7 +342,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			}
 		}
 
-		ExifSubIFDDirectory subDir = metadata.getDirectory(ExifSubIFDDirectory.class);
+		ExifSubIFDDirectory subDir = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 		if (subDir != null) {
 			Date date = subDir.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
 			if (date != null) {
