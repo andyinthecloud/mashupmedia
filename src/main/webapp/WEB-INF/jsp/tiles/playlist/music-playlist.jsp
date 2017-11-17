@@ -52,7 +52,7 @@
             savePlaylist();
         });
 
-        $("#playlist ul.items li a.play").click(function() {
+        $("#playlist ul.items li .play").click(function() {
             $("#playlist ul.items li").removeClass("playing");
 
             var songRow = $(this).closest("li");
@@ -207,11 +207,11 @@
 
 			<li id="media-item-id-<c:out value="${song.id}"/>"
 				class="<c:out value="${playingClass}"/>"><a href="javascript:;"
-				class="play"> <img
+				class="play"><img
 					src="<c:url value="${themePath}/images/controls/play.png"/>" />
 			</a>
 
-				<div class="item">
+				<div class="item play">
 					<div class="title">${song.displayTitle}</div>
 					<div class="meta">${song.artist.name} - ${song.album.name}</div>
 				</div>

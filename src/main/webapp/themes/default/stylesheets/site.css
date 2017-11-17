@@ -658,6 +658,7 @@ ul.photos li {
 
 ul.photos img {
 	max-width: 800px;
+	width: 100%;
 	height: auto;
 	overflow: hidden;
 }
