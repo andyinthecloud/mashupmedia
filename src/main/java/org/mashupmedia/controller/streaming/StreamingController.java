@@ -166,9 +166,16 @@ public class StreamingController {
 
 		List<FileInputStream> fileInputStreams = new ArrayList<FileInputStream>();
 		try {
+			PlaylistMediaItem previousPlaylistMediaItem = null;
+			
 			for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+				
+				if (previousPlaylistMediaItem == null) {
+					previousPlaylistMediaItem = playlistMediaItem;
+				}				
 				user.setPlaylistMediaItem(playlistMediaItem);
 				adminManager.updateUser(user);
+				
 				MediaItem mediaItem = playlistMediaItem.getMediaItem();
 				MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 				File mediaFile = getMediaFile(mediaItem, mediaEncoding);
@@ -176,7 +183,7 @@ public class StreamingController {
 				fileInputStreams.add(fileInputStream);
 				IOUtils.copy(fileInputStream, response.getOutputStream());
 				response.flushBuffer();
-				// WebHelper.writeFileToResponse(mediaFile, response);
+				previousPlaylistMediaItem = playlistMediaItem;
 			}
 		} finally {
 			if (fileInputStreams == null || fileInputStreams.isEmpty()) {
@@ -191,7 +198,6 @@ public class StreamingController {
 				
 			}
 		}
-
 	}
 
 	private long getContentLength(List<PlaylistMediaItem> playlistMediaItems, String mediaContentTypeValue) {
