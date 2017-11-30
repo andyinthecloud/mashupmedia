@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.log4j.Logger;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
@@ -48,6 +49,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/streaming")
 public class StreamingController {
+	
+	private Logger logger = Logger.getLogger(getClass());
 
 	public static final MediaContentType[] ESSENTIAL_MUSIC_STREAMING_CONTENT_TYPES = new MediaContentType[] {
 			MediaContentType.MP3 };
@@ -158,8 +161,8 @@ public class StreamingController {
 		String format = firstMediaItem.getFormat();
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
 
-		long contentLength = getContentLength(playlistMediaItems, mediaContentTypeValue);
-		setResponse(response, mediaContentType, playlist.getName(), contentLength);
+//		long contentLength = getContentLength(playlistMediaItems, mediaContentTypeValue);
+		setResponse(response, mediaContentType, playlist.getName(), null);
 
 		List<FileInputStream> fileInputStreams = new ArrayList<FileInputStream>();
 		try {
@@ -180,7 +183,12 @@ public class StreamingController {
 				return;
 			}
 			for (FileInputStream fileInputStream : fileInputStreams) {
-				IOUtils.closeQuietly(fileInputStream);
+				try {
+				fileInputStream.close();
+				} catch (IOException e) {
+					logger.error("Unable to close fileinputstream", e);
+				}
+				
 			}
 		}
 
