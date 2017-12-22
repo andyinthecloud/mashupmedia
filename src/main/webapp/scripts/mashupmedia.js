@@ -460,7 +460,11 @@ function parseId(text, identifier) {
 }
 
 function endsWith(text, suffix) {
-	return text.indexOf(suffix, text.length - suffix.length) !== -1;
+    return text.indexOf(suffix, text.length - suffix.length) !== -1;
+}
+
+function contains(text, value) {
+    return text.indexOf(value) !== -1;
 }
 
 function getNumberFromText(text) {
@@ -591,9 +595,6 @@ function getTextFromField(textField) {
 	return text;
 }
 
-function endsWith(text, suffix) {
-    return text.indexOf(suffix, text.length - suffix.length) !== -1;
-}
 
 function isValidNumber(value) {
 	if (value.length == 0 || isNaN(value)) {

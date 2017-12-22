@@ -172,7 +172,7 @@ public class StreamingController {
 				
 				if (previousPlaylistMediaItem == null) {
 					previousPlaylistMediaItem = playlistMediaItem;
-				}				
+				}
 				user.setPlaylistMediaItem(previousPlaylistMediaItem);
 				adminManager.updateUser(user);
 				
