@@ -105,8 +105,9 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		Query<Photo> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Photo.class);
 		query.setCacheable(true);
 
-		int firstResult = pageNumber * totalItems;
-		query.setMaxResults(totalItems * getTotalGroups());
+		int totalGroups = getTotalGroups();
+		int firstResult = pageNumber * totalItems * totalGroups;
+		query.setMaxResults(totalItems * totalGroups);
 		query.setFirstResult(firstResult);
 
 		@SuppressWarnings("unchecked")

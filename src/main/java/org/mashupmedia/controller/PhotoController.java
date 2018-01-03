@@ -29,19 +29,7 @@ public class PhotoController extends BaseController {
 	private static String MODEL_KEY_PHOTOS = "photos";
 	private static String MODEL_KEY_ALBUM = "album";
 
-	public enum PhotoListType {
-		LATEST("photo-list-latest"), ALBUM("photo-list-album");
 
-		private PhotoListType(String className) {
-			this.className = className;
-		}
-
-		private String className;
-
-		public String getClassName() {
-			return className;
-		}
-	}
 
 	@Autowired
 	private PhotoManager photoManager;
@@ -111,8 +99,6 @@ public class PhotoController extends BaseController {
 		}
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, isAppendPrimitive);
-		model.addAttribute(PhotoListType.LATEST);
-
 		List<Photo> photos = photoManager.getLatestPhotos(pageNumber, MAXIMUM_PHOTOS);
 		model.addAttribute(MODEL_KEY_PHOTOS, photos);
 		String pagePath = getPath(isFragment, "photos.photos");
@@ -151,7 +137,6 @@ public class PhotoController extends BaseController {
 		Album album = photoManager.getAlbum(albumId);
 		List<Breadcrumb> breadcrumbs = getAlbumBreadcrumbs(album);
 		model.addAttribute(MODEL_KEY_BREADCRUMBS, breadcrumbs);
-		model.addAttribute(PhotoListType.ALBUM);
 		model.addAttribute(MODEL_KEY_ALBUM, album);
 
 		List<Photo> photos = album.getPhotos();
