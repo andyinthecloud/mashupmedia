@@ -72,7 +72,6 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	
 	private void deletePhoto(Photo photo) {
 		processManager.killProcesses(photo.getId());
-		FileHelper.deleteFile(photo.getThumbnailPath());
 		FileHelper.deleteFile(photo.getWebOptimisedImagePath());		
 	}
 	
@@ -237,10 +236,6 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			ImageRotationType imageRotationType = ImageHelper.getImageRotationType(orientation);
 
 			try {
-				String thumbnailPath = ImageHelper.generateAndSaveImage(library.getId(), path, ImageType.THUMBNAIL,
-						imageRotationType);
-				photo.setThumbnailPath(thumbnailPath);
-
 				String webOptimisedImagePath = ImageHelper.generateAndSaveImage(library.getId(), path,
 						ImageType.WEB_OPTIMISED, imageRotationType);
 				photo.setWebOptimisedImagePath(webOptimisedImagePath);

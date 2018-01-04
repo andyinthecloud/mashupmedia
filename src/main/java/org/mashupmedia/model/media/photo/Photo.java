@@ -30,7 +30,6 @@ public class Photo extends MediaItem {
 	@IndexedEmbedded
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
-	private String thumbnailPath;
 	private String webOptimisedImagePath;
 	private int orientation;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -82,14 +81,6 @@ public class Photo extends MediaItem {
 
 	public void setAlbum(Album album) {
 		this.album = album;
-	}
-
-	public String getThumbnailPath() {
-		return thumbnailPath;
-	}
-
-	public void setThumbnailPath(String thumbnailPath) {
-		this.thumbnailPath = thumbnailPath;
 	}
 
 	public String getWebOptimisedImagePath() {

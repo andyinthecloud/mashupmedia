@@ -108,10 +108,7 @@ public class StreamingController {
 
 		String filePath = photo.getPath();
 		String defaultImagePath = MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO;
-		if (imageType == ImageType.THUMBNAIL) {
-			filePath = photo.getThumbnailPath();
-			defaultImagePath = MediaItemImageView.IMAGE_PATH_DEFAULT_PHOTO_THUMBNAIL;
-		} else if (imageType == ImageType.WEB_OPTIMISED) {
+		if (imageType == ImageType.WEB_OPTIMISED) {
 			filePath = photo.getWebOptimisedImagePath();
 		}
 

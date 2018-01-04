@@ -19,6 +19,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
@@ -79,6 +80,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 				.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
 		boolean isProxyEnabled = BooleanUtils.toBoolean(proxyEnabledValue);
 
+		
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(link);
 
