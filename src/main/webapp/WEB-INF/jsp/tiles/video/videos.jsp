@@ -4,7 +4,7 @@
 
 	<c:choose>
 		<c:when test="${fn:length(videos) == 0}">
-			<spring:message code="list-videos.empty" />
+			<spring:message code="videos.empty" />
 		</c:when>
 
 		<c:otherwise>

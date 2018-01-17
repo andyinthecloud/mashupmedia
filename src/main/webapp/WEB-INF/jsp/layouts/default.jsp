@@ -118,7 +118,7 @@
             }, title, link);
 
         });
-        
+
         <c:if test="${isTransparentBackground}">
         $("#contextUrl").val("<c:url value="/" />");
         </c:if>
@@ -132,13 +132,13 @@
         });
 
         document.title = "${headPageTitle}";
-        
+
         $("#music-player").on("click", ".controls a.play", function() {
             togglePlayPause("play");
         });
 
         $("#music-player").on("click", ".controls a.pause", function() {
-            togglePlayPause("pause");            
+            togglePlayPause("pause");
         });
 
         $("#music-player").on("click", ".controls a.stop", function() {
@@ -152,9 +152,9 @@
         $("#music-player").on("click", ".controls a.next", function() {
             mashupMedia.playNextSong();
         });
-        
+
         mashupMedia.loadLastAccessedPlaylist();
-        
+
     });
 
     function togglePlayPause(action) {
@@ -163,7 +163,7 @@
 
         var text = null;
         var nextAction = "";
-                
+
         if (action == "play") {
             nextAction = "pause";
             imagePath = "<c:url value="${themePath}/images/media-player/pause.png"/>";
@@ -191,12 +191,12 @@
     // enter the highlighted class name, the media type is determined
     // from <mediaType>-<className>
     function showFooterTabs(highlight) {
-        
+
         if (highlight === undefined) {
             $("#footer").hide();
             return;
         }
-        
+
         var mediaType = highlight.replace(/-.*/g, "");
 
         if (mediaType === undefined) {
@@ -219,7 +219,7 @@
         }
 
         if (isShowFooter) {
-            
+
             $("#footer ul." + mediaType).show();
             $("#footer div.tabs").show();
             $("#footer").show();
@@ -277,12 +277,11 @@
 				<table>
 					<tr>
 						<td class="controls"><a class="previous" href="javascript:;">
-						
-						<img
-								title="<spring:message code="action.previous"/>"
+
+								<img title="<spring:message code="action.previous"/>"
 								alt="<spring:message code="action.previous"/>"
-								src="<c:url value="${themePath}/images/media-player/previous.png"/>" /></a>
-							<a class="play" href="javascript:;"><img
+								src="<c:url value="${themePath}/images/media-player/previous.png"/>" />
+						</a> <a class="play" href="javascript:;"><img
 								title="<spring:message code="action.play"/>"
 								alt="<spring:message code="action.play"/>"
 								src="<c:url value="${themePath}/images/media-player/play.png"/>" /></a>
@@ -381,7 +380,7 @@
 							alt="<spring:message code="footer.music.playlist"/>"
 							src="<c:url value="${themePath}/images/link-icons/playlist.png"/>" /></a></li>
 				</ul>
-				
+
 				<ul class="photo">
 					<li><a rel="internal"
 						href="<c:url value="/app/photo/photos" />" class="photo-photos"
@@ -397,8 +396,8 @@
 							alt="<spring:message code="footer.photo.albums"/>"
 							src="<c:url value="${themePath}/images/link-icons/photo-album.png"/>" /></a></li>
 
-				</ul>				
-				
+				</ul>
+
 			</div>
 
 
@@ -419,7 +418,9 @@
 					title="<spring:message code="music.title" />"
 					href="<c:url value="/app/music/random-albums" />"
 					data-media="music"><spring:message code="top-bar.music" /></a></li>
-				<li><a href="<c:url value="/app/videos" />"><spring:message
+				<li><a rel="internal"
+					title="<spring:message code="videos.title" />"
+					href="<c:url value="/app/video/videos" />" data-media="video"><spring:message
 							code="top-bar.videos" /></a></li>
 				<li><a title="<spring:message code="photos.title" />"
 					rel="internal" href="<c:url value="/app/photo/photos" />"

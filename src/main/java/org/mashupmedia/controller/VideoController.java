@@ -157,4 +157,15 @@ public class VideoController extends BaseController {
 		return "video";
 	}
 
+	@RequestMapping(value = "/videos", method = RequestMethod.GET)
+	public String handleGetVideoList(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
+			Model model) {
+		List<Video> videos = videoManager.getVideos();
+		model.addAttribute("videos", videos);
+
+		String pagePath = getPath(isFragment, "videos");
+		return pagePath;
+	}
+	
+
 }

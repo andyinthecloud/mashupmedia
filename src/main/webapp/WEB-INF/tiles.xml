@@ -299,6 +299,16 @@
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
 	</definition>
+		
+	<definition name="videos" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/video/videos.jsp" />
+	</definition>
+	
+	<definition name="videos.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/video/videos.jsp" />
+	</definition>	
 	
 	<!-- 
 
