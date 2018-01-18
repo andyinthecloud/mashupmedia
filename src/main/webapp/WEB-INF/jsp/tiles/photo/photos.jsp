@@ -51,14 +51,7 @@
 						href="<c:url value="/app/streaming/media/${photo.id}/original" />"
 						target="_blank"><spring:message code="photo.original" /></a></li>
 				</ul>
-
 			</li>
-
-
-
-
-
-
 
 		</c:forEach>
 		<c:if test="${!isAppend}">

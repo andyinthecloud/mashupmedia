@@ -163,7 +163,7 @@ public class VideoController extends BaseController {
 		List<Video> videos = videoManager.getVideos();
 		model.addAttribute("videos", videos);
 
-		String pagePath = getPath(isFragment, "videos");
+		String pagePath = getPath(isFragment, "video.videos");
 		return pagePath;
 	}
 	

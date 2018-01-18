@@ -300,15 +300,26 @@
 			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
 	</definition>
 		
-	<definition name="videos" extends="home">
+	<definition name="video.videos" extends="home">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/video/videos.jsp" />
 	</definition>
 	
-	<definition name="videos.fragment" extends="ui-content">
+	<definition name="video.videos.fragment" extends="ui-content">
 		<put-attribute name="body"
 			value="/WEB-INF/jsp/tiles/video/videos.jsp" />
 	</definition>	
+	
+	<definition name="video.show" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/video/video.jsp" />
+	</definition>
+	
+	<definition name="video.show.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/video/video.jsp" />
+	</definition>		
+	
 	
 	<!-- 
 
