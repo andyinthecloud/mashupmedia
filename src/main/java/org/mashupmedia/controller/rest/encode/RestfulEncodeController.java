@@ -12,6 +12,7 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
@@ -39,6 +40,8 @@ public class RestfulEncodeController {
 	}
 
 	private MediaContentType[] musicEncodingMediaContentTypes = new MediaContentType[] { MediaContentType.MP3 };
+	
+	private MediaContentType[] videoEncodingMediaContentTypes = new MediaContentType[] { MediaContentType.MP4 };
 
 	@Autowired
 	private MediaManager mediaManager;
@@ -95,13 +98,6 @@ public class RestfulEncodeController {
 
 			encodeMediaItem(messageKeys, mediaContentTypes, mediaItem);
 		}
-
-//		MediaItem mediaItem = mediaManager.getMediaItem(playlistId);
-//		if (mediaItem == null) {
-//			return "encode.message.media-item-not-found";
-//		}
-//		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
-//		encodeMediaItem(messageKeys, musicEncodingMediaContentTypes, mediaItem);
 
 		String messageKey = getMostImportantMessageKey(messageKeys);
 		String message = MessageHelper.getMessage(messageKey, new String[] { WebHelper.getContextPath() });
@@ -215,5 +211,21 @@ public class RestfulEncodeController {
 
 		messageKeys.put(EncodeMessageType.INFO, "encode.message.queued");
 	}
+	
+	@RequestMapping(value = "/video", method = RequestMethod.POST)
+	public String encodeVideo(@RequestParam(value = "id") long videoId) {
+		
+		MediaItem mediaItem = mediaManager.getMediaItem(videoId);
+		if (!mediaItem.getClass().isAssignableFrom(Video.class)) {
+			return MessageHelper.getMessage("encode.message.error");
+		}
+		
+		Map<EncodeMessageType, String> messageKeys = new HashMap<EncodeMessageType, String>();
+		encodeMediaItem(messageKeys, videoEncodingMediaContentTypes, mediaItem);
+		String messageKey = getMostImportantMessageKey(messageKeys);
+
+		String message = MessageHelper.getMessage(messageKey, new String[] { WebHelper.getContextPath() });
+		return message;
+	}	
 
 }
