@@ -116,7 +116,8 @@ public class ProcessManager {
 			while ((line = bufferedReader.readLine()) != null) {
 				logger.info(line);
 			}
-			IOUtils.closeQuietly(inputStream);
+			
+			inputStream.close();
 
 			try {
 				int waitForValue = process.waitFor();
@@ -286,5 +287,7 @@ public class ProcessManager {
 		processQueueItems.add(index, processQueueItem);
 		return true;
 	}
+
+
 
 }

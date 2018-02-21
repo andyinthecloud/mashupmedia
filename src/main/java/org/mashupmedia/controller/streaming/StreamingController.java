@@ -30,6 +30,7 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.task.PlaylistTaskManager;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
@@ -63,6 +64,9 @@ public class StreamingController {
 
 	@Autowired
 	private AdminManager adminManager;
+	
+	@Autowired
+	private PlaylistTaskManager playlistTaskManager;
 
 	@RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = { RequestMethod.GET })
 	public void getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
@@ -177,9 +181,15 @@ public class StreamingController {
 				MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 				File mediaFile = getMediaFile(mediaItem, mediaEncoding);
 				FileInputStream fileInputStream = new FileInputStream(mediaFile);
-				fileInputStreams.add(fileInputStream);
+				
+				// Copy file with audio tags removed
+				File playlistFile = playlistTaskManager.getTemporaryPlaylistFile(playlist.getId(), mediaFile);
+				FileInputStream playlistFileInputStream = new FileInputStream(playlistFile);
+				fileInputStreams.add(playlistFileInputStream);
 				IOUtils.copy(fileInputStream, response.getOutputStream());
 				response.flushBuffer();
+				playlistFileInputStream.close();
+				FileHelper.deleteFile(playlistFile);
 				previousPlaylistMediaItem = playlistMediaItem;
 			}
 		} finally {
@@ -191,8 +201,7 @@ public class StreamingController {
 				fileInputStream.close();
 				} catch (IOException e) {
 					logger.error("Unable to close fileinputstream", e);
-				}
-				
+				}				
 			}
 		}
 	}

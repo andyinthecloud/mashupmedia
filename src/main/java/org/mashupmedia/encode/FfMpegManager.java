@@ -294,5 +294,41 @@ public class FfMpegManager {
 
 		return commands;
 	}
+	
+	
+
+	
+	private List<String> removeAudioTags(String pathToFfMpeg, File inputFile, File outputFile) {
+//		ffmpeg -i tagged.mp3 -vn -codec:a copy -map_metadata -1 out.mp3
+		
+		List<String> commands = new ArrayList<String>();
+		commands.add(pathToFfMpeg);
+		commands.add("-i");
+		commands.add(inputFile.getAbsolutePath());
+		commands.add("-vn");
+		commands.add("-codec:a");
+		commands.add("copy");
+		commands.add("-map_metadata");
+		commands.add("-1");
+		commands.add(outputFile.getAbsolutePath());
+		
+		return commands;
+	}
+
+
+
+	public List<String> queueCopyAudioWithoutTags(File mediaFile, File playlistTemporaryFile) throws MediaItemEncodeException{
+		String pathToFfMpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
+		if (StringUtils.isBlank(pathToFfMpeg)) {
+			String errorText = "Unable to encode media, ffmpeg is not configured.";
+			throw new MediaItemEncodeException(EncodeExceptionType.ENCODER_NOT_CONFIGURED, errorText);
+		}
+
+		List<String> commands = removeAudioTags(pathToFfMpeg, mediaFile, playlistTemporaryFile);
+		return commands;
+		
+	}
+	
+	
 
 }

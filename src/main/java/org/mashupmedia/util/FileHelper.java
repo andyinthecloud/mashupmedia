@@ -1,18 +1,16 @@
 package org.mashupmedia.util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
@@ -289,12 +287,12 @@ public class FileHelper {
 	public static boolean deleteFile(File file) {
 		if (file.isDirectory()) {
 			logger.info("Unable to delete file. It is in fact a folder: " + file.getAbsolutePath());
-			return true;
+			return false;
 		}
 
 		if (!file.exists()) {
 			logger.info("Unable to delete file. It is does not exist: " + file.getAbsolutePath());
-			return true;
+			return false;
 		}
 
 		try {
@@ -360,17 +358,21 @@ public class FileHelper {
 		return path;
 	}
 
-	public static File getResourceAsFile(String defaultImagePath) throws IOException {
+	private static File getPlaylistFolder(long playlistId) {		
+		File playlistFolder = new File(getApplicationFolder(), "playlists/" + playlistId);
+		playlistFolder.mkdirs();
+		return playlistFolder;
+	}
+	
+	
+	public static File createTemporaryPlaylistFile(long playlistId) {
+		User user = AdminHelper.getLoggedInUser();
+		String userPrefix = "";
+		if (user != null) {
+			userPrefix = user.getUsername();
+		}
 		
-		String extension = getFileExtension(defaultImagePath);
-		String name = StringHelper.find(defaultImagePath, "./.*?\\.");
-		name.replaceAll("/|\\.", "");
-		
-		File tempFile = File.createTempFile(name, extension);
-		tempFile.deleteOnExit();
-		FileInputStream inputStream = new FileInputStream(tempFile);
-		FileOutputStream outputStream = new FileOutputStream(tempFile);
-		IOUtils.copy(inputStream, outputStream);
-		return tempFile;
+		File file = new File(getPlaylistFolder(playlistId), userPrefix + "-" + System.currentTimeMillis());
+		return file;
 	}
 }
