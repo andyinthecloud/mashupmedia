@@ -181,15 +181,16 @@ public class StreamingController {
 				MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 				File mediaFile = getMediaFile(mediaItem, mediaEncoding);
 				FileInputStream fileInputStream = new FileInputStream(mediaFile);
+				fileInputStreams.add(fileInputStream);
 				
 				// Copy file with audio tags removed
-				File playlistFile = playlistTaskManager.getTemporaryPlaylistFile(playlist.getId(), mediaFile);
-				FileInputStream playlistFileInputStream = new FileInputStream(playlistFile);
-				fileInputStreams.add(playlistFileInputStream);
+//				File playlistFile = playlistTaskManager.getTemporaryPlaylistFile(playlist.getId(), mediaFile);
+//				FileInputStream playlistFileInputStream = new FileInputStream(playlistFile);
+//				fileInputStreams.add(playlistFileInputStream);
 				IOUtils.copy(fileInputStream, response.getOutputStream());
 				response.flushBuffer();
-				playlistFileInputStream.close();
-				FileHelper.deleteFile(playlistFile);
+//				playlistFileInputStream.close();
+//				FileHelper.deleteFile(playlistFile);
 				previousPlaylistMediaItem = playlistMediaItem;
 			}
 		} finally {

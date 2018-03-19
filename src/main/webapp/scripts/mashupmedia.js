@@ -320,6 +320,7 @@ function setupAudio() {
     $(playBarElement).css("width", 0);
     
     mashupMedia.audio = document.createElement("audio");
+    mashupMedia.autoplay = true;
     
     mashupMedia.audio.addEventListener("ended", function() {
         mashupMedia.playNextSong();      

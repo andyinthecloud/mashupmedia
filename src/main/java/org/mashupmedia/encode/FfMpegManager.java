@@ -303,6 +303,7 @@ public class FfMpegManager {
 		
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
+		commands.add("-y");
 		commands.add("-i");
 		commands.add(inputFile.getAbsolutePath());
 		commands.add("-vn");
@@ -311,6 +312,7 @@ public class FfMpegManager {
 		commands.add("-map_metadata");
 		commands.add("-1");
 		commands.add(outputFile.getAbsolutePath());
+		
 		
 		return commands;
 	}
