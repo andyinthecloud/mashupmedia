@@ -403,8 +403,10 @@ function setupAudio() {
 
 
 function isDesktopMode() {
-    var isDesktop = $("#music-player div.progress").is(":visible");
-    return isDesktop;
+    //var isDesktop = $("#music-player div.progress").is(":visible");
+    //return isDesktop;
+    
+    return true;
 }
 
 function showSongInPlaylistIfEmpty(playlistId, mediaItemId) {
