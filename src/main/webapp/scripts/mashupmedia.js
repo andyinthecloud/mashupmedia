@@ -141,22 +141,15 @@ var mashupMedia = new function() {
             $("#music-player .controls a.pause").trigger("click");
             return;
         }        
-        
-        var preloadOption = "auto";
-        
-        if (isDesktopMode()) {
-            for (i = 0; i < streams.length; i++) {
-                if (mashupMedia.audio.canPlayType(streams[i].format)) {
-                    mashupMedia.audio.src = streams[i].url;
-                }                
-            }
-        } else {
-            preloadOption = "none";
-            var url = mashupMedia.contextUrl + "/app/streaming/playlist/music/mp3/" + Date.now();
-            mashupMedia.audio.src = url;
+                
+        for (i = 0; i < streams.length; i++) {
+            if (mashupMedia.audio.canPlayType(streams[i].format)) {
+                mashupMedia.audio.src = streams[i].url;
+            }                
         }
+       
 
-        mashupMedia.audio.preload = preloadOption;
+        mashupMedia.audio.preload = "none";
         mashupMedia.audio.load();
         
         if (mashupMedia.isMusicPlaying()) {
@@ -326,35 +319,11 @@ function setupAudio() {
         mashupMedia.playNextSong();      
     });
     
-    mashupMedia.audio.addEventListener("timeupdate", function() {
-                
-        var currentTime = mashupMedia.audio.currentTime;
-        
-        if (isDesktopMode()) {
-            var progressRatio = currentTime / mashupMedia.audio.duration * 100;
-            $(playBarElement).css("width", progressRatio + "%");
-            return true;
-        }
-        
-        var s = Math.round(currentTime);
-        if (s % 10 == 0 && s != secondsPlayed) {
-            secondsPlayed = s;
-            $.ajax({
-                url: mashupMedia.contextUrl + "/app/restful/playlist/music/playing",
-                type: "get",
-                async: true
-            })
-            .done(function(song) {
-                console.log(song);
-                if (mashupMedia.songId != song.id) {
-                    mashupMedia.displaySong(song);
-                }
-            })
-            .fail(function(event) {
-                console.log(event);
-            });                
-        }
-        
+    mashupMedia.audio.addEventListener("timeupdate", function() {                
+        var currentTime = mashupMedia.audio.currentTime;        
+        var progressRatio = currentTime / mashupMedia.audio.duration * 100;
+        $(playBarElement).css("width", progressRatio + "%");
+        return true;
     });
     
     mashupMedia.audio.addEventListener("loadeddata", function() {

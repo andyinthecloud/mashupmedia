@@ -1,7 +1,6 @@
 package org.mashupmedia.controller.streaming;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,11 +12,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
-import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaEncoding;
@@ -25,13 +21,8 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
-import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MediaManager;
-import org.mashupmedia.service.PlaylistManager;
-import org.mashupmedia.task.PlaylistTaskManager;
-import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
@@ -50,23 +41,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/streaming")
 public class StreamingController {
-	
-	private Logger logger = Logger.getLogger(getClass());
 
 	public static final MediaContentType[] ESSENTIAL_MUSIC_STREAMING_CONTENT_TYPES = new MediaContentType[] {
 			MediaContentType.MP3 };
 
 	@Autowired
 	private MediaManager mediaManager;
-
-	@Autowired
-	private PlaylistManager playlistManager;
-
-	@Autowired
-	private AdminManager adminManager;
-	
-	@Autowired
-	private PlaylistTaskManager playlistTaskManager;
 
 	@RequestMapping(value = "/media/{mediaItemId}/{mediaContentType}", method = { RequestMethod.GET })
 	public void getMediaStream(@PathVariable("mediaItemId") Long mediaItemId,
@@ -143,85 +123,6 @@ public class StreamingController {
 		response.setHeader("Content-Disposition", title);
 		response.flushBuffer();
 
-	}
-
-	@RequestMapping(value = "/playlist/{playlistTypeValue}/{mediaContentType}/{timestamp}", method = {
-			RequestMethod.GET })
-	public void getCurrentPlaylistStream(@PathVariable(value = "playlistTypeValue") String playlistTypeValue,
-			@PathVariable(value = "mediaContentType") String mediaContentTypeValue,
-			@PathVariable(value = "timestamp") String timestamp, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-
-		PlaylistType playlistType = PlaylistHelper.getPlaylistType(playlistTypeValue);
-		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(playlistType);
-		User user = AdminHelper.getLoggedInUser();
-
-		List<PlaylistMediaItem> playlistMediaItems = getPlaylistMediaItems(playlist);
-
-		MediaItem firstMediaItem = PlaylistHelper.getFirstPlayListMediaItem(playlist).getMediaItem();
-		String format = firstMediaItem.getFormat();
-		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
-
-//		long contentLength = getContentLength(playlistMediaItems, mediaContentTypeValue);
-		setResponse(response, mediaContentType, playlist.getName(), null);
-
-		List<FileInputStream> fileInputStreams = new ArrayList<FileInputStream>();
-		try {
-			PlaylistMediaItem previousPlaylistMediaItem = null;
-			
-			for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-				
-				if (previousPlaylistMediaItem == null) {
-					previousPlaylistMediaItem = playlistMediaItem;
-				}
-				user.setPlaylistMediaItem(previousPlaylistMediaItem);
-				adminManager.updateUser(user);
-				
-				MediaItem mediaItem = playlistMediaItem.getMediaItem();
-				MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
-				File mediaFile = getMediaFile(mediaItem, mediaEncoding);
-				FileInputStream fileInputStream = new FileInputStream(mediaFile);
-				fileInputStreams.add(fileInputStream);
-				
-				// Copy file with audio tags removed
-//				File playlistFile = playlistTaskManager.getTemporaryPlaylistFile(playlist.getId(), mediaFile);
-//				FileInputStream playlistFileInputStream = new FileInputStream(playlistFile);
-//				fileInputStreams.add(playlistFileInputStream);
-				IOUtils.copy(fileInputStream, response.getOutputStream());
-				response.flushBuffer();
-//				playlistFileInputStream.close();
-//				FileHelper.deleteFile(playlistFile);
-				previousPlaylistMediaItem = playlistMediaItem;
-			}
-		} finally {
-			if (fileInputStreams == null || fileInputStreams.isEmpty()) {
-				return;
-			}
-			for (FileInputStream fileInputStream : fileInputStreams) {
-				try {
-				fileInputStream.close();
-				} catch (IOException e) {
-					logger.error("Unable to close fileinputstream", e);
-				}				
-			}
-		}
-	}
-
-	private long getContentLength(List<PlaylistMediaItem> playlistMediaItems, String mediaContentTypeValue) {
-		long contentLength = 0;
-
-		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-			return contentLength;
-		}
-
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			MediaItem mediaItem = playlistMediaItem.getMediaItem();
-			MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
-			File mediaFile = getMediaFile(mediaItem, mediaEncoding);
-			contentLength += mediaFile.length();
-		}
-
-		return contentLength;
 	}
 
 	protected MediaEncoding getMediaEncoding(MediaItem mediaItem, String mediaContentTypeValue) {
