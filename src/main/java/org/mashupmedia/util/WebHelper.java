@@ -128,19 +128,34 @@ public class WebHelper {
 
 	public static void writeResourceToResponse(String resourcePath, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
-		InputStream inputStream = request.getSession().getServletContext().getResourceAsStream(resourcePath);
-		OutputStream outputStream = response.getOutputStream();
-		IOUtils.copy(inputStream, outputStream);
-		outputStream.flush();
-		IOUtils.closeQuietly(inputStream);
+		InputStream inputStream = null;
+		try {
+			inputStream = request.getSession().getServletContext().getResourceAsStream(resourcePath);
+			OutputStream outputStream = response.getOutputStream();
+			IOUtils.copy(inputStream, outputStream);
+			outputStream.flush();
+		} finally {
+			if (inputStream == null) {
+				return;
+			}
+			inputStream.close();
+		}
 	}
 
 	public static void writeFileToResponse(File file, HttpServletResponse response) throws IOException {
-		FileInputStream fileInputStream = new FileInputStream(file);		
-		OutputStream outputStream = response.getOutputStream();	
-		IOUtils.copy(fileInputStream, outputStream);
-		outputStream.flush();
-		IOUtils.closeQuietly(fileInputStream);		
+		FileInputStream fileInputStream = null;
+		try {
+			fileInputStream = new FileInputStream(file);
+			OutputStream outputStream = response.getOutputStream();
+			IOUtils.copy(fileInputStream, outputStream);
+			outputStream.flush();
+		} finally {
+			if (fileInputStream == null) {
+				return;
+			}
+
+			fileInputStream.close();
+		}
 	}
 
 }

@@ -77,11 +77,11 @@ public class StreamingController {
 		MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 		File mediaFile = getMediaFile(mediaItem, mediaEncoding);
 
-		Long contentLength = mediaFile.length();
+//		Long contentLength = mediaFile.length();
 		String format = mediaItem.getFormat();
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
 
-		setResponse(response, mediaContentType, mediaItem.getDisplayTitle(), contentLength);
+		setResponse(response, mediaContentType, mediaItem.getDisplayTitle(), null);
 		WebHelper.writeFileToResponse(mediaFile, response);
 	}
 
