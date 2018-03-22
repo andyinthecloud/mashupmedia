@@ -131,7 +131,11 @@
 			<scope>test</scope>
 		</dependency>
 
-
+<dependency>
+    <groupId>org.springframework.mobile</groupId>
+    <artifactId>spring-mobile-device</artifactId>
+    <version>1.1.5.RELEASE</version>
+</dependency>
 
 		<dependency>
 			<groupId>javax.xml</groupId>

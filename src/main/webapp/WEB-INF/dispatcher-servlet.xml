@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans
@@ -14,14 +16,19 @@
 	<mvc:annotation-driven />
 
 	<mvc:interceptors>
-		<bean class="org.mashupmedia.interceptor.InitialisationInterceptor" />
+		<bean
+			class="org.mashupmedia.interceptor.InitialisationInterceptor" />
+		<bean
+			class="org.springframework.mobile.device.DeviceResolverHandlerInterceptor" />
 	</mvc:interceptors>
 
 
-	<context:component-scan base-package="org.mashupmedia.controller" />
+	<context:component-scan
+		base-package="org.mashupmedia.controller" />
 
 
-	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+	<bean id="tilesConfigurer"
+		class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
 		<property name="definitions">
 			<list>
 				<value>/WEB-INF/tiles.xml</value>
@@ -31,15 +38,19 @@
 
 
 
-	<bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+	<bean id="tilesViewResolver"
+		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.tiles3.TilesView" />
 		<property name="order" value="1" />
 	</bean>
-	
-		
 
-	<bean id="jspViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+
+
+	<bean id="jspViewResolver"
+		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
 		<property name="prefix" value="/WEB-INF/jsp/" />
 		<property name="suffix" value=".jsp" />
 		<property name="order" value="2" />
