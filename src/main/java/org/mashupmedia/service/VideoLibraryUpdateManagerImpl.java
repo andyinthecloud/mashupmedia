@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.VideoDao;
 import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.library.VideoLibrary;
@@ -37,12 +36,9 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
-	
-	@Autowired
-	private ProcessManager processManager;
 
 	@Autowired
-	private MediaDao mediaDao;
+	private ProcessManager processManager;
 
 	@Override
 	public void updateLibrary(VideoLibrary library, File folder, Date date) {
@@ -54,7 +50,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		if (VideoDeriveTitleType.USE_FILE_NAME.name().equalsIgnoreCase(deriveTitle)) {
 			videoDeriveTitleType = VideoDeriveTitleType.USE_FILE_NAME;
 		} else if (VideoDeriveTitleType.USE_FOLDER_NAME.name().equalsIgnoreCase(deriveTitle)) {
-			videoDeriveTitleType = VideoDeriveTitleType.USE_FOLDER_NAME;			
+			videoDeriveTitleType = VideoDeriveTitleType.USE_FOLDER_NAME;
 		} else {
 			videoDeriveTitleType = VideoDeriveTitleType.USE_FOLDER_AND_FILE_NAME;
 		}
@@ -79,7 +75,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			String videoDisplayTitle, VideoLibrary library) {
 		if (file.isDirectory()) {
 			if (StringUtils.isEmpty(videoDisplayTitle)) {
-				videoDisplayTitle = file.getName();
+				videoDisplayTitle = StringUtils.trimToEmpty(file.getName());
 			} else {
 				videoDisplayTitle = videoDisplayTitle + "/" + file.getName();
 			}
@@ -91,22 +87,26 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			}
 		}
 
-		String fileName = file.getName();
+		String fileName = StringUtils.trimToEmpty(file.getName());
 		if (!FileHelper.isSupportedVideo(fileName)) {
 			return;
 		}
 
 		if (videoDeriveTitleType == VideoDeriveTitleType.USE_FOLDER_NAME) {
-			videoDisplayTitle = file.getParentFile().getName();
+			videoDisplayTitle = StringUtils.trimToEmpty(file.getParentFile().getName());
 		} else if (videoDeriveTitleType == VideoDeriveTitleType.USE_FILE_NAME) {
-			videoDisplayTitle = file.getName();
+			videoDisplayTitle = fileName;
 		} else {
-			videoDisplayTitle = videoDisplayTitle + " / " + file.getName();
+			if (StringUtils.isNotBlank(videoDisplayTitle)) {
+				videoDisplayTitle = videoDisplayTitle + " / " + fileName;
+			} else {
+				videoDisplayTitle = fileName;
+			}
 		}
 
 		String path = file.getAbsolutePath();
 		Video video = videoDao.getVideoByPath(path);
-		
+
 		boolean isCreateVideo = false;
 		if (video == null) {
 			isCreateVideo = true;
@@ -114,7 +114,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			if (file.length() != video.getSizeInBytes()) {
 				isCreateVideo = true;
 			}
-		}		
+		}
 
 		int totalVideosWithSameNameThreshold = 0;
 		if (isCreateVideo) {
@@ -159,10 +159,9 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		}
 
 		videoDao.saveVideo(video, isSessionFlush);
-		
 
 		if (!library.isEncodeVideoOnDemand()) {
-			encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(video, MediaContentType.MP4);			
+			encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(video, MediaContentType.MP4);
 		}
 	}
 
