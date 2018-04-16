@@ -61,7 +61,7 @@ public class VideoController extends BaseController {
 	@RequestMapping(value = "/show/{videoId}", method = RequestMethod.GET)
 	public String handleGetVideo(
 			@PathVariable("videoId") Long videoId,
-			@RequestParam(value = "reencode", required = false) Boolean isReencode,
+			@RequestParam(value = "reencode", required = false) Boolean isReencode, @RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			Model model, HttpServletRequest request) {
 
 		Video video = videoManager.getVideo(videoId);
@@ -101,7 +101,9 @@ public class VideoController extends BaseController {
 		videoPage.setPosterUrl(posterUrl);
 
 		model.addAttribute("videoPage", videoPage);
-		return "video.show";
+		
+		String pagePath = getPath(isFragment, "video.show");
+		return pagePath;
 	}
 
 	protected void processReencodeRequest(Boolean isReencode, Video video) throws MediaItemEncodeException {

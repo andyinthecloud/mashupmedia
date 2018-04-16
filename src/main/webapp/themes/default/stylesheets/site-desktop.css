@@ -61,9 +61,7 @@
 		margin-left: 1em;
 		margin-bottom: 1em;
 	}
-	ul.items li{
-		height: 100px;
-	}
+
 	ul.items li span.label {		
 		left: 110px;
 	}

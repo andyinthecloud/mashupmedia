@@ -255,7 +255,7 @@ div.title-with-player-control h1, div.title-with-player-control h2{
 	display: inline-block;
 }
 
-div.title-with-player-control h1 form {
+h1 form, div.breadcrumbs form {
 	display: inline;
 }
 

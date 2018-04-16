@@ -3,10 +3,17 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        
+         $("div.breadcrumbs span:last-child").editable("<c:url value="/app/restful/media/save-media-name" />", {
+             tooltip: "<spring:message code="action.click.edit" />"
+         });
+
+        /*
 
         $("h1.edit").editable("<c:url value="/app/restful/media/save-media-name" />", {
             tooltip: "<spring:message code="action.click.edit" />"
         });
+        */
 
         $("#re-encode").click(function() {
             $.post("<c:url value="/app/restful/encode/video" />", {
