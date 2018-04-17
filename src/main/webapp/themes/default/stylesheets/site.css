@@ -830,3 +830,8 @@ table.photo-container td.photo img {
 	width: 100%;
 	height: auto;
 }
+
+#video-player {
+	width: 80%;
+	height: auto;
+}

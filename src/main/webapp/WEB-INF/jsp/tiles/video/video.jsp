@@ -5,15 +5,13 @@
     $(document).ready(function() {
         
          $("div.breadcrumbs span:last-child").editable("<c:url value="/app/restful/media/save-media-name" />", {
-             tooltip: "<spring:message code="action.click.edit" />"
+             tooltip: "<spring:message code="action.click.edit" />",             
+             submitdata : {id: ${videoPage.video.id}},
+             data: function(value, settings) {
+                 return $.trim(value);
+                 
+             }
          });
-
-        /*
-
-        $("h1.edit").editable("<c:url value="/app/restful/media/save-media-name" />", {
-            tooltip: "<spring:message code="action.click.edit" />"
-        });
-        */
 
         $("#re-encode").click(function() {
             $.post("<c:url value="/app/restful/encode/video" />", {
@@ -26,7 +24,7 @@
     });
 </script>
 
-<h1 class="edit" id="${videoPage.video.id}">${videoPage.video.displayTitle}</h1>
+<br />
 
 <div class="control-menu"
 	id="album-id-<c:out value="${albumPage.album.id}" />">
@@ -36,9 +34,9 @@
 			code="action.re-encode" /></a>
 </div>
 
-<video width="320" height="240" controls>
+<video controls id="video-player">
 	<source
-		src="<c:url value="/app/streaming/media/${videoPage.video.id}?mediaContentType=${mediaEncoding.mediaContentType.jPlayerContentType}" />"
+		src="<c:url value="/app/streaming/media/${videoPage.video.id}/${mediaEncoding.mediaContentType.jPlayerContentType}" />"
 		type="${mediaEncoding.mediaContentType.mimeContentType}" />
 </video>
 
