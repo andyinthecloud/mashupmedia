@@ -16,14 +16,17 @@ You can create and share music playlists.
 Mashup Media uses ![FFMpeg](https://www.ffmpeg.org/) to provide support for the most common music encoding formats.
 
 ## Photos
-![Mashup Media - music home page](src/misc/screehshots/photo-photos.png)
+![Mashup Media - photo home page](src/misc/screehshots/photo-photos.png)
 Photos are grouped in albums and managed in libraries. Mashup Media compresses your photos to small web friendly files but provides a link to the original image.
 
 ## Videos
 Many file formats are supported using ![FFMpeg](https://www.ffmpeg.org/). Videos are listed clearly and are managed by libraries.
 
 ## Configuration
-Mashup Media should work out of the box.
+### Out of the box
+Mashup Media will work out of the box, just add a library and point it to a folder containing your photos, music or videos and it will index them automatically and then in real time whenever a file is added, updated or removed.
+### User management
+The user set up is very simple. Users can be added to multiple groups which are linked to libraries.
 
 ## Technology
 Mashup Media is developed in Java, html and javascript. It will work as either a standalone file or embedded in a Java web server such as ![Tomcat](https://tomcat.apache.org/index.html). Mashup Media will run in almost environments such as Windows, Mac and Linux.
