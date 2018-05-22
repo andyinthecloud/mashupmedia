@@ -11,12 +11,16 @@ Add as many music libraries as you like and Mashup Media will provide a clean, e
 You can listen to your music on all modern html5 compatible web browsers on desktop, tablet and mobile devices.
 ### Playlists
 You can create and share music playlists.
+
 ![Mashup Media - music home page](src/misc/screehshots/music-playlist.png)
+
 ### Support for many music formats 
 Mashup Media uses ![FFMpeg](https://www.ffmpeg.org/) to provide support for the most common music encoding formats.
 
 ## Photos
+
 ![Mashup Media - photo home page](src/misc/screehshots/photo-photos.png)
+
 Photos are grouped in albums and managed in libraries. Mashup Media compresses your photos to small web friendly files but provides a link to the original image.
 
 ## Videos
