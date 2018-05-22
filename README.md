@@ -7,9 +7,16 @@ Mashup Media eliminates the need to worry about online privacy and corporate sma
 ## Music
 ![Mashup Media - music home page](src/misc/screehshots/music-random.png)
 Add as many music libraries as you like and Mashup Media will provide a clean, elegant interface to quickly access and play your tunes.
-### Formats
-Mashup Media uses ![FFMpeg](https://www.ffmpeg.org/) to provide support for the most different common music encoding formats.
+### Compatibility
+You can listen to your music on all modern html5 compatible web browsers on desktop, tablet and mobile devices.
+### Playlists
+You can create and share music playlists.
+### Support for many music formats 
+Mashup Media uses ![FFMpeg](https://www.ffmpeg.org/) to provide support for the most common music encoding formats.
 
+## Photos
+![Mashup Media - music home page](src/misc/screehshots/photo-photos.png)
+Photos are grouped in libraries and albums. Mashup Media compresses your photos to web friendly files to save bandwidth but provides a link to the original image.
 
 ## Why choose Mashup Media
 ---
