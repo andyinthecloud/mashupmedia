@@ -1,8 +1,12 @@
 # Mashup Media
 ***
-Mashup Media is a free, online, open source HTML5 media centre designed to play, listen, view, manage and share your music, videos and pictures safely and securely just using a modern web browser and is supported on all devices.
+Mashup Media is a free, online, open source HTML5 media centre designed to play, listen, view, manage and share your music, videos and pictures safely and securely just using a modern web browser supported on all devices.
 
-There is no more need to read the corporate social media small print about who really owns your stuff after it has been uploaded or worry about what information is being generated about you based on your music, videos or photographs. Your private life remains private and you can choose who you want to share it with.
+Mashup Media eliminates the need to worry about online privacy and corporate small print, it puts you back in control of your media content. Share your files with friends, family, colleagues using groups to seperate who can access what. Your private life remains private and you can choose who you want to share it with.
+
+## Music
+![Mashup Media - music home page](src/misc/screehshots/music-random.png)
+
 
 ## Why choose Mashup Media
 ---
