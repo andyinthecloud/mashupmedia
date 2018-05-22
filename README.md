@@ -11,23 +11,23 @@ Add as many music libraries as you like and Mashup Media will provide a clean, e
 You can listen to your music on all modern html5 compatible web browsers on desktop, tablet and mobile devices.
 ### Playlists
 You can create and share music playlists.
+![Mashup Media - music home page](src/misc/screehshots/music-playlist.png)
 ### Support for many music formats 
 Mashup Media uses ![FFMpeg](https://www.ffmpeg.org/) to provide support for the most common music encoding formats.
 
 ## Photos
 ![Mashup Media - music home page](src/misc/screehshots/photo-photos.png)
-Photos are grouped in albums and managed in libraries. Mashup Media compresses your photos to web friendly files to save bandwidth but provides a link to the original image.
+Photos are grouped in albums and managed in libraries. Mashup Media compresses your photos to small web friendly files but provides a link to the original image.
 
-## Why choose Mashup Media
----
-Mashup Media has been designed for people who want to access and share their music, photographs and videos over the internet but are concerned about invasion of privacy. Since Mashup Media is open source, the code is freely available and any security issues will be spotted and fixed quickly.
+## Videos
+Many file formats are supported using ![FFMpeg](https://www.ffmpeg.org/). Videos are listed clearly and are managed by libraries.
 
-With Mashup Media you can share your media in two ways:
+## Configuration
+Mashup Media should work out of the box.
 
-    Through a secure, simple and flexible user management interface.
-    Between different Mashup Media servers.
+## Technology
+Mashup Media is developed in Java, html and javascript. It will work as either a standalone file or embedded in a Java web server such as ![Tomcat](https://tomcat.apache.org/index.html). Mashup Media will run in almost environments such as Windows, Mac and Linux.
 
-Most file formats are supported.
+## Instructions
 
-Mashup Media is written in Java which means that is is supported by practically all operating systems such as Windows, Apple and Linux. Installation is very simple and is explained on the download page.
 
