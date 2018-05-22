@@ -16,7 +16,7 @@ Mashup Media uses ![FFMpeg](https://www.ffmpeg.org/) to provide support for the 
 
 ## Photos
 ![Mashup Media - music home page](src/misc/screehshots/photo-photos.png)
-Photos are grouped in libraries and albums. Mashup Media compresses your photos to web friendly files to save bandwidth but provides a link to the original image.
+Photos are grouped in albums and managed in libraries. Mashup Media compresses your photos to web friendly files to save bandwidth but provides a link to the original image.
 
 ## Why choose Mashup Media
 ---
