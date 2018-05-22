@@ -6,6 +6,9 @@ Mashup Media eliminates the need to worry about online privacy and corporate sma
 
 ## Music
 ![Mashup Media - music home page](src/misc/screehshots/music-random.png)
+Add as many music libraries as you like and Mashup Media will provide a clean, elegant interface to quickly access and play your tunes.
+### Formats
+Mashup Media uses ![FFMpeg](https://www.ffmpeg.org/) to provide support for the most different common music encoding formats.
 
 
 ## Why choose Mashup Media
