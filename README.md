@@ -4,18 +4,10 @@ Mashup Media is a free, online, open source HTML5 media centre designed to play,
 
 Mashup Media eliminates the need to worry about online privacy and corporate small print, it puts you back in control of your media content. Share your files with friends, family, colleagues using groups to seperate who can access what. Your private life remains private and you can choose who you want to share it with.
 
+[Music](#music)
 
-#Title
 
-##Place 1
-
-Hello, this is some text to fill in this, [here](#place-2), is a link to the second place.
-
-##Place 2
-
-Place one has the fun times of linking here, but I can also link back [here](#place-1).
-
-## [Music](#anchors-in-markdown)
+## Music
 ![Mashup Media - music home page](src/misc/screehshots/music-random.png)
 Add as many music libraries as you like and Mashup Media will provide a clean, elegant interface to quickly access and play your tunes.
 ### Compatibility
