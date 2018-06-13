@@ -5,8 +5,8 @@ Mashup Media is a free, online, open source HTML5 media centre designed to play,
 Mashup Media eliminates the need to worry about online privacy and corporate small print, it puts you back in control of your media content. Share your files with friends, family, colleagues using groups to seperate who can access what. Your private life remains private and you can choose who you want to share it with.
 
 ### Table of contents
-[Music](#music)
-[Photos](#photos)
+-[Music](#music)
+-[Photos](#photos)
 
 
 
