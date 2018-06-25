@@ -29,10 +29,16 @@ Mashup Media uses ![FFMpeg](https://www.ffmpeg.org/) to provide support for the 
 ## Photos
 
 ![Mashup Media - photo home page](src/misc/screehshots/photo-photos.png)
+
 Finally a secure way to store and view your photos! All you have to do is let Mashup Media know where your images are located and it will index them, create thumbnails and organise them into albums. 
 
 ## Videos
 Imagine all your videos available to watch through a web browser! This is what Mashup Media offers. Nearly all formats are supported. Videos are listed clearly and are managed by libraries.
+
+## Security
+
+Security is a key aspect of Mashup Media. The application can only be accessed with a valid username and password. Media access can be finetuned through groups, for example members of the group "family" could just be given access to family photographs. User passwords are encrypted before being stored in the Mashup Media 
+
 
 ## Configuration
 ### Out of the box
