@@ -13,6 +13,9 @@ Mashup Media eliminates the need to worry about online privacy and corporate sma
 ## Music
 ![Mashup Media - music home page](src/misc/screehshots/music-random.png)
 Add as many music libraries as you like and Mashup Media will provide a clean, elegant interface to quickly access and play your tunes.
+
+A lot of time has been dedicated into making the Mashup Media music experience very special. Music is categorised into artist, albums, genre and year by the music tags or failing that the folder structure. Album art is extracted either from the music tag or the folder. Libraries can contain very large amount of files with minimal impact to performance. Any changes to the library files are automatically detected making sure that the libraries are always sychronised.
+
 ### Compatibility
 You can listen to your music on all modern html5 compatible web browsers on desktop, tablet and mobile devices.
 ### Playlists
@@ -26,11 +29,10 @@ Mashup Media uses ![FFMpeg](https://www.ffmpeg.org/) to provide support for the 
 ## Photos
 
 ![Mashup Media - photo home page](src/misc/screehshots/photo-photos.png)
-
-Photos are grouped in albums and managed in libraries. Mashup Media compresses your photos to small web friendly files but provides a link to the original image.
+Finally a secure way to store and view your photos! All you have to do is let Mashup Media know where your images are located and it will index them, create thumbnails and organise them into albums. 
 
 ## Videos
-Many file formats are supported using ![FFMpeg](https://www.ffmpeg.org/). Videos are listed clearly and are managed by libraries.
+Imagine all your videos available to watch through a web browser! This is what Mashup Media offers. Nearly all formats are supported. Videos are listed clearly and are managed by libraries.
 
 ## Configuration
 ### Out of the box
