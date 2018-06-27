@@ -51,4 +51,8 @@ Mashup Media is developed in Java, html and javascript. It will work as either a
 
 ## Instructions
 
-
+![Apache Maven](https://maven.apache.org/) is used to build and package Mashup Media. Please follow the ![Maven installation page](https://maven.apache.org/install.html) and make sure it is configured correctly. Then run the command 
+```
+mvn -skipTests package
+```
+This will compile the code and create *mashupmedia.war*
