@@ -51,8 +51,23 @@ Mashup Media is developed in Java, html and javascript. It will work as either a
 
 ## Instructions
 
-![Apache Maven](https://maven.apache.org/) is used to build and package Mashup Media. Please follow the ![Maven installation page](https://maven.apache.org/install.html) and make sure it is configured correctly. Then run the command 
+![Apache Maven](https://maven.apache.org/) is used to build and package Mashup Media. Please follow the ![Maven installation page](https://maven.apache.org/install.html) and make sure it is configured correctly. There are two options to run Mashup Media.
+
+
+1. Create a web container file. 
 ```
 mvn -skipTests package
 ```
-This will compile the code and create *mashupmedia.war*
+This will build a file called *mashupmedia.war* which can be loaded into a Java web container such as ![Tomcat](http://tomcat.apache.org/), ![Jetty](http://www.eclipse.org/jetty/) or ![Oracle Weblogic](https://www.oracle.com/middleware/weblogic/index.html).
+
+2. Create an executable jar file.
+```
+mvn -skipTests install tomcat7:exec-war-only
+```
+This builds a file called *mashupmedia.jar* which contains everything required to run Mashup Media. Go to the folder with mashupmedia.jar and type.
+```
+java -jar mashupmedia.jar
+```
+
+
+
