@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration strict="true"
+	xmlns="http://logging.apache.org/log4j/2.0/config"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://logging.apache.org/log4j/2.0/config 
+           https://raw.githubusercontent.com/apache/logging-log4j2/master/log4j-core/src/main/resources/Log4j-config.xsd">
+
+	<Properties>
+		<Property name="fileName">logs/mashupmedia.log</Property>
+	</Properties>
+
+	<Appenders>
+		<Appender type="Console" name="STDOUT">
+			<Layout type="PatternLayout" pattern="%m MDC%X%n" />
+		</Appender>
+
+		<Appender type="File" name="File" fileName="${filename}">
+			<Layout type="PatternLayout">
+				<Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+			</Layout>
+		</Appender>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="org.mashupmedia" additivity="false"
+			level="${log4j.mashupmedia.level}">
+			<AppenderRef ref="Console"></AppenderRef>
+			<AppenderRef ref="File"></AppenderRef>
+		</Logger>
+
+		<Root level="${log4j.root.level}">
+			<AppenderRef ref="Console"></AppenderRef>
+			<AppenderRef ref="File"></AppenderRef>
+		</Root>
+	</Loggers>
+
+</Configuration>
+
