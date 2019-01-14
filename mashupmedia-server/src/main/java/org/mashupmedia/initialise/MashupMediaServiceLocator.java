@@ -17,7 +17,6 @@
 
 package org.mashupmedia.initialise;
 
-import java.beans.PropertyVetoException;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.Statement;
@@ -25,16 +24,14 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.mashupmedia.exception.MashupMediaRuntimeException;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.mashupmedia.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-
 public class MashupMediaServiceLocator {
-	
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private DataSource dataSource;
@@ -53,19 +50,17 @@ public class MashupMediaServiceLocator {
 	}
 
 	public DataSource createDataSource() {
-		ComboPooledDataSource dataSource = new ComboPooledDataSource();
-		try {
-			dataSource.setDriverClass("org.h2.Driver");
-		} catch (PropertyVetoException e) {
-			throw new MashupMediaRuntimeException(e.getMessage());
-		}
+
+		BasicDataSource dataSource = new BasicDataSource();
+
+		dataSource.setDriverClassLoader(org.h2.Driver.class.getClassLoader());
 		String applicationFolderPath = FileHelper.getApplicationFolder().getAbsolutePath();
-		dataSource.setJdbcUrl("jdbc:h2:file:" + applicationFolderPath + "/db");
-		dataSource.setUser("sa");
+		dataSource.setUrl("jdbc:h2:file:" + applicationFolderPath + "/db");
+		dataSource.setUsername("sa");
 		dataSource.setPassword("");
-		dataSource.setMinPoolSize(3);
-		dataSource.setMaxPoolSize(20);
-		dataSource.setMaxIdleTime(600);
+		dataSource.setInitialSize(3);
+		dataSource.setMaxTotal(20);
+		dataSource.setMaxIdle(600);
 		return dataSource;
 	}
 
@@ -94,28 +89,24 @@ public class MashupMediaServiceLocator {
 
 		return localSessionFactoryBean;
 	}
-	
-	
+
 	public void shutdown() {
 		// Shut down the database cleanly
-        try {
-        	Connection connection = dataSource.getConnection();
-            Statement statement = connection.createStatement();
-            statement.execute("SHUTDOWN");
-            statement.close();
-        } catch (Exception e) {
-        	logger.error("Error shutting down", e);
-        }
-        
-        try {
-        	Connection connection = dataSource.getConnection();
-            connection.close();
-        } catch (Exception e) {
-        	logger.error("Error shutting down", e);
-        }
+		try {
+			Connection connection = dataSource.getConnection();
+			Statement statement = connection.createStatement();
+			statement.execute("SHUTDOWN");
+			statement.close();
+		} catch (Exception e) {
+			logger.error("Error shutting down", e);
+		}
+
+		try {
+			Connection connection = dataSource.getConnection();
+			connection.close();
+		} catch (Exception e) {
+			logger.error("Error shutting down", e);
+		}
 	}
-	
-	
-	
 
 }

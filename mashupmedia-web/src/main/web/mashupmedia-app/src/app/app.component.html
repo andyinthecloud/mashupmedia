@@ -1,17 +1,53 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
 
+
+
+
+
+<mat-sidenav-container id="main-container">
+<mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
+               (closed)="events.push('close!')">Start</mat-sidenav> <mat-sidenav-content>
+
+<div id="header">
+
+<a href="#menu"><mat-icon (click)="sidenav.toggle()">menu</mat-icon></a>
+
+<button mat-button (click)="sidenav.toggle()">sidenav.toggle()</button>
+
+  <a href="#home">Home</a>
+  <a href="#news">News</a>
+  <a href="#contact">Contact</a>
+</div>
+
+
+<div class="main-content">
+
+
+<!-- 
 <img class="logo-home" alt="Mashup Media" title="Mashup Media"
 		src="assets/images/mashupmedia-logo.png" />
+ -->
+
+<p><button mat-button (click)="sidenav.toggle()">sidenav.toggle()</button></p>
+
+<p i18n="@@app.page.summary.1">Welcome to Mashup Media, your
+	personal online media server.</p>
+
+<p i18n="@@app.page.summary.2">View, share and manage your music,
+	photos and videos with friends and family in complete privacy.</p>
+	
+	
+	</div>
+	
+</mat-sidenav-content> </mat-sidenav-container>
 
 
-  <p i18n="@@app.page.summary.1">
-  	Welcome to Mashup Media, your personal online media server.
-  </p>
-  
-  <p i18n="@@app.page.summary.2">
-  	View, share and manage your music, photos and videos with friends and family in complete privacy.
-  </p>
-  
 
-<router-outlet></router-outlet>
+
+
+<!-- router-outlet></router-outlet -->
+
+
+
+
+
