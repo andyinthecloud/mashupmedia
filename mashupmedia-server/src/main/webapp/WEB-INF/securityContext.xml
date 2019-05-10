@@ -18,7 +18,7 @@
 		class="org.springframework.security.authentication.ProviderManager">
 		<beans:constructor-arg>
 			<beans:list>
-				<beans:ref local="daoAuthenticationProvider" />
+				<beans:ref bean="daoAuthenticationProvider" />
 			</beans:list>
 		</beans:constructor-arg>
 

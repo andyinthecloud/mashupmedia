@@ -3,7 +3,9 @@ package org.mashupmedia.dao;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.type.StringType;
+import org.hibernate.type.Type;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.mashupmedia.model.User;
@@ -28,10 +30,10 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 
 	@Override
 	public User getUser(String username) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from User where username = :username");
-		query.setString("username", username);
+		Query<User> query = sessionFactory.getCurrentSession().createQuery("from User where username = :username");
+		query.setParameter("username", username, StringType.INSTANCE); 
 		query.setCacheable(true);
-		User user = (User) query.uniqueResult();
+		User user = query.uniqueResult();
 		return user;
 	}
 

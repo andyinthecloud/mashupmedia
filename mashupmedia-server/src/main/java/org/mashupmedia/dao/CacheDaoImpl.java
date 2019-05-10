@@ -10,8 +10,10 @@ public class CacheDaoImpl extends BaseDaoImpl implements CacheDao {
 	
 	@Override
 	public void clearCache() {
-		sessionFactory.getCache().evictCollectionRegions();
-		sessionFactory.getCache().evictEntityRegions();
+//		sessionFactory.getCache().evictCollectionRegions();
+		sessionFactory.getCache().evictCollectionData();
+//		sessionFactory.getCache().evictEntityRegions();
+		sessionFactory.getCache().evictEntityData();
 		sessionFactory.getCache().evictQueryRegions();
 		sessionFactory.getCache().evictDefaultQueryRegion();
 		logger.info("Cleared hibernate cache.");
