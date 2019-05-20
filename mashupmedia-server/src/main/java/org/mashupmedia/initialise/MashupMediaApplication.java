@@ -9,6 +9,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ComponentScans({ @ComponentScan("org.mashupmedia.service"), @ComponentScan("org.mashupmedia.dao"),
 		@ComponentScan("org.mashupmedia.security"), @ComponentScan("org.mashupmedia.editor"),
@@ -36,4 +38,11 @@ public class MashupMediaApplication {
 
 		};
 	}
+	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+	    return new BCryptPasswordEncoder();
+	}
+	
+	
 }

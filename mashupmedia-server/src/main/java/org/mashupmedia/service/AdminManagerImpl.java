@@ -19,10 +19,10 @@ import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.EncryptionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AdminManagerImpl implements AdminManager {
 	private Logger logger = LoggerFactory.getLogger(getClass());
-
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private UserDao userDao;
@@ -43,12 +45,28 @@ public class AdminManagerImpl implements AdminManager {
 
 	@Autowired
 	private PlaylistDao playlistDao;
-
+	
 	@Override
 	public User getUser(String username) {
 		User user = userDao.getUser(username);
+		encodeUserPassword(user);
 		initialisePlaylistMediaItem(user);
 		return user;
+	}
+
+	private void encodeUserPassword(User user) {
+		if (user == null) {
+			return;
+		}				
+		
+		String rawPassword = user.getPassword();
+		if (rawPassword == null) {
+			return;
+		}
+		
+		String encodedPassword = passwordEncoder.encode(rawPassword);
+		user.setPassword(encodedPassword);
+		
 	}
 
 	private void initialisePlaylistMediaItem(User user) {
@@ -61,11 +79,10 @@ public class AdminManagerImpl implements AdminManager {
 		user.setPlaylistMediaItem(playlistMediaItem);
 	}
 	
-	
-	
 	@Override
 	public User getUser(long userId) {
 		User user = userDao.getUser(userId);
+		encodeUserPassword(user);
 		return user;
 	}
 
@@ -74,8 +91,8 @@ public class AdminManagerImpl implements AdminManager {
 		Date date = new Date();
 		long userId = user.getId();
 		String username = user.getUsername();
-		String password = user.getPassword();		
-
+		String password = user.getPassword();
+		
 		// All users should have the user role to access the application
 		Set<Role> roles = user.getRoles();
 		if (roles == null) {
@@ -139,13 +156,13 @@ public class AdminManagerImpl implements AdminManager {
 	}
 
 	@Override
-	public void updatePassword(String username, String password) {
+	public void updatePassword(String username, String rawPassword) {
 		User user = getUser(username);
 		if (user == null) {
 			throw new MashupMediaRuntimeException("Could not find user with username: " + username);
 		}
 
-		String encodedPassword = EncryptionHelper.encodePassword(password);
+		String encodedPassword = passwordEncoder.encode(rawPassword);
 		user.setPassword(encodedPassword);
 		userDao.saveUser(user);
 	}
