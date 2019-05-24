@@ -1,0 +1,2 @@
+--start spring boot in debug mode
+mvnDebug clean compile spring-boot:run
