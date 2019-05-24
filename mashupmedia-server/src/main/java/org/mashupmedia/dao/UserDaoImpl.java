@@ -15,22 +15,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	@Override
 	public void saveUser(User user) {
 		long userId = user.getId();
 		if (userId == 0) {
-			sessionFactory.getCurrentSession().save(user);
+			getCurrentSession().save(user);
 		} else {
-			sessionFactory.getCurrentSession().merge(user);
+			getCurrentSession().merge(user);
 		}
 	}
 
 	@Override
 	public User getUser(String username) {
-		Query<User> query = sessionFactory.getCurrentSession().createQuery("from User where username = :username");
+		Query<User> query = getCurrentSession().createQuery("from User where username = :username");
 		query.setParameter("username", username, StringType.INSTANCE); 
 		query.setCacheable(true);
 		User user = query.uniqueResult();
@@ -39,7 +37,7 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 
 	@Override
 	public User getUser(long userId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from User where id = :userId");
+		Query query = getCurrentSession().createQuery("from User where id = :userId");
 		query.setLong("userId", userId);
 		query.setCacheable(true);
 		User user = (User) query.uniqueResult();
@@ -48,7 +46,7 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 
 	@Override
 	public int getTotalUsers() {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
+		Criteria criteria = getCurrentSession().createCriteria(User.class);
 		criteria.setCacheable(true);
 		criteria.setProjection(Projections.rowCount());
 		Number total = (Number) criteria.uniqueResult();
@@ -57,7 +55,7 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 
 	@Override
 	public List<User> getUsers() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from User where system = false order by name");
+		Query query = getCurrentSession().createQuery("from User where system = false order by name");
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<User> users = query.list();
@@ -70,16 +68,16 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 		// Clean up user
 		Long userId = user.getId();
 
-		Query updateMediaItemQuery = sessionFactory.getCurrentSession().createQuery(
+		Query updateMediaItemQuery = getCurrentSession().createQuery(
 				"update MediaItem set lastAccessedBy = null where lastAccessedBy.id = :userId");
 		updateMediaItemQuery.setLong("userId", userId);
 		updateMediaItemQuery.executeUpdate();
 
-		Query updatePlaylistUpdatedByQuery = sessionFactory.getCurrentSession().createQuery(
+		Query updatePlaylistUpdatedByQuery = getCurrentSession().createQuery(
 				"update Playlist set updatedBy = null where updatedBy.id = :userId");
 		updatePlaylistUpdatedByQuery.setLong("userId", userId);
 		updatePlaylistUpdatedByQuery.executeUpdate();
 
-		sessionFactory.getCurrentSession().delete(user);
+		getCurrentSession().delete(user);
 	}
 }

@@ -49,24 +49,8 @@ public class AdminManagerImpl implements AdminManager {
 	@Override
 	public User getUser(String username) {
 		User user = userDao.getUser(username);
-		encodeUserPassword(user);
 		initialisePlaylistMediaItem(user);
 		return user;
-	}
-
-	private void encodeUserPassword(User user) {
-		if (user == null) {
-			return;
-		}				
-		
-		String rawPassword = user.getPassword();
-		if (rawPassword == null) {
-			return;
-		}
-		
-		String encodedPassword = passwordEncoder.encode(rawPassword);
-		user.setPassword(encodedPassword);
-		
 	}
 
 	private void initialisePlaylistMediaItem(User user) {
@@ -82,7 +66,6 @@ public class AdminManagerImpl implements AdminManager {
 	@Override
 	public User getUser(long userId) {
 		User user = userDao.getUser(userId);
-		encodeUserPassword(user);
 		return user;
 	}
 
@@ -90,8 +73,6 @@ public class AdminManagerImpl implements AdminManager {
 	public void saveUser(User user) {
 		Date date = new Date();
 		long userId = user.getId();
-		String username = user.getUsername();
-		String password = user.getPassword();
 		
 		// All users should have the user role to access the application
 		Set<Role> roles = user.getRoles();
@@ -111,12 +92,13 @@ public class AdminManagerImpl implements AdminManager {
 		}
 
 		user.setUpdatedOn(date);
-		userDao.saveUser(user);
 
+		String password = user.getPassword();
 		if (StringUtils.isNotBlank(password)) {
-			logger.info("Updating user password...");
-			updatePassword(username, password);
+			user.setPassword(passwordEncoder.encode(password));
 		}
+
+		userDao.saveUser(user);
 
 	}
 	
@@ -155,17 +137,6 @@ public class AdminManagerImpl implements AdminManager {
 
 	}
 
-	@Override
-	public void updatePassword(String username, String rawPassword) {
-		User user = getUser(username);
-		if (user == null) {
-			throw new MashupMediaRuntimeException("Could not find user with username: " + username);
-		}
-
-		String encodedPassword = passwordEncoder.encode(rawPassword);
-		user.setPassword(encodedPassword);
-		userDao.saveUser(user);
-	}
 
 	@Override
 	public void saveGroup(Group group) {

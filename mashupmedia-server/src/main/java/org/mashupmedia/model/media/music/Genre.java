@@ -11,8 +11,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.hibernate.search.annotations.Field;
-
 @Entity
 @Cacheable
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -22,7 +20,7 @@ public class Genre implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@XmlTransient
 	private long id;
-	@Field
+//	@Field
 	private String name;
 
 	public long getId() {

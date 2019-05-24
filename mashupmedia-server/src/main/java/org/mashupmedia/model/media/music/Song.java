@@ -8,10 +8,6 @@ import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Year;
@@ -21,7 +17,7 @@ import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 @Entity
-@Indexed
+//@Indexed
 @Cacheable
 @XmlRootElement
 public class Song extends MediaItem {
@@ -29,19 +25,19 @@ public class Song extends MediaItem {
 	private static final long serialVersionUID = -8767965461920368852L;
 
 	private int trackNumber;
-	@Field(analyze = Analyze.NO)
+//	@Field(analyze = Analyze.NO)
 	@Column(length = 1000)
 	private String title;
-	@IndexedEmbedded
+//	@IndexedEmbedded
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
 	@ManyToOne
 	private Genre genre;
 	@ManyToOne
-	@IndexedEmbedded
+//	@IndexedEmbedded
 	private Year year;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@IndexedEmbedded
+//	@IndexedEmbedded
 	private Artist artist;
 	private long trackLength;
 	private long bitRate;

@@ -18,18 +18,14 @@
 package org.mashupmedia.initialise;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ehcache.jsr107.EhcacheCachingProvider;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cache.jcache.internal.JCacheRegionFactory;
 import org.hibernate.cfg.Environment;
 import org.mashupmedia.util.FileHelper;
 import org.slf4j.Logger;
@@ -141,10 +137,10 @@ public class MashupMediaServiceLocator {
          settings.put(Environment.USE_QUERY_CACHE, true);
 
          // Specify cache region factory class
-         settings.put(Environment.CACHE_REGION_FACTORY, JCacheRegionFactory.class);
+//         settings.put(Environment.CACHE_REGION_FACTORY, JCacheRegionFactory.class);
 
          // Specify cache provider
-         settings.put("hibernate.javax.cache.provider", EhcacheCachingProvider.class);
+//         settings.put("hibernate.javax.cache.provider", EhcacheCachingProvider.class);
  		registryBuilder.applySettings(settings);
  		registry = registryBuilder.build();
  		

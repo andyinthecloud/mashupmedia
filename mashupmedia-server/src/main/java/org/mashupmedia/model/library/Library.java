@@ -20,7 +20,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.location.Location;
@@ -48,7 +47,7 @@ public abstract class Library implements Serializable {
 	private boolean enabled;
 	private String scanMinutesInterval;
 	private Date lastSuccessfulScanOn;
-	@IndexedEmbedded
+//	@IndexedEmbedded
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Group> groups;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

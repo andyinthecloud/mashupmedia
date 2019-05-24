@@ -27,20 +27,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
-import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
-import org.apache.lucene.analysis.snowball.SnowballPorterFilterFactory;
-import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.AnalyzerDef;
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Parameter;
-import org.hibernate.search.annotations.Resolution;
-import org.hibernate.search.annotations.TokenFilterDef;
-import org.hibernate.search.annotations.TokenizerDef;
 import org.mashupmedia.comparator.MediaEncodingComparator;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
@@ -48,11 +34,11 @@ import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
 
 @Entity
-@Indexed
-@AnalyzerDef(name = "customanalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
-		@TokenFilterDef(factory = LowerCaseFilterFactory.class),
-		@TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
-		@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = { @Parameter(name = "language", value = "English") }) })
+//@Indexed
+//@AnalyzerDef(name = "customanalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
+//		@TokenFilterDef(factory = LowerCaseFilterFactory.class),
+//		@TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
+//		@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = { @Parameter(name = "language", value = "English") }) })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,7 +57,7 @@ public class MediaItem implements Serializable {
 	private long id;
 	private String fileName;
 	private String path;
-	@IndexedEmbedded
+//	@IndexedEmbedded
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@XmlTransient
 	private Library library;
@@ -81,30 +67,30 @@ public class MediaItem implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedOn;
 	private String format;
-	@Field(analyze = Analyze.NO)
+//	@Field(analyze = Analyze.NO)
 	private int vote;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Field(analyze = Analyze.NO)
-	@DateBridge(resolution = Resolution.SECOND)
+//	@Field(analyze = Analyze.NO)
+//	@DateBridge(resolution = Resolution.SECOND)
 	private Date lastAccessed;
 	@ManyToOne(cascade = { CascadeType.PERSIST })
 	@XmlTransient
 	private User lastAccessedBy;
-	@Field
+//	@Field
 	@Column(length = 1000)
 	private String searchText;
-	@Field(analyze = Analyze.NO)
+//	@Field(analyze = Analyze.NO)
 	private String mediaTypeValue;
 	@Column(length = 1000)
 	private String summary;
-	@Field(analyze = Analyze.NO)
+//	@Field(analyze = Analyze.NO)
 	private String displayTitle;
-	@Field(analyze = Analyze.NO)
+//	@Field(analyze = Analyze.NO)
 	private boolean enabled;
 	private long fileLastModifiedOn;
-	@Field(analyze = Analyze.NO)
+//	@Field(analyze = Analyze.NO)
 	private boolean publicAccess;
-	@Field(analyze = Analyze.NO)
+//	@Field(analyze = Analyze.NO)
 	private String uniqueName;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("createdOn")

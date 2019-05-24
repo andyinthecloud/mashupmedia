@@ -15,12 +15,12 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
 
 	@Override
 	public void saveGroup(Group group) {
-		sessionFactory.getCurrentSession().saveOrUpdate(group);
+		getCurrentSession().saveOrUpdate(group);
 	}
 
 	@Override
 	public Group getGroup(long groupId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Group where id = :groupId");
+		Query query = getCurrentSession().createQuery("from Group where id = :groupId");
 		query.setLong("groupId", groupId);
 		query.setCacheable(true);
 		Group group = (Group) query.uniqueResult();
@@ -29,7 +29,7 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
 	
 	@Override
 	public List<Long> getGroupIds() {
-		Query query = sessionFactory.getCurrentSession().createQuery("select id from Group");
+		Query query = getCurrentSession().createQuery("select id from Group");
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Long> groupIds = (List<Long>) query.list();
@@ -38,7 +38,7 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
 
 	@Override
 	public List<Group> getGroups() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Group order by name");
+		Query query = getCurrentSession().createQuery("from Group order by name");
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Group> groups = (List<Group>) query.list();
@@ -49,12 +49,12 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
 	public void deleteGroup(Group group) {
 		deleteGroupFromLibraries(group);
 		deleteGroupFromUsers(group);
-		sessionFactory.getCurrentSession().delete(group);
+		getCurrentSession().delete(group);
 	}
 
 	protected void deleteGroupFromUsers(Group group) {
 		long groupId = group.getId();
-		Session session = sessionFactory.getCurrentSession();
+		Session session = getCurrentSession();
 		Query query = session.createQuery("from User u inner join u.groups g where g.id = :groupId");
 		query.setLong("groupId", groupId);
 		query.setCacheable(true);
@@ -69,7 +69,7 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
 
 	protected void deleteGroupFromLibraries(Group group) {
 		long groupId = group.getId();
-		Session session = sessionFactory.getCurrentSession();
+		Session session = getCurrentSession();
 		Query query = session.createQuery("from Library l inner join l.groups g where g.id = :groupId");
 		query.setLong("groupId", groupId);
 		query.setCacheable(true);

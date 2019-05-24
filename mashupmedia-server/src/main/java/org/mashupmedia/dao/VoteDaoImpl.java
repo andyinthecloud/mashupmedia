@@ -13,7 +13,7 @@ public class VoteDaoImpl extends BaseDaoImpl implements VoteDao {
 
 	@Override
 	public Vote getLatestVote(long userId, long mediaItemId) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
+		Query query = getCurrentSession().createQuery(
 				"from Vote where user.id = :userId and mediaItem.id = :mediaItemId "
 						+ "and createdOn = (select max(tv.createdOn) from Vote tv where tv.user.id = :userId and tv.mediaItem.id = mediaItem.id)");
 		query.setLong("userId", userId);
@@ -37,12 +37,12 @@ public class VoteDaoImpl extends BaseDaoImpl implements VoteDao {
 
 	@Override
 	public void deleteVote(Vote vote) {
-		sessionFactory.getCurrentSession().delete(vote);
+		getCurrentSession().delete(vote);
 	}
 
 	@Override
 	public List<Vote> getVotesForMediaItem(long mediaItemId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Vote where mediaItem.id = :mediaItemId");
+		Query query = getCurrentSession().createQuery("from Vote where mediaItem.id = :mediaItemId");
 		query.setLong("mediaItemId", mediaItemId);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")

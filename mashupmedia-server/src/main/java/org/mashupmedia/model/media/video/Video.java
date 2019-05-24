@@ -4,11 +4,10 @@ import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hibernate.search.annotations.Indexed;
 import org.mashupmedia.model.media.MediaItem;
 
 @Entity
-@Indexed
+//@Indexed
 @Cacheable
 @XmlRootElement
 public class Video extends MediaItem {

@@ -2,22 +2,14 @@ package org.mashupmedia.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
-import org.hibernate.search.query.dsl.BooleanJunction;
-import org.hibernate.search.query.dsl.QueryBuilder;
-import org.mashupmedia.comparator.MediaItemComparator;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.util.StringHelper;
@@ -28,7 +20,7 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 
 	@Override
 	public List<MediaItem> getMediaItems(long libraryId) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
+		Query query = getCurrentSession().createQuery(
 				"from MediaItem where library.id = :libraryId order by title");
 		query.setLong("libraryId", libraryId);
 		query.setCacheable(true);
@@ -48,14 +40,14 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 			}
 
 			album.setAlbumArtImage(null);
-			// sessionFactory.getCurrentSession().saveOrUpdate(album);
-			sessionFactory.getCurrentSession().delete(albumArtImage);
+			// getCurrentSession().saveOrUpdate(album);
+			getCurrentSession().delete(albumArtImage);
 		}
 	}
 
 	@Override
 	public List<AlbumArtImage> getAlbumArtImages(long libraryId) {
-		Query query = sessionFactory.getCurrentSession()
+		Query query = getCurrentSession()
 				.createQuery("from AlbumArtImage where library.id = :libraryId");
 		query.setLong("libraryId", libraryId);
 		query.setCacheable(true);
@@ -66,7 +58,7 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 
 	@Override
 	public MediaItem getMediaItem(long mediaItemId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from MediaItem where id = :mediaItemId");
+		Query query = getCurrentSession().createQuery("from MediaItem where id = :mediaItemId");
 		query.setLong("mediaItemId", mediaItemId);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -80,7 +72,7 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 	
 	@Override
 	public List<MediaItem> getMediaItems(String path) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from MediaItem where path = :path");
+		Query query = getCurrentSession().createQuery("from MediaItem where path = :path");
 		query.setString("path", path);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -90,7 +82,7 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 
 	@Override
 	public void updateMediaItem(MediaItem mediaItem) {
-		sessionFactory.getCurrentSession().update(mediaItem);
+		getCurrentSession().update(mediaItem);
 
 	}
 
@@ -138,39 +130,40 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 
 	@Override
 	public List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria) {
-		Session session = sessionFactory.getCurrentSession();
-		FullTextSession fullTextSession = Search.getFullTextSession(session);
-
-		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(MediaItem.class)
-				.get();
-		@SuppressWarnings("rawtypes")
-		BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
-
-		String searchWordsValue = mediaItemSearchCriteria.getSearchWords();
-		String[] searchWords = searchWordsValue.split("\\s");
-		for (String searchWord : searchWords) {
-			booleanJunction.must(queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord)
-					.createQuery());
-		}
-
-		MediaType mediaType = mediaItemSearchCriteria.getMediaType();
-		if (mediaType != null) {
-			String mediaTypeValue = StringHelper.normaliseTextForDatabase(mediaType.toString());
-			booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue)
-					.createQuery());
-		}
-
-		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
-		Query query = fullTextSession.createFullTextQuery(luceneQuery, MediaItem.class);
-		int maximumResults = mediaItemSearchCriteria.getMaximumResults();
-		int firstResult = mediaItemSearchCriteria.getPageNumber() * maximumResults;
-		query.setFirstResult(firstResult);
-		query.setMaxResults(maximumResults);
-
-		@SuppressWarnings("unchecked")
-		List<MediaItem> mediaItems = query.list();
-		Collections.sort(mediaItems, new MediaItemComparator());
-		return mediaItems;
+		return null;
+//		Session session = getCurrentSession();
+//		FullTextSession fullTextSession = Search.getFullTextSession(session);
+//
+//		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(MediaItem.class)
+//				.get();
+//		@SuppressWarnings("rawtypes")
+//		BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
+//
+//		String searchWordsValue = mediaItemSearchCriteria.getSearchWords();
+//		String[] searchWords = searchWordsValue.split("\\s");
+//		for (String searchWord : searchWords) {
+//			booleanJunction.must(queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord)
+//					.createQuery());
+//		}
+//
+//		MediaType mediaType = mediaItemSearchCriteria.getMediaType();
+//		if (mediaType != null) {
+//			String mediaTypeValue = StringHelper.normaliseTextForDatabase(mediaType.toString());
+//			booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue)
+//					.createQuery());
+//		}
+//
+//		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
+//		Query query = fullTextSession.createFullTextQuery(luceneQuery, MediaItem.class);
+//		int maximumResults = mediaItemSearchCriteria.getMaximumResults();
+//		int firstResult = mediaItemSearchCriteria.getPageNumber() * maximumResults;
+//		query.setFirstResult(firstResult);
+//		query.setMaxResults(maximumResults);
+//
+//		@SuppressWarnings("unchecked")
+//		List<MediaItem> mediaItems = query.list();
+//		Collections.sort(mediaItems, new MediaItemComparator());
+//		return mediaItems;
 	}
 
 	@Override
@@ -179,7 +172,7 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		if (mediaItemId == 0) {
 			saveOrUpdate(mediaItem);
 		} else {
-			sessionFactory.getCurrentSession().merge(mediaItem);
+			getCurrentSession().merge(mediaItem);
 		}
 	}
 }

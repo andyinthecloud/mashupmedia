@@ -20,9 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-
 @Entity(name = "org.mashupmedia.model.media.music.Album")
 @Table(name = "MusicAlbum")
 @Cacheable
@@ -32,7 +29,7 @@ public class Album implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	@Field(analyze = Analyze.NO)
+//	@Field(analyze = Analyze.NO)
 	private String name;
 	private String folderName;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

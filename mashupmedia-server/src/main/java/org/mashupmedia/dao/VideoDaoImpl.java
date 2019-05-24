@@ -30,7 +30,7 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 				"select distinct v from Video v join v.library.groups g where v.enabled = true");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by v.displayTitle");
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
+		Query query = getCurrentSession().createQuery(queryBuilder.toString());
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
 		List<Video> videos = query.list();
@@ -39,7 +39,7 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 
 	@Override
 	public int removeObsoleteVideos(long libraryId, Date date) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
+		Query query = getCurrentSession().createQuery(
 				"delete Video v where v.updatedOn < :date and v.library.id = :libraryId");
 		query.setDate("date", date);
 		query.setLong("libraryId", libraryId);
@@ -49,7 +49,7 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 
 	@Override
 	public List<Video> getObsoleteVideos(long libraryId, Date date) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
+		Query query = getCurrentSession().createQuery(
 				"from Video v where v.updatedOn < :date and v.library.id = :libraryId");
 		query.setDate("date", date);
 		query.setLong("libraryId", libraryId);
@@ -61,7 +61,7 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 
 	@Override
 	public Video getVideoByPath(String path) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Video v where v.path = :path");
+		Query query = getCurrentSession().createQuery("from Video v where v.path = :path");
 		query.setString("path", path);
 		query.setCacheable(true);
 		@SuppressWarnings("unchecked")
@@ -84,7 +84,7 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 
 	@Override
 	public Video getVideo(long videoId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Video v where v.id = :videoId");
+		Query query = getCurrentSession().createQuery("from Video v where v.id = :videoId");
 		query.setLong("videoId", videoId);
 		query.setCacheable(true);
 
@@ -100,7 +100,7 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 
 	@Override
 	public int getTotalVideosWithSameName(String title) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
+		Query query = getCurrentSession().createQuery(
 				"select count(*) from Video v where v.searchText = :title");
 		query.setString("title", title);
 		query.setCacheable(true);
@@ -114,7 +114,7 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 		}
 		for (Video video : videos) {
 			logger.info("Deleting video: " + video.getPath());
-			sessionFactory.getCurrentSession().delete(video);
+			getCurrentSession().delete(video);
 		}
 
 	}

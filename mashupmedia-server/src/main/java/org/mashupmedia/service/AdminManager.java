@@ -18,8 +18,6 @@ public interface AdminManager {
 
 	public void saveRole(Role role);
 
-	public void updatePassword(String defaultUsername, String defaultPassword);
-
 	public void saveGroup(Group group);
 
 	public List<Group> getGroups();

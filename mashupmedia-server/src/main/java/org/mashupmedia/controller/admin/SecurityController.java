@@ -5,7 +5,10 @@ import java.util.Base64;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.security.core.userdetails.User;
+import org.mashupmedia.dto.User;
+import org.mashupmedia.security.AuthenticationConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin
 public class SecurityController {
+	
+	@Autowired
+	private AuthenticationConfiguration authenticationConfiguration;
 
 	@RequestMapping("/login")
-	public boolean login(@RequestBody User user) {
-		return user.getUsername().equals("user") && user.getPassword().equals("password");
+	public boolean login(@RequestBody User user) {		
+		boolean isAuthenticated = authenticationConfiguration.authenticate(user.getUsername(), user.getPassword());
+		return isAuthenticated;
 	}
 
 	@RequestMapping("/user")

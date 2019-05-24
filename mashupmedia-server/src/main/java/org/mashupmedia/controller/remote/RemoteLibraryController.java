@@ -29,12 +29,14 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.security.AuthenticationConfiguration;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.MediaManager;
@@ -46,9 +48,6 @@ import org.mashupmedia.util.WebHelper.WebContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -72,8 +71,11 @@ public class RemoteLibraryController {
 	@Autowired
 	private MediaManager mediaManager;
 
+//	@Autowired
+//	private AuthenticationManager authenticationManager;
+	
 	@Autowired
-	private AuthenticationManager authenticationManager;
+	private AuthenticationConfiguration authenticationConfiguration; 
 
 	@Autowired
 	private AdminManager adminManager;
@@ -155,15 +157,14 @@ public class RemoteLibraryController {
 	protected void logInAsSystemuser(HttpServletRequest request) {
 
 		User systemUser = adminManager.getSystemUser();
-		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(systemUser.getUsername(), systemUser.getPassword());
-
-		// Authenticate the user
-		Authentication authentication = authenticationManager.authenticate(authRequest);
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		securityContext.setAuthentication(authentication);
-
+		boolean isAuthenticated = authenticationConfiguration.authenticate(systemUser.getUsername(), systemUser.getPassword());
+		if (!isAuthenticated) {
+			throw new MashupMediaRuntimeException("Unable to log in as system user");
+		}
+		
 		// Create a new session and add the security context.
 		HttpSession session = request.getSession(true);
+		SecurityContext securityContext = SecurityContextHolder.getContext();
 		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
 	}
 
