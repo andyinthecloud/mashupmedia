@@ -1,0 +1,16 @@
+<img  [src]="'assets/images/mashupmedia-logo.png'" alt="Mashup Media">
+<h1>Login</h1>
+<p>{{message}}</p>
+
+<form class="login">
+  <mat-form-field>
+    <input [formControl]="username" matInput placeholder="Username">
+  </mat-form-field>
+
+  <mat-form-field>
+     <input [formControl]="password" type="password" matInput placeholder="Password">
+  </mat-form-field>
+
+  <button mat-raised-button (click)="login()">Login</button>
+</form>
+

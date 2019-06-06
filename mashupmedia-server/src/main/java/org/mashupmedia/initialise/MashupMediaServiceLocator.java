@@ -112,7 +112,7 @@ public class MashupMediaServiceLocator {
 //	}	
 	
 
-	public LocalSessionFactoryBean createSessionFactory() {
+	public LocalSessionFactoryBean createSessionFactory_del() {
 		
 		
 		

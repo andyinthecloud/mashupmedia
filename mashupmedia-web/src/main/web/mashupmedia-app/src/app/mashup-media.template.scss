@@ -1,0 +1,64 @@
+#music-player {
+  padding: 5px;
+  visibility: hidden;
+}
+
+#music-player .controls {
+  white-space: nowrap;
+}
+
+#music-player div.progress {
+  height: 5px;
+  cursor: pointer;
+  position: relative;
+}
+
+#music-player div.play-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: #e579e9;
+  width: 42%;
+  height: 2px;
+}
+
+#music-player .album-art {
+  padding: 0 10px;
+}
+
+#music-player .album-art img {
+  width: 30px;
+  height: auto;
+}
+
+#music-player .song-info div {
+  overflow: hidden;
+}
+
+#music-player .artist-name {
+  font-size: 0.8em;
+  height: 1.5em;
+  max-height: 1.5em;
+}
+
+#music-player .title {
+  font-size: 0.9em;
+  height: 2.5em;
+  max-height: 2.5em;
+}
+
+#music-player td.controls img {
+  vertical-align: middle;
+  padding: 0px 2px;
+  width: auto;
+}
+
+#music-player .controls a.previous img,
+#music-player .controls a.next img {
+  height: 20px;
+}
+
+#music-player .controls a.play img,
+#music-player .controls a.pause img {
+  height: 32px;
+}

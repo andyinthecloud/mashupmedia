@@ -45,7 +45,7 @@ public class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
 			SecurityContext securityContext = SecurityContextHolder.getContext();
 			securityContext.setAuthentication(authentication);
 		} catch (AuthenticationException e) {
-			logger.info("Error logging in", e);
+			logger.info("Invalid username and / or password.");
 			return false;
 		}
 
@@ -64,7 +64,7 @@ public class AuthenticationConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-				.antMatchers("/login").permitAll().anyRequest().authenticated().and().httpBasic();
+				.antMatchers("/security/login").permitAll().anyRequest().authenticated().and().httpBasic();
 
 	}
 
