@@ -1,44 +1,109 @@
-start music player
-<div id="music-player">
-    <table>
-        <tr>
-            <td class="controls"><a class="previous" href="javascript:;">
+<mat-sidenav-container id="root-container">
 
-                    <img title="Previous track"
-                    alt="Previous track"
-                    src="../assets/images/media-player/previous.png" />
-            </a> <a class="play" href="javascript:;"><img
-                    title="Play track"
-                    alt="Play track"
-                    src="../assets/images/media-player/play.png"/></a>
-                <a class="next" href="javascript:;"><img
-                    title="Next track"
-                    alt="Next track"
-                    src="../assets/images/media-player/next.png" /></a>
-            </td>
-            <td class="album-art"></td>
-            <td class="song-info">
-                <div class="artist-name"></div>
-                <div class="title"></div>
-            </td>
-        </tr>
+    <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
+        (closed)="events.push('close!')" position="end">
+        <mat-toolbar>
+            <mat-toolbar-row>
+                <span>Close menu</span>
+                <span class="fill-remaining-space"></span>
+                <mat-icon aria-hidden="false" aria-label="Close">close</mat-icon>
+            </mat-toolbar-row>
+            <mat-toolbar-row>
+                <span>
+                    <span>Log out</span>
+                    <span class="fill-remaining-space"></span>
+                    <mat-icon aria-hidden="false" aria-label="Log out">power_settings_new</mat-icon>
+                </span>
+            </mat-toolbar-row>
+        </mat-toolbar>
+    </mat-sidenav>
 
-    </table>
+    <mat-sidenav-content>
+
+        <div id="header">
+
+            <a class="menu" [routerLink]="" (click)="sidenav.toggle()">
+                <mat-icon aria-hidden="false" aria-label="Example home icon">menu</mat-icon>
+            </a>
+
+            <div id="music-player">
+                <table>
+                    <tr>
+                        <td class="controls"><a class="previous" href="javascript:;">
+
+                                <img title="Previous track" alt="Previous track"
+                                    src="../assets/images/media-player/previous.png" />
+                            </a> <a class="play" href="javascript:;"><img title="Play track" alt="Play track"
+                                    src="../assets/images/media-player/play.png" /></a>
+                            <a class="next" href="javascript:;"><img title="Next track" alt="Next track"
+                                    src="../assets/images/media-player/next.png" /></a>
+                        </td>
+                        <td class="album-art"></td>
+                        <td class="song-info">
+                            <div class="artist-name"></div>
+                            <div class="title"></div>
+                        </td>
+                    </tr>
+
+                </table>
 
 
 
-    <!--
-    <a class="pause"><img title="<spring:message code="action.play"/>" alt="<spring:message code="action.play"/>" src="<c:url value="${themePath}/images/media-player/play.png"/>" /></a>
+                <!--
+                <a class="pause"><img title="<spring:message code="action.play"/>" alt="<spring:message code="action.play"/>" src="<c:url value="${themePath}/images/media-player/play.png"/>" /></a>
 
-    <button class="stop">Stop</button>
-    -->
-    <div class="progress">
-        <div class="play-bar"></div>
-    </div>
-</div>
-
-end  music player
-
-<ng-content></ng-content>
+                <button class="stop">Stop</button>
+                -->
+                <div class="progress">
+                    <div class="play-bar"></div>
+                </div>
+            </div>
+        </div>
 
 
+        <div id="main-content">
+
+            <mat-toolbar>
+                <mat-toolbar-row>
+                    <span>Network</span>
+                </mat-toolbar-row>
+                <mat-toolbar-row>
+                    <span>Libraries</span>
+                </mat-toolbar-row>
+                <mat-toolbar-row>
+                    <span>Users</span>
+                </mat-toolbar-row>
+                <mat-toolbar-row>
+                    <span>Groups</span>
+                </mat-toolbar-row>
+                <mat-toolbar-row>
+                    <span>Encoding</span>
+                </mat-toolbar-row>
+            </mat-toolbar>
+
+        </div>
+
+        <mat-toolbar id="footer">
+            <span><a class="menu" [routerLink]="" (click)="sidenav.toggle()">
+                    <mat-icon aria-hidden="false" aria-label="Music">music_note</mat-icon>
+                </a></span>
+            <span><a class="menu" [routerLink]="" (click)="sidenav.toggle()">
+                    <mat-icon aria-hidden="false" aria-label="Photos">photo</mat-icon>
+                </a></span>
+            <span><a class="menu" [routerLink]="" (click)="sidenav.toggle()">
+                    <mat-icon aria-hidden="false" aria-label="Videos">videocam</mat-icon>
+                </a></span>
+            <span><a class="menu" [routerLink]="" (click)="sidenav.toggle()">
+                    <mat-icon aria-hidden="false" aria-label="Settings">settings</mat-icon>
+                </a></span>
+        </mat-toolbar>
+
+
+    </mat-sidenav-content>
+
+
+</mat-sidenav-container>
+
+
+
+here

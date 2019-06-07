@@ -11,11 +11,12 @@ import { ComposeMessageComponent } from './compose-message/compose-message.compo
 
 import { AppRoutingModule }        from './app-routing.module';
 import { HeroesModule }            from './heroes/heroes.module';
-import { MatSidenavModule, MatCheckboxModule, MatIconModule } from '@angular/material';
+
 import { HttpClientModule } from '@angular/common/http';
 import { AuthModule } from './auth/auth.module';
 import { HomeComponent } from './home/home.component';
 import { BaseComponent } from './base/base.component';
+import { MaterialModule } from './material-module';
 
 @NgModule({
   imports: [
@@ -24,11 +25,9 @@ import { BaseComponent } from './base/base.component';
     FormsModule,
     HeroesModule,
     AppRoutingModule,
-    MatSidenavModule,
-    MatCheckboxModule,
-    MatIconModule,
     HttpClientModule,
     AuthModule,
+    MaterialModule
   ],
   declarations: [
     AppComponent,
