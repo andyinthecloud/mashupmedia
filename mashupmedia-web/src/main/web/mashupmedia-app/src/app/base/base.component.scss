@@ -1,3 +1,11 @@
+
+$mashupmedia-pink: #E579E9;
+
+a {
+  text-decoration: none;
+  color: $mashupmedia-pink;
+}
+
 #root-container {
   position: absolute;
   top: 0;
@@ -25,7 +33,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  background-color: #e579e9;
+  background-color: $mashupmedia-pink;
   width: 42%;
   height: 2px;
 }
@@ -115,16 +123,16 @@
   flex: 1 1 auto;
 }
 
-mat-sidenav mat-toolbar {
+mat-sidenav  {
   font-size: 1em;
+  background-color: #373737;
   mat-toolbar-row {
-    span.fill-remaining-space {
-      flex: 1 1 auto;
-    }
-
     a {
+      font-weight: bold;
       text-decoration: none;
+      color: $mashupmedia-pink;
       mat-icon {
+        padding-left: 1em;
         vertical-align: middle;
       }
     }
