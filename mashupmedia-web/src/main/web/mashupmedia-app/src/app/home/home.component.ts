@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 @Component({
-  selector: 'main-content',
+  // selector: 'main-content',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 

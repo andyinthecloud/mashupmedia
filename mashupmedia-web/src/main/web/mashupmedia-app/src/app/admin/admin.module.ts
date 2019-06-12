@@ -7,19 +7,26 @@ import { ManageCrisesComponent }    from './manage-crises/manage-crises.componen
 import { ManageHeroesComponent }    from './manage-heroes/manage-heroes.component';
 
 import { AdminRoutingModule }       from './admin-routing.module';
+import { NetworkComponent } from './network/network.component';
+import { BaseComponent } from '../base/base.component';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../material-module';
 
 
 
 @NgModule({
   imports: [
     CommonModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    MaterialModule
   ],
   declarations: [
     AdminComponent,
     AdminDashboardComponent,
     ManageCrisesComponent,
-    ManageHeroesComponent
+    ManageHeroesComponent,
+    NetworkComponent,
+    BaseComponent
 
   ]
 })

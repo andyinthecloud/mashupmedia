@@ -3,17 +3,21 @@
     <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
         (closed)="events.push('close!')" position="end">
 
-          <mat-toolbar-row>
+        <mat-toolbar-row>
             <span><a href="javascript:;" (click)="sidenav.close()">Close menu</a></span>
             <span class="fill-remaining-space"></span>
-            <a href="javascript:;" (click)="sidenav.close()"><mat-icon aria-hidden="false" aria-label="Close">close</mat-icon></a>
-          </mat-toolbar-row>
+            <a href="javascript:;" (click)="sidenav.close()">
+                <mat-icon aria-hidden="false" aria-label="Close">close</mat-icon>
+            </a>
+        </mat-toolbar-row>
 
-          <mat-toolbar-row>
+        <mat-toolbar-row>
             <span><a href="javascript:;" (click)="sidenav.close()">Log out</a></span>
             <span class="fill-remaining-space"></span>
-            <a href="javascript:;" (click)="sidenav.close()"><mat-icon aria-hidden="false" aria-label="Log out">power_settings_new</mat-icon></a>
-          </mat-toolbar-row>
+            <a href="javascript:;" (click)="sidenav.close()">
+                <mat-icon aria-hidden="false" aria-label="Log out">power_settings_new</mat-icon>
+            </a>
+        </mat-toolbar-row>
 
     </mat-sidenav>
 
@@ -62,22 +66,55 @@
 
         <div id="main-content">
 
+            <div>
+before template
+<router-outlet></router-outlet>
+
+            after template
+        </div>
+
+
             <mat-toolbar>
                 <mat-toolbar-row>
-                    <span>Network</span>
+                    <span><a class="menu" [routerLink]="['/admin/network']">Network</a></span>
+                    <span class="fill-remaining-space"></span>
+                    <a class="menu" [routerLink]="">
+                        <mat-icon aria-hidden="false" aria-label="Network">arrow_right</mat-icon>
+                    </a>
                 </mat-toolbar-row>
+
                 <mat-toolbar-row>
-                    <span>Libraries</span>
+                    <span><a class="menu" [routerLink]="">Libraries</a></span>
+                    <span class="fill-remaining-space"></span>
+                    <a class="menu" [routerLink]="">
+                        <mat-icon aria-hidden="false" aria-label="Libraries">arrow_right</mat-icon>
+                    </a>
                 </mat-toolbar-row>
+
                 <mat-toolbar-row>
-                    <span>Users</span>
+                    <span><a class="menu" [routerLink]="">Users</a></span>
+                    <span class="fill-remaining-space"></span>
+                    <a class="menu" [routerLink]="">
+                        <mat-icon aria-hidden="false" aria-label="Users">arrow_right</mat-icon>
+                    </a>
                 </mat-toolbar-row>
+
                 <mat-toolbar-row>
-                    <span>Groups</span>
+                    <span><a class="menu" [routerLink]="">Groups</a></span>
+                    <span class="fill-remaining-space"></span>
+                    <a class="menu" [routerLink]="">
+                        <mat-icon aria-hidden="false" aria-label="Groups">arrow_right</mat-icon>
+                    </a>
                 </mat-toolbar-row>
+
                 <mat-toolbar-row>
-                    <span>Encoding</span>
+                    <span><a class="menu" [routerLink]="">Encoding</a></span>
+                    <span class="fill-remaining-space"></span>
+                    <a class="menu" [routerLink]="">
+                        <mat-icon aria-hidden="false" aria-label="Encoding">arrow_right</mat-icon>
+                    </a>
                 </mat-toolbar-row>
+
             </mat-toolbar>
 
         </div>
@@ -105,4 +142,3 @@
 
 
 
-here

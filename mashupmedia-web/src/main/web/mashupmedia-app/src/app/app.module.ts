@@ -17,6 +17,9 @@ import { AuthModule } from './auth/auth.module';
 import { HomeComponent } from './home/home.component';
 import { BaseComponent } from './base/base.component';
 import { MaterialModule } from './material-module';
+import { AdminRoutingModule } from './admin/admin-routing.module';
+import { NetworkComponent } from './admin/network/network.component';
+import { AdminModule } from './admin/admin.module';
 
 @NgModule({
   imports: [
@@ -27,14 +30,17 @@ import { MaterialModule } from './material-module';
     AppRoutingModule,
     HttpClientModule,
     AuthModule,
-    MaterialModule
+    MaterialModule,
+    AdminModule,
+    AdminRoutingModule
   ],
   declarations: [
     AppComponent,
     ComposeMessageComponent,
     PageNotFoundComponent,
     HomeComponent,
-    BaseComponent
+
+
   ],
   bootstrap: [ AppComponent ]
 })

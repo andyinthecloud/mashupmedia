@@ -1,17 +1,12 @@
 import { Component, ViewEncapsulation, TemplateRef, ViewChild, OnInit } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { AuthService } from '../../auth/auth.service';
+import { BaseComponent } from 'src/app/base/base.component';
 
 @Component({
-
-  // selector: 'app-content',
+  // selector: 'main-content',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
-
-/*
-  templateUrl: '../../mashup-media.template.html',
-  styleUrls: ['../../mashup-media.template.scss']
-*/
 
 })
 export class AdminComponent  implements OnInit {

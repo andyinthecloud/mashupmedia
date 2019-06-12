@@ -7,8 +7,11 @@ import { ManageCrisesComponent }    from './manage-crises/manage-crises.componen
 import { ManageHeroesComponent }    from './manage-heroes/manage-heroes.component';
 
 import { AuthGuard }                from '../auth/auth.guard';
+import { NetworkComponent } from './network/network.component';
+import { BaseComponent } from '../base/base.component';
 
 const adminRoutes: Routes = [
+  /*
   {
     path: '',
     component: AdminComponent,
@@ -18,13 +21,25 @@ const adminRoutes: Routes = [
         path: '',
         canActivateChild: [AuthGuard],
         children: [
-          { path: 'crises', component: ManageCrisesComponent },
-          { path: 'heroes', component: ManageHeroesComponent },
+          // { path: 'crises', component: ManageCrisesComponent },
+          // { path: 'heroes', component: ManageHeroesComponent },
+          { path: 'network', component: NetworkComponent },
 //          { path: '', component: AdminDashboardComponent }
         ]
       }
     ]
   }
+  */
+
+  {
+    path: '',
+    component: BaseComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'network', component: NetworkComponent },
+    ]
+  }
+
 ];
 
 @NgModule({

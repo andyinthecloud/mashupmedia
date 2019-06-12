@@ -4,6 +4,8 @@ import {
   MatIconModule,
   MatSidenavModule,
   MatToolbarModule,
+  MatSlideToggleModule,
+  MatFormFieldModule,
 } from '@angular/material';
 
 @NgModule({
@@ -11,7 +13,9 @@ import {
     MatSidenavModule,
     MatCheckboxModule,
     MatIconModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatSlideToggleModule,
+    MatFormFieldModule
   ]
 })
 

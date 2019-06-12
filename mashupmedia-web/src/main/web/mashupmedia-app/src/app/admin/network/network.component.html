@@ -1,0 +1,12 @@
+network
+
+<form [formGroup]="formGroup" (ngSubmit)="onFormSubmit(formGroup.value)">
+
+  <mat-slide-toggle formControlName="enableHttpProxy" class="example-margin" [color]="enableHttpProxy" [checked]="checked">
+    Enable Http proxy
+  </mat-slide-toggle>
+
+
+
+
+</form>

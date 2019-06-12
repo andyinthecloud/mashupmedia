@@ -8,6 +8,7 @@ import { AuthGuard }                          from './auth/auth.guard';
 import { SelectivePreloadingStrategyService } from './selective-preloading-strategy.service';
 import { LoginComponent } from './auth/login/login.component';
 import { HomeComponent } from './home/home.component';
+import { BaseComponent } from './base/base.component';
 
 const appRoutes: Routes = [
   {
@@ -17,11 +18,12 @@ const appRoutes: Routes = [
   },
   {
     path: 'home',
-    component: HomeComponent,
+    component: BaseComponent,
+    children: [
+      {path: '', component: HomeComponent}
+    ],
     canLoad: [AuthGuard],
-
   },
-
   {
     path: 'admin',
     loadChildren: './admin/admin.module#AdminModule',
@@ -52,7 +54,8 @@ const appRoutes: Routes = [
     )
   ],
   exports: [
-    RouterModule
+    RouterModule,
+    // BaseComponent
   ]
 })
 export class AppRoutingModule { }
