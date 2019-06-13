@@ -1,12 +1,27 @@
-network
+<h1>Proxy configuration</h1>
 
-<form [formGroup]="formGroup" (ngSubmit)="onFormSubmit(formGroup.value)">
+<form [formGroup]="proxyFormGroup" (ngSubmit)="onSubmit(proxyFormGroup)">
 
-  <mat-slide-toggle formControlName="enableHttpProxy" class="example-margin" [color]="enableHttpProxy" [checked]="checked">
+
+  <mat-slide-toggle formControlName="enableHttpProxy" >
     Enable Http proxy
   </mat-slide-toggle>
 
+  <mat-form-field>
+    <input formControlName="host" matInput placeholder="Host">
+  </mat-form-field>
 
+  <mat-form-field>
+    <input formControlName="port" matInput placeholder="Port number">
+  </mat-form-field>
 
+  <mat-form-field>
+    <input formControlName="username" matInput placeholder="Username">
+  </mat-form-field>
 
+  <mat-form-field>
+    <input type="password" formControlName="password" matInput placeholder="Password">
+  </mat-form-field>
+
+  <button type="submit" mat-raised-button>Save</button>
 </form>

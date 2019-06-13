@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation, TemplateRef, ViewChild, OnInit } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { AuthService } from '../../auth/auth.service';
-import { BaseComponent } from 'src/app/base/base.component';
+import { BaseLayoutComponent } from 'src/app/base-layout/base-layout.component';
 
 @Component({
   // selector: 'main-content',

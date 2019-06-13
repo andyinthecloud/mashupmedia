@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { BaseComponent } from '../base/base.component';
+import { Component } from '@angular/core';
+import { BaseLayoutComponent } from '../base-layout/base-layout.component';
 
 @Component({
-  // selector: 'main-content',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 
 })
-export class HomeComponent extends BaseComponent implements OnInit {
-
-  // constructor() { }
+export class HomeComponent extends BaseLayoutComponent {
 
   ngOnInit() {
   }

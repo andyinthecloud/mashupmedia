@@ -1,6 +1,6 @@
 import { NgModule }       from '@angular/core';
 import { BrowserModule }  from '@angular/platform-browser';
-import { FormsModule }    from '@angular/forms';
+import { FormsModule, ReactiveFormsModule }    from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { Router } from '@angular/router';
@@ -15,11 +15,12 @@ import { HeroesModule }            from './heroes/heroes.module';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthModule } from './auth/auth.module';
 import { HomeComponent } from './home/home.component';
-import { BaseComponent } from './base/base.component';
 import { MaterialModule } from './material-module';
 import { AdminRoutingModule } from './admin/admin-routing.module';
-import { NetworkComponent } from './admin/network/network.component';
 import { AdminModule } from './admin/admin.module';
+import { AdminLayoutComponent } from './base-layout/admin-layout/admin-layout.component';
+import { BaseLayoutComponent } from './base-layout/base-layout.component';
+import { HomeLayoutComponent } from './base-layout/home-layout/home-layout.component';
 
 @NgModule({
   imports: [
@@ -39,6 +40,8 @@ import { AdminModule } from './admin/admin.module';
     ComposeMessageComponent,
     PageNotFoundComponent,
     HomeComponent,
+    HomeLayoutComponent,
+    // AdminLayoutComponent,
 
 
   ],

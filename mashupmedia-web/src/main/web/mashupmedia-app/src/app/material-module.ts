@@ -6,6 +6,8 @@ import {
   MatToolbarModule,
   MatSlideToggleModule,
   MatFormFieldModule,
+  MatButtonModule,
+  MatInputModule,
 } from '@angular/material';
 
 @NgModule({
@@ -15,7 +17,9 @@ import {
     MatIconModule,
     MatToolbarModule,
     MatSlideToggleModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
   ]
 })
 

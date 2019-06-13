@@ -1,7 +1,6 @@
 <mat-sidenav-container id="root-container">
 
-    <mat-sidenav #sidenav mode="side" [(opened)]="opened" (opened)="events.push('open!')"
-        (closed)="events.push('close!')" position="end">
+    <mat-sidenav #sidenav mode="side" [(opened)]="opened" position="end">
 
         <mat-toolbar-row>
             <span><a href="javascript:;" (click)="sidenav.close()">Close menu</a></span>
@@ -66,15 +65,11 @@
 
         <div id="main-content">
 
-            <div>
-before template
-<router-outlet></router-outlet>
+            <div class="content">
+                <router-outlet></router-outlet>
+            </div>
 
-            after template
-        </div>
-
-
-            <mat-toolbar>
+            <mat-toolbar *ngIf="showAdminMenu">
                 <mat-toolbar-row>
                     <span><a class="menu" [routerLink]="['/admin/network']">Network</a></span>
                     <span class="fill-remaining-space"></span>
@@ -119,7 +114,7 @@ before template
 
         </div>
 
-        <mat-toolbar id="footer">
+        <mat-toolbar id="footer" *ngIf="showMainFooterMenu">
             <span><a class="menu" [routerLink]="" (click)="sidenav.toggle()">
                     <mat-icon aria-hidden="false" aria-label="Music">music_note</mat-icon>
                 </a></span>
@@ -139,6 +134,3 @@ before template
 
 
 </mat-sidenav-container>
-
-
-

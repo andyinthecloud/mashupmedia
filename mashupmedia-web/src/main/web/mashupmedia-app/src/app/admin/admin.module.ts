@@ -8,9 +8,12 @@ import { ManageHeroesComponent }    from './manage-heroes/manage-heroes.componen
 
 import { AdminRoutingModule }       from './admin-routing.module';
 import { NetworkComponent } from './network/network.component';
-import { BaseComponent } from '../base/base.component';
+import { BaseLayoutComponent } from '../base-layout/base-layout.component';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../material-module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AdminLayoutComponent } from '../base-layout/admin-layout/admin-layout.component';
+// import { AdminLayoutComponent } from '../base-layout/admin-layout/admin-layout.component';
 
 
 
@@ -18,7 +21,8 @@ import { MaterialModule } from '../material-module';
   imports: [
     CommonModule,
     AdminRoutingModule,
-    MaterialModule
+    MaterialModule,
+    ReactiveFormsModule
   ],
   declarations: [
     AdminComponent,
@@ -26,7 +30,7 @@ import { MaterialModule } from '../material-module';
     ManageCrisesComponent,
     ManageHeroesComponent,
     NetworkComponent,
-    BaseComponent
+    AdminLayoutComponent
 
   ]
 })

@@ -8,7 +8,7 @@ import { ManageHeroesComponent }    from './manage-heroes/manage-heroes.componen
 
 import { AuthGuard }                from '../auth/auth.guard';
 import { NetworkComponent } from './network/network.component';
-import { BaseComponent } from '../base/base.component';
+import { AdminLayoutComponent } from '../base-layout/admin-layout/admin-layout.component';
 
 const adminRoutes: Routes = [
   /*
@@ -33,7 +33,7 @@ const adminRoutes: Routes = [
 
   {
     path: '',
-    component: BaseComponent,
+    component: AdminLayoutComponent,
     canActivate: [AuthGuard],
     children: [
       { path: 'network', component: NetworkComponent },

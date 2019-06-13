@@ -1,38 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { BaseComponent } from 'src/app/base/base.component';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { AdminLayoutComponent } from 'src/app/base-layout/admin-layout/admin-layout.component';
 
 @Component({
-  // selector: 'app-network',
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss']
 })
-export class NetworkComponent implements OnInit {
-  formGroup: FormGroup;
-
-  enableHttpProxy = 'accent';
-  checked = false;
-
-  url = new FormControl('');
-
-  // disabled = false;
-  // enableHttpProxy = new FormControl('');
-
-  // activateHttpProxy = new FormControl('');
-  // url = new FormControl('');
-  // port = new FormControl('');
-  // username = new FormControl('');
-  // password = new FormControl('');
-
-constructor(formBuilder: FormBuilder) {
-  this.formGroup = formBuilder.group({
-    enableHttpProxy: true,
-    url: ''
-
-  })
-}
+export class NetworkComponent extends AdminLayoutComponent {
+  proxyFormGroup: FormGroup;
+  constructor(formBuilder: FormBuilder) {
+    super();
+  }
 
   ngOnInit() {
+    console.log('ngOnInit');
+    this.showAdminMenu = false;
+    this.proxyFormGroup = new FormGroup({
+      enableHttpProxy: new FormControl(false),
+      host: new FormControl(),
+      port: new FormControl(),
+      username: new FormControl(),
+      password: new FormControl()
+    });
+  }
+
+  onSubmit(form: FormGroup) {
+    // form.value.
   }
 
 }

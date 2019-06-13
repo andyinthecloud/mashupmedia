@@ -21,7 +21,8 @@ import { MatInputModule, MatButtonModule } from '@angular/material';
     ReactiveFormsModule
   ],
   declarations: [
-    LoginComponent
+    LoginComponent,
+
   ]
 })
 export class AuthModule {}

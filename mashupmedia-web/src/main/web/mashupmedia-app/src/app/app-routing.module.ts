@@ -8,7 +8,7 @@ import { AuthGuard }                          from './auth/auth.guard';
 import { SelectivePreloadingStrategyService } from './selective-preloading-strategy.service';
 import { LoginComponent } from './auth/login/login.component';
 import { HomeComponent } from './home/home.component';
-import { BaseComponent } from './base/base.component';
+import { HomeLayoutComponent } from './base-layout/home-layout/home-layout.component';
 
 const appRoutes: Routes = [
   {
@@ -18,7 +18,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'home',
-    component: BaseComponent,
+    component: HomeLayoutComponent,
     children: [
       {path: '', component: HomeComponent}
     ],
