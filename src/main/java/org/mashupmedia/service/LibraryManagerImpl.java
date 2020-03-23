@@ -30,17 +30,15 @@ public class LibraryManagerImpl implements LibraryManager {
 	@Autowired
 	private LibraryUpdateManager libraryUpdateManager;
 	@Autowired
-	private ConfigurationManager configurationManager;	
+	private ConfigurationManager configurationManager;
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 	@Autowired
-	private PhotoLibraryUpdateManager photoLibraryUpdateManager;	
+	private PhotoLibraryUpdateManager photoLibraryUpdateManager;
 	@Autowired
 	private AdminManager adminManager;
-	@Autowired	
+	@Autowired
 	private LibraryWatchManager libraryWatchManager;
-
-	
 
 	@Override
 	public List<Library> getLocalLibraries(LibraryType libraryType) {
@@ -177,7 +175,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	public void deleteLibrary(long libraryId) {
 		FileHelper.deleteLibrary(libraryId);
 		Library library = libraryDao.getLibrary(libraryId);
-		libraryDao.deleteLibrary(library);		
+		libraryDao.deleteLibrary(library);
 		libraryWatchManager.removeWatchLibraryListener(libraryId);
 	}
 
@@ -191,25 +189,24 @@ public class LibraryManagerImpl implements LibraryManager {
 	@Override
 	public synchronized void saveMedia(long librayId, File file) {
 		logger.info("Saving media file: " + file.getAbsolutePath());
-		
-		Date date = new Date();		
-		
+
+		Date date = new Date();
+
 		if (!file.exists()) {
 			return;
 		}
-		
+
 		if (file.isDirectory()) {
 			File[] filesInFolder = file.listFiles();
 			for (File fileInFolder : filesInFolder) {
 				saveMedia(librayId, fileInFolder);
 			}
 		}
-		
-		
+
 		Library library = libraryDao.getLibrary(librayId);
-		LibraryType libraryType = library.getLibraryType();		
-		
-		if (libraryType == LibraryType.MUSIC) {			
+		LibraryType libraryType = library.getLibraryType();
+
+		if (libraryType == LibraryType.MUSIC) {
 			musicLibraryUpdateManager.saveFile((MusicLibrary) library, file, date);
 		} else if (libraryType == LibraryType.PHOTO) {
 			photoLibraryUpdateManager.saveFile((PhotoLibrary) library, file, date);
@@ -233,6 +230,5 @@ public class LibraryManagerImpl implements LibraryManager {
 		}
 
 	}
-
 
 }

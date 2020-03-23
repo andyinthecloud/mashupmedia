@@ -59,7 +59,7 @@ public class MashupMediaServiceLocator {
 			throw new MashupMediaRuntimeException(e.getMessage());
 		}
 		String applicationFolderPath = FileHelper.getApplicationFolder().getAbsolutePath();
-		dataSource.setJdbcUrl("jdbc:h2:file:" + applicationFolderPath + "/db");
+		dataSource.setJdbcUrl("jdbc:h2:file:" + applicationFolderPath + "/db;MODE=Oracle;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
 		dataSource.setUser("sa");
 		dataSource.setPassword("");
 		dataSource.setMinPoolSize(3);
