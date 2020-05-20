@@ -7,11 +7,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Query;
+
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.mashupmedia.comparator.MediaItemComparator;
@@ -23,17 +23,19 @@ import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Repository
+@Slf4j
 public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 
 	@Override
 	public List<MediaItem> getMediaItems(long libraryId) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
+		Query query = entityManager.createQuery(
 				"from MediaItem where library.id = :libraryId order by title");
-		query.setLong("libraryId", libraryId);
-		query.setCacheable(true);
+		query.setParameter("libraryId", libraryId);
 		@SuppressWarnings("unchecked")
-		List<MediaItem> mediaList = (List<MediaItem>) query.list();
+		List<MediaItem> mediaList = (List<MediaItem>) query.getResultList();
 		return mediaList;
 	}
 
@@ -43,34 +45,32 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		for (AlbumArtImage albumArtImage : albumArtImages) {
 			Album album = albumArtImage.getAlbum();
 			if (album == null) {
-				logger.debug(albumArtImage.getName() + " has no album.");
+				log.debug(albumArtImage.getName() + " has no album.");
 				continue;
 			}
 
 			album.setAlbumArtImage(null);
-			// sessionFactory.getCurrentSession().saveOrUpdate(album);
-			sessionFactory.getCurrentSession().delete(albumArtImage);
+			// entityManager.saveOrUpdate(album);
+			entityManager.remove(albumArtImage);
 		}
 	}
 
 	@Override
 	public List<AlbumArtImage> getAlbumArtImages(long libraryId) {
-		Query query = sessionFactory.getCurrentSession()
+		Query query = entityManager
 				.createQuery("from AlbumArtImage where library.id = :libraryId");
-		query.setLong("libraryId", libraryId);
-		query.setCacheable(true);
+		query.setParameter("libraryId", libraryId);
 		@SuppressWarnings("unchecked")
-		List<AlbumArtImage> albumArtImages = (List<AlbumArtImage>) query.list();
+		List<AlbumArtImage> albumArtImages = (List<AlbumArtImage>) query.getResultList();
 		return albumArtImages;
 	}
 
 	@Override
 	public MediaItem getMediaItem(long mediaItemId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from MediaItem where id = :mediaItemId");
-		query.setLong("mediaItemId", mediaItemId);
-		query.setCacheable(true);
+		Query query = entityManager.createQuery("from MediaItem where id = :mediaItemId");
+		query.setParameter("mediaItemId", mediaItemId);
 		@SuppressWarnings("unchecked")
-		List<MediaItem> mediaItems = (List<MediaItem>) query.list();
+		List<MediaItem> mediaItems = (List<MediaItem>) query.getResultList();
 		if (mediaItems == null || mediaItems.isEmpty()) {
 			return null;
 		}
@@ -80,17 +80,16 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 	
 	@Override
 	public List<MediaItem> getMediaItems(String path) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from MediaItem where path = :path");
-		query.setString("path", path);
-		query.setCacheable(true);
+		Query query = entityManager.createQuery("from MediaItem where path = :path");
+		query.setParameter("path", path);
 		@SuppressWarnings("unchecked")
-		List<MediaItem> mediaItems = (List<MediaItem>) query.list();
+		List<MediaItem> mediaItems = (List<MediaItem>) query.getResultList();
 		return mediaItems;
 	}
 
 	@Override
 	public void updateMediaItem(MediaItem mediaItem) {
-		sessionFactory.getCurrentSession().update(mediaItem);
+		saveOrUpdate(mediaItem);
 
 	}
 
@@ -138,10 +137,11 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 
 	@Override
 	public List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria) {
-		Session session = sessionFactory.getCurrentSession();
-		FullTextSession fullTextSession = Search.getFullTextSession(session);
+		
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
-		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(MediaItem.class)
+
+		QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(MediaItem.class)
 				.get();
 		@SuppressWarnings("rawtypes")
 		BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
@@ -161,14 +161,14 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		}
 
 		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
-		Query query = fullTextSession.createFullTextQuery(luceneQuery, MediaItem.class);
+		Query query = fullTextEntityManager.createFullTextQuery(luceneQuery, MediaItem.class);
 		int maximumResults = mediaItemSearchCriteria.getMaximumResults();
 		int firstResult = mediaItemSearchCriteria.getPageNumber() * maximumResults;
 		query.setFirstResult(firstResult);
 		query.setMaxResults(maximumResults);
 
 		@SuppressWarnings("unchecked")
-		List<MediaItem> mediaItems = query.list();
+		List<MediaItem> mediaItems = query.getResultList();
 		Collections.sort(mediaItems, new MediaItemComparator());
 		return mediaItems;
 	}
@@ -179,7 +179,7 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 		if (mediaItemId == 0) {
 			saveOrUpdate(mediaItem);
 		} else {
-			sessionFactory.getCurrentSession().merge(mediaItem);
+			entityManager.merge(mediaItem);
 		}
 	}
 }

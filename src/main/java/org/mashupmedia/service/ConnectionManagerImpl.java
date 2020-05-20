@@ -21,7 +21,6 @@ import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
-import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.AlbumArtImage;
@@ -30,11 +29,12 @@ import org.mashupmedia.util.StringHelper.Encoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@Slf4j
 public class ConnectionManagerImpl implements ConnectionManager {
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private ConfigurationManager configurationManager;
@@ -96,7 +96,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 					return inputStream;
 				}
 			} catch (Exception e) {
-				logger.error("Unable to connect to host: " + link + ". Trying proxy...");
+				log.error("Unable to connect to host: " + link + ". Trying proxy...");
 			}
 		} else {
 			httpClient.getCredentialsProvider().setCredentials(new AuthScope(getProxyUrl(), getProxyPort()),
@@ -115,7 +115,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 				}
 
 			} catch (Exception e) {
-				logger.error("Unable to connect to host: " + link + " through proxy.", e);
+				log.error("Unable to connect to host: " + link + " through proxy.", e);
 			}
 
 		}
@@ -160,7 +160,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	public long getMediaItemFileSize(long mediaItemId) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		if (mediaItem == null) {
-			logger.error("Unable to start media stream, no media type found");
+			log.error("Unable to start media stream, no media type found");
 			return 0;
 		}
 
@@ -179,7 +179,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 				String xml = FileUtils.readFileToString(file);
 				return xml;
 			} catch (IOException e) {
-				logger.error("Error reading remoteLibraryFile at: " + file.getAbsolutePath(), e);
+				log.error("Error reading remoteLibraryFile at: " + file.getAbsolutePath(), e);
 			}
 		}
 
@@ -188,7 +188,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		try {
 			IOUtils.copy(inputStream, stringWriter, Encoding.UTF8.getEncodingString());
 		} catch (IOException e) {
-			logger.error(e);
+			log.error("Error", e);
 		}
 
 		IOUtils.closeQuietly(stringWriter);

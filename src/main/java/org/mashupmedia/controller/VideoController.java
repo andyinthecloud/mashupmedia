@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.restful.VideoWebService;
@@ -29,11 +28,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @RequestMapping("/video")
+@Slf4j
 public class VideoController extends BaseController {
-
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private VideoManager videoManager;
@@ -69,7 +69,7 @@ public class VideoController extends BaseController {
 		try {
 			processReencodeRequest(isReencode, video);
 		} catch (MediaItemEncodeException e) {
-			logger.error("Error encoding video", e);
+			log.error("Error encoding video", e);
 		}
 
 		List<Breadcrumb> breadcrumbs = populateBreadcrumbs();
@@ -134,7 +134,7 @@ public class VideoController extends BaseController {
 
 			}
 		} catch (ConnectException e) {
-			logger.error(
+			log.error(
 					"Error connecting to the remote web service, site may be unavailable or check proxy are incorrect",
 					e);
 
@@ -144,7 +144,7 @@ public class VideoController extends BaseController {
 			remoteMediaMetaItem.setIntroduction(introductionMessage);
 			remoteMediaMetaItem.setError(true);
 		} catch (Exception e) {
-			logger.error("Error getting remote video information", e);
+			log.error("Error getting remote video information", e);
 			remoteMediaMetaItem.setIntroduction(MessageHelper
 					.getMessage("remote.error"));
 			remoteMediaMetaItem.setError(true);

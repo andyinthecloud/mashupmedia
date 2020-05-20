@@ -2,7 +2,9 @@ package org.mashupmedia.dao;
 
 import java.util.List;
 
-import org.hibernate.Query;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
 import org.mashupmedia.model.vote.DislikeVote;
 import org.mashupmedia.model.vote.LikeVote;
 import org.mashupmedia.model.vote.Vote;
@@ -13,13 +15,12 @@ public class VoteDaoImpl extends BaseDaoImpl implements VoteDao {
 
 	@Override
 	public Vote getLatestVote(long userId, long mediaItemId) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
+		TypedQuery<Vote> query = entityManager.createQuery(
 				"from Vote where user.id = :userId and mediaItem.id = :mediaItemId "
-						+ "and createdOn = (select max(tv.createdOn) from Vote tv where tv.user.id = :userId and tv.mediaItem.id = mediaItem.id)");
-		query.setLong("userId", userId);
-		query.setLong("mediaItemId", mediaItemId);
-		query.setCacheable(true);
-		Vote vote = (Vote) query.uniqueResult();
+						+ "and createdOn = (select max(tv.createdOn) from Vote tv where tv.user.id = :userId and tv.mediaItem.id = mediaItem.id)", Vote.class);
+		query.setParameter("userId", userId);
+		query.setParameter("mediaItemId", mediaItemId);
+		Vote vote = getUniqueResult(query);
 		return vote;
 
 	}
@@ -37,16 +38,15 @@ public class VoteDaoImpl extends BaseDaoImpl implements VoteDao {
 
 	@Override
 	public void deleteVote(Vote vote) {
-		sessionFactory.getCurrentSession().delete(vote);
+		entityManager.remove(vote);
 	}
 
 	@Override
 	public List<Vote> getVotesForMediaItem(long mediaItemId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Vote where mediaItem.id = :mediaItemId");
-		query.setLong("mediaItemId", mediaItemId);
-		query.setCacheable(true);
+		Query query = entityManager.createQuery("from Vote where mediaItem.id = :mediaItemId");
+		query.setParameter("mediaItemId", mediaItemId);
 		@SuppressWarnings("unchecked")
-		List<Vote> votes = query.list();
+		List<Vote> votes = query.getResultList();
 		return votes;
 	}
 

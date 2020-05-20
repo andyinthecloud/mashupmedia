@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.controller.ajax.AjaxBaseController;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.restful.MusicWebService;
@@ -24,11 +23,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @RequestMapping("/remote/music")
+@Slf4j
 public class RemoteMusicController extends AjaxBaseController {
-
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private MusicManager musicManager;
@@ -79,7 +79,7 @@ public class RemoteMusicController extends AjaxBaseController {
 
 			}
 		} catch (ConnectException e) {
-			logger.error(
+			log.error(
 					"Error connecting to the remote web service, site may be unavailable or check proxy are incorrect",
 					e);
 			String contextUrl = WebHelper.getContextUrl(request);
@@ -87,7 +87,7 @@ public class RemoteMusicController extends AjaxBaseController {
 			remoteMediaMeta.setIntroduction(introductionMessage);
 			remoteMediaMeta.setError(true);
 		} catch (Exception e) {
-			logger.error("Error getting remote artist information", e);
+			log.error("Error getting remote artist information", e);
 			remoteMediaMeta.setIntroduction(MessageHelper.getMessage("remote.error"));
 			remoteMediaMeta.setError(true);
 		}

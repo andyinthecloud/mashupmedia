@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.MediaItem;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MediaItemSequenceInputStream {
 
-	private Logger logger = Logger.getLogger(getClass());
 
 	private SequenceInputStream sequenceInputStream;
 	private List<MediaItem> mediaItems;
@@ -35,7 +35,7 @@ public class MediaItemSequenceInputStream {
 				BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(path));
 				bufferedInputStreams.add(bufferedInputStream);
 			} catch (IOException e) {
-				logger.error("File not found error", e);
+				log.error("File not found error", e);
 			}
 		}
 
@@ -59,7 +59,7 @@ public class MediaItemSequenceInputStream {
 					return mediaItem;
 				}
 			} catch (IOException e) {
-				logger.error("Unable to get file size", e);
+				log.error("Unable to get file size", e);
 			}
 
 		}

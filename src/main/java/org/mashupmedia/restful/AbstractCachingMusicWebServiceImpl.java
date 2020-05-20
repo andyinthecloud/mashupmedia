@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public abstract class AbstractCachingMusicWebServiceImpl implements MusicWebService {
-	private Logger logger = Logger.getLogger(getClass());
 	
 	private Map<String, RemoteMediaMetaItem> remoteMediaCache = new HashMap<String, RemoteMediaMetaItem>();
 	public static int MAXIMUM_SECONDS_IN_CACHE = 86400;
@@ -39,7 +39,7 @@ public abstract class AbstractCachingMusicWebServiceImpl implements MusicWebServ
 		remoteMediaMetaItem.setDate(new Date());
 		String remoteId = remoteMediaMetaItem.getRemoteId();
 		if (StringUtils.isBlank(remoteId)) {
-			logger.error("Unable to add remote media item to cache, remote id is empty.");
+			log.error("Unable to add remote media item to cache, remote id is empty.");
 			return;
 		}
 		

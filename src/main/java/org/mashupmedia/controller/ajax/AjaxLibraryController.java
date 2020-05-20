@@ -18,24 +18,20 @@
 package org.mashupmedia.controller.ajax;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.model.library.RemoteShare.RemoteShareStatusType;
 import org.mashupmedia.service.LibraryManager;
-import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.LibraryHelper;
-import org.mashupmedia.util.DateHelper.DateFormatType;
 import org.mashupmedia.util.WebHelper.WebContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -82,7 +78,8 @@ public class AjaxLibraryController {
 	}
 
 	@RequestMapping(value = "/update-remote-shares", method = RequestMethod.POST)
-	public ModelAndView handleUpdateRemoteShares(@RequestParam("libraryId") Long libraryId, @RequestParam("remoteShareIds[]") Long[] remoteShareIds,
+	public ModelAndView handleUpdateRemoteShares(@RequestParam("libraryId") Long libraryId,
+			@RequestParam("remoteShareIds[]") Long[] remoteShareIds,
 			@RequestParam("remoteShareStatus") String remoteShareStatus, Model model) {
 
 		remoteShareStatus = StringUtils.trimToEmpty(remoteShareStatus);
@@ -127,44 +124,18 @@ public class AjaxLibraryController {
 	}
 
 	private ModelAndView getRemoteShares(Library library) {
-		List<RemoteShare> remoteShares = library.getRemoteShares();
-
-		final JSONArray jsonArray = new JSONArray();
-		if (remoteShares == null || remoteShares.isEmpty()) {
-			remoteShares = new ArrayList<RemoteShare>();
-		}
-
-		for (RemoteShare remoteShare : remoteShares) {
-			JSONObject remoteSharePropertiesJson = new JSONObject();
-			remoteSharePropertiesJson.put("createdBy", remoteShare.getCreatedBy().getName());
-			remoteSharePropertiesJson.put("createdOn", DateHelper.parseToText(remoteShare.getCreatedOn(), DateFormatType.SHORT_DISPLAY_WITH_TIME));
-			remoteSharePropertiesJson.put("id", remoteShare.getId());
-			String lastAccessedValue = "";
-			Date lastAccessed = remoteShare.getLastAccessed();
-			if (lastAccessed != null) {
-				lastAccessedValue = DateHelper.parseToText(remoteShare.getLastAccessed(), DateFormatType.SHORT_DISPLAY_WITH_TIME);
-			}
-
-			remoteSharePropertiesJson.put("lastAccessed", lastAccessedValue);
-			remoteSharePropertiesJson.put("remoteUrl", StringUtils.trimToEmpty(remoteShare.getRemoteUrl()));
-			remoteSharePropertiesJson.put("totalPlayedMediaItems", remoteShare.getTotalPlayedMediaItems());
-			remoteSharePropertiesJson.put("uniqueName", StringUtils.trimToEmpty(remoteShare.getUniqueName()));
-			remoteSharePropertiesJson.put("status", remoteShare.getStatusType().toString());
-
-			JSONObject remoteShareJson = new JSONObject();
-			remoteShareJson.put("remoteShare", remoteSharePropertiesJson);
-			jsonArray.add(remoteShareJson);
-
-		}
+		final List<RemoteShare> remoteShares = library.getRemoteShares();
 
 		ModelAndView modelAndView = new ModelAndView(new View() {
 
 			@Override
-			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
+					throws Exception {
 				response.setContentType(getContentType());
 
-				response.getWriter().print(jsonArray.toString());
-
+				if (remoteShares != null) {
+					response.getWriter().print(new ObjectMapper().writeValueAsString(remoteShares));
+				}
 			}
 
 			@Override

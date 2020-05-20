@@ -7,11 +7,10 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.Tag;
-import org.jaudiotagger.tag.images.Artwork;
+import org.jaudiotagger.tag.datatype.Artwork;
 import org.mashupmedia.comparator.FileSizeComparator;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.library.MusicLibrary;
@@ -27,11 +26,12 @@ import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@Slf4j
 public class AlbumArtManagerImpl implements AlbumArtManager {
-	private Logger logger = Logger.getLogger(getClass());
 
 	public static final String DEFAULT_MIME_TYPE = "jpg";
 
@@ -95,7 +95,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 				return false;
 			}
 		} catch (IOException e) {
-			logger.error("Error getting album art image", e);
+			log.error("Error getting album art image", e);
 		}
 
 		return true;
@@ -114,7 +114,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		try {
 			artwork = getArtwork(musicFile);
 		} catch (Exception e) {
-			logger.info("Error reading music file artwork: " + musicFile.getAbsolutePath(), e);
+			log.info("Error reading music file artwork: " + musicFile.getAbsolutePath(), e);
 		}
 
 		final String albumArtImagePattern = musicLibrary.getAlbumArtImagePattern();
@@ -152,7 +152,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		try {
 			thumbnailUrl = ImageHelper.generateAndSaveMusicAlbumArtThumbnail(musicLibrary.getId(), imagePath);
 		} catch (Exception e) {
-			logger.error("Error converting album art image to thumbnail, using original image.", e);
+			log.error("Error converting album art image to thumbnail, using original image.", e);
 		}
 
 		albumArtImage.setThumbnailUrl(thumbnailUrl);

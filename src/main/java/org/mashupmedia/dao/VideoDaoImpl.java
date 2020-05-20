@@ -4,12 +4,17 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Query;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
 import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.util.DaoHelper;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Repository
+@Slf4j
 public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 
 	@Override
@@ -30,49 +35,46 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 				"select distinct v from Video v join v.library.groups g where v.enabled = true");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by v.displayTitle");
-		Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
-		query.setCacheable(true);
+		Query query = entityManager.createQuery(queryBuilder.toString());
 		@SuppressWarnings("unchecked")
-		List<Video> videos = query.list();
+		List<Video> videos = query.getResultList();
 		return videos;
 	}
 
 	@Override
 	public int removeObsoleteVideos(long libraryId, Date date) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
+		Query query = entityManager.createQuery(
 				"delete Video v where v.updatedOn < :date and v.library.id = :libraryId");
-		query.setDate("date", date);
-		query.setLong("libraryId", libraryId);
+		query.setParameter("date", date);
+		query.setParameter("libraryId", libraryId);
 		int totalDeletedVideos = query.executeUpdate();
 		return totalDeletedVideos;
 	}
 
 	@Override
 	public List<Video> getObsoleteVideos(long libraryId, Date date) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
+		Query query = entityManager.createQuery(
 				"from Video v where v.updatedOn < :date and v.library.id = :libraryId");
-		query.setDate("date", date);
-		query.setLong("libraryId", libraryId);
-		query.setCacheable(true);
+		query.setParameter("date", date);
+		query.setParameter("libraryId", libraryId);
 		@SuppressWarnings("unchecked")
-		List<Video> videos = query.list();
+		List<Video> videos = query.getResultList();
 		return videos;
 	}
 
 	@Override
 	public Video getVideoByPath(String path) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Video v where v.path = :path");
-		query.setString("path", path);
-		query.setCacheable(true);
+		Query query = entityManager.createQuery("from Video v where v.path = :path");
+		query.setParameter("path", path);
 		@SuppressWarnings("unchecked")
-		List<Video> videos = query.list();
+		List<Video> videos = query.getResultList();
 
 		if (videos == null || videos.isEmpty()) {
 			return null;
 		}
 
 		if (videos.size() > 1) {
-			logger.error("Duplicate videos found for the same file. Attempting to remove files");
+			log.error("Duplicate videos found for the same file. Attempting to remove files");
 			Video video = videos.get(0);
 			videos.remove(video);
 			deleteVideos(videos);
@@ -84,12 +86,11 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 
 	@Override
 	public Video getVideo(long videoId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Video v where v.id = :videoId");
-		query.setLong("videoId", videoId);
-		query.setCacheable(true);
+		Query query = entityManager.createQuery("from Video v where v.id = :videoId");
+		query.setParameter("videoId", videoId);
 
 		@SuppressWarnings("unchecked")
-		List<Video> videos = query.list();
+		List<Video> videos = query.getResultList();
 		if (videos == null || videos.isEmpty()) {
 			return null;
 		}
@@ -100,11 +101,10 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 
 	@Override
 	public int getTotalVideosWithSameName(String title) {
-		Query query = sessionFactory.getCurrentSession().createQuery(
-				"select count(*) from Video v where v.searchText = :title");
-		query.setString("title", title);
-		query.setCacheable(true);
-		Long count = (Long) query.uniqueResult();
+		TypedQuery<Long> query = entityManager.createQuery(
+				"select count(*) from Video v where v.searchText = :title", Long.class);
+		query.setParameter("title", title);
+		Long count = getUniqueResult(query);
 		return count.intValue();
 	}
 
@@ -113,8 +113,8 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 			return;
 		}
 		for (Video video : videos) {
-			logger.info("Deleting video: " + video.getPath());
-			sessionFactory.getCurrentSession().delete(video);
+			log.info("Deleting video: " + video.getPath());
+			entityManager.remove(video);
 		}
 
 	}

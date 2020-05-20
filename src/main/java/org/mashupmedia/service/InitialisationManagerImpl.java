@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.encode.FfMpegManager;
 import org.mashupmedia.encode.ProcessManager;
@@ -15,11 +14,12 @@ import org.mashupmedia.util.AdminHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@Slf4j
 public class InitialisationManagerImpl implements InitialisationManager {
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private AdminManager adminManager;
@@ -34,7 +34,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	public void initialiseApplication() {
 		User user = adminManager.getUser(MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME);
 		if (user != null) {
-			logger.info("Database has already been initialised. Exiting....");
+			log.info("Database has already been initialised. Exiting....");
 			return;
 		}
 
@@ -57,7 +57,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		try {
 			isValidFfMpegConfiguration = ffMpegManager.isValidFfMpeg(ffMpegFile);
 		} catch (IOException e) {
-			logger.info("Error validating ffmpeg", e);
+			log.info("Error validating ffmpeg", e);
 		}
 
 		if (!isValidFfMpegConfiguration) {

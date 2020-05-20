@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.dao.PhotoDao;
 import org.mashupmedia.encode.ProcessManager;
@@ -29,7 +28,7 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import lombok.extern.slf4j.Slf4j;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
@@ -39,9 +38,9 @@ import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 @Service
 @Transactional
+@Slf4j
 public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager {
 
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private PhotoDao photoDao;
@@ -66,7 +65,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			deletePhoto(photo);
 		}
 
-		logger.info(totalDeletedPhotos + " obsolete photos deleted.");
+		log.info(totalDeletedPhotos + " obsolete photos deleted.");
 	}
 	
 	
@@ -94,7 +93,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		processPhotos(folder, date, null, library, photos);
 
 		long totalMediaItems = libraryDao.getTotalMediaItemsFromLibrary(library.getId());
-		logger.info("Total photos saved:" + totalMediaItems);
+		log.info("Total photos saved:" + totalMediaItems);
 	}
 
 	protected void processPhotos(File file, Date date, String albumName, PhotoLibrary library, List<Photo> photos) {
@@ -225,11 +224,11 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			try {
 				processPhotoMetadata(file, photo);
 			} catch (ImageProcessingException e) {
-				logger.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
+				log.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
 			} catch (IOException e) {
-				logger.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
+				log.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
 			} catch (MetadataException e) {
-				logger.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
+				log.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
 			}
 
 			int orientation = photo.getOrientation();
@@ -241,7 +240,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				photo.setWebOptimisedImagePath(webOptimisedImagePath);
 
 			} catch (Exception e) {
-				logger.error("Will not save photo, unable to create thumbnail: " + file.getAbsolutePath(), e);
+				log.error("Will not save photo, unable to create thumbnail: " + file.getAbsolutePath(), e);
 				return null;
 			}
 
@@ -319,7 +318,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	protected int getOrientatonFromMeta(Metadata metadata) throws MetadataException {
 		int orientation = 0;
-		ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+		ExifIFD0Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
 		if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
 			orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
 		}
@@ -329,7 +328,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	}
 
 	protected Date getTakenOnDatefromMeta(File file, Metadata metadata) {
-		ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+		ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
 		if (exifIFD0Directory != null) {
 			Date date = exifIFD0Directory.getDate(ExifIFD0Directory.TAG_DATETIME);
 			if (date != null) {
@@ -337,7 +336,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			}
 		}
 
-		ExifSubIFDDirectory subDir = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+		ExifSubIFDDirectory subDir = metadata.getDirectory(ExifSubIFDDirectory.class);
 		if (subDir != null) {
 			Date date = subDir.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
 			if (date != null) {

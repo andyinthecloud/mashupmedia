@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.dao.VoteDao;
 import org.mashupmedia.model.User;
@@ -16,13 +15,13 @@ import org.mashupmedia.util.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@Slf4j
 public class VoteManagerImpl implements VoteManager {
 	
-	private Logger logger = Logger.getLogger(getClass());
-
 	@Autowired
 	private ConfigurationManager configurationManager;
 
@@ -113,7 +112,7 @@ public class VoteManagerImpl implements VoteManager {
 			return;
 		}
 
-		logger.info("Deleting " + votes.size() + " votes...");
+		log.info("Deleting " + votes.size() + " votes...");
 		for (Vote vote : votes) {
 			voteDao.deleteVote(vote);
 		}

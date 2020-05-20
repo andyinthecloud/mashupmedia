@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.DateHelper.DateFormatType;
@@ -25,8 +24,10 @@ import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class StreamingMediaHandler {
-	private static Logger logger = Logger.getLogger(StreamingMediaHandler.class);
 
 	// private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
 	// private static final String CONTENT_TYPE_MULTITYPE_WITH_BOUNDARY =
@@ -142,7 +143,7 @@ public class StreamingMediaHandler {
 				// return 304.
 				String ifNoneMatch = request.getHeader(IF_NONE_MATCH);
 				if (Objects.nonNull(ifNoneMatch) && matches(ifNoneMatch, fileName)) {
-					logger.error("If-None-Match header should contain \"*\" or ETag. If so, then return 304.");
+					log.error("If-None-Match header should contain \"*\" or ETag. If so, then return 304.");
 					response.setHeader(ETAG, fileName); // Required in 304.
 					response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
 					return;
@@ -155,7 +156,7 @@ public class StreamingMediaHandler {
 				// specified.
 				long ifModifiedSince = request.getDateHeader(IF_MODIFIED_SINCE);
 				if (Objects.isNull(ifNoneMatch) && ifModifiedSince != -1 && ifModifiedSince + 1000 > lastModified) {
-					logger.error(
+					log.error(
 							"If-Modified-Since header should be greater than LastModified. If so, then return 304.");
 					response.setHeader(ETAG, fileName); // Required in 304.
 					response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
@@ -170,7 +171,7 @@ public class StreamingMediaHandler {
 				// 412.
 				String ifMatch = request.getHeader(IF_MATCH);
 				if (Objects.nonNull(ifMatch) && !matches(ifMatch, fileName)) {
-					logger.error("If-Match header should contain \"*\" or ETag. If not, then return 412.");
+					log.error("If-Match header should contain \"*\" or ETag. If not, then return 412.");
 					response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
 					return;
 				}
@@ -180,7 +181,7 @@ public class StreamingMediaHandler {
 				// If not, then return 412.
 				long ifUnmodifiedSince = request.getDateHeader(IF_UNMODIFIED_SINCE);
 				if (ifUnmodifiedSince != -1 && ifUnmodifiedSince + 1000 <= lastModified) {
-					logger.error(
+					log.error(
 							"If-Unmodified-Since header should be greater than LastModified. If not, then return 412.");
 					response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
 					return;
@@ -203,7 +204,7 @@ public class StreamingMediaHandler {
 					// If
 					// not, then return 416.
 					if (!range.matches("^bytes=\\d*-\\d*(,\\d*-\\d*)*$")) {
-						logger.error(
+						log.error(
 								"Range header should match format \"bytes=n-n,n-n,n-n...\". If not, then return 416.");
 						range = "";
 
@@ -234,7 +235,7 @@ public class StreamingMediaHandler {
 					// byte
 					// range.
 					if (ranges.isEmpty()) {
-						logger.info("If any valid If-Range header, then process each part of byte range.");
+						log.info("If any valid If-Range header, then process each part of byte range.");
 						for (String part : range.substring(6).split(",")) {
 							// Assuming a file with length of 100, the following
 							// examples returns bytes at:
@@ -254,7 +255,7 @@ public class StreamingMediaHandler {
 							// then
 							// return 416.
 							if (start > end) {
-								logger.info("Check if Range is syntactically valid. If not, then return 416.");
+								log.info("Check if Range is syntactically valid. If not, then return 416.");
 								response.setHeader(CONTENT_RANGE,
 										String.format(BYTES_INVALID_BYTE_RANGE_FORMAT, length)); // Required
 																									// in
@@ -269,7 +270,7 @@ public class StreamingMediaHandler {
 					}
 				}
 
-				logger.debug("Content-Type : " + contentType);
+				log.debug("Content-Type : " + contentType);
 				// Initialize response.
 				response.reset();
 				OutputStream output = response.getOutputStream();
@@ -294,7 +295,7 @@ public class StreamingMediaHandler {
 
 					response.setHeader(CONTENT_DISPOSITION,
 							String.format(CONTENT_DISPOSITION_FORMAT, disposition, fileName));
-					logger.debug("Content-Disposition : " + disposition);
+					log.debug("Content-Disposition : " + disposition);
 				}
 
 				// Send requested file (part(s)) to client
@@ -317,13 +318,13 @@ public class StreamingMediaHandler {
 				if (ranges.isEmpty() || ranges.get(0) == full) {
 
 					// Return full file.
-					logger.info("Return full file");
+					log.info("Return full file");
 					setContent(response, contentType, full);
 					Range.copy(fileInputStream, output, length, full.start, full.length);
 
 				} else if (ranges.size() == 1) {
 					Range r = ranges.get(0);
-					logger.info("Return 1 part of file : from (" + r.start + ") to (" + r.end + ")");
+					log.info("Return 1 part of file : from (" + r.start + ") to (" + r.end + ")");
 
 					setContent(response, contentType, r);
 					Range.copy(fileInputStream, output, length, r.start, r.length);

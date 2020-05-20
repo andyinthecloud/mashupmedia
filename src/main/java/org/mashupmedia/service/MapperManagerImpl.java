@@ -28,12 +28,10 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.transform.stream.StreamResult;
-
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.music.Album;
@@ -44,11 +42,12 @@ import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.xml.PartialUnmarshaller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class MapperManagerImpl implements MapperManager {
 
-	private Logger logger = Logger.getLogger(getClass());
 
 	private Marshaller marshaller;
 
@@ -126,7 +125,9 @@ public class MapperManagerImpl implements MapperManager {
 		File file = FileHelper.getLibraryXmlFile(libraryId);
 
 		FileWriter writer = new FileWriter(file, true);
-		getMarshaller().marshal(clonedSong, new StreamResult(writer));
+		
+		XmlMapper xmlMapper = new XmlMapper();
+		xmlMapper.writeValue(writer, clonedSong);
 		writer.close();
 	}
 
@@ -139,7 +140,7 @@ public class MapperManagerImpl implements MapperManager {
 		List<Song> songs = new ArrayList<Song>();
 
 		if (StringUtils.isBlank(xml)) {
-			logger.error("Unable to save remote songs, xml is empty");
+			log.error("Unable to save remote songs, xml is empty");
 			return;
 		}
 

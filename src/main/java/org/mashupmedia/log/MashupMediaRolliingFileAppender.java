@@ -19,10 +19,11 @@ package org.mashupmedia.log;
 
 import java.io.File;
 
-import org.apache.log4j.RollingFileAppender;
 import org.mashupmedia.util.FileHelper;
+import ch.qos.logback.core.rolling.RollingFileAppender;
 
-public class MashupMediaRolliingFileAppender extends RollingFileAppender {
+
+public class MashupMediaRolliingFileAppender<T> extends RollingFileAppender<T> {
 
 	@Override
 	public void setFile(String fileName) {

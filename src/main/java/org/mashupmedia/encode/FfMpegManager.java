@@ -19,12 +19,12 @@ package org.mashupmedia.encode;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.exception.MediaItemEncodeException.EncodeExceptionType;
@@ -35,15 +35,16 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class FfMpegManager {
 
 	private static final String FFMPEG_FOLDER_NAME = "ffmpeg";
 	private static final String FFMPEG_EXECUTABLE_NAME = "ffmpeg";
 	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh" };
 	private static final String FFMPEG_EXECUTABLE_LINK = "ffmpeg.txt";
-
-	private Logger logger = Logger.getLogger(FfMpegManager.class);
 
 	@Autowired
 	private ProcessManager processManager;
@@ -99,9 +100,9 @@ public class FfMpegManager {
 		if (fileName.equalsIgnoreCase(FFMPEG_EXECUTABLE_LINK)) {
 			String link = null;
 			try {
-				link = StringUtils.trimToEmpty(FileUtils.readFileToString(file));
+				link = StringUtils.trimToEmpty(FileUtils.readFileToString(file, StandardCharsets.UTF_8.name()));
 			} catch (IOException e) {
-				logger.error("Unable to read link file", e);
+				log.error("Unable to read link file", e);
 				return null;
 			}
 
@@ -156,7 +157,7 @@ public class FfMpegManager {
 
 		if (!isDeleted) {
 			String errorText = "Unable to delete encoded media file whil try when webserver stops: " + outputFile.getAbsolutePath();
-			logger.error(errorText);
+			log.error(errorText);
 		}
 
 		List<String> commands = new ArrayList<String>();

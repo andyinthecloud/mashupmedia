@@ -21,7 +21,6 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.service.MediaManager;
@@ -30,9 +29,11 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class EncodeMediaManagerImpl implements EncodeMediaManager {
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private MediaManager mediaManager;
@@ -54,15 +55,15 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 			}
 
 			if (isCurrentlyEncoding) {
-				logger.info("Media file is being encoded, exiting...");
+				log.info("Media file is being encoded, exiting...");
 				return;
 			}
 
-			logger.info("Starting to encode media file to html5 format");
+			log.info("Starting to encode media file to html5 format");
 
 			processManager.startProcess(processQueueItem);
 
-			logger.info("Media file decoded to " + mediaContentType.getName());
+			log.info("Media file decoded to " + mediaContentType.getName());
 			MediaEncoding mediaEncoding = new MediaEncoding();
 			mediaEncoding.setMediaContentType(mediaContentType);
 			mediaEncoding.setOriginal(false);
@@ -77,7 +78,7 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 			mediaItem.setSizeInBytes(sizeInBytes);
 			mediaManager.saveMediaItem(mediaItem);
 		} catch (Exception e) {
-			logger.error("Error encoding media item: " + mediaItemId, e);
+			log.error("Error encoding media item: " + mediaItemId, e);
 		}
 
 	}

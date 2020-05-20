@@ -11,7 +11,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -29,15 +28,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import lombok.extern.slf4j.Slf4j;
 
 @Service("lastFm")
+@Slf4j
 public class LastFmMusicWebServiceImpl extends AbstractCachingMusicWebServiceImpl {
 	private final static String LASTFM_API_KEY = "lastfm.api.key";
 	private final static String LASTFM_API_ROOT_URL = "http://ws.audioscrobbler.com/2.0/";
 	private final static String LASTFM_API_ARTIST_INFO_URL = LASTFM_API_ROOT_URL + "?method=artist.getinfo";
 	private final static String LASTFM_API_ARTIST_SEARCH_URL = LASTFM_API_ROOT_URL + "?method=artist.search";
 
-	private Logger logger = Logger.getLogger(getClass());
 	
 	@Autowired
 	private ConnectionManager connectionManager;
@@ -140,7 +140,7 @@ public class LastFmMusicWebServiceImpl extends AbstractCachingMusicWebServiceImp
 
 		InputStream artistInfoInputStream = connectionManager.connect(artistInfoUrl);
 		if (artistInfoInputStream == null) {
-			logger.error("Unable to connect to " + urlBuilder.toString());
+			log.error("Unable to connect to " + urlBuilder.toString());
 			return null;
 		}
 		

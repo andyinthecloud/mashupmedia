@@ -2,7 +2,6 @@ package org.mashupmedia.controller.rest.media;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.service.MusicManager;
@@ -12,12 +11,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/restful/media/music")
+@Slf4j
 public class RestfulMusicController extends RestfulMediaController{
-	
-	private Logger logger = Logger.getLogger(getClass());
-	
+		
 	@Autowired
 	private MusicManager musicManager;
 	
@@ -25,14 +25,14 @@ public class RestfulMusicController extends RestfulMediaController{
 	public String saveAlbumName(@RequestParam(value = "id") String id, @RequestParam(value = "value") String value) {
 		id = StringUtils.trimToEmpty(id);
 		if (StringUtils.isEmpty(id)) {
-			logger.info("Unable to save album name without id. Id = " + id);
+			log.info("Unable to save album name without id. Id = " + id);
 			return value;
 		}
 		long albumId = NumberUtils.toLong(id.replaceAll("\\D", ""));
 		
 		Album album = musicManager.getAlbum(albumId);
 		if (album == null) {
-			logger.info("Unable to find album with id: " + albumId);
+			log.info("Unable to find album with id: " + albumId);
 			return value;
 		}
 		
@@ -40,7 +40,7 @@ public class RestfulMusicController extends RestfulMediaController{
 		
 		value = StringUtils.trimToEmpty(value);
 		if (StringUtils.isEmpty(value)) {
-			logger.info("Unable to save empty album name.");
+			log.info("Unable to save empty album name.");
 			return value;
 		}		
 				
@@ -54,20 +54,20 @@ public class RestfulMusicController extends RestfulMediaController{
 	public String saveArtistName(@RequestParam(value = "id") String id, @RequestParam(value = "value") String value) {
 		id = StringUtils.trimToEmpty(id);
 		if (StringUtils.isEmpty(id)) {
-			logger.info("Unable to save artist name without id. Id = " + id);
+			log.info("Unable to save artist name without id. Id = " + id);
 			return value;
 		}
 		long artistId = NumberUtils.toLong(id.replaceAll("\\D", ""));
 		
 		Artist artist = musicManager.getArtist(artistId);
 		if (artist == null) {
-			logger.info("Unable to find artist with id: " + artistId);
+			log.info("Unable to find artist with id: " + artistId);
 			return value;
 		}
 		
 		value = StringUtils.trimToEmpty(value);
 		if (StringUtils.isEmpty(value)) {
-			logger.info("Unable to save empty artist name.");
+			log.info("Unable to save empty artist name.");
 			return value;
 		}		
 				

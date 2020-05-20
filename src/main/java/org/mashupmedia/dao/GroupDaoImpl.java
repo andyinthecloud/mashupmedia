@@ -3,8 +3,8 @@ package org.mashupmedia.dao;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
+import javax.persistence.Query;
+
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
@@ -15,70 +15,63 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
 
 	@Override
 	public void saveGroup(Group group) {
-		sessionFactory.getCurrentSession().saveOrUpdate(group);
+		saveOrUpdate(group);
 	}
 
 	@Override
 	public Group getGroup(long groupId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Group where id = :groupId");
-		query.setLong("groupId", groupId);
-		query.setCacheable(true);
-		Group group = (Group) query.uniqueResult();
+		Query query =  entityManager.createQuery("from Group where id = :groupId");
+		query.setParameter("groupId", groupId);
+		Group group = (Group) query.getSingleResult();
 		return group;
 	}
 	
 	@Override
 	public List<Long> getGroupIds() {
-		Query query = sessionFactory.getCurrentSession().createQuery("select id from Group");
-		query.setCacheable(true);
+		Query query = entityManager.createQuery("select id from Group");
 		@SuppressWarnings("unchecked")
-		List<Long> groupIds = (List<Long>) query.list();
+		List<Long> groupIds = (List<Long>) query.getResultList();
 		return groupIds;
 	}
 
 	@Override
 	public List<Group> getGroups() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Group order by name");
-		query.setCacheable(true);
+		Query query = entityManager.createQuery("from Group order by name");
 		@SuppressWarnings("unchecked")
-		List<Group> groups = (List<Group>) query.list();
+		List<Group> groups = (List<Group>) query.getResultList();
 		return groups;
 	}
 
 	@Override
 	public void deleteGroup(Group group) {
 		deleteGroupFromLibraries(group);
-		deleteGroupFromUsers(group);
-		sessionFactory.getCurrentSession().delete(group);
+		deleteGroupFromUsers(group);		
+		entityManager.remove(group);
 	}
 
 	protected void deleteGroupFromUsers(Group group) {
 		long groupId = group.getId();
-		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("from User u inner join u.groups g where g.id = :groupId");
-		query.setLong("groupId", groupId);
-		query.setCacheable(true);
+		Query query = entityManager.createQuery("from User u inner join u.groups g where g.id = :groupId");
+		query.setParameter("groupId", groupId);
 		@SuppressWarnings("unchecked")
-		List<User> users = query.list();
+		List<User> users = query.getResultList();
 		for (User user : users) {
 			Set<Group> groups = user.getGroups();
 			groups.remove(group);
-			session.merge(user);
+			entityManager.merge(user);
 		}		
 	}
 
 	protected void deleteGroupFromLibraries(Group group) {
 		long groupId = group.getId();
-		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("from Library l inner join l.groups g where g.id = :groupId");
-		query.setLong("groupId", groupId);
-		query.setCacheable(true);
+		Query query = entityManager.createQuery("from Library l inner join l.groups g where g.id = :groupId");
+		query.setParameter("groupId", groupId);
 		@SuppressWarnings("unchecked")
-		List<Library> libraries = query.list();
+		List<Library> libraries = query.getResultList();
 		for (Library library : libraries) {
 			Set<Group> groups = library.getGroups();
 			groups.remove(group);
-			session.merge(library);
+			entityManager.merge(library);
 		}
 		
 	}

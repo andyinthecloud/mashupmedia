@@ -4,13 +4,10 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.service.MusicManager;
@@ -20,13 +17,14 @@ import org.mashupmedia.web.remote.RemoteImage;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 @Service("discogs")
+@Slf4j
 public class DiscogsWebServiceImpl extends AbstractCachingMusicWebServiceImpl {
 	private static final String PREPEND_CACHE_KEY_ARTIST = "artist_";
 	private static final int INTRODUCTION_MAX_LENGTH = 500;
 
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private MusicManager musicManager;
@@ -87,26 +85,28 @@ public class DiscogsWebServiceImpl extends AbstractCachingMusicWebServiceImpl {
 			}
 
 			String artistUrl = "http://api.discogs.com/artists/" + discogsArtistId;
-			logger.debug("Searching Discogs for artist information using url: " + artistUrl);
+			log.debug("Searching Discogs for artist information using url: " + artistUrl);
 			InputStream inputStream = connectionManager.connect(artistUrl);
 			String jsonArtistText = IOUtils.toString(inputStream, Encoding.UTF8.getEncodingString());
-			JSONObject jsonArtist = JSONObject.fromObject(jsonArtistText);
+
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonArtist = objectMapper.readTree(jsonArtistText);
 
 			String nameKey = "name";
-			if (!jsonArtist.containsKey(nameKey)) {
+			if (!jsonArtist.has(nameKey)) {
 				inputStream.close();
 				continue;
 			}
 
 			if (StringUtils.isBlank(remoteMediaMetaItem.getName())) {
-				String name = StringUtils.trimToEmpty(jsonArtist.getString("name"));
+				String name = StringUtils.trimToEmpty(jsonArtist.get("name").asText());
 				remoteMediaMetaItem.setName(name);
 			}
 
 			String profileKey = "profile";
 			String profile = "";
-			if (jsonArtist.containsKey(profileKey)) {
-				profile = StringUtils.trimToEmpty(jsonArtist.getString(profileKey));
+			if (jsonArtist.has(profileKey)) {
+				profile = StringUtils.trimToEmpty(jsonArtist.get(profileKey).asText());
 				profile = profile.replaceAll("\\[.*?\\]", "");
 				profile = profile.replaceAll("(\r\n|\n\r|\r|\n)", "<br />");
 			}
@@ -123,22 +123,22 @@ public class DiscogsWebServiceImpl extends AbstractCachingMusicWebServiceImpl {
 			List<RemoteImage> remoteImages = new ArrayList<RemoteImage>();
 			String imagesKey = "images";
 			if (jsonArtist.has(imagesKey)) {
-				JSONArray jsonImages = jsonArtist.getJSONArray(imagesKey);
+				JsonNode jsonImages = jsonArtist.get(imagesKey);
 
 				if (jsonImages != null) {
 					for (int j = 0; j < jsonImages.size(); j++) {
-						JSONObject jsonImage = jsonImages.getJSONObject(j);
+						JsonNode jsonImage = jsonImages.get(j);
 						RemoteImage remoteImage = new RemoteImage();
-						String imageUrl = convertImageToProxyUrl(jsonImage.getString("resource_url"));
+						String imageUrl = convertImageToProxyUrl(jsonImage.get("resource_url").asText());
 						remoteImage.setImageUrl(imageUrl);
 
-						int width = jsonImage.getInt("width");
+						int width = jsonImage.get("width").asInt();
 						remoteImage.setWidth(width);
 
-						int height = jsonImage.getInt("height");
+						int height = jsonImage.get("height").asInt();
 						remoteImage.setHeight(height);
 
-						String thumbUrl = convertImageToProxyUrl(jsonImage.getString("uri150"));
+						String thumbUrl = convertImageToProxyUrl(jsonImage.get("uri150").asText());
 						remoteImage.setThumbUrl(thumbUrl);
 
 						remoteImages.add(remoteImage);
@@ -189,15 +189,16 @@ public class DiscogsWebServiceImpl extends AbstractCachingMusicWebServiceImpl {
 		}
 
 		String searchUrl = "http://api.discogs.com/database/search?q=" + name + "&type=artist";
-		logger.debug("Searching Discogs for artist id using url: " + searchUrl);
+		log.debug("Searching Discogs for artist id using url: " + searchUrl);
 		InputStream inputStream = connectionManager.connect(searchUrl);
 		if (inputStream == null) {
-			logger.error("Could not connect to Discogs web service.");
+			log.error("Could not connect to Discogs web service.");
 			throw new ConnectException("Could not connect to Discogs web service.");
 		}
 		String jsonSearchResults = IOUtils.toString(inputStream, Encoding.UTF8.getEncodingString());
-		JSONObject jsonObject = JSONObject.fromObject(jsonSearchResults);
-		JSONArray jsonArray = jsonObject.getJSONArray("results");
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode jsonObject = objectMapper.readTree(jsonSearchResults);
+		JsonNode jsonArray = jsonObject.get("results");
 		if (jsonArray == null) {
 			return remoteMediaMetaItems;
 		}
@@ -207,14 +208,14 @@ public class DiscogsWebServiceImpl extends AbstractCachingMusicWebServiceImpl {
 		}
 
 		for (int i = 0; i < jsonArray.size(); i++) {
-			JSONObject jsonArtist = jsonArray.getJSONObject(i);
-			logger.debug("Found jsonObject: " + jsonArtist.toString(2));
-			String discogsArtistId = jsonArtist.getString("id");
+			JsonNode jsonArtist = jsonArray.get(i);
+			log.debug("Found jsonObject: " + jsonArtist.asText());
+			String discogsArtistId = jsonArtist.get("id").asText();
 			RemoteMediaMetaItem remoteMediaMeta = new RemoteMediaMetaItem();
 			remoteMediaMeta.setRemoteId(discogsArtistId);
 
 			if (!remoteMediaMetaItems.contains(remoteMediaMeta)) {
-				String title = jsonArtist.getString("title");
+				String title = jsonArtist.get("title").asText();
 				remoteMediaMeta.setName(title);
 				remoteMediaMetaItems.add(remoteMediaMeta);
 

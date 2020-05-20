@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mashupmedia.dao.VideoDao;
 import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.library.VideoLibrary;
@@ -24,12 +25,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.apachecommons.CommonsLog;
+
+@CommonsLog
 @Service
 @Transactional
 public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager {
 
 	private final int VIDEOS_SAVE_AMOUNT_MAX_SIZE = 20;
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private VideoDao videoDao;
@@ -68,7 +71,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			FileHelper.deleteProcessedVideo(libraryId, video.getId());
 		}
 
-		logger.info(totalDeletedVideos + " obsolete videos deleted.");
+		log.info(totalDeletedVideos + " obsolete videos deleted.");
 	}
 
 	protected void processVideos(List<Video> videos, File file, VideoDeriveTitleType videoDeriveTitleType, Date date,

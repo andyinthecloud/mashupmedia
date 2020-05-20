@@ -3,7 +3,6 @@ package org.mashupmedia.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.MusicDao;
@@ -17,12 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+@Slf4j
 public class MusicManagerImpl implements MusicManager {
 
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private MusicDao musicDao;
@@ -177,7 +177,7 @@ public class MusicManagerImpl implements MusicManager {
 		User user = AdminHelper.getLoggedInUser();
 
 		if (!isFullyInitialise && user == null) {
-			logger.error("No user found in session, using system user...");
+			log.error("No user found in session, using system user...");
 			user = adminManager.getSystemUser();
 		}
 

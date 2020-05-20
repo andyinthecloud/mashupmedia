@@ -2,45 +2,48 @@ package org.mashupmedia.dao;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
+import javax.persistence.Query;
+
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.Search;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.Configuration;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Repository
+@Slf4j
 public class ConfigurationDaoImpl extends BaseDaoImpl implements ConfigurationDao {
-	private Logger logger = Logger.getLogger(getClass()); 
 
 	@Override
-	public Configuration getConfiguration(String key) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Configuration where key = :key");
-		query.setString("key", key);
-		query.setCacheable(true);		
+	@org.springframework.data.jpa.repository.Query("select c from Configuration where key = :key")
+	public Configuration getConfiguration(@Param("key") String key) {
+		Query query = entityManager.createQuery("from Configuration where key = :key");
+		query.setParameter("key", key);
 		@SuppressWarnings("unchecked")
-		List<Configuration> configurations = query.list();
+		List<Configuration> configurations = query.getResultList();
 		if (configurations == null || configurations.isEmpty()) {
 			return null;
 		}
-		
+
 		Configuration configuration = configurations.get(0);
 		return configuration;
 	}
 
 	@Override
 	public void saveConfiguration(Configuration configuration) {
-		sessionFactory.getCurrentSession().saveOrUpdate(configuration);
+		saveOrUpdate(configuration);
 	}
 
 	@Override
 	public void indexMediaItems() {
-		logger.info("About to start indexing...");
-		FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
+		log.info("About to start indexing...");
+		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 		try {
-			fullTextSession.createIndexer().startAndWait();
-			logger.info("Indexation finished.");
+			fullTextEntityManager.createIndexer().startAndWait();
+			log.info("Indexation finished.");
 		} catch (InterruptedException e) {
 			throw new MashupMediaRuntimeException("Error indexing content", e);
 		}

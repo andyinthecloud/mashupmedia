@@ -21,9 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.controller.BaseController;
 import org.mashupmedia.encode.FfMpegManager;
@@ -43,15 +42,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @SessionAttributes("encodingPage")
+@Slf4j
 public class EncodingConfigurationController extends BaseController {
 
 	private final static String PAGE_NAME = "encoding";
 	private final static String PAGE_PATH = "configuration." + PAGE_NAME;
 	private final static String PAGE_URL = "/configuration/" + PAGE_NAME;
-
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private ConfigurationManager configurationManager;
@@ -92,7 +92,7 @@ public class EncodingConfigurationController extends BaseController {
 				}
 			} catch (IOException e) {
 				encodingPage.setAdditionalErrorMessage(e.getLocalizedMessage());
-				logger.error("Error running ffmpeg: " + ffMpegFilePath, e);
+				log.error("Error running ffmpeg: " + ffMpegFilePath, e);
 			}
 
 		}

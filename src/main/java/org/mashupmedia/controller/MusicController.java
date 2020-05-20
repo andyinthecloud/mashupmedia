@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
@@ -48,8 +47,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @RequestMapping("/music")
+@Slf4j
 public class MusicController extends BaseController {
 
 	private final static int MAX_ALBUMS = 60;
@@ -67,8 +69,6 @@ public class MusicController extends BaseController {
 			return className;
 		}
 	}
-
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private MusicManager musicManager;
@@ -235,7 +235,7 @@ public class MusicController extends BaseController {
 
 		Album album = musicManager.getAlbum(albumId);
 		if (album == null) {
-			logger.error("Unable to find album id: " + albumId);
+			log.error("Unable to find album id: " + albumId);
 			return null;
 		}
 		
@@ -259,7 +259,7 @@ public class MusicController extends BaseController {
 			}
 			
 		} catch (IOException e) {
-			logger.info("Unable to read album art: " + albumArtImage.getUrl(), e);
+			log.info("Unable to read album art: " + albumArtImage.getUrl(), e);
 		}
 
 		Song remoteSong = getFirstRemoteSongInAlbum(album);

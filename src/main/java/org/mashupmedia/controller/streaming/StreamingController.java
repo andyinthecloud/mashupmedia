@@ -33,8 +33,6 @@ import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.view.MediaItemImageView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mobile.device.Device;
-import org.springframework.mobile.device.DeviceUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,12 +77,12 @@ public class StreamingController {
 		MediaEncoding mediaEncoding = getMediaEncoding(mediaItem, mediaContentTypeValue);
 		File mediaFile = getMediaFile(mediaItem, mediaEncoding);
 
-		Long contentLength = null;
 		
-		Device device = DeviceUtils.getCurrentDevice(request);
-		if (device.isNormal()) {
-			contentLength = mediaFile.length();
-		}
+		// Device device = DeviceUtils.getCurrentDevice(request);
+		// if (device.isNormal()) {
+		// 	contentLength = mediaFile.length();
+		// }
+		Long contentLength = mediaFile.length();
 		String format = mediaItem.getFormat();
 		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(format);
 

@@ -1,14 +1,13 @@
 package org.mashupmedia.exception;
 
-import org.apache.log4j.Logger;
 import org.mashupmedia.util.MessageHelper;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MediaItemEncodeException extends Exception {
 
 	private static final long serialVersionUID = -7174329107038461455L;
 	
-	private Logger logger = Logger.getLogger(getClass());
-
 	private EncodeExceptionType encodeExceptionType;
 
 	public enum EncodeExceptionType {
@@ -17,7 +16,7 @@ public class MediaItemEncodeException extends Exception {
 
 	public MediaItemEncodeException(EncodeExceptionType encodeExceptionType, String messageKey) {
 		super(messageKey);		
-		logger.error(getDisplayMessage());
+		log.error(getDisplayMessage());
 		this.encodeExceptionType = encodeExceptionType;
 	}
 

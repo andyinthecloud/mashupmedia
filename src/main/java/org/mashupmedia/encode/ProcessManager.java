@@ -1,18 +1,16 @@
 /*
- *  This file is part of MashupMedia.
+ * This file is part of MashupMedia.
  *
- *  MashupMedia is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * MashupMedia is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- *  MashupMedia is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * MashupMedia is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with MashupMedia.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with MashupMedia. If not,
+ * see <http://www.gnu.org/licenses/>.
  */
 
 package org.mashupmedia.encode;
@@ -29,16 +27,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class ProcessManager {
-	private static Logger logger = Logger.getLogger(ProcessManager.class);
 
 	public final static String KEY_TOTAL_FFMPEG_PROCESSES = "totalFfMpegProcesses";
 	public final static int DEFAULT_TOTAL_FFMPEG_PROCESSES = 3;
@@ -68,32 +67,35 @@ public class ProcessManager {
 	}
 
 	public int getMaximumConcurrentProcesses() {
-		int totalFfMpegProcesses = NumberUtils.toInt(configurationManager
-				.getConfigurationValue(KEY_TOTAL_FFMPEG_PROCESSES));
+		int totalFfMpegProcesses = NumberUtils
+				.toInt(configurationManager.getConfigurationValue(KEY_TOTAL_FFMPEG_PROCESSES));
 		return totalFfMpegProcesses;
 	}
 
-	public void addProcessToQueue(List<String> commands, long mediaItemId, MediaContentType mediaContentType) {
-		ProcessQueueItem processQueueItem = generateProcessQueueItem(mediaItemId, mediaContentType, commands);
+	public void addProcessToQueue(List<String> commands, long mediaItemId,
+			MediaContentType mediaContentType) {
+		ProcessQueueItem processQueueItem =
+				generateProcessQueueItem(mediaItemId, mediaContentType, commands);
 		if (processQueueItems.contains(processQueueItem)) {
-			logger.info("Media is already queued for encoding: " + processQueueItem.toString());
+			log.info("Media is already queued for encoding: " + processQueueItem.toString());
 			return;
 		}
-		
+
 		processQueueItems.add(processQueueItem);
 	}
 
-	protected ProcessQueueItem generateProcessQueueItem(long mediaItemId, MediaContentType mediaContentType,
-			List<String> commands) {
+	protected ProcessQueueItem generateProcessQueueItem(long mediaItemId,
+			MediaContentType mediaContentType, List<String> commands) {
 
-		ProcessQueueItem processQueueItem = new ProcessQueueItem(mediaItemId, mediaContentType, commands);
+		ProcessQueueItem processQueueItem =
+				new ProcessQueueItem(mediaItemId, mediaContentType, commands);
 		return processQueueItem;
 	}
 
 	public void startProcess(ProcessQueueItem processQueueItem) throws IOException {
-		
+
 		try {
-			logger.info("Starting process...");
+			log.info("Starting process...");
 			List<String> commands = processQueueItem.getCommands();
 
 			ProcessBuilder processBuilder = new ProcessBuilder(commands);
@@ -103,10 +105,9 @@ public class ProcessManager {
 			// The started on date should have already been set
 			Date startedOn = processQueueItem.getProcessStartedOn();
 			if (startedOn == null) {
-				processQueueItem.setProcessStartedOn(new Date());	
+				processQueueItem.setProcessStartedOn(new Date());
 			}
-			
-			
+
 			processQueueItem.setProcess(process);
 
 			InputStream inputStream = process.getInputStream();
@@ -114,20 +115,20 @@ public class ProcessManager {
 			String line;
 
 			while ((line = bufferedReader.readLine()) != null) {
-				logger.info(line);
+				log.info(line);
 			}
-			
+
 			inputStream.close();
 
 			try {
 				int waitForValue = process.waitFor();
-				logger.info("Process waitFor value = " + waitForValue);
+				log.info("Process waitFor value = " + waitForValue);
 			} catch (InterruptedException e) {
-				logger.error("Error waiting for waitFor.", e);
+				log.error("Error waiting for waitFor.", e);
 			}
 
 			int exitValue = process.exitValue();
-			logger.info("Process exit value = " + exitValue);
+			log.info("Process exit value = " + exitValue);
 
 		} finally {
 			processQueueItems.remove(processQueueItem);
@@ -146,36 +147,53 @@ public class ProcessManager {
 
 	public String callProcess(List<String> commands) throws IOException {
 
-		logger.info("Starting process...");
-
-		ProcessBuilder processBuilder = new ProcessBuilder(commands);
-		processBuilder.redirectErrorStream(true);
-		Process process = processBuilder.start();
-
-		InputStream inputStream = process.getInputStream();
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-		String line;
-
-		StringBuilder outputBuilder = new StringBuilder();
-
-		while ((line = bufferedReader.readLine()) != null) {
-			logger.info(line);
-			outputBuilder.append(line);
-		}
-		IOUtils.closeQuietly(inputStream);
+		InputStream inputStream = null;
+		BufferedReader bufferedReader = null;
 
 		try {
-			int waitForValue = process.waitFor();
-			logger.info("Process waitFor value = " + waitForValue);
-		} catch (InterruptedException e) {
-			logger.error("Error waiting for waitFor.", e);
+
+			log.info("Starting process...");
+
+			ProcessBuilder processBuilder = new ProcessBuilder(commands);
+			processBuilder.redirectErrorStream(true);
+			Process process = processBuilder.start();
+
+			inputStream = process.getInputStream();
+			bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+			String line;
+
+			StringBuilder outputBuilder = new StringBuilder();
+
+			while ((line = bufferedReader.readLine()) != null) {
+				log.info(line);
+				outputBuilder.append(line);
+			}
+
+			try {
+				int waitForValue = process.waitFor();
+				log.info("Process waitFor value = " + waitForValue);
+			} catch (InterruptedException e) {
+				log.error("Error waiting for waitFor.", e);
+			}
+
+			int exitValue = process.exitValue();
+			log.info("Process exit value = " + exitValue);
+
+			return outputBuilder.toString();
+
+		} finally {
+			try {
+				if (bufferedReader != null) {
+					bufferedReader.close();
+				}
+				if (inputStream != null) {
+					inputStream.close();
+				}
+			} catch (Exception e) {
+				log.info("Unable to close stream", e);
+
+			}
 		}
-
-		int exitValue = process.exitValue();
-		logger.info("Process exit value = " + exitValue);
-
-		return outputBuilder.toString();
-
 	}
 
 	// public boolean isEncoding(long mediaItemId, MediaContentType
@@ -198,7 +216,8 @@ public class ProcessManager {
 	// return true;
 	// }
 
-	private ProcessQueueItem getProcessQueueItem(long mediaItemId, MediaContentType mediaContentType) {
+	private ProcessQueueItem getProcessQueueItem(long mediaItemId,
+			MediaContentType mediaContentType) {
 		if (processQueueItems == null || processQueueItems.isEmpty()) {
 			return null;
 		}
@@ -287,7 +306,5 @@ public class ProcessManager {
 		processQueueItems.add(index, processQueueItem);
 		return true;
 	}
-
-
 
 }

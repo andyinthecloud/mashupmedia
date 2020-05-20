@@ -2,50 +2,70 @@ package org.mashupmedia.dao;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
 import org.mashupmedia.exception.MashupMediaRuntimeException;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class BaseDaoImpl {
-	protected Logger logger = Logger.getLogger(getClass());
 
-	@Autowired
-	protected SessionFactory sessionFactory;
+	@PersistenceContext
+	protected EntityManager entityManager;
 
-	protected void saveOrUpdate(Object object) {
-		if (object == null) {
-			logger.info("Unable to save or update object because it is null");
+	protected void saveOrUpdate(Object entity) {
+		if (entity == null) {
+			log.info("Unable to save or update object because it is null");
 			return;
 		}
-		sessionFactory.getCurrentSession().saveOrUpdate(object);
+
+		entityManager.persist(entity);
 	}
 	
-	protected void saveOrMerge(Object object) {
-		if (object == null) {
-			logger.info("Unable to save or update object because it is null");
+	protected void saveOrMerge(Object entity) {
+		if (entity == null) {
+			log.info("Unable to save or update object because it is null");
 			return;
 		}
 		
 		
 		Long id;
 		try {
-			id = getObjectId(object);
+			id = getObjectId(entity);
 		} catch (Exception e) {
-			throw new MashupMediaRuntimeException("Unable to get id for object: " + object.toString());
+			throw new MashupMediaRuntimeException("Unable to get id for object: " + entity.toString());
 		} 
 		
 		if (id == null) {
-			throw new MashupMediaRuntimeException("Unable to get id for object: " + object.toString());			
+			throw new MashupMediaRuntimeException("Unable to get id for object: " + entity.toString());			
 		}
 		
 		if (id == 0) {
-			sessionFactory.getCurrentSession().save(object);
+			entityManager.persist(entity);
 		} else {
-			sessionFactory.getCurrentSession().merge(object);
+			entityManager.merge(entity);
 		}
 		
+	}
+
+	protected <T> T getUniqueResult(TypedQuery<T> query) {
+		List<T> items = query.getResultList();	
+		if (items == null || items.isEmpty()) {
+			throw new MashupMediaRuntimeException("Unable to get a unique result as items are empty.");
+		}
+
+		if (items.size() > 1) {
+			throw new MashupMediaRuntimeException("Unable to get a unique result as there are more than one item.");
+
+		}
+
+		return items.get(0);
 	}
 	
 	
@@ -67,10 +87,10 @@ public class BaseDaoImpl {
 		if (!isFlushSession) {
 			return;
 		}
-				
-		sessionFactory.getCurrentSession().flush();
-		sessionFactory.getCurrentSession().clear();
-		logger.debug("Flushed and cleared session.");
+
+		entityManager.flush();
+		entityManager.clear();
+		log.debug("Flushed and cleared session.");
 	}
 
 }

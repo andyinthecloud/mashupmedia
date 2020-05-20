@@ -29,7 +29,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.RemoteShare;
@@ -59,11 +58,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @RequestMapping("/remote")
+@Slf4j
 public class RemoteLibraryController {
-
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private LibraryManager libraryManager;
@@ -82,7 +82,7 @@ public class RemoteLibraryController {
 			throws IOException {
 		Library remoteLibrary = getRemoteLibrary(uniqueName, request, true);
 		if (remoteLibrary == null) {
-			logger.info("Unable to stream remote media, unknown host: " + request.getRemoteHost());
+			log.info("Unable to stream remote media, unknown host: " + request.getRemoteHost());
 			return null;
 		}
 
@@ -99,7 +99,7 @@ public class RemoteLibraryController {
 			@PathVariable Long songId, Model model) throws IOException {
 		Library remoteLibrary = getRemoteLibrary(uniqueName, request, true);
 		if (remoteLibrary == null) {
-			logger.info("Unable to load album art, unknown host: " + request.getRemoteHost());
+			log.info("Unable to load album art, unknown host: " + request.getRemoteHost());
 			return null;
 		}
 
@@ -127,7 +127,7 @@ public class RemoteLibraryController {
 
 		Library remoteLibrary = getRemoteLibrary(uniqueName, request, false);
 		if (remoteLibrary == null) {
-			logger.info("Unable to connect to remote library, unknown host: " + request.getRemoteHost());
+			log.info("Unable to connect to remote library, unknown host: " + request.getRemoteHost());
 			return null;
 		}
 

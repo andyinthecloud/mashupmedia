@@ -3,17 +3,17 @@ package org.mashupmedia.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.InitialisationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class InitialisationInterceptor extends HandlerInterceptorAdapter {
 
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private AdminManager adminManager;
@@ -27,7 +27,7 @@ public class InitialisationInterceptor extends HandlerInterceptorAdapter {
 		int totalUsers = adminManager.getTotalUsers();
 		if (totalUsers == 0) {
 			initialisationManager.initialiseApplication();
-			logger.info("Initialised mashupmedia.");
+			log.info("Initialised mashupmedia.");
 		}
 		return super.preHandle(request, response, handler);
 	}

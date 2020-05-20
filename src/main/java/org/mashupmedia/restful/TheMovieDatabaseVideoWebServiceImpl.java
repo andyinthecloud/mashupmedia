@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.Configuration;
@@ -25,8 +23,10 @@ import org.mashupmedia.web.remote.RemoteImage.RemoteImageType;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 @Service("themoviedb")
+@Slf4j
 public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWebServiceImpl{
 	
 	private final static String THE_MOVIE_DB_API_KEY = "themoviedb.api.key";
@@ -55,7 +55,7 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 
 		String title = video.getSearchText();
 
-		JSONObject jsonVideo = null;
+		JsonNode jsonVideo = null;
 		if (StringUtils.isNotEmpty(remoteId)) {
 			jsonVideo = getVideoInfoDocumentByRemoteId(remoteId);			
 		} else {
@@ -70,13 +70,13 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 		
 		remoteMediaMetaItem.setDate(new Date());
 
-		String remoteName = jsonVideo.getString("original_title");
+		String remoteName = jsonVideo.get("original_title").asText();
 		remoteMediaMetaItem.setName(remoteName);
 
-		remoteId = jsonVideo.getString("id");
+		remoteId = jsonVideo.get("id").asText();
 		remoteMediaMetaItem.setRemoteId(remoteId);
 
-		String introduction = jsonVideo.getString("overview");
+		String introduction = jsonVideo.get("overview").asText();
 		remoteMediaMetaItem.setIntroduction(introduction);
 
 		List<RemoteImage> remoteImages = processRemoteImages(jsonVideo);
@@ -87,7 +87,7 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 		return remoteMediaMetaItem;
 	}
 
-	private JSONObject getVideoInfoDocumentByTitle(String title) throws IOException {
+	private JsonNode getVideoInfoDocumentByTitle(String title) throws IOException {
 		StringBuilder urlBuilder = new StringBuilder(THE_MOVIE_DB_ROOT_URL);
 		urlBuilder.append("/3/search/movie");
 		urlBuilder.append("?api_key=");
@@ -103,8 +103,9 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 		
 		String jsonVideoSearchText = IOUtils.toString(searchInputStream, Encoding.UTF8.getEncodingString());
 		
-		JSONObject jsonResultsObject = JSONObject.fromObject(jsonVideoSearchText);
-		JSONArray jsonResultsArray = jsonResultsObject.getJSONArray("results");
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode jsonResultsObject = objectMapper.readTree(jsonVideoSearchText);
+		JsonNode jsonResultsArray = jsonResultsObject.get("results");
 		
 		IOUtils.closeQuietly(searchInputStream);
 
@@ -112,15 +113,15 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 			return null;
 		}
 		
-		JSONObject jsonResultObject = (JSONObject)jsonResultsArray.get(0);
-		String remoteId = jsonResultObject.getString("id");
+		JsonNode jsonResultObject = jsonResultsArray.get(0);
+		String remoteId = jsonResultObject.get("id").asText();
 		
 		
-		JSONObject jsonVideoObject = getVideoInfoDocumentByRemoteId(remoteId);
+		JsonNode jsonVideoObject = getVideoInfoDocumentByRemoteId(remoteId);
 		return jsonVideoObject;
 	}
 
-	protected List<RemoteImage> processRemoteImages(JSONObject jsonVideo) throws IOException {
+	protected List<RemoteImage> processRemoteImages(JsonNode jsonVideo) throws IOException {
 		
 		String baseImageUrl = getBaseImageUrl();
 		
@@ -128,7 +129,7 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 		
 		List<RemoteImage> remoteImages = new ArrayList<RemoteImage>();
 		
-		String posterImageUrl = StringUtils.trimToEmpty( jsonVideo.getString("poster_path"));
+		String posterImageUrl = StringUtils.trimToEmpty( jsonVideo.get("poster_path").asText());
 		if (StringUtils.isNotEmpty(posterImageUrl)) {
 			posterImageUrl = baseImageUrl + StringHelper.formatTextToUrlParameter(posterImageUrl);			
 			posterImageUrl = PROXY_URL_PREFIX + posterImageUrl;						
@@ -138,7 +139,7 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 			remoteImages.add(remoteImage);
 		}
 		
-		String backdropImageUrl = StringUtils.trimToEmpty( jsonVideo.getString("backdrop_path"));
+		String backdropImageUrl = StringUtils.trimToEmpty( jsonVideo.get("backdrop_path").asText());
 		if (StringUtils.isNotEmpty(backdropImageUrl)) {
 			backdropImageUrl = baseImageUrl + StringHelper.formatTextToUrlParameter(backdropImageUrl);			
 			backdropImageUrl = PROXY_URL_PREFIX + backdropImageUrl;						
@@ -184,9 +185,10 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 		String jsonConfigurationText = IOUtils.toString(inputStream, Encoding.UTF8.getEncodingString());
 		IOUtils.closeQuietly(inputStream);
 		
-		JSONObject jsonConfiguration = JSONObject.fromObject(jsonConfigurationText);
-		JSONObject jsonConfigurationImages = jsonConfiguration.getJSONObject("images");
-		String baseImageUrl = jsonConfigurationImages.getString("base_url");
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode jsonConfiguration = objectMapper.readTree(jsonConfigurationText);
+		JsonNode jsonConfigurationImages = jsonConfiguration.get("images");
+		String baseImageUrl = jsonConfigurationImages.get("base_url").asText();
 		
 		configuration = new Configuration();
 		configuration.setKey(THE_MOVIE_DB_BASE_IMAGE_URL);
@@ -197,7 +199,7 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 		return baseImageUrl;
 	}
 
-	protected JSONObject getVideoInfoDocumentByRemoteId(String remoteId) throws IOException{
+	protected JsonNode getVideoInfoDocumentByRemoteId(String remoteId) throws IOException{
 		StringBuilder urlBuilder = new StringBuilder(THE_MOVIE_DB_ROOT_URL);
 		urlBuilder.append("/3/movie/");
 		urlBuilder.append(remoteId);
@@ -214,7 +216,8 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 		
 		String jsonVideoText = IOUtils.toString(inputStream, Encoding.UTF8.getEncodingString());
 		
-		JSONObject jsonVideo = JSONObject.fromObject(jsonVideoText);
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode jsonVideo = objectMapper.readTree(jsonVideoText);
 		IOUtils.closeQuietly(inputStream);
 		return jsonVideo;
 	}

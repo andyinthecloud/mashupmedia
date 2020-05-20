@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryStatusType;
 import org.mashupmedia.model.library.Library.LibraryType;
@@ -33,11 +32,12 @@ import org.mashupmedia.model.location.Location;
 import org.mashupmedia.util.LibraryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
-	private Logger logger = Logger.getLogger(getClass());
 
 	private final int LIBRARY_UPDATE_TIMEOUT_HOURS = 1;
 
@@ -68,7 +68,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		library = libraryManager.getLibrary(library.getId());
 
 		if (!library.isEnabled()) {
-			logger.info("Library is disabled, will not update:" + library.toString());
+			log.info("Library is disabled, will not update:" + library.toString());
 			return;
 		}
 
@@ -82,7 +82,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		}
 
 		if (library.getLibraryStatusType() != LibraryStatusType.OK && date.before(lastSavedMediaItemOn)) {
-			logger.info("Library is already updating, exiting:" + library.toString());
+			log.info("Library is already updating, exiting:" + library.toString());
 			return;
 		}
 
@@ -94,7 +94,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			Location location = library.getLocation();
 			File folder = new File(location.getPath());
 			if (!folder.isDirectory()) {
-				logger.error("Media library points to a file not a directory, exiting...");
+				log.error("Media library points to a file not a directory, exiting...");
 				return;
 			}
 
@@ -104,7 +104,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			library.setLastSuccessfulScanOn(new Date());
 
 		} catch (Exception e) {
-			logger.error("Error updating library", e);
+			log.error("Error updating library", e);
 			library.setLibraryStatusType(LibraryStatusType.ERROR);
 		} finally {
 			libraryManager.saveLibrary(library);
@@ -161,12 +161,12 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		library = libraryManager.getLibrary(library.getId());
 
 		if (!library.isEnabled()) {
-			logger.info("Library is disabled, exiting..");
+			log.info("Library is disabled, exiting..");
 			return;
 		}
 
 		if (library.getLibraryStatusType() == LibraryStatusType.WORKING) {
-			logger.info("Library is already updating, exiting:" + library.toString());
+			log.info("Library is already updating, exiting:" + library.toString());
 			return;
 		}
 
@@ -180,7 +180,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			library.setLibraryStatusType(LibraryStatusType.OK);
 
 		} catch (Exception e) {
-			logger.error("Error updating remote library", e);
+			log.error("Error updating remote library", e);
 			library.setLibraryStatusType(LibraryStatusType.ERROR);
 		} finally {
 			libraryManager.saveLibrary(library);

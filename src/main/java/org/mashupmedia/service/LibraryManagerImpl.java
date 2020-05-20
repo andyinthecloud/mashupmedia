@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
@@ -20,11 +19,12 @@ import org.mashupmedia.util.LibraryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@Slf4j
 public class LibraryManagerImpl implements LibraryManager {
-	private Logger logger = Logger.getLogger(getClass());
 	@Autowired
 	private LibraryDao libraryDao;
 	@Autowired
@@ -62,7 +62,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	public void saveLibrary(Library library, boolean isFlushSession) {
 		User user = AdminHelper.getLoggedInUser();
 		if (user == null) {
-			logger.error("No user found in session, using system user...");
+			log.error("No user found in session, using system user...");
 			user = adminManager.getSystemUser();
 		}
 
@@ -188,7 +188,7 @@ public class LibraryManagerImpl implements LibraryManager {
 
 	@Override
 	public synchronized void saveMedia(long librayId, File file) {
-		logger.info("Saving media file: " + file.getAbsolutePath());
+		log.info("Saving media file: " + file.getAbsolutePath());
 
 		Date date = new Date();
 
@@ -218,7 +218,7 @@ public class LibraryManagerImpl implements LibraryManager {
 
 	@Override
 	public synchronized void deleteMedia(long librayId, File file) {
-		logger.info("Deleting media file: " + file.getAbsolutePath());
+		log.info("Deleting media file: " + file.getAbsolutePath());
 		Library library = libraryDao.getLibrary(librayId);
 		LibraryType libraryType = library.getLibraryType();
 		if (libraryType == LibraryType.MUSIC) {

@@ -1,7 +1,6 @@
 package org.mashupmedia.security;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.User;
 import org.mashupmedia.service.AdminManager;
@@ -11,10 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class CustomUserDetailsService implements UserDetailsService {
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private AdminManager adminManager;
@@ -28,10 +28,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 		username = StringUtils.trimToEmpty(username);
 		if (totalUsers == 0 && MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME.equals(username)) {
 			initialisationManager.initialiseApplication();
-			logger.info("Initialised mashupmedia.");
+			log.info("Initialised mashupmedia.");
 		}
 		User user = adminManager.getUser(username);
 		return user;
 	}
-
 }

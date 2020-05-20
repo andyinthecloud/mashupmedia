@@ -25,16 +25,15 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.util.FileHelper;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import lombok.extern.slf4j.Slf4j;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-
+@Slf4j
 public class MashupMediaServiceLocator {
 	
-	private Logger logger = Logger.getLogger(getClass());
 
 	private DataSource dataSource;
 
@@ -51,22 +50,21 @@ public class MashupMediaServiceLocator {
 		this.dataSource = dataSource;
 	}
 
-	public DataSource createDataSource() {
-		ComboPooledDataSource dataSource = new ComboPooledDataSource();
-		try {
-			dataSource.setDriverClass("org.h2.Driver");
-		} catch (PropertyVetoException e) {
-			throw new MashupMediaRuntimeException(e.getMessage());
-		}
-		String applicationFolderPath = FileHelper.getApplicationFolder().getAbsolutePath();
-		dataSource.setJdbcUrl("jdbc:h2:file:" + applicationFolderPath + "/db;MODE=Oracle;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
-		dataSource.setUser("sa");
-		dataSource.setPassword("");
-		dataSource.setMinPoolSize(3);
-		dataSource.setMaxPoolSize(20);
-		dataSource.setMaxIdleTime(600);
-		return dataSource;
-	}
+	// public DataSource createDataSource() {
+		
+	// 	DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+
+	// 	// ComboPooledDataSource dataSource = new ComboPooledDataSource();
+	// 		dataSourceBuilder.driverClassName("org.h2.Driver");
+	// 	String applicationFolderPath = FileHelper.getApplicationFolder().getAbsolutePath();
+	// 	dataSourceBuilder.url("jdbc:h2:file:" + applicationFolderPath + "/db;MODE=Oracle;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+	// 	dataSourceBuilder.username("sa");
+	// 	dataSourceBuilder.password("");
+	// 	// dataSourceBuilder.poolsetMinPoolSize(3);
+	// 	// dataSourceBuilder.posetMaxPoolSize(20);
+	// 	// dataSourceBuilder.setMaxIdleTime(600);
+	// 	return dataSourceBuilder.build();
+	// }
 
 	public LocalSessionFactoryBean createSessionFactory() {
 		LocalSessionFactoryBean localSessionFactoryBean = new LocalSessionFactoryBean();
@@ -79,7 +77,7 @@ public class MashupMediaServiceLocator {
 		hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "update");
 		hibernateProperties.setProperty("hibernate.jdbc.batch_size", "20");
 		hibernateProperties.setProperty("hibernate.cache.region.factory_class",
-				"org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory");
+				"org.hibernate.cache.ehcache.EhCacheRegionFactory");
 		hibernateProperties.setProperty("hibernate.cache.use_query_cache", "true");
 		hibernateProperties.setProperty("hibernate.query.substitutions", "true '1', false '0'");
 		hibernateProperties.setProperty("hibernate.cache.use_second_level_cache", "true");
@@ -103,14 +101,14 @@ public class MashupMediaServiceLocator {
             statement.execute("SHUTDOWN");
             statement.close();
         } catch (Exception e) {
-        	logger.error("Error shutting down", e);
+        	log.error("Error shutting down", e);
         }
         
         try {
         	Connection connection = dataSource.getConnection();
             connection.close();
         } catch (Exception e) {
-        	logger.error("Error shutting down", e);
+        	log.error("Error shutting down", e);
         }
 	}
 	

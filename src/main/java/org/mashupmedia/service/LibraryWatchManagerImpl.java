@@ -7,18 +7,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.watch.WatchLibraryListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class LibraryWatchManagerImpl implements LibraryWatchManager {
 
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private LibraryManager libraryManager;
@@ -69,7 +69,7 @@ public class LibraryWatchManagerImpl implements LibraryWatchManager {
 			if (libraryId == watchLibrary.getLibrayId()) {
 				watchLibrary.cancel();
 				watchLibraryListeners.remove(watchLibrary);
-				logger.info("Watch libray removed. Library id = " + libraryId);
+				log.info("Watch libray removed. Library id = " + libraryId);
 				return;
 			}
 		}
@@ -98,7 +98,7 @@ public class LibraryWatchManagerImpl implements LibraryWatchManager {
 			watchLibraryListener.processEvents();
 			addWatchLibraryListener(watchLibraryListener);
 		} catch (IOException e) {
-			logger.error("Error creating watch library", e);
+			log.error("Error creating watch library", e);
 		}
 
 	}

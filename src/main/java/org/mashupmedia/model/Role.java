@@ -1,19 +1,16 @@
 package org.mashupmedia.model;
 
-import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Cacheable
-public class Role extends Translation implements GrantedAuthority, Serializable {
+public class Role extends Translation implements GrantedAuthority {
 	private static final long serialVersionUID = -8680736152957783557L;
 
 	@Id

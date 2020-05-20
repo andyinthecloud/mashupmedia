@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.PlaylistDao;
@@ -24,11 +23,12 @@ import org.mashupmedia.util.EncryptionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@Slf4j
 public class AdminManagerImpl implements AdminManager {
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private UserDao userDao;
@@ -95,7 +95,7 @@ public class AdminManagerImpl implements AdminManager {
 		userDao.saveUser(user);
 
 		if (StringUtils.isNotBlank(password)) {
-			logger.info("Updating user password...");
+			log.info("Updating user password...");
 			updatePassword(username, password);
 		}
 
@@ -125,7 +125,7 @@ public class AdminManagerImpl implements AdminManager {
 		String idName = StringUtils.trimToEmpty(role.getIdName());
 		Role savedRole = roleDao.getRole(idName);
 		if (savedRole != null) {
-			logger.debug("Role is already saved with idName: " + idName);
+			log.debug("Role is already saved with idName: " + idName);
 			return;
 		}
 		if (role.getId() == 0) {

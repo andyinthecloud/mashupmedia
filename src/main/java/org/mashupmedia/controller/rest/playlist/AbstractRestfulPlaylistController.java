@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
@@ -26,10 +25,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-public abstract class AbstractRestfulPlaylistController {
+import lombok.extern.slf4j.Slf4j;
 
-	private Logger logger = Logger.getLogger(getClass());
+@RestController
+@Slf4j
+public abstract class AbstractRestfulPlaylistController {
 
 	@Autowired
 	private PlaylistManager playlistManager;
@@ -101,14 +101,14 @@ public abstract class AbstractRestfulPlaylistController {
 	public String savePlaylistName(@RequestParam(value = "id") String id, @RequestParam(value = "value") String value) {
 		id = StringUtils.trimToEmpty(id);
 		if (StringUtils.isEmpty(id)) {
-			logger.info("Unable to save playlist name without id. Id = " + id);
+			log.info("Unable to save playlist name without id. Id = " + id);
 			return value;
 		}
 		long playlistId = NumberUtils.toLong(id.replaceAll("\\D", ""));
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
 		value = StringUtils.trimToEmpty(value);
 		if (StringUtils.isEmpty(value)) {
-			logger.info("Unable to save empty playlist name.");
+			log.info("Unable to save empty playlist name.");
 			return value;
 
 		}

@@ -5,8 +5,9 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.apache.commons.collections.list.SetUniqueList;
-import org.hibernate.query.Query;
+import javax.persistence.TypedQuery;
+
+import org.apache.commons.collections4.list.SetUniqueList;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.photo.Album;
@@ -16,7 +17,10 @@ import org.mashupmedia.util.MediaItemHelper.MediaItemSequenceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Repository
+@Slf4j
 public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Autowired
@@ -31,12 +35,11 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	@Override
 	public List<Album> getAlbums(String albumName) {
-		Query<Album> query = sessionFactory.getCurrentSession()
+		TypedQuery<Album> query = entityManager
 				.createQuery("from org.mashupmedia.model.media.photo.Album a where a.name = :albumName", Album.class);
 
 		query.setParameter("albumName", albumName);
-		query.setCacheable(true);
-		List<Album> albums = query.list();
+		List<Album> albums = query.getResultList();
 		return albums;
 	}
 
@@ -48,7 +51,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		Library library = photo.getLibrary();
 		libraryDao.saveLibrary(library);
 		flushSession(isSessionFlush);
-		logger.debug("Saved photo. id: " + photo.getId() + ", path: " + photo.getPath());
+		log.debug("Saved photo. id: " + photo.getId() + ", path: " + photo.getPath());
 	}
 
 	@Override
@@ -57,17 +60,16 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		StringBuilder queryBuilder = new StringBuilder("select p from Photo p");
 		queryBuilder.append(" where p.path = :path");
 
-		Query<Photo> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Photo.class);
+		TypedQuery<Photo> query = entityManager.createQuery(queryBuilder.toString(), Photo.class);
 		query.setParameter("path", path);
-		query.setCacheable(true);
-		List<Photo> photos = query.list();
+		List<Photo> photos = query.getResultList();
 
 		if (photos == null || photos.isEmpty()) {
 			return null;
 		}
 
 		if (photos.size() > 1) {
-			logger.error("Duplicate photos found for the same file. Attempting to remove files. Path = " + path);
+			log.error("Duplicate photos found for the same file. Attempting to remove files. Path = " + path);
 			Photo photo = photos.get(0);
 			photos.remove(photo);
 			deletePhotos(photos);
@@ -84,8 +86,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		}
 
 		for (Photo photo : photos) {
-			logger.info("Deleting photo: " + photo.getPath());
-			sessionFactory.getCurrentSession().delete(photo);
+			log.info("Deleting photo: " + photo.getPath());
+			entityManager.remove(photo);
 		}
 
 	}
@@ -102,8 +104,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		queryBuilder.append(" order by p.takenOn desc");
 
-		Query<Photo> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Photo.class);
-		query.setCacheable(true);
+		TypedQuery<Photo> query = entityManager.createQuery(queryBuilder.toString(), Photo.class);
 
 		int totalGroups = getTotalGroups();
 		int firstResult = pageNumber * totalItems * totalGroups;
@@ -111,7 +112,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		query.setFirstResult(firstResult);
 
 		@SuppressWarnings("unchecked")
-		List<Photo> photos = SetUniqueList.decorate(query.list());
+		List<Photo> photos = SetUniqueList.setUniqueList(query.getResultList());
 		return photos;
 	}
 
@@ -128,26 +129,24 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 			queryBuilder.append(" order by a.name");
 		}
 
-		Query<Album> query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Album.class);
-		query.setCacheable(true);
-		List<Album> albums = new ArrayList<Album>(new LinkedHashSet<Album>(query.list()));
+		TypedQuery<Album> query = entityManager.createQuery(queryBuilder.toString(), Album.class);
+		List<Album> albums = new ArrayList<Album>(new LinkedHashSet<Album>(query.getResultList()));
 		return albums;
 	}
 
 	@Override
 	public List<Photo> getObsoletePhotos(long libraryId, Date date) {
-		Query<Photo> query = sessionFactory.getCurrentSession()
+		TypedQuery<Photo> query = entityManager
 				.createQuery("from Photo p where p.updatedOn < :date and p.library.id = :libraryId", Photo.class);
 		query.setParameter("date", date);
 		query.setParameter("libraryId", libraryId);
-		query.setCacheable(true);
-		List<Photo> photos = query.list();
+		List<Photo> photos = query.getResultList();
 		return photos;
 	}
 
 	@Override
 	public int removeObsoletePhotos(long libraryId, Date date) {
-		int totalDeletedPhotos = sessionFactory.getCurrentSession()
+		int totalDeletedPhotos = entityManager
 				.createQuery("delete Photo p where p.updatedOn < :date and p.library.id = :libraryId")
 				.setParameter("date", date).setParameter("libraryId", libraryId).executeUpdate();
 		return totalDeletedPhotos;
@@ -156,11 +155,10 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	@Override
 	public Album getAlbum(List<Long> groupIds, long albumId) {
 
-		Query<Album> albumQuery = sessionFactory.getCurrentSession()
+		TypedQuery<Album> albumQuery = entityManager
 				.createQuery("from org.mashupmedia.model.media.photo.Album a where a.id = :albumId", Album.class);
 		albumQuery.setParameter("albumId", albumId);
-		albumQuery.setCacheable(true);
-		List<Album> albums = albumQuery.list();
+		List<Album> albums = albumQuery.getResultList();
 		if (albums.isEmpty()) {
 			return null;
 		}
@@ -176,11 +174,10 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		listPhotosQueryBuilder.append(" where p.album.id = :albumId");
 		DaoHelper.appendGroupFilter(listPhotosQueryBuilder, groupIds);
 		listPhotosQueryBuilder.append(" order by p.takenOn");
-		Query<Photo> listPhotosQuery = sessionFactory.getCurrentSession().createQuery(listPhotosQueryBuilder.toString(),
+		TypedQuery<Photo> listPhotosQuery = entityManager.createQuery(listPhotosQueryBuilder.toString(),
 				Photo.class);
 		listPhotosQuery.setParameter("albumId", albumId);
-		listPhotosQuery.setCacheable(true);
-		List<Photo> photos = listPhotosQuery.list();
+		List<Photo> photos = listPhotosQuery.getResultList();
 
 		album.setPhotos(photos);
 
@@ -287,7 +284,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 			prepareLastPhotoSql(queryBuilder);
 		}
 
-		Query<Photo> photoQuery = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString(), Photo.class);
+		TypedQuery<Photo> photoQuery = entityManager.createQuery(queryBuilder.toString(), Photo.class);
 
 		if (hasAlbumParameter) {
 			photoQuery.setParameter("albumId", albumId);
@@ -297,15 +294,14 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 			photoQuery.setParameter("takenOn", takenOn);
 		}
 
-		photoQuery.setCacheable(true);
 		photoQuery.setFirstResult(0);
 
 		int maxResults = getTotalGroups();
 		photoQuery.setMaxResults(maxResults);
-		photoQuery.setFetchSize(maxResults);
+		// photoQuery.setFetchSize(maxResults);
 
 		@SuppressWarnings("unchecked")
-		List<Photo> photos = SetUniqueList.decorate(photoQuery.list());
+		List<Photo> photos = SetUniqueList.setUniqueList(photoQuery.getResultList());
 
 		if (photos == null || photos.isEmpty()) {
 			return null;
