@@ -1,15 +1,15 @@
 package org.mashupmedia.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
 
+@Slf4j
 public class EncryptionHelper {
 
-	private static Logger logger = Logger.getLogger(EncryptionHelper.class);
 
 	private static PasswordEncryptor passwordEncryptor;
 	private static BasicTextEncryptor textEncryptor;
@@ -61,7 +61,7 @@ public class EncryptionHelper {
 			String text = getTextEncryptor().decrypt(encryptedText);
 			return text;
 		} catch (EncryptionOperationNotPossibleException e) {
-			logger.info("Unable to decrypt text, perhaps it has not yet been encrypted.");
+			log.info("Unable to decrypt text, perhaps it has not yet been encrypted.");
 			return encryptedText;
 		}
 	}

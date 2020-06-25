@@ -2,7 +2,7 @@ package org.mashupmedia.task;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.service.LibraryManager;
@@ -13,9 +13,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class LibraryUpdateTaskManager {
-
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private ThreadPoolTaskExecutor libraryUpdateThreadPoolTaskExecutor;
@@ -62,7 +61,7 @@ public class LibraryUpdateTaskManager {
 				return;
 			}
 			libraryUpdateManager.updateLibrary(library);
-			logger.info("updated library");
+			log.info("updated library");
 		}
 
 	}

@@ -20,7 +20,7 @@ package org.mashupmedia.task;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.mashupmedia.encode.EncodeMediaManager;
 import org.mashupmedia.encode.FfMpegManager;
 import org.mashupmedia.encode.ProcessManager;
@@ -34,9 +34,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class EncodeMediaItemTaskManager {
-	
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private ThreadPoolTaskExecutor encodeMediaItemThreadPoolTaskExecutor;
@@ -61,7 +60,7 @@ public class EncodeMediaItemTaskManager {
 			try {
 				processMediaItemForEncoding(mediaItem, mediaContentType);
 			} catch (MediaItemEncodeException exception) {
-				logger.error(exception);
+				log.error("Error while encoding media item", exception);
 			}
 		}
 	}

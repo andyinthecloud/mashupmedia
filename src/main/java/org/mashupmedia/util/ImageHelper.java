@@ -8,15 +8,15 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Rotation;
 import org.mashupmedia.util.FileHelper.FileType;
 
+@Slf4j
 public class ImageHelper {
-	private static Logger LOGGER = Logger.getLogger(ImageHelper.class);
 
 	public final static int PHOTO_THUMBNAIL_WIDTH = 200;
 	public final static int PHOTO_THUMBNAIL_HEIGHT = 200;
@@ -80,7 +80,7 @@ public class ImageHelper {
 			}
 
 		} catch (Exception e) {
-			LOGGER.error("Error resizing image.", e);
+			log.error("Error resizing image.", e);
 		}
 		return processedImage;
 	}

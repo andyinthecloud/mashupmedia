@@ -5,13 +5,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+@Slf4j
 public class DateHelper {
-
-	private static Logger logger = Logger.getLogger(DateHelper.class);
-
+	
 	public enum DateFormatType {
 
 		URL("dd-MM-yyyy"), SHORT_DISPLAY_WITH_TIME("dd/MM/yyyy HH:mm:ss z");
@@ -61,7 +60,7 @@ public class DateHelper {
 	public static String parseToText(Date date, DateFormatType dateFormatType, Locale locale) {
 
 		if (date == null) {
-			logger.info("Cannot convert null date, defaulting to current date.");
+			log.info("Cannot convert null date, defaulting to current date.");
 			date = new Date();
 		}
 

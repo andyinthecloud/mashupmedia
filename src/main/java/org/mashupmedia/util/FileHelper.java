@@ -5,9 +5,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.User;
@@ -16,9 +16,9 @@ import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
+@Slf4j
 public class FileHelper {
 
-	private static Logger logger = Logger.getLogger(FileHelper.class);
 	private static String MASHUP_MEDIA_HOME = "MASHUP_MEDIA_HOME";
 
 	public final static String ALBUM_ART_FOLDER = "cover-art";
@@ -208,9 +208,9 @@ public class FileHelper {
 			applicationHomeFolder = new File(applicationHomePath, ".mashup_media");
 			applicationHomeFolder.mkdirs();
 			if (!applicationHomeFolder.isDirectory()) {
-				logger.error("Unable to create Mashup Media folder in the user home: "
+				log.error("Unable to create Mashup Media folder in the user home: "
 						+ applicationHomeFolder.getAbsolutePath());
-				logger.error(
+				log.error(
 						"Will default to temp directory but please set the system property MASHUP_MEDIA_HOME variable as files inside this folder are deleted regualary by the system.");
 				applicationHomePath = System.getProperty("java.io.tmpdir");
 				applicationHomeFolder = new File(applicationHomePath, ".mashup_media");
@@ -221,7 +221,7 @@ public class FileHelper {
 		applicationHomeFolder.mkdirs();
 
 		if (!applicationHomeFolder.isDirectory()) {
-			logger.error("Error creating application folder: " + applicationHomeFolder.getAbsolutePath());
+			log.error("Error creating application folder: " + applicationHomeFolder.getAbsolutePath());
 			throw new MashupMediaRuntimeException("Cannot proceed, unable to create the folder MASHUP_MEDIA_HOME: "
 					+ applicationHomeFolder.getAbsolutePath());
 		}
@@ -240,7 +240,7 @@ public class FileHelper {
 		try {
 			FileUtils.deleteDirectory(libraryFolder);
 		} catch (IOException e) {
-			logger.error("Unable to delete library folder", e);
+			log.error("Unable to delete library folder", e);
 		}
 
 	}
@@ -286,12 +286,12 @@ public class FileHelper {
 
 	public static boolean deleteFile(File file) {
 		if (file.isDirectory()) {
-			logger.info("Unable to delete file. It is in fact a folder: " + file.getAbsolutePath());
+			log.info("Unable to delete file. It is in fact a folder: " + file.getAbsolutePath());
 			return false;
 		}
 
 		if (!file.exists()) {
-			logger.info("Unable to delete file. It is does not exist: " + file.getAbsolutePath());
+			log.info("Unable to delete file. It is does not exist: " + file.getAbsolutePath());
 			return false;
 		}
 
@@ -300,10 +300,10 @@ public class FileHelper {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.info("Unable to delete file: ", e);
+			log.info("Unable to delete file: ", e);
 		}
 
-		logger.info("Unable to delete file, will try to remove when web server stops...");
+		log.info("Unable to delete file, will try to remove when web server stops...");
 		file.deleteOnExit();
 		return false;
 	}
@@ -322,7 +322,7 @@ public class FileHelper {
 	public static void deleteProcessedVideo(long libraryId, long videoId) {
 
 		if (libraryId == 0 || videoId == 0) {
-			logger.info(
+			log.info(
 					"Unable to delete video files from libray, libraryId = " + libraryId + ", videoId = " + videoId);
 			return;
 		}
@@ -330,14 +330,14 @@ public class FileHelper {
 		File videoFolder = getVideoFolder(libraryId, videoId);
 
 		if (!videoFolder.isDirectory()) {
-			logger.debug("Unable to delete video folder: " + videoFolder.getAbsolutePath() + ". Does not exist.");
+			log.debug("Unable to delete video folder: " + videoFolder.getAbsolutePath() + ". Does not exist.");
 			return;
 		}
 
 		try {
 			FileUtils.deleteDirectory(videoFolder);
 		} catch (IOException e) {
-			logger.error("Error deleting folder: " + videoFolder.getAbsolutePath(), e);
+			log.error("Error deleting folder: " + videoFolder.getAbsolutePath(), e);
 		}
 	}
 

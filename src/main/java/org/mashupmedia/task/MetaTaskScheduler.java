@@ -19,7 +19,7 @@ package org.mashupmedia.task;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -32,9 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class MetaTaskScheduler {
-
-	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
 	private ProxyManager proxyManager;
@@ -48,7 +47,7 @@ public class MetaTaskScheduler {
 			ProxyTextFile proxyTextFile = (ProxyTextFile) proxyManager.loadProxyFile(url, ProxyType.TEXT_FILE);
 			
 			if (proxyTextFile == null) {
-				logger.info("Unable to find latest release from page: http://www.mashupmedia.org/latest-release/final");
+				log.info("Unable to find latest release from page: http://www.mashupmedia.org/latest-release/final");
 				return;
 			}
 			
@@ -56,10 +55,10 @@ public class MetaTaskScheduler {
 			Elements elements = document.select("div.view-latest-final-release div.views-row");
 			String releaseType = elements.select("div.views-field-field-release-type").text();
 			String version = elements.select("div.views-field-field-version").text();
-			logger.info("Found latest release information, type = " + releaseType + ", version = " + version);
+			log.info("Found latest release information, type = " + releaseType + ", version = " + version);
 			configurationManager.saveConfiguration(MashUpMediaConstants.LATEST_RELEASE_FINAL_VERSION, version);
 		} catch (IOException e) {
-			logger.error("Unable to get latest version information from www.mashupmedia.org", e);
+			log.error("Unable to get latest version information from www.mashupmedia.org", e);
 			return;
 		}
 

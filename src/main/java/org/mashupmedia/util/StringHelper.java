@@ -8,17 +8,16 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.springframework.web.util.UriUtils;
 
+@Slf4j
 public class StringHelper {
 	public static final String TEXT_DELIMITER = ";";
-
-	private static Logger logger = Logger.getLogger(StringHelper.class);
 
 	public static String[] STOP_WORDS = new String[] { "the", "a" };
 	public static String[] ARTICLES = { "the", "a" };
@@ -77,7 +76,7 @@ public class StringHelper {
 		try {
 			text = new String(bytes, Encoding.UTF8.getEncodingString());
 		} catch (UnsupportedEncodingException e) {
-			logger.error("Error converting bytes to string", e);
+			log.error("Error converting bytes to string", e);
 		}
 		return text;
 	}

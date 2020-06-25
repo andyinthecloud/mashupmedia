@@ -19,12 +19,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.mashupmedia.service.LibraryManager;
 
+@Slf4j
 public class WatchLibraryListener {
 
-	private Logger logger = Logger.getLogger(getClass());
 	private LibraryManager libraryManager;
 	private WatchService watcher;
 	private Map<WatchKey, Path> keys;
@@ -48,10 +48,10 @@ public class WatchLibraryListener {
 
 		Path prev = keys.get(key);
 		if (prev == null) {
-			logger.info("register: " + folder);
+			log.info("register: " + folder);
 		} else {
 			if (!folder.equals(prev)) {
-				logger.info("update: " + prev + " -> " + folder);
+				log.info("update: " + prev + " -> " + folder);
 			}
 		}
 		keys.put(key, folder);
@@ -78,7 +78,7 @@ public class WatchLibraryListener {
 					});
 
 				} catch (IOException e) {
-					logger.error("Error watching folders", e);
+					log.error("Error watching folders", e);
 				}
 
 			}
@@ -95,9 +95,9 @@ public class WatchLibraryListener {
 		this.librayId = libraryId;
 		this.libraryManager = libraryManager;
 
-		logger.debug("Scanning %s ...\n" + dir);
+		log.debug("Scanning %s ...\n" + dir);
 		registerAll(dir);
-		logger.debug("Done.");
+		log.debug("Done.");
 
 	}
 
@@ -118,7 +118,7 @@ public class WatchLibraryListener {
 
 			Path dir = keys.get(key);
 			if (dir == null) {
-				logger.error("WatchKey not recognized!!");
+				log.error("WatchKey not recognized!!");
 				continue;
 			}
 
@@ -139,7 +139,7 @@ public class WatchLibraryListener {
 				Path child = dir.resolve(name);
 
 				// print out event
-				logger.info(event.kind().name() + ": " + child);
+				log.info(event.kind().name() + ": " + child);
 
 				// if directory is created, and watching recursively, then
 				// register it and its sub-directories
