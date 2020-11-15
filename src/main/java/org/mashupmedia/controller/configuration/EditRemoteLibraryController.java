@@ -75,11 +75,11 @@ public class EditRemoteLibraryController extends BaseController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration");
+		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
 
 		Breadcrumb listRemoteLibrariesBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.remotelibraries"),
-				"/app/configuration/list-remote-libraries");
+				"/configuration/list-remote-libraries");
 		breadcrumbs.add(listRemoteLibrariesBreadcrumb);
 
 		Breadcrumb remoteLibraryBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.editremotelibrary"));

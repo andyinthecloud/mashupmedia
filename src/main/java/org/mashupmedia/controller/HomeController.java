@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class HomeController extends BaseController {
 
-	@RequestMapping(value = "/home", method = RequestMethod.GET)
+	@RequestMapping(value = {"/", "/home"}, method = RequestMethod.GET)
 	public String getHome(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment) {		
 		String path = getPath(isFragment, "home");
 		return path;

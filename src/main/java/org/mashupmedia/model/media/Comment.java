@@ -3,17 +3,12 @@ package org.mashupmedia.model.media;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import org.mashupmedia.model.User;
 
 @Entity
+@Table(name = "comments")
 @Cacheable
 public class Comment implements Serializable {
 	private static final long serialVersionUID = 1552265448903497284L;

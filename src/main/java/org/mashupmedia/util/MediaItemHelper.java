@@ -201,7 +201,7 @@ public class MediaItemHelper {
 
 	public static String prepareUrlStream(String contextPath, long mediaItemId, String format) {
 		StringBuilder urlBuilder = new StringBuilder(contextPath);
-		urlBuilder.append("/app/streaming/media/");
+		urlBuilder.append("/streaming/media/");
 		urlBuilder.append(mediaItemId);
 		urlBuilder.append("/");
 		urlBuilder.append(format);		

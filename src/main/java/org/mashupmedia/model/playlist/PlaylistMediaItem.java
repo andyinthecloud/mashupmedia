@@ -2,17 +2,12 @@ package org.mashupmedia.model.playlist;
 
 import java.io.Serializable;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.mashupmedia.model.media.MediaItem;
 
 @Entity
+@Table(name = "playlist_media_items")
 @Cacheable
 public class PlaylistMediaItem implements Serializable {
 

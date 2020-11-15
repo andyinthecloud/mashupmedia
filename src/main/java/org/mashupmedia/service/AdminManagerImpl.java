@@ -21,6 +21,7 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.EncryptionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,9 @@ public class AdminManagerImpl implements AdminManager {
 
 	@Autowired
 	private PlaylistDao playlistDao;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Override
 	public User getUser(String username) {
@@ -87,7 +91,7 @@ public class AdminManagerImpl implements AdminManager {
 			user.setCreatedOn(date);
 		} else {
 			User savedUser = getUser(userId);
-			user.setPassword(savedUser.getPassword());
+			user.setPassword(passwordEncoder.encode(savedUser.getPassword()));
 			user.setPlaylistMediaItem(savedUser.getPlaylistMediaItem());
 		}
 
@@ -143,7 +147,8 @@ public class AdminManagerImpl implements AdminManager {
 			throw new MashupMediaRuntimeException("Could not find user with username: " + username);
 		}
 
-		String encodedPassword = EncryptionHelper.encodePassword(password);
+//		String encodedPassword = EncryptionHelper.encodePassword(password);
+		String encodedPassword = passwordEncoder.encode(password);
 		user.setPassword(encodedPassword);
 		userDao.saveUser(user);
 	}
@@ -245,4 +250,5 @@ public class AdminManagerImpl implements AdminManager {
 		User systemUser = getUser(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME);		
 		return systemUser;
 	}
+
 }

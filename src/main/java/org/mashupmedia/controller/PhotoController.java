@@ -41,18 +41,18 @@ public class PhotoController extends BaseController {
 
 	protected Breadcrumb getListAlbumsBreadcrumb() {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.photo.albums"),
-				"/app/photo/albums");
+				"/photo/albums");
 		return breadcrumb;
 	}
 
 	protected Breadcrumb getLatestPhotosBreadcrumb() {
 		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.photo.latest-photos"),
-				"/app/photo/photos");
+				"/photo/photos");
 		return breadcrumb;
 	}
 
 	protected Breadcrumb getAlbumBreadcrumb(Album album) {
-		Breadcrumb breadcrumb = new Breadcrumb(album.getName(), "/app/photo/album/" + album.getId());
+		Breadcrumb breadcrumb = new Breadcrumb(album.getName(), "/photo/album/" + album.getId());
 		return breadcrumb;
 	}
 

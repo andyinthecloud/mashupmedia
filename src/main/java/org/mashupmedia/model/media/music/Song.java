@@ -1,10 +1,6 @@
 package org.mashupmedia.model.media.music;
 
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +17,7 @@ import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 @Entity
+@Table(name = "songs")
 @Indexed
 @Cacheable
 @XmlRootElement

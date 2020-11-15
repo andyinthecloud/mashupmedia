@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<definition name="home" template="/WEB-INF/jsp/layouts/default.jsp">
+		<put-attribute name="topBar" value="/WEB-INF/jsp/tiles/top-bar.jsp" />
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/home.jsp" />
+	</definition>
+
+	<definition name="ui-content" template="/WEB-INF/jsp/layouts/ui-content.jsp">
+		<put-attribute name="body" value="" />
+	</definition>
+	
+
+	 
+	<definition name="home.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/home.jsp" />
+	</definition>
+	
+	<definition name="configuration.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration.jsp" />
+	</definition>
+ 
+	
+	<definition name="configuration" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration.jsp" />
+	</definition>
+
+	 
+	<definition name="configuration.network" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/network.jsp" />
+	</definition>
+
+	<definition name="configuration.network.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/network.jsp" />
+	</definition>
+
+	<definition name="configuration.encoding" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/encoding.jsp" />
+	</definition>
+
+	<definition name="configuration.encoding.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/encoding.jsp" />
+	</definition>
+
+	<definition name="configuration.list-libraries" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/list-libraries.jsp" />
+	</definition>
+	
+	<definition name="configuration.list-libraries.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/list-libraries.jsp" />
+	</definition>		
+	
+
+	<definition name="configuration.list-remote-libraries"
+		extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/list-remote-libraries.jsp" />
+	</definition>
+
+	<definition name="configuration.edit-remote-library"
+		extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/edit-remote-library.jsp" />
+	</definition>
+
+	<definition name="configuration.url-error-remote-library"
+		extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/url-error-remote-library.jsp" />
+	</definition>
+
+	<definition name="configuration.choose-library-type"
+		extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/choose-library-type.jsp" />
+	</definition>
+	
+	<definition name="configuration.choose-library-type.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/choose-library-type.jsp" />
+	</definition>
+
+	<definition name="configuration.library.music.panel"
+		template="/WEB-INF/jsp/tiles/configuration/library.jsp">
+		<put-attribute name="additionalConfiguration" value="" />
+	</definition>
+
+	<definition name="configuration.library.music" extends="home">
+		<put-attribute name="body" value="configuration.library.music.panel" />
+	</definition>
+
+	<definition name="configuration.library.music.fragment" extends="ui-content">
+		<put-attribute name="body" value="configuration.library.music.panel" />
+	</definition>
+
+	<definition name="configuration.library.video.panel"
+		template="/WEB-INF/jsp/tiles/configuration/library.jsp">
+		<put-attribute name="additionalConfiguration"
+			value="/WEB-INF/jsp/tiles/configuration/video-library-configuration.jsp" />
+	</definition>
+
+	<definition name="configuration.library.video" extends="home">
+		<put-attribute name="body" value="configuration.library.video.panel" />
+	</definition>
+
+	<definition name="configuration.library.video.fragment" extends="ui-content">
+		<put-attribute name="body" value="configuration.library.video.panel" />
+	</definition>
+
+	<definition name="configuration.library.photo" extends="home">
+		<put-attribute name="body" value="configuration.library.photo.panel" />		
+	</definition>
+	
+	<definition name="configuration.library.photo.fragment" extends="ui-content">
+		<put-attribute name="body" value="configuration.library.photo.panel" />		
+	</definition>
+	
+	<definition name="configuration.library.photo.panel"
+		template="/WEB-INF/jsp/tiles/configuration/library.jsp">
+		<put-attribute name="additionalConfiguration"
+			value="" />
+	</definition>
+	
+	<definition name="configuration.administration.list-users"
+		extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/administration/list-users.jsp" />
+	</definition>
+	
+	<definition name="configuration.administration.list-users.fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/administration/list-users.jsp" />
+	</definition>
+	
+	<definition name="configuration.administration.edit-user"
+		extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
+	</definition>
+
+	<definition name="configuration.administration.edit-user.fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/administration/edit-user.jsp" />
+	</definition>
+
+	<definition name="configuration.administration.list-groups"
+		extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/administration/list-groups.jsp" />
+	</definition>
+
+	<definition name="configuration.administration.list-groups.fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/administration/list-groups.jsp" />
+	</definition>
+
+	<definition name="configuration.administration.edit-group"
+		extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/administration/edit-group.jsp" />
+	</definition>
+
+	<definition name="configuration.administration.edit-group.fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/configuration/administration/edit-group.jsp" />
+	</definition>
+	  
+	<definition name="music.albums" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/albums.jsp" />
+	</definition>
+
+	<definition name="music.albums.fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/albums.jsp" />
+	</definition>
+	
+	
+	<definition name="music.album" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/album.jsp" />
+	</definition>
+
+	<definition name="music.album.fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/album.jsp" />
+	</definition>
+	
+	<definition name="music.artists" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/artists.jsp" />
+	</definition>
+
+	<definition name="music.artists.fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/artists.jsp" />
+	</definition>	
+
+
+	<definition name="music.artist" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/artist.jsp" />
+	</definition>
+
+	<definition name="music.artist.fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/music/artist.jsp" />
+	</definition>	
+
+
+	<definition name="playlist.music" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/playlist/music-playlist.jsp" />
+	</definition>
+
+	<definition name="playlist.music.fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/playlist/music-playlist.jsp" />
+	</definition>
+
+	<definition name="playlist.list" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/playlist/list-playlists.jsp" />
+	</definition>
+
+	<definition name="playlist.list.fragment"
+		extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/playlist/list-playlists.jsp" />
+	</definition>
+
+	<definition name="photos.photos" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/photos.jsp" />
+	</definition>
+
+	<definition name="photos.photos.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/photos.jsp" />
+	</definition>
+	
+	<definition name="photo.show" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/photo.jsp" />
+	</definition>
+	
+	<definition name="photo.show.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/photo.jsp" />
+	</definition>	
+	
+	<definition name="photo.album" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/album.jsp" />
+	</definition>	
+
+	<definition name="photo.album.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/album.jsp" />
+	</definition>	
+
+	<definition name="photo.albums" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/albums.jsp" />
+	</definition>		
+
+	<definition name="photo.albums.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/albums.jsp" />
+	</definition>		
+
+	<definition name="encode.queue" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
+	</definition>
+
+	<definition name="encode.queue.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/encode/queue.jsp" />
+	</definition>
+		
+	<definition name="video.videos" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/video/videos.jsp" />
+	</definition>
+	
+	<definition name="video.videos.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/video/videos.jsp" />
+	</definition>	
+	
+	<definition name="video.show" extends="home">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/video/video.jsp" />
+	</definition>
+	
+	<definition name="video.show.fragment" extends="ui-content">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/video/video.jsp" />
+	</definition>		
+	
+	
+	<!-- 
+
+	<definition name="video" extends="home">
+		<put-attribute name="topBar"
+			value="/WEB-INF/jsp/tiles/video/video-top-bar.jsp" />
+	</definition>
+
+	<definition name="videos" extends="video">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/video/list-videos.jsp" />
+	</definition>
+
+	<definition name="video.show" extends="video">
+		<put-attribute name="body" value="/WEB-INF/jsp/tiles/video/video.jsp" />
+	</definition>
+
+
+
+	
+
+	
+	
+	
+	<definition name="photos-home" extends="photo">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/photos-home.jsp" />
+	</definition>
+	
+	<definition name="photo.show" extends="photo">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/photo.jsp" />
+	</definition>
+	
+	<definition name="photo.album.list" extends="photo">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/list-albums.jsp" />
+	</definition>
+	
+	<definition name="photo.album.show" extends="photo">
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/tiles/photo/album.jsp" />
+	</definition>
+	
+	 -->
+</tiles-definitions>

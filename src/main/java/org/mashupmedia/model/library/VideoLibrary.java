@@ -2,8 +2,10 @@ package org.mashupmedia.model.library;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "video_libraries")
 @Cacheable
 public class VideoLibrary extends Library {
 

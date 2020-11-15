@@ -59,7 +59,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		return restfulSong;
 	}
 
-	@RequestMapping(value = "/append-album", method = RequestMethod.GET)
+	@RequestMapping(value = "end-album", method = RequestMethod.GET)
 	@ResponseBody
 	public RestfulSong appendAlbum(@RequestParam("albumId") Long albumId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
@@ -114,7 +114,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		return restfulSong;
 	}
 
-	@RequestMapping(value = "/append-artist", method = RequestMethod.GET)
+	@RequestMapping(value = "end-artist", method = RequestMethod.GET)
 	@ResponseBody
 	public RestfulSong appendArtist(@RequestParam("artistId") Long artistId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
@@ -164,7 +164,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		return restfulSong;
 	}
 
-	@RequestMapping(value = "/append-song", method = RequestMethod.GET)
+	@RequestMapping(value = "end-song", method = RequestMethod.GET)
 	@ResponseBody
 	public RestfulSong appendSong(@RequestParam("songId") Long songId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);

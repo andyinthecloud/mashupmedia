@@ -29,6 +29,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.sun.xml.txw2.annotation.XmlNamespace;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +48,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class MapperManagerImpl implements MapperManager {
-
 
 	private Marshaller marshaller;
 
@@ -135,7 +135,7 @@ public class MapperManagerImpl implements MapperManager {
 	public void saveXmltoSongs(MusicLibrary musicLibrary, String xml) throws Exception {
 
 		String libraryPath = StringUtils.trimToEmpty(musicLibrary.getLocation().getPath());
-		libraryPath = libraryPath.replaceFirst("/app/.*", "");
+		libraryPath = libraryPath.replaceFirst("/.*", "");
 
 		List<Song> songs = new ArrayList<Song>();
 

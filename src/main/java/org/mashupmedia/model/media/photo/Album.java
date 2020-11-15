@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
 @Entity(name = "org.mashupmedia.model.media.photo.Album")
-@Table(name = "PhotoAlbum")
+@Table(name = "photo_albums")
 @Cacheable
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Album implements Serializable {

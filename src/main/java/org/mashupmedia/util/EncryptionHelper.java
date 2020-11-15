@@ -11,18 +11,18 @@ import org.jasypt.util.text.BasicTextEncryptor;
 public class EncryptionHelper {
 
 
-	private static PasswordEncryptor passwordEncryptor;
+//	private static PasswordEncryptor passwordEncryptor;
 	private static BasicTextEncryptor textEncryptor;
 
-	public static PasswordEncryptor getPasswordEncryptor() {
-
-		if (passwordEncryptor != null) {
-			return passwordEncryptor;
-		}
-
-		passwordEncryptor = new StrongPasswordEncryptor();
-		return passwordEncryptor;
-	}
+//	public static PasswordEncryptor getPasswordEncryptor() {
+//
+//		if (passwordEncryptor != null) {
+//			return passwordEncryptor;
+//		}
+//
+//		passwordEncryptor = new StrongPasswordEncryptor();
+//		return passwordEncryptor;
+//	}
 
 	public static BasicTextEncryptor getTextEncryptor() {
 		if (textEncryptor != null) {
@@ -34,15 +34,15 @@ public class EncryptionHelper {
 		return textEncryptor;
 	}
 
-	public static String encodePassword(String password) {
-		String encodedPassword = getPasswordEncryptor().encryptPassword(password);
-		return encodedPassword;
-	}
-
-	public static boolean isPasswordValid(String encodedPassword, String rawPassword) {
-		boolean isValid = getPasswordEncryptor().checkPassword(rawPassword, encodedPassword);
-		return isValid;
-	}
+//	public static String encodePassword(String password) {
+//		String encodedPassword = getPasswordEncryptor().encryptPassword(password);
+//		return encodedPassword;
+//	}
+//
+//	public static boolean isPasswordValid(String encodedPassword, String rawPassword) {
+//		boolean isValid = getPasswordEncryptor().checkPassword(rawPassword, encodedPassword);
+//		return isValid;
+//	}
 
 	public static String encryptText(String text) {
 		text = StringUtils.trimToEmpty(text);

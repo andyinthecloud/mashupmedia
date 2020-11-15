@@ -4,19 +4,27 @@ import org.mashupmedia.util.EncryptionHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-@Component("customPasswordEncoder")
-public class CustomPasswordEncoder implements PasswordEncoder {
+//@Component("customPasswordEncoder")
+public class CustomPasswordEncoder {
 
-	@Override
+//	@Bean
+//	public PasswordEncoder passwordEncoder() {
+//		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//	}
+
+
+//	@Override
 	public String encode(CharSequence rawPassword) {
-		String encodedPassword = EncryptionHelper.encodePassword(rawPassword.toString());
-		return encodedPassword;
+//		String encodedPassword = EncryptionHelper.encodePassword(rawPassword.toString());
+//		return encodedPassword;
+		return "";
 	}
 
-	@Override
+//	@Override
 	public boolean matches(CharSequence rawPassword, String encodedPassword) {
-		boolean isValid = EncryptionHelper.isPasswordValid(encodedPassword, rawPassword.toString());
-		return isValid;
+//		boolean isValid = EncryptionHelper.isPasswordValid(encodedPassword, rawPassword.toString());
+//		return isValid;
+		return false;
 	}
 
 }

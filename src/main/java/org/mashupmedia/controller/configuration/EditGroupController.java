@@ -68,9 +68,9 @@ public class EditGroupController extends BaseController {
 
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
-		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/app/configuration"));
+		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"), "/configuration"));
 		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.groups"),
-				"/app/configuration/administration/list-groups"));
+				"/configuration/administration/list-groups"));
 		breadcrumbs.add(new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.edit-group")));
 	}
 

@@ -24,7 +24,7 @@ import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 
 @Entity(name = "org.mashupmedia.model.media.music.Album")
-@Table(name = "MusicAlbum")
+@Table(name = "music_albums")
 @Cacheable
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Album implements Serializable {

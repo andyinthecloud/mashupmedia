@@ -19,12 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
-	@PersistenceContext
-	
 	@Override
 	public List<Library> getRemoteLibraries() {
 		Query query = entityManager.createQuery("from Library where remote = true order by name");
-		@SuppressWarnings("unchecked")
+
 		List<Library> libraries = (List<Library>) query.getResultList();
 		return libraries;
 	}

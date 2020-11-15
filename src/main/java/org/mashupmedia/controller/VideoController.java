@@ -49,7 +49,7 @@ public class VideoController extends BaseController {
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb breadcrumb = new Breadcrumb(
-				MessageHelper.getMessage("breadcrumb.videos"), "/app/video/videos");
+				MessageHelper.getMessage("breadcrumb.videos"), "/video/videos");
 		breadcrumbs.add(breadcrumb);
 	}
 

@@ -115,7 +115,7 @@ public class MusicController extends BaseController {
 	}
 
 	protected Breadcrumb getMusicBreadcrumb() {
-		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/app/music/albums");
+		Breadcrumb breadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.music"), "/music/albums");
 		return breadcrumb;
 	}
 

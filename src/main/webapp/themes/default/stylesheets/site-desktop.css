@@ -1,0 +1,75 @@
+@media all and (min-width: 50em) {
+	div.center-panel {
+		padding: 20px !important;
+		max-width: 60em;
+		text-align: center;
+	}
+	div.border {
+		border: 1px solid #e579e9;
+	}
+	form {
+		padding: 20px;
+		max-width: 60em;
+	}
+	#music-player div.controls a img {
+		height: 30px;
+		width: auto;
+		padding: 0px 2px;
+	}
+	div.albums div.album {
+		height: 240px;	
+	}
+	div.artists div.artist {
+		height: 210px;
+	} 	
+	div.albums div.album, div.artists div.artist {
+		float: left;
+		padding: 5px;
+		width: 150px;
+		border: 1px solid #A0A0A0;
+		margin-right: 5px;
+		margin-bottom: 5px;
+		font-size: 0.9em;
+		overflow: hidden;
+	}
+	div.albums div.highlight, div.artists div.highlight {
+		/*border-color: #E579E9;*/
+		border: 1px solid #E579E9;
+	}
+	div.albums div.album img, div.artists div.artist img {
+		width: 150px;
+		height: 150px;
+	}
+	div.albums div.album-control, div.artists div.artist-control {
+		position: absolute;
+		left: 5px;
+		bottom: 5px;
+		padding: 3px;
+		border: 1px solid #A0A0A0;
+		background-color: white;
+	}
+	div.albums div.album-control img, div.artists div.artist-control img {
+		width: 10px;
+		height: auto;
+	}
+	div.albums div.album-control a, div.artists div.artist-control a {
+		padding: 0 5px;
+	}
+	div.album div.album-art, div.artist div.artist-art {
+		float: right;
+		width: 45%;
+		margin-left: 1em;
+		margin-bottom: 1em;
+	}
+
+	ul.items li span.label {		
+		left: 110px;
+	}
+	ul.items li img.thumb {
+		width: 100px;
+		height: auto;
+	}
+	
+
+	
+}

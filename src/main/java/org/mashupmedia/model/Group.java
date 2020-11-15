@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Cacheable
-@Table(name = "GROUPS")
+@Table(name = "groups")
 public class Group implements Serializable {
 
 	private static final long serialVersionUID = 6142620896348154603L;

@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="mashupmedia:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>mashupmedia</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="mashupmedia.war">
+      <element id="artifact" artifact-name="mashupmedia:war exploded" />
+    </root>
+  </artifact>
+</component>

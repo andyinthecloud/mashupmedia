@@ -52,11 +52,11 @@ public abstract class AbstractLibraryController extends BaseController {
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 
 		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"),
-				"/app/configuration");
+				"/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
 
 		Breadcrumb musicConfigurationBreadcrumb = new Breadcrumb(
-				MessageHelper.getMessage("breadcrumb.configuration.libraries"), "/app/configuration/list-libraries");
+				MessageHelper.getMessage("breadcrumb.configuration.libraries"), "/configuration/list-libraries");
 		breadcrumbs.add(musicConfigurationBreadcrumb);
 
 		breadcrumbs.add(prepareFinalBreadcrumb());

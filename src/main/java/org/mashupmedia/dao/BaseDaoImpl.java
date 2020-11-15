@@ -57,7 +57,8 @@ public class BaseDaoImpl {
 	protected <T> T getUniqueResult(TypedQuery<T> query) {
 		List<T> items = query.getResultList();	
 		if (items == null || items.isEmpty()) {
-			throw new MashupMediaRuntimeException("Unable to get a unique result as items are empty.");
+//			throw new MashupMediaRuntimeException("Unable to get a unique result as items are empty.");
+			return null;
 		}
 
 		if (items.size() > 1) {

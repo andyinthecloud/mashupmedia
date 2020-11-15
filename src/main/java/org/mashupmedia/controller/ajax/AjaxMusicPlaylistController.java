@@ -90,7 +90,7 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
 	}
 
-//	@RequestMapping(value = "/append-artist", method = RequestMethod.POST)
+//	@RequestMapping(value = "end-artist", method = RequestMethod.POST)
 //	public String appendArtist(@RequestParam("artistId") Long artistId,
 //			Model model) {
 //		Playlist playlist = playlistManager
@@ -140,7 +140,7 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 //		return "ajax/json/media-item";
 //	}
 
-//	@RequestMapping(value = "/append-album", method = RequestMethod.POST)
+//	@RequestMapping(value = "end-album", method = RequestMethod.POST)
 //	public String appendAlbum(@RequestParam("albumId") Long albumId, Model model) {
 //		Playlist playlist = playlistManager
 //				.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
@@ -182,7 +182,7 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 //		return "ajax/json/media-item";
 //	}
 //
-//	@RequestMapping(value = "/append-song", method = RequestMethod.POST)
+//	@RequestMapping(value = "end-song", method = RequestMethod.POST)
 //	public String appendSong(@RequestParam("songId") Long songId, Model model) {
 //		Playlist playlist = playlistManager
 //				.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
@@ -206,7 +206,7 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 //		return "ajax/json/media-item";
 //	}
 
-	@RequestMapping(value = "/append-media-items", method = RequestMethod.POST)
+	@RequestMapping(value = "end-media-items", method = RequestMethod.POST)
 	public String appendMediaItems(
 			@RequestParam("mediaItemIds[]") Long[] mediaItemIds, Model model) {
 		addMediaItemsToPlaylist(mediaItemIds, model, false);

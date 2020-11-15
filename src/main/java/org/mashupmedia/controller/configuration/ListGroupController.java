@@ -46,7 +46,7 @@ public class ListGroupController extends BaseController {
 	@Override
 	public void prepareBreadcrumbs(List<Breadcrumb> breadcrumbs) {
 		Breadcrumb configurationBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration"),
-				"/app/configuration");
+				"/configuration");
 		breadcrumbs.add(configurationBreadcrumb);
 
 		Breadcrumb networkBreadcrumb = new Breadcrumb(MessageHelper.getMessage("breadcrumb.configuration.groups"));

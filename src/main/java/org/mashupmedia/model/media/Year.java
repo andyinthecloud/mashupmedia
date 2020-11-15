@@ -2,11 +2,7 @@ package org.mashupmedia.model.media;
 
 import java.io.Serializable;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -15,6 +11,7 @@ import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 
 @Entity
+@Table(name = "years")
 @Cacheable
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Year implements Serializable {

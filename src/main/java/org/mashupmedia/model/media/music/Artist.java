@@ -3,13 +3,7 @@ package org.mashupmedia.model.media.music;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -18,6 +12,7 @@ import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
 
 @Entity
+@Table(name = "artists")
 @Cacheable
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Artist implements Serializable {

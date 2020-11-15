@@ -83,7 +83,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	@Autowired
 	private MediaDao mediaDao;
 
-	private MusicLibraryUpdateManagerImpl() {
+	public MusicLibraryUpdateManagerImpl() {
 		// Disable the jaudiotagger library logging
 		// LogManager.getLogManager().reset();
 		// java.util.logging.Logger globalLogger = java.util.logging.Logger

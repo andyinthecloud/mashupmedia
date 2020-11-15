@@ -2,15 +2,10 @@ package org.mashupmedia.model.media.music;
 
 import java.io.Serializable;
 
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "album_art_images")
 @Cacheable
 public class AlbumArtImage implements Serializable {
 	private static final long serialVersionUID = -1853946902325001789L;

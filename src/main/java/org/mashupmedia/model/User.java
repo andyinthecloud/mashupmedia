@@ -3,20 +3,14 @@ package org.mashupmedia.model;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Transient;
+import javax.persistence.*;
+
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
+@Table(name = "users")
 @Cacheable
 public class User implements UserDetails {
 	

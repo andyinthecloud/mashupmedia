@@ -32,7 +32,7 @@ public class TheMovieDatabaseVideoWebServiceImpl extends AbstractCachingVideoWeb
 	private final static String THE_MOVIE_DB_API_KEY = "themoviedb.api.key";
 	private final static String THE_MOVIE_DB_ROOT_URL = "http://api.themoviedb.org";
 	private final static String THE_MOVIE_DB_BASE_IMAGE_URL = "themoviedb.base.image.url";
-	private final static String PROXY_URL_PREFIX = "/app/proxy/binary-file?url=";
+	private final static String PROXY_URL_PREFIX = "/proxy/binary-file?url=";
 	
 	@Autowired
 	private ConnectionManager connectionManager;

@@ -37,7 +37,7 @@ public abstract class BaseController {
 
 	protected Breadcrumb getHomeBreadcrumb() {
 		Breadcrumb breadcrumb = new Breadcrumb(
-				MessageHelper.getMessage("breadcrumb.home"), "/app/home");
+				MessageHelper.getMessage("breadcrumb.home"), "/home");
 		return breadcrumb;
 	}
 
