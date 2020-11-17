@@ -15,7 +15,6 @@ spring:
       prefix: /WEB-INF
       suffix: .jsp
     servlet:
-#      path: /app
       path: /
 
 server:
