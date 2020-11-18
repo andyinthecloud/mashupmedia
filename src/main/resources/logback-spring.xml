@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <property name="LOGS" value="${MASHUP_MEDIA_HOME}/logs" />
+<!--    <property name="LOGS" value="${MASHUP_MEDIA_HOME}/logs" />-->
+    <define name="LOGS" class="org.mashupmedia.config.LogBackApplicationFolderProperty"/>
 
     <appender name="Console"
               class="ch.qos.logback.core.ConsoleAppender">
