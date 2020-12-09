@@ -18,8 +18,10 @@
 package org.mashupmedia.util;
 
 
+import java.util.List;
 import java.util.Set;
 
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.springframework.security.core.Authentication;
@@ -68,6 +70,14 @@ public class AdminHelper {
 
 		return null;
 	}
+
+
+	public static boolean isAllowedGroup(List<Group> groups) {
+		User user = getLoggedInUser();
+		Set<Group> userGroups = user.getGroups();
+		return userGroups.stream().anyMatch(groups::contains);
+	}
+
 
 
 }

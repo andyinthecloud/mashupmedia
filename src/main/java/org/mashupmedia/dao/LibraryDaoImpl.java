@@ -189,7 +189,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 		Query query = entityManager.createQuery(
 				"update MediaItem set fileLastModifiedOn = :fileLastModifiedOn where library.id = :libraryId");
-		query.setParameter("fileLastModifiedOn", 0);
+		query.setParameter("fileLastModifiedOn", 0l);
 		query.setParameter("libraryId", library.getId());
 		int totalItemsUpdated = query.executeUpdate();
 		log.info("Total media items reinitialised: " + totalItemsUpdated);

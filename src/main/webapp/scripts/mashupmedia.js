@@ -17,7 +17,7 @@ $(document).ready(function() {
 	});
 	
 	setupAudio();
-			
+
 });
 
 
@@ -202,9 +202,11 @@ var mashupMedia = new function() {
 	this.playNextSong = function() {
         $.ajax({
             method: "GET",
+			dataType: "json",
             url: mashupMedia.contextUrl + "/restful/playlist/music/play/next",
             async: true
         }).done(function(song) {
+        	console.log("playNextSong", song);
             mashupMedia.prepareSong(song);
             mashupMedia.playMusic(song.streams);
         });     

@@ -22,6 +22,7 @@ public class Artist implements Serializable {
 	@XmlTransient
 	private long id;
 	@Field(analyze = Analyze.NO)
+	@Column(unique = true)
 	private String name;
 	private String folderName;
 	@OneToMany(mappedBy = "artist")

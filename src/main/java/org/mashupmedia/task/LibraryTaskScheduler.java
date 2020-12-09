@@ -36,7 +36,7 @@ public class LibraryTaskScheduler {
 			log.info("Library updated: " + library.getName());
 		}
 		
-		libraryWatchManager.registerWatchLibraryListeners();
+//		libraryWatchManager.registerWatchLibraryListeners();
 	}
 
 }

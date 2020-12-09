@@ -6,11 +6,13 @@ import java.util.List;
 import org.hibernate.Hibernate;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.MusicDao;
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.util.AdminHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Autowired
 	private AdminManager adminManager;
+
+	@Autowired
+	private ArtistRepository artistRepository;
 
 	protected enum ListAlbumsType {
 		RANDOM, LATEST, ALL
@@ -178,11 +183,17 @@ public class MusicManagerImpl implements MusicManager {
 
 		if (!isFullyInitialise && user == null) {
 			log.error("No user found in session, using system user...");
-			user = adminManager.getSystemUser();
 		}
 
-		List<Long> userGroupIds = securityManager.getUserGroupIds(user);
-		Artist artist = musicDao.getArtist(userGroupIds, artistId);
+
+		Artist artist;
+		List<Group> groups = artistRepository.findGroupsById(artistId);
+		if (AdminHelper.isAllowedGroup(groups)) {
+			artist = artistRepository.getOne(artistId);
+		} else {
+			return null;
+		}
+
 		if (!isFullyInitialise) {
 			return artist;
 		}

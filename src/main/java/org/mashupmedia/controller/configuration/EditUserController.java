@@ -141,7 +141,7 @@ public class EditUserController extends BaseController {
 			adminManager.saveUser(user);
 		}
 
-		return "redirect:/app/configuration/administration/list-users?" + PARAM_FRAGMENT + "=true";
+		return "redirect:/configuration/administration/list-users?" + PARAM_FRAGMENT + "=true";
 	}
 
 	protected void processAdministratorRole(EditUserPage editUserPage) {

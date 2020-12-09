@@ -18,7 +18,10 @@ import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.web.restful.RestfulMediaItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,11 +42,11 @@ public abstract class AbstractRestfulPlaylistController {
 
 	@RequestMapping(value = "/play/current", method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulMediaItem playCurrentUserMusicPlaylist(Model model) {
+	public ResponseEntity<RestfulMediaItem> playCurrentUserMusicPlaylist(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(getPlaylistType());
 		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(0, playlist);
 		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
-		return restfulMediaItem;
+		return ResponseEntity.ok(restfulMediaItem);
 	}
 
 	protected abstract PlaylistType getPlaylistType();

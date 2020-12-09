@@ -31,7 +31,7 @@ public class Playlist implements Serializable {
 
 	private String name;
 
-	@OneToMany(mappedBy = "playlist")
+	@OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("ranking")
 	private List<PlaylistMediaItem> playlistMediaItems;
 

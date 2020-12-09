@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.persistence.Query;
@@ -20,6 +21,7 @@ import org.hibernate.search.query.dsl.BooleanJunction;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
@@ -28,6 +30,8 @@ import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.repository.media.music.ArtistRepository;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.DaoHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +48,9 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Autowired
 	private GroupDao groupDao;
+
+	@Autowired
+	private ArtistRepository artistRepository;
 
 	// Used for remote library synchronisation
 	private final static int NUMBER_OF_DAYS_TO_KEEP_DISABLED_SONGS = 1;
@@ -99,19 +106,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		return artists;
 	}
 
-	@Override
-	public Artist getArtist(List<Long> groupIds, String name) {
 
-		StringBuilder queryBuilder = new StringBuilder(
-				"select a from Artist a join a.albums as album join album.songs as s join s.library.groups as g where lower(a.name) = :name");
-		queryBuilder.append(" and s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-
-		TypedQuery<Artist> query = entityManager.createQuery(queryBuilder.toString(), Artist.class);
-		query.setParameter("name", name.toLowerCase());
-		Artist artist = getUniqueResult(query);
-		return artist;
-	}
 
 	@Override
 	public void deleteObsoleteSong(Song song) {
@@ -258,7 +253,14 @@ query.setParameter("genreId", genre.getId());
 	@Override
 	public void saveSong(Song song, boolean isSessionFlush) {
 		Artist artist = song.getArtist();
-		saveOrMerge(artist);
+		Optional<Artist> persistedArtist = artistRepository.findArtistByNameIgnoreCase(artist.getName());
+		if (persistedArtist.isPresent()) {
+			artist = persistedArtist.get();
+		} else {
+			artistRepository.save(artist);
+		}
+
+//		saveOrMerge(artist);
 
 		Album album = song.getAlbum();
 		saveOrMerge(album);
@@ -269,6 +271,7 @@ query.setParameter("genreId", genre.getId());
 		saveOrUpdate(song);
 
 		Library library = song.getLibrary();
+//		saveOrUpdate(library.getLocation());
 		libraryDao.saveLibrary(library);
 
 		flushSession(isSessionFlush);

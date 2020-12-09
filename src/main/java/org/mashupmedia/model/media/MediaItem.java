@@ -58,7 +58,8 @@ public class MediaItem implements Serializable {
 	private String fileName;
 	private String path;
 	@IndexedEmbedded
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+//	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToOne
 	@XmlTransient
 	private Library library;
 	private long sizeInBytes;

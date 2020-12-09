@@ -116,7 +116,7 @@ public abstract class AbstractLibraryController extends BaseController {
 	}
 
 	protected String getRedirectListLibraryView() {
-		return "redirect:/app/configuration/list-libraries?" + PARAM_FRAGMENT + "=true";
+		return "redirect:/configuration/list-libraries?" + PARAM_FRAGMENT + "=true";
 	}
 
 	private void processSaveAction(LibraryPage libraryPage) {

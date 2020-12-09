@@ -33,7 +33,7 @@ public class LibraryUpdateTaskManager {
 	public void updateLibrary(Library library) {
 		LibraryUpdateTask libraryUpdateTask = new LibraryUpdateTask(library);
 		libraryUpdateThreadPoolTaskExecutor.execute(libraryUpdateTask);				
-		libraryWatchManager.registerWatchLibraryListeners();
+//		libraryWatchManager.registerWatchLibraryListeners();
 	}
 
 	public void updateLibraries() {

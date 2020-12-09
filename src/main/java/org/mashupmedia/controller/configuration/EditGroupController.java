@@ -132,7 +132,7 @@ public class EditGroupController extends BaseController {
 			adminManager.saveGroup(group);
 		}
 
-		return "redirect:/app/configuration/administration/list-groups?" + PARAM_FRAGMENT + "=true";
+		return "redirect:/configuration/administration/list-groups?" + PARAM_FRAGMENT + "=true";
 	}
 
 	protected void processSaveLibraries(List<Library> selectedLibraries, Group group) {

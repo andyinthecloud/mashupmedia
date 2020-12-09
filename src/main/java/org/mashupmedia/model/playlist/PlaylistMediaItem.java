@@ -108,9 +108,9 @@ public class PlaylistMediaItem implements Serializable {
 		builder.append(", playing=");
 		builder.append(playing);
 		builder.append(", playlist=");
-		builder.append(playlist);
+		builder.append(playlist.getId());
 		builder.append(", mediaItem=");
-		builder.append(mediaItem);
+		builder.append(mediaItem.getId());
 		builder.append("]");
 		return builder.toString();
 	}

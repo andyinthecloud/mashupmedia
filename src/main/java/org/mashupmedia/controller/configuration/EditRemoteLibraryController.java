@@ -133,7 +133,7 @@ public class EditRemoteLibraryController extends BaseController {
 	@RequestMapping(value = "/configuration/delete-remote-library", method = RequestMethod.GET)
 	public String deleteRemoteLibrary(@RequestParam(value = "libraryId", required = true) Long libraryId, Model model) {
 		libraryUpdateTaskManager.deleteLibrary(libraryId);
-		return "redirect:/app/configuration/list-remote-libraries";
+		return "redirect:/configuration/list-remote-libraries";
 	}
 
 	@RequestMapping(value = "/configuration/edit-remote-library", method = RequestMethod.POST)
@@ -171,7 +171,7 @@ public class EditRemoteLibraryController extends BaseController {
 		remoteLibrary.setRemote(true);
 		libraryManager.saveLibrary(remoteLibrary);
 		libraryUpdateTaskManager.updateRemoteLibrary(remoteLibrary);
-		return "redirect:/app/configuration/list-remote-libraries";
+		return "redirect:/configuration/list-remote-libraries";
 	}
 
 	@InitBinder

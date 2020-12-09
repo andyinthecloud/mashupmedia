@@ -50,8 +50,8 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	@Autowired
 	private PhotoLibraryUpdateManager photoLibraryUpdateManager;
 
-	@Autowired
-	private MapperManager mapperManager;
+//	@Autowired
+//	private MapperManager mapperManager;
 
 	@Autowired
 	private LibraryManager libraryManager;
@@ -115,7 +115,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		Date updatingOn = new Date();
 		long libraryId = library.getId();
 		LibraryType libraryType = library.getLibraryType();
-		mapperManager.writeStartRemoteMusicLibraryXml(libraryId, libraryType);
+//		mapperManager.writeStartRemoteMusicLibraryXml(libraryId, libraryType);
 		Location location = library.getLocation();
 		File locationFolder = new File(location.getPath());
 		File[] files = locationFolder.listFiles();
@@ -135,14 +135,14 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		}
 
 		deleteObsoleteMediaItems(library, updatingOn);
-		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
+//		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
 
 	}
 
 	@Override
 	public void deleteObsoleteMediaItems(Library library, Date date) {
 
-		libraryWatchManager.removeWatchLibraryListeners();
+//		libraryWatchManager.removeWatchLibraryListeners();
 
 		long libraryId = library.getId();
 		if (library instanceof MusicLibrary) {
@@ -153,7 +153,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			photoLibraryUpdateManager.deleteObsoletePhotos(libraryId, date);
 		}
 
-		libraryWatchManager.registerWatchLibraryListeners();
+//		libraryWatchManager.registerWatchLibraryListeners();
 	}
 
 	@Override

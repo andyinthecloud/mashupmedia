@@ -19,6 +19,7 @@ import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.web.restful.RestfulMediaItem;
 import org.mashupmedia.web.restful.RestfulSong;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,7 +60,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		return restfulSong;
 	}
 
-	@RequestMapping(value = "end-album", method = RequestMethod.GET)
+	@RequestMapping(value = "append-album", method = RequestMethod.GET)
 	@ResponseBody
 	public RestfulSong appendAlbum(@RequestParam("albumId") Long albumId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
@@ -114,7 +115,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		return restfulSong;
 	}
 
-	@RequestMapping(value = "end-artist", method = RequestMethod.GET)
+	@RequestMapping(value = "append-artist", method = RequestMethod.GET)
 	@ResponseBody
 	public RestfulSong appendArtist(@RequestParam("artistId") Long artistId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
@@ -164,7 +165,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		return restfulSong;
 	}
 
-	@RequestMapping(value = "end-song", method = RequestMethod.GET)
+	@RequestMapping(value = "append-song", method = RequestMethod.GET)
 	@ResponseBody
 	public RestfulSong appendSong(@RequestParam("songId") Long songId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);

@@ -110,15 +110,24 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 	@Override
 	public void savePlaylist(Playlist playlist) {
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+
 		long playlistId = playlist.getId();
 		Playlist savedPlaylist = getPlaylist(playlistId);
+//		savedPlaylist.getPlaylistMediaItems().clear();
+//		savedPlaylist.setPlaylistMediaItems(playlistMediaItems);
 		List<PlaylistMediaItem> savedPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
 		if (savedPlaylist != null) {
+//			savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
 			savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
 		}
-		List<PlaylistMediaItem> newPlaylistMediaItems = playlist.getPlaylistMediaItems();
-		synchronisePlaylistMediaItems(savedPlaylistMediaItems, newPlaylistMediaItems);
+
+
+//		List<PlaylistMediaItem> newPlaylistMediaItems = playlist.getPlaylistMediaItems();
+//		synchronisePlaylistMediaItems(savedPlaylistMediaItems, newPlaylistMediaItems);
 		saveOrMerge(playlist);
+//		saveOrMerge(savedPlaylist);
+
 		log.info("Playlist saved");
 	}
 
@@ -135,15 +144,16 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 		for (Iterator<PlaylistMediaItem> iterator = newPlaylistMediaItems.iterator(); iterator.hasNext();) {
 			PlaylistMediaItem newPlaylistMediaItem = (PlaylistMediaItem) iterator.next();
-			if (savedPlaylistMediaItems.remove(newPlaylistMediaItem)) {
-				iterator.remove();
-				continue;
-			}
+//			if (savedPlaylistMediaItems.remove(newPlaylistMediaItem)) {
+//				iterator.remove();
+//				continue;
+//			}
 			saveOrMerge(newPlaylistMediaItem);
 		}
 
 		List<Long> savedPlaylistMediaItemIds = new ArrayList<Long>();
-		for (PlaylistMediaItem savedPlaylistMediaItem : savedPlaylistMediaItems) {
+		for (PlaylistMediaItem savedPlaylistMediaItem : newPlaylistMediaItems) {
+//		for (PlaylistMediaItem savedPlaylistMediaItem : savedPlaylistMediaItems) {
 			savedPlaylistMediaItemIds.add(savedPlaylistMediaItem.getId());
 		}
 

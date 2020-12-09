@@ -124,7 +124,7 @@ public class EncodingConfigurationController extends BaseController {
 		configurationManager.saveConfiguration(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES,
 				String.valueOf(totalFfmpegprocesses));
 
-		return "redirect:/app/" + PAGE_PATH + "?" + PARAM_FRAGMENT + "=true";
+		return "redirect:/" + PAGE_PATH + "?" + PARAM_FRAGMENT + "=true";
 	}
 
 }

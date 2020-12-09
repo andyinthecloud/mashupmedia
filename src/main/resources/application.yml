@@ -16,6 +16,14 @@ spring:
       suffix: .jsp
     servlet:
       path: /
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  data:
+    rest:
+      default-media-type: application/json
+
 
 server:
   servlet:

@@ -74,7 +74,7 @@ public class MashupMediaServiceLocator {
 		Properties hibernateProperties = new Properties();
 		hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
 
-		hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "update");
+//		hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "update");
 		hibernateProperties.setProperty("hibernate.jdbc.batch_size", "20");
 		hibernateProperties.setProperty("hibernate.cache.region.factory_class",
 				"org.hibernate.cache.ehcache.EhCacheRegionFactory");
