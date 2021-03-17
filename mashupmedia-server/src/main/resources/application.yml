@@ -1,0 +1,30 @@
+logging:
+  level:
+    root: WARN
+    org.springframework.web: DEBUG
+    org.hibernate: ERROR
+
+spring:
+  application:
+    name: mashupmedia
+  h2:
+    console:
+      enabled: true
+  mvc:
+    view:
+      prefix: /WEB-INF
+      suffix: .jsp
+    servlet:
+      path: /
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  data:
+    rest:
+      default-media-type: application/json
+
+
+server:
+  servlet:
+    context-path: /mashupmedia

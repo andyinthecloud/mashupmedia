@@ -7,16 +7,21 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="server" />
+        <module name="mashupmedia-server" />
+        <module name="mashupmedia-client-react" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="mashupmedia" target="11" />
+      <module name="mashupmedia-client-react" target="11" />
+      <module name="mashupmedia-server" target="11" />
       <module name="server" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="mashupmedia-client-react" options="-parameters" />
+      <module name="mashupmedia-server" options="-parameters" />
       <module name="server" options="-parameters" />
     </option>
   </component>
