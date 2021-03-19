@@ -3,7 +3,9 @@
   <component name="FacetManager">
     <facet type="web" name="Web">
       <configuration>
-        <webroots />
+        <webroots>
+          <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
+        </webroots>
         <sourceRoots>
           <root url="file://$MODULE_DIR$/src/main/java" />
           <root url="file://$MODULE_DIR$/src/main/resources" />
@@ -64,6 +66,8 @@
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-rest-webmvc:3.3.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-rest-core:3.3.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.atteo:evo-inflector:1.2.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.data:spring-data-rest-hal-explorer:3.3.4.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-hateoas:2.3.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.hateoas:spring-hateoas:1.1.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.plugin:spring-plugin-core:2.0.0.RELEASE" level="project" />
@@ -181,7 +185,6 @@
     <orderEntry type="library" name="Maven: org.apache.tiles:tiles-template:3.0.8" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tiles:tiles-api:3.0.8" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tiles:tiles-autotag-core-runtime:1.2" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tiles:tiles-request-jsp:1.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tiles:tiles-request-api:1.0.7" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.tomcat.embed:tomcat-embed-jasper:9.0.38" level="project" />

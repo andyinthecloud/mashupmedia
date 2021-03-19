@@ -7,17 +7,19 @@ import Drawer from "./components/Drawer";
 import Footer from "./components/Footer";
 import Introduction from "./components/Introduction";
 
+import './App.css';
+
 function App() {
   return (
     <div className="App">
 
         <Drawer></Drawer>
 
-        <Container >
-            <Header />
+        <Header />
+        <Container className="main-container">
             <Introduction />
-            <Footer />
         </Container>
+        <Footer />
 
 
     </div>
