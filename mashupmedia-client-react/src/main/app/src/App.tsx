@@ -5,24 +5,28 @@ import {Container} from "@material-ui/core";
 import Drawer from "./components/Drawer";
 
 import Footer from "./components/Footer";
-import Introduction from "./components/Introduction";
-
-import './App.css';
+import {BrowserRouter} from "react-router-dom";
+import Routes from "./Routes";
 
 function App() {
   return (
+
+<BrowserRouter>
+
     <div className="App">
 
-        <Drawer></Drawer>
+        <Drawer ></Drawer>
 
         <Header />
         <Container className="main-container">
-            <Introduction />
+            <Routes />
         </Container>
         <Footer />
 
 
     </div>
+
+</BrowserRouter>
   );
 }
 

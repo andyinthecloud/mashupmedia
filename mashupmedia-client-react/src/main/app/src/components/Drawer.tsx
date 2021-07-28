@@ -2,10 +2,9 @@ import React from 'react';
 import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
+import ListItem, {ListItemProps} from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
@@ -13,9 +12,11 @@ import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import SettingsIcon from '@material-ui/icons/Settings';
 
+
 import {Collapse, IconButton} from "@material-ui/core";
 import './Drawer.css';
-import {DialerSip, ExpandLess, ExpandMore, StarBorder} from "@material-ui/icons";
+import {ExpandLess, ExpandMore} from "@material-ui/icons";
+
 
 const useStyles = makeStyles({
     list: {
@@ -27,6 +28,11 @@ const useStyles = makeStyles({
 });
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
+
+
+function ListItemLink(props: ListItemProps<'a', { button?: true }>) {
+    return <ListItem button component="a" {...props} />;
+}
 
 export default function TemporaryDrawer() {
     const classes = useStyles();
@@ -76,9 +82,10 @@ export default function TemporaryDrawer() {
                 </ListItem>
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding className="nested-list">
-                        <ListItem button>
-                            <ListItemText primary="Network"/>
-                        </ListItem>
+
+                        <ListItemLink button  href="/settings/network"   >
+                            <ListItemText primary="Network" />
+                        </ListItemLink>
                         <ListItem button>
                             <ListItemText primary="Libraries"/>
                         </ListItem>
