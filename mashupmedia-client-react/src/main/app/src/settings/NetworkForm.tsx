@@ -13,8 +13,14 @@ class NetworkForm extends React.Component<any, any> {
             username: "",
             password: ""
         };
+        // useSt
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSwitch = this.handleSwitch.bind(this);
+
+        console.log(this.state);
+
+        console.log("process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL: " + process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL);
+        console.log("process.env.NODE_ENV: " + process.env.NODE_ENV);
     }
 
     handleInputChange(event: any) {
@@ -31,10 +37,18 @@ class NetworkForm extends React.Component<any, any> {
         this.setState({value: event.target.value});
     }
 
-    handleSubmit(event: any) {
-        console.log(this.state);
+
+    handleSubmit = (event:any)  => {
         event.preventDefault();
-        return false;
+        console.log('on submit');
+        console.log(JSON.stringify(this.state));
+
+        const response = fetch("{process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL} ", {
+            method: 'POST',
+            body: JSON.stringify(this.state),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }});
     }
 
     isFormDisabled() {
@@ -45,6 +59,9 @@ class NetworkForm extends React.Component<any, any> {
         return (
             <form onSubmit={this.handleSubmit}>
                 <h1>Network</h1>
+                %REACT_APP_MASHUPMEDIA_BACKEND_URL%
+                <br/>
+                %NODE_ENV%
 
                 <FormGroup>
                     <FormControlLabel
