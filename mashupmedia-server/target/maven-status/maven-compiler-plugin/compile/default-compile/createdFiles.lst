@@ -175,6 +175,7 @@ org\mashupmedia\util\FileHelper$1.class
 org\mashupmedia\repository\media\music\MusicAlbumRepository.class
 org\mashupmedia\dao\PhotoDao.class
 org\mashupmedia\model\media\music\Genre.class
+org\mashupmedia\config\AppMvcConfig.class
 org\mashupmedia\web\Breadcrumb.class
 org\mashupmedia\util\FileHelper$FileType.class
 org\mashupmedia\controller\configuration\library\MusicLibraryController.class

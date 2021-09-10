@@ -8,12 +8,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="mashupmedia-server" />
-        <module name="mashupmedia-client-react" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="mashupmedia" target="11" />
-      <module name="mashupmedia-client-react" target="11" />
+      <module name="mashupmedia-client-react" target="1.5" />
       <module name="mashupmedia-server" target="11" />
       <module name="server" target="11" />
     </bytecodeTargetLevel>

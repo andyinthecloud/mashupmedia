@@ -19,7 +19,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-
   data:
     rest:
       default-media-type: application/json
@@ -28,3 +27,12 @@ spring:
 server:
   servlet:
     context-path: /mashupmedia
+    encoding:
+      charset: utf-8
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    operations-sorter: method
+    path: /swagger-ui.html

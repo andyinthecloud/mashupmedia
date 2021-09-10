@@ -2,6 +2,14 @@ import React from "react";
 import {Button, FormControlLabel, FormGroup, Switch, TextField} from "@material-ui/core";
 
 
+// interface Network {
+//     useProxy: boolean,
+//     url: string,
+//     port: number,
+//     username: string,
+//     password: string;
+// }
+
 class NetworkForm extends React.Component<any, any> {
 
     constructor(props: any) {
@@ -9,11 +17,10 @@ class NetworkForm extends React.Component<any, any> {
         this.state = {
             useProxy: false,
             url: "",
-            port: "",
+            port: 0,
             username: "",
             password: ""
         };
-        // useSt
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSwitch = this.handleSwitch.bind(this);
 
@@ -43,12 +50,25 @@ class NetworkForm extends React.Component<any, any> {
         console.log('on submit');
         console.log(JSON.stringify(this.state));
 
+
         const response = fetch("{process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL} ", {
             method: 'POST',
             body: JSON.stringify(this.state),
             headers: {
-                "Content-type": "application/json; charset=UTF-8"
+                // "Content-type": "application/json; charset=UTF-8"
+
+                'X-XSRF-TOKEN': this.getCookie('XSRF-TOKEN'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json; charset=UTF-8'
             }});
+    }
+
+    getCookie(cookieName: string) :string {
+        // let cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        const values = document.cookie.match('(^|;)\\s*' + cookieName + '\\s*=\\s*([^;]+)');
+        const value = values ? String(values.pop()) : '';
+        console.log('cookie value = ', value);
+        return value;
     }
 
     isFormDisabled() {
@@ -85,7 +105,7 @@ class NetworkForm extends React.Component<any, any> {
                 </div>
 
                 <div>
-                    <TextField name="port" label="Port" value={this.state.port} onChange={this.handleInputChange}
+                    <TextField name="port" label="Port" value={this.state.port} type="number" onChange={this.handleInputChange}
                                disabled={this.isFormDisabled()} fullWidth={true}/>
                 </div>
 

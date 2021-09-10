@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -40,15 +41,17 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity)
             throws Exception {
         httpSecurity.authorizeRequests()
-                .antMatchers("/h2-console/**")
-                .permitAll()
+//                .antMatchers("/h2-console/**").permitAll()
+//                .antMatchers("/**/*.{js,html,css}").permitAll()
+//                .antMatchers("/", "/api/user").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .formLogin();
 
         httpSecurity.csrf()
-                .ignoringAntMatchers("/h2-console/**");
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+//                .ignoringAntMatchers("/h2-console/**");
         httpSecurity.headers()
                 .frameOptions()
                 .sameOrigin();
