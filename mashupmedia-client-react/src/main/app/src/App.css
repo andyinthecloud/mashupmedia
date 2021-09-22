@@ -40,3 +40,11 @@
 div.main-container {
   padding: 1em 0;
 }
+
+div.new-line {
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+
+
+

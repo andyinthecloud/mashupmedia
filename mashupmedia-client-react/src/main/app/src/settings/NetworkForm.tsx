@@ -1,5 +1,6 @@
 import React from "react";
-import {Button, FormControlLabel, FormGroup, Switch, TextField} from "@material-ui/core";
+import {Button, FormControlLabel, FormGroup, Switch, TextField} from "@mui/material";
+import {getNameValueFromEvent, NameValue} from "../utils/FormUtils";
 
 
 // interface Network {
@@ -31,13 +32,10 @@ class NetworkForm extends React.Component<any, any> {
     }
 
     handleInputChange(event: any) {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
-
+        const nameValue: NameValue = getNameValueFromEvent(event);
         this.setState({
-            [name]: value
-        });
+            [nameValue.name]: nameValue.value
+        })
     }
 
     handleSwitch(event: any) {
@@ -99,7 +97,7 @@ class NetworkForm extends React.Component<any, any> {
 
                 </FormGroup>
 
-                <div>
+                <div className="new-line">
                     <TextField name="url" label="URL" value={this.state.url} onChange={this.handleInputChange}
                                disabled={this.isFormDisabled()} fullWidth={true}/>
                 </div>
@@ -119,7 +117,7 @@ class NetworkForm extends React.Component<any, any> {
                                onChange={this.handleInputChange} disabled={this.isFormDisabled()} fullWidth={true}/>
                 </div>
 
-                <Button type="submit" color="primary">
+                <Button type="submit" className="mashup-button">
                     Save
                 </Button>
 

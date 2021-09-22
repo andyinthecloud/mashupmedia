@@ -1,22 +1,20 @@
-import React from 'react';
+import * as React from 'react';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import ListItem, {ListItemProps} from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MenuIcon from '@mui/icons-material/Menu';
+import {Collapse, IconButton} from '@mui/material';
+
+import MailIcon from '@mui/icons-material/Mail';
+import SettingsIcon from '@mui/icons-material/Settings';
+import {makeStyles} from '@mui/styles';
 import clsx from 'clsx';
-import {makeStyles} from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ListItem, {ListItemProps} from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
-import MenuIcon from '@material-ui/icons/Menu';
-import SettingsIcon from '@material-ui/icons/Settings';
-
-
-import {Collapse, IconButton} from "@material-ui/core";
 import './Drawer.css';
-import {ExpandLess, ExpandMore} from "@material-ui/icons";
-
+import {ExpandLess, ExpandMore} from "@mui/icons-material";
 
 const useStyles = makeStyles({
     list: {
