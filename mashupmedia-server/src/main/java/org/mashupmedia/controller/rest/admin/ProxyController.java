@@ -2,7 +2,7 @@ package org.mashupmedia.controller.rest.admin;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.dto.admin.ProxyDTO;
+import org.mashupmedia.dto.admin.ProxyPayload;
 import org.mashupmedia.service.ConfigurationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,14 +21,14 @@ public class ProxyController {
     private ConfigurationManager configurationManager;
 
     @GetMapping("/")
-    public ProxyDTO getProxy() {
+    public ProxyPayload getProxy() {
         boolean enabled = BooleanUtils.toBoolean(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
         String url = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_URL);
         String port = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_PORT);
         String username = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_USERNAME);
         String password = configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_PASSWORD);
 
-        return ProxyDTO.builder()
+        return ProxyPayload.builder()
                 .enabled(enabled)
                 .url(url)
                 .port(port)
@@ -40,7 +40,7 @@ public class ProxyController {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    public ProxyDTO saveProxy(@RequestBody ProxyDTO proxyDTO) {
+    public ProxyPayload saveProxy(@RequestBody ProxyPayload proxyDTO) {
         configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_URL, proxyDTO.getUrl());
         configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_PORT, proxyDTO.getPort());
         configurationManager.saveConfiguration(MashUpMediaConstants.PROXY_USERNAME, proxyDTO.getUsername());

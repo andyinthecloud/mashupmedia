@@ -15,6 +15,7 @@ C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\m
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\service\MediaManager.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\repository\media\music\SongRepository.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\service\ProxyManagerImpl.java
+C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\proxy\DeprecratedProxyController.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\service\InitialisationManagerImpl.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\model\library\RemoteShare.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\config\TilesApplicationConfiguration.java
@@ -29,7 +30,6 @@ C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\m
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\restful\MusicWebService.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\service\LibraryManager.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\service\LibraryUpdateManager.java
-C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\LoginController.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\dao\UserDao.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\configuration\ListRemoteLibrariesController.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\dao\PlaylistDao.java
@@ -45,6 +45,7 @@ C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\m
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\config\DataSourceConfig.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\configuration\library\MusicLibraryController.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\security\CustomUserDetailsService.java
+C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\DeprecatedLoginController.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\dao\ConfigurationDao.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\util\AdminHelper.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\xml\PartialUnmarshaller.java
@@ -88,6 +89,7 @@ C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\m
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\web\restful\RestfulStream.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\util\ModelUtil.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\util\DaoHelper.java
+C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\dto\admin\ProxyPayload.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\task\MetaTaskScheduler.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\model\library\PhotoLibrary.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\exception\MashupMediaRuntimeException.java
@@ -101,6 +103,7 @@ C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\m
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\web\page\ArtistPage.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\encode\ProcessManager.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\ajax\AjaxLocationController.java
+C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\dto\login\UserPayload.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\config\WebInitializer.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\model\media\MediaEncoding.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\util\PlaylistHelper.java
@@ -123,6 +126,7 @@ C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\m
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\model\media\Year.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\ListEncodingProcessesController.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\web\page\PhotoPage.java
+C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\rest\LoginController.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\service\MusicManagerImpl.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\exception\PageNotFoundException.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\configuration\ListLibrariesController.java
@@ -141,6 +145,7 @@ C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\m
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\editor\GroupEditor.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\util\EncryptionHelper.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\configuration\NetworkConfigurationController.java
+C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\security\SecurityConstants.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\web\remote\RemoteMediaMetaItem.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\rest\media\RestfulMusicController.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\model\media\music\Genre.java
@@ -151,6 +156,7 @@ C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\m
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\exception\MediaItemEncodeException.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\util\WebHelper.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\rest\playlist\AbstractRestfulPlaylistController.java
+C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\security\JWTAuthenticationFilter.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\streaming\StreamingMediaHandler.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\web\page\EncodingPage.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\ConfigurationController.java
@@ -158,10 +164,10 @@ C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\m
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\web\page\NetworkPage.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\repository\admin\GroupRepository.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\MusicController.java
-C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\proxy\ProxyController.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\model\playlist\Playlist.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\validator\EditGroupPageValidator.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\validator\EditUserPageValidator.java
+C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\security\JWTAuthorizationFilter.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\service\InitialisationManager.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\service\PhotoManagerImpl.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\configuration\EditUserController.java
@@ -179,6 +185,8 @@ C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\m
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\editor\LibraryEditor.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\security\CustomPasswordEncoder.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\MashupMediaApplication.java
+C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\controller\rest\admin\ProxyController.java
+C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\dto\login\LoginPayload.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\dao\PlaylistDaoImpl.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\service\AdminManager.java
 C:\Users\alester\IdeaProjects\mashupmedia\mashupmedia-server\src\main\java\org\mashupmedia\web\page\VideoPage.java

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class ProxyDTO {
+public class ProxyPayload {
     private final Boolean enabled;
     private final String url;
     private final String port;

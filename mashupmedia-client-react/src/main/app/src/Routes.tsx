@@ -8,6 +8,7 @@ const Routes = () => {
 
     return (
         <Switch>
+
             <Route exact path="/">
                 <Introduction />
             </Route>
@@ -15,13 +16,13 @@ const Routes = () => {
                 <LogIn />
             </Route>
 
-
             <PrivateRoute component={NetworkForm} path="/settings/network" exact/>
 
 
             {/*<Route exact path="/settings/network">*/}
             {/*    <NetworkForm />*/}
             {/*</Route>*/}
+
 
         </Switch>
     )

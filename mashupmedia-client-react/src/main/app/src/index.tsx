@@ -3,10 +3,17 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {mashupTheme} from "./utils/FormUtils";
+import {ThemeProvider} from "@mui/styles";
+import {Provider} from "react-redux";
+
 
 ReactDOM.render(
     <React.StrictMode>
+        <Provider store={stor}
+        <ThemeProvider theme={mashupTheme}>
         <App/>
+        </ThemeProvider>
     </React.StrictMode>,
     document.getElementById('root')
 );

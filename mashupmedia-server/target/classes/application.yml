@@ -19,10 +19,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    open-in-view: false
   data:
     rest:
       default-media-type: application/json
-
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8083/auth/realms/baeldung
+          jwk-set-uri: http://localhost:8083/auth/realms/baeldung/protocol/openid-connect/certs
 
 server:
   servlet:

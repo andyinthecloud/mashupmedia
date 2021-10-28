@@ -28,8 +28,8 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.sun.xml.txw2.annotation.XmlNamespace;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +53,9 @@ public class MapperManagerImpl implements MapperManager {
 
 	@Autowired
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
+
+@Autowired
+private ObjectMapper objectMapper;
 
 	protected Marshaller getMarshaller() throws JAXBException {
 		if (marshaller != null) {
@@ -121,14 +124,8 @@ public class MapperManagerImpl implements MapperManager {
 		String albumFolderName = clonedAlbum.getFolderName();
 		clonedAlbum.setFolderName(StringHelper.escapeXml(albumFolderName));
 		clonedSong.setAlbum(clonedAlbum);
-
 		File file = FileHelper.getLibraryXmlFile(libraryId);
-
-		FileWriter writer = new FileWriter(file, true);
-		
-		XmlMapper xmlMapper = new XmlMapper();
-		xmlMapper.writeValue(writer, clonedSong);
-		writer.close();
+		objectMapper.writeValue(file, clonedSong);
 	}
 
 	@Override
