@@ -10,7 +10,7 @@ import {Provider} from "react-redux";
 
 ReactDOM.render(
     <React.StrictMode>
-        <Provider store={stor}
+        {/*<Provider store={stor}*/}
         <ThemeProvider theme={mashupTheme}>
         <App/>
         </ThemeProvider>

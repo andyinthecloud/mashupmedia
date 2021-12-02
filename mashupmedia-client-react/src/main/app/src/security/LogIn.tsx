@@ -1,5 +1,5 @@
 import logo from "../logo.png";
-import React, {FormEvent} from "react";
+import React, {FormEvent, useCallback} from "react";
 import TextField from '@mui/material/TextField';
 import {getNameValueFromEvent, NameValue} from "../utils/FormUtils";
 import {Button} from "@mui/material";
@@ -9,10 +9,12 @@ import { useState } from 'react';
 import { decrement, increment } from './features/counterSlice';
 import {RootStateOrAny} from "react-redux";
 import {RootState} from "../redux/store";
+import {login, userLogIn} from "./features/loggedInUserSlice";
 
 class LogInForm extends React.Component<any, any> {
 
     private isInvalidLogin: boolean = false;
+
 
 
     constructor(props: any) {
@@ -25,8 +27,8 @@ class LogInForm extends React.Component<any, any> {
         this.handleInputChange = this.handleInputChange.bind(this);
 
 
-        const count = useAppSelector((state)) => state.counter.value;
-        const dispatch = useAppDispatch();
+        // const count = useAppSelector((state)) => state.counter.value;
+
     }
 
     handleInputChange(event: any) {
@@ -46,33 +48,41 @@ class LogInForm extends React.Component<any, any> {
 
     handleSubmit = (event: React.FormEvent) => {
         // perform_login
-
         event.preventDefault();
 
-        const loginUrl: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + '/api/login';
-        // console.log('process: ', process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL);
+        const dispatch = useAppDispatch()
 
-        // const formUrl = process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL?.toString();
+        useCallback(
+            (username, password) =>
+            dispatch(login({username: this.state.username, password})),
+            [dispatch]
+        );
 
-        const formData = new FormData();
-        formData.append('username', this.state.username);
-        formData.append('password', this.state.password);
 
-
-        const response = fetch(loginUrl, {
-            method: 'POST',
-            mode: 'cors',
-            credentials: 'omit',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
-            },
-            body: JSON.stringify(this.state),
-        })
-            .then(response => response.json());
-
-        console.log('response', response);
+        // const loginUrl: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + '/api/login';
+        // // console.log('process: ', process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL);
+        //
+        // // const formUrl = process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL?.toString();
+        //
+        // const formData = new FormData();
+        // formData.append('username', this.state.username);
+        // formData.append('password', this.state.password);
+        //
+        //
+        // const response = fetch(loginUrl, {
+        //     method: 'POST',
+        //     mode: 'cors',
+        //     credentials: 'omit',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Access-Control-Allow-Origin': '*',
+        //         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+        //     },
+        //     body: JSON.stringify(this.state),
+        // })
+        //     .then(response => response.json());
+        //
+        // console.log('response', response);
 
     }
 
