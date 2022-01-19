@@ -5,13 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         
+
+        
         {
             "type": "java",
-            "name": "Debug office",
-            "projectName": "mashupmedia",
-            "request": "attach",
-            "hostName": "office",
-            "port": 8000
+            "name": "Spring Boot-MashupMediaApplication<mashupmedia-server>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/mashupmedia-server",
+            "console": "internalConsole",
+            "mainClass": "org.mashupmedia.MashupMediaApplication",
+            "projectName": "mashupmedia-server",
+            "args": "",
+            "env": {
+                "MASHUP_MEDIA_HOME": "C:\\stuff\\data\\mm-home"
+            }
         }
     ]
 }

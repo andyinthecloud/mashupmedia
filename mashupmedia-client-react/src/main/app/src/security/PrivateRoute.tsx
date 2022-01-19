@@ -1,45 +1,34 @@
-import {Redirect, Route, RouteProps} from "react-router-dom";
-import {isLogin} from "./SecurityUtils";
+import { useSelector } from "react-redux";
+import { Redirect, Route, RouteProps } from "react-router-dom";
+import { RootState } from "../redux/store";
+import { LogInState } from "./features/loggedInUserSlice";
+import { isLoggedIn } from "./SecurityUtils";
 
 interface PrivateRouteProps extends RouteProps {
     // tslint:disable-next-line:no-any
     component: any;
-    // isSignedIn: boolean;
 }
+
 
 const PrivateRoute = (props: PrivateRouteProps) => {
     const { component: Component, ...rest } = props;
+
+    const logInState = useSelector<RootState, LogInState>(state => state.loggedInUser);
+
 
     return (
         <Route
             {...rest}
             render={(routeProps) =>
-                isLogin() ? (
+                isLoggedIn(logInState) ? (
                     <Component {...routeProps} />
-                ) : (
-                    <Redirect
-                        to={{
-                            pathname: '/login',
-                            state: { from: routeProps.location }
-                        }}
-                    />
+                ) : (          
+
+                    <Redirect to="/login" />
                 )
             }
         />
-    );
-};
-
-// const PrivateRoute = ({component: any, ...rest}) => {
-//     return (
-//
-//         // Show the component only when the user is logged in
-//         // Otherwise, redirect the user to /signin page
-//         <Route {...rest} render={props => (
-//             isLogin() ?
-//                 <Component {...props} />
-//                 : <Redirect to="/signin" />
-//         )} />
-//     );
-// };
+    )
+}
 
 export default PrivateRoute;

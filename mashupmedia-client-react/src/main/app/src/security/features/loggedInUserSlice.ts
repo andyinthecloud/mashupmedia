@@ -7,14 +7,14 @@ interface UserCredentialsPayload {
     password: string
 }
 
-interface UserPayload {
+export interface UserPayload {
     username: string
     name: string
     token: string
     groupNames: string[]
 }
 
-interface LogInState {
+export interface LogInState {
     currentUser: UserPayload | null;
     loading: boolean;
     error: string | null;
@@ -26,9 +26,12 @@ const initialState: LogInState = {
     error: null,
 }
 
-export const login = createAsyncThunk<UserPayload, UserCredentialsPayload >(
+export const logIn = createAsyncThunk<UserPayload, UserCredentialsPayload>(
     'user/login',
-    async (userCredentialsPayload) => {
+    async (userCredentialsPayload: UserCredentialsPayload) => {
+        console.log('userCredentialsPayload', userCredentialsPayload);
+
+
         const loginUrl: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + '/api/login';
         const response = await fetch(loginUrl, {
             method: 'POST',
@@ -46,6 +49,7 @@ export const login = createAsyncThunk<UserPayload, UserCredentialsPayload >(
 
     }
 )
+
 
 
 export const loggedInUserSlice = createSlice({
@@ -75,3 +79,5 @@ export const loggedInUserSlice = createSlice({
         })
     }
 })
+
+export default loggedInUserSlice

@@ -1,130 +1,102 @@
+import { Button, TextField } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import ErrorBox from "../components/ErrorBox";
 import logo from "../logo.png";
-import React, {FormEvent, useCallback} from "react";
-import TextField from '@mui/material/TextField';
-import {getNameValueFromEvent, NameValue} from "../utils/FormUtils";
-import {Button} from "@mui/material";
-import {ErrorBox} from "../components/ErrorBox";
-import {useAppDispatch, useAppSelector} from "../redux/hooks";
-import { useState } from 'react';
-import { decrement, increment } from './features/counterSlice';
-import {RootStateOrAny} from "react-redux";
-import {RootState} from "../redux/store";
-import {login, userLogIn} from "./features/loggedInUserSlice";
-
-class LogInForm extends React.Component<any, any> {
-
-    private isInvalidLogin: boolean = false;
+import { useAppDispatch } from "../redux/hooks";
+import { RootState } from "../redux/store";
+import { logIn, LogInState } from "./features/loggedInUserSlice";
 
 
-
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            username: "",
-            password: ""
-        }
-
-        this.handleInputChange = this.handleInputChange.bind(this);
-
-
-        // const count = useAppSelector((state)) => state.counter.value;
-
-    }
-
-    handleInputChange(event: any) {
-        const nameValue: NameValue = getNameValueFromEvent(event);
-        this.setState({
-            [nameValue.name]: nameValue.value
-        })
-    }
-
-
-    invalidLoginMessage = () => {
-        return
-        if (this.isInvalidLogin) {
-            <div>Invalid login</div>
-        }
-    }
-
-    handleSubmit = (event: React.FormEvent) => {
-        // perform_login
-        event.preventDefault();
-
-        const dispatch = useAppDispatch()
-
-        useCallback(
-            (username, password) =>
-            dispatch(login({username: this.state.username, password})),
-            [dispatch]
-        );
-
-
-        // const loginUrl: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + '/api/login';
-        // // console.log('process: ', process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL);
-        //
-        // // const formUrl = process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL?.toString();
-        //
-        // const formData = new FormData();
-        // formData.append('username', this.state.username);
-        // formData.append('password', this.state.password);
-        //
-        //
-        // const response = fetch(loginUrl, {
-        //     method: 'POST',
-        //     mode: 'cors',
-        //     credentials: 'omit',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Access-Control-Allow-Origin': '*',
-        //         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
-        //     },
-        //     body: JSON.stringify(this.state),
-        // })
-        //     .then(response => response.json());
-        //
-        // console.log('response', response);
-
-    }
-
-
-    render() {
-        return (
-
-            <form onSubmit={this.handleSubmit}>
-
-                <img src={logo} alt="Mashup Media"/>
-
-                <div>Log in</div>
-
-                {this.state.isInvalidLogin && <ErrorBox message={"Invalid username password combination"}/>}
-
-
-                <div className="new-line">
-
-                    <TextField name="username" label="Username" value={this.state.username}
-                               onChange={this.handleInputChange}
-                               fullWidth={true} variant={"standard"}/>
-
-                </div>
-
-                <div className="new-line">
-                    <TextField name="password" label="Password" value={this.state.password}
-                               onChange={this.handleInputChange}
-                               fullWidth={true} type={"password"} variant="standard"/>
-                </div>
-
-                <div className="new-line">
-
-
-                    <Button variant="outlined" type="submit">
-                        Log in
-                    </Button>
-                </div>
-
-            </form>
-
-        )
-    }
+type LogInProps = {
+    username: string;
+    password: string;
+    isInvalidLogIn: boolean
 }
 
-export default LogInForm;
+const LogIn = () => {
+
+    const dispatch = useAppDispatch();
+
+    const history = useHistory();
+
+    const [props, setProps] = useState<LogInProps>({
+        username: '',
+        password: '',
+        isInvalidLogIn: false
+    });
+
+
+    const setStateValue = (name: string, value: string): void => {
+        setProps(p => ({
+            ...p,
+            [name]: value
+        }));
+    }
+
+    const logInState = useSelector<RootState, LogInState>(state => state.loggedInUser);
+
+    useEffect(() => {
+        if (logInState.currentUser) {
+            history.push('/');
+        }
+    }, [logInState])
+
+    const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        dispatch(
+            logIn({ username: props.username, password: props.password })
+        )
+
+    },
+        [props, dispatch]
+    )
+
+    return (
+
+        <form onSubmit={useHandleSubmit}>
+
+            <img src={logo} alt="Mashup Media" />
+
+            <h1>Log in</h1>
+
+
+            {logInState.error &&
+                <ErrorBox message={"Invalid username password combination"} />
+            }
+
+            <div className="new-line">
+                <TextField label="Username" value={props.username} autoComplete="off"
+                    onChange={(e) => setStateValue('username', e.currentTarget.value)}
+                    fullWidth={true} variant="standard" />
+            </div>
+
+            <div className="new-line">
+                <TextField name="password" label="Password" value={props.password} autoComplete="off"
+                    onChange={(e) => setStateValue('password', e.currentTarget.value)}
+                    fullWidth={true} type={"password"} variant="standard" />
+            </div>
+
+            <div className="new-line">
+                <Button variant="outlined" type="submit">
+                    Log in
+                </Button>
+            </div>
+
+
+
+            <pre>Form</pre>
+            <pre>{JSON.stringify(props)}</pre>
+
+
+            <pre>Logged in user</pre>
+            <pre>{JSON.stringify(logInState)}</pre>
+
+        </form>
+
+    )
+}
+
+export default LogIn

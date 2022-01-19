@@ -1,8 +1,8 @@
-import {Route, Switch} from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import Introduction from "./components/Introduction";
-import NetworkForm from "./settings/NetworkForm";
-import PrivateRoute from "./security/PrivateRoute";
 import LogIn from "./security/LogIn";
+import PrivateRoute from "./security/PrivateRoute";
+import NetworkForm from "./settings/NetworkForm";
 
 const Routes = () => {
 
@@ -13,8 +13,9 @@ const Routes = () => {
                 <Introduction />
             </Route>
             <Route exact path="/login">
-                <LogIn />
+                <LogIn/>
             </Route>
+            <Route exact path="/test" component={NetworkForm} />
 
             <PrivateRoute component={NetworkForm} path="/settings/network" exact/>
 

@@ -1,15 +1,12 @@
-import {Component} from "react";
-
-export interface ErrorBoxProps {
+type ErrorBoxProps = {
     message: string;
 }
 
-export class ErrorBox extends Component<ErrorBoxProps, {}> {
-    render() {
-        const {message} = this.props;
-        return (
-            <div> {message} </div>
-        )
-
-    }
+const ErrorBox = (props: ErrorBoxProps) => {
+    return (
+        <div> {props.message} </div>
+    )
 }
+
+
+export default ErrorBox

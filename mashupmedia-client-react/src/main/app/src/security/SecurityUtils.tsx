@@ -1,3 +1,5 @@
+import { LogInState } from "./features/loggedInUserSlice";
+
 const TOKEN_KEY = 'jwt';
 
 export const login = () => {
@@ -9,11 +11,22 @@ export const logout = () => {
 }
 
 export const isLogin = () => {
+
     if (localStorage.getItem(TOKEN_KEY)) {
         return true;
     }
 
     return false;
+}
+
+
+export const isLoggedIn = (logInState: LogInState) => {
+    console.log('isLoggedIn', logInState)
+    const token = logInState.currentUser?.token;
+    console.log('token', token ? true : false)
+    return token ? true : false;
+
+    // return true
 }
 
 

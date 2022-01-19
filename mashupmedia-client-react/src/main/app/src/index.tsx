@@ -1,19 +1,23 @@
+import { ThemeProvider } from "@mui/styles";
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import { Provider } from "react-redux";
 import App from './App';
+import './index.css';
+import { store } from './redux/store';
 import reportWebVitals from './reportWebVitals';
-import {mashupTheme} from "./utils/FormUtils";
-import {ThemeProvider} from "@mui/styles";
-import {Provider} from "react-redux";
+import { mashupTheme } from "./utils/FormUtils";
 
 
 ReactDOM.render(
+
+    // const store = createStore(store);
     <React.StrictMode>
-        {/*<Provider store={stor}*/}
-        <ThemeProvider theme={mashupTheme}>
-        <App/>
-        </ThemeProvider>
+        <Provider store={store}>
+            <ThemeProvider theme={mashupTheme}>
+                <App />
+            </ThemeProvider>
+        </Provider>
     </React.StrictMode>,
     document.getElementById('root')
 );

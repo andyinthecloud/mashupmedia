@@ -2,19 +2,20 @@ import * as React from 'react';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
-import ListItem, {ListItemProps} from '@mui/material/ListItem';
+import ListItem, { ListItemProps } from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MenuIcon from '@mui/icons-material/Menu';
-import {Collapse, IconButton} from '@mui/material';
+import { Collapse, IconButton } from '@mui/material';
 
 import MailIcon from '@mui/icons-material/Mail';
 import SettingsIcon from '@mui/icons-material/Settings';
-import {makeStyles} from '@mui/styles';
+import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
 import './Drawer.css';
-import {ExpandLess, ExpandMore} from "@mui/icons-material";
+import { ExpandLess, ExpandMore, Label } from "@mui/icons-material";
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles({
     list: {
@@ -28,8 +29,19 @@ const useStyles = makeStyles({
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
 
-function ListItemLink(props: ListItemProps<'a', { button?: true }>) {
-    return <ListItem button component="a" {...props} />;
+// function ListItemLink(props: ListItemProps<'a', { button?: true }>) {
+//     return <ListItem button component="a" {...props} />;
+// }
+
+
+function ListItemRoute(props: { toRoute: string, label: string, button?: true }) {
+    return (
+        <Link to={props.toRoute} style={{textDecoration: "none"}}>
+            <ListItem button>
+                <ListItemText primary={props.label} />
+            </ListItem>
+        </Link>
+    )
 }
 
 export default function TemporaryDrawer() {
@@ -57,7 +69,7 @@ export default function TemporaryDrawer() {
             return;
         }
 
-        setState({...state, [anchor]: open});
+        setState({ ...state, [anchor]: open });
     };
 
     const list = (anchor: Anchor) => (
@@ -66,8 +78,8 @@ export default function TemporaryDrawer() {
                 [classes.fullList]: anchor === 'top' || anchor === 'bottom',
             })}
             role="presentation"
-            // onClick={toggleDrawer(anchor, false)}
-            // onKeyDown={toggleDrawer(anchor, false)}
+        // onClick={toggleDrawer(anchor, false)}
+        // onKeyDown={toggleDrawer(anchor, false)}
         >
 
             <List>
@@ -75,48 +87,48 @@ export default function TemporaryDrawer() {
                     <ListItemIcon>
                         <SettingsIcon></SettingsIcon>
                     </ListItemIcon>
-                    <ListItemText primary="Settings"/>
-                    {open ? <ExpandLess/> : <ExpandMore/>}
+                    <ListItemText primary="Settings" />
+                    {open ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding className="nested-list">
 
-                        <ListItemLink button  href="/settings/network"   >
-                            <ListItemText primary="Network" />
-                        </ListItemLink>
+
+                        <ListItemRoute label="Network" toRoute="/settings/network" />
+
                         <ListItem button>
-                            <ListItemText primary="Libraries"/>
+                            <ListItemText primary="Libraries" />
                         </ListItem>
                         <ListItem button>
-                            <ListItemText primary="Users"/>
+                            <ListItemText primary="Users" />
                         </ListItem>
                         <ListItem button>
-                            <ListItemText primary="Groups"/>
+                            <ListItemText primary="Groups" />
                         </ListItem>
                         <ListItem button>
-                            <ListItemText primary="Encoding"/>
+                            <ListItemText primary="Encoding" />
                         </ListItem>
                     </List>
 
                 </Collapse>
             </List>
 
-            <Divider/>
+            <Divider />
 
             <List>
                 {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
                     <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
-                        <ListItemText primary={text}/>
+                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                        <ListItemText primary={text} />
                     </ListItem>
                 ))}
             </List>
-            <Divider/>
+            <Divider />
             <List>
                 {['All mail', 'Trash', 'Spam'].map((text, index) => (
                     <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
-                        <ListItemText primary={text}/>
+                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                        <ListItemText primary={text} />
                     </ListItem>
                 ))}
             </List>
@@ -127,7 +139,7 @@ export default function TemporaryDrawer() {
         <div className="Drawer">
 
             <IconButton onClick={toggleDrawer('right', true)}>
-                <MenuIcon/>
+                <MenuIcon />
             </IconButton>
 
             {(['right'] as Anchor[]).map((anchor) => (
