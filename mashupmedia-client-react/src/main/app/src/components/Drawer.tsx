@@ -29,11 +29,6 @@ const useStyles = makeStyles({
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
 
-// function ListItemLink(props: ListItemProps<'a', { button?: true }>) {
-//     return <ListItem button component="a" {...props} />;
-// }
-
-
 function ListItemRoute(props: { toRoute: string, label: string, button?: true }) {
     return (
         <Link to={props.toRoute} style={{textDecoration: "none"}}>
