@@ -32,7 +32,7 @@ const LogIn = () => {
         setProps(p => ({
             ...p,
             [name]: value
-        }));
+        }))
     }
 
     const logInState = useSelector<RootState, LogInState>(state => state.loggedInUser);
@@ -69,13 +69,13 @@ const LogIn = () => {
 
             <div className="new-line">
                 <TextField label="Username" value={props.username} autoComplete="off"
-                    onChange={(e) => setStateValue('username', e.currentTarget.value)}
-                    fullWidth={true} variant="standard" />
+                    onChange={(e) => setStateValue(e.currentTarget.name, e.currentTarget.value)}
+                    name="username" fullWidth={true} variant="standard" />
             </div>
 
             <div className="new-line">
                 <TextField name="password" label="Password" value={props.password} autoComplete="off"
-                    onChange={(e) => setStateValue('password', e.currentTarget.value)}
+                    onChange={(e) => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                     fullWidth={true} type={"password"} variant="standard" />
             </div>
 
@@ -95,6 +95,7 @@ const LogIn = () => {
             <pre>{JSON.stringify(logInState)}</pre>
 
         </form>
+
 
     )
 }

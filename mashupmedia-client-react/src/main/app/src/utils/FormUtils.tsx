@@ -18,7 +18,7 @@ export const getNameValueFromEvent = (event: any): NameValue => {
     return {
         name,
         value
-    };
+    }
 }
 
 
@@ -35,7 +35,10 @@ export const mashupTheme = createTheme({
             },
         }
     }
-);
+)
+
+
+
 
 
 

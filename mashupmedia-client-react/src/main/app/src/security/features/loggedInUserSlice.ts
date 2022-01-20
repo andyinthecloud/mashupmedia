@@ -1,20 +1,18 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-// https://redux-toolkit.js.org/usage/usage-guide#asynchronous-logic-and-data-fetching
-// https://stackoverflow.com/questions/68002829/redux-toolkit-with-typescript-cannot-dispatch-action-created-by-createasyncthun
 
-interface UserCredentialsPayload {
+type UserCredentialsPayload = {
     username: string
     password: string
 }
 
-export interface UserPayload {
+export type UserPayload = {
     username: string
     name: string
     token: string
     groupNames: string[]
 }
 
-export interface LogInState {
+export type LogInState = {
     currentUser: UserPayload | null;
     loading: boolean;
     error: string | null;
@@ -49,7 +47,6 @@ export const logIn = createAsyncThunk<UserPayload, UserCredentialsPayload>(
 
     }
 )
-
 
 
 export const loggedInUserSlice = createSlice({

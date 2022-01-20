@@ -1,129 +1,91 @@
-import React from "react";
-import {Button, FormControlLabel, FormGroup, Switch, TextField} from "@mui/material";
-import {getNameValueFromEvent, NameValue} from "../utils/FormUtils";
+import { Button, FormControlLabel, FormGroup, Switch, TextField, UseSwitchProps } from "@mui/material";
+import React, { useState } from "react";
+
+type NetworkFormProps = {
+    useProxy: boolean
+    url: string
+    port: number
+    username: string
+    password: string
+}
 
 
-// interface Network {
-//     useProxy: boolean,
-//     url: string,
-//     port: number,
-//     username: string,
-//     password: string;
-// }
+const NetworkForm = () => {
 
-class NetworkForm extends React.Component<any, any> {
+    const [props, setProps] = useState<NetworkFormProps>({
+        useProxy: true,
+        url: '',
+        port: 0,
+        username: '',
+        password: '',
+    });
 
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            useProxy: false,
-            url: "",
-            port: 0,
-            username: "",
-            password: ""
-        };
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleSwitch = this.handleSwitch.bind(this);
-
-        console.log(this.state);
-
-        console.log("process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL: " + process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL);
-        console.log("process.env.NODE_ENV: " + process.env.NODE_ENV);
+    const switchProps: UseSwitchProps = {
+        checked: true
     }
 
-    handleInputChange(event: any) {
-        const nameValue: NameValue = getNameValueFromEvent(event);
-        this.setState({
-            [nameValue.name]: nameValue.value
-        })
+    const setStateValue = (name: string, value: any): void => {
+        setProps(p => ({
+            ...p,
+            [name]: value
+        }))
     }
 
-    handleSwitch(event: any) {
-        this.setState({value: event.target.value});
+    function isFormDisabled(): boolean {
+        return props.useProxy ? false : true;
     }
 
+    return (
+        <form >
+            <h1>Network</h1>
 
-    handleSubmit = (event:any)  => {
-        event.preventDefault();
-        console.log('on submit');
-        console.log(JSON.stringify(this.state));
+            <FormGroup className="new-line">
+                <FormControlLabel
+                    control={
+                        <Switch
+                            name="useProxy"
+                            checked={props.useProxy}
+                            onClick={e => setStateValue('useProxy', !props.useProxy)}
+                            color="primary"
+                        />
+                    }
+                    label="Enable proxy"
+
+                />
+
+            </FormGroup>
 
 
-        const response = fetch("{process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL} ", {
-            method: 'POST',
-            body: JSON.stringify(this.state),
-            headers: {
-                // "Content-type": "application/json; charset=UTF-8"
+            <div className="new-line">
+                <TextField name="url" label="URL" value={props.url} onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
+                    disabled={isFormDisabled()} fullWidth={true} />
+            </div>
 
-                'X-XSRF-TOKEN': this.getCookie('XSRF-TOKEN'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json; charset=UTF-8'
-            }});
-    }
+            <div className="new-line">
+                <TextField name="port" label="Port" value={props.port} type="number" onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
+                    disabled={isFormDisabled()} fullWidth={true} />
+            </div>
 
-    getCookie(cookieName: string) :string {
-        // let cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-        const values = document.cookie.match('(^|;)\\s*' + cookieName + '\\s*=\\s*([^;]+)');
-        const value = values ? String(values.pop()) : '';
-        console.log('cookie value = ', value);
-        return value;
-    }
+            <div className="new-line">
+                <TextField name="username" label="Username" value={props.username}
+                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)} disabled={isFormDisabled()} fullWidth={true} />
+            </div>
 
-    isFormDisabled() {
-        return this.state.useProxy ? false : true;
-    }
+            <div className="new-line">
+                <TextField name="password" label="Password" value={props.password} type="password"
+                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)} disabled={isFormDisabled()} fullWidth={true} />
+            </div>
 
-    render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <h1>Network</h1>
-                %REACT_APP_MASHUPMEDIA_BACKEND_URL%
-                <br/>
-                %NODE_ENV%
-
-                <FormGroup>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={this.state.useProxy}
-                                onChange={this.handleInputChange}
-                                name="useProxy"
-                                color="primary"
-                            />
-                        }
-                        label="Enable proxy"
-
-                    />
-
-                </FormGroup>
-
-                <div className="new-line">
-                    <TextField name="url" label="URL" value={this.state.url} onChange={this.handleInputChange}
-                               disabled={this.isFormDisabled()} fullWidth={true}/>
-                </div>
-
-                <div>
-                    <TextField name="port" label="Port" value={this.state.port} type="number" onChange={this.handleInputChange}
-                               disabled={this.isFormDisabled()} fullWidth={true}/>
-                </div>
-
-                <div>
-                    <TextField name="username" label="Username" value={this.state.username}
-                               onChange={this.handleInputChange} disabled={this.isFormDisabled()} fullWidth={true}/>
-                </div>
-
-                <div>
-                    <TextField name="password" label="Password" value={this.state.password}
-                               onChange={this.handleInputChange} disabled={this.isFormDisabled()} fullWidth={true}/>
-                </div>
-
-                <Button type="submit" className="mashup-button">
+            <div className="new-line">
+                <Button variant="outlined" type="submit">
                     Save
                 </Button>
+            </div>
 
-            </form>
-        );
-    }
+            <pre>{JSON.stringify(props)}</pre>
+
+        </form>
+    )
 }
 
 
