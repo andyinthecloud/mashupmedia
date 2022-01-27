@@ -1,28 +1,30 @@
-import { Button, FormControlLabel, FormGroup, Switch, TextField, UseSwitchProps } from "@mui/material";
-import React, { useState } from "react";
-
-type NetworkFormProps = {
-    useProxy: boolean
-    url: string
-    port: number
-    username: string
-    password: string
-}
+import { Button, FormControlLabel, FormGroup, Switch, TextField } from "@mui/material";
+import { useCallback, useState } from "react";
+import { useAppDispatch } from "../redux/hooks";
+import { getNetworkProxy, NetworkProxyPayload } from "./features/networkSlice";
 
 
 const NetworkForm = () => {
 
-    const [props, setProps] = useState<NetworkFormProps>({
-        useProxy: true,
+    const dispatch = useAppDispatch();
+
+    useCallback(() => {
+        console.log('useCallback proxy')
+        dispatch(
+            getNetworkProxy()
+        )
+    
+    }, [dispatch])
+
+
+    const [props, setProps] = useState<NetworkProxyPayload>({
+        enabled: true,
         url: '',
         port: 0,
         username: '',
         password: '',
-    });
+    })
 
-    const switchProps: UseSwitchProps = {
-        checked: true
-    }
 
     const setStateValue = (name: string, value: any): void => {
         setProps(p => ({
@@ -32,7 +34,7 @@ const NetworkForm = () => {
     }
 
     function isFormDisabled(): boolean {
-        return props.useProxy ? false : true;
+        return props.enabled ? false : true
     }
 
     return (
@@ -44,8 +46,8 @@ const NetworkForm = () => {
                     control={
                         <Switch
                             name="useProxy"
-                            checked={props.useProxy}
-                            onClick={e => setStateValue('useProxy', !props.useProxy)}
+                            checked={props.enabled}
+                            onClick={e => setStateValue('useProxy', !props.enabled)}
                             color="primary"
                         />
                     }

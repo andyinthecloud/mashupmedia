@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 import {BrowserRouter} from "react-router-dom";
 import Routes from "./Routes";
 import {Button, Container, ThemeProvider} from "@mui/material";
-import {mashupTheme} from "./utils/FormUtils";
+import {mashupTheme} from "./utils/formUtils";
 
 
 function App() {

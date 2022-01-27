@@ -5,15 +5,9 @@ import { useHistory } from "react-router-dom";
 import ErrorBox from "../components/ErrorBox";
 import logo from "../logo.png";
 import { useAppDispatch } from "../redux/hooks";
-import { RootState } from "../redux/store";
-import { logIn, LogInState } from "./features/loggedInUserSlice";
+import { PayloadState, RootState } from "../redux/store";
+import { logIn, UserLogInPayload, UserPayload } from "./features/loggedInUserSlice";
 
-
-type LogInProps = {
-    username: string;
-    password: string;
-    isInvalidLogIn: boolean
-}
 
 const LogIn = () => {
 
@@ -21,12 +15,10 @@ const LogIn = () => {
 
     const history = useHistory();
 
-    const [props, setProps] = useState<LogInProps>({
+    const [props, setProps] = useState<UserLogInPayload>({
         username: '',
-        password: '',
-        isInvalidLogIn: false
+        password: ''
     });
-
 
     const setStateValue = (name: string, value: string): void => {
         setProps(p => ({
@@ -35,13 +27,17 @@ const LogIn = () => {
         }))
     }
 
-    const logInState = useSelector<RootState, LogInState>(state => state.loggedInUser);
+    const logInState = useSelector<RootState, PayloadState<UserPayload>>(state => state.loggedInUser);
 
-    useEffect(() => {
-        if (logInState.currentUser) {
-            history.push('/');
-        }
-    }, [logInState])
+    // useEffect(() => {
+    //     console.log('useEffect', logInState)
+
+    //     if (logInState.payload) {
+    //         history.push('/');
+    //     }
+    // }, [logInState])
+
+
 
     const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -53,6 +49,14 @@ const LogIn = () => {
     },
         [props, dispatch]
     )
+
+    useEffect(() => {
+        console.log('useEffect', logInState)
+
+        if (logInState.payload) {
+            history.push('/');
+        }
+    })
 
     return (
 

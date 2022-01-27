@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { Redirect, Route, RouteProps } from "react-router-dom";
-import { RootState } from "../redux/store";
-import { LogInState } from "./features/loggedInUserSlice";
+import { PayloadState, RootState } from "../redux/store";
+import { UserPayload } from "./features/loggedInUserSlice";
 import { isLoggedIn } from "./SecurityUtils";
 
 interface PrivateRouteProps extends RouteProps {
@@ -13,7 +13,7 @@ interface PrivateRouteProps extends RouteProps {
 const PrivateRoute = (props: PrivateRouteProps) => {
     const { component: Component, ...rest } = props;
 
-    const logInState = useSelector<RootState, LogInState>(state => state.loggedInUser);
+    const logInState = useSelector<RootState, PayloadState<UserPayload | null>>(state => state.loggedInUser);
 
 
     return (

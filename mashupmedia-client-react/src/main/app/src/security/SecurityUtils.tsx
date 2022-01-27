@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { LogInState } from "./features/loggedInUserSlice";
+import { PayloadState } from "../redux/store";
+import { UserPayload } from "./features/loggedInUserSlice";
 
 const TOKEN_KEY = 'jwt';
 
@@ -21,9 +21,9 @@ export const isLogin = () => {
 }
 
 
-export const isLoggedIn = (logInState: LogInState) => {
-    console.log('isLoggedIn', logInState)
-    const token = logInState.currentUser?.token;
+export const isLoggedIn = (payloadState: PayloadState<UserPayload | null>) => {
+    console.log('isLoggedIn', payloadState)
+    const token = payloadState.payload?.token;
     console.log('token', token ? true : false)
     return token ? true : false;
 

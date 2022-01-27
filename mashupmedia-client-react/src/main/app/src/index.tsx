@@ -6,7 +6,7 @@ import App from './App';
 import './index.css';
 import { store } from './redux/store';
 import reportWebVitals from './reportWebVitals';
-import { mashupTheme } from "./utils/FormUtils";
+import { mashupTheme } from "./utils/formUtils";
 
 
 ReactDOM.render(
