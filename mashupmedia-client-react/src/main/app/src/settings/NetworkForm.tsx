@@ -1,5 +1,5 @@
 import { Button, FormControlLabel, FormGroup, Switch, TextField } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch } from "../redux/hooks";
 import { getNetworkProxy, NetworkProxyPayload } from "./features/networkSlice";
 
@@ -8,13 +8,14 @@ const NetworkForm = () => {
 
     const dispatch = useAppDispatch();
 
-    useCallback(() => {
+    const getProxy = useCallback(() => {
         console.log('useCallback proxy')
         dispatch(
             getNetworkProxy()
         )
     
     }, [dispatch])
+
 
 
     const [props, setProps] = useState<NetworkProxyPayload>({
@@ -25,6 +26,15 @@ const NetworkForm = () => {
         password: '',
     })
 
+
+    useEffect(() => {
+        // getProxy()
+
+        console.log('useCallback proxy')
+        dispatch(
+            getNetworkProxy()
+        )
+    })
 
     const setStateValue = (name: string, value: any): void => {
         setProps(p => ({
