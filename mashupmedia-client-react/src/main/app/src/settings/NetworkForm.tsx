@@ -1,40 +1,42 @@
-import { Button, FormControlLabel, FormGroup, Switch, TextField } from "@mui/material";
+import { Alert, AlertTitle, Button, FormControlLabel, FormGroup, Switch, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { useAppDispatch } from "../redux/hooks";
-import { getNetworkProxy, NetworkProxyPayload } from "./features/networkSlice";
+import { PayloadAction, RootState, SecurePayload } from "../redux/store";
+import { getNetworkProxy, NetworkProxyPayload, postNetworkProxy } from "./features/networkSlice";
 
 
 const NetworkForm = () => {
 
-    const dispatch = useAppDispatch();
+    const userToken = useSelector((state: RootState) => state.loggedInUser.payload?.token)
+    const dispatch = useAppDispatch()
 
-    const getProxy = useCallback(() => {
-        console.log('useCallback proxy')
+    useEffect(() => {
         dispatch(
-            getNetworkProxy()
+            getNetworkProxy(userToken)
         )
-    
-    }, [dispatch])
 
+    }, [dispatch, userToken])
 
+    const networkPayload = useSelector((state: RootState) => state.networkProxy.payload)
+    const networkPayloadAction = useSelector((state: RootState) => state.networkProxy.payloadAction)
 
     const [props, setProps] = useState<NetworkProxyPayload>({
         enabled: true,
         url: '',
         port: 0,
         username: '',
-        password: '',
+        password: ''
     })
-
 
     useEffect(() => {
-        // getProxy()
+        setProps(p => ({
+            ...p,
+            ...networkPayload
+        }))
 
-        console.log('useCallback proxy')
-        dispatch(
-            getNetworkProxy()
-        )
-    })
+    }, [networkPayload])
 
     const setStateValue = (name: string, value: any): void => {
         setProps(p => ({
@@ -47,8 +49,45 @@ const NetworkForm = () => {
         return props.enabled ? false : true
     }
 
+    const history = useHistory()
+
+    const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const securePayload: SecurePayload<NetworkProxyPayload> = { userToken, payload: props }
+        console.log('useHandleSubmit', securePayload)
+        dispatch(
+            postNetworkProxy(securePayload)
+        )
+    },
+        [dispatch, props, userToken]
+    )
+
+    let isSuccessfulSave = false
+
+    useEffect(() => {
+        if (networkPayloadAction === PayloadAction.SAVED) {
+            isSuccessfulSave = true
+        } else {
+            isSuccessfulSave = false
+        }
+
+    },
+        [networkPayloadAction, isSuccessfulSave]
+    )
+
+
+
+
     return (
-        <form >
+
+        <form onSubmit={useHandleSubmit}>
+
+
+            <Alert severity="success">
+                <AlertTitle>Success</AlertTitle>
+                This is a success alert — <strong>check it out!</strong>
+            </Alert>
+
             <h1>Network</h1>
 
             <FormGroup className="new-line">
@@ -57,16 +96,13 @@ const NetworkForm = () => {
                         <Switch
                             name="useProxy"
                             checked={props.enabled}
-                            onClick={e => setStateValue('useProxy', !props.enabled)}
+                            onClick={e => setStateValue('enabled', !props.enabled)}
                             color="primary"
                         />
                     }
                     label="Enable proxy"
-
                 />
-
             </FormGroup>
-
 
             <div className="new-line">
                 <TextField name="url" label="URL" value={props.url} onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}

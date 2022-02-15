@@ -28,7 +28,7 @@ export const logIn = createAsyncThunk<UserPayload, UserLogInPayload>(
             method: 'POST',
             mode: 'cors',
             credentials: 'omit',
-            headers: restHeaders,
+            headers: restHeaders(),
             body: JSON.stringify(userLoginPayload)
         });
         return (await response.json()) as UserPayload;

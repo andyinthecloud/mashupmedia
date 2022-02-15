@@ -30,6 +30,11 @@ spring:
           issuer-uri: http://localhost:8083/auth/realms/baeldung
           jwk-set-uri: http://localhost:8083/auth/realms/baeldung/protocol/openid-connect/certs
 
+
+  jackson:
+      
+    default-property-inclusion: non-absent
+
 server:
   servlet:
     context-path: /mashupmedia

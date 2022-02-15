@@ -21,13 +21,11 @@ export const isLogin = () => {
 }
 
 
-export const isLoggedIn = (payloadState: PayloadState<UserPayload | null>) => {
-    console.log('isLoggedIn', payloadState)
-    const token = payloadState.payload?.token;
+export const isLoggedIn = (userPayload: UserPayload | null) => {
+    console.log('isLoggedIn', userPayload)
+    const token = userPayload?.token
     console.log('token', token ? true : false)
-    return token ? true : false;
-
-    // return true
+    return token ? true : false
 }
 
 

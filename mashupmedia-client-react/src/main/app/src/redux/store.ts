@@ -1,20 +1,30 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { counterSlice } from "../security/features/counterSlice";
 import loggedInUserSlice from '../security/features/loggedInUserSlice';
 import networkProxySlice from '../settings/features/networkSlice';
 
 // ...
 
-export const store = configureStore({
-    reducer: {
-        // posts: postsReducer,
-        // comments: commentsReducer,
-        // users: usersReducer,
-        counter: counterSlice.reducer,
-        loggedInUser: loggedInUserSlice.reducer,
-        networkProxy: networkProxySlice.reducer
+const reducer = combineReducers({
+    counter: counterSlice.reducer,
+    loggedInUser: loggedInUserSlice.reducer,
+    networkProxy: networkProxySlice.reducer
+})
 
-    },
+
+export const store = configureStore({
+    reducer    
+    // reducer: {
+
+
+    //     // posts: postsReducer,
+    //     // comments: commentsReducer,
+    //     // users: usersReducer,
+    //     counter: counterSlice.reducer,
+    //     loggedInUser: loggedInUserSlice.reducer,
+    //     networkProxy: networkProxySlice.reducer
+
+    // },
 })
 
 
@@ -24,12 +34,22 @@ export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
 
+export enum PayloadAction {
+    SAVED,
+    GOT
+}
+
 export type PayloadState<T> = {
     payload: T | null;
     loading: boolean;
     error: string | null | void;
+    payloadAction?: PayloadAction
 }
 
+export type SecurePayload<T> = {
+    payload: T;
+    userToken: string | undefined;
+}
 
 
 

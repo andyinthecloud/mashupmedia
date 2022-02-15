@@ -1,34 +1,57 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { PayloadState } from "../../redux/store"
+import { PayloadAction, PayloadState, RootState, SecurePayload } from "../../redux/store"
 import { restHeaders } from "../../utils/httpUtils"
 
 export type NetworkProxyPayload = {
     enabled: boolean
-    url: string
-    port: number
-    username: string
-    password: string
+    url?: string
+    port?: number
+    username?: string
+    password?: string
 }
 
 const initialState: PayloadState<NetworkProxyPayload> = {
-    payload: null,
+    payload: {
+        enabled: false,
+        url: 'andy',
+        port: 0,
+        username: '',
+        password: ''
+    },
     loading: false,
     error: null
-
 }
 
+
+const networkProxyUrl: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + '/api/admin/proxy/'
+
 export const getNetworkProxy = createAsyncThunk(
-    'settings/network',
-    async () => {
-        const networkProxyUrl: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + '/api/admin/proxy';
+    'networkProxy/getDetails',
+    async (userToken: string | undefined) => {
         const response = await fetch(networkProxyUrl, {
             method: 'GET',
             mode: 'cors',
             credentials: 'omit',
-            headers: restHeaders
+            headers: restHeaders(userToken)
         })
 
         return (await response.json()) as NetworkProxyPayload
+    }
+)
+
+export const postNetworkProxy = createAsyncThunk(
+    'networkProxy/postDetails',
+    async (securePayload: SecurePayload<NetworkProxyPayload>) => {
+        const response = await fetch(networkProxyUrl, {
+            method: 'PUT',
+            mode: 'cors',
+            credentials: 'omit',
+            headers: restHeaders(securePayload.userToken),
+            body: JSON.stringify(securePayload.payload)
+        })
+
+        return (await response.json()) as NetworkProxyPayload
+
     }
 )
 
@@ -39,29 +62,73 @@ export const networkProxySlice = createSlice({
 
     },
     extraReducers: (builder) => {
-        builder.addCase(getNetworkProxy.pending, (state) => {
-            state = {
-                loading: true,
-                payload: null,
-                error: null
-            }
-        })
-        builder.addCase(getNetworkProxy.rejected, (state, action) => {
-            state = {
-                loading: false,
-                payload: null,
-                error: action?.payload ? String(action?.payload) : 'Failed to fetch payload'
-            }
-        })
-        builder.addCase(getNetworkProxy.fulfilled, (state, action) => {
-            state = {
-                loading: false,
-                error: null,
-                payload: action.payload
-            }
-        })
 
+        builder.addCase(
+            getNetworkProxy.fulfilled,
+            (state, action) => {
+                state.loading = true
+                state.error = null
+                state.payload = action.payload
+                state.payloadAction = PayloadAction.GOT
+            })
+        builder.addCase(
+            postNetworkProxy.fulfilled,
+            (state, action) => {
+                state.loading = true
+                state.error = null
+                state.payload = action.payload
+                state.payloadAction = PayloadAction.SAVED
+            })
+
+
+        builder.addMatcher(
+            (action) => action.type.endsWith('/pending'),
+            (state) => {
+                state.loading = true
+                state.error = null
+                state.payload = null
+                state.payloadAction = undefined
+            }
+        )
+        builder.addMatcher(
+            (action) => action.type.endsWith('/rejected'),
+            (state, action) => {
+                state.loading = true
+                state.error = action?.payload ? String(action?.payload) : 'Failed to fetch payload'
+                state.payload = null
+                state.payloadAction = undefined
+            }
+        )
+        // builder.addMatcher(
+        //     (action) => action.type.endsWith('/fulfilled'),
+        //     (state, action) => {
+        //         state.loading = true
+        //         state.error = null
+        //         state.payload = action.payload
+        //         state.payloadAction = PayloadAction.GOT
+        //     }
+        // )
+
+
+        // builder.addCase(
+        //     getNetworkProxy.rejected ,
+        //     (state, action) => {
+        //         state.loading = false
+        //         state.error = action?.payload ? String(action?.payload) : 'Failed to fetch payload'
+        //         state.payload = null                
+        //     })
+
+
+        // builder.addCase(
+        //     getNetworkProxy.fulfilled,
+        //     (state, action) => {
+        //         state.loading = false
+        //         state.error = null
+        //         state.payload = action.payload
+        //     })
     }
 })
+
+export const selectProxy = (state: RootState) => state.networkProxy.payload
 
 export default networkProxySlice

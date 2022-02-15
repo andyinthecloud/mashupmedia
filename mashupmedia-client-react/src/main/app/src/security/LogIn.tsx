@@ -5,8 +5,8 @@ import { useHistory } from "react-router-dom";
 import ErrorBox from "../components/ErrorBox";
 import logo from "../logo.png";
 import { useAppDispatch } from "../redux/hooks";
-import { PayloadState, RootState } from "../redux/store";
-import { logIn, UserLogInPayload, UserPayload } from "./features/loggedInUserSlice";
+import { RootState } from "../redux/store";
+import { logIn, UserLogInPayload } from "./features/loggedInUserSlice";
 
 
 const LogIn = () => {
@@ -27,16 +27,7 @@ const LogIn = () => {
         }))
     }
 
-    const logInState = useSelector<RootState, PayloadState<UserPayload>>(state => state.loggedInUser);
-
-    // useEffect(() => {
-    //     console.log('useEffect', logInState)
-
-    //     if (logInState.payload) {
-    //         history.push('/');
-    //     }
-    // }, [logInState])
-
+    const logInState = useSelector((state: RootState) => state.loggedInUser)
 
 
     const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
@@ -47,12 +38,10 @@ const LogIn = () => {
         )
 
     },
-        [props, dispatch]
+        [dispatch, props]
     )
 
     useEffect(() => {
-        console.log('useEffect', logInState)
-
         if (logInState.payload) {
             history.push('/');
         }
