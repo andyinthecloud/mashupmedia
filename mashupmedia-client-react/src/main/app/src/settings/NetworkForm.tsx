@@ -1,7 +1,7 @@
-import { Alert, AlertTitle, Button, FormControlLabel, FormGroup, Switch, TextField } from "@mui/material";
+import { Button, FormControlLabel, FormGroup, Switch, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import AlertBox, { AlertBoxType } from "../components/AlertBox";
 import { useAppDispatch } from "../redux/hooks";
 import { PayloadAction, RootState, SecurePayload } from "../redux/store";
 import { getNetworkProxy, NetworkProxyPayload, postNetworkProxy } from "./features/networkSlice";
@@ -30,6 +30,8 @@ const NetworkForm = () => {
         password: ''
     })
 
+
+
     useEffect(() => {
         setProps(p => ({
             ...p,
@@ -49,8 +51,6 @@ const NetworkForm = () => {
         return props.enabled ? false : true
     }
 
-    const history = useHistory()
-
     const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const securePayload: SecurePayload<NetworkProxyPayload> = { userToken, payload: props }
@@ -62,31 +62,23 @@ const NetworkForm = () => {
         [dispatch, props, userToken]
     )
 
-    let isSuccessfulSave = false
-
+    const [isSuccessfulSave, setSuccessfulSave] = useState(false)
     useEffect(() => {
+
         if (networkPayloadAction === PayloadAction.SAVED) {
-            isSuccessfulSave = true
+            setSuccessfulSave(true)
         } else {
-            isSuccessfulSave = false
+            setSuccessfulSave(false)
         }
-
     },
-        [networkPayloadAction, isSuccessfulSave]
+        [networkPayloadAction]
     )
-
-
-
 
     return (
 
         <form onSubmit={useHandleSubmit}>
 
-
-            <Alert severity="success">
-                <AlertTitle>Success</AlertTitle>
-                This is a success alert — <strong>check it out!</strong>
-            </Alert>
+            <AlertBox alertType={AlertBoxType.SUCCESS} message="Network properties saved." isShow={isSuccessfulSave}></AlertBox>
 
             <h1>Network</h1>
 
@@ -131,7 +123,7 @@ const NetworkForm = () => {
             </div>
 
             <pre>{JSON.stringify(props)}</pre>
-
+            <pre>{JSON.stringify(isSuccessfulSave)}</pre>
         </form>
     )
 }

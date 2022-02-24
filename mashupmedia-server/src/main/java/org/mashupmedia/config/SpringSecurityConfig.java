@@ -82,8 +82,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         httpSecurity
                 .csrf().disable().authorizeRequests().and()
-                .cors().and().authorizeRequests()
+                .cors()
+                .and()
+                .authorizeRequests()
                 .antMatchers(HttpMethod.POST,  SecurityConstants.SIGN_UP_URL).permitAll()
+                // .antMatchers("/mashupmedia/**/*").permitAll()
+                
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), this.objectMapper))

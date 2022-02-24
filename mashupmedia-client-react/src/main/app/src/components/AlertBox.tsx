@@ -1,24 +1,57 @@
-import { Alert, AlertTitle } from "@mui/material"
+import { Alert, AlertColor, AlertTitle } from "@mui/material"
 
 
-enum AlertBoxType {
-    ERRROR, WARNING, INFO, SUCCESS
+export enum AlertBoxType {
+    ERRROR = 'error', WARNING = 'warning', INFO = 'info', SUCCESS = 'success'
 }
 
 export type AlertBoxProperties = {
     message: string;
     alertType: AlertBoxType
+    isShow: boolean
 }
 
 const AlertBox = (props: AlertBoxProperties) => {
-    // {logInState.error &&
+
+    const severity = (alertType: AlertBoxType): AlertColor => {
+        const alertColor: AlertColor = alertType.toString().toLowerCase() as AlertColor
+        const defaultAlertColour: AlertColor = 'info'
+        return (alertColor) ? alertColor : defaultAlertColour
+    }
+
+    const title = (alertType: AlertBoxType): string => {
+        let title: string
+        switch (alertType) {
+            case AlertBoxType.ERRROR:
+                title = 'Error'
+                break
+            case AlertBoxType.INFO:
+                title = 'Information'
+                break
+            case AlertBoxType.SUCCESS:
+                title = 'Success'
+                break
+            case AlertBoxType.WARNING:
+                title = 'Warning'
+                break
+            default:
+                title = 'Warning'
+                break
+
+        }
+        return title
+    }
+
 
     return (
-    
-    <Alert severity="success">
-        <AlertTitle>Success</AlertTitle>
-        This is a success alert — <strong>check it out!</strong>
-    </Alert>
+        <span>
+            {props.isShow &&
+                <Alert severity={severity(props.alertType)} >
+                    <AlertTitle>{title(props.alertType)}</AlertTitle>
+                    {props.message}
+                </Alert>
+            }
+        </span>
     )
 
 

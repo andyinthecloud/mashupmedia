@@ -2,6 +2,7 @@ import { Route, Switch } from "react-router-dom";
 import Introduction from "./components/Introduction";
 import LogIn from "./security/LogIn";
 import PrivateRoute from "./security/PrivateRoute";
+import MyAccount from "./settings/MyAccount";
 import NetworkForm from "./settings/NetworkForm";
 
 const Routes = () => {
@@ -15,9 +16,8 @@ const Routes = () => {
             <Route exact path="/login">
                 <LogIn/>
             </Route>
-            <Route exact path="/test" component={NetworkForm} />
-
             <PrivateRoute component={NetworkForm} path="/settings/network" exact/>
+            <PrivateRoute component={MyAccount} path="/settings/my-account" exact/>
 
 
             {/*<Route exact path="/settings/network">*/}

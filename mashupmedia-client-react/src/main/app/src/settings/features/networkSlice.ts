@@ -99,33 +99,6 @@ export const networkProxySlice = createSlice({
                 state.payloadAction = undefined
             }
         )
-        // builder.addMatcher(
-        //     (action) => action.type.endsWith('/fulfilled'),
-        //     (state, action) => {
-        //         state.loading = true
-        //         state.error = null
-        //         state.payload = action.payload
-        //         state.payloadAction = PayloadAction.GOT
-        //     }
-        // )
-
-
-        // builder.addCase(
-        //     getNetworkProxy.rejected ,
-        //     (state, action) => {
-        //         state.loading = false
-        //         state.error = action?.payload ? String(action?.payload) : 'Failed to fetch payload'
-        //         state.payload = null                
-        //     })
-
-
-        // builder.addCase(
-        //     getNetworkProxy.fulfilled,
-        //     (state, action) => {
-        //         state.loading = false
-        //         state.error = null
-        //         state.payload = action.payload
-        //     })
     }
 })
 

@@ -2,7 +2,7 @@ import { Button, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import ErrorBox from "../components/ErrorBox";
+import AlertBox, { AlertBoxType } from "../components/AlertBox";
 import logo from "../logo.png";
 import { useAppDispatch } from "../redux/hooks";
 import { RootState } from "../redux/store";
@@ -56,9 +56,7 @@ const LogIn = () => {
             <h1>Log in</h1>
 
 
-            {logInState.error &&
-                <ErrorBox message={"Invalid username password combination"} />
-            }
+            <AlertBox alertType={AlertBoxType.ERRROR} message="Invalid username password combination." isShow={logInState.error ? true : false}></AlertBox>
 
             <div className="new-line">
                 <TextField label="Username" value={props.username} autoComplete="off"

@@ -88,8 +88,8 @@ export default function TemporaryDrawer() {
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding className="nested-list">
 
-
                         <ListItemRoute label="Network" toRoute="/settings/network" />
+                        <ListItemRoute label="My account" toRoute="/settings/my-account" />
 
                         <ListItem button>
                             <ListItemText primary="Libraries" />
