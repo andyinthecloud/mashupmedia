@@ -1,7 +1,7 @@
 package org.mashupmedia.controller.rest;
 
 import org.mashupmedia.dto.login.LoginPayload;
-import org.mashupmedia.dto.login.UserPayload;
+import org.mashupmedia.dto.login.SecurityPayload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,8 +19,8 @@ public class LoginController {
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/")
-    public UserPayload delete_login(@RequestBody LoginPayload loginPayload) {
-        return UserPayload.builder()
+    public SecurityPayload delete_login(@RequestBody LoginPayload loginPayload) {
+        return SecurityPayload.builder()
                 .token(this.passwordEncoder.encode("test"))
                 .build();
     }
@@ -28,8 +28,8 @@ public class LoginController {
 
 //    @CrossOrigin
     @PostMapping("/")
-    public UserPayload login(@RequestBody LoginPayload loginPayload) {
-        return UserPayload.builder()
+    public SecurityPayload login(@RequestBody LoginPayload loginPayload) {
+        return SecurityPayload.builder()
                 .token(this.passwordEncoder.encode("test"))
                 .build();
     }

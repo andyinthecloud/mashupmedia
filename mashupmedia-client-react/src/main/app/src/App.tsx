@@ -1,13 +1,15 @@
+import { Button, Container, ThemeProvider } from "@mui/material";
+import { Route, Routes } from "react-router-dom";
 import './App.css';
-
-import Header from "./components/Header";
 import Drawer from "./components/Drawer";
-
 import Footer from "./components/Footer";
-import {BrowserRouter} from "react-router-dom";
-import Routes from "./Routes";
-import {Button, Container, ThemeProvider} from "@mui/material";
-import {mashupTheme} from "./utils/formUtils";
+import Header from "./components/Header";
+import Introduction from "./components/Introduction";
+import LogIn from "./security/LogIn";
+import { RequireAuthenication } from "./security/RequireAuthentication";
+import MyAccount from "./settings/MyAccount";
+import NetworkForm from "./settings/NetworkForm";
+import { mashupTheme } from "./utils/formUtils";
 
 
 function App() {
@@ -21,19 +23,37 @@ function App() {
                 Secondary
             </Button>
 
-        <BrowserRouter>
-                <div className={"App"}>
+            <div className={"App"}>
 
-                    <Drawer></Drawer>
-                    <Header/>
-                    <Container className="main-container" maxWidth="md">
-                        <Routes/>
-                    </Container>
-                    <Footer/>
+                <Drawer></Drawer>
+                <Header />
+                <Container className="main-container" maxWidth="md">
 
-                </div>
+                    <Routes>
+                        <Route path="/" element={<Introduction />} />
+                        <Route path="/login" element={<LogIn />} />
 
-        </BrowserRouter>
+                        <Route path="/settings/my-account" element={
+                            <RequireAuthenication>
+                                <MyAccount />
+                            </RequireAuthenication>
+                        } />
+
+
+                        <Route path="/settings/network" element={
+                            <RequireAuthenication>
+                                <NetworkForm />
+                            </RequireAuthenication>
+                        } />
+                    </Routes>
+
+
+                </Container>
+                <Footer />
+
+            </div>
+
+
 
         </ThemeProvider>
     );

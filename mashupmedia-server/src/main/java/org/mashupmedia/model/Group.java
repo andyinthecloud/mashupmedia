@@ -10,9 +10,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Cacheable
 @Table(name = "groups")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Group implements Serializable {
 
 	private static final long serialVersionUID = 6142620896348154603L;

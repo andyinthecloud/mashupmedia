@@ -1,35 +1,46 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { counterSlice } from "../security/features/counterSlice";
-import loggedInUserSlice from '../security/features/loggedInUserSlice';
-import networkProxySlice from '../settings/features/networkSlice';
+import { PayloadAction } from './actions';
+import rootReducer from './rootReducer';
 
-// const reducer = combineReducers({
+
+
+const initialState = {
+    networkProxy: {
+        payload: null,
+        loading: false,
+        error: null
+    },
+    user: {
+        payload: null,
+        loading: false,
+        error: null
+    }
+}
+
+
+// const rootReducer = combineReducers({
 //     counter: counterSlice.reducer,
 //     loggedInUser: loggedInUserSlice.reducer,
+//     user: userSlice.reducer,
 //     networkProxy: networkProxySlice.reducer
 // })
 
-
 export const store = configureStore({
-    reducer: {
-        counter: counterSlice.reducer,
-        loggedInUser: loggedInUserSlice.reducer,
-        networkProxy: networkProxySlice.reducer
-    }
+    reducer: rootReducer,
+    preloadedState: initialState
 })
 
 
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>
+// export type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof rootReducer>;
+
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch
 
 
-export enum PayloadAction {
-    SAVED,
-    GOT
-}
+
 
 export type PayloadState<T> = {
     payload: T | null;

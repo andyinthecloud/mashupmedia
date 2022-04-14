@@ -9,9 +9,16 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "users")
 @Cacheable
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails {
 	
 	public static String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";

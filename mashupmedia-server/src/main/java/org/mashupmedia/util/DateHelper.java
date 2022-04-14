@@ -1,6 +1,8 @@
 package org.mashupmedia.util;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -10,7 +12,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 @Slf4j
 public class DateHelper {
-	
+
 	public enum DateFormatType {
 
 		URL("dd-MM-yyyy"), SHORT_DISPLAY_WITH_TIME("dd/MM/yyyy HH:mm:ss z");
@@ -78,6 +80,12 @@ public class DateHelper {
 		calendar.add(Calendar.MONTH, 1);
 		long timeInAMonth = calendar.getTimeInMillis();
 		return timeInAMonth;
+	}
+
+	public static LocalDateTime toLocalDateTime(Date date) {
+		return date.toInstant()
+				.atZone(ZoneId.systemDefault())
+				.toLocalDateTime();
 	}
 
 }

@@ -5,9 +5,16 @@ import javax.persistence.*;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "authorities")
 @Cacheable
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role extends Translation implements GrantedAuthority {
 	private static final long serialVersionUID = -8680736152957783557L;
 

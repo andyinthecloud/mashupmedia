@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class UserPayload {
+public class SecurityPayload {
     private final String token;
     private final String username;
     private final String message;

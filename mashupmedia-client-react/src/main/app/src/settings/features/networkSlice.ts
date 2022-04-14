@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { PayloadAction, PayloadState, RootState, SecurePayload } from "../../redux/store"
+import { PayloadAction } from "../../redux/actions"
+import type { PayloadState, SecurePayload } from "../../redux/store"
 import { restHeaders } from "../../utils/httpUtils"
 
 export type NetworkProxyPayload = {
@@ -13,7 +14,7 @@ export type NetworkProxyPayload = {
 const initialState: PayloadState<NetworkProxyPayload> = {
     payload: {
         enabled: false,
-        url: 'andy',
+        url: '',
         port: 0,
         username: '',
         password: ''
@@ -55,7 +56,7 @@ export const postNetworkProxy = createAsyncThunk(
     }
 )
 
-export const networkProxySlice = createSlice({
+const networkProxySlice = createSlice({
     name: 'networkProxy',
     initialState,
     reducers: {
@@ -69,7 +70,7 @@ export const networkProxySlice = createSlice({
                 state.loading = true
                 state.error = null
                 state.payload = action.payload
-                state.payloadAction = PayloadAction.GOT
+                state.payloadAction = PayloadAction.RETRIEVED
             })
         builder.addCase(
             postNetworkProxy.fulfilled,
@@ -102,6 +103,6 @@ export const networkProxySlice = createSlice({
     }
 })
 
-export const selectProxy = (state: RootState) => state.networkProxy.payload
+// export const selectProxy = (state: RootState) => state.networkProxy.payload
 
 export default networkProxySlice

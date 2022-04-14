@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { PayloadState } from "../../redux/store";
+import type { PayloadState } from "../../redux/store";
 import { restHeaders } from "../../utils/httpUtils";
 
 export type UserLogInPayload = {
@@ -35,7 +35,7 @@ export const logIn = createAsyncThunk<UserPayload, UserLogInPayload>(
     }
 )
 
-export const loggedInUserSlice = createSlice({
+const loggedInUserSlice = createSlice({
     name: 'loggedInUser',
     initialState,
     reducers: {

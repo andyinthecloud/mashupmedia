@@ -3,8 +3,11 @@ import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import AlertBox, { AlertBoxType } from "../components/AlertBox";
 import { useAppDispatch } from "../redux/hooks";
-import { PayloadAction, RootState, SecurePayload } from "../redux/store";
-import { getNetworkProxy, NetworkProxyPayload, postNetworkProxy } from "./features/networkSlice";
+import { PayloadAction } from "../redux/actions";
+import type { RootState, SecurePayload } from "../redux/store";
+
+import { getNetworkProxy, postNetworkProxy } from "./features/networkSlice";
+import type {NetworkProxyPayload } from "./features/networkSlice";
 
 
 const NetworkForm = () => {
@@ -15,6 +18,7 @@ const NetworkForm = () => {
     useEffect(() => {
         dispatch(
             getNetworkProxy(userToken)
+            // getMyAccount(userToken)
         )
 
     }, [dispatch, userToken])

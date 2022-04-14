@@ -1,19 +1,20 @@
 import { Button, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AlertBox, { AlertBoxType } from "../components/AlertBox";
 import logo from "../logo.png";
 import { useAppDispatch } from "../redux/hooks";
-import { RootState } from "../redux/store";
-import { logIn, UserLogInPayload } from "./features/loggedInUserSlice";
+import type { RootState } from "../redux/store";
+import { logIn } from "./features/loggedInUserSlice";
+import type { UserLogInPayload } from "./features/loggedInUserSlice";
 
 
 const LogIn = () => {
 
     const dispatch = useAppDispatch();
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [props, setProps] = useState<UserLogInPayload>({
         username: '',
@@ -43,7 +44,7 @@ const LogIn = () => {
 
     useEffect(() => {
         if (logInState.payload) {
-            history.push('/');
+            navigate('/');
         }
     })
 

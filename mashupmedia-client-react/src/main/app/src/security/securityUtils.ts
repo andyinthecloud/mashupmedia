@@ -1,5 +1,4 @@
-import { PayloadState } from "../redux/store";
-import { UserPayload } from "./features/loggedInUserSlice";
+import type { UserPayload } from "./features/loggedInUserSlice";
 
 const TOKEN_KEY = 'jwt';
 
