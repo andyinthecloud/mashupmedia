@@ -5,6 +5,7 @@ import org.mashupmedia.security.CustomUserDetailsService;
 import org.mashupmedia.security.JWTAuthenticationFilter;
 import org.mashupmedia.security.JWTAuthorizationFilter;
 import org.mashupmedia.security.SecurityConstants;
+import org.mashupmedia.service.AdminManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -33,6 +34,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private AdminManager adminManager;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -91,7 +95,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), this.objectMapper))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager(), adminManager))
                 // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

@@ -51,24 +51,30 @@ const MyAccount = () => {
 
             <div className="new-line">
                 <Box sx={{ color: 'primary.main' }}>
-                <FormGroup>
-                    <FormControlLabel control={<Checkbox defaultChecked />} label="Administrator" />
-                    <FormControlLabel disabled control={<Checkbox />} label="Enabled" />
-                </FormGroup>
+                    <FormGroup>
+                        <FormControlLabel control={<Checkbox defaultChecked />} label="Administrator" />
+                        <FormControlLabel disabled control={<Checkbox />} label="Enabled" />
+                    </FormGroup>
                 </Box>
             </div>
 
             <div className="new-line">
-                <TextField name="username" label="Username" 
+                <TextField
+                    name="username"
+                    label="Username"
+                    value={props.username}
+                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                     fullWidth={true} />
             </div>
 
             <div className="new-line">
-                <TextField name="name" label="Name" 
+                <TextField
+                    name="name"
+                    label="Name"
+                    value={props.name}
+                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                     fullWidth={true} />
             </div>
-
-
 
         </form>
     )

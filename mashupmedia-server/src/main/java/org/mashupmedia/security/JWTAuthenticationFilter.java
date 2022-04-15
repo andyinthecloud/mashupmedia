@@ -64,14 +64,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        User user = (User) authentication.getPrincipal();
-
-
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
-        HttpSession httpSession = request.getSession(true);
-        httpSession.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext);
-
         String token = JWT.create()
                 .withSubject(((User) authentication.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
@@ -80,7 +72,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         SecurityPayload userPayload = SecurityPayload
                 .builder()
                 .token(token)
-                .username(user.getUsername())
+                .username(authentication.getName())
                 .build();
 
         response.getWriter().write(objectMapper.writeValueAsString(userPayload));
