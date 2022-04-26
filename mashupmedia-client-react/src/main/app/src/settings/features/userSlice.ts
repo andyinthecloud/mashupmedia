@@ -3,11 +3,29 @@ import { PayloadAction } from "../../redux/actions";
 import type { PayloadState } from "../../redux/store"
 import { restHeaders } from "../../utils/httpUtils"
 
+
+export type RolePayload = {
+    idName: string;
+    name: string;    
+}
+
+export type GroupPayload = {
+    id: number;
+    name: string;    
+}
+
+
 export type UserPayload = {
     admin: boolean;
     enabled: boolean;
+    editable: boolean;
     username: string;
     name: string;
+    createdOn?: string | null;
+    updatedOn?: string | null;
+    rolePayloads?: RolePayload[];
+    groupPayloads?: GroupPayload[];
+
 }
 
 const userUrl: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + '/api/admin/user/'
@@ -32,8 +50,13 @@ const initialState: PayloadState<UserPayload> = {
     payload: {
         admin: false,
         enabled: false,
+        editable: false,
         username: '',
-        name: ''
+        name: '',
+        createdOn: null,
+        updatedOn: null,
+        rolePayloads: [],
+        groupPayloads: []
     },
     loading: false,
     error: null

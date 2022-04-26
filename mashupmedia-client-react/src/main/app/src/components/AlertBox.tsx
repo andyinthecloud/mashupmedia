@@ -6,7 +6,7 @@ export enum AlertBoxType {
 }
 
 export type AlertBoxProperties = {
-    message: string;
+    message: string
     alertType: AlertBoxType
     isShow: boolean
 }

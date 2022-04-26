@@ -1,9 +1,11 @@
-import { Box, Checkbox, FormControlLabel, FormGroup, TextField } from "@mui/material"
+import { Box, Button, Checkbox, FormControlLabel, FormGroup, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+import LineItems, { LineItemPayload } from "../components/LineItems"
 import { useAppDispatch } from "../redux/hooks"
 import type { RootState } from "../redux/store"
-import { getMyAccount, UserPayload } from "./features/userSlice"
+import { displayDateTime } from "../utils/dateUtils"
+import { getMyAccount, UserPayload, RolePayload } from "./features/userSlice"
 
 const MyAccount = () => {
 
@@ -22,8 +24,10 @@ const MyAccount = () => {
     const [props, setProps] = useState<UserPayload>({
         admin: false,
         enabled: false,
+        editable: false,
         name: '',
         username: ''
+
     })
 
     useEffect(() => {
@@ -41,8 +45,29 @@ const MyAccount = () => {
         }))
     }
 
-    const isAdministrator = () => true
-    const isMyAccount = () => true
+    const isEditable = (): boolean => (!props.editable)
+
+    const toLineItemPayloadArrayFromRolePayload = (rolePayloadArray: RolePayload[] | undefined): LineItemPayload[] => {
+
+
+        const lineItemPayloadArray: LineItemPayload[] = []
+
+        if (rolePayloadArray === undefined || !rolePayloadArray.length) {
+            return lineItemPayloadArray;
+        }
+
+        rolePayloadArray.forEach(rolePayload => {
+            lineItemPayloadArray.push({
+                id: rolePayload.idName,
+                name: rolePayload.name
+            })
+        });
+
+        return lineItemPayloadArray;
+
+
+
+    }
 
     return (
         <form>
@@ -52,8 +77,24 @@ const MyAccount = () => {
             <div className="new-line">
                 <Box sx={{ color: 'primary.main' }}>
                     <FormGroup>
-                        <FormControlLabel control={<Checkbox defaultChecked />} label="Administrator" />
-                        <FormControlLabel disabled control={<Checkbox />} label="Enabled" />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    disabled={isEditable()}
+                                    name="admin"
+                                    checked={props.admin}
+                                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.checked)}
+                                />}
+                            label="Administrator" />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    disabled={isEditable()}
+                                    name="enabled"
+                                    checked={props.enabled}
+                                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.checked)}
+                                />}
+                            label="Enabled" />
                     </FormGroup>
                 </Box>
             </div>
@@ -62,6 +103,7 @@ const MyAccount = () => {
                 <TextField
                     name="username"
                     label="Username"
+                    disabled={isEditable()}
                     value={props.username}
                     onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                     fullWidth={true} />
@@ -71,10 +113,49 @@ const MyAccount = () => {
                 <TextField
                     name="name"
                     label="Name"
+                    disabled={isEditable()}
                     value={props.name}
                     onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                     fullWidth={true} />
             </div>
+
+            {props.createdOn &&
+                <div className="new-line">
+                    <TextField
+                        label="Created on"
+                        disabled={true}
+                        value={displayDateTime(props.createdOn)}
+                        fullWidth={true} />
+                </div>
+            }
+
+            {props.updatedOn &&
+                <div className="new-line">
+                    <TextField
+                        label="Updated on"
+                        disabled={true}
+                        value={displayDateTime(props.updatedOn)}
+                        fullWidth={true} />
+                </div>
+            }
+
+            <div className="new-line">
+                <h2>Roles</h2>
+                <LineItems isDisabled={props.admin} lineItemPayloads={toLineItemPayloadArrayFromRolePayload(props.rolePayloads)}></LineItems>
+            </div>
+
+            <div className="new-line">
+                <Button variant="outlined" type="button" style={{ marginRight: "1em" }}>
+                    Cancel
+                </Button>
+
+                <Button variant="outlined" type="submit">
+                    Save
+                </Button>
+            </div>
+
+
+            <pre> {JSON.stringify(props)}</pre>
 
         </form>
     )
