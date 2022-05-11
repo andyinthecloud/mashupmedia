@@ -5,7 +5,8 @@ import LineItems, { LineItemPayload } from "../components/LineItems"
 import { useAppDispatch } from "../redux/hooks"
 import type { RootState } from "../redux/store"
 import { displayDateTime } from "../utils/dateUtils"
-import { getMyAccount, UserPayload, RolePayload } from "./features/userSlice"
+import { fetchGroupPayloads, fetchRolePayloads, GroupPayload, RolePayload } from "./ajax/metaCalls"
+import { getMyAccount, UserPayload } from "./features/userSlice"
 
 const MyAccount = () => {
 
@@ -19,7 +20,7 @@ const MyAccount = () => {
     }, [userToken, dispatch])
 
     const userPayload = useSelector((state: RootState) => state.user.payload)
-    const userPayloadAction = useSelector((state: RootState) => state.user.payloadAction)
+    // const userPayloadAction = useSelector((state: RootState) => state.user.payloadAction)
 
     const [props, setProps] = useState<UserPayload>({
         admin: false,
@@ -37,6 +38,27 @@ const MyAccount = () => {
         }))
 
     }, [userPayload])
+
+
+    const [groupPayloads, setGroupPayloads] = useState<GroupPayload[]>([])
+    const [rolePayloads, setRolePayloads] = useState<RolePayload[]>([])
+
+    useEffect(() => {
+
+        fetchGroupPayloads(userToken).then(response => {
+            if (response.parsedBody !== undefined) {
+                setGroupPayloads(response.parsedBody)
+            }
+        })
+
+        fetchRolePayloads(userToken).then(response => {
+            if (response.parsedBody !== undefined) {
+                setRolePayloads(response.parsedBody)
+            }
+        })
+
+    }, [])
+
 
     const setStateValue = (name: string, value: any): void => {
         setProps(p => ({
@@ -156,6 +178,9 @@ const MyAccount = () => {
 
 
             <pre> {JSON.stringify(props)}</pre>
+
+            <pre> {JSON.stringify(groupPayloads)}</pre>
+            <pre> {JSON.stringify(rolePayloads)}</pre>
 
         </form>
     )

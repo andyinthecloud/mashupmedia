@@ -51,6 +51,15 @@ public class AdminHelper {
 		
 		return false;
 	}
+
+	public static boolean isAdministrator() {
+		User user = getLoggedInUser();
+		if (user == null) {
+			return false;
+		}
+		
+		return isAdministrator(user);
+	}
 	
 	public static User getLoggedInUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -77,6 +86,8 @@ public class AdminHelper {
 		Set<Group> userGroups = user.getGroups();
 		return userGroups.stream().anyMatch(groups::contains);
 	}
+
+
 
 
 

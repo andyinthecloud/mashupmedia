@@ -10,6 +10,7 @@ import org.mashupmedia.dto.admin.UserPayload;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,57 +18,75 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper implements DomainMapper<User, UserPayload> {
 
-    @Autowired
-    private GroupMapper groupMapper;
+        @Autowired
+        private GroupMapper groupMapper;
 
-    @Autowired
-    private RoleMapper roleMapper;
+        @Autowired
+        private RoleMapper roleMapper;
 
-    @Override
-    public UserPayload toDto(User domain) {
+        @Override
+        public UserPayload toDto(User domain) {
 
-        List<GroupPayload> groupPayloads = domain.getGroups().stream()
-                .map(groupMapper::toDto)
-                .collect(Collectors.toList());
+                UserPayload userPayload = UserPayload.builder()
+                                .name(domain.getName())
+                                .username(domain.getUsername())
+                                .editable(domain.isEditable())
+                                .enabled(domain.isEnabled())
+                                .createdOn(DateHelper.toLocalDateTime(domain.getCreatedOn()))
+                                .updatedOn(DateHelper.toLocalDateTime(domain.getUpdatedOn()))
+                                .build();
 
-        List<RolePayload> rolePayloads = domain.getRoles().stream()
-                .map(roleMapper::toDto)
-                .collect(Collectors.toList());
+                if (!AdminHelper.isAdministrator()) {
+                        return userPayload;
+                }
 
-        return UserPayload.builder()
-                .name(domain.getName())
-                .username(domain.getUsername())
-                .editable(domain.isEditable())
-                .enabled(domain.isEnabled())
-                .system(domain.isSystem())
-                .groupPayloads(groupPayloads)
-                .rolePayloads(rolePayloads)
-                .createdOn(DateHelper.toLocalDateTime(domain.getCreatedOn()))
-                .updatedOn(DateHelper.toLocalDateTime(domain.getUpdatedOn()))
-                .build();
-    }
+                List<GroupPayload> groupPayloads = domain.getGroups().stream()
+                                .map(groupMapper::toDto)
+                                .collect(Collectors.toList());
 
-    @Override
-    public User toDomain(UserPayload payload) {
+                List<RolePayload> rolePayloads = domain.getRoles().stream()
+                                .map(roleMapper::toDto)
+                                .collect(Collectors.toList());
 
-        Set<Group> groups = payload.getGroupPayloads().stream()
-                .map(groupMapper::toDomain)
-                .collect(Collectors.toSet());
+                return userPayload.toBuilder()
+                                .system(domain.isSystem())
+                                .groupPayloads(groupPayloads)
+                                .rolePayloads(rolePayloads)
+                                .build();
+        }
 
-        Set<Role> roles = payload.getRolePayloads().stream()
-                .map(roleMapper::toDomain)
-                .collect(Collectors.toSet());
+        @Override
+        public User toDomain(UserPayload payload) {
 
-        return User.builder()
-                .username(payload.getUsername())
-                .name(payload.getName())
-                .enabled(payload.isEnabled())
-                .editable(payload.isEditable())
-                .system(payload.isSystem())
-                .groups(groups)
-                .roles(roles)
-                .build();
+                User user = User.builder()
+                                .username(payload.getUsername())
+                                .name(payload.getName())
+                                .enabled(payload.isEnabled())
+                                .editable(payload.isEditable())
+                                .build();
 
-    }
+                if (!AdminHelper.isAdministrator()) {
+                        return user;
+                }
+
+                Set<Group> groups = payload.getGroupPayloads().stream()
+                                .map(groupMapper::toDomain)
+                                .collect(Collectors.toSet());
+
+                Set<Role> roles = payload.getRolePayloads().stream()
+                                .map(roleMapper::toDomain)
+                                .collect(Collectors.toSet());
+
+                return User.builder()
+                                .username(payload.getUsername())
+                                .name(payload.getName())
+                                .enabled(payload.isEnabled())
+                                .editable(payload.isEditable())
+                                .system(payload.isSystem())
+                                .groups(groups)
+                                .roles(roles)
+                                .build();
+
+        }
 
 }

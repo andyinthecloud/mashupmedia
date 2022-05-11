@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "users")
 @Cacheable
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {

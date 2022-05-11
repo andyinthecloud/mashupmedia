@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.dao.GroupDao;
@@ -72,6 +74,7 @@ public class AdminManagerImpl implements AdminManager {
 	}
 
 	@Override
+	@RolesAllowed("ROLE_ADMINISTRATOR")
 	public void saveUser(User user) {
 		Date date = new Date();
 		long userId = user.getId();

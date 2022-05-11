@@ -2,17 +2,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { PayloadAction } from "../../redux/actions";
 import type { PayloadState } from "../../redux/store"
 import { restHeaders } from "../../utils/httpUtils"
+import { GroupPayload, RolePayload } from "../ajax/metaCalls";
 
 
-export type RolePayload = {
-    idName: string;
-    name: string;    
-}
 
-export type GroupPayload = {
-    id: number;
-    name: string;    
-}
 
 
 export type UserPayload = {

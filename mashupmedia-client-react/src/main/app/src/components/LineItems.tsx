@@ -9,6 +9,7 @@ export type LineItemPayload = {
 
 
 export type LineItemPayloadArray = {
+    isDisabled: boolean
     lineItemPayloads: LineItemPayload[]
 }
 
@@ -17,7 +18,7 @@ const LineItems = (props: LineItemPayloadArray) => {
     return (
         <ul>
             {props.lineItemPayloads.map(function (lineItemPayload) {
-                lineItemPayload.isDisabled = true
+                lineItemPayload.isDisabled = props.isDisabled
 
                 return (
                     <LineItem key={lineItemPayload.id} {...lineItemPayload} ></LineItem>

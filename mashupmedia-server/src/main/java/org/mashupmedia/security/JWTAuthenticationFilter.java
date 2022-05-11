@@ -7,7 +7,6 @@ import java.util.Date;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -21,11 +20,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import static  org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
-
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -40,7 +35,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
-                                                HttpServletResponse response) throws AuthenticationException {
+            HttpServletResponse response) throws AuthenticationException {
         try {
             LoginPayload loginPayload = new ObjectMapper()
                     .readValue(request.getInputStream(), LoginPayload.class);
@@ -49,8 +44,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     new UsernamePasswordAuthenticationToken(
                             loginPayload.getUsername(),
                             loginPayload.getPassword(),
-                            new ArrayList<>())
-            );
+                            new ArrayList<>()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -58,9 +52,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            FilterChain chain,
-                                            Authentication authentication) throws IOException {
+            HttpServletResponse response,
+            FilterChain chain,
+            Authentication authentication) throws IOException {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
