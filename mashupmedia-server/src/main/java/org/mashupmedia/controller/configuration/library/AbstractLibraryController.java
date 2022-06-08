@@ -18,6 +18,7 @@ import org.mashupmedia.validator.LibraryPageValidator;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.LibraryPage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,15 +37,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public abstract class AbstractLibraryController extends BaseController {
 
 	@Autowired
+	@Lazy
 	protected AdminManager adminManager;
 
 	@Autowired
+	@Lazy
 	protected LibraryManager libraryManager;
 
 	@Autowired
+	@Lazy
 	protected GroupEditor groupEditor;
 
 	@Autowired
+	@Lazy
 	protected LibraryUpdateTaskManager libraryUpdateTaskManager;
 	
 

@@ -21,6 +21,7 @@ import org.mashupmedia.web.remote.RemoteImage.RemoteImageType;
 import org.mashupmedia.web.remote.RemoteMediaMetaItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +40,7 @@ public class VideoController extends BaseController {
 	private VideoManager videoManager;
 
 	@Autowired
+	@Lazy
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 
 	@Autowired

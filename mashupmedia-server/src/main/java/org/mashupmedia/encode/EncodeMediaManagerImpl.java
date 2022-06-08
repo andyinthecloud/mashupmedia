@@ -27,6 +27,7 @@ import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;

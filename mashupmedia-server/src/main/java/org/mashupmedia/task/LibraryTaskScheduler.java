@@ -9,6 +9,7 @@ import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
 import org.mashupmedia.service.LibraryWatchManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,12 +17,15 @@ import org.springframework.stereotype.Component;
 public class LibraryTaskScheduler {
 	
 	@Autowired
+	@Lazy
 	private LibraryManager libraryManager;
 	
 	@Autowired
+	@Lazy
 	private LibraryUpdateManager libraryUpdateManager;
 	
 	@Autowired
+	@Lazy
 	private LibraryWatchManager libraryWatchManager;
 	
 	

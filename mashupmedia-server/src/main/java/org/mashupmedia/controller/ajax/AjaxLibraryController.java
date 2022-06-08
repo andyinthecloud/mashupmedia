@@ -34,6 +34,7 @@ import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.WebHelper.WebContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,7 @@ import org.springframework.web.servlet.View;
 public class AjaxLibraryController {
 
 	@Autowired
+	@Lazy
 	private LibraryManager libraryManager;
 
 	@RequestMapping(value = "/add-remote-share", method = RequestMethod.POST)

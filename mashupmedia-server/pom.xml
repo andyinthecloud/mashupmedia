@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>3.18.2</version>
+            <version>3.19.2</version>
         </dependency>
 
 
@@ -99,7 +99,8 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
-            <version>5.2.2.RELEASE</version>
+            <!-- <version>5.2.2.RELEASE</version> -->
+            <version>5.7.1</version>
         </dependency>
 
 
@@ -107,13 +108,13 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.5.10</version>
-            <exclusions>
+            <version>1.6.9</version>
+            <!-- <exclusions>
                 <exclusion>
                     <groupId>org.apache.commons</groupId>
                     <artifactId>commons-lang3</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions> -->
         </dependency>
 
 
@@ -127,7 +128,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-search-orm</artifactId>
-            <version>5.11.5.Final</version>
+            <version>5.11.10.Final</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.hibernate.common</groupId>

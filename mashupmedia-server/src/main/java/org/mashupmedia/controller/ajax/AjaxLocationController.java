@@ -8,6 +8,7 @@ import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.ConnectionManager;
 import org.mashupmedia.util.MessageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ public class AjaxLocationController {
 	private ConfigurationManager configurationManager;
 	
 	@Autowired
+	@Lazy
 	private FfMpegManager encodeManager;
 
 	@RequestMapping(value = "/ajax/check-folder-location", method = RequestMethod.POST)

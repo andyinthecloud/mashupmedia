@@ -24,11 +24,13 @@ import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Lazy(true)
 @Transactional
 @Slf4j
 public class AlbumArtManagerImpl implements AlbumArtManager {

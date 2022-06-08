@@ -23,12 +23,14 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.service.LibraryManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LibraryEditor extends PropertyEditorSupport {
 
 	@Autowired
+	@Lazy
 	private LibraryManager libraryManager;
 
 	@Override

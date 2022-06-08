@@ -9,6 +9,7 @@ import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
 import org.mashupmedia.service.LibraryWatchManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 

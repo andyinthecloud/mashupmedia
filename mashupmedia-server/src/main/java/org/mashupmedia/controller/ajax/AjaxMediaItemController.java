@@ -32,6 +32,7 @@ import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +47,7 @@ public class AjaxMediaItemController {
 	public static final String MODEL_KEY_IS_SUCCESSFUL = "isSuccessful";
 
 	@Autowired
+	@Lazy
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 
 	@Autowired

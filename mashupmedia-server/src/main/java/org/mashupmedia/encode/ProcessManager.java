@@ -31,6 +31,7 @@ import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,7 @@ public class ProcessManager {
 	private ConfigurationManager configurationManager;
 
 	@Autowired
+	@Lazy
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 
 	private List<ProcessQueueItem> processQueueItems = new CopyOnWriteArrayList<ProcessQueueItem>();

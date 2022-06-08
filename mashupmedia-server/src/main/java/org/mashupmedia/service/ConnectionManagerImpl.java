@@ -27,11 +27,13 @@ import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.StringHelper.Encoding;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Lazy
 @Transactional
 @Slf4j
 public class ConnectionManagerImpl implements ConnectionManager {

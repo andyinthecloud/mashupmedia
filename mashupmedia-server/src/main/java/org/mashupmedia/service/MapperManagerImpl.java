@@ -29,7 +29,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +41,11 @@ import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.xml.PartialUnmarshaller;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -52,10 +55,11 @@ public class MapperManagerImpl implements MapperManager {
 	private Marshaller marshaller;
 
 	@Autowired
+	@Lazy
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 
-@Autowired
-private ObjectMapper objectMapper;
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	protected Marshaller getMarshaller() throws JAXBException {
 		if (marshaller != null) {
@@ -73,8 +77,8 @@ private ObjectMapper objectMapper;
 		File file = FileHelper.getLibraryXmlFile(libraryId);
 		FileWriter writer = new FileWriter(file, false);
 		writer.write("<?xml version=\"1.0\" ?>");
-		
-		writer.write("<library type=\""+libraryType.name().toLowerCase()+"\">");
+
+		writer.write("<library type=\"" + libraryType.name().toLowerCase() + "\">");
 		writer.close();
 	}
 
@@ -145,7 +149,7 @@ private ObjectMapper objectMapper;
 
 		PartialUnmarshaller<Song> partialUnmarshaller = new PartialUnmarshaller<Song>(inputStream, Song.class);
 
-		Date date = new Date();		
+		Date date = new Date();
 		while (partialUnmarshaller.hasNext()) {
 			Song song = partialUnmarshaller.next();
 			String title = StringEscapeUtils.unescapeXml(song.getTitle());

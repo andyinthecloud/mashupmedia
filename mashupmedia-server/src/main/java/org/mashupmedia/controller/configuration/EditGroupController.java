@@ -35,6 +35,7 @@ import org.mashupmedia.validator.EditGroupPageValidator;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.EditGroupPage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -56,9 +57,11 @@ public class EditGroupController extends BaseController {
 	private AdminManager adminManager;
 
 	@Autowired
+	@Lazy
 	private LibraryManager libraryManager;
 
 	@Autowired
+	@Lazy
 	private LibraryEditor libraryEditor;
 
 	@Override

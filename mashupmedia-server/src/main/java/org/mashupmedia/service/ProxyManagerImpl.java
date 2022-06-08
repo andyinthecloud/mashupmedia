@@ -13,10 +13,12 @@ import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.proxy.ProxyFile;
 import org.mashupmedia.web.proxy.ProxyTextFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Lazy(true)
 @Transactional
 public class ProxyManagerImpl implements ProxyManager{
 

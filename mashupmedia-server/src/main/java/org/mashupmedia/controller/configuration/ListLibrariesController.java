@@ -10,6 +10,7 @@ import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.ListLibrariesPage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ public class ListLibrariesController extends BaseController {
 	private final static String CHOOSE_LIBRARY_PAGE_PATH = "configuration.choose-library-type";
 
 	@Autowired
+	@Lazy
 	private LibraryManager libraryManager;
 
 	@Override

@@ -44,6 +44,7 @@ import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.StringHelper.Encoding;
 import org.mashupmedia.util.WebHelper.WebContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -66,15 +67,19 @@ import lombok.extern.slf4j.Slf4j;
 public class RemoteLibraryController {
 
 	@Autowired
+	@Lazy
 	private LibraryManager libraryManager;
 
 	@Autowired
+	@Lazy
 	private MediaManager mediaManager;
 
 	@Autowired
+	@Lazy
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
+	@Lazy
 	private AdminManager adminManager;
 
 	@RequestMapping(value = "/stream/{uniqueName}/{mediaItemId}", method = { RequestMethod.GET, RequestMethod.HEAD })

@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.task.LibraryUpdateTaskManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class StartupService {
 
 	@Autowired
+	@Lazy
 	private LibraryUpdateTaskManager libraryUpdateTaskManager;		
 
 	@EventListener

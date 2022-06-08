@@ -36,6 +36,7 @@ import org.mashupmedia.validator.EditRemoteLibraryPageValidator;
 import org.mashupmedia.web.Breadcrumb;
 import org.mashupmedia.web.page.EditRemoteLibraryPage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -54,18 +55,21 @@ public class EditRemoteLibraryController extends BaseController {
 	private AdminManager adminManager;
 
 	@Autowired
+	@Lazy
 	private LibraryManager libraryManager;
 
 	@Autowired
 	private ConnectionManager connectionManager;
 
 	@Autowired
+	@Lazy
 	private LibraryUpdateTaskManager libraryUpdateTaskManager;
 
 	@Autowired
 	private GroupEditor groupEditor;
 	
 	@Autowired
+	@Lazy
 	private EditRemoteLibraryPageValidator editRemoteLibraryPageValidator;
 
 	@Override

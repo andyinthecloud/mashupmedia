@@ -1,10 +1,11 @@
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import LineItems, { LineItemPayload } from "../components/LineItems"
+import Checkboxes, { CheckboxHandlerPayload, CheckboxPayload } from "../components/Checkboxes"
 import { useAppDispatch } from "../redux/hooks"
 import type { RootState } from "../redux/store"
 import { displayDateTime } from "../utils/dateUtils"
+import { createGroupCheckboxPayloads, createRoleCheckboxPayloads, toSelectedGroupValues, toSelectedRoleValues } from "../utils/domainUtils"
 import { fetchGroupPayloads, fetchRolePayloads, GroupPayload, RolePayload } from "./ajax/metaCalls"
 import { getMyAccount, UserPayload } from "./features/userSlice"
 
@@ -69,27 +70,31 @@ const MyAccount = () => {
 
     const isEditable = (): boolean => (!props.editable)
 
-    const toLineItemPayloadArrayFromRolePayload = (rolePayloadArray: RolePayload[] | undefined): LineItemPayload[] => {
 
 
-        const lineItemPayloadArray: LineItemPayload[] = []
-
-        if (rolePayloadArray === undefined || !rolePayloadArray.length) {
-            return lineItemPayloadArray;
-        }
-
-        rolePayloadArray.forEach(rolePayload => {
-            lineItemPayloadArray.push({
-                id: rolePayload.idName,
-                name: rolePayload.name
+    const handleRolesChange = (roleValues: string[]) => {
+        const rolePayLoads: RolePayload[] = [];
+        roleValues.map(roleValue => {
+            rolePayLoads.push({
+                idName: roleValue,
+                name: ''
             })
-        });
-
-        return lineItemPayloadArray;
-
-
-
+        })
+        setStateValue('rolePayloads', rolePayLoads)
     }
+
+    const handleGroupsChange = (roleValues: string[]) => {
+        const groupPayLoads: GroupPayload[] = [];
+        roleValues.map(roleValue => {
+            groupPayLoads.push({
+                id: +roleValue,
+                name: ''
+            })
+        })
+        setStateValue('groupPayloads', groupPayLoads)
+    }
+
+
 
     return (
         <form>
@@ -163,7 +168,22 @@ const MyAccount = () => {
 
             <div className="new-line">
                 <h2>Roles</h2>
-                <LineItems isDisabled={props.admin} lineItemPayloads={toLineItemPayloadArrayFromRolePayload(props.rolePayloads)}></LineItems>
+                <Checkboxes
+                    isDisabled={props.admin} 
+                    referenceItems={createRoleCheckboxPayloads(rolePayloads)}
+                    selectedValues={toSelectedRoleValues(props.rolePayloads)}
+                    onChange={handleRolesChange}
+                />
+            </div>
+
+            <div className="new-line">
+                <h2>Groups</h2>
+                <Checkboxes
+                    isDisabled={props.admin} 
+                    referenceItems={createGroupCheckboxPayloads(groupPayloads)}
+                    selectedValues={toSelectedGroupValues(props.groupPayloads)}
+                    onChange={handleGroupsChange}
+                />
             </div>
 
             <div className="new-line">

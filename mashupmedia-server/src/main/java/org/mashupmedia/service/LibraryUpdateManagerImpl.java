@@ -31,7 +31,9 @@ import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.util.LibraryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -42,24 +44,30 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	private final int LIBRARY_UPDATE_TIMEOUT_HOURS = 1;
 
 	@Autowired
+	@Lazy
 	private MusicLibraryUpdateManager musicLibraryUpdateManager;
 
 	@Autowired
+	@Lazy
 	private VideoLibraryUpdateManager videoLibraryUpdateManager;
 
 	@Autowired
+	@Lazy
 	private PhotoLibraryUpdateManager photoLibraryUpdateManager;
 
 //	@Autowired
 //	private MapperManager mapperManager;
 
 	@Autowired
+	@Lazy
 	private LibraryManager libraryManager;
 
 	@Autowired
+	@Lazy
 	private ConfigurationManager configurationManager;
 
 	@Autowired
+	@Lazy
 	private LibraryWatchManager libraryWatchManager;
 
 	@Override

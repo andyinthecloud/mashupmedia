@@ -26,6 +26,7 @@ import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	private LibraryDao libraryDao;
 
 	@Autowired
+	@Lazy
 	private LibraryManager libraryManager;
 
 	private final int BATCH_INSERT_ITEMS = 20;
