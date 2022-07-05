@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.mashupmedia.dto.admin.GroupPayload;
-import org.mashupmedia.dto.admin.RolePayload;
 import org.mashupmedia.dto.admin.UserPayload;
+import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
@@ -40,16 +39,16 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                         return userPayload;
                 }
 
-                List<GroupPayload> groupPayloads = domain.getGroups().stream()
+                List<NameValuePayload<Long>> groupPayloads = domain.getGroups().stream()
                                 .map(groupMapper::toDto)
                                 .collect(Collectors.toList());
 
-                List<RolePayload> rolePayloads = domain.getRoles().stream()
+                List<NameValuePayload<String>> rolePayloads = domain.getRoles().stream()
                                 .map(roleMapper::toDto)
                                 .collect(Collectors.toList());
 
                 return userPayload.toBuilder()
-                                .system(domain.isSystem())
+                                .system(domain.isSystem())                                
                                 .groupPayloads(groupPayloads)
                                 .rolePayloads(rolePayloads)
                                 .build();

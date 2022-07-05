@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @RequestMapping("/api/admin/user")
 public class UserController {
@@ -24,9 +23,6 @@ public class UserController {
 
     @Autowired
     private AdminManager adminManager;
-
-    
-
     
     @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserPayload> getUser() {
@@ -38,8 +34,6 @@ public class UserController {
 
         return ResponseEntity.ok(userMapper.toDto(user));
     }
-
-
     
     @PutMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserPayload> saveUser(@RequestBody UserPayload userPayload) {

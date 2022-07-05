@@ -1,27 +1,27 @@
 package org.mashupmedia.mapper;
 
-import org.mashupmedia.dto.admin.GroupPayload;
+import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.model.Group;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GroupMapper implements DomainMapper<Group, GroupPayload> {
+public class GroupMapper implements DomainMapper<Group, NameValuePayload<Long>> {
 
     @Override
-    public GroupPayload toDto(Group domain) {
-        return GroupPayload
-                .builder()
-                .id(domain.getId())
+    public NameValuePayload<Long> toDto(Group domain) {
+        return NameValuePayload
+                .<Long>builder()
                 .name(domain.getName())
+                .value(domain.getId())
                 .build();
     }
 
     @Override
-    public Group toDomain(GroupPayload payload) {
+    public Group toDomain(NameValuePayload<Long> payload) {
         return Group.builder()
-        .id(payload.getId())
-        .name(payload.getName())
-        .build();
+                .id(payload.getValue())
+                .name(payload.getName())
+                .build();
     }
 
 }

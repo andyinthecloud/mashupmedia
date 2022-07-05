@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -60,42 +62,49 @@ public class AdminManagerImpl implements AdminManager {
 		if (user == null) {
 			return;
 		}
-		
+
 		long playlistMediaItemId = user.getPlaylistMediaItemId();
 		PlaylistMediaItem playlistMediaItem = playlistDao.getPlaylistMediaItem(playlistMediaItemId);
 		user.setPlaylistMediaItem(playlistMediaItem);
 	}
-	
-	
-	
+
 	@Override
 	public User getUser(long userId) {
 		User user = userDao.getUser(userId);
 		return user;
 	}
 
+	private long getUserId(String username) {
+		User user = userDao.getUser(username);
+		return user != null ? user.getId() : 0;
+	}
+
+
 	@Override
 	@RolesAllowed("ROLE_ADMINISTRATOR")
 	public void saveUser(User user) {
 		Date date = new Date();
-		long userId = user.getId();
 		String username = user.getUsername();
-		String password = user.getPassword();		
+		String password = user.getPassword();
+		long userId = getUserId(username);
+		user.setId(userId);
 
-		// All users should have the user role to access the application
-		Set<Role> roles = user.getRoles();
-		if (roles == null) {
-			roles = new HashSet<Role>();
-		}
-		Role userRole = getRole(AdminHelper.ROLE_USER_IDNAME);
-		roles.add(userRole);
+		Set<Role> roles = user.getRoles().stream()
+				.map(r -> getRole(r.getIdName()))
+				.collect(Collectors.toSet());
 		user.setRoles(roles);
+
+		Set<Group> groups = user.getGroups().stream()
+				.map(g -> getGroup(g.getId()))
+				.collect(Collectors.toSet());
+		user.setGroups(groups);
 
 		if (userId == 0) {
 			user.setCreatedOn(date);
 		} else {
 			User savedUser = getUser(userId);
-			user.setPassword(passwordEncoder.encode(savedUser.getPassword()));
+			user.setCreatedOn(savedUser.getCreatedOn());
+			user.setPassword(savedUser.getPassword());
 			user.setPlaylistMediaItem(savedUser.getPlaylistMediaItem());
 		}
 
@@ -108,14 +117,13 @@ public class AdminManagerImpl implements AdminManager {
 		}
 
 	}
-	
+
 	@Override
 	public void updateUser(User user) {
 		if (user.getId() == 0) {
 			throw new MashupMediaRuntimeException("Can only update an existing user.");
 		}
-		
-		
+
 		PlaylistMediaItem playlistMediaItem = user.getPlaylistMediaItem();
 		long playlistMediaItemId = playlistMediaItem.getId();
 		user.setPlaylistMediaItemId(playlistMediaItemId);
@@ -151,7 +159,7 @@ public class AdminManagerImpl implements AdminManager {
 			throw new MashupMediaRuntimeException("Could not find user with username: " + username);
 		}
 
-//		String encodedPassword = EncryptionHelper.encodePassword(password);
+		// String encodedPassword = EncryptionHelper.encodePassword(password);
 		String encodedPassword = passwordEncoder.encode(password);
 		user.setPassword(encodedPassword);
 		userDao.saveUser(user);
@@ -213,7 +221,7 @@ public class AdminManagerImpl implements AdminManager {
 	}
 
 	@Override
-	public void  initialiseAdminUser() {
+	public void initialiseAdminUser() {
 		User user = new User();
 		user.setName(MashUpMediaConstants.ADMIN_USER_DEFAULT_NAME);
 		user.setUsername(MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME);
@@ -221,7 +229,7 @@ public class AdminManagerImpl implements AdminManager {
 
 		user.setEnabled(true);
 		user.setEditable(false);
-		
+
 		Set<Role> roles = new HashSet<Role>(getRoles());
 		user.setRoles(roles);
 
@@ -229,7 +237,7 @@ public class AdminManagerImpl implements AdminManager {
 		user.setGroups(new HashSet<Group>(groups));
 		saveUser(user);
 	}
-	
+
 	@Override
 	public void initialiseSystemUser() {
 		User user = new User();
@@ -240,18 +248,18 @@ public class AdminManagerImpl implements AdminManager {
 		user.setEnabled(true);
 		user.setEditable(false);
 		user.setSystem(true);
-		
+
 		Set<Role> roles = new HashSet<Role>(getRoles());
 		user.setRoles(roles);
 
 		List<Group> groups = getGroups();
 		user.setGroups(new HashSet<Group>(groups));
-		saveUser(user);		
+		saveUser(user);
 	}
-	
+
 	@Override
 	public User getSystemUser() {
-		User systemUser = getUser(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME);		
+		User systemUser = getUser(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME);
 		return systemUser;
 	}
 

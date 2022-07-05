@@ -8,6 +8,7 @@ import { useAppDispatch } from "../redux/hooks";
 import type { RootState } from "../redux/store";
 import { logIn } from "./features/loggedInUserSlice";
 import type { UserLogInPayload } from "./features/loggedInUserSlice";
+import { setTokenCookie } from "./securityUtils";
 
 
 const LogIn = () => {
@@ -33,7 +34,6 @@ const LogIn = () => {
 
     const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-
         dispatch(
             logIn({ username: props.username, password: props.password })
         )
@@ -44,9 +44,10 @@ const LogIn = () => {
 
     useEffect(() => {
         if (logInState.payload) {
+            setTokenCookie(logInState.payload.token)
             navigate('/');
         }
-    })
+    }, [logInState])
 
     return (
 

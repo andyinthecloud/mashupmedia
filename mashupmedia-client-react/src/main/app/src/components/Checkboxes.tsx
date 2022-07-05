@@ -2,29 +2,29 @@ import { Checkbox, FormControlLabel } from '@mui/material'
 import { ChangeEvent, useEffect, useState } from 'react'
 import './Checkboxes.css'
 
-export type CheckboxPayload = {
+export type CheckboxPayload<T> = {
     name: string
-    value: string
+    value: T
     isDisabled?: boolean
 }
 
-export type CheckboxHandlerPayload = {
-    checkboxPayload: CheckboxPayload,
+export type CheckboxHandlerPayload<T> = {
+    checkboxPayload: CheckboxPayload<T>,
     isChecked: boolean
-    onChange: (value: string, isChecked: boolean) => void
+    onChange: (value: T, isChecked: boolean) => void
 }
 
 
-export type CheckboxesPayload = {
+export type CheckboxesPayload<T> = {
     isDisabled: boolean
-    referenceItems: CheckboxPayload[]
-    selectedValues: string[]
-    onChange: (value: string[]) => void
+    referenceItems: CheckboxPayload<T>[]
+    selectedValues: T[]
+    onChange: (value: T[]) => void
 }
 
-const Checkboxes = (payload: CheckboxesPayload) => {
+const Checkboxes = <T,>(payload: CheckboxesPayload<T>) => {
 
-    const [props, setProps] = useState<CheckboxesPayload>({
+    const [props, setProps] = useState<CheckboxesPayload<T>>({
         ...payload
     })
 
@@ -32,14 +32,14 @@ const Checkboxes = (payload: CheckboxesPayload) => {
         setProps(payload)
     }, [payload])
 
-    const handleChange = (value: string, isChecked: boolean) => {
+    const handleChange = (value: T, isChecked: boolean) => {
         const index = props.selectedValues?.indexOf(value)
         processSelectedValues(value, isChecked, index)
-        console.log('handleChange: ' + props.selectedValues)      
+        console.log('handleChange: ' + props.selectedValues)
         props.onChange(props.selectedValues)
     }
-    
-    const processSelectedValues = (value: string, isChecked: boolean, index: number | undefined): void => {
+
+    const processSelectedValues = (value: T, isChecked: boolean, index: number | undefined): void => {
         if (isChecked) {
             props.selectedValues?.push(value)
         } else {
@@ -53,16 +53,15 @@ const Checkboxes = (payload: CheckboxesPayload) => {
     return (
         <ul>
             {props.referenceItems.map(function (referenceItem) {
-                referenceItem.isDisabled = props.isDisabled                
-
-                const checkboxHandlerPayload: CheckboxHandlerPayload = {
+                referenceItem.isDisabled = props.isDisabled
+                const checkboxHandlerPayload: CheckboxHandlerPayload<T> = {
                     checkboxPayload: referenceItem,
-                    isChecked: props.selectedValues.some(selectedValue => selectedValue === referenceItem.value),
+                    isChecked: props.selectedValues.some(selectedValue => referenceItem.value === selectedValue ),
                     onChange: () => void 0
                 }
 
                 return (
-                    <CustomCheckbox {...checkboxHandlerPayload} key={referenceItem.value} onChange={handleChange} />
+                    <CustomCheckbox {...checkboxHandlerPayload} key={String(referenceItem.value)} onChange={handleChange} />
                 )
             }
             )}
@@ -73,11 +72,15 @@ const Checkboxes = (payload: CheckboxesPayload) => {
 export default Checkboxes
 
 
-const CustomCheckbox = (payload: CheckboxHandlerPayload) => {
+const CustomCheckbox = <T,>(payload: CheckboxHandlerPayload<T>) => {
 
-    const [props, setProps] = useState<CheckboxHandlerPayload>({
+    const [props, setProps] = useState<CheckboxHandlerPayload<T>>({
         ...payload
     })
+
+    useEffect(() => {
+        setProps(payload)
+    }, [payload])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setProps({ ...props, isChecked: e.target.checked })

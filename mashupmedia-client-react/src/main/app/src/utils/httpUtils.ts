@@ -14,7 +14,8 @@ export const restHeaders = (userToken?: string): Headers => {
 
 export enum HttpMethod {
     GET = 'GET',
-    POST = 'POST'
+    POST = 'POST',
+    PUT = 'PUT'
 }
 
 export interface HttpResponse<T> extends Response {
@@ -22,7 +23,7 @@ export interface HttpResponse<T> extends Response {
 }
 
 
-export const fetchMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string, userToken?: string, body?: string): Promise<HttpResponse<T>> => {
+export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string, userToken?: string, body?: string): Promise<HttpResponse<T>> => {
 
     const url: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + uri
 

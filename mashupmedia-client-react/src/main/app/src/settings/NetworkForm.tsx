@@ -68,7 +68,6 @@ const NetworkForm = () => {
 
     const [isSuccessfulSave, setSuccessfulSave] = useState(false)
     useEffect(() => {
-
         if (networkPayloadAction === PayloadAction.SAVED) {
             setSuccessfulSave(true)
         } else {

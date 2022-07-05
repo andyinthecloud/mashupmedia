@@ -1,64 +1,49 @@
 import { CheckboxPayload } from "../components/Checkboxes";
-import { GroupPayload, RolePayload } from "../settings/ajax/metaCalls";
+import { NameValuePayload } from "../settings/backend/metaCalls";
 
-export const toSelectedRoleValues = (rolePayloadArray: RolePayload[] | undefined): string[] => {
-    const selectedValues: string[] = []
-    if (rolePayloadArray === undefined || !rolePayloadArray.length) {
-        return selectedValues;
+export const toSelectedValues = <T,>(checkboxPayloads: CheckboxPayload<T>[] | undefined): T[] => {
+    const selectedValues: T[] = []
+    if (checkboxPayloads === undefined) {
+        return selectedValues
     }
 
-    rolePayloadArray.forEach(rolePayload => {
-        selectedValues.push(rolePayload.idName)
+    checkboxPayloads.forEach(checkboxPayload => {
+        selectedValues.push(checkboxPayload.value)
     })
 
     return selectedValues
 }
 
-export const toSelectedGroupValues = (groupPayloadArray: GroupPayload[] | undefined): string[] => {
-    const selectedValues: string[] = []
-    if (groupPayloadArray === undefined || !groupPayloadArray.length) {
-        return selectedValues;
-    }
+export const toCheckboxPayloads = <T,>(nameValuePayloads: NameValuePayload<T>[] | undefined): CheckboxPayload<T>[] => {
 
-    groupPayloadArray.forEach(groupPayload => {
-        selectedValues.push(String(groupPayload.id))
-    })
+    const checkboxPayloads: CheckboxPayload<T>[] = []
 
-    return selectedValues
-}
-
-export const createRoleCheckboxPayloads = (rolePayloadArray: RolePayload[] | undefined): CheckboxPayload[] => {
-
-    const checkboxPayloads: CheckboxPayload[] = []
-
-    if (rolePayloadArray === undefined || !rolePayloadArray.length) {
+    if (nameValuePayloads === undefined || !nameValuePayloads.length) {
         return checkboxPayloads;
     }
 
-    rolePayloadArray.forEach(rolePayload => {
+    nameValuePayloads.forEach(nameValuePayload => {
         checkboxPayloads.push({
-            name: rolePayload.name,
-            value: rolePayload.idName
+            name: nameValuePayload.name,
+            value: nameValuePayload.value
         })
     });
 
     return checkboxPayloads
 }
 
-export const createGroupCheckboxPayloads = (rolePayloadArray: GroupPayload[] | undefined): CheckboxPayload[] => {
+export const toNameValuePayloads = <T,>(values: T[]): NameValuePayload<T>[] => {
 
-    const checkboxPayloads: CheckboxPayload[] = []
-
-    if (rolePayloadArray === undefined || !rolePayloadArray.length) {
-        return checkboxPayloads;
-    }
-
-    rolePayloadArray.forEach(groupPayload => {
-        checkboxPayloads.push({
-            name: groupPayload.name,
-            value: '' + groupPayload.id
+    const nameValuePayloads: NameValuePayload<T>[] = [];
+    values.map(value => {
+        nameValuePayloads.push({
+            value,
+            name: ''
         })
-    });
+    })
+    return nameValuePayloads
 
-    return checkboxPayloads
 }
+
+
+     

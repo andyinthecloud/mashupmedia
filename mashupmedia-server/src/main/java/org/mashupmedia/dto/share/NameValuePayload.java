@@ -1,4 +1,4 @@
-package org.mashupmedia.dto.admin;
+package org.mashupmedia.dto.share;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GroupPayload {
-    private long id;
-	private String name;
+public class NameValuePayload<T> {
+    private String name;
+    private T value;
 }

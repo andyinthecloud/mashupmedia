@@ -1,8 +1,9 @@
 package org.mashupmedia.dto.admin;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.mashupmedia.dto.share.NameValuePayload;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -16,17 +17,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class UserPayload {
-    private String username;
+	private String username;
 	private String name;
 	private boolean enabled;
 	private boolean editable;
 	private boolean system;
 
-    private List<RolePayload> rolePayloads;
-    private List<GroupPayload> groupPayloads;
+	private List<NameValuePayload<String>> rolePayloads;
+	private List<NameValuePayload<Long>> groupPayloads;
 
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime createdOn;
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime updatedOn;
 }

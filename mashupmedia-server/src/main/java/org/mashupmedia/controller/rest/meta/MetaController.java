@@ -3,8 +3,7 @@ package org.mashupmedia.controller.rest.meta;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.mashupmedia.dto.admin.GroupPayload;
-import org.mashupmedia.dto.admin.RolePayload;
+import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.mapper.GroupMapper;
 import org.mashupmedia.mapper.RoleMapper;
 import org.mashupmedia.service.AdminManager;
@@ -28,7 +27,7 @@ public class MetaController {
     private RoleMapper roleMapper;
 
     @GetMapping(value = "/groups", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<GroupPayload> getGroups() {
+    public List<NameValuePayload<Long>> getGroups() {
         return adminManager.getGroups()
                 .stream()
                 .map(groupMapper::toDto)
@@ -36,7 +35,7 @@ public class MetaController {
     }
 
     @GetMapping(value = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RolePayload> getRoles() {
+    public List<NameValuePayload<String>> getRoles() {
         return adminManager.getRoles()
                 .stream()
                 .map(roleMapper::toDto)

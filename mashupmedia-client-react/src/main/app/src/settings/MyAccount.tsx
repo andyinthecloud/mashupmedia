@@ -1,48 +1,39 @@
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import Checkboxes, { CheckboxHandlerPayload, CheckboxPayload } from "../components/Checkboxes"
+import AlertBox, { AlertBoxType } from "../components/AlertBox"
+import Checkboxes from "../components/Checkboxes"
 import { useAppDispatch } from "../redux/hooks"
 import type { RootState } from "../redux/store"
 import { displayDateTime } from "../utils/dateUtils"
-import { createGroupCheckboxPayloads, createRoleCheckboxPayloads, toSelectedGroupValues, toSelectedRoleValues } from "../utils/domainUtils"
-import { fetchGroupPayloads, fetchRolePayloads, GroupPayload, RolePayload } from "./ajax/metaCalls"
-import { getMyAccount, UserPayload } from "./features/userSlice"
+import { toCheckboxPayloads, toNameValuePayloads, toSelectedValues } from "../utils/domainUtils"
+import { fetchGroupPayloads, fetchRolePayloads, NameValuePayload } from "./backend/metaCalls"
+import { fetchMyAccount, saveMyAccount, UserPayload } from "./backend/userCalls"
 
 const MyAccount = () => {
 
-    const dispatch = useAppDispatch()
     const userToken = useSelector((state: RootState) => state.loggedInUser.payload?.token)
-
-    useEffect(() => {
-        dispatch(
-            getMyAccount(userToken)
-        )
-    }, [userToken, dispatch])
-
-    const userPayload = useSelector((state: RootState) => state.user.payload)
-    // const userPayloadAction = useSelector((state: RootState) => state.user.payloadAction)
 
     const [props, setProps] = useState<UserPayload>({
         admin: false,
-        enabled: false,
-        editable: false,
-        name: '',
-        username: ''
-
+            enabled: false,
+            editable: false,
+            name: '',
+            username: ''
+    
     })
 
     useEffect(() => {
-        setProps(p => ({
-            ...p,
-            ...userPayload
-        }))
+        fetchMyAccount(userToken).then((response) => {
+            if (response.parsedBody !== undefined) {
+                setProps(response.parsedBody)
+            }
+        })
 
-    }, [userPayload])
+    }, [userToken])
 
-
-    const [groupPayloads, setGroupPayloads] = useState<GroupPayload[]>([])
-    const [rolePayloads, setRolePayloads] = useState<RolePayload[]>([])
+    const [groupPayloads, setGroupPayloads] = useState<NameValuePayload<number>[]>([])
+    const [rolePayloads, setRolePayloads] = useState<NameValuePayload<string>[]>([])
 
     useEffect(() => {
 
@@ -70,49 +61,37 @@ const MyAccount = () => {
 
     const isEditable = (): boolean => (!props.editable)
 
-
-
-    const handleRolesChange = (roleValues: string[]) => {
-        const rolePayLoads: RolePayload[] = [];
-        roleValues.map(roleValue => {
-            rolePayLoads.push({
-                idName: roleValue,
-                name: ''
-            })
-        })
-        setStateValue('rolePayloads', rolePayLoads)
+    const handleRolesChange = (values: string[]) => {
+        setStateValue('rolePayloads', toNameValuePayloads(values))
     }
 
-    const handleGroupsChange = (roleValues: string[]) => {
-        const groupPayLoads: GroupPayload[] = [];
-        roleValues.map(roleValue => {
-            groupPayLoads.push({
-                id: +roleValue,
-                name: ''
-            })
-        })
-        setStateValue('groupPayloads', groupPayLoads)
+    const handleGroupsChange = (values: number[]) => {
+        setStateValue('groupPayloads', toNameValuePayloads(values))
     }
 
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
+        e.preventDefault()
+        saveMyAccount(props, userToken)
+        .then(result => {
+            // setProps(result)
+            setSuccessfulSave(true)
+        })
+        .catch(error => setSuccessfulSave(false))
+    }
+
+    const [isSuccessfulSave, setSuccessfulSave] = useState(false)
 
 
     return (
-        <form>
+        <form onSubmit={handleSubmit}>
             <h1>Edit user</h1>
+
+            <AlertBox alertType={AlertBoxType.SUCCESS} message="Account saved." isShow={isSuccessfulSave}></AlertBox>
 
 
             <div className="new-line">
                 <Box sx={{ color: 'primary.main' }}>
                     <FormGroup>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    disabled={isEditable()}
-                                    name="admin"
-                                    checked={props.admin}
-                                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.checked)}
-                                />}
-                            label="Administrator" />
                         <FormControlLabel
                             control={
                                 <Checkbox
@@ -168,20 +147,20 @@ const MyAccount = () => {
 
             <div className="new-line">
                 <h2>Roles</h2>
-                <Checkboxes
-                    isDisabled={props.admin} 
-                    referenceItems={createRoleCheckboxPayloads(rolePayloads)}
-                    selectedValues={toSelectedRoleValues(props.rolePayloads)}
+                <Checkboxes<string>
+                    isDisabled={props.admin}
+                    referenceItems={toCheckboxPayloads<string>(rolePayloads)}
+                    selectedValues={toSelectedValues<string>(props.rolePayloads)}
                     onChange={handleRolesChange}
                 />
             </div>
 
             <div className="new-line">
                 <h2>Groups</h2>
-                <Checkboxes
-                    isDisabled={props.admin} 
-                    referenceItems={createGroupCheckboxPayloads(groupPayloads)}
-                    selectedValues={toSelectedGroupValues(props.groupPayloads)}
+                <Checkboxes<number>
+                    isDisabled={props.admin}
+                    referenceItems={toCheckboxPayloads<number>(groupPayloads)}
+                    selectedValues={toSelectedValues<number>(props.groupPayloads)}
                     onChange={handleGroupsChange}
                 />
             </div>
