@@ -1,6 +1,11 @@
 package org.mashupmedia.security;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -15,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mashupmedia.dto.login.LoginPayload;
 import org.mashupmedia.dto.login.SecurityPayload;
 import org.mashupmedia.model.User;
+import org.mashupmedia.util.DateHelper;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -58,9 +64,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
+        LocalDateTime localDateExpires = LocalDateTime.now().plusHours(SecurityConstants.EXPIRATION_HOURS);
+        Date dateExpires = DateHelper.toDate(localDateExpires);
+
         String token = JWT.create()
                 .withSubject(((User) authentication.getPrincipal()).getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+                .withExpiresAt(dateExpires)
                 .sign(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes()));
 
         SecurityPayload userPayload = SecurityPayload

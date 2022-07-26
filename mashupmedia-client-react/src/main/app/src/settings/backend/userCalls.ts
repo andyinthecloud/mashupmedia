@@ -4,15 +4,14 @@ import { NameValuePayload } from "./metaCalls";
 // export{}
 
 export type UserPayload = {
-    admin: boolean;
-    enabled: boolean;
-    editable: boolean;
-    username: string;
-    name: string;
-    createdOn?: string | null;
-    updatedOn?: string | null;
-    rolePayloads?: NameValuePayload<string>[];
-    groupPayloads?: NameValuePayload<number>[];
+    enabled: boolean
+    editable: boolean
+    username: string
+    name: string
+    createdOn?: string | null
+    updatedOn?: string | null
+    rolePayloads?: NameValuePayload<string>[]
+    groupPayloads?: NameValuePayload<number>[]
 
 }
 
@@ -25,3 +24,4 @@ export const fetchMyAccount = (userToken?: string): Promise<HttpResponse<UserPay
 export const saveMyAccount = (userPayload: UserPayload, userToken?: string): Promise<HttpResponse<UserPayload>> => {
     return callMashupMediaApi<UserPayload> (HttpMethod.PUT, userUri + 'me', userToken, JSON.stringify(userPayload))
 }
+

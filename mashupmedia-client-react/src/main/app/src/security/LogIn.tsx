@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import AlertBox, { AlertBoxType } from "../components/AlertBox";
 import logo from "../logo.png";
 import { useAppDispatch } from "../redux/hooks";
@@ -9,13 +9,19 @@ import type { RootState } from "../redux/store";
 import { logIn } from "./features/loggedInUserSlice";
 import type { UserLogInPayload } from "./features/loggedInUserSlice";
 import { setTokenCookie } from "./securityUtils";
+import { HttpStatus } from "../utils/httpUtils";
 
 
 const LogIn = () => {
 
-    const dispatch = useAppDispatch();
+    const [searchParams, setSearchParams] = useSearchParams()
+    const code = searchParams.get("code")
 
-    const navigate = useNavigate();
+    const dispatch = useAppDispatch()
+
+    const navigate = useNavigate()
+
+
 
     const [props, setProps] = useState<UserLogInPayload>({
         username: '',
@@ -34,10 +40,11 @@ const LogIn = () => {
 
     const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        searchParams.delete('code')
+        setSearchParams(searchParams)
         dispatch(
             logIn({ username: props.username, password: props.password })
         )
-
     },
         [dispatch, props]
     )
@@ -45,20 +52,28 @@ const LogIn = () => {
     useEffect(() => {
         if (logInState.payload) {
             setTokenCookie(logInState.payload.token)
-            navigate('/');
+            navigate(-1);
         }
     }, [logInState])
+
+
 
     return (
 
         <form onSubmit={useHandleSubmit}>
+
+
 
             <img src={logo} alt="Mashup Media" />
 
             <h1>Log in</h1>
 
 
-            <AlertBox alertType={AlertBoxType.ERRROR} message="Invalid username password combination." isShow={logInState.error ? true : false}></AlertBox>
+
+            <AlertBox alertType={AlertBoxType.WARNING} message="User session expired. Please log in again." isShow={code == '' + HttpStatus.FORBIDDEN}></AlertBox>
+
+
+            <AlertBox alertType={AlertBoxType.ERROR} message="Invalid username password combination." isShow={logInState.error ? true : false}></AlertBox>
 
             <div className="new-line">
                 <TextField label="Username" value={props.username} autoComplete="off"

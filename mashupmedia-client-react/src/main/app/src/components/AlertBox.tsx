@@ -1,9 +1,11 @@
 import { Alert, AlertColor, AlertTitle } from "@mui/material"
 
 
+
 export enum AlertBoxType {
-    ERRROR = 'error', WARNING = 'warning', INFO = 'info', SUCCESS = 'success'
+    ERROR = 'error', WARNING = 'warning', INFO = 'info', SUCCESS = 'success'
 }
+
 
 export type AlertBoxProperties = {
     message: string
@@ -22,7 +24,7 @@ const AlertBox = (props: AlertBoxProperties) => {
     const title = (alertType: AlertBoxType): string => {
         let title: string
         switch (alertType) {
-            case AlertBoxType.ERRROR:
+            case AlertBoxType.ERROR:
                 title = 'Error'
                 break
             case AlertBoxType.INFO:

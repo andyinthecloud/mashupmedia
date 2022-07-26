@@ -1,21 +1,22 @@
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import AlertBox, { AlertBoxType } from "../components/AlertBox"
 import Checkboxes from "../components/Checkboxes"
-import { useAppDispatch } from "../redux/hooks"
 import type { RootState } from "../redux/store"
 import { displayDateTime } from "../utils/dateUtils"
 import { toCheckboxPayloads, toNameValuePayloads, toSelectedValues } from "../utils/domainUtils"
+import { HttpStatus, redirectLogin } from "../utils/httpUtils"
 import { fetchGroupPayloads, fetchRolePayloads, NameValuePayload } from "./backend/metaCalls"
 import { fetchMyAccount, saveMyAccount, UserPayload } from "./backend/userCalls"
 
 const MyAccount = () => {
 
+    
     const userToken = useSelector((state: RootState) => state.loggedInUser.payload?.token)
 
     const [props, setProps] = useState<UserPayload>({
-        admin: false,
             enabled: false,
             editable: false,
             name: '',
@@ -24,11 +25,13 @@ const MyAccount = () => {
     })
 
     useEffect(() => {
-        fetchMyAccount(userToken).then((response) => {
+        fetchMyAccount(userToken)
+        .then((response) => {
             if (response.parsedBody !== undefined) {
                 setProps(response.parsedBody)
             }
         })
+        .catch(error => redirectLogin(HttpStatus.FORBIDDEN))
 
     }, [userToken])
 
@@ -73,10 +76,18 @@ const MyAccount = () => {
         e.preventDefault()
         saveMyAccount(props, userToken)
         .then(result => {
-            // setProps(result)
             setSuccessfulSave(true)
         })
         .catch(error => setSuccessfulSave(false))
+    }
+
+    const navigate = useNavigate()
+    function handleCancel(): void {
+        navigate('/')
+    }
+
+    function handleChangeUserPassword(): void {
+        navigate(`/settings/change-user-password/${props.username}`)
     }
 
     const [isSuccessfulSave, setSuccessfulSave] = useState(false)
@@ -148,7 +159,7 @@ const MyAccount = () => {
             <div className="new-line">
                 <h2>Roles</h2>
                 <Checkboxes<string>
-                    isDisabled={props.admin}
+                    isDisabled={!props.editable}
                     referenceItems={toCheckboxPayloads<string>(rolePayloads)}
                     selectedValues={toSelectedValues<string>(props.rolePayloads)}
                     onChange={handleRolesChange}
@@ -158,28 +169,25 @@ const MyAccount = () => {
             <div className="new-line">
                 <h2>Groups</h2>
                 <Checkboxes<number>
-                    isDisabled={props.admin}
+                    isDisabled={!props.editable}
                     referenceItems={toCheckboxPayloads<number>(groupPayloads)}
                     selectedValues={toSelectedValues<number>(props.groupPayloads)}
                     onChange={handleGroupsChange}
                 />
             </div>
 
-            <div className="new-line">
-                <Button variant="outlined" type="button" style={{ marginRight: "1em" }}>
+            <div className="new-line right">
+                <Button variant="contained" color="secondary"  type="button" onClick={handleCancel}>
                     Cancel
                 </Button>
+                <Button variant="contained" color="secondary" type="button" onClick={handleChangeUserPassword}>
+                    Change password
+                </Button>
 
-                <Button variant="outlined" type="submit">
+                <Button variant="contained" color="primary" type="submit" disabled={!props.editable}>
                     Save
                 </Button>
             </div>
-
-
-            <pre> {JSON.stringify(props)}</pre>
-
-            <pre> {JSON.stringify(groupPayloads)}</pre>
-            <pre> {JSON.stringify(rolePayloads)}</pre>
 
         </form>
     )

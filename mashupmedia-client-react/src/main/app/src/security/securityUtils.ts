@@ -1,7 +1,6 @@
-import type { UserPayload } from "./features/loggedInUserSlice";
+import { fetchMyAccount } from "../settings/backend/userCalls";
 
 const TOKEN_KEY = 'jwt'
-const COOKIE_TOKEN_NAME = 'token'
 
 export const login = () => {
     localStorage.setItem(TOKEN_KEY, 'TestLogin');
@@ -11,7 +10,7 @@ export const logout = () => {
     localStorage.removeItem(TOKEN_KEY);
 }
 
-export const isLogin = () => {
+export const isLogin = (): boolean => {
 
     if (localStorage.getItem(TOKEN_KEY)) {
         return true;
@@ -20,30 +19,48 @@ export const isLogin = () => {
     return false;
 }
 
-export const isLoggedIn = (userPayload: UserPayload | null) => {
-    console.log('isLoggedIn', userPayload)
-    const token = userPayload?.token
-    console.log('token', token ? true : false)
-    return token ? true : false
-}
+// export const isLoggedIn = async (userToken: string | null | undefined): boolean => {
+//     // console.log('isLoggedIn', userPayload)
+//     // const token = userPayload?.token
+//     console.log('token', userToken ? true : false)
+
+//     if (!userToken) {
+//         return false
+//     }
+
+//     // fetchMyAccount(token);
+//     const isLoggedIn = 
+//     fetchMyAccount(userToken).then((response) => {
+//         return response.ok;
+//     }).catch(error => {
+//         return false
+//     })
+
+
+
+//     // return userToken ? true : false
+//     return await isLoggedIn;
+// }
 
 export function setTokenCookie(token: string): void {
     const date = new Date()
     date.setMonth(date.getMonth() + 3) 
-    document.cookie = `${COOKIE_TOKEN_NAME}=${token}; expires = ${date.toUTCString()}; path = /`
+    document.cookie = `${TOKEN_KEY}=${token}; expires = ${date.toUTCString()}; path = /`
 }
 
-export function getCookieValue (name: string): string | undefined | null  {
-	let value = `; ${document.cookie}`;
-	let parts = value.split(`; ${name}=`);
+export function getCookieValue (name: string): string | null {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
 
     if (parts && parts.length === 2) {
-        return parts.pop()?.split(';').shift()
+        const value = parts.pop()?.split(';').shift()
+        return value === undefined ? null : value
     } else {
         return null
     }
 }
 
 
-
+export const securityToken = (userToken: string | undefined): string | null => 
+    userToken ? userToken : getCookieValue(TOKEN_KEY)
 

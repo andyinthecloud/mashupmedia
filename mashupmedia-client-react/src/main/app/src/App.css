@@ -46,5 +46,21 @@ div.new-line {
   margin-bottom: 1em;
 }
 
+.right {
+  text-align: right;
+}
+
+button {
+  margin-left: 1em !important;
+}
+
+h1 {
+  color: rgb(160, 84, 163);
+}
+
+h2 {
+  color: rgb(87, 163, 84);
+}
+
 
 

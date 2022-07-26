@@ -2,7 +2,7 @@ import { FC, Props } from "react"
 import { useSelector } from "react-redux"
 import { Navigate, useLocation } from "react-router-dom"
 import type { RootState } from "../redux/store"
-import { isLoggedIn } from "./securityUtils"
+import { securityToken } from "./securityUtils"
 
 
 // const RequireAuthenication:FC =  ({ children }) => {
@@ -34,12 +34,11 @@ import { isLoggedIn } from "./securityUtils"
 
 export function RequireAuthenication({ children }: { children: JSX.Element }): any {
     const userPayload = useSelector((state: RootState) => state.loggedInUser.payload)
-    let location = useLocation()
-    if (isLoggedIn(userPayload)) {
-        return children
-    }
+    const location = useLocation()
 
-    return (
+    if (securityToken(userPayload?.token)) {
+        return children
+    } else {
         <Navigate to="/login" state={{ from: location }} replace />
-    )
+    }
 }

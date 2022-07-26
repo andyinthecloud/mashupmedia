@@ -7,7 +7,8 @@ import { PayloadAction } from "../redux/actions";
 import type { RootState, SecurePayload } from "../redux/store";
 
 import { getNetworkProxy, postNetworkProxy } from "./features/networkSlice";
-import type {NetworkProxyPayload } from "./features/networkSlice";
+import type { NetworkProxyPayload } from "./features/networkSlice";
+import { HttpStatus, redirectInternal, redirectLogin } from "../utils/httpUtils";
 
 
 const NetworkForm = () => {
@@ -18,13 +19,13 @@ const NetworkForm = () => {
     useEffect(() => {
         dispatch(
             getNetworkProxy(userToken)
-            // getMyAccount(userToken)
         )
 
     }, [dispatch, userToken])
 
-    const networkPayload = useSelector((state: RootState) => state.networkProxy.payload)
-    const networkPayloadAction = useSelector((state: RootState) => state.networkProxy.payloadAction)
+    const networkProxyPayloadState = useSelector((state: RootState) => state.networkProxy)
+    // const networkPayload = useSelector((state: RootState) => state.networkProxy.payload)
+    // const networkPayloadAction = useSelector((state: RootState) => state.networkProxy.payloadAction)
 
     const [props, setProps] = useState<NetworkProxyPayload>({
         enabled: true,
@@ -37,12 +38,17 @@ const NetworkForm = () => {
 
 
     useEffect(() => {
+        if (networkProxyPayloadState.error) {
+            redirectLogin(HttpStatus.FORBIDDEN)
+            return
+        }
+
         setProps(p => ({
             ...p,
-            ...networkPayload
+            ...networkProxyPayloadState.payload
         }))
 
-    }, [networkPayload])
+    }, [networkProxyPayloadState])
 
     const setStateValue = (name: string, value: any): void => {
         setProps(p => ({
@@ -67,14 +73,15 @@ const NetworkForm = () => {
     )
 
     const [isSuccessfulSave, setSuccessfulSave] = useState(false)
+
     useEffect(() => {
-        if (networkPayloadAction === PayloadAction.SAVED) {
+        if (networkProxyPayloadState.payloadAction === PayloadAction.SAVED) {
             setSuccessfulSave(true)
         } else {
             setSuccessfulSave(false)
         }
     },
-        [networkPayloadAction]
+        [networkProxyPayloadState]
     )
 
     return (

@@ -9,9 +9,10 @@ export type CheckboxPayload<T> = {
 }
 
 export type CheckboxHandlerPayload<T> = {
-    checkboxPayload: CheckboxPayload<T>,
-    isChecked: boolean
+    checkboxPayload: CheckboxPayload<T>
+    isChecked: boolean    
     onChange: (value: T, isChecked: boolean) => void
+    isDisabled?: boolean
 }
 
 
@@ -57,7 +58,8 @@ const Checkboxes = <T,>(payload: CheckboxesPayload<T>) => {
                 const checkboxHandlerPayload: CheckboxHandlerPayload<T> = {
                     checkboxPayload: referenceItem,
                     isChecked: props.selectedValues.some(selectedValue => referenceItem.value === selectedValue ),
-                    onChange: () => void 0
+                    onChange: () => void 0,
+                    isDisabled: props.isDisabled
                 }
 
                 return (
@@ -91,6 +93,7 @@ const CustomCheckbox = <T,>(payload: CheckboxHandlerPayload<T>) => {
         <li><FormControlLabel control={<Checkbox
             onChange={handleChange}
             checked={props.isChecked}
+            disabled={props.isDisabled}
         />}
             label={props.checkboxPayload.name}
             disabled={props.checkboxPayload.isDisabled}

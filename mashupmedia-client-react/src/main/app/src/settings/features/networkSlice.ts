@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { PayloadAction } from "../../redux/actions"
 import type { PayloadState, SecurePayload } from "../../redux/store"
+import { securityToken } from "../../security/securityUtils"
 import { restHeaders } from "../../utils/httpUtils"
 
 export type NetworkProxyPayload = {
@@ -29,13 +30,14 @@ const networkProxyUrl: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL a
 export const getNetworkProxy = createAsyncThunk(
     'networkProxy/getDetails',
     async (userToken: string | undefined) => {
+        
         const response = await fetch(networkProxyUrl, {
             method: 'GET',
             mode: 'cors',
             credentials: 'omit',
-            headers: restHeaders(userToken)
+            headers: restHeaders(securityToken(userToken))
         })
-
+        
         return (await response.json()) as NetworkProxyPayload
     }
 )
@@ -47,7 +49,7 @@ export const postNetworkProxy = createAsyncThunk(
             method: 'PUT',
             mode: 'cors',
             credentials: 'omit',
-            headers: restHeaders(securePayload.userToken),
+            headers: restHeaders(securityToken(securePayload.userToken)),
             body: JSON.stringify(securePayload.payload)
         })
 
@@ -102,7 +104,5 @@ const networkProxySlice = createSlice({
         )
     }
 })
-
-// export const selectProxy = (state: RootState) => state.networkProxy.payload
 
 export default networkProxySlice

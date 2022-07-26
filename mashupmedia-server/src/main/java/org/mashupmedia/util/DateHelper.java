@@ -88,4 +88,8 @@ public class DateHelper {
 				.toLocalDateTime();
 	}
 
+	public static Date toDate(LocalDateTime localDateTime) {
+		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+	}
+
 }
