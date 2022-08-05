@@ -2,8 +2,8 @@ import { Box, Button, Checkbox, FormControlLabel, FormGroup, TextField } from "@
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import AlertBox, { AlertBoxType } from "../components/AlertBox"
 import Checkboxes from "../components/Checkboxes"
+import { NotificationType, addNotification } from "../notification/notificationSlice"
 import type { RootState } from "../redux/store"
 import { displayDateTime } from "../utils/dateUtils"
 import { toCheckboxPayloads, toNameValuePayloads, toSelectedValues } from "../utils/domainUtils"
@@ -75,10 +75,15 @@ const MyAccount = () => {
     function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault()
         saveMyAccount(props, userToken)
-        .then(result => {
+        .then(() => {
+            addNotification({
+                message: 'Account saved',
+                notificationType: NotificationType.SUCCESS
+            })
+
             setSuccessfulSave(true)
         })
-        .catch(error => setSuccessfulSave(false))
+        .catch(() => setSuccessfulSave(false))
     }
 
     const navigate = useNavigate()
@@ -96,9 +101,6 @@ const MyAccount = () => {
     return (
         <form onSubmit={handleSubmit}>
             <h1>Edit user</h1>
-
-            <AlertBox alertType={AlertBoxType.SUCCESS} message="Account saved." isShow={isSuccessfulSave}></AlertBox>
-
 
             <div className="new-line">
                 <Box sx={{ color: 'primary.main' }}>

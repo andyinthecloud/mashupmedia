@@ -18,13 +18,6 @@ const initialState = {
 }
 
 
-// const rootReducer = combineReducers({
-//     counter: counterSlice.reducer,
-//     loggedInUser: loggedInUserSlice.reducer,
-//     user: userSlice.reducer,
-//     networkProxy: networkProxySlice.reducer
-// })
-
 export const store = configureStore({
     reducer: rootReducer,
     preloadedState: initialState
@@ -38,8 +31,6 @@ export type RootState = ReturnType<typeof rootReducer>;
 
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch
-
-
 
 
 export type PayloadState<T> = {

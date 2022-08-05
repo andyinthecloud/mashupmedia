@@ -1,23 +1,60 @@
 import { Button, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import AlertBox, { AlertBoxType } from "../components/AlertBox";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import logo from "../logo.png";
+import { NotificationType, addNotification } from "../notification/notificationSlice";
 import { useAppDispatch } from "../redux/hooks";
 import type { RootState } from "../redux/store";
-import { logIn } from "./features/loggedInUserSlice";
+import { codeParamName, HttpStatus } from "../utils/httpUtils";
 import type { UserLogInPayload } from "./features/loggedInUserSlice";
+import { logIn } from "./features/loggedInUserSlice";
 import { setTokenCookie } from "./securityUtils";
-import { HttpStatus } from "../utils/httpUtils";
 
 
 const LogIn = () => {
 
     const [searchParams, setSearchParams] = useSearchParams()
-    const code = searchParams.get("code")
 
     const dispatch = useAppDispatch()
+
+
+    const code = searchParams.get(codeParamName)
+    useEffect(() => {
+
+        if (!searchParams.has(codeParamName)) {
+            return
+        }
+
+        searchParams.delete(codeParamName)
+        setSearchParams(searchParams)
+
+        const httpStatus = Object.values(HttpStatus).find(value => value == code) as HttpStatus
+
+        let message: string
+
+        switch (httpStatus) {
+            case HttpStatus.FORBIDDEN:
+                message = 'Please log in to renew your session'
+                break
+
+            case HttpStatus.SERVER_ERROR:
+                message = 'Error contacting Mashup media. Please try again.'
+                break
+
+            default:
+                message = 'Please log in to renew your session'
+
+        }
+
+        dispatch(
+            addNotification({
+                message,
+                notificationType: NotificationType.WARNING
+            })
+        )
+    }, [code])
+
 
     const navigate = useNavigate()
 
@@ -53,6 +90,12 @@ const LogIn = () => {
         if (logInState.payload) {
             setTokenCookie(logInState.payload.token)
             navigate(-1);
+        } else {
+            addNotification({
+                message: 'Invalid username password combination.',
+                notificationType: NotificationType.ERROR
+            })
+
         }
     }, [logInState])
 
@@ -62,18 +105,9 @@ const LogIn = () => {
 
         <form onSubmit={useHandleSubmit}>
 
-
-
             <img src={logo} alt="Mashup Media" />
 
             <h1>Log in</h1>
-
-
-
-            <AlertBox alertType={AlertBoxType.WARNING} message="User session expired. Please log in again." isShow={code == '' + HttpStatus.FORBIDDEN}></AlertBox>
-
-
-            <AlertBox alertType={AlertBoxType.ERROR} message="Invalid username password combination." isShow={logInState.error ? true : false}></AlertBox>
 
             <div className="new-line">
                 <TextField label="Username" value={props.username} autoComplete="off"

@@ -12,8 +12,15 @@ export type UserPayload = {
     updatedOn?: string | null
     rolePayloads?: NameValuePayload<string>[]
     groupPayloads?: NameValuePayload<number>[]
-
 }
+
+export type ChangeUserPasswordPayload = {
+    username?: string
+    currentPassword: string
+    newPassword: string
+    confirmPassword: string
+}
+
 
 const userUri = '/api/admin/user/'
 
@@ -25,3 +32,6 @@ export const saveMyAccount = (userPayload: UserPayload, userToken?: string): Pro
     return callMashupMediaApi<UserPayload> (HttpMethod.PUT, userUri + 'me', userToken, JSON.stringify(userPayload))
 }
 
+export const changePassword = (changeUserPasswordPayload: ChangeUserPasswordPayload, userToken?: string): Promise<HttpResponse<UserPayload>> => {
+    return callMashupMediaApi<UserPayload> (HttpMethod.PUT, userUri + 'change-password', userToken, JSON.stringify(changeUserPasswordPayload))
+}

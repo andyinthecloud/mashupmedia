@@ -47,12 +47,12 @@ export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string,
         console.log('Error getting json', exception)
     }
 
-    if (response.status == HttpStatus.FORBIDDEN) {
-        window.location.href = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + '/api/login' 
+    if (response.status == HttpStatus.FORBIDDEN) {        
+        redirectLogin(HttpStatus.FORBIDDEN)        
     }
 
     if (!response.ok) {
-        throw new Error(response.statusText)
+        redirectLogin(HttpStatus.SERVER_ERROR);
     }
 
     return response
@@ -67,13 +67,16 @@ export const redirectInternal = (internalUri: string): void => {
 
 }
 
+export const codeParamName = 'code'
+
 export const redirectLogin = (httpStatus: HttpStatus): void => {
     
     let loginUri = '/login'
     if (httpStatus) {
-        loginUri += '?code=' + httpStatus
+        loginUri += '?' + codeParamName + '=' + httpStatus
     }
 
     redirectInternal(loginUri)
 }
+
 

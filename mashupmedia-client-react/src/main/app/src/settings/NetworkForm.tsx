@@ -1,14 +1,14 @@
 import { Button, FormControlLabel, FormGroup, Switch, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import AlertBox, { AlertBoxType } from "../components/AlertBox";
-import { useAppDispatch } from "../redux/hooks";
 import { PayloadAction } from "../redux/actions";
+import { useAppDispatch } from "../redux/hooks";
 import type { RootState, SecurePayload } from "../redux/store";
 
-import { getNetworkProxy, postNetworkProxy } from "./features/networkSlice";
+import { NotificationType, addNotification } from "../notification/notificationSlice";
+import { HttpStatus, redirectLogin } from "../utils/httpUtils";
 import type { NetworkProxyPayload } from "./features/networkSlice";
-import { HttpStatus, redirectInternal, redirectLogin } from "../utils/httpUtils";
+import { getNetworkProxy, postNetworkProxy } from "./features/networkSlice";
 
 
 const NetworkForm = () => {
@@ -64,7 +64,6 @@ const NetworkForm = () => {
     const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const securePayload: SecurePayload<NetworkProxyPayload> = { userToken, payload: props }
-        console.log('useHandleSubmit', securePayload)
         dispatch(
             postNetworkProxy(securePayload)
         )
@@ -75,10 +74,17 @@ const NetworkForm = () => {
     const [isSuccessfulSave, setSuccessfulSave] = useState(false)
 
     useEffect(() => {
+
         if (networkProxyPayloadState.payloadAction === PayloadAction.SAVED) {
-            setSuccessfulSave(true)
+            addNotification({
+                message: 'Account saved',
+                notificationType: NotificationType.SUCCESS
+            })            
         } else {
-            setSuccessfulSave(false)
+            addNotification({
+                message: 'Error saving account',
+                notificationType: NotificationType.ERROR
+            })
         }
     },
         [networkProxyPayloadState]
@@ -87,8 +93,6 @@ const NetworkForm = () => {
     return (
 
         <form onSubmit={useHandleSubmit}>
-
-            <AlertBox alertType={AlertBoxType.SUCCESS} message="Network properties saved." isShow={isSuccessfulSave}></AlertBox>
 
             <h1>Network</h1>
 

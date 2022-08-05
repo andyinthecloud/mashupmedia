@@ -1,39 +1,78 @@
 import { Alert, AlertColor, AlertTitle } from "@mui/material"
+import { useEffect, useState } from "react"
+import { useDispatch } from "react-redux"
+import { clearNotification, NotificationPayload, NotificationType } from "../notification/notificationSlice"
 
 
 
-export enum AlertBoxType {
-    ERROR = 'error', WARNING = 'warning', INFO = 'info', SUCCESS = 'success'
+export type AlertBoxPayload = {
+    notificationPayloads: NotificationPayload[]
 }
 
+const AlertBoxes = (payload: AlertBoxPayload) => {
 
-export type AlertBoxProperties = {
-    message: string
-    alertType: AlertBoxType
-    isShow: boolean
+
+    const [props, setProps] = useState<AlertBoxPayload>({
+        ...payload
+    })
+
+    useEffect(() => {
+        setProps(payload)
+    }, [payload])
+
+    return (
+        <div>
+            {props.notificationPayloads.map((notificationPayload) => {
+                return (
+                    <AlertBox
+                        key={notificationPayload.id}
+                        id={notificationPayload.id}
+                        notificationType={notificationPayload.notificationType}
+                        message={notificationPayload.message} />
+                )
+            })}
+
+        </div>
+    )
+
+
 }
 
-const AlertBox = (props: AlertBoxProperties) => {
+export default AlertBoxes
 
-    const severity = (alertType: AlertBoxType): AlertColor => {
-        const alertColor: AlertColor = alertType.toString().toLowerCase() as AlertColor
+const AlertBox = (payload: NotificationPayload) => {
+
+    const [props, setProps] = useState<NotificationPayload>({
+        ...payload
+    })
+    useEffect(() => {
+        setProps(payload)
+    }, [payload])
+
+
+    const severity = (notificationType: NotificationType | null): AlertColor => {
         const defaultAlertColour: AlertColor = 'info'
+        if (!notificationType) {
+            return defaultAlertColour
+        }
+
+        const alertColor: AlertColor = NotificationType[notificationType].toLowerCase() as AlertColor
         return (alertColor) ? alertColor : defaultAlertColour
     }
 
-    const title = (alertType: AlertBoxType): string => {
+    const title = (alertType: NotificationType | null): string => {
         let title: string
         switch (alertType) {
-            case AlertBoxType.ERROR:
+            case NotificationType.ERROR:
                 title = 'Error'
                 break
-            case AlertBoxType.INFO:
+            case NotificationType.INFO:
                 title = 'Information'
                 break
-            case AlertBoxType.SUCCESS:
+            case NotificationType.SUCCESS:
                 title = 'Success'
                 break
-            case AlertBoxType.WARNING:
+            case NotificationType.WARNING:
                 title = 'Warning'
                 break
             default:
@@ -44,19 +83,23 @@ const AlertBox = (props: AlertBoxProperties) => {
         return title
     }
 
+    const dispatch = useDispatch()
+
+    const handleClose = (notificationId: number | undefined): void => {
+        if (notificationId === undefined) {
+            return;
+        }
+
+        dispatch(clearNotification(notificationId))
+        setProps({ ...props })
+    }
 
     return (
-        <span>
-            {props.isShow &&
-                <Alert severity={severity(props.alertType)} >
-                    <AlertTitle>{title(props.alertType)}</AlertTitle>
-                    {props.message}
-                </Alert>
-            }
-        </span>
+        <Alert key={props.id} severity={severity(props.notificationType)} onClose={() => handleClose(props.id)}  >
+            <AlertTitle>{title(props.notificationType)}</AlertTitle>
+            {props.message}
+        </Alert>
     )
 
 
 }
-
-export default AlertBox

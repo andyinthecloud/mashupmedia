@@ -15,23 +15,42 @@ export function MashupRoutes() {
             <Route path="/" element={<Introduction />} />
             <Route path="/login" element={<LogIn />} />
 
-            <Route path="/settings/my-account" element={
-                <RequireAuthenication>
-                    <MyAccount />
-                </RequireAuthenication>
-            } />
+            <Route path="/settings">
+                <Route index element={
+                    <RequireAuthenication>
+                        <MyAccount />
+                    </RequireAuthenication>
+                } />
+                <Route path="my-account" element={
+                    <RequireAuthenication>
+                        <MyAccount />
+                    </RequireAuthenication>
+                } />
 
-            <Route path="/settings/change-user-password/:userId" element={
-                <RequireAuthenication>
-                    <ChangeUserPassword />
-                </RequireAuthenication>
-            } />
+                <Route path="change-user-password">
+                    <Route index element={
+                        <RequireAuthenication>
+                            <ChangeUserPassword />
+                        </RequireAuthenication>
+                    } />
+                    <Route path=":userId" element={
+                        <RequireAuthenication>
+                            <ChangeUserPassword />
+                        </RequireAuthenication>
+                    } />
 
-            <Route path="/settings/network" element={
-                <RequireAuthenication>
-                    <NetworkForm />
-                </RequireAuthenication>
-            } />
+                </Route>
+
+                <Route path="network" element={
+                    <RequireAuthenication>
+                        <NetworkForm />
+                    </RequireAuthenication>
+                } />
+            </Route>
+
+
+
+
 
 
 
