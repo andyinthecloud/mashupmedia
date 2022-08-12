@@ -2,24 +2,67 @@ import { Button, TextField } from "@mui/material"
 import { useState } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { NotificationType, addNotification } from "../notification/notificationSlice"
+import FieldError from "../components/FieldError"
+import { addNotification, NotificationType } from "../notification/notificationSlice"
 import { RootState } from "../redux/store"
+import { emptyFieldValidation, FieldValidation, FormValidation, isEmpty } from "../utils/form-validation-utils"
 import { changePassword, ChangeUserPasswordPayload } from "./backend/userCalls"
+
+type ChangeUserPasswordPagePayload = {
+    changeUserPasswordPayload: ChangeUserPasswordPayload
+    formValidation: FormValidation
+}
 
 const ChangeUserPassword = () => {
 
     const userToken = useSelector((state: RootState) => state.loggedInUser.payload?.token)
 
-    const [props, setProps] = useState<ChangeUserPasswordPayload>({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-    })
+    const enum FieldNames {
+        CURRENT_PASSWORD = 'currentPassword',
+        NEW_PASSWORD = 'newPassword',
+        CONFIRM_PASSWORD = 'confirmPassword'
+    }
 
-    const setStateValue = (name: string, value: any): void => {
+    const [props, setProps] = useState<ChangeUserPasswordPagePayload>(
+        {
+            changeUserPasswordPayload: {
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+            }, formValidation: { fieldValidations: [] }
+        }
+    )
+
+    const setFieldValueState = (name: string, value: string): void => {
         setProps(p => ({
             ...p,
-            [name]: value
+            changeUserPasswordPayload: {
+                ...p.changeUserPasswordPayload,
+                [name]: value
+            }
+        }))
+    }
+
+    const setFieldValidationState = (fieldValidation: FieldValidation): void => {
+        const fieldValidations = props.formValidation.fieldValidations
+        fieldValidations.push(fieldValidation)
+
+        setProps(p => ({
+            ...p,
+            formValidation: {
+                fieldValidations
+            }
+        }))
+    }
+
+    const clearFieldValidationState = () => {
+        const fieldValidations = props.formValidation.fieldValidations
+        fieldValidations.splice(0, fieldValidations.length)
+        setProps(p => ({
+            ...p,
+            formValidation: {
+                fieldValidations
+            }
         }))
     }
 
@@ -30,9 +73,28 @@ const ChangeUserPassword = () => {
         navigate('/')
     }
 
+
+    const validateForm = (): void => {
+
+        clearFieldValidationState()
+
+        const changeUserPasswordPayload = props.changeUserPasswordPayload
+
+        if (isEmpty(changeUserPasswordPayload.currentPassword)) {
+            setFieldValidationState(emptyFieldValidation('currentPassword', 'Current password'))
+        }
+
+    }
+
     function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault()
-        changePassword(props, userToken)
+        validateForm()
+
+        if (props.formValidation.fieldValidations.length) {
+            return
+        }
+
+        changePassword(props.changeUserPasswordPayload, userToken)
             .then(() => addNotification({
                 message: 'Password saved.',
                 notificationType: NotificationType.SUCCESS
@@ -54,7 +116,10 @@ const ChangeUserPassword = () => {
                     label="Current password"
                     type={"password"}
                     fullWidth={true}
-                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)} />
+                    onChange={e => setFieldValueState(e.currentTarget.name, e.currentTarget.value)} />
+
+                <FieldError fieldName="currentPassword" formValidation={props.formValidation}></FieldError>
+
             </div>
 
             <div className="new-line">
@@ -63,7 +128,7 @@ const ChangeUserPassword = () => {
                     label="New password"
                     type={"password"}
                     fullWidth={true}
-                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)} />
+                    onChange={e => setFieldValueState(e.currentTarget.name, e.currentTarget.value)} />
             </div>
 
             <div className="new-line">
@@ -72,7 +137,7 @@ const ChangeUserPassword = () => {
                     label="Confirm password"
                     type={"password"}
                     fullWidth={true}
-                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)} />
+                    onChange={e => setFieldValueState(e.currentTarget.name, e.currentTarget.value)} />
             </div>
 
             <div className="new-line right">

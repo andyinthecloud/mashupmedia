@@ -1,0 +1,10 @@
+div.FieldError {
+    text-align: left;
+    color: red;
+}
+
+div.FieldError svg {
+    margin-right: 0.2em;
+    vertical-align: middle;
+}
+
