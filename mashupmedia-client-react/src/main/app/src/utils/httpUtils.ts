@@ -47,13 +47,13 @@ export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string,
         console.log('Error getting json', exception)
     }
 
-    if (response.status == HttpStatus.FORBIDDEN) {        
-        redirectLogin(HttpStatus.FORBIDDEN)        
+    if (response.status == HttpStatus.FORBIDDEN || response.status == HttpStatus.SERVER_ERROR) {        
+        redirectLogin(response.status)        
     }
 
-    if (!response.ok) {
-        redirectLogin(HttpStatus.SERVER_ERROR);
-    }
+    // if (!response.ok) {
+    //     redirectLogin(HttpStatus.SERVER_ERROR);
+    // }
 
     return response
 }
@@ -62,21 +62,26 @@ export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string,
 // const contextUrl: string = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2)) 
 
 export const redirectInternal = (internalUri: string): void => {    
-    // console.log('redirectInternal', contextUrl + internalUri)
     window.location.href = internalUri
-
 }
 
 export const codeParamName = 'code'
+export const jumpUriParamName = 'jump'
 
-export const redirectLogin = (httpStatus: HttpStatus): void => {
-    
-    let loginUri = '/login'
-    if (httpStatus) {
-        loginUri += '?' + codeParamName + '=' + httpStatus
+export const redirectLogin = (statusCode: number): void => {    
+
+    console.log('redirectLogin')
+
+    const loginUri = '/login';
+    const searchParams = new URLSearchParams()
+
+    if (statusCode) {
+        searchParams.append(codeParamName, '' + statusCode)
     }
 
-    redirectInternal(loginUri)
+    searchParams.append(jumpUriParamName, window.location.pathname + window.location.search)
+
+    redirectInternal(loginUri + '?' + searchParams.toString())
 }
 
 

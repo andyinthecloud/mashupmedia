@@ -2,10 +2,9 @@ import { Button, TextField } from "@mui/material"
 import { useState } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import FieldError from "../components/FieldError"
 import { addNotification, NotificationType } from "../notification/notificationSlice"
 import { RootState } from "../redux/store"
-import { emptyFieldValidation, FieldValidation, FormValidation, isEmpty } from "../utils/form-validation-utils"
+import { emptyFieldValidation, fieldErrorMessage, FieldValidation, FormValidation, hasFieldError, isEmpty, ServerError } from "../utils/form-validation-utils"
 import { changePassword, ChangeUserPasswordPayload } from "./backend/userCalls"
 
 type ChangeUserPasswordPagePayload = {
@@ -42,6 +41,24 @@ const ChangeUserPassword = () => {
             }
         }))
     }
+
+    const setServerFieldValidationState = (serverError: ServerError): void => {
+        const fieldValidation: FieldValidation = {
+            name: serverError.field || serverError.name,
+            message: serverError.code
+        }
+
+        const fieldValidations = props.formValidation.fieldValidations
+        fieldValidations.push(fieldValidation)
+
+        setProps(p => ({
+            ...p,
+            formValidation: {
+                fieldValidations
+            }
+        }))
+    }
+
 
     const setFieldValidationState = (fieldValidation: FieldValidation): void => {
         const fieldValidations = props.formValidation.fieldValidations
@@ -81,7 +98,15 @@ const ChangeUserPassword = () => {
         const changeUserPasswordPayload = props.changeUserPasswordPayload
 
         if (isEmpty(changeUserPasswordPayload.currentPassword)) {
-            setFieldValidationState(emptyFieldValidation('currentPassword', 'Current password'))
+            setFieldValidationState(emptyFieldValidation(FieldNames.CURRENT_PASSWORD, 'Current password'))
+        }
+
+        if (isEmpty(changeUserPasswordPayload.newPassword)) {
+            setFieldValidationState(emptyFieldValidation(FieldNames.NEW_PASSWORD, 'New password'))
+        }
+
+        if (isEmpty(changeUserPasswordPayload.confirmPassword)) {
+            setFieldValidationState(emptyFieldValidation(FieldNames.CONFIRM_PASSWORD, 'Confirm password'))
         }
 
     }
@@ -95,15 +120,29 @@ const ChangeUserPassword = () => {
         }
 
         changePassword(props.changeUserPasswordPayload, userToken)
-            .then(() => addNotification({
-                message: 'Password saved.',
-                notificationType: NotificationType.SUCCESS
-            }))
-            .catch(() => addNotification({
-                message: 'Please confirm the current password is correct and the new and confirm password are identical.',
-                notificationType: NotificationType.ERROR
-            }))
+            .then(response => {
 
+                if (response.ok) {
+                    addNotification({
+                        message: 'Password saved.',
+                        notificationType: NotificationType.SUCCESS
+                    })
+                    // navigate('/')
+
+                } else {
+                    response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
+                        setServerFieldValidationState(serverError)
+                    })
+
+                    response.parsedBody?.errorPayload.objectErrors.map(function (serverError) {
+                        addNotification({
+                            message: serverError.code,
+                            notificationType: NotificationType.ERROR
+                        })
+                    })
+                }
+
+            })
     }
 
     return (
@@ -112,32 +151,38 @@ const ChangeUserPassword = () => {
 
             <div className="new-line">
                 <TextField
-                    name="currentPassword"
+                    name={FieldNames.CURRENT_PASSWORD}
                     label="Current password"
                     type={"password"}
                     fullWidth={true}
-                    onChange={e => setFieldValueState(e.currentTarget.name, e.currentTarget.value)} />
-
-                <FieldError fieldName="currentPassword" formValidation={props.formValidation}></FieldError>
-
+                    onChange={e => setFieldValueState(e.currentTarget.name, e.currentTarget.value)}
+                    error={hasFieldError(FieldNames.CURRENT_PASSWORD, props.formValidation)}
+                    helperText={fieldErrorMessage(FieldNames.CURRENT_PASSWORD, props.formValidation)}
+                />
             </div>
 
             <div className="new-line">
                 <TextField
-                    name="newPassword"
+                    name={FieldNames.NEW_PASSWORD}
                     label="New password"
                     type={"password"}
                     fullWidth={true}
-                    onChange={e => setFieldValueState(e.currentTarget.name, e.currentTarget.value)} />
+                    onChange={e => setFieldValueState(e.currentTarget.name, e.currentTarget.value)}
+                    error={hasFieldError(FieldNames.NEW_PASSWORD, props.formValidation)}
+                    helperText={fieldErrorMessage(FieldNames.NEW_PASSWORD, props.formValidation)}
+                />
             </div>
 
             <div className="new-line">
                 <TextField
-                    name="confirmPassword"
+                    name={FieldNames.CONFIRM_PASSWORD}
                     label="Confirm password"
                     type={"password"}
                     fullWidth={true}
-                    onChange={e => setFieldValueState(e.currentTarget.name, e.currentTarget.value)} />
+                    onChange={e => setFieldValueState(e.currentTarget.name, e.currentTarget.value)}
+                    error={hasFieldError(FieldNames.CONFIRM_PASSWORD, props.formValidation)}
+                    helperText={fieldErrorMessage(FieldNames.CONFIRM_PASSWORD, props.formValidation)}
+                />
             </div>
 
             <div className="new-line right">

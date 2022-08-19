@@ -2,13 +2,24 @@ package org.mashupmedia.dto.admin;
 
 import javax.validation.constraints.NotBlank;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder(toBuilder = true)
 public class ChangeUserPasswordPayload {
-    @NotBlank
+    private String username;
+
+    @NotBlank(message = "The current password value should not be empty.")
     private String currentPassword;
     
-    @NotBlank    
+    @NotBlank(message = "The new password value should not be empty.")
     private String newPassword;
     
-    @NotBlank
+    @NotBlank(message = "The confirm password value should not be empty.")
     private String confirmPassword; 
 }

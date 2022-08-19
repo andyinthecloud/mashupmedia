@@ -66,6 +66,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         LocalDateTime localDateExpires = LocalDateTime.now().plusHours(SecurityConstants.EXPIRATION_HOURS);
         Date dateExpires = DateHelper.toDate(localDateExpires);
+        // Date dateExpires = DateHelper.toDate(LocalDateTime.now().minusMinutes(1));
 
         String token = JWT.create()
                 .withSubject(((User) authentication.getPrincipal()).getUsername())

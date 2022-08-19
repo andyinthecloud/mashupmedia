@@ -1,3 +1,4 @@
+import { ServerResponsePayload } from "../../utils/form-validation-utils";
 import { callMashupMediaApi, HttpMethod, HttpResponse } from "../../utils/httpUtils"
 import { NameValuePayload } from "./metaCalls";
 
@@ -32,6 +33,6 @@ export const saveMyAccount = (userPayload: UserPayload, userToken?: string): Pro
     return callMashupMediaApi<UserPayload> (HttpMethod.PUT, userUri + 'me', userToken, JSON.stringify(userPayload))
 }
 
-export const changePassword = (changeUserPasswordPayload: ChangeUserPasswordPayload, userToken?: string): Promise<HttpResponse<UserPayload>> => {
-    return callMashupMediaApi<UserPayload> (HttpMethod.PUT, userUri + 'change-password', userToken, JSON.stringify(changeUserPasswordPayload))
+export const changePassword = (changeUserPasswordPayload: ChangeUserPasswordPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
+    return callMashupMediaApi<ServerResponsePayload<string>> (HttpMethod.PUT, userUri + 'change-password', userToken, JSON.stringify(changeUserPasswordPayload))
 }

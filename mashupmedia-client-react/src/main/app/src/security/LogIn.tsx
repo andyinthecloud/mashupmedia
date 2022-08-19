@@ -6,7 +6,7 @@ import logo from "../logo.png";
 import { NotificationType, addNotification } from "../notification/notificationSlice";
 import { useAppDispatch } from "../redux/hooks";
 import type { RootState } from "../redux/store";
-import { codeParamName, HttpStatus } from "../utils/httpUtils";
+import { codeParamName, HttpStatus, jumpUriParamName } from "../utils/httpUtils";
 import type { UserLogInPayload } from "./features/loggedInUserSlice";
 import { logIn } from "./features/loggedInUserSlice";
 import { setTokenCookie } from "./securityUtils";
@@ -20,6 +20,8 @@ const LogIn = () => {
 
 
     const code = searchParams.get(codeParamName)
+    const encodedJumpUri = searchParams.get(jumpUriParamName)
+
     useEffect(() => {
 
         if (!searchParams.has(codeParamName)) {
@@ -77,8 +79,10 @@ const LogIn = () => {
 
     const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        searchParams.delete('code')
+        searchParams.delete(codeParamName)
+        // searchParams.delete(jumpUriParamName)
         setSearchParams(searchParams)
+
         dispatch(
             logIn({ username: props.username, password: props.password })
         )
@@ -89,7 +93,10 @@ const LogIn = () => {
     useEffect(() => {
         if (logInState.payload) {
             setTokenCookie(logInState.payload.token)
-            navigate(-1);
+
+            const navigateUri = encodedJumpUri ? decodeURI(encodedJumpUri) : '/'
+            console.log(navigateUri)
+            navigate(navigateUri)
         } else {
             addNotification({
                 message: 'Invalid username password combination.',
@@ -135,6 +142,7 @@ const LogIn = () => {
 
             <pre>Logged in user</pre>
             <pre>{JSON.stringify(logInState)}</pre>
+
 
         </form>
 
