@@ -1,6 +1,6 @@
 import { Button, TextField } from "@mui/material"
 import { useState } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { addNotification, NotificationType } from "../notification/notificationSlice"
 import { RootState } from "../redux/store"
@@ -15,6 +15,8 @@ type ChangeUserPasswordPagePayload = {
 const ChangeUserPassword = () => {
 
     const userToken = useSelector((state: RootState) => state.loggedInUser.payload?.token)
+
+    const dispatch = useDispatch()
 
     const enum FieldNames {
         CURRENT_PASSWORD = 'currentPassword',
@@ -113,6 +115,7 @@ const ChangeUserPassword = () => {
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault()
+
         validateForm()
 
         if (props.formValidation.fieldValidations.length) {
@@ -121,13 +124,14 @@ const ChangeUserPassword = () => {
 
         changePassword(props.changeUserPasswordPayload, userToken)
             .then(response => {
-
                 if (response.ok) {
-                    addNotification({
-                        message: 'Password saved.',
-                        notificationType: NotificationType.SUCCESS
-                    })
-                    // navigate('/')
+                    dispatch(
+                        addNotification({
+                            message: 'Password saved.',
+                            notificationType: NotificationType.SUCCESS
+                        })
+                    )
+                    navigate('/')
 
                 } else {
                     response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
@@ -141,7 +145,6 @@ const ChangeUserPassword = () => {
                         })
                     })
                 }
-
             })
     }
 

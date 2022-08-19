@@ -72,6 +72,11 @@ public class UserController {
             errors.rejectValue("newPassword", "The new password and confirm password should be the same");
         }
 
+        if (!errors.hasErrors()) {
+            adminManager.updatePassword(savedUser.getUsername(), changeUserPasswordPayload.getNewPassword());
+        }
+
+
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_RESPONSE_MESSAGE, errors);
 
     }

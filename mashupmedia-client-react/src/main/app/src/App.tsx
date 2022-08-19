@@ -1,19 +1,16 @@
 import { Button, Container, ThemeProvider } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import './App.css';
-import AlertBoxes from "./components/AlertBox";
+import AlertBoxes from "./components/AlertBoxes";
 import Drawer from "./components/Drawer";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import { MashupRoutes } from "./MashupRoutes";
 import { addNotification, NotificationType } from "./notification/notificationSlice";
-import { RootState } from "./redux/store";
 import { mashupTheme } from "./utils/formUtils";
 
 
 function App() {
-
-    const notificationPayloadsState = useSelector((state: RootState) => state.notification)
 
     const dispatch = useDispatch()
 
@@ -33,7 +30,8 @@ function App() {
                 <Drawer></Drawer>
                 <Header />
                 <Container className="main-container" maxWidth="md">
-                    <AlertBoxes notificationPayloads={notificationPayloadsState.notificationPayloads}></AlertBoxes>
+                {/* <AlertBoxes notificationPayloads={notificationPayloadsState.notificationPayloads}></AlertBoxes> */}
+                    <AlertBoxes />
                     <MashupRoutes />
                 </Container>
                 <Footer />

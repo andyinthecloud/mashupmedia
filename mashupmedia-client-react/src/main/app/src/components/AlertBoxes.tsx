@@ -1,7 +1,8 @@
 import { Alert, AlertColor, AlertTitle } from "@mui/material"
 import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { clearNotification, NotificationPayload, NotificationType } from "../notification/notificationSlice"
+import { RootState } from "../redux/store"
 
 
 
@@ -9,20 +10,20 @@ export type AlertBoxPayload = {
     notificationPayloads: NotificationPayload[]
 }
 
-const AlertBoxes = (payload: AlertBoxPayload) => {
+const AlertBoxes = () => {
+
+    const notificationPayloadsState = useSelector((state: RootState) => state.notification)
 
 
-    const [props, setProps] = useState<AlertBoxPayload>({
-        ...payload
-    })
+    const [props, setProps] = useState<AlertBoxPayload>()
 
     useEffect(() => {
-        setProps(payload)
-    }, [payload])
+        setProps(notificationPayloadsState)
+    }, [notificationPayloadsState])
 
     return (
         <div>
-            {props.notificationPayloads.map((notificationPayload) => {
+            {props?.notificationPayloads.map((notificationPayload) => {
                 return (
                     <AlertBox
                         key={notificationPayload.id}
