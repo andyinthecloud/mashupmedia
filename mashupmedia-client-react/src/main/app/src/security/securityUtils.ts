@@ -1,4 +1,3 @@
-import { fetchMyAccount } from "../settings/backend/userCalls";
 
 const TOKEN_KEY = 'jwt'
 

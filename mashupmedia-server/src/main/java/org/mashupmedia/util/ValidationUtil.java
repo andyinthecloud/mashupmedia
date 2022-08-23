@@ -8,7 +8,8 @@ import org.springframework.validation.Errors;
 
 public class ValidationUtil {
 
-    public static String DEFAULT_RESPONSE_MESSAGE = "I am completely operational, and all my circuits are functioning perfectly."; 
+    public static String DEFAULT_OK_RESPONSE_MESSAGE = "I am completely operational, and all my circuits are functioning perfectly."; 
+    public static String DEFAULT_ERROR_RESPONSE_MESSAGE = "I think you ought to know I'm feeling very depressed.";
 
 
     public static <T> ResponseEntity<ServerResponsePayload<T>> createResponseEntityPayload(T payload, Errors errors) {

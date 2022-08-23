@@ -90,15 +90,12 @@ export default function TemporaryDrawer() {
 
                         <ListItemRoute label="Network" toRoute="/settings/network" />
                         <ListItemRoute label="My account" toRoute="/settings/my-account" />
+                        <ListItemRoute label="Users" toRoute="/settings/users" />
+                        <ListItemRoute label="Groups" toRoute="/settings/groups" />
+
 
                         <ListItem button>
                             <ListItemText primary="Libraries" />
-                        </ListItem>
-                        <ListItem button>
-                            <ListItemText primary="Users" />
-                        </ListItem>
-                        <ListItem button>
-                            <ListItemText primary="Groups" />
                         </ListItem>
                         <ListItem button>
                             <ListItemText primary="Encoding" />

@@ -80,7 +80,6 @@ const LogIn = () => {
     const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         searchParams.delete(codeParamName)
-        // searchParams.delete(jumpUriParamName)
         setSearchParams(searchParams)
 
         dispatch(
@@ -93,16 +92,13 @@ const LogIn = () => {
     useEffect(() => {
         if (logInState.payload) {
             setTokenCookie(logInState.payload.token)
-
             const navigateUri = encodedJumpUri ? decodeURI(encodedJumpUri) : '/'
-            console.log(navigateUri)
             navigate(navigateUri)
         } else {
             addNotification({
                 message: 'Invalid username password combination.',
                 notificationType: NotificationType.ERROR
             })
-
         }
     }, [logInState])
 

@@ -15,7 +15,8 @@ export const restHeaders = (userToken?: string | null): Headers => {
 export enum HttpMethod {
     GET = 'GET',
     POST = 'POST',
-    PUT = 'PUT'
+    PUT = 'PUT',
+    DELETE = 'DELETE'
 }
 
 export enum HttpStatus {

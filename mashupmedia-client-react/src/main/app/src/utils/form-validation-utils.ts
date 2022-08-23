@@ -11,7 +11,7 @@ export type FormValidation = {
 export type ServerError = {
     field: string
     name: string
-    code: string
+    defaultMessage: string
 }
 
 export type ServerResponsePayload<T> = {
@@ -47,3 +47,7 @@ export const fieldValidation = (name: string, formValidation: FormValidation): F
         .find(fieldValidation => fieldValidation.name === name)
 }
 
+export const toFieldValidation = (serverError: ServerError): FieldValidation => ({
+    name: serverError.field || serverError.name,
+    message: serverError.defaultMessage
+})

@@ -1,5 +1,6 @@
 package org.mashupmedia.mapper;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                                 .username(domain.getUsername())
                                 .editable(domain.isEditable())
                                 .enabled(domain.isEnabled())
+                                .administrator(domain.isAdministrator())
                                 .createdOn(DateHelper.toLocalDateTime(domain.getCreatedOn()))
                                 .updatedOn(DateHelper.toLocalDateTime(domain.getUpdatedOn()))
                                 .build();
@@ -48,7 +50,7 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                                 .collect(Collectors.toList());
 
                 return userPayload.toBuilder()
-                                .system(domain.isSystem())                                
+                                .system(domain.isSystem())
                                 .groupPayloads(groupPayloads)
                                 .rolePayloads(rolePayloads)
                                 .build();
@@ -68,13 +70,19 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                         return user;
                 }
 
-                Set<Group> groups = payload.getGroupPayloads().stream()
-                                .map(groupMapper::toDomain)
-                                .collect(Collectors.toSet());
+                Set<Group> groups = new HashSet<>();
+                if (payload.getGroupPayloads() != null) {
+                        groups = payload.getGroupPayloads().stream()
+                                        .map(groupMapper::toDomain)
+                                        .collect(Collectors.toSet());
+                }
 
-                Set<Role> roles = payload.getRolePayloads().stream()
-                                .map(roleMapper::toDomain)
-                                .collect(Collectors.toSet());
+                Set<Role> roles = new HashSet<>();
+                if (payload.getRolePayloads() != null) {
+                        roles = payload.getRolePayloads().stream()
+                                        .map(roleMapper::toDomain)
+                                        .collect(Collectors.toSet());
+                }
 
                 return User.builder()
                                 .username(payload.getUsername())

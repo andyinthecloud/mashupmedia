@@ -4,8 +4,9 @@ import Introduction from "./components/Introduction";
 import LogIn from "./security/LogIn";
 import { RequireAuthenication } from "./security/RequireAuthentication";
 import ChangeUserPassword from "./settings/ChangeUserPassword";
-import MyAccount from "./settings/MyAccount";
+import User from "./settings/User";
 import NetworkForm from "./settings/NetworkForm";
+import Users from "./settings/Users";
 
 
 export function MashupRoutes() {
@@ -18,14 +19,33 @@ export function MashupRoutes() {
             <Route path="/settings">
                 <Route index element={
                     <RequireAuthenication>
-                        <MyAccount />
+                        <User />
                     </RequireAuthenication>
                 } />
                 <Route path="my-account" element={
                     <RequireAuthenication>
-                        <MyAccount />
+                        <User />
                     </RequireAuthenication>
                 } />
+
+                <Route path="new-account" element={
+                    <RequireAuthenication>
+                        <User />
+                    </RequireAuthenication>
+                } />
+
+                <Route path="user-account">
+                    <Route index element={
+                        <RequireAuthenication>
+                            <User />
+                        </RequireAuthenication>
+                    } />
+                    <Route path=":userId" element={
+                        <RequireAuthenication>
+                            <User />
+                        </RequireAuthenication>
+                    } />
+                </Route>
 
                 <Route path="change-user-password">
                     <Route index element={
@@ -38,7 +58,6 @@ export function MashupRoutes() {
                             <ChangeUserPassword />
                         </RequireAuthenication>
                     } />
-
                 </Route>
 
                 <Route path="network" element={
@@ -46,6 +65,13 @@ export function MashupRoutes() {
                         <NetworkForm />
                     </RequireAuthenication>
                 } />
+
+                <Route path="users" element={
+                    <RequireAuthenication>
+                        <Users />
+                    </RequireAuthenication>
+                } />
+
             </Route>
 
 

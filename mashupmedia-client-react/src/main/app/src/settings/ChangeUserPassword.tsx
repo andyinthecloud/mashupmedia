@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { addNotification, NotificationType } from "../notification/notificationSlice"
 import { RootState } from "../redux/store"
-import { emptyFieldValidation, fieldErrorMessage, FieldValidation, FormValidation, hasFieldError, isEmpty, ServerError } from "../utils/form-validation-utils"
+import { emptyFieldValidation, fieldErrorMessage, FieldValidation, FormValidation, hasFieldError, isEmpty, ServerError, toFieldValidation } from "../utils/form-validation-utils"
 import { changePassword, ChangeUserPasswordPayload } from "./backend/userCalls"
 
 type ChangeUserPasswordPagePayload = {
@@ -45,13 +45,8 @@ const ChangeUserPassword = () => {
     }
 
     const setServerFieldValidationState = (serverError: ServerError): void => {
-        const fieldValidation: FieldValidation = {
-            name: serverError.field || serverError.name,
-            message: serverError.code
-        }
-
         const fieldValidations = props.formValidation.fieldValidations
-        fieldValidations.push(fieldValidation)
+        fieldValidations.push(toFieldValidation(serverError))
 
         setProps(p => ({
             ...p,
@@ -139,10 +134,12 @@ const ChangeUserPassword = () => {
                     })
 
                     response.parsedBody?.errorPayload.objectErrors.map(function (serverError) {
-                        addNotification({
-                            message: serverError.code,
-                            notificationType: NotificationType.ERROR
-                        })
+                        dispatch(
+                            addNotification({
+                                message: serverError.defaultMessage,
+                                notificationType: NotificationType.ERROR
+                            })
+                        )
                     })
                 }
             })

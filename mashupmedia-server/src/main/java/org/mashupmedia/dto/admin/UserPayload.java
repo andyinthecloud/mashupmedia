@@ -3,6 +3,9 @@ package org.mashupmedia.dto.admin;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import org.mashupmedia.dto.share.NameValuePayload;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -17,11 +20,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class UserPayload {
+	@NotBlank(message = "The username should not be empty.")
 	private String username;
+	@Size(min = 3, max = 255, message = "Name should be between 3 and 255 characaters")
 	private String name;
 	private boolean enabled;
 	private boolean editable;
 	private boolean system;
+	private boolean administrator;
 
 	private List<NameValuePayload<String>> rolePayloads;
 	private List<NameValuePayload<Long>> groupPayloads;

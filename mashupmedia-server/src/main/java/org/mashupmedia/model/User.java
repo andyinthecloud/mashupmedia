@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
 
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,7 +29,7 @@ public class User implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	private String username;
+	private String username;	
 	private String password;
 	private String name;
 	private boolean enabled;
