@@ -3,12 +3,11 @@ import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import logo from "../logo.png";
-import { NotificationType, addNotification } from "../notification/notificationSlice";
+import { addNotification, NotificationType } from "../notification/notificationSlice";
 import { useAppDispatch } from "../redux/hooks";
-import type { RootState } from "../redux/store";
+import { RootState } from "../redux/store";
 import { codeParamName, HttpStatus, jumpUriParamName } from "../utils/httpUtils";
-import type { UserLogInPayload } from "./features/loggedInUserSlice";
-import { logIn } from "./features/loggedInUserSlice";
+import { logIn, UserLogInPayload } from "./features/securitySlice";
 import { setTokenCookie } from "./securityUtils";
 
 
@@ -74,13 +73,28 @@ const LogIn = () => {
         }))
     }
 
-    const logInState = useSelector((state: RootState) => state.loggedInUser)
-
+    const securityState = useSelector((state: RootState) => state.security)
 
     const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         searchParams.delete(codeParamName)
         setSearchParams(searchParams)
+
+        // login({ username: props.username, password: props.password })
+        //     .then(response => {
+        //         if (response.ok) {
+        //             setTokenCookie(response.parsedBody?.token)
+        //             const navigateUri = encodedJumpUri ? decodeURI(encodedJumpUri) : '/'
+        //             navigate(navigateUri)
+        //         } else {
+        //             dispatch(
+        //                 addNotification({
+        //                     message: 'Invalid username password combination.',
+        //                     notificationType: NotificationType.ERROR
+        //                 })
+        //             )
+        //         }                
+        //     })
 
         dispatch(
             logIn({ username: props.username, password: props.password })
@@ -90,17 +104,33 @@ const LogIn = () => {
     )
 
     useEffect(() => {
-        if (logInState.payload) {
-            setTokenCookie(logInState.payload.token)
-            const navigateUri = encodedJumpUri ? decodeURI(encodedJumpUri) : '/'
-            navigate(navigateUri)
-        } else {
-            addNotification({
-                message: 'Invalid username password combination.',
-                notificationType: NotificationType.ERROR
-            })
-        }
-    }, [logInState])
+        // if (securityState.payload) {
+
+            if (securityState.error?.length) {
+                dispatch(
+                    addNotification({
+                        message: 'Invalid username password combination.',
+                        notificationType: NotificationType.ERROR
+                    })
+                )
+            } 
+
+            if (securityState.payload) {            
+                setTokenCookie(securityState.payload?.token)
+                const navigateUri = encodedJumpUri ? decodeURI(encodedJumpUri) : '/'
+                navigate(navigateUri)
+
+            }
+        // }
+        // else {
+        //     dispatch(
+        //         addNotification({
+        //             message: 'Invalid username password combination.',
+        //             notificationType: NotificationType.ERROR
+        //         })
+        //     )
+        // }
+    }, [dispatch, securityState])
 
 
 
@@ -129,16 +159,6 @@ const LogIn = () => {
                     Log in
                 </Button>
             </div>
-
-
-
-            <pre>Form</pre>
-            <pre>{JSON.stringify(props)}</pre>
-
-
-            <pre>Logged in user</pre>
-            <pre>{JSON.stringify(logInState)}</pre>
-
 
         </form>
 

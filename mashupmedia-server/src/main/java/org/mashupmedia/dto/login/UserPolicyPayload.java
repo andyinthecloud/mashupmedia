@@ -1,7 +1,5 @@
 package org.mashupmedia.dto.login;
 
-import javax.validation.constraints.NotBlank;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class LoginPayload {
-    @NotBlank
+public class UserPolicyPayload {
+    private boolean administrator;
     private String username;
-    @NotBlank
-    private  String password;
+    private String name; 
 }

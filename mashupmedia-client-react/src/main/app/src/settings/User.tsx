@@ -5,6 +5,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom"
 import Checkboxes from "../components/Checkboxes"
 import { addNotification, NotificationType } from "../notification/notificationSlice"
 import type { RootState } from "../redux/store"
+import { userPolicy } from "../security/features/userPolicySlice"
 import { displayDateTime } from "../utils/dateUtils"
 import { toCheckboxPayloads, toNameValuePayloads, toSelectedValues } from "../utils/domainUtils"
 import { fieldErrorMessage, FormValidation, hasFieldError, ServerError, toFieldValidation } from "../utils/form-validation-utils"
@@ -26,7 +27,7 @@ const User = () => {
 
     const { userId } = useParams();
 
-    const userToken = useSelector((state: RootState) => state.loggedInUser.payload?.token)
+    const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
     const [props, setProps] = useState<UserValidationPayload>({
         userPayload: {
@@ -37,8 +38,6 @@ const User = () => {
             administrator: false
         },
         formValidation: { fieldValidations: [] }
-
-
     })
 
     const location = useLocation()
@@ -109,6 +108,10 @@ const User = () => {
 
     useEffect(() => {
 
+        dispatch(
+            userPolicy(userToken)
+        )
+
         fetchGroupPayloads(userToken).then(response => {
             if (response.parsedBody !== undefined) {
                 setGroupPayloads(response.parsedBody)
@@ -121,7 +124,10 @@ const User = () => {
             }
         })
 
-    }, [])
+    }, [userToken])
+
+    const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
+
 
 
     const setStateValue = (name: string, value: any): void => {
@@ -129,8 +135,6 @@ const User = () => {
             ...p,
             userPayload: {
                 ...p.userPayload,
-                // enabled: false
-                // ...p,
                 [name]: value
             }
         }))
@@ -201,29 +205,55 @@ const User = () => {
 
     function handleDeleteUser(): void {
         deleteUserAccount(props.userPayload.username, userToken)
-        .then(() => {
-            dispatch(
-                addNotification({
-                    message: 'Account deleted',
-                    notificationType: NotificationType.SUCCESS
-                })
-            )
-        })
-        .catch(() => {
-            dispatch(
-                addNotification({
-                    message: 'Unable to delete account.',
-                    notificationType: NotificationType.ERROR
-                })
-            )
-        })
+            .then(() => {
+                dispatch(
+                    addNotification({
+                        message: 'Account deleted',
+                        notificationType: NotificationType.SUCCESS
+                    })
+                )
+            })
+            .catch(() => {
+                dispatch(
+                    addNotification({
+                        message: 'Unable to delete account.',
+                        notificationType: NotificationType.ERROR
+                    })
+                )
+            })
 
         navigate('/settings/users')
+    }
+
+    const hasDeletePermission = (): boolean => {
+        if (userPolicyPayload?.username == props.userPayload.username) {
+            return false
+        }
+
+        if (userPolicyPayload?.administrator) {
+            return userPolicyPayload.administrator
+        }
+
+        return false
+    }
+
+
+    const hasChangePasswordPermission = (): boolean => {
+        if (userPolicyPayload?.username == props.userPayload.username) {
+            return true
+        }
+
+        if (userPolicyPayload?.administrator) {
+            return userPolicyPayload.administrator
+        }
+
+        return false
     }
 
     return (
         <form onSubmit={handleSubmit}>
             <h1>Edit user</h1>
+
 
             <div className="new-line">
                 <Box sx={{ color: 'primary.main' }}>
@@ -313,26 +343,26 @@ const User = () => {
                     Cancel
                 </Button>
 
-                {props.userPayload.username.length > 0 &&
+                {hasChangePasswordPermission() &&
                     <Button variant="contained" color="secondary" type="button" onClick={handleChangeUserPassword}>
                         Change password
                     </Button>
                 }
 
-                {props.userPayload.username.length > 0 &&
+                {hasDeletePermission() &&
                     <Button variant="contained" color="secondary" type="button" onClick={handleDeleteUser}>
                         Delete
                     </Button>
                 }
 
-                <Button variant="contained" color="primary" type="submit" disabled={!props.userPayload.editable}>
-                    Save
-                </Button>
+                {userPolicyPayload?.administrator &&
+                    <Button variant="contained" color="primary" type="submit" disabled={!props.userPayload.editable}>
+                        Save
+                    </Button>
+                }
             </div>
-
         </form>
     )
-
 
 
 }

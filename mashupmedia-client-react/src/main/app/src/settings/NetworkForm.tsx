@@ -5,23 +5,24 @@ import { PayloadAction } from "../redux/actions";
 import { useAppDispatch } from "../redux/hooks";
 import type { RootState, SecurePayload } from "../redux/store";
 
-import { NotificationType, addNotification } from "../notification/notificationSlice";
+import { addNotification, NotificationType } from "../notification/notificationSlice";
 import { HttpStatus, redirectLogin } from "../utils/httpUtils";
 import type { NetworkProxyPayload } from "./features/networkSlice";
-import { getNetworkProxy, postNetworkProxy } from "./features/networkSlice";
+import { postNetworkProxy } from "./features/networkSlice";
 
 
 const NetworkForm = () => {
 
-    const userToken = useSelector((state: RootState) => state.loggedInUser.payload?.token)
+    const securityPayload = useSelector((state: RootState) => state.security.payload)
+
     const dispatch = useAppDispatch()
 
-    useEffect(() => {
-        dispatch(
-            getNetworkProxy(userToken)
-        )
+    // useEffect(() => {
+    //     dispatch(
+    //         myAccount(userToken)
+    //     )
 
-    }, [dispatch, userToken])
+    // }, [dispatch, securityPayload])
 
     const networkProxyPayloadState = useSelector((state: RootState) => state.networkProxy)
     // const networkPayload = useSelector((state: RootState) => state.networkProxy.payload)
@@ -63,15 +64,15 @@ const NetworkForm = () => {
 
     const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const securePayload: SecurePayload<NetworkProxyPayload> = { userToken, payload: props }
+        const securePayload: SecurePayload<NetworkProxyPayload> = { userToken: securityPayload?.token, payload: props }
         dispatch(
             postNetworkProxy(securePayload)
         )
     },
-        [dispatch, props, userToken]
+        [dispatch, props, securityPayload]
     )
 
-    const [isSuccessfulSave, setSuccessfulSave] = useState(false)
+    // const [isSuccessfulSave, setSuccessfulSave] = useState(false)
 
     useEffect(() => {
 
@@ -137,7 +138,7 @@ const NetworkForm = () => {
             </div>
 
             <pre>{JSON.stringify(props)}</pre>
-            <pre>{JSON.stringify(isSuccessfulSave)}</pre>
+            {/* <pre>{JSON.stringify(isSuccessfulSave)}</pre> */}
         </form>
     )
 }

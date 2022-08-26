@@ -44,7 +44,7 @@ public class User implements UserDetails {
 	private long playlistMediaItemId;
 	@Transient
 	private PlaylistMediaItem playlistMediaItem;
-
+	
 	public boolean isSystem() {
 		return system;
 	}

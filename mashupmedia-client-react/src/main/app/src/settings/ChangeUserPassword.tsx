@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material"
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { addNotification, NotificationType } from "../notification/notificationSlice"
 import { RootState } from "../redux/store"
 import { emptyFieldValidation, fieldErrorMessage, FieldValidation, FormValidation, hasFieldError, isEmpty, ServerError, toFieldValidation } from "../utils/form-validation-utils"
@@ -14,7 +14,8 @@ type ChangeUserPasswordPagePayload = {
 
 const ChangeUserPassword = () => {
 
-    const userToken = useSelector((state: RootState) => state.loggedInUser.payload?.token)
+    const securityPayload = useSelector((state: RootState) => state.security.payload)
+
 
     const dispatch = useDispatch()
 
@@ -24,12 +25,15 @@ const ChangeUserPassword = () => {
         CONFIRM_PASSWORD = 'confirmPassword'
     }
 
+    const { userId } = useParams()
+
     const [props, setProps] = useState<ChangeUserPasswordPagePayload>(
         {
             changeUserPasswordPayload: {
                 currentPassword: '',
                 newPassword: '',
-                confirmPassword: ''
+                confirmPassword: '',
+                username: userId
             }, formValidation: { fieldValidations: [] }
         }
     )
@@ -55,7 +59,6 @@ const ChangeUserPassword = () => {
             }
         }))
     }
-
 
     const setFieldValidationState = (fieldValidation: FieldValidation): void => {
         const fieldValidations = props.formValidation.fieldValidations
@@ -117,7 +120,7 @@ const ChangeUserPassword = () => {
             return
         }
 
-        changePassword(props.changeUserPasswordPayload, userToken)
+        changePassword(props.changeUserPasswordPayload, securityPayload?.token)
             .then(response => {
                 if (response.ok) {
                     dispatch(
@@ -143,6 +146,20 @@ const ChangeUserPassword = () => {
                     })
                 }
             })
+    }
+
+    const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
+
+    const hasChangePasswordPermission = (): boolean => {
+        if (userPolicyPayload?.administrator) {
+            return userPolicyPayload.administrator
+        }
+
+        if (userPolicyPayload?.username == props.changeUserPasswordPayload.username) {
+            return true
+        }
+
+        return false
     }
 
     return (
@@ -190,9 +207,12 @@ const ChangeUserPassword = () => {
                     Cancel
                 </Button>
 
-                <Button variant="contained" color="primary" type="submit">
-                    Change password
-                </Button>
+                {hasChangePasswordPermission() &&
+                    <Button variant="contained" color="primary" type="submit">
+                        Change password
+                    </Button>
+                }
+
             </div>
 
         </form>

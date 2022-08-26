@@ -9,7 +9,8 @@ import { UserPayload, users } from "./backend/userCalls"
 
 const Users = () => {
 
-    const userToken = useSelector((state: RootState) => state.loggedInUser.payload?.token)
+    const userToken = useSelector((state: RootState) => state.security.payload?.token)
+
 
     const [props, setProps] = useState<UserPayload[]>([])
 

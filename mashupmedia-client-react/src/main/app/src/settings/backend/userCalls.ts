@@ -2,14 +2,11 @@ import { ServerResponsePayload } from "../../utils/form-validation-utils";
 import { callMashupMediaApi, HttpMethod, HttpResponse } from "../../utils/httpUtils"
 import { NameValuePayload } from "./metaCalls";
 
-// export{}
-
 export type UserPayload = {
     enabled: boolean
     editable: boolean
     administrator: boolean
     username: string
-    password?: string
     name: string
     createdOn?: string | null
     updatedOn?: string | null
@@ -23,7 +20,6 @@ export type ChangeUserPasswordPayload = {
     newPassword: string
     confirmPassword: string
 }
-
 
 const userUri = '/api/admin/user/'
 
@@ -47,7 +43,7 @@ export const users = (userToken?: string): Promise<HttpResponse<UserPayload[]>> 
     return callMashupMediaApi<UserPayload[]> (HttpMethod.GET, userUri + 'all', userToken)
 }
 
-
 export const deleteUserAccount = (username: string, userToken?: string): Promise<HttpResponse<boolean>> => {
     return callMashupMediaApi<boolean> (HttpMethod.DELETE, userUri + 'delete-account', userToken, username)
 }
+

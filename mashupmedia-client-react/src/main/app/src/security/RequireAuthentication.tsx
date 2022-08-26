@@ -33,10 +33,10 @@ import { securityToken } from "./securityUtils"
 
 
 export function RequireAuthenication({ children }: { children: JSX.Element }): any {
-    const userPayload = useSelector((state: RootState) => state.loggedInUser.payload)
+    const securityPayload = useSelector((state: RootState) => state.security.payload)
     const location = useLocation()
 
-    if (securityToken(userPayload?.token)) {
+    if (securityToken(securityPayload?.token)) {
         return children
     } else {
         <Navigate to="/login" state={{ from: location }} replace />

@@ -1,22 +1,22 @@
 
 const TOKEN_KEY = 'jwt'
 
-export const login = () => {
-    localStorage.setItem(TOKEN_KEY, 'TestLogin');
-}
+// export const login = () => {
+//     localStorage.setItem(TOKEN_KEY, 'TestLogin');
+// }
 
-export const logout = () => {
-    localStorage.removeItem(TOKEN_KEY);
-}
+// export const logout = () => {
+//     localStorage.removeItem(TOKEN_KEY);
+// }
 
-export const isLogin = (): boolean => {
+// export const isLogin = (): boolean => {
 
-    if (localStorage.getItem(TOKEN_KEY)) {
-        return true;
-    }
+//     if (localStorage.getItem(TOKEN_KEY)) {
+//         return true;
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
 // export const isLoggedIn = async (userToken: string | null | undefined): boolean => {
 //     // console.log('isLoggedIn', userPayload)
@@ -41,7 +41,11 @@ export const isLogin = (): boolean => {
 //     return await isLoggedIn;
 // }
 
-export function setTokenCookie(token: string): void {
+export function setTokenCookie(token: string | undefined): void {
+    if (!token?.length) {
+        return;
+    }
+
     const date = new Date()
     date.setMonth(date.getMonth() + 3) 
     document.cookie = `${TOKEN_KEY}=${token}; expires = ${date.toUTCString()}; path = /`
