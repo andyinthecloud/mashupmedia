@@ -32,11 +32,11 @@ export const logIn = createAsyncThunk<UserTokenPayload, UserLogInPayload>(
     }
 )
 
+
 const securitySlice = createSlice({
     name: 'security/login',
     initialState,
-    reducers: {
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder.addCase(logIn.pending, (state) => {
             state.loading = true
@@ -55,6 +55,5 @@ const securitySlice = createSlice({
         })
     }
 })
-
 
 export default securitySlice

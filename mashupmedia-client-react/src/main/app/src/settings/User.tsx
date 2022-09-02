@@ -5,13 +5,12 @@ import { useLocation, useNavigate, useParams } from "react-router-dom"
 import Checkboxes from "../components/Checkboxes"
 import { addNotification, NotificationType } from "../notification/notificationSlice"
 import type { RootState } from "../redux/store"
-import { userPolicy } from "../security/features/userPolicySlice"
 import { displayDateTime } from "../utils/dateUtils"
 import { toCheckboxPayloads, toNameValuePayloads, toSelectedValues } from "../utils/domainUtils"
 import { fieldErrorMessage, FormValidation, hasFieldError, ServerError, toFieldValidation } from "../utils/form-validation-utils"
 import { HttpStatus, redirectLogin } from "../utils/httpUtils"
-import { fetchGroupPayloads, fetchRolePayloads, NameValuePayload } from "./backend/metaCalls"
-import { deleteUserAccount, myAccount, saveUserAccount, userAccount, UserPayload } from "./backend/userCalls"
+import { getGroups, getRoles, NameValuePayload } from "./backend/metaCalls"
+import { deleteUserAccount, getMyAccount, saveUserAccount, userAccount, UserPayload } from "./backend/userCalls"
 
 type UserValidationPayload = {
     userPayload: UserPayload
@@ -83,7 +82,7 @@ const User = () => {
         }
         // my account
         else {
-            myAccount(userToken)
+            getMyAccount(userToken)
                 .then((response) => {
 
                     const userPayload = response.parsedBody !== undefined
@@ -108,17 +107,13 @@ const User = () => {
 
     useEffect(() => {
 
-        dispatch(
-            userPolicy(userToken)
-        )
-
-        fetchGroupPayloads(userToken).then(response => {
+        getGroups(userToken).then(response => {
             if (response.parsedBody !== undefined) {
                 setGroupPayloads(response.parsedBody)
             }
         })
 
-        fetchRolePayloads(userToken).then(response => {
+        getRoles(userToken).then(response => {
             if (response.parsedBody !== undefined) {
                 setRolePayloads(response.parsedBody)
             }

@@ -5,18 +5,18 @@ import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { RootState } from "../redux/store"
 import { HttpStatus, redirectLogin } from "../utils/httpUtils"
-import { UserPayload, users } from "./backend/userCalls"
+import { UserPayload, getUsers } from "./backend/userCalls"
 
 const Users = () => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
-
+    const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
 
     const [props, setProps] = useState<UserPayload[]>([])
 
 
     useEffect(() => {
-        users(userToken)
+        getUsers(userToken)
             .then((response) => {
                 if (response.parsedBody !== undefined) {
                     setProps(response.parsedBody)
@@ -68,14 +68,17 @@ const Users = () => {
                 })}
             </List>
 
-            
+
             <div className="new-line right">
-                <Button variant="contained" color="secondary"  type="button" onClick={handleCancel}>
+                <Button variant="contained" color="secondary" type="button" onClick={handleCancel}>
                     Cancel
                 </Button>
-                <Button variant="contained" color="primary" type="submit" onClick={handleNewUser}>
-                    New user
-                </Button>
+
+                {userPolicyPayload && userPolicyPayload.administrator &&
+                    <Button variant="contained" color="primary" type="submit" onClick={handleNewUser}>
+                        New user
+                    </Button>
+                }
             </div>
 
 

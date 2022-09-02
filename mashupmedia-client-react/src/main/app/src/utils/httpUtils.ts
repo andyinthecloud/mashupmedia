@@ -69,7 +69,7 @@ export const redirectInternal = (internalUri: string): void => {
 export const codeParamName = 'code'
 export const jumpUriParamName = 'jump'
 
-export const redirectLogin = (statusCode: number): void => {    
+export const redirectLogin = (statusCode?: number): void => {    
 
     console.log('redirectLogin')
 

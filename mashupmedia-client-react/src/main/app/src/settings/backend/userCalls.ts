@@ -31,7 +31,7 @@ export const saveUserAccount = (userPayload: UserPayload, userToken?: string): P
     return callMashupMediaApi<ServerResponsePayload<string>> (HttpMethod.PUT, userUri + 'account', userToken, JSON.stringify(userPayload))
 }
 
-export const myAccount = (userToken?: string): Promise<HttpResponse<UserPayload>> => {
+export const getMyAccount = (userToken?: string): Promise<HttpResponse<UserPayload>> => {
     return callMashupMediaApi<UserPayload> (HttpMethod.GET, userUri + 'my-account', userToken)
 }
 
@@ -39,7 +39,7 @@ export const changePassword = (changeUserPasswordPayload: ChangeUserPasswordPayl
     return callMashupMediaApi<ServerResponsePayload<string>> (HttpMethod.PUT, userUri + 'change-password', userToken, JSON.stringify(changeUserPasswordPayload))
 }
 
-export const users = (userToken?: string): Promise<HttpResponse<UserPayload[]>> => {
+export const getUsers = (userToken?: string): Promise<HttpResponse<UserPayload[]>> => {
     return callMashupMediaApi<UserPayload[]> (HttpMethod.GET, userUri + 'all', userToken)
 }
 

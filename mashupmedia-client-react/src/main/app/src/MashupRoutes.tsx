@@ -1,11 +1,12 @@
-import { Login } from "@mui/icons-material";
 import { Route, Routes } from "react-router-dom";
 import Introduction from "./components/Introduction";
 import LogIn from "./security/LogIn";
 import { RequireAuthenication } from "./security/RequireAuthentication";
 import ChangeUserPassword from "./settings/ChangeUserPassword";
-import User from "./settings/User";
+import Group from "./settings/Group";
+import Groups from "./settings/Groups";
 import NetworkForm from "./settings/NetworkForm";
+import User from "./settings/User";
 import Users from "./settings/Users";
 
 
@@ -71,6 +72,25 @@ export function MashupRoutes() {
                         <Users />
                     </RequireAuthenication>
                 } />
+
+                <Route path="groups" element={
+                    <RequireAuthenication>
+                        <Groups />
+                    </RequireAuthenication>
+                } />
+
+                <Route path="group">
+                    <Route index element={
+                        <RequireAuthenication>
+                            <Group />
+                        </RequireAuthenication>
+                    } />
+                    <Route path=":groupId" element={
+                        <RequireAuthenication>
+                            <Group />
+                        </RequireAuthenication>
+                    } />
+                </Route>
 
             </Route>
 

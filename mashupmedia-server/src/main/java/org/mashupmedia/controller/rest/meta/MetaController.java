@@ -3,13 +3,22 @@ package org.mashupmedia.controller.rest.meta;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.mashupmedia.dto.share.NameValuePayload;
+import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.GroupMapper;
 import org.mashupmedia.mapper.RoleMapper;
 import org.mashupmedia.service.AdminManager;
+import org.mashupmedia.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,6 +49,18 @@ public class MetaController {
                 .stream()
                 .map(roleMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Secured("ROLE_ADMINISTRATOR")
+    @PutMapping(value = "/role", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ServerResponsePayload<String>> saveRole(@Valid @RequestBody NameValuePayload nameValuePayload, Errors errors) {
+
+        if (errors.hasErrors()) {
+            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
+        }
+
+        adminManager.saveGroup(group);
+
     }
 
 }

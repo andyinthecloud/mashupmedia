@@ -1,46 +1,6 @@
 
 const TOKEN_KEY = 'jwt'
 
-// export const login = () => {
-//     localStorage.setItem(TOKEN_KEY, 'TestLogin');
-// }
-
-// export const logout = () => {
-//     localStorage.removeItem(TOKEN_KEY);
-// }
-
-// export const isLogin = (): boolean => {
-
-//     if (localStorage.getItem(TOKEN_KEY)) {
-//         return true;
-//     }
-
-//     return false;
-// }
-
-// export const isLoggedIn = async (userToken: string | null | undefined): boolean => {
-//     // console.log('isLoggedIn', userPayload)
-//     // const token = userPayload?.token
-//     console.log('token', userToken ? true : false)
-
-//     if (!userToken) {
-//         return false
-//     }
-
-//     // fetchMyAccount(token);
-//     const isLoggedIn = 
-//     fetchMyAccount(userToken).then((response) => {
-//         return response.ok;
-//     }).catch(error => {
-//         return false
-//     })
-
-
-
-//     // return userToken ? true : false
-//     return await isLoggedIn;
-// }
-
 export function setTokenCookie(token: string | undefined): void {
     if (!token?.length) {
         return;

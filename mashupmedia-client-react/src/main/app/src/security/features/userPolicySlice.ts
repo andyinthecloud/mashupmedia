@@ -16,7 +16,7 @@ const initialState: PayloadState<UserPolicyPayload> = {
     loading: false,
 }
 
-export const userPolicy = createAsyncThunk(
+export const loadUserPolicyIntoState = createAsyncThunk(
     'security/user',
     async (userToken: string | undefined) => {
         const url: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + '/api/security/user-policy';
@@ -36,17 +36,17 @@ const userPolicySlice = createSlice({
     reducers: {
     },
     extraReducers: (builder) => {
-        builder.addCase(userPolicy.pending, (state) => {
+        builder.addCase(loadUserPolicyIntoState.pending, (state) => {
             state.loading = true
             state.error = null
             state.payload = null
         })
-        builder.addCase(userPolicy.rejected, (state, action) => {
+        builder.addCase(loadUserPolicyIntoState.rejected, (state, action) => {
             state.loading = false
             state.error = action?.payload ? String(action?.payload) : 'Failed to fetch payload'
             state.payload = null
         })
-        builder.addCase(userPolicy.fulfilled, (state, action) => {
+        builder.addCase(loadUserPolicyIntoState.fulfilled, (state, action) => {
             state.loading = false
             state.error = null
             state.payload = action.payload

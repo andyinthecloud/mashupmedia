@@ -6,10 +6,10 @@ export type NameValuePayload<T> = {
     value: T
 }
 
-export const fetchGroupPayloads = (userToken?: string): Promise<HttpResponse<NameValuePayload<number>[]>> => {
+export const getGroups = (userToken?: string): Promise<HttpResponse<NameValuePayload<number>[]>> => {
     return callMashupMediaApi<NameValuePayload<number>[]> (HttpMethod.GET, '/api/meta/groups', userToken)
 }
 
-export const fetchRolePayloads = async (userToken?: string): Promise<HttpResponse<NameValuePayload<string>[]>> => {
+export const getRoles = async (userToken?: string): Promise<HttpResponse<NameValuePayload<string>[]>> => {
     return callMashupMediaApi<NameValuePayload<string>[]> (HttpMethod.GET, '/api/meta/roles', userToken)
 }

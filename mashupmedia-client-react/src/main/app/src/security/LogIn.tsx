@@ -8,6 +8,7 @@ import { useAppDispatch } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { codeParamName, HttpStatus, jumpUriParamName } from "../utils/httpUtils";
 import { logIn, UserLogInPayload } from "./features/securitySlice";
+import { loadUserPolicyIntoState as getUserPolicy } from "./features/userPolicySlice";
 import { setTokenCookie } from "./securityUtils";
 
 
@@ -79,23 +80,6 @@ const LogIn = () => {
         e.preventDefault()
         searchParams.delete(codeParamName)
         setSearchParams(searchParams)
-
-        // login({ username: props.username, password: props.password })
-        //     .then(response => {
-        //         if (response.ok) {
-        //             setTokenCookie(response.parsedBody?.token)
-        //             const navigateUri = encodedJumpUri ? decodeURI(encodedJumpUri) : '/'
-        //             navigate(navigateUri)
-        //         } else {
-        //             dispatch(
-        //                 addNotification({
-        //                     message: 'Invalid username password combination.',
-        //                     notificationType: NotificationType.ERROR
-        //                 })
-        //             )
-        //         }                
-        //     })
-
         dispatch(
             logIn({ username: props.username, password: props.password })
         )
@@ -104,33 +88,38 @@ const LogIn = () => {
     )
 
     useEffect(() => {
-        // if (securityState.payload) {
+        if (securityState.error?.length) {
+            dispatch(
+                addNotification({
+                    message: 'Invalid username password combination.',
+                    notificationType: NotificationType.ERROR
+                })
+            )
+        }
 
-            if (securityState.error?.length) {
-                dispatch(
-                    addNotification({
-                        message: 'Invalid username password combination.',
-                        notificationType: NotificationType.ERROR
-                    })
-                )
-            } 
+        if (securityState.payload) {
+            setTokenCookie(securityState.payload?.token)
+            const navigateUri = encodedJumpUri ? decodeURI(encodedJumpUri) : '/'
+            navigate(navigateUri)
+            // dispatch(
+            //     getUserPolicy(securityState.payload?.token)
+            // )
 
-            if (securityState.payload) {            
-                setTokenCookie(securityState.payload?.token)
-                const navigateUri = encodedJumpUri ? decodeURI(encodedJumpUri) : '/'
-                navigate(navigateUri)
+        }
 
-            }
-        // }
-        // else {
-        //     dispatch(
-        //         addNotification({
-        //             message: 'Invalid username password combination.',
-        //             notificationType: NotificationType.ERROR
-        //         })
-        //     )
-        // }
-    }, [dispatch, securityState])
+    }, [securityState])
+
+
+
+    // const userPolicy = useSelector((state: RootState) => state.userPolicy)
+
+    // useEffect(() => {
+    //     if (userPolicy.payload) {
+    //         const navigateUri = encodedJumpUri ? decodeURI(encodedJumpUri) : '/'
+    //         navigate(navigateUri)
+    //     }
+
+    // }, [userPolicy])
 
 
 
