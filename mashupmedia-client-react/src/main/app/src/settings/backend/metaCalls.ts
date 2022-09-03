@@ -2,7 +2,7 @@ import {  callMashupMediaApi, HttpMethod, HttpResponse } from "../../utils/httpU
 
 
 export type NameValuePayload<T> = {
-    name: string;    
+    name: string    
     value: T
 }
 

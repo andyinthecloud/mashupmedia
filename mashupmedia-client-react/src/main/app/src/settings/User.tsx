@@ -42,13 +42,9 @@ const User = () => {
     const location = useLocation()
 
     useEffect(() => {
-        console.log('useEffect', location.pathname)
-
 
         // user account with username in url
         if (location.pathname.match(/\/user-account/) && userId) {
-            console.log('useEffect: user account', location.pathname)
-
             userAccount(userId, userToken)
                 .then((response) => {
                     const userPayload = response.parsedBody !== undefined
@@ -67,7 +63,6 @@ const User = () => {
         }
         // new account
         else if (location.pathname.match(/\/new-account/)) {
-            console.log('useEffect: new account', location.pathname.indexOf('/new-account'))
             setProps(p => ({
                 ...p,
                 userPayload: {

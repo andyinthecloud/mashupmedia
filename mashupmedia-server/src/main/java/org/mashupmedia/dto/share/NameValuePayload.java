@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class NameValuePayload<T> {
+    private long id;
     private String name;
     private T value;
 }
