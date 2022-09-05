@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.dto.admin.ChangeUserPasswordPayload;
 import org.mashupmedia.dto.admin.UserPayload;
+import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.UserMapper;
 import org.mashupmedia.model.User;
@@ -69,9 +70,8 @@ public class UserController {
 
         User loggedInUser = AdminHelper.getLoggedInUser();
         if (!AdminHelper.isAdministrator() && !userPayload.getUsername().equals(loggedInUser.getUsername())) {
-            throw new SecurityException("Only an administrator can update another user account"); 
+            throw new SecurityException("Only an administrator can update another user account");
         }
-
 
         if (errors.hasErrors()) {
             return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
@@ -94,11 +94,17 @@ public class UserController {
         User savedUser = StringUtils.isBlank(username) ? AdminHelper.getLoggedInUser() : adminManager.getUser(username);
 
         if (!passwordEncoder.matches(changeUserPasswordPayload.getCurrentPassword(), savedUser.getPassword())) {
-            errors.rejectValue("currentPassword", "The current password is incorrect");
+            errors.rejectValue(
+                    "currentPassword",
+                    ErrorCode.INCORRECT_PASSWORD.getErrorCode(),
+                    "The current password is incorrect");
         }
 
         if (!changeUserPasswordPayload.getNewPassword().equals(changeUserPasswordPayload.getConfirmPassword())) {
-            errors.rejectValue("newPassword", "The new password and confirm password should be the same");
+            errors.rejectValue(
+                    "newPassword",
+                    ErrorCode.NON_MATCHING_PASSWORDS.getErrorCode(),
+                    "The new password and confirm password should be the same");
         }
 
         if (errors.hasErrors()) {
@@ -133,7 +139,7 @@ public class UserController {
         }
 
         adminManager.deleteUser(user.getId());
-        return ResponseEntity.ok(true);        
+        return ResponseEntity.ok(true);
     }
 
 }

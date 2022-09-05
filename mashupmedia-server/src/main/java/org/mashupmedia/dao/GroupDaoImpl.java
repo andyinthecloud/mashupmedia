@@ -15,7 +15,7 @@ public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {
 
 	@Override
 	public void saveGroup(Group group) {
-		saveOrUpdate(group);
+		saveOrMerge(group);
 	}
 
 	@Override

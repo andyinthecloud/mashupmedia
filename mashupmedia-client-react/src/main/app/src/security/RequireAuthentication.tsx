@@ -23,6 +23,8 @@ export function RequireAuthenication({ children }: { children: JSX.Element }): a
             dispatch(
                 loadUserPolicyIntoState(token)
             )
+        } else {
+            redirectLogin()
         }
     })
 

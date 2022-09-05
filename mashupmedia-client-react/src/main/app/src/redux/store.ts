@@ -4,23 +4,18 @@ import rootReducer from './rootReducer';
 
 
 
-const initialState = {
-    networkProxy: {
-        payload: null,
-        loading: false,
-        error: null
-    },
-    user: {
-        payload: null,
-        loading: false,
-        error: null
-    }
-}
+// const initialState = {
+//     networkProxy: {
+//         payload: null,
+//         loading: false,
+//         error: null
+//     }
+// }
 
 
 export const store = configureStore({
-    reducer: rootReducer,
-    preloadedState: initialState
+    reducer: rootReducer
+    // preloadedState: initialState
 })
 
 

@@ -1,5 +1,7 @@
 package org.mashupmedia.dto.share;
 
+import javax.validation.constraints.NotBlank;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class NameValuePayload<T> {
-    private long id;
+    @NotBlank
     private String name;
     private T value;
 }

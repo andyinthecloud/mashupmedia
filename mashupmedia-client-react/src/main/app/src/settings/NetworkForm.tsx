@@ -17,16 +17,7 @@ const NetworkForm = () => {
 
     const dispatch = useAppDispatch()
 
-    // useEffect(() => {
-    //     dispatch(
-    //         myAccount(userToken)
-    //     )
-
-    // }, [dispatch, securityPayload])
-
     const networkProxyPayloadState = useSelector((state: RootState) => state.networkProxy)
-    // const networkPayload = useSelector((state: RootState) => state.networkProxy.payload)
-    // const networkPayloadAction = useSelector((state: RootState) => state.networkProxy.payloadAction)
 
     const [props, setProps] = useState<NetworkProxyPayload>({
         enabled: true,
@@ -71,8 +62,6 @@ const NetworkForm = () => {
     },
         [dispatch, props, securityPayload]
     )
-
-    // const [isSuccessfulSave, setSuccessfulSave] = useState(false)
 
     useEffect(() => {
 
@@ -138,7 +127,6 @@ const NetworkForm = () => {
             </div>
 
             <pre>{JSON.stringify(props)}</pre>
-            {/* <pre>{JSON.stringify(isSuccessfulSave)}</pre> */}
         </form>
     )
 }

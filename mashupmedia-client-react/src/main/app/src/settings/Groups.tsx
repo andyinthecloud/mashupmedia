@@ -30,11 +30,11 @@ const Groups = () => {
     }
 
     function handleNewGroup(): void {
-        navigate('/')
+        navigate('/settings/group')
     }
 
-    function handleClickGroup(id: number): void {
-        navigate('/settings/group/' + number)
+    function handleClickGroup(groupId: number): void {
+        navigate('/settings/group/' + groupId)
     }
 
     return (
