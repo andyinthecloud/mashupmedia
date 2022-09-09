@@ -3,14 +3,14 @@ package org.mashupmedia.dto.share;
 import javax.validation.constraints.NotBlank;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class NameValuePayload<T> {
     @NotBlank
     private String name;

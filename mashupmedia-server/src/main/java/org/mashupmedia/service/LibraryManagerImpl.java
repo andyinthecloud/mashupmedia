@@ -3,13 +3,16 @@ package org.mashupmedia.service;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.mashupmedia.dao.LibraryDao;
+import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
+import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.library.RemoteShare;
@@ -20,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Lazy
@@ -82,6 +87,8 @@ public class LibraryManagerImpl implements LibraryManager {
 		if (libraryId == 0) {
 			library.setCreatedBy(user);
 			library.setCreatedOn(date);
+		} else {
+			library = copyToExistingLibrary(library);
 		}
 
 		library.setUpdatedBy(user);
@@ -104,6 +111,24 @@ public class LibraryManagerImpl implements LibraryManager {
 
 		libraryDao.saveLibrary(library);
 	}
+
+	protected Library copyToExistingLibrary(Library library) {
+		long libraryId = library.getId();
+		Assert.isTrue(libraryId > 0, "Library id should be greater than 0");
+		Library savedLibrary = libraryDao.getLibrary(library.getId());
+
+		savedLibrary.setName(library.getName());
+		savedLibrary.getLocation().setPath(library.getLocation().getPath());
+		savedLibrary.setEnabled(library.isEnabled());
+
+		Set<Group> groups = savedLibrary.getGroups(); 
+		groups.clear();
+		groups.addAll(library.getGroups());
+		savedLibrary.setGroups(groups);;
+
+		return savedLibrary;
+	}
+
 
 	@Override
 	public void saveAndReinitialiseLibrary(Library library) {
