@@ -1,13 +1,15 @@
 import { Route, Routes } from "react-router-dom";
-import Introduction from "./components/Introduction";
-import LogIn from "./security/LogIn";
-import { RequireAuthenication } from "./security/RequireAuthentication";
+import Introduction from "./common/components/Introduction";
+import LogIn from "./common/security/LogIn";
+import { RequireAuthenication } from "./common/security/RequireAuthentication";
 import ChangeUserPassword from "./settings/ChangeUserPassword";
-import Group from "./settings/Group";
 import Groups from "./settings/Groups";
 import NetworkForm from "./settings/NetworkForm";
 import User from "./settings/User";
 import Users from "./settings/Users";
+import Group from "./settings/Group";
+import Libraries from "./settings/Libraries";
+import Library from "./settings/Library";
 
 
 export function MashupRoutes() {
@@ -92,11 +94,28 @@ export function MashupRoutes() {
                     } />
                 </Route>
 
+
+                <Route path="libraries" element={
+                    <RequireAuthenication>
+                        <Libraries />
+                    </RequireAuthenication>
+                } />
+
+
+                <Route path="library">
+                    <Route index element={
+                        <RequireAuthenication>
+                            <Library />
+                        </RequireAuthenication>
+                    } />
+                    <Route path=":libraryId" element={
+                        <RequireAuthenication>
+                            <Library />
+                        </RequireAuthenication>
+                    } />
+                </Route>
+
             </Route>
-
-
-
-
 
 
 

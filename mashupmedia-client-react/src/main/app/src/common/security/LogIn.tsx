@@ -2,13 +2,12 @@ import { Button, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import logo from "../logo.png";
+import logo from "../../logo.png";
 import { addNotification, NotificationType } from "../notification/notificationSlice";
 import { useAppDispatch } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { codeParamName, HttpStatus, jumpUriParamName } from "../utils/httpUtils";
 import { logIn, UserLogInPayload } from "./features/securitySlice";
-import { loadUserPolicyIntoState as getUserPolicy } from "./features/userPolicySlice";
 import { setTokenCookie } from "./securityUtils";
 
 

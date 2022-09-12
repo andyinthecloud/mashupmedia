@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { PayloadAction } from "../../redux/actions"
-import type { PayloadState, SecurePayload } from "../../redux/store"
-import { securityToken } from "../../security/securityUtils"
-import { restHeaders } from "../../utils/httpUtils"
+import { PayloadAction } from "../../common/redux/actions"
+import type { PayloadState, SecurePayload } from "../../common/redux/store"
+import { securityToken } from "../../common/security/securityUtils"
+import { restHeaders } from "../../common/utils/httpUtils"
 
 export type NetworkProxyPayload = {
     enabled: boolean

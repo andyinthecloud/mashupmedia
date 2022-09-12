@@ -1,7 +1,7 @@
 import './FieldError.css';
 import { Warning } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { fieldValidation, FieldValidation, FormValidation } from "../utils/form-validation-utils";
+import { fieldValidation, FieldValidation, FormValidation } from "../../common/utils/form-validation-utils";
 
 
 export type FieldErrorPayload = {

@@ -1,12 +1,12 @@
 import { Button, FormControlLabel, FormGroup, Switch, TextField } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { PayloadAction } from "../redux/actions";
-import { useAppDispatch } from "../redux/hooks";
-import type { RootState, SecurePayload } from "../redux/store";
+import { PayloadAction } from "../common/redux/actions";
+import { useAppDispatch } from "../common/redux/hooks";
+import type { RootState, SecurePayload } from "../common/redux/store";
 
-import { addNotification, NotificationType } from "../notification/notificationSlice";
-import { HttpStatus, redirectLogin } from "../utils/httpUtils";
+import { addNotification, NotificationType } from "../common/notification/notificationSlice";
+import { HttpStatus, redirectLogin } from "../common/utils/httpUtils";
 import type { NetworkProxyPayload } from "./features/networkSlice";
 import { postNetworkProxy } from "./features/networkSlice";
 

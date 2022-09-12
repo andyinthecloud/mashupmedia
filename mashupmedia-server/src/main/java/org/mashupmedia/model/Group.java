@@ -97,4 +97,7 @@ public class Group implements Serializable {
 		return builder.toString();
 	}
 
+	public boolean isEquals(Group group) {
+		return group.id == this.id;
+	}
 }

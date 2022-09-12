@@ -1,13 +1,13 @@
 import { Button, Container, ThemeProvider } from "@mui/material";
 import { useDispatch } from "react-redux";
 import './App.css';
-import AlertBoxes from "./components/AlertBoxes";
-import Drawer from "./components/Drawer";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
+import AlertBoxes from "./common/components/AlertBoxes";
+import Drawer from "./common/components/Drawer";
+import Footer from "./common/components/Footer";
+import Header from "./common/components/Header";
 import { MashupRoutes } from "./MashupRoutes";
-import { addNotification, NotificationType } from "./notification/notificationSlice";
-import { mashupTheme } from "./utils/formUtils";
+import { addNotification, NotificationType } from "./common/notification/notificationSlice";
+import { mashupTheme } from "./common/utils/formUtils";
 
 function App() {
 

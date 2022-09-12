@@ -1,14 +1,13 @@
 import { ThemeProvider } from "@mui/styles";
-import { createStore } from "@reduxjs/toolkit";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import App from './App';
+import { store } from "./common/redux/store";
+import { mashupTheme } from "./common/utils/formUtils";
 import './index.css';
-import { store } from "./redux/store";
-import reportWebVitals from './reportWebVitals';
-import { mashupTheme } from "./utils/formUtils";
+import reportWebVitals from "./reportWebVitals";
 
 
 // const store = createStore(rootReducer);

@@ -1,8 +1,8 @@
 import { Alert, AlertColor, AlertTitle } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { clearNotification, NotificationPayload, NotificationType } from "../notification/notificationSlice"
-import { RootState } from "../redux/store"
+import { clearNotification, NotificationPayload, NotificationType } from "../../common/notification/notificationSlice"
+import { RootState } from "../../common/redux/store"
 
 
 

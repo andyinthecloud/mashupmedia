@@ -3,8 +3,8 @@ import { Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText } fr
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { RootState } from "../redux/store"
-import { HttpStatus, redirectLogin } from "../utils/httpUtils"
+import { RootState } from "../common/redux/store"
+import { HttpStatus, redirectLogin } from "../common/utils/httpUtils"
 import { UserPayload, getUsers } from "./backend/userCalls"
 
 const Users = () => {

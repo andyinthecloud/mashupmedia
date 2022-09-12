@@ -1,5 +1,5 @@
-import { ServerResponsePayload } from "../../utils/form-validation-utils";
-import {  callMashupMediaApi, HttpMethod, HttpResponse } from "../../utils/httpUtils";
+import { ServerResponsePayload } from "../../common/utils/form-validation-utils";
+import {  callMashupMediaApi, HttpMethod, HttpResponse } from "../../common/utils/httpUtils";
 
 
 export type NameValuePayload<T> = {

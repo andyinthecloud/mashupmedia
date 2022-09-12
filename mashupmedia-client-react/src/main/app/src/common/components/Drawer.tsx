@@ -15,7 +15,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { RootState } from '../../common/redux/store';
 import './Drawer.css';
 import ListItemRoute from './ListItemRoute';
 
@@ -84,10 +84,7 @@ export default function TemporaryDrawer() {
 
                             <ListItemRoute label="Users" toRoute="/settings/users" />
                             <ListItemRoute label="Groups" toRoute="/settings/groups" />
-
-                            <ListItem button>
-                                <ListItemText primary="Libraries" />
-                            </ListItem>
+                            <ListItemRoute label="Libraries" toRoute="/settings/libraries" />
                             <ListItemRoute label="Network" toRoute="/settings/network" />
                             <ListItem button>
                                 <ListItemText primary="Encoding" />
