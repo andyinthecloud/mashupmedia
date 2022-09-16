@@ -19,7 +19,7 @@ const Group = () => {
         VALUE = 'value',
     }
 
-    const { groupId } = useParams();
+    const { groupId } = useParams()
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
 

@@ -262,7 +262,6 @@ const User = () => {
             </div>
 
             <div className="new-line">
-
                 <TextField
                     name={FieldNames.USERNAME}
                     label="Username"

@@ -17,7 +17,7 @@ export type CheckboxHandlerPayload<T> = {
 
 
 export type CheckboxesPayload<T> = {
-    isDisabled: boolean
+    isDisabled?: boolean
     referenceItems: CheckboxPayload<T>[]
     selectedValues: T[]
     onChange: (value: T[]) => void
@@ -36,7 +36,6 @@ const Checkboxes = <T,>(payload: CheckboxesPayload<T>) => {
     const handleChange = (value: T, isChecked: boolean) => {
         const index = props.selectedValues?.indexOf(value)
         processSelectedValues(value, isChecked, index)
-        console.log('handleChange: ' + props.selectedValues)
         props.onChange(props.selectedValues)
     }
 
@@ -54,7 +53,7 @@ const Checkboxes = <T,>(payload: CheckboxesPayload<T>) => {
     return (
         <ul>
             {props.referenceItems.map(function (referenceItem) {
-                referenceItem.isDisabled = props.isDisabled
+                referenceItem.isDisabled = props.isDisabled || false
                 const checkboxHandlerPayload: CheckboxHandlerPayload<T> = {
                     checkboxPayload: referenceItem,
                     isChecked: props.selectedValues.some(selectedValue => referenceItem.value === selectedValue ),

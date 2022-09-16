@@ -36,5 +36,8 @@ public class LibraryPayload {
     @NotNull(message = "LibraryTypePayload should not be null")
     private LibraryTypePayload libraryTypePayload;
 
+    // MUSIC
+    private String albumArtImagePattern;
+
 
 }
