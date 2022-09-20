@@ -17,7 +17,6 @@ import org.mashupmedia.mapper.LibraryNameValueMapper;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.service.LibraryManager;
-import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,14 +28,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 @RequestMapping("/api/library")
 public class LibraryController {
+
+    private static final String FIELD_NAME_VALUE = "value";
+    private static final String FIELD_NAME_PATH = "path";
 
     @Autowired
     private LibraryMapper libraryMapper;
@@ -70,12 +71,21 @@ public class LibraryController {
     @DeleteMapping(value = "/{libraryId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteLibrary(@PathVariable long libraryId) {
         libraryManager.deleteLibrary(libraryId);
-        return ResponseEntity.ok().body(true);
+        return ResponseEntity.ok().body(true);        
     }
 
     @Secured("ROLE_ADMINISTRATOR")
-    @PutMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<String>> saveGroup(@Valid @RequestBody LibraryPayload libraryPayload, Errors errors) {
+    @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ServerResponsePayload<String>> saveGroup(@Valid @RequestBody LibraryPayload libraryPayload,
+            Errors errors) {
+
+        if (isInvalidLibraryPath(libraryPayload.getPath())) {
+            errors.rejectValue(
+                    FIELD_NAME_PATH,
+                    ErrorCode.LIBRARY_INVALID_PATH.getErrorCode(),
+                    "The library path is invalid");
+        }
+
         if (errors.hasErrors()) {
             return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
         }
@@ -86,16 +96,35 @@ public class LibraryController {
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
-    @Secured("ROLE_ADMINISTRATOR")
-    @PostMapping(value = "/check-path", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> isValidPath(@Valid @RequestBody NameValuePayload<String> mediaPathPayload) {
-        String mediaPath = mediaPathPayload.getValue();
-        if (StringUtils.isBlank(mediaPath)) {
-            return ResponseEntity.ok(false);
+    private boolean isInvalidLibraryPath(String libraryPath) {
+        if (StringUtils.isBlank(libraryPath)) {
+            return true;
         }
 
-        File file = new File(mediaPath);
-        return ResponseEntity.ok(file.isDirectory());
+        File file = new File(libraryPath);
+        return !file.isDirectory();
     }
+
+    @Secured("ROLE_ADMINISTRATOR")
+    @PostMapping(value = "/check-path", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ServerResponsePayload<String>> isValidPath(
+            @Valid @RequestBody NameValuePayload<String> nameValuePayload, Errors errors) {
+
+        if (isInvalidLibraryPath(nameValuePayload.getValue())) {
+            errors.rejectValue(
+                    FIELD_NAME_VALUE,
+                    ErrorCode.LIBRARY_INVALID_PATH.getErrorCode(),
+                    "The library path is invalid");
+        }
+
+        if (errors.hasErrors()) {
+            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
+        }
+
+        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+    }
+
+
+    
 
 }

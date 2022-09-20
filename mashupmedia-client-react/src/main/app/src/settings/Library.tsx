@@ -1,15 +1,18 @@
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { RootState } from "../common/redux/store";
-import { fieldErrorMessage, FormValidation, hasFieldError } from "../common/utils/form-validation-utils";
-import { getLibrary, LibraryPayload, LibraryTypePayload } from "./backend/libraryCalls";
-import { useEffect, useState } from "react";
-import { getGroups, NameValuePayload } from "./backend/metaCalls";
-import Checkboxes from "../common/components/Checkboxes";
-import { toCheckboxPayloads, toNameValuePayloads, toSelectedValues } from "../common/utils/domainUtils";
-import { FormControl, FormControlLabel, FormLabel, IconButton, Radio, RadioGroup, TextField } from "@mui/material";
 import { Check } from "@mui/icons-material";
-import './Library.css'
+import { Button, FormControl, FormControlLabel, FormLabel, IconButton, Radio, RadioGroup, TextField } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import Checkboxes from "../common/components/Checkboxes";
+import { addNotification, NotificationType } from '../common/notification/notificationSlice';
+import { RootState } from "../common/redux/store";
+import { toCheckboxPayloads, toNameValuePayloads, toSelectedValues } from "../common/utils/domainUtils";
+import { fieldErrorMessage, FormValidation, hasFieldError, ServerError, toFieldValidation } from "../common/utils/form-validation-utils";
+import { checkLibraryPathExists, deleteLibrary, getLibrary, LibraryPayload, LibraryTypePayload, saveLibrary } from "./backend/libraryCalls";
+import { getGroups, NameValuePayload } from "./backend/metaCalls";
+import './Library.css';
+import { displayDateTime } from "../common/utils/dateUtils"
+
 
 
 type LibrayValidationPayload = {
@@ -25,6 +28,7 @@ const Library = () => {
         TYPE = 'libraryTypePayload',
         NAME = 'name',
         PATH = 'path',
+        GROUPS = 'groups',
         CREATED_ON = 'createdOn',
         CREATED_BY = 'createdBy',
         UPDATED_ON = 'updatedOn',
@@ -97,27 +101,146 @@ const Library = () => {
         setStateValue('groups', toNameValuePayloads(values))
     }
 
+    const navigate = useNavigate()
+
+    function handleCancel(): void {
+        navigate('/settings/libraries')
+    }
+
+    function handleDeleteLibrary(): void {
+
+        const libraryId = props.libraryPayload.id;
+        if (!libraryId) {
+            return;
+        }
+
+        deleteLibrary(libraryId, userToken)
+            .then(() => {
+                dispatch(
+                    addNotification({
+                        message: 'Account deleted',
+                        notificationType: NotificationType.SUCCESS
+                    })
+                )
+
+            })
+            .catch(() => {
+                dispatch(
+                    addNotification({
+                        message: 'Unable to delete account.',
+                        notificationType: NotificationType.ERROR
+                    })
+                )
+            })
+
+        navigate('/settings/libraries')
+    }
+
+    const clearFieldValidationState = () => {
+        const fieldValidations = props.formValidation.fieldValidations
+        fieldValidations.splice(0, fieldValidations.length)
+        setProps(p => ({
+            ...p,
+            formValidation: {
+                fieldValidations
+            }
+        }))
+    }
+
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
+        e.preventDefault()
+
+        clearFieldValidationState()
+
+        saveLibrary(props.libraryPayload, userToken)
+            .then(response => {
+                if (response.ok) {
+                    dispatch(
+                        addNotification({
+                            message: 'Library is saved.',
+                            notificationType: NotificationType.SUCCESS
+                        })
+                    )
+                    navigate('/settings/libraries')
+                } else {
+                    response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
+                        setServerFieldValidationState(serverError)
+                    })
+                }
+            })
+    }
+
+    const dispatch = useDispatch()
+
+    function handleCheckPath(): void {
+        const fieldValidations = props.formValidation.fieldValidations
+        fieldValidations.splice(
+            fieldValidations.findIndex(fv => fv.name == FieldNames.PATH)
+            , 1
+        )
+
+        setProps(p => ({
+            ...p,
+            formValidation: {
+                fieldValidations
+            }
+        }))
+
+
+        checkLibraryPathExists(props.libraryPayload.path, userToken)
+            .then(response => {
+
+                if (response.ok) {
+                    dispatch(
+                        addNotification({
+                            message: 'Library path is verified.',
+                            notificationType: NotificationType.SUCCESS
+                        })
+                    )
+                } else {
+                    response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
+                        setServerFieldValidationState({ name: 'path', defaultMessage: serverError.defaultMessage })
+                    })
+                }
+            })
+    }
+
+    const setServerFieldValidationState = (serverError: ServerError): void => {
+        const fieldValidations = props.formValidation.fieldValidations
+        fieldValidations.push(toFieldValidation(serverError))
+
+        setProps(p => ({
+            ...p,
+            formValidation: {
+                fieldValidations
+            }
+        }))
+    }
 
     return (
-        <form>
+        <form onSubmit={handleSubmit}>
             <h1>Library</h1>
 
-            <div className="new-line">
-                <FormControl fullWidth={true}>
-                    <FormLabel className='align-left'>Choose library type</FormLabel>
-                    <RadioGroup
-                        row                        
-                        aria-labelledby="demo-radio-buttons-group-label"
-                        defaultValue="music"
-                        name={FieldNames.TYPE}                        
-                        onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
-                    >
-                        <FormControlLabel value="music" control={<Radio />} label="Music" />
-                        <FormControlLabel value="photo" control={<Radio />} label="Photo" />
-                        <FormControlLabel value="video" control={<Radio />} label="Video" />
-                    </RadioGroup>
-                </FormControl>
-            </div>
+
+            {!props.libraryPayload.id &&
+                <div className="new-line">
+                    <FormControl fullWidth={true}>
+                        <FormLabel className='align-left'>Choose library type</FormLabel>
+                        <RadioGroup
+                            row
+                            aria-labelledby="demo-radio-buttons-
+                        -label"
+                            defaultValue="music"
+                            name={FieldNames.TYPE}
+                            onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
+                        >
+                            <FormControlLabel value="music" control={<Radio />} label="Music" />
+                            <FormControlLabel value="photo" control={<Radio />} label="Photo" />
+                            <FormControlLabel value="video" control={<Radio />} label="Video" />
+                        </RadioGroup>
+                    </FormControl>
+                </div>
+            }
 
             <div className="new-line">
                 <TextField
@@ -140,7 +263,7 @@ const Library = () => {
                     fullWidth={true}
                     error={hasFieldError(FieldNames.PATH, props.formValidation)}
                     helperText={fieldErrorMessage(FieldNames.PATH, props.formValidation)}
-                    InputProps={{ endAdornment: <IconButton><Check /></IconButton> }}
+                    InputProps={{ endAdornment: <IconButton onClick={handleCheckPath}><Check /></IconButton> }}
                 />
             </div>
 
@@ -149,7 +272,7 @@ const Library = () => {
                     <TextField
                         name={FieldNames.CREATED_ON}
                         label="Created on"
-                        value={props.libraryPayload.createdOn}
+                        value={displayDateTime(props.libraryPayload.createdOn)}
                         fullWidth={true}
                         disabled={true}
                     />
@@ -200,8 +323,7 @@ const Library = () => {
                         value={props.libraryPayload.updatedOn}
                         onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                         fullWidth={true}
-                        error={hasFieldError(FieldNames.PATH, props.formValidation)}
-                        helperText={fieldErrorMessage(FieldNames.PATH, props.formValidation)}    
+                        helperText={'Something like this'}
                     />
                 </div>
             }
@@ -213,7 +335,29 @@ const Library = () => {
                     referenceItems={toCheckboxPayloads<number>(props.groupPayloads)}
                     selectedValues={toSelectedValues<number>(props.libraryPayload.groups)}
                     onChange={handleGroupsChange}
+                    error={hasFieldError(FieldNames.GROUPS, props.formValidation)}
+                    helperText={fieldErrorMessage(FieldNames.GROUPS, props.formValidation)}
                 />
+            </div>
+
+
+            <div className="new-line right">
+                <Button variant="contained" color="secondary" type="button" onClick={handleCancel}>
+                    Cancel
+                </Button>
+
+                {userPolicyPayload?.administrator &&
+                    <Button variant="contained" color="secondary" type="button" onClick={handleDeleteLibrary}>
+                        Delete
+                    </Button>
+                }
+
+                {userPolicyPayload?.administrator &&
+                    <Button variant="contained" color="primary" type="submit">
+                        Save
+                    </Button>
+                }
+
             </div>
 
         </form>

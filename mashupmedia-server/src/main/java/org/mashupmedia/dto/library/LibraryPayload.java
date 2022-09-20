@@ -9,15 +9,17 @@ import javax.validation.constraints.NotNull;
 
 import org.mashupmedia.dto.share.NameValuePayload;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder(toBuilder = true)
+@Builder(toBuilder = true)
 public class LibraryPayload {
 
     private long id;
@@ -25,11 +27,14 @@ public class LibraryPayload {
     private String name;
     @NotBlank(message = "Path should not be empty")
     private String path; 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedOn;
     private String createdBy;
     private String updatedBy;
     private boolean enabled;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastSuccessfulScanOn;
     @NotEmpty(message = "Groups should not be empty")
     private List<NameValuePayload<Long>> groups;

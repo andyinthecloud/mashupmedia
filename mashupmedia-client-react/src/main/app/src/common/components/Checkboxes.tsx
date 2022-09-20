@@ -10,7 +10,7 @@ export type CheckboxPayload<T> = {
 
 export type CheckboxHandlerPayload<T> = {
     checkboxPayload: CheckboxPayload<T>
-    isChecked: boolean    
+    isChecked: boolean
     onChange: (value: T, isChecked: boolean) => void
     isDisabled?: boolean
 }
@@ -20,6 +20,8 @@ export type CheckboxesPayload<T> = {
     isDisabled?: boolean
     referenceItems: CheckboxPayload<T>[]
     selectedValues: T[]
+    error?: boolean
+    helperText?: string
     onChange: (value: T[]) => void
 }
 
@@ -56,7 +58,7 @@ const Checkboxes = <T,>(payload: CheckboxesPayload<T>) => {
                 referenceItem.isDisabled = props.isDisabled || false
                 const checkboxHandlerPayload: CheckboxHandlerPayload<T> = {
                     checkboxPayload: referenceItem,
-                    isChecked: props.selectedValues.some(selectedValue => referenceItem.value === selectedValue ),
+                    isChecked: props.selectedValues.some(selectedValue => referenceItem.value === selectedValue),
                     onChange: () => void 0,
                     isDisabled: props.isDisabled
                 }
@@ -66,7 +68,13 @@ const Checkboxes = <T,>(payload: CheckboxesPayload<T>) => {
                 )
             }
             )}
+
+            {props.error &&
+                <li className='error'>{props.helperText}</li>
+            }
         </ul>
+
+
     )
 }
 

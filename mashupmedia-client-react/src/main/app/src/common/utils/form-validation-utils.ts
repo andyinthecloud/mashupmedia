@@ -9,8 +9,8 @@ export type FormValidation = {
 }
 
 export type ServerError = {
-    field: string
     name: string
+    field?: string
     defaultMessage: string
 }
 

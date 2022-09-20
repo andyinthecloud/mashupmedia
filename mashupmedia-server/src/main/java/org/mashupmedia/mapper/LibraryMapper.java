@@ -6,13 +6,12 @@ import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.library.LibraryPayload;
 import org.mashupmedia.dto.library.LibraryTypePayload;
-import org.mashupmedia.dto.library.MusicLibraryPayload;
 import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.library.MusicLibrary;
+import org.mashupmedia.model.location.Location;
 import org.mashupmedia.util.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,7 +37,7 @@ public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
         Assert.notNull(libraryType, "Library type should not be null");
         if (libraryType == LibraryType.MUSIC) {
             MusicLibrary musicLibrary = (MusicLibrary) domain;
-            libraryPayload = MusicLibraryPayload.builder()
+            libraryPayload = LibraryPayload.builder()
                     .albumArtImagePattern(musicLibrary.getAlbumArtImagePattern())
                     .build();
         }
@@ -62,17 +61,20 @@ public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
     @Override
     public Library toDomain(LibraryPayload payload) {
 
-
         LibraryTypePayload libraryTypePayload = payload.getLibraryTypePayload();
         Assert.notNull(libraryTypePayload, "Library type payload should not be null");
 
         Library library = null;
+
         if (libraryTypePayload == LibraryTypePayload.MUSIC) {
-            MusicLibraryPayload musicLibraryPayload = (MusicLibraryPayload) payload;
-            library = mapToMusicLibrary(musicLibraryPayload); 
+            MusicLibrary musicLibrary = new MusicLibrary();
+            musicLibrary.setAlbumArtImagePattern(payload.getAlbumArtImagePattern());
+            library = musicLibrary;
         }
 
         Assert.notNull(library, "Library should not be null");
+
+        mapToLibrary(library, payload);
 
         Set<Group> groups = payload.getGroups().stream()
                 .map(groupMapper::toDomain)
@@ -82,21 +84,18 @@ public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
         return library;
     }
 
-    private Library mapToMusicLibrary(MusicLibraryPayload libraryPayload) {
-        MusicLibrary library = new MusicLibrary();
-        library.setAlbumArtImagePattern(libraryPayload.getAlbumArtImagePattern());
-        mapToLibrary(library, libraryPayload);
-        return library;
-    }
-
-    private void mapToLibrary(Library library, MusicLibraryPayload libraryPayload) {
-        library.setId(libraryPayload.getId());
-        library.setName(libraryPayload.getName());
+    private void mapToLibrary(Library library, LibraryPayload payload) {
+        library.setId(payload.getId());
+        library.setName(payload.getName());
         Location location = new Location();
-        location.setPath(libraryPayload.getPath());
+        location.setPath(payload.getPath());
         library.setLocation(location);
-        library.setEnabled(libraryPayload.isEnabled());                
-    }
+        library.setEnabled(payload.isEnabled());
 
+        Set<Group> groups = payload.getGroups().stream()
+                .map(groupMapper::toDomain)
+                .collect(Collectors.toSet());
+        library.setGroups(groups);
+    }
 
 }

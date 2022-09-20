@@ -5,7 +5,9 @@ public enum ErrorCode {
     NOT_UNIQUE("error.not-unique"),
     INCORRECT_PASSWORD("error.password.incorrect"),
     NON_MATCHING_PASSWORDS("error.password.matching"),
-    LIBRARY_INVALID_PATH("error.library.invalid-path");
+    LIBRARY_INVALID_PATH("error.library.invalid-path"),
+    
+    ;
     
 
 

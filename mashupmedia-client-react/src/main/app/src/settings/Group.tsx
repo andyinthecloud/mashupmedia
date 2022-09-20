@@ -101,10 +101,6 @@ const Group = () => {
 
     const setServerFieldValidationState = (serverError: ServerError): void => {
         const fieldValidations = props.formValidation.fieldValidations
-
-        console.log('setServerFieldValidationState: serverError', serverError)
-        console.log('setServerFieldValidationState', toFieldValidation(serverError))
-
         fieldValidations.push(toFieldValidation(serverError))
 
         setProps(p => ({

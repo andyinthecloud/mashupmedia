@@ -62,5 +62,8 @@ h2 {
   color: rgb(87, 163, 84);
 }
 
-
+.error {
+  color: #d32f2f;
+  font-size: small;
+}
 

@@ -83,6 +83,10 @@ public class DateHelper {
 	}
 
 	public static LocalDateTime toLocalDateTime(Date date) {
+		if (date == null) {
+			return null;
+		}
+
 		return date.toInstant()
 				.atZone(ZoneId.systemDefault())
 				.toLocalDateTime();
