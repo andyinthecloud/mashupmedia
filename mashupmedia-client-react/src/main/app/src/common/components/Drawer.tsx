@@ -1,5 +1,4 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import { Collapse, IconButton } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
@@ -9,8 +8,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import * as React from 'react';
 
-import { AccountBox, ExpandLess, ExpandMore, Login } from "@mui/icons-material";
-import MailIcon from '@mui/icons-material/Mail';
+import { AccountBox, ExpandLess, ExpandMore, Login, Logout } from "@mui/icons-material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
@@ -67,9 +65,12 @@ export default function TemporaryDrawer() {
                 [classes.fullList]: anchor === 'top' || anchor === 'bottom',
             })}
             role="presentation"
-        // onClick={toggleDrawer(anchor, false)}
-        // onKeyDown={toggleDrawer(anchor, false)}
         >
+
+<ListItemRoute label="My account" toRoute="/configuration/my-account" icon={<AccountBox />} />
+            <Divider />
+
+
             {userPolicyPayload && userPolicyPayload.administrator &&
                 <List>
                     <ListItem button onClick={handleClick}>
@@ -82,10 +83,10 @@ export default function TemporaryDrawer() {
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding className="nested-list">
 
-                            <ListItemRoute label="Users" toRoute="/settings/users" />
-                            <ListItemRoute label="Groups" toRoute="/settings/groups" />
-                            <ListItemRoute label="Libraries" toRoute="/settings/libraries" />
-                            <ListItemRoute label="Network" toRoute="/settings/network" />
+                            <ListItemRoute label="Users" toRoute="/configuration/users" />
+                            <ListItemRoute label="Groups" toRoute="/configuration/groups" />
+                            <ListItemRoute label="Libraries" toRoute="/configuration/libraries" />
+                            <ListItemRoute label="Network" toRoute="/configuration/network" />
                             <ListItem button>
                                 <ListItemText primary="Encoding" />
                             </ListItem>
@@ -96,34 +97,14 @@ export default function TemporaryDrawer() {
                 </List>
             }
 
-            <ListItemRoute label="My account" toRoute="/settings/my-account" icon={<AccountBox />} />
             <Divider />
             {userPolicyPayload &&
-                <ListItemRoute label="Log out" toRoute="/login" />
+                <ListItemRoute label="Log out" toRoute="/logout" icon={<Logout />} />
             }
             {!userPolicyPayload &&
                 <ListItemRoute label="Log in" toRoute="/login" icon={<Login />} />
             }
-            <Divider />
 
-
-            <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
-            </List>
-            <Divider />
-            <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
-            </List>
         </div>
     );
 

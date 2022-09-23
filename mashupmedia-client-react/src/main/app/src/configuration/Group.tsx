@@ -126,7 +126,7 @@ const Group = () => {
                             notificationType: NotificationType.SUCCESS
                         })
                     )
-                    navigate('/settings/groups')
+                    navigate('/configuration/groups')
                 } else {
                     response.parsedBody?. errorPayload.fieldErrors.map(function (serverError) {
                         setServerFieldValidationState(serverError)
@@ -148,7 +148,7 @@ const Group = () => {
     const navigate = useNavigate()
 
     function handleCancel(): void {
-        navigate('/settings/groups')
+        navigate('/configuration/groups')
     }
 
     function handleDeleteGroup(): void {
@@ -170,7 +170,7 @@ const Group = () => {
                 )
             })
 
-        navigate('/settings/groups')
+        navigate('/configuration/groups')
     }
 
     return (

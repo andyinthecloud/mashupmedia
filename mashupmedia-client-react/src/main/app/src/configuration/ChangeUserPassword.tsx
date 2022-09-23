@@ -87,7 +87,7 @@ const ChangeUserPassword = () => {
     const navigate = useNavigate()
 
     function handleCancel(): void {
-        navigate('/settings/users')
+        navigate('/configuration/users')
     }
 
 

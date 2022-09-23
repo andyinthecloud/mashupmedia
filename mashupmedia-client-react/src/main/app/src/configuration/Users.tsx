@@ -40,11 +40,11 @@ const Users = () => {
 
 
     function handleNewUser(): void {
-        navigate('/settings/new-account')
+        navigate('/configuration/new-account')
     }
 
     function handleClickUser(username: string): void {
-        navigate('/settings/user-account/' + encodeURIComponent(username))
+        navigate('/configuration/user-account/' + encodeURIComponent(username))
     }
 
 

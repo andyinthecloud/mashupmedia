@@ -165,7 +165,7 @@ const User = () => {
                             notificationType: NotificationType.SUCCESS
                         })
                     )
-                    navigate('/settings/users')
+                    navigate('/configuration/users')
                 } else {
                     response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
                         setServerFieldValidationState(serverError)
@@ -190,7 +190,7 @@ const User = () => {
     }
 
     function handleChangeUserPassword(): void {
-        navigate(`/settings/change-user-password/${props.userPayload.username}`)
+        navigate(`/configuration/change-user-password/${props.userPayload.username}`)
     }
 
     function handleDeleteUser(): void {
@@ -212,7 +212,7 @@ const User = () => {
                 )
             })
 
-        navigate('/settings/users')
+        navigate('/configuration/users')
     }
 
     const hasDeletePermission = (): boolean => {

@@ -104,7 +104,7 @@ const Library = () => {
     const navigate = useNavigate()
 
     function handleCancel(): void {
-        navigate('/settings/libraries')
+        navigate('/configuration/libraries')
     }
 
     function handleDeleteLibrary(): void {
@@ -133,7 +133,7 @@ const Library = () => {
                 )
             })
 
-        navigate('/settings/libraries')
+        navigate('/configuration/libraries')
     }
 
     const clearFieldValidationState = () => {
@@ -161,7 +161,7 @@ const Library = () => {
                             notificationType: NotificationType.SUCCESS
                         })
                     )
-                    navigate('/settings/libraries')
+                    navigate('/configuration/libraries')
                 } else {
                     response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
                         setServerFieldValidationState(serverError)

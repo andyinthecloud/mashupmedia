@@ -8,6 +8,7 @@ import Header from "./common/components/Header";
 import { MashupRoutes } from "./MashupRoutes";
 import { addNotification, NotificationType } from "./common/notification/notificationSlice";
 import { mashupTheme } from "./common/utils/formUtils";
+import { ConfigurationRoutes } from './configuration/ConfigurationRoutes';
 
 function App() {
 

@@ -1,5 +1,5 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import networkProxySlice from "../../settings/features/networkSlice";
+import networkProxySlice from "../../configuration/features/networkSlice";
 import notificationSlice from "../notification/notificationSlice";
 import securitySlice from "../security/features/securitySlice";
 import userPolicySlice from "../security/features/userPolicySlice";

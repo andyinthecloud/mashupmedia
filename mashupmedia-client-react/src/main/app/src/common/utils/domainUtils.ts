@@ -1,4 +1,4 @@
-import { NameValuePayload } from "../../settings/backend/metaCalls";
+import { NameValuePayload } from "../../configuration/backend/metaCalls";
 import { CheckboxPayload } from "../components/Checkboxes";
 
 export const toSelectedValues = <T,>(checkboxPayloads: CheckboxPayload<T>[] | undefined): T[] => {

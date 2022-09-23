@@ -28,11 +28,11 @@ const  Libraries = () => {
     }
 
     function handleNewLibrary(): void {
-        navigate('/settings/library')
+        navigate('/configuration/library')
     }
 
     function handleClickLibrary(libraryId: number): void {
-        navigate('/settings/library/' + libraryId)
+        navigate('/configuration/library/' + libraryId)
     }
 
     return (

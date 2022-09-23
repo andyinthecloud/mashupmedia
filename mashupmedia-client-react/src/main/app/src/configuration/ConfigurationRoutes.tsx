@@ -1,26 +1,16 @@
-import { Route, Routes } from "react-router-dom";
-import Introduction from "./common/components/Introduction";
-import LogIn from "./common/security/LogIn";
-import { RequireAuthenication } from "./common/security/RequireAuthentication";
-import ChangeUserPassword from "./configuration/ChangeUserPassword";
-import Groups from "./configuration/Groups";
-import NetworkForm from "./configuration/NetworkForm";
-import User from "./configuration/User";
-import Users from "./configuration/Users";
-import Group from "./configuration/Group";
-import Libraries from "./configuration/Libraries";
-import Library from "./configuration/Library";
-import { ConfigurationRoutes } from './configuration/ConfigurationRoutes';
-import { MediaRoutes } from './media/MediaRoutes';
+import { Group, Groups } from '@mui/icons-material'
+import { Route } from 'react-router-dom'
+import { RequireAuthenication } from '../common/security/RequireAuthentication'
+import ChangeUserPassword from './ChangeUserPassword'
+import Libraries from './Libraries'
+import Library from './Library'
+import NetworkForm from './NetworkForm'
+import User from './User'
+import Users from './Users'
 
-
-export const MashupRoutes = () => {
+export const ConfigurationRoutes = () => {
     return (
-        <Routes>
-            <Route path="/" element={<Introduction />} />
-            <Route path="/login" element={<LogIn />} />
-            
-            <Route path="/configuration">
+        <Route path="/configuration">
             <Route index element={
                 <RequireAuthenication>
                     <User />
@@ -116,9 +106,8 @@ export const MashupRoutes = () => {
                 } />
             </Route>
         </Route>
-
-            {/* <MediaRoutes /> */}
-        </Routes>
     )
-
 }
+
+
+
