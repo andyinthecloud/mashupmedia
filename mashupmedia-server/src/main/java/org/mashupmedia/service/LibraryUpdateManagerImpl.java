@@ -34,8 +34,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
@@ -43,32 +45,20 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	private final int LIBRARY_UPDATE_TIMEOUT_HOURS = 1;
 
-	@Autowired
-	@Lazy
-	private MusicLibraryUpdateManager musicLibraryUpdateManager;
+	private final MusicLibraryUpdateManager musicLibraryUpdateManager;
 
-	@Autowired
-	@Lazy
-	private VideoLibraryUpdateManager videoLibraryUpdateManager;
+	private final  VideoLibraryUpdateManager videoLibraryUpdateManager;
 
-	@Autowired
-	@Lazy
-	private PhotoLibraryUpdateManager photoLibraryUpdateManager;
+	private final PhotoLibraryUpdateManager photoLibraryUpdateManager;
 
 //	@Autowired
 //	private MapperManager mapperManager;
 
-	@Autowired
-	@Lazy
-	private LibraryManager libraryManager;
+	private final LibraryManager libraryManager;
 
-	@Autowired
-	@Lazy
-	private ConfigurationManager configurationManager;
+	private final ConfigurationManager configurationManager;
 
-	@Autowired
-	@Lazy
-	private LibraryWatchManager libraryWatchManager;
+	private final LibraryWatchManager libraryWatchManager;
 
 	@Override
 	public synchronized void updateLibrary(Library library) {

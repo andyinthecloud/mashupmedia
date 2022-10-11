@@ -7,9 +7,7 @@ logging:
 spring:
   application:
     name: mashupmedia
-  h2:
-    console:
-      enabled: true
+
   mvc:
     view:
       prefix: /WEB-INF

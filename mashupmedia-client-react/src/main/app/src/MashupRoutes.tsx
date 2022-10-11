@@ -12,6 +12,7 @@ import Libraries from "./configuration/Libraries";
 import Library from "./configuration/Library";
 import { ConfigurationRoutes } from './configuration/ConfigurationRoutes';
 import { MediaRoutes } from './media/MediaRoutes';
+import Albums from './media/music/Albums';
 
 
 export const MashupRoutes = () => {
@@ -19,105 +20,111 @@ export const MashupRoutes = () => {
         <Routes>
             <Route path="/" element={<Introduction />} />
             <Route path="/login" element={<LogIn />} />
-            
+
             <Route path="/configuration">
-            <Route index element={
-                <RequireAuthenication>
-                    <User />
-                </RequireAuthenication>
-            } />
-            <Route path="my-account" element={
-                <RequireAuthenication>
-                    <User />
-                </RequireAuthenication>
-            } />
-
-            <Route path="new-account" element={
-                <RequireAuthenication>
-                    <User />
-                </RequireAuthenication>
-            } />
-
-            <Route path="user-account">
                 <Route index element={
                     <RequireAuthenication>
                         <User />
                     </RequireAuthenication>
                 } />
-                <Route path=":userId" element={
+                <Route path="my-account" element={
                     <RequireAuthenication>
                         <User />
                     </RequireAuthenication>
                 } />
+
+                <Route path="new-account" element={
+                    <RequireAuthenication>
+                        <User />
+                    </RequireAuthenication>
+                } />
+
+                <Route path="user-account">
+                    <Route index element={
+                        <RequireAuthenication>
+                            <User />
+                        </RequireAuthenication>
+                    } />
+                    <Route path=":userId" element={
+                        <RequireAuthenication>
+                            <User />
+                        </RequireAuthenication>
+                    } />
+                </Route>
+
+                <Route path="change-user-password">
+                    <Route index element={
+                        <RequireAuthenication>
+                            <ChangeUserPassword />
+                        </RequireAuthenication>
+                    } />
+                    <Route path=":userId" element={
+                        <RequireAuthenication>
+                            <ChangeUserPassword />
+                        </RequireAuthenication>
+                    } />
+                </Route>
+
+                <Route path="network" element={
+                    <RequireAuthenication>
+                        <NetworkForm />
+                    </RequireAuthenication>
+                } />
+
+                <Route path="users" element={
+                    <RequireAuthenication>
+                        <Users />
+                    </RequireAuthenication>
+                } />
+
+                <Route path="groups" element={
+                    <RequireAuthenication>
+                        <Groups />
+                    </RequireAuthenication>
+                } />
+
+                <Route path="group">
+                    <Route index element={
+                        <RequireAuthenication>
+                            <Group />
+                        </RequireAuthenication>
+                    } />
+                    <Route path=":groupId" element={
+                        <RequireAuthenication>
+                            <Group />
+                        </RequireAuthenication>
+                    } />
+                </Route>
+
+
+                <Route path="libraries" element={
+                    <RequireAuthenication>
+                        <Libraries />
+                    </RequireAuthenication>
+                } />
+
+
+                <Route path="library">
+                    <Route index element={
+                        <RequireAuthenication>
+                            <Library />
+                        </RequireAuthenication>
+                    } />
+                    <Route path=":libraryId" element={
+                        <RequireAuthenication>
+                            <Library />
+                        </RequireAuthenication>
+                    } />
+                </Route>
             </Route>
 
-            <Route path="change-user-password">
-                <Route index element={
+            <Route path="/music">
+                <Route path="albums" element={
                     <RequireAuthenication>
-                        <ChangeUserPassword />
-                    </RequireAuthenication>
-                } />
-                <Route path=":userId" element={
-                    <RequireAuthenication>
-                        <ChangeUserPassword />
+                        <Albums />
                     </RequireAuthenication>
                 } />
             </Route>
-
-            <Route path="network" element={
-                <RequireAuthenication>
-                    <NetworkForm />
-                </RequireAuthenication>
-            } />
-
-            <Route path="users" element={
-                <RequireAuthenication>
-                    <Users />
-                </RequireAuthenication>
-            } />
-
-            <Route path="groups" element={
-                <RequireAuthenication>
-                    <Groups />
-                </RequireAuthenication>
-            } />
-
-            <Route path="group">
-                <Route index element={
-                    <RequireAuthenication>
-                        <Group />
-                    </RequireAuthenication>
-                } />
-                <Route path=":groupId" element={
-                    <RequireAuthenication>
-                        <Group />
-                    </RequireAuthenication>
-                } />
-            </Route>
-
-
-            <Route path="libraries" element={
-                <RequireAuthenication>
-                    <Libraries />
-                </RequireAuthenication>
-            } />
-
-
-            <Route path="library">
-                <Route index element={
-                    <RequireAuthenication>
-                        <Library />
-                    </RequireAuthenication>
-                } />
-                <Route path=":libraryId" element={
-                    <RequireAuthenication>
-                        <Library />
-                    </RequireAuthenication>
-                } />
-            </Route>
-        </Route>
-
-            {/* <MediaRoutes /> */}
         </Routes>
     )
 

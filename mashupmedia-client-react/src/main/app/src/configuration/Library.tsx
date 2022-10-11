@@ -320,7 +320,7 @@ const Library = () => {
                     <TextField
                         name={MusicFieldNames.ART_IMAGE_PATTERN}
                         label="Art image file pattern"
-                        value={props.libraryPayload.updatedOn}
+                        value={props.libraryPayload.albumArtImagePattern}
                         onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                         fullWidth={true}
                         helperText={'Something like this'}

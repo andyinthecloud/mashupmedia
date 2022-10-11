@@ -38,6 +38,7 @@ public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
         if (libraryType == LibraryType.MUSIC) {
             MusicLibrary musicLibrary = (MusicLibrary) domain;
             libraryPayload = LibraryPayload.builder()
+                    .libraryTypePayload(LibraryTypePayload.MUSIC)
                     .albumArtImagePattern(musicLibrary.getAlbumArtImagePattern())
                     .build();
         }

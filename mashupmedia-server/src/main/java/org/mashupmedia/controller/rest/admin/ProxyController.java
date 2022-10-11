@@ -4,7 +4,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.dto.admin.ProxyPayload;
 import org.mashupmedia.service.ConfigurationManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,12 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/admin/proxy")
 public class ProxyController {
 
-    @Autowired
-    private ConfigurationManager configurationManager;
+    private final ConfigurationManager configurationManager;
 
     private ProxyPayload getProxyPayload() {
         boolean enabled = BooleanUtils

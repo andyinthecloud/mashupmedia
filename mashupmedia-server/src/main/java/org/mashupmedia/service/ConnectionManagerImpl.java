@@ -16,10 +16,14 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.message.BasicHeader;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.media.MediaItem;
@@ -30,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -82,8 +87,10 @@ public class ConnectionManagerImpl implements ConnectionManager {
 				.trimToEmpty(configurationManager.getConfigurationValue(MashUpMediaConstants.PROXY_ENABLED));
 		boolean isProxyEnabled = BooleanUtils.toBoolean(proxyEnabledValue);
 
-		
-		DefaultHttpClient httpClient = new DefaultHttpClient();
+		// DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+		// CloseableHttpClient httpClient = HttpClients.createDefault();
+
 		HttpGet httpGet = new HttpGet(link);
 
 		BasicHeader header = new BasicHeader("User-Agent", "Mashup Media/1.0 +http://www.mashupmedia.org");
@@ -91,6 +98,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 
 		if (!isProxyEnabled) {
 			try {
+				CloseableHttpClient httpClient = httpClientBuilder.build();
 				HttpResponse httpResponse = httpClient.execute(httpGet);
 				HttpEntity httpEntity = httpResponse.getEntity();
 				if (httpEntity != null) {
@@ -101,11 +109,21 @@ public class ConnectionManagerImpl implements ConnectionManager {
 				log.error("Unable to connect to host: " + link + ". Trying proxy...");
 			}
 		} else {
-			httpClient.getCredentialsProvider().setCredentials(new AuthScope(getProxyUrl(), getProxyPort()),
+			CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+			credentialsProvider.setCredentials(new AuthScope(getProxyUrl(), getProxyPort()),
 					new UsernamePasswordCredentials(getProxyUsername(), getProxyPassword()));
+			HttpClientContext localContext = HttpClientContext.create();
+			localContext.setCredentialsProvider(credentialsProvider);
+
+			// httpClient.getCredentialsProvider().setCredentials(new
+			// AuthScope(getProxyUrl(), getProxyPort()),
+			// new UsernamePasswordCredentials(getProxyUsername(), getProxyPassword()));
 
 			HttpHost proxy = new HttpHost(getProxyUrl(), getProxyPort());
-			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+			DefaultProxyRoutePlanner defaultProxyRoutePlanner = new DefaultProxyRoutePlanner(proxy);	
+			httpClientBuilder.setRoutePlanner(defaultProxyRoutePlanner);
+			CloseableHttpClient httpClient = httpClientBuilder.build();
+			// httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 			httpGet = new HttpGet(link);
 
 			try {

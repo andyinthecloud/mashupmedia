@@ -87,6 +87,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,  SecurityConstants.SIGN_UP_URL).permitAll()
                 // .antMatchers("/mashupmedia/**/*").permitAll()
                 
+                // development
+                // .and()
+                // .authorizeRequests()
+                // .antMatchers("/mashupmedia/h2-console/*").permitAll()
+
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), this.objectMapper))

@@ -67,7 +67,7 @@ export default function TemporaryDrawer() {
             role="presentation"
         >
 
-<ListItemRoute label="My account" toRoute="/configuration/my-account" icon={<AccountBox />} />
+            <ListItemRoute label="My account" toRoute="/configuration/my-account" icon={<AccountBox />} />
             <Divider />
 
 
