@@ -12,6 +12,7 @@ export const restHeaders = (userToken?: string | null): Headers => {
     return headers
 }
 
+
 export enum HttpMethod {
     GET = 'GET',
     POST = 'POST',
@@ -27,12 +28,17 @@ export enum HttpStatus {
 }
 
 export interface HttpResponse<T> extends Response {
-    parsedBody?: T;
+    parsedBody?: T,
+    parsedBlob?: Blob
 }
+
+export const backendUrl = (uri: string): string => (
+    (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + uri
+)
 
 export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string, userToken?: string, body?: string): Promise<HttpResponse<T>> => {
 
-    const url: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + uri
+    const url = backendUrl(uri)
 
     const response: HttpResponse<T> = await fetch(url, {
         method: httpMethod.toString(),
@@ -52,12 +58,34 @@ export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string,
         redirectLogin(response.status)        
     }
 
-    // if (!response.ok) {
-    //     redirectLogin(HttpStatus.SERVER_ERROR);
+    return response
+}
+
+export const callMashupMediaResource = async (uri: string, userToken?: string): Promise<Response> => {
+
+    const url = backendUrl(uri)
+
+    const response: Response = await fetch(url, {
+        method: HttpMethod.GET,
+        mode: 'cors',
+        credentials: 'omit',
+        headers: restHeaders(securityToken(userToken))
+    })
+
+    // try {
+    //     response.parsedBody = await response.json()
+    // } catch (exception) {
+    //     console.log('Error getting json', exception)
     // }
+
+    if (response.status == HttpStatus.FORBIDDEN || response.status == HttpStatus.SERVER_ERROR) {        
+        redirectLogin(response.status)        
+    }
 
     return response
 }
+
+
 
 
 // const contextUrl: string = window.location.pathname.substring(0, window.location.pathname.indexOf("/",2)) 

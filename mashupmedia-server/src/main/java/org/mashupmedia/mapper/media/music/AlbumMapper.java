@@ -17,7 +17,6 @@ public class AlbumMapper implements DomainMapper<Album, AlbumPayload> {
     public AlbumPayload toDto(Album domain) {
         return AlbumPayload.builder()
                 .id(domain.getId())
-                .indexLetter(domain.getIndexLetter())
                 .name(domain.getName())
                 .albumArtImagePayload(albumArtImageMapper.toDto(domain.getAlbumArtImage()))
                 .build();

@@ -9,7 +9,6 @@ import org.mashupmedia.mapper.UserPolicyMapper;
 import org.mashupmedia.model.User;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.util.AdminHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,31 +19,40 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/security")
+@RequiredArgsConstructor
 public class LoginController {
 
-    @Autowired
-    private AdminManager adminManager;
+    private final AdminManager adminManager;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserPolicyMapper userPolicyMapper;
+    private final UserPolicyMapper userPolicyMapper;
+
+    private final org.mashupmedia.service.SecurityManager securityManager;
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserTokenPayload> login(@RequestBody @Valid LoginPayload loginPayload) {
+    public ResponseEntity<UserTokenPayload> login(@RequestBody @Valid LoginPayload loginPayload) throws Exception{
         User user = adminManager.getUser(loginPayload.getUsername());
 
         if (!passwordEncoder.matches(loginPayload.getPassword(), user.getPassword())) {
             throw new SecurityException("Invalid username / password combination");
         }
 
-        String token = passwordEncoder.encode(loginPayload.getUsername());
-        return ResponseEntity.ok(UserTokenPayload.builder().token(token).build());
-    }
+        String username = loginPayload.getUsername();
+        String token = passwordEncoder.encode(username);
+        String streamingToken = securityManager.generateStreamingToken(username);
 
+        return ResponseEntity.ok(
+                UserTokenPayload
+                        .builder()
+                        .token(token)
+                        .streamingToken(streamingToken)
+                        .build());
+    }
 
     @GetMapping(value = "/user-policy", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserPolicyPayload> userPolicy() {

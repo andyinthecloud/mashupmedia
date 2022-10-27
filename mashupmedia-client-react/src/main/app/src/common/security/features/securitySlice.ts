@@ -9,6 +9,7 @@ export type UserLogInPayload = {
 
 export type UserTokenPayload = {
     token: string
+    streamingToken: string
 }
 
 const initialState: PayloadState<UserTokenPayload> = {

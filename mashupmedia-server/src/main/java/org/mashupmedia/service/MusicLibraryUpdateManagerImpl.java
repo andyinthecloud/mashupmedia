@@ -8,7 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,6 +54,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -60,15 +64,14 @@ import lombok.extern.slf4j.Slf4j;
 public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager {
 	private final int BATCH_INSERT_ITEMS = 20;
 
-
 	@Autowired
 	private ConnectionManager connectionManager;
 
 	@Autowired
 	private AlbumArtManager albumArtManager;
 
-//	@Autowired
-//	private MapperManager mapperManager;
+	// @Autowired
+	// private MapperManager mapperManager;
 
 	@Autowired
 	private MusicDao musicDao;
@@ -98,13 +101,12 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	@Autowired
 	private MusicAlbumRepository musicAlbumRepository;
 
-
 	public MusicLibraryUpdateManagerImpl() {
-		// Disable the jaudiotagger library logging
-		// LogManager.getLogManager().reset();
-		// java.util.logging.Logger globalLogger = java.util.logging.Logger
-		// 		.getLogger(java.util.logging.log.GLOBAL_LOGGER_NAME);
-		// globallog.setLevel(java.util.logging.Level.OFF);
+		Logger[] loggers = new Logger[] { Logger.getLogger("org.jaudiotagger") };
+
+		for (Logger logger : loggers) {
+			logger.setLevel(Level.OFF);
+		}
 	}
 
 	@Override
@@ -155,7 +157,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		Location location = musicLibrary.getLocation();
 		String remoteLibraryUrl = location.getPath();
 		String libraryXml = connectionManager.proceessRemoteLibraryConnection(remoteLibraryUrl);
-//		mapperManager.saveXmltoSongs(musicLibrary, libraryXml);
+		// mapperManager.saveXmltoSongs(musicLibrary, libraryXml);
 	}
 
 	@Override
@@ -164,7 +166,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			return;
 		}
 
-//		List<Long> groupIds = getGroupIds();
+		// List<Long> groupIds = getGroupIds();
 
 		long libraryId = musicLibrary.getId();
 		long totalSongsSaved = 0;
@@ -176,8 +178,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 			String songPath = song.getPath();
 			long fileLastModifiedOn = song.getFileLastModifiedOn();
-//			Song savedSong = getSavedSong(groupIds, libraryId, songPath, fileLastModifiedOn);
-			Optional<Song> optionalSong = songRepository.findByLibraryIdAndPathAndLastModifiedOn(libraryId, songPath, fileLastModifiedOn);
+			// Song savedSong = getSavedSong(groupIds, libraryId, songPath,
+			// fileLastModifiedOn);
+			Optional<Song> optionalSong = songRepository.findByLibraryIdAndPathAndLastModifiedOn(libraryId, songPath,
+					fileLastModifiedOn);
 
 			if (optionalSong.isPresent()) {
 				Song savedSong = optionalSong.get();
@@ -186,8 +190,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				savedSong.setUpdatedOn(song.getUpdatedOn());
 				savedSong.setEnabled(true);
 				musicDao.saveSong(savedSong, false);
-				log.info("Song is already in database, updated song date.");				
-//				writeSongToXml(libraryId, savedSong);
+				log.info("Song is already in database, updated song date.");
+				// writeSongToXml(libraryId, savedSong);
 				// encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedSong,
 				// MediaContentType.MP3);
 				continue;
@@ -272,7 +276,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			song.setSearchText(searchText);
 
 			musicDao.saveSong(song, isSessionFlush);
-//			writeSongToXml(libraryId, song);
+			// writeSongToXml(libraryId, song);
 
 			// encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(song,
 			// MediaContentType.MP3);
@@ -295,14 +299,14 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return savedSong;
 	}
 
-//	protected void writeSongToXml(long libraryId, Song song) {
-//		try {
-////			mapperManager.writeSongToXml(libraryId, song);
-//		} catch (Exception e) {
-//			log.error("Error writing song to xml", e);
-//		}
-//
-//	}
+	// protected void writeSongToXml(long libraryId, Song song) {
+	// try {
+	//// mapperManager.writeSongToXml(libraryId, song);
+	// } catch (Exception e) {
+	// log.error("Error writing song to xml", e);
+	// }
+	//
+	// }
 
 	private Genre prepareGenre(Genre genre) {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
@@ -427,6 +431,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				} else {
 					folderAlbumName += " - " + fileName;
 				}
+
 				File[] files = file.listFiles();
 				for (File childFile : files) {
 					prepareSongs(date, songs, childFile, musicLibrary, folderArtistName, folderAlbumName);
@@ -529,6 +534,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			log.info("Unable to add song to the library. No album found for artist = " + folderArtistName
 					+ ", song title = " + tagSongTitle);
 		}
+
 		album.setName(tagAlbumName);
 		album.setFolderName(folderAlbumName);
 		song.setAlbum(album);
@@ -557,13 +563,13 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	private int processTrackNumber(String fileName, int musicFileCount) {
 		Pattern pattern = Pattern.compile("\\d+");
 		Matcher matcher = pattern.matcher(fileName);
-		String trackNumberValue = null;		
+		String trackNumberValue = null;
 		try {
 			trackNumberValue = matcher.group(1);
 		} catch (IllegalStateException e) {
 			log.info("Unable to get track number from file name: " + fileName, e);
 		}
-		
+
 		int trackNumber = NumberUtils.toInt(trackNumberValue, musicFileCount);
 		return trackNumber;
 	}
@@ -622,7 +628,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	private Artist prepareArtist(Artist artist) {
-//		Artist savedArtist = musicDao.getArtist(userGroupIds, artist.getName());
+		// Artist savedArtist = musicDao.getArtist(userGroupIds, artist.getName());
 		Optional<Artist> artistOptional = artistRepository.findArtistByNameIgnoreCase(artist.getName());
 
 		if (artistOptional.isPresent()) {
@@ -638,6 +644,11 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	private Album prepareAlbum(Album album) {
+
+        log.debug("prepareAlbum name: " + album.getName());
+        log.debug("prepareAlbum folderName: " +  album.getFolderName());
+		
+
 		Artist artist = album.getArtist();
 		String albumName = album.getName();
 		if (StringUtils.isBlank(albumName)) {
@@ -652,8 +663,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			thumbnailUrl = albumArtImage.getThumbnailUrl();
 		}
 
-//		Album savedAlbum = musicDao.getAlbum(userGroupIds, artist.getName(), albumName);
-		Optional<Album> optionalAlbum = musicAlbumRepository.findByArtistNameAndAlbumNameIgnoreCase(artist.getName(), albumName);
+		// Album savedAlbum = musicDao.getAlbum(userGroupIds, artist.getName(),
+		// albumName);
+		Optional<Album> optionalAlbum = musicAlbumRepository.findByArtistNameAndAlbumNameIgnoreCase(artist.getName(),
+				albumName);
 
 		if (optionalAlbum.isPresent()) {
 			Album savedAlbum = optionalAlbum.get();

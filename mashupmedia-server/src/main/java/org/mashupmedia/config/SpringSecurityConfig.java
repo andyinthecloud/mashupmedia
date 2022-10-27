@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -25,37 +24,33 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
 @ComponentScan("org.mashupmedia.security")
+@RequiredArgsConstructor
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    @Lazy
-    private AdminManager adminManager;
+    private final AdminManager adminManager;
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public SpringSecurityConfig() {
-        this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
-    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-//        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
-        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
+        // authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
-    @Bean
-    public PasswordEncoder getPasswordEncoder() {
-        return this.bCryptPasswordEncoder;
-    }
+    // @Bean
+    // public PasswordEncoder getPasswordEncoder() {
+    //     return new BCryptPasswordEncoder();
+    // }
 
     @Bean
     public AuthenticationManager getAuthenticationManager() throws Exception {
@@ -74,50 +69,26 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
-
     @Override
     protected void configure(HttpSecurity httpSecurity)
             throws Exception {
 
         httpSecurity
-                .csrf().disable().authorizeRequests().and()
+                .csrf()
+                .disable()
+                .authorizeRequests()
+                .and()
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST,  SecurityConstants.SIGN_UP_URL).permitAll()
-                // .antMatchers("/mashupmedia/**/*").permitAll()
-                
-                // development
-                // .and()
-                // .authorizeRequests()
-                // .antMatchers("/mashupmedia/h2-console/*").permitAll()
-
-                .anyRequest().authenticated()
+                .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()
+                .antMatchers(SecurityConstants.STREAMING_URL).permitAll()                
+                .anyRequest()
+                .authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), this.objectMapper))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(), adminManager))
-                // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-//        httpSecurity.cors().and()
-//                .authorizeRequests()
-////                .antMatchers("/h2-console/**").permitAll()
-////                .antMatchers("/**/*.{js,html,css}").permitAll()
-////                .antMatchers("/", "/api/user").permitAll()
-//                .anyRequest()
-//                .authenticated()
-//                .and()
-//                .formLogin()
-//                .loginProcessingUrl("/perform_login")
-//                .failureUrl("/login?error=true")
-//                .and().csrf().disable();
-
-
-//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-////                .ignoringAntMatchers("/h2-console/**");
-//        httpSecurity.headers()
-//                .frameOptions()
-//                .sameOrigin();
     }
 
 }

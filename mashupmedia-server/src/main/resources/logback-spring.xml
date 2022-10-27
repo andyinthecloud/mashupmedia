@@ -45,4 +45,11 @@
         <appender-ref ref="Console" />
     </logger>
 
+    <logger name="org.jaudiotagger" level="ERROR" additivity="false">
+        <appender-ref ref="RollingFile" />
+        <appender-ref ref="Console" />
+    </logger>
+
+    
+
 </configuration>

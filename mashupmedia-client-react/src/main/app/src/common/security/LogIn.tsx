@@ -100,10 +100,6 @@ const LogIn = () => {
             setTokenCookie(securityState.payload?.token)
             const navigateUri = encodedJumpUri ? decodeURI(encodedJumpUri) : '/'
             navigate(navigateUri)
-            // dispatch(
-            //     getUserPolicy(securityState.payload?.token)
-            // )
-
         }
 
     }, [securityState])

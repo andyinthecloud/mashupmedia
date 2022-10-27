@@ -13,6 +13,8 @@ import Library from "./configuration/Library";
 import { ConfigurationRoutes } from './configuration/ConfigurationRoutes';
 import { MediaRoutes } from './media/MediaRoutes';
 import Albums from './media/music/Albums';
+import Artists from './media/music/Artists';
+import Artist from './media/music/Artist';
 
 
 export const MashupRoutes = () => {
@@ -119,6 +121,20 @@ export const MashupRoutes = () => {
             </Route>
 
             <Route path="/music">
+                <Route path="artists" element={
+                    <RequireAuthenication>
+                        <Artists />
+                    </RequireAuthenication>
+                } />
+
+                <Route path="artist">
+                    <Route path=":artistId" element={
+                        <RequireAuthenication>
+                            <Artist />
+                        </RequireAuthenication>
+                    } />
+                </Route>
+
                 <Route path="albums" element={
                     <RequireAuthenication>
                         <Albums />

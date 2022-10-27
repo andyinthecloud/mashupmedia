@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class AlbumPayload {
     private long id;
     private String name;
-	private String indexLetter;
     private AlbumArtImagePayload albumArtImagePayload; 
 
 }
