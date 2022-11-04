@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserTokenPayload {
     private String token;
-    private String streamingToken;
 }

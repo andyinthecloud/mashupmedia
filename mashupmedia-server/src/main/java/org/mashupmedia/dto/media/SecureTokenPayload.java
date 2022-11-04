@@ -1,4 +1,4 @@
-package org.mashupmedia.dto.media.music;
+package org.mashupmedia.dto.media;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class AlbumPayload {
-    private long id;
-    private String name;
+public class SecureTokenPayload<P> {
+    private String secureToken;
+    private P payload;
 }

@@ -17,7 +17,7 @@ public class VideoManagerImpl implements VideoManager {
 	private VideoDao videoDao;
 
 	@Autowired
-	private SecurityManager securityManager;
+	private MashupMediaSecurityManager securityManager;
 
 	@Override
 	public List<Video> getVideos() {

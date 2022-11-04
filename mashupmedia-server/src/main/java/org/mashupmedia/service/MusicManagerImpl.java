@@ -32,7 +32,7 @@ public class MusicManagerImpl implements MusicManager {
 	private MusicDao musicDao;
 
 	@Autowired
-	private SecurityManager securityManager;
+	private MashupMediaSecurityManager securityManager;
 
 	@Autowired
 	private AdminManager adminManager;

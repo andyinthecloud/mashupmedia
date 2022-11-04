@@ -14,5 +14,4 @@ import lombok.NoArgsConstructor;
 public class ArtistWithAlbumsPayload  {
     private ArtistPayload artistPayload; 
     private List<AlbumPayload> albumPayloads;
-
 }

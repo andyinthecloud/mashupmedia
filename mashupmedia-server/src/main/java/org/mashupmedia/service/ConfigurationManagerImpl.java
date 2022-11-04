@@ -6,17 +6,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.dao.ConfigurationDao;
 import org.mashupmedia.model.Configuration;
-import org.mashupmedia.util.EncryptionHelper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mashupmedia.util.EncryptService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ConfigurationManagerImpl implements ConfigurationManager {
 
-	@Autowired
-	private ConfigurationDao configurationDao;
+	private final ConfigurationDao configurationDao;
+
+	private final EncryptService encryptService;
 
 	@Override
 	public Configuration getConfiguration(String key) {
@@ -56,14 +59,14 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 	@Override
 	public String getConfigurationDecryptedValue(String key) {
 		String encryptedValue = getConfigurationValue(key);
-		String decryptedValue = EncryptionHelper.decryptText(encryptedValue);
+		String decryptedValue = encryptService.decrypt(encryptedValue);
 		return decryptedValue;
 	}
 
 	@Override
 	public void saveEncryptedConfiguration(String key, String value) {
 		value = StringUtils.trimToEmpty(value);
-		String encryptedValue = EncryptionHelper.encryptText(value);
+		String encryptedValue = encryptService.encrypt(value);
 		saveConfiguration(key, encryptedValue);
 	}
 	

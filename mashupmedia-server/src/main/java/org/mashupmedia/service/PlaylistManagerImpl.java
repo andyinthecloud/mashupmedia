@@ -32,7 +32,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	private MediaDao mediaDao;
 
 	@Autowired
-	private SecurityManager securityManager;
+	private MashupMediaSecurityManager securityManager;
 
 	@Autowired
 	private AdminManager adminManager;

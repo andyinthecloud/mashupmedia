@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { RootState } from '../../common/redux/store';
-import SecureImage from '../SecureImage';
+import { backendUrl } from '../../common/utils/httpUtils';
+import { SecureTokenPayload } from '../rest/secureTokenPayload';
 import { ArtistWithAlbumsPayload, getArtist } from './rest/musicCalls';
 
 const Artist = () => {
@@ -11,9 +12,7 @@ const Artist = () => {
 
     const { artistId } = useParams()
 
-    const [props, setProps] = useState<ArtistWithAlbumsPayload>()
-
-    const albumArtUri = '/api/music/albums/album-art/'
+    const [props, setProps] = useState<SecureTokenPayload<ArtistWithAlbumsPayload>>()
 
 
     useEffect(() => {
@@ -27,17 +26,21 @@ const Artist = () => {
 
     }, [artistId, userToken])
 
+    const albumArtImageUrl = (albumId: number): string => {
+        return `${backendUrl('/streaming/album-art')}/${albumId}?streamingToken=${props?.secureToken}` 
+    }
+
     return (
         <div>
-            <h1>{props?.artistPayload.name}</h1>
+            <h1>{props?.payload.artistPayload.name}</h1>
 
             <div>
-                {props?.albumPayloads.map(function (albumPayload) {
+                {props?.payload.albumPayloads.map(function (albumPayload) {
                     return (
                         <div key={albumPayload.id}>
                             <h2>{albumPayload.name}</h2>
 
-                            <SecureImage path={albumArtUri + albumPayload.id} />
+                            <img src={albumArtImageUrl(albumPayload.id)} />
 
 
                         </div>

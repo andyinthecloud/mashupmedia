@@ -7,6 +7,7 @@ export type UserPolicyPayload = {
     administrator: boolean
     username: string
     name: string
+    streamingToken: string
 }
 
 

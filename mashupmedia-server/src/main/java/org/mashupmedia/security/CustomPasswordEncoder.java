@@ -1,6 +1,6 @@
 package org.mashupmedia.security;
 
-import org.mashupmedia.util.EncryptionHelper;
+import org.mashupmedia.util.EncryptService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

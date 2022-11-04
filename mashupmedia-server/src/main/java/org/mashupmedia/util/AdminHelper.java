@@ -17,18 +17,18 @@
 
 package org.mashupmedia.util;
 
-
 import java.util.List;
 import java.util.Set;
 
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
+import org.mashupmedia.security.MediaAuthentication;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class AdminHelper {
-	
+
 	public static final String ROLE_ADMIN_IDNAME = "role.admin";
 	public static final String ROLE_USER_IDNAME = "role.user";
 
@@ -36,19 +36,18 @@ public class AdminHelper {
 		if (user == null) {
 			return false;
 		}
-		
+
 		Set<Role> roles = user.getRoles();
 		if (roles == null || roles.isEmpty()) {
 			return false;
 		}
-		
-		
+
 		for (Role role : roles) {
 			if (role.getIdName().equalsIgnoreCase(ROLE_ADMIN_IDNAME)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -57,10 +56,23 @@ public class AdminHelper {
 		if (user == null) {
 			return false;
 		}
-		
+
 		return isAdministrator(user);
 	}
-	
+
+	public static void setLoggedInUser(User user) {
+		MediaAuthentication authentication = MediaAuthentication
+				.builder()
+				.name(user.getName())
+				.authenticated(true)
+				.authorities(user.getRoles())
+				.details(user)
+				.principal(user)
+				.build();
+
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+	}
+
 	public static User getLoggedInUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication == null) {
@@ -80,15 +92,10 @@ public class AdminHelper {
 		return null;
 	}
 
-
 	public static boolean isAllowedGroup(List<Group> groups) {
 		User user = getLoggedInUser();
 		Set<Group> userGroups = user.getGroups();
 		return userGroups.stream().anyMatch(groups::contains);
 	}
-
-
-
-
 
 }

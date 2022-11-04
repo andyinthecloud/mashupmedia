@@ -8,6 +8,7 @@ import org.mashupmedia.dto.login.UserTokenPayload;
 import org.mashupmedia.mapper.UserPolicyMapper;
 import org.mashupmedia.model.User;
 import org.mashupmedia.service.AdminManager;
+import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.util.AdminHelper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class LoginController {
 
     private final UserPolicyMapper userPolicyMapper;
 
-    private final org.mashupmedia.service.SecurityManager securityManager;
+    private final MashupMediaSecurityManager securityManager;
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenPayload> login(@RequestBody @Valid LoginPayload loginPayload) throws Exception{
@@ -44,13 +45,12 @@ public class LoginController {
 
         String username = loginPayload.getUsername();
         String token = passwordEncoder.encode(username);
-        String streamingToken = securityManager.generateStreamingToken(username);
+        
 
         return ResponseEntity.ok(
                 UserTokenPayload
                         .builder()
                         .token(token)
-                        .streamingToken(streamingToken)
                         .build());
     }
 
@@ -59,6 +59,19 @@ public class LoginController {
         User user = AdminHelper.getLoggedInUser();
         Assert.notNull(user, "User should not be null");
         Assert.isTrue(user.isEnabled(), "User is enabled");
-        return ResponseEntity.ok(userPolicyMapper.toDto(user));
+
+        String streamingToken = securityManager.generateStreamingToken(user.getUsername());
+
+        return ResponseEntity.ok(UserPolicyPayload
+        .builder()
+        .administrator(user.isAdministrator())
+        .name(user.getName())
+        .username(user.getUsername())
+        .streamingToken(streamingToken)
+        .build());
+
+
+
+        // return ResponseEntity.ok(userPolicyMapper.toDto(user));
     }
 }

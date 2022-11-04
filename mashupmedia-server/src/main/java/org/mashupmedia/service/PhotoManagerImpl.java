@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PhotoManagerImpl implements PhotoManager {
 
 	@Autowired
-	private SecurityManager securityManager;
+	private MashupMediaSecurityManager securityManager;
 
 	@Autowired
 	private MediaManager mediaManager;

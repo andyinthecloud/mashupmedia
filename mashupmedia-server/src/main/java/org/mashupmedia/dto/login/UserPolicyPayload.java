@@ -14,4 +14,5 @@ public class UserPolicyPayload {
     private boolean administrator;
     private String username;
     private String name; 
+    private String streamingToken;
 }

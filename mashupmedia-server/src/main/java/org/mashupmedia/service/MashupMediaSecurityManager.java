@@ -17,7 +17,6 @@
 
 package org.mashupmedia.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,10 +25,7 @@ import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
-public interface SecurityManager {
+public interface MashupMediaSecurityManager {
 	
 	public List<Long> getLoggedInUserGroupIds();
 	
@@ -41,8 +37,8 @@ public interface SecurityManager {
 
 	public boolean canAccessMediaItem(MediaItem mediaItem);
 
-	public String generateStreamingToken(String username) throws JsonProcessingException, UnsupportedEncodingException;
+	public String generateStreamingToken(String username);
 
-	public boolean isStreamingTokenValid(String streamingToken) throws UnsupportedEncodingException, JsonMappingException, JsonProcessingException;
+	public boolean isStreamingTokenValid(String streamingToken);
 
 }
