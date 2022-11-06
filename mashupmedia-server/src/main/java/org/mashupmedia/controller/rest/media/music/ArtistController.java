@@ -42,7 +42,7 @@ public class ArtistController {
     @GetMapping(value = "/{artistId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public SecureTokenPayload<ArtistWithAlbumsPayload> getArtist(@PathVariable long artistId) {
         User user = AdminHelper.getLoggedInUser();
-        String streamingToken = mashupMediaSecurityManager.generateStreamingToken(user.getUsername());
+        String streamingToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
         var t =  artistWithAlbumsMapper.toDto(musicManager.getArtist(artistId), streamingToken);
         return t;
 

@@ -60,7 +60,7 @@ public class LoginController {
         Assert.notNull(user, "User should not be null");
         Assert.isTrue(user.isEnabled(), "User is enabled");
 
-        String streamingToken = securityManager.generateStreamingToken(user.getUsername());
+        String streamingToken = securityManager.generateMediaToken(user.getUsername());
 
         return ResponseEntity.ok(UserPolicyPayload
         .builder()

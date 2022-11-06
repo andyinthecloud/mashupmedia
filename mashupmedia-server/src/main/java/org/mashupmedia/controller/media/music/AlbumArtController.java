@@ -1,16 +1,19 @@
-package org.mashupmedia.controller.streaming;
+package org.mashupmedia.controller.media.music;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.hibernate.type.ImageType;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.MediaItemHelper;
-import org.mashupmedia.service.MashupMediaSecurityManager;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/streaming/album-art")
+@RequestMapping("/media/music/album-art")
 @RequiredArgsConstructor
 public class AlbumArtController {
 
@@ -33,26 +36,29 @@ public class AlbumArtController {
     private final MashupMediaSecurityManager securityManager;
 
     @GetMapping(value = "/{albumId}")
-    public ResponseEntity<InputStreamResource> getAlbumArt(@PathVariable long albumId,
-            @RequestParam String streamingToken,
-            @RequestParam(value = "imageType", required = false) ImageType imageType) throws IOException {
+    public @ResponseBody byte[] getAlbumArt(@PathVariable long albumId,
+            @RequestParam String mediaToken,
+            @RequestParam(value = "imageType", required = false) ImageType imageType,
+            final HttpServletResponse httpServletResponse) throws IOException {
 
-        if (!securityManager.isStreamingTokenValid(streamingToken)) {
+        if (!securityManager.isMediaTokenValid(mediaToken)) {
             throw new IllegalArgumentException("Invalid token");
         }
 
         Album album = musicManager.getAlbum(albumId);
         AlbumArtImage albumArtImage = album.getAlbumArtImage();
 
+        MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(albumArtImage.getContentType());
+        httpServletResponse.setContentType(mediaContentType.getMimeContentType());
+
         String imagePath = getImagePath(imageType, albumArtImage);
         InputStream inputStream = new FileInputStream(imagePath);
+        return IOUtils.toByteArray(inputStream);
 
-        // MediaType mediaType = MediaItemHelper.getMediaType(albumArtImage.getContentType());
-
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(new InputStreamResource(inputStream));
+        // return ResponseEntity
+        //         .ok()
+        //         // .contentType(MediaType.IMAGE_JPEG)
+        //         .body(new InputStreamResource(inputStream));
 
     }
 

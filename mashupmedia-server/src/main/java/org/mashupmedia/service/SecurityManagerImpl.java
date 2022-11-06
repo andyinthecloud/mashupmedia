@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.mashupmedia.dto.login.StreamingTokenPayload;
+import org.mashupmedia.dto.login.MediaTokenPayload;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
@@ -156,64 +156,52 @@ public class SecurityManagerImpl implements MashupMediaSecurityManager {
 	}
 
 	@Override
-	public String generateStreamingToken(String username) {
-		StreamingTokenPayload streamingTokenPayload = StreamingTokenPayload
+	public String generateMediaToken(String username) {
+		MediaTokenPayload mediaTokenPayload = MediaTokenPayload
 				.builder()
 				.username(username)
 				.expiresDateTime(LocalDateTime.now().plusHours(SecurityConstants.EXPIRATION_HOURS))
 				.build();
 
 		try {
-			String streamingToken = objectMapper.writeValueAsString(streamingTokenPayload);
-			String encryptedStreamingToken = this.encryptService.encrypt(streamingToken);
-			return UriUtils.encodePath(encryptedStreamingToken, StandardCharsets.UTF_8);
+			String mediaToken = objectMapper.writeValueAsString(mediaTokenPayload);
+			String encryptedMediaToken = this.encryptService.encrypt(mediaToken);
+			return UriUtils.encodePath(encryptedMediaToken, StandardCharsets.UTF_8);
 
 		} catch (JsonProcessingException e) {
-			throw new MashupMediaRuntimeException("Error generating streaming token", e);
+			throw new MashupMediaRuntimeException("Error generating media token", e);
 		}
 
 	}
 
 	@Override
-	public boolean isStreamingTokenValid(String encodedStreamingToken) {
+	public boolean isMediaTokenValid(String encodedMediaToken) {
 
-		StreamingTokenPayload streamingTokenPayload;
+		MediaTokenPayload mediaTokenPayload;
 
 		try {
-			String encryptedStreamingToken = UriUtils.decode(encodedStreamingToken,
+			String encryptedMediaToken = UriUtils.decode(encodedMediaToken,
 					StandardCharsets.UTF_8).replaceAll(" ", "+");
 
-			String streamingToken = encryptService.decrypt(encryptedStreamingToken);
+			String mediaToken = encryptService.decrypt(encryptedMediaToken);
 
-			streamingTokenPayload = objectMapper.readValue(streamingToken,
-					StreamingTokenPayload.class);
-			if (streamingTokenPayload == null) {
+			mediaTokenPayload = objectMapper.readValue(mediaToken,
+					MediaTokenPayload.class);
+			if (mediaTokenPayload == null) {
 				return false;
 			}
 		} catch (JsonProcessingException e) {
-			log.info("Error validating streaming token", e);
+			log.info("Error validating media token", e);
 			return false;
 		}
 
-		Assert.notNull(streamingTokenPayload, "streamingTokenPayload should not be null");
+		Assert.notNull(mediaTokenPayload, "mediaTokenPayload should not be null");
 		
-		User user = adminManager.getUser(streamingTokenPayload.getUsername());
+		User user = adminManager.getUser(mediaTokenPayload.getUsername());
 
 		AdminHelper.setLoggedInUser(user);
 
-
-		// SecurityContextHolder.getContext().setAuthentication(null);
-
-		// String loggedInUsername = AdminHelper.getLoggedInUser().getUsername();
-		// if (!passwordEncoder.matches(streamingTokenPayload.getUsername(), loggedInUsername)) {
-		// 	return false;
-		
-		
-		// }
-
-		// AdminHelper.getLoggedInUser()
-
-		LocalDateTime expiresDateTime = streamingTokenPayload.getExpiresDateTime();
+		LocalDateTime expiresDateTime = mediaTokenPayload.getExpiresDateTime();
 		Assert.notNull(expiresDateTime, "expiresDateTime should not be null");
 
 		LocalDateTime now = LocalDateTime.now();
@@ -221,7 +209,7 @@ public class SecurityManagerImpl implements MashupMediaSecurityManager {
 			return false;
 		}
 
-		return streamingTokenPayload.getExpiresDateTime().isAfter(now);
+		return mediaTokenPayload.getExpiresDateTime().isAfter(now);
 	}
 
 }

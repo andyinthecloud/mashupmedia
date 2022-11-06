@@ -32,18 +32,26 @@ import org.mashupmedia.web.restful.RestfulStream;
 public class MediaItemHelper {
 
 	public enum MediaContentType {
-		MP3("audio/mpeg", "mp3", "mp3", 1), M4A("audio/m4a", "m4a", "m4a", 2), OGA("audio/ogg", "oga", "oga", 3), WAV(
-				"audio/wav", "wav", "wav", 3), FLAC("audio/flac", "flac", "flac", 4), WMA("audio/x-ms-wma", "wma",
-						"wma", 5), UNSUPPORTED("media/unsupported", "unsupported", "unsupported", 100), MP4("video/mp4",
-								"m4v", "mp4", 1), WEBM("video/webm", "webmv", "webm", 2), OGV("video/ogg", "ogv", "ogv",
-										3), WMV("video/x-ms-wmv", "wmv", "wmv", 4), JPEG("image/jpeg", "jpg", "jpg",
-												1), PNG("image/png", "png", "png", 2), GIF("image/gif", "gif", "gif",
-														3), TIF("image/tiff", "tiff", "tiff", 4);
+		MP3("audio/mpeg", "mp3", "mp3", 1), 
+		M4A("audio/m4a", "m4a", "m4a", 2), 
+		OGA("audio/ogg", "oga", "oga", 3), 
+		WAV("audio/wav", "wav", "wav", 3), 
+		FLAC("audio/flac", "flac", "flac", 4), 
+		WMA("audio/x-ms-wma", "wma", "wma", 5), 
+		UNSUPPORTED("media/unsupported", "unsupported", "unsupported", 100), 
+		MP4("video/mp4", "m4v", "mp4", 1), 
+		WEBM("video/webm", "webmv", "webm", 2), 
+		OGV("video/ogg", "ogv", "ogv", 3), 
+		WMV("video/x-ms-wmv", "wmv", "wmv", 4), 
+		JPEG("image/jpeg", "jpg", "jpg", 1), 
+		PNG("image/png", "png", "png", 2), 
+		GIF("image/gif", "gif", "gif", 3), 
+		TIF("image/tiff", "tiff", "tiff", 4);
 
-		private String mimeContentType;
-		private String jPlayerContentType;
-		private String name;
-		private int ranking;
+		private final String mimeContentType;
+		private final String jPlayerContentType;
+		private final String name;
+		private final int ranking;
 
 		private MediaContentType(String mimeContentType, String jPlayerContentType, String name, int ranking) {
 			this.mimeContentType = mimeContentType;

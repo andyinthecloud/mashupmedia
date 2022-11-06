@@ -37,8 +37,8 @@ public interface MashupMediaSecurityManager {
 
 	public boolean canAccessMediaItem(MediaItem mediaItem);
 
-	public String generateStreamingToken(String username);
+	public String generateMediaToken(String username);
 
-	public boolean isStreamingTokenValid(String streamingToken);
+	public boolean isMediaTokenValid(String streamingToken);
 
 }

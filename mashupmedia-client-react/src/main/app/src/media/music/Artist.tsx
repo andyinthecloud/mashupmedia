@@ -27,7 +27,7 @@ const Artist = () => {
     }, [artistId, userToken])
 
     const albumArtImageUrl = (albumId: number): string => {
-        return `${backendUrl('/streaming/album-art')}/${albumId}?streamingToken=${props?.secureToken}` 
+        return `${backendUrl('/media/music/album-art')}/${albumId}?mediaToken=${props?.secureToken}` 
     }
 
     return (

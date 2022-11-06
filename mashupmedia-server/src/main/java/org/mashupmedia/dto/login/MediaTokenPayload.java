@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class StreamingTokenPayload {
+public class MediaTokenPayload {
     private String username;
     private LocalDateTime expiresDateTime;
 }

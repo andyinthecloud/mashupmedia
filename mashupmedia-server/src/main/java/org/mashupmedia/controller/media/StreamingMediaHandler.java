@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.streaming;
+package org.mashupmedia.controller.media;
 
 import java.io.File;
 import java.io.FileInputStream;

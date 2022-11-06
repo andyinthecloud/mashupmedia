@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.controller.streaming.StreamingController;
+import org.mashupmedia.controller.media.StreamingController;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.ConfigurationDao;
 import org.mashupmedia.dao.MediaDao;
