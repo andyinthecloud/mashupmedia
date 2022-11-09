@@ -1,5 +1,5 @@
 import { callMashupMediaApi, HttpMethod, HttpResponse } from '../../../common/utils/httpUtils'
-import { SecureTokenPayload } from '../../rest/secureTokenPayload'
+import { MediaTokenPayload as MediaTokenPayload } from '../../rest/secureTokenPayload'
 
 export type ArtistPayload = {
     id: number
@@ -12,8 +12,14 @@ export type AlbumPayload = {
     name: string
 }
 
+export type AlbumWithArtistPayload = {
+    artistPayload: ArtistPayload
+    albumPayload: AlbumPayload
+}
+
+
 export type ArtistWithAlbumsPayload = {
-    secureToken: string
+    mediaToken: string
     artistPayload: ArtistPayload
     albumPayloads: AlbumPayload[]
 }
@@ -24,6 +30,6 @@ export const getArtists = (userToken?: string): Promise<HttpResponse<ArtistPaylo
     return callMashupMediaApi<ArtistPayload[]>(HttpMethod.GET, musicUri, userToken)
 }
 
-export const getArtist = (artistId: number, userToken?: string): Promise<HttpResponse<SecureTokenPayload<ArtistWithAlbumsPayload>>> => {
-    return callMashupMediaApi<SecureTokenPayload<ArtistWithAlbumsPayload>>(HttpMethod.GET, musicUri + artistId, userToken)
+export const getArtist = (artistId: number, userToken?: string): Promise<HttpResponse<MediaTokenPayload<ArtistWithAlbumsPayload>>> => {
+    return callMashupMediaApi<MediaTokenPayload<ArtistWithAlbumsPayload>>(HttpMethod.GET, musicUri + artistId, userToken)
 }

@@ -3,7 +3,7 @@ package org.mashupmedia.controller.rest.media.music;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.mashupmedia.dto.media.SecureTokenPayload;
+import org.mashupmedia.dto.media.MediaTokenPayload;
 import org.mashupmedia.dto.media.music.ArtistPayload;
 import org.mashupmedia.dto.media.music.ArtistWithAlbumsPayload;
 import org.mashupmedia.mapper.media.music.ArtistMapper;
@@ -40,7 +40,7 @@ public class ArtistController {
     }
 
     @GetMapping(value = "/{artistId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public SecureTokenPayload<ArtistWithAlbumsPayload> getArtist(@PathVariable long artistId) {
+    public MediaTokenPayload<ArtistWithAlbumsPayload> getArtist(@PathVariable long artistId) {
         User user = AdminHelper.getLoggedInUser();
         String streamingToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
         var t =  artistWithAlbumsMapper.toDto(musicManager.getArtist(artistId), streamingToken);

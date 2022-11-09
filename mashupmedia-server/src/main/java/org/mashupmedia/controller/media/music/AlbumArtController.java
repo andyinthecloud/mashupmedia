@@ -1,5 +1,6 @@
 package org.mashupmedia.controller.media.music;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,9 +15,6 @@ import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/media/music/album-art")
 @RequiredArgsConstructor
 public class AlbumArtController {
+
+    public static final String IMAGE_PATH_DEFAULT_ALBUM_ART = "/images/default-album-art.png";
 
     private final MusicManager musicManager;
 
@@ -52,14 +52,16 @@ public class AlbumArtController {
         httpServletResponse.setContentType(mediaContentType.getMimeContentType());
 
         String imagePath = getImagePath(imageType, albumArtImage);
-        InputStream inputStream = new FileInputStream(imagePath);
+        File albumArtFile = new File(imagePath);
+
+        InputStream inputStream = null;
+        if (albumArtFile.isFile()) {
+            inputStream = new FileInputStream(albumArtFile);
+        } else {
+            inputStream = getClass().getResourceAsStream(IMAGE_PATH_DEFAULT_ALBUM_ART);
+        }
+
         return IOUtils.toByteArray(inputStream);
-
-        // return ResponseEntity
-        //         .ok()
-        //         // .contentType(MediaType.IMAGE_JPEG)
-        //         .body(new InputStreamResource(inputStream));
-
     }
 
     private String getImagePath(ImageType imageType, AlbumArtImage albumArtImage) {

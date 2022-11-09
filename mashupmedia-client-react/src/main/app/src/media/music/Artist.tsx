@@ -1,10 +1,11 @@
+import { Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import AlbumSummary from '../../common/components/media/AlbumSummary';
 import { RootState } from '../../common/redux/store';
-import { backendUrl } from '../../common/utils/httpUtils';
-import { SecureTokenPayload } from '../rest/secureTokenPayload';
-import { ArtistWithAlbumsPayload, getArtist } from './rest/musicCalls';
+import { MediaTokenPayload } from '../rest/secureTokenPayload';
+import { AlbumWithArtistPayload, ArtistWithAlbumsPayload, getArtist } from './rest/musicCalls';
 
 const Artist = () => {
 
@@ -12,7 +13,7 @@ const Artist = () => {
 
     const { artistId } = useParams()
 
-    const [props, setProps] = useState<SecureTokenPayload<ArtistWithAlbumsPayload>>()
+    const [props, setProps] = useState<MediaTokenPayload<ArtistWithAlbumsPayload>>()
 
 
     useEffect(() => {
@@ -26,27 +27,31 @@ const Artist = () => {
 
     }, [artistId, userToken])
 
-    const albumArtImageUrl = (albumId: number): string => {
-        return `${backendUrl('/media/music/album-art')}/${albumId}?mediaToken=${props?.secureToken}` 
-    }
 
     return (
-        <div>
+        <div id='artist'>
             <h1>{props?.payload.artistPayload.name}</h1>
 
-            <div>
+            <Grid container spacing={2} columns={{ xs: 4, sm: 8, md: 12 }} display="flex">
+
                 {props?.payload.albumPayloads.map(function (albumPayload) {
+                    const albumWithArtistPayload: AlbumWithArtistPayload = {
+                        albumPayload, 
+                        artistPayload: props.payload.artistPayload
+                    }
                     return (
-                        <div key={albumPayload.id}>
-                            <h2>{albumPayload.name}</h2>
-
-                            <img src={albumArtImageUrl(albumPayload.id)} />
-
-
-                        </div>
+                        <Grid item key={albumPayload.id} xs={4} sm={4} md={4} >
+                            <AlbumSummary
+                                mediaToken={props.mediaToken}
+                                payload={
+                                    albumWithArtistPayload
+                                }
+                            />
+                        </Grid>
                     )
                 })}
-            </div>
+            </Grid>
+
 
 
 

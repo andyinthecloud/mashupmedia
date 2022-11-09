@@ -1,13 +1,13 @@
 package org.mashupmedia.mapper;
 
-import org.mashupmedia.dto.media.SecureTokenPayload;
+import org.mashupmedia.dto.media.MediaTokenPayload;
 
 public abstract class SecureMediaDomainMapper<D, P> implements DomainMapper<D, P> {
 
-    public SecureTokenPayload<P> toDto(D domain, String secureToken) {
-        return SecureTokenPayload
+    public MediaTokenPayload<P> toDto(D domain, String mediaToken) {
+        return MediaTokenPayload
                 .<P>builder()
-                .secureToken(secureToken)
+                .mediaToken(mediaToken)
                 .payload(toDto(domain))
                 .build();
     }

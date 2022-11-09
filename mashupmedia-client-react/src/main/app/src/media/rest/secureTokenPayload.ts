@@ -1,4 +1,4 @@
-export type SecureTokenPayload<P> = {
-    secureToken: string
+export type MediaTokenPayload<P> = {
+    mediaToken: string
     payload: P
 }

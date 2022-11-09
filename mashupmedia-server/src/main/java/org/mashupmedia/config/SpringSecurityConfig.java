@@ -82,7 +82,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()
-                .antMatchers(SecurityConstants.STREAMING_URL).permitAll()                
+                .antMatchers(SecurityConstants.MEDIA_URL).permitAll()                
                 .anyRequest()
                 .authenticated()
                 .and()

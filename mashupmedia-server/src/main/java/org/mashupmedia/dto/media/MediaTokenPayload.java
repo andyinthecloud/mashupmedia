@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class SecureTokenPayload<P> {
-    private String secureToken;
+public class MediaTokenPayload<P> {
+    private String mediaToken;
     private P payload;
 }
