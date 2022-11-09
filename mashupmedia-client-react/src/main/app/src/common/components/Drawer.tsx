@@ -8,7 +8,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import * as React from 'react';
 
-import { AccountBox, ExpandLess, ExpandMore, Login, Logout } from "@mui/icons-material";
+import { AccountBox, ExpandLess, ExpandMore, LibraryMusic, Login, Logout } from "@mui/icons-material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
@@ -28,6 +28,15 @@ const useStyles = makeStyles({
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
+type MenuState = {
+    isMusicMenuOpen: boolean
+    isSettingsMenuOpen: boolean
+}
+
+enum MenuType {
+    MUSIC, SETTINGS
+}
+
 
 export default function TemporaryDrawer() {
     const classes = useStyles();
@@ -38,10 +47,31 @@ export default function TemporaryDrawer() {
         right: false,
     });
 
-    const [open, setOpen] = React.useState(false);
-    const handleClick = () => {
-        setOpen(!open);
-    };
+
+    const [props, setProps] = React.useState<MenuState>({
+        isMusicMenuOpen: false,
+        isSettingsMenuOpen: false
+    });
+
+    const handleMenuClick = (menuType: MenuType): void => {
+
+        switch (menuType) {
+            case MenuType.MUSIC:
+                setProps(p => ({
+                    ...p,
+                    isMusicMenuOpen: !props.isMusicMenuOpen
+                }))
+                break;
+
+            case MenuType.SETTINGS:
+                setProps(p => ({
+                    ...p,
+                    isSettingsMenuOpen: !props.isSettingsMenuOpen
+                }))
+                break;
+        }
+    }
+
 
     const toggleDrawer = (anchor: Anchor, open: boolean) => (
         event: React.KeyboardEvent | React.MouseEvent,
@@ -70,17 +100,37 @@ export default function TemporaryDrawer() {
             <ListItemRoute label="My account" toRoute="/configuration/my-account" icon={<AccountBox />} />
             <Divider />
 
+            {userPolicyPayload &&
+                <List>
+                    <ListItem button onClick={() => handleMenuClick(MenuType.MUSIC)}>
+                        <ListItemIcon>
+                            <LibraryMusic />
+                        </ListItemIcon>
+                        <ListItemText primary="Music" />
+                        {props.isMusicMenuOpen ? <ExpandLess /> : <ExpandMore />}
+                    </ListItem>
+                    <Collapse in={props.isMusicMenuOpen} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding className="nested-list">
+                            <ListItemRoute label="Albums" toRoute="/music/albums" />
+                            <ListItemRoute label="Artists" toRoute="/music/artists" />
+
+                        </List>
+
+                    </Collapse>
+                </List>
+            }
+            <Divider />
 
             {userPolicyPayload && userPolicyPayload.administrator &&
                 <List>
-                    <ListItem button onClick={handleClick}>
+                    <ListItem button onClick={() => handleMenuClick(MenuType.SETTINGS)}>
                         <ListItemIcon>
-                            <SettingsIcon></SettingsIcon>
+                            <SettingsIcon />
                         </ListItemIcon>
                         <ListItemText primary="Settings" />
-                        {open ? <ExpandLess /> : <ExpandMore />}
+                        {props.isSettingsMenuOpen ? <ExpandLess /> : <ExpandMore />}
                     </ListItem>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
+                    <Collapse in={props.isSettingsMenuOpen} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding className="nested-list">
 
                             <ListItemRoute label="Users" toRoute="/configuration/users" />

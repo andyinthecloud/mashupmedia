@@ -1,5 +1,5 @@
 import { Add, PlayArrow } from '@mui/icons-material'
-import { Button, Card, CardActionArea, CardMedia, IconButton } from '@mui/material'
+import { Button, Card, CardMedia } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { AlbumWithArtistPayload } from '../../../media/music/rest/musicCalls'
 import { MediaTokenPayload } from '../../../media/rest/secureTokenPayload'
@@ -36,11 +36,11 @@ const AlbumSummary = (payload: MediaTokenPayload<AlbumWithArtistPayload>) => {
                 <div className="artist cursor-pointer">{props.payload.artistPayload.name}</div>
             </div>
 
-            <div className="sticker controls">
-                <Button variant="outlined" startIcon={<PlayArrow />}>
+            <div className="controls">
+                <Button variant="contained" startIcon={<PlayArrow />}>
                     Play
                 </Button>
-                <Button variant="outlined" startIcon={<Add />}>
+                <Button variant="contained" startIcon={<Add />}>
                     Add
                 </Button>
 

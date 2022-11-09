@@ -32,7 +32,7 @@ const Artist = () => {
         <div id='artist'>
             <h1>{props?.payload.artistPayload.name}</h1>
 
-            <Grid container spacing={2} columns={{ xs: 4, sm: 8, md: 12 }} display="flex">
+            <Grid container spacing={5} columns={{ xs: 4, sm: 8, md: 12 }} display="flex">
 
                 {props?.payload.albumPayloads.map(function (albumPayload) {
                     const albumWithArtistPayload: AlbumWithArtistPayload = {

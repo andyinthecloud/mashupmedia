@@ -25,11 +25,14 @@
 
 
 .album-summary .controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
     width: 100%;
 }
 
 .album-summary .controls button{
-    margin: 0.5em 1em !important;
+    margin: 1em !important;
     padding: 0.5em 4em;
     width: 30%;
 }
