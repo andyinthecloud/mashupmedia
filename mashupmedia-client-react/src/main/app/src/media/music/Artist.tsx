@@ -1,10 +1,10 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import AlbumSummary from '../../common/components/media/AlbumSummary';
 import { RootState } from '../../common/redux/store';
-import { MediaTokenPayload } from '../rest/secureTokenPayload';
+import { SecureMediaPayload } from '../rest/secureMediaPayload';
 import { AlbumWithArtistPayload, ArtistWithAlbumsPayload, getArtist } from './rest/musicCalls';
 
 const Artist = () => {
@@ -13,7 +13,7 @@ const Artist = () => {
 
     const { artistId } = useParams()
 
-    const [props, setProps] = useState<MediaTokenPayload<ArtistWithAlbumsPayload>>()
+    const [props, setProps] = useState<SecureMediaPayload<ArtistWithAlbumsPayload>>()
 
 
     useEffect(() => {
@@ -51,10 +51,6 @@ const Artist = () => {
                     )
                 })}
             </Grid>
-
-
-
-
         </div>
     )
 

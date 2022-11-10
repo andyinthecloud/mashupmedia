@@ -2,13 +2,13 @@ import { Add, PlayArrow } from '@mui/icons-material'
 import { Button, Card, CardMedia } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { AlbumWithArtistPayload } from '../../../media/music/rest/musicCalls'
-import { MediaTokenPayload } from '../../../media/rest/secureTokenPayload'
+import { SecureMediaPayload } from '../../../media/rest/secureMediaPayload'
 import { backendUrl } from '../../utils/httpUtils'
 import './AlbumSummary.css'
 
-const AlbumSummary = (payload: MediaTokenPayload<AlbumWithArtistPayload>) => {
+const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
 
-    const [props, setProps] = useState<MediaTokenPayload<AlbumWithArtistPayload>>({
+    const [props, setProps] = useState<SecureMediaPayload<AlbumWithArtistPayload>>({
         ...payload
     })
 

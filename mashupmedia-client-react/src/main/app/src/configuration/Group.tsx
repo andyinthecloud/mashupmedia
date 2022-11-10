@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { addNotification, NotificationType } from "../common/notification/notificationSlice";
 import { RootState } from "../common/redux/store";
-import { emptyFieldValidation, fieldErrorMessage, FieldValidation, FormValidation, hasFieldError, isEmpty, ServerError, toFieldValidation } from "../common/utils/form-validation-utils";
+import { emptyFieldValidation, fieldErrorMessage, FieldValidation, FormValidation, hasFieldError, isEmpty, ServerError, toFieldValidation } from "../common/utils/formValidationUtils";
 import { deleteGroup, getGroup, getGroups, NameValuePayload, saveGroup } from "./backend/metaCalls";
 
 type GroupValidationPayload = {

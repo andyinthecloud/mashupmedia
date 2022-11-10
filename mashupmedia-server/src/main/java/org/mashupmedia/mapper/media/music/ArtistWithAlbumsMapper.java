@@ -27,9 +27,4 @@ public class ArtistWithAlbumsMapper extends SecureMediaDomainMapper<Artist, Arti
                 .build();
     }
 
-    @Override
-    public Artist toDomain(ArtistWithAlbumsPayload payload) {
-        return null;
-    }
-
 }

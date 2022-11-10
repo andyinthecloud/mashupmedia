@@ -7,7 +7,7 @@ import Checkboxes from "../common/components/Checkboxes";
 import { addNotification, NotificationType } from '../common/notification/notificationSlice';
 import { RootState } from "../common/redux/store";
 import { toCheckboxPayloads, toNameValuePayloads, toSelectedValues } from "../common/utils/domainUtils";
-import { fieldErrorMessage, FormValidation, hasFieldError, ServerError, toFieldValidation } from "../common/utils/form-validation-utils";
+import { fieldErrorMessage, FormValidation, hasFieldError, ServerError, toFieldValidation } from "../common/utils/formValidationUtils";
 import { checkLibraryPathExists, deleteLibrary, getLibrary, LibraryPayload, LibraryTypePayload, saveLibrary } from "./backend/libraryCalls";
 import { getGroups, NameValuePayload } from "./backend/metaCalls";
 import './Library.css';

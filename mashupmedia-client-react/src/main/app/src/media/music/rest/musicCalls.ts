@@ -1,5 +1,5 @@
 import { callMashupMediaApi, HttpMethod, HttpResponse } from '../../../common/utils/httpUtils'
-import { MediaTokenPayload as MediaTokenPayload } from '../../rest/secureTokenPayload'
+import { SecureMediaPayload as SecureMediaPayload } from '../../rest/secureMediaPayload'
 
 export type ArtistPayload = {
     id: number
@@ -24,12 +24,19 @@ export type ArtistWithAlbumsPayload = {
     albumPayloads: AlbumPayload[]
 }
 
-const musicUri = '/api/music/artists/'
+const musicUri = '/api/music'
+const artistUri = musicUri + '/artists'
+const albumUri = musicUri + '/albums'
+
 
 export const getArtists = (userToken?: string): Promise<HttpResponse<ArtistPayload[]>> => {
-    return callMashupMediaApi<ArtistPayload[]>(HttpMethod.GET, musicUri, userToken)
+    return callMashupMediaApi<ArtistPayload[]>(HttpMethod.GET, artistUri, userToken)
 }
 
-export const getArtist = (artistId: number, userToken?: string): Promise<HttpResponse<MediaTokenPayload<ArtistWithAlbumsPayload>>> => {
-    return callMashupMediaApi<MediaTokenPayload<ArtistWithAlbumsPayload>>(HttpMethod.GET, musicUri + artistId, userToken)
+export const getArtist = (artistId: number, userToken?: string): Promise<HttpResponse<SecureMediaPayload<ArtistWithAlbumsPayload>>> => {
+    return callMashupMediaApi<SecureMediaPayload<ArtistWithAlbumsPayload>>(HttpMethod.GET, artistUri + artistId, userToken)
+}
+
+export const getRandomAlbums = (userToken?: string): Promise<HttpResponse<SecureMediaPayload<AlbumWithArtistPayload>[]>> => {
+    return callMashupMediaApi<SecureMediaPayload<AlbumWithArtistPayload>[]>(HttpMethod.GET, albumUri + '/random', userToken)
 }

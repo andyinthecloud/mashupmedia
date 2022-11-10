@@ -7,7 +7,7 @@ import { addNotification, NotificationType } from "../common/notification/notifi
 import type { RootState } from "../common/redux/store"
 import { displayDateTime } from "../common/utils/dateUtils"
 import { toCheckboxPayloads, toNameValuePayloads, toSelectedValues } from "../common/utils/domainUtils"
-import { fieldErrorMessage, FormValidation, hasFieldError, ServerError, toFieldValidation } from "../common/utils/form-validation-utils"
+import { fieldErrorMessage, FormValidation, hasFieldError, ServerError, toFieldValidation } from "../common/utils/formValidationUtils"
 import { HttpStatus, redirectLogin } from "../common/utils/httpUtils"
 import { getGroups, getRoles, NameValuePayload } from "./backend/metaCalls"
 import { deleteUserAccount, getMyAccount, saveUserAccount, userAccount, UserPayload } from "./backend/userCalls"

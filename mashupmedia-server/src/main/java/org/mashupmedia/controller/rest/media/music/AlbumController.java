@@ -1,18 +1,18 @@
 package org.mashupmedia.controller.rest.media.music;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
-import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.dto.media.SecureMediaPayload;
+import org.mashupmedia.dto.media.music.AlbumWithArtistPayload;
+import org.mashupmedia.mapper.media.music.AlbumWithArtistMapper;
+import org.mashupmedia.model.User;
+import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MusicManager;
-import org.mashupmedia.util.ImageHelper.ImageType;
+import org.mashupmedia.util.AdminHelper;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -21,27 +21,23 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/music/albums")
 public class AlbumController {
+    private final static int MAX_RANDOM_ALBUMS = 20;
 
     private final MusicManager musicManager;
 
-    @GetMapping(value = "/album-art/{albumId}")
-    public byte[]  getAlbumArt(@PathVariable long albumId,
-             @RequestParam(value = "imageType", required = false) ImageType imageType) throws IOException {
+    private final MashupMediaSecurityManager mashupMediaSecurityManager;
 
-        Album album = musicManager.getAlbum(albumId);
-        AlbumArtImage albumArtImage = album.getAlbumArtImage();
+    private final AlbumWithArtistMapper albumWithArtistMapper;
 
-        String imagePath = getImagePath(imageType, albumArtImage);
-        InputStream inputStream = new FileInputStream(imagePath);
-        return IOUtils.toByteArray(inputStream);
-    }
+    @GetMapping(value = "/random", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<SecureMediaPayload<AlbumWithArtistPayload>> getRandomAlbums() {
+        User user = AdminHelper.getLoggedInUser();
+        String streamingToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
 
-    private String getImagePath(ImageType imageType, AlbumArtImage albumArtImage) {
-        if (imageType == null) {
-            return albumArtImage.getThumbnailUrl();
-        }
-
-        return albumArtImage.getUrl();
+        return musicManager.getRandomAlbums(MAX_RANDOM_ALBUMS)
+                .stream()
+                .map(album -> albumWithArtistMapper.toDto(album, streamingToken))
+                .collect(Collectors.toList());
     }
 
 }
