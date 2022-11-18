@@ -73,7 +73,7 @@ export const redirectLogin = (statusCode?: number): void => {
 
     console.log('redirectLogin')
 
-    const loginUri = '/login';
+    const loginUri = '/login'
     const searchParams = new URLSearchParams()
 
     if (statusCode) {

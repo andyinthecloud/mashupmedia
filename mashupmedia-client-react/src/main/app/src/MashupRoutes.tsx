@@ -3,18 +3,17 @@ import Introduction from "./common/components/Introduction";
 import LogIn from "./common/security/LogIn";
 import { RequireAuthenication } from "./common/security/RequireAuthentication";
 import ChangeUserPassword from "./configuration/ChangeUserPassword";
+import Group from "./configuration/Group";
 import Groups from "./configuration/Groups";
+import Libraries from "./configuration/Libraries";
+import Library from "./configuration/Library";
 import NetworkForm from "./configuration/NetworkForm";
 import User from "./configuration/User";
 import Users from "./configuration/Users";
-import Group from "./configuration/Group";
-import Libraries from "./configuration/Libraries";
-import Library from "./configuration/Library";
-import { ConfigurationRoutes } from './configuration/ConfigurationRoutes';
-import { MediaRoutes } from './media/MediaRoutes';
+import Album from "./media/music/Album";
 import Albums from './media/music/Albums';
-import Artists from './media/music/Artists';
 import Artist from './media/music/Artist';
+import Artists from './media/music/Artists';
 
 
 export const MashupRoutes = () => {
@@ -140,6 +139,14 @@ export const MashupRoutes = () => {
                         <Albums />
                     </RequireAuthenication>
                 } />
+
+                <Route path="album">
+                    <Route path=":albumId" element={
+                        <RequireAuthenication>
+                            <Album />
+                        </RequireAuthenication>
+                    } />
+                </Route>
             </Route>
         </Routes>
     )

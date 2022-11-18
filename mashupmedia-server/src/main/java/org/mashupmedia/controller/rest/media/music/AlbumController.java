@@ -5,13 +5,17 @@ import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.media.SecureMediaPayload;
 import org.mashupmedia.dto.media.music.AlbumWithArtistPayload;
+import org.mashupmedia.dto.media.music.AlbumWithSongsPayload;
 import org.mashupmedia.mapper.media.music.AlbumWithArtistMapper;
+import org.mashupmedia.mapper.media.music.AlbumWithSongsMapper;
 import org.mashupmedia.model.User;
+import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.AdminHelper;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +33,8 @@ public class AlbumController {
 
     private final AlbumWithArtistMapper albumWithArtistMapper;
 
+    private final AlbumWithSongsMapper albumWithSongsMapper;
+
     @GetMapping(value = "/random", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<SecureMediaPayload<AlbumWithArtistPayload>> getRandomAlbums() {
         User user = AdminHelper.getLoggedInUser();
@@ -39,5 +45,14 @@ public class AlbumController {
                 .map(album -> albumWithArtistMapper.toDto(album, streamingToken))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping(value = "/{albumId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public SecureMediaPayload<AlbumWithSongsPayload> getArtist(@PathVariable long albumId) {
+        User user = AdminHelper.getLoggedInUser();
+        String streamingToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
+        Album album = musicManager.getAlbum(albumId);
+        return albumWithSongsMapper.toDto(album, streamingToken);
+    }
+
 
 }
