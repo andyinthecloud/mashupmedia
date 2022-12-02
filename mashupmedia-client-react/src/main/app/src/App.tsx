@@ -1,14 +1,13 @@
-import { Button, Container, ThemeProvider } from "@mui/material";
+import { Container, ThemeProvider } from "@mui/material";
 import { useDispatch } from "react-redux";
 import './App.css';
 import AlertBoxes from "./common/components/AlertBoxes";
 import Drawer from "./common/components/Drawer";
 import Footer from "./common/components/Footer";
-import Header from "./common/components/Header";
-import { MashupRoutes } from "./MashupRoutes";
+import AudioPlayer from "./common/components/media/AudioPlayer";
 import { addNotification, NotificationType } from "./common/notification/notificationSlice";
 import { mashupTheme } from "./common/utils/formUtils";
-import { ConfigurationRoutes } from './configuration/ConfigurationRoutes';
+import { MashupRoutes } from "./MashupRoutes";
 
 function App() {
 
@@ -25,10 +24,9 @@ function App() {
 
     return (
         <ThemeProvider theme={mashupTheme}>
-            <Button onClick={handleClick}>alert</Button>
             <div className={"App"}>
                 <Drawer></Drawer>
-                <Header />
+                <AudioPlayer />
                 <Container className="main-container" maxWidth="md">
                     <AlertBoxes />
                     <MashupRoutes />

@@ -2,9 +2,8 @@ import { Add, PlayArrow } from '@mui/icons-material'
 import { Button, Card, CardMedia } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom"
-import { AlbumWithArtistPayload } from '../../../media/music/rest/musicCalls'
+import { albumArtImageUrl, AlbumWithArtistPayload, ImageType } from '../../../media/music/rest/musicCalls'
 import { SecureMediaPayload } from '../../../media/rest/secureMediaPayload'
-import { backendUrl } from '../../utils/httpUtils'
 import './AlbumSummary.css'
 
 const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
@@ -12,14 +11,11 @@ const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
     const [props, setProps] = useState<SecureMediaPayload<AlbumWithArtistPayload>>({
         ...payload
     })
-
+    
     useEffect(() => {
         setProps(payload)
     }, [payload])
 
-    const albumArtImageUrl = (albumId: number): string => {
-        return `${backendUrl('/media/music/album-art')}/${albumId}?mediaToken=${props.mediaToken}`
-    }
 
     const navigate = useNavigate()
 
@@ -35,7 +31,7 @@ const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
         <Card className="album-summary" sx={{ width: 300 }}>
             <CardMedia
                 component="img"
-                image={albumArtImageUrl(props.payload.albumPayload.id)}
+                image={albumArtImageUrl(props.payload.albumPayload.id, ImageType.THUMBNAIL, props.mediaToken)}
                 height="300"
                 className="cursor-pointer"
                 onClick={handleAlbumClick}
@@ -59,7 +55,6 @@ const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
                 <Button variant="contained" startIcon={<Add />}>
                     Add
                 </Button>
-
             </div>
 
         </Card>

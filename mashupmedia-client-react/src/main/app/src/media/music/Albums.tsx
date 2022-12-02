@@ -5,7 +5,7 @@ import { useSelector } from "react-redux"
 import AlbumSummary from "../../common/components/media/AlbumSummary"
 import { RootState } from "../../common/redux/store"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
-import { AlbumWithArtistPayload, getRandomAlbums } from "./rest/musicCalls"
+import { AlbumWithArtistPayload, getAlbums } from "./rest/musicCalls"
 
 
 type InfiniteScrollPayload = {
@@ -45,7 +45,7 @@ const Albums = () => {
         }
 
         setInfiniteScrollLoadingProps(true)
-        getRandomAlbums(userToken)
+        getAlbums(userToken)
             .then(response => {
                 if (response.parsedBody) {
                     if (props) {

@@ -12,5 +12,8 @@ import lombok.NoArgsConstructor;
 public class SongPayload {
     private long id;
     private String name;
+    private int trackNumber;
+    private int minutes;
+    private int seconds;
 
 }

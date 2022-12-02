@@ -1,0 +1,53 @@
+#audio-player-container {
+    position: sticky;
+    top: 1em;
+    width: 90%;
+    border: 1px solid #e579e9;
+    border-radius: 1em;
+    padding: 0 1em;
+    margin: 1em auto 0 auto;
+    width: 85%;   
+    background-color: white;
+    z-index: 99;
+}
+
+#audio-player-container .sticky{
+    position: fixed;
+    top: 0;
+}
+
+#audio-player-container .centre {
+    margin: 0 auto;
+    text-align: center;
+}
+
+#audio-player-container div.track {
+    font-size: large;
+}
+
+#audio-player-container div.track span.artist{
+    opacity: 0.7;
+}
+#audio-player-container div.track span.artist::after{
+    margin: 0 0.5em;
+    content: '-';
+}
+
+#audio-player-container div.duration {
+    position: relative;
+    width: 95%;
+}
+
+#audio-player-container div.duration-time {
+    position: absolute;
+    bottom: 30px;
+    font-size: smaller;
+}
+
+#audio-player-container div.beginning {
+    left: 0;
+}
+
+#audio-player-container div.end {
+    right: 0;
+}

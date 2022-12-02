@@ -45,7 +45,6 @@ public class ArtistController {
         String streamingToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
         var t =  artistWithAlbumsMapper.toDto(musicManager.getArtist(artistId), streamingToken);
         return t;
-
     }
 
 }

@@ -1,4 +1,4 @@
-import { callMashupMediaApi, HttpMethod, HttpResponse } from '../../../common/utils/httpUtils'
+import { backendUrl, callMashupMediaApi, HttpMethod, HttpResponse } from '../../../common/utils/httpUtils'
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
 
 export type ArtistPayload = {
@@ -20,6 +20,8 @@ export type AlbumWithArtistPayload = {
 export type SongPayload = {
     id: number
     name: string
+    minutes?: number
+    seconds?: number
 }
 
 export type AlbumWithSongsAndArtistPayload = {
@@ -34,10 +36,17 @@ export type ArtistWithAlbumsPayload = {
     albumPayloads: AlbumPayload[]
 }
 
+export enum ImageType {
+    ORIGINAL = "ORIGINAL", THUMBNAIL = "THUMBNAIL"
+}
+
 const musicUri = "/api/music"
 const artistUri = musicUri + "/artists"
 const albumUri = musicUri + "/albums"
 
+export const albumArtImageUrl = (albumId: number, imageType: ImageType, mediaToken: string): string => {
+    return `${backendUrl('/media/music/album-art')}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}`
+}
 
 export const getArtists = (userToken?: string): Promise<HttpResponse<ArtistPayload[]>> => {
     return callMashupMediaApi<ArtistPayload[]>(HttpMethod.GET, artistUri + "/", userToken)
@@ -47,6 +56,10 @@ export const getArtist = (artistId: number, userToken?: string): Promise<HttpRes
     return callMashupMediaApi<SecureMediaPayload<ArtistWithAlbumsPayload>>(HttpMethod.GET, artistUri + "/" + artistId, userToken)
 }
 
-export const getRandomAlbums = (userToken?: string): Promise<HttpResponse<SecureMediaPayload<AlbumWithArtistPayload>[]>> => {
-    return callMashupMediaApi<SecureMediaPayload<AlbumWithArtistPayload>[]>(HttpMethod.GET, albumUri + '/random', userToken)
+export const getAlbums = (userToken?: string): Promise<HttpResponse<SecureMediaPayload<AlbumWithArtistPayload>[]>> => {
+    return callMashupMediaApi<SecureMediaPayload<AlbumWithArtistPayload>[]>(HttpMethod.GET, albumUri + "/", userToken)
+}
+
+export const getAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<SecureMediaPayload<AlbumWithSongsAndArtistPayload>>> => {
+    return callMashupMediaApi<SecureMediaPayload<AlbumWithSongsAndArtistPayload>>(HttpMethod.GET, albumUri + "/" + albumId, userToken)
 }

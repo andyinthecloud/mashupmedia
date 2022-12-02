@@ -14,7 +14,7 @@ export type UserPolicyPayload = {
 const initialState: PayloadState<UserPolicyPayload> = {
     payload: null,
     error: null,
-    loading: false,
+    loading: false
 }
 
 export const loadUserPolicyIntoState = createAsyncThunk(

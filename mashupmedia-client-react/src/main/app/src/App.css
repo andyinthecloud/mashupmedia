@@ -67,3 +67,7 @@ h2 {
   font-size: small;
 }
 
+.hide {
+  display: none;
+}
+

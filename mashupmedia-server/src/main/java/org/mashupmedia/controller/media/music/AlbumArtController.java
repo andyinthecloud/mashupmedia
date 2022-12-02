@@ -8,12 +8,12 @@ import java.io.InputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.hibernate.type.ImageType;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,11 +65,11 @@ public class AlbumArtController {
     }
 
     private String getImagePath(ImageType imageType, AlbumArtImage albumArtImage) {
-        if (imageType == null) {
+        if (imageType == ImageType.THUMBNAIL) {
             return albumArtImage.getThumbnailUrl();
+        } else {
+            return albumArtImage.getUrl();
         }
-
-        return albumArtImage.getUrl();
     }
 
 }

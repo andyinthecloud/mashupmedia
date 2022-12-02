@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class AlbumWithSongsPayload {
+public class AlbumWithSongsAndArtistPayload {
     private AlbumPayload albumPayload;
+    private ArtistPayload artistPayload;
     private List<SongPayload> songPayloads;
 }
