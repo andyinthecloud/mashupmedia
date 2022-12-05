@@ -1,3 +1,4 @@
+import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
 import { backendUrl, callMashupMediaApi, HttpMethod, HttpResponse } from '../../../common/utils/httpUtils'
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
 
@@ -42,7 +43,7 @@ export enum ImageType {
 
 const musicUri = "/api/music"
 const artistUri = musicUri + "/artists"
-const albumUri = musicUri + "/albums"
+const albumUrl = musicUri + "/albums"
 
 export const albumArtImageUrl = (albumId: number, imageType: ImageType, mediaToken: string): string => {
     return `${backendUrl('/media/music/album-art')}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}`
@@ -57,9 +58,22 @@ export const getArtist = (artistId: number, userToken?: string): Promise<HttpRes
 }
 
 export const getAlbums = (userToken?: string): Promise<HttpResponse<SecureMediaPayload<AlbumWithArtistPayload>[]>> => {
-    return callMashupMediaApi<SecureMediaPayload<AlbumWithArtistPayload>[]>(HttpMethod.GET, albumUri + "/", userToken)
+    return callMashupMediaApi<SecureMediaPayload<AlbumWithArtistPayload>[]>(HttpMethod.GET, albumUrl + "/", userToken)
 }
 
 export const getAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<SecureMediaPayload<AlbumWithSongsAndArtistPayload>>> => {
-    return callMashupMediaApi<SecureMediaPayload<AlbumWithSongsAndArtistPayload>>(HttpMethod.GET, albumUri + "/" + albumId, userToken)
+    return callMashupMediaApi<SecureMediaPayload<AlbumWithSongsAndArtistPayload>>(HttpMethod.GET, albumUrl + "/" + albumId, userToken)
+}
+
+// playlist calls
+
+const playlistUrl = "/api/playlist/music"
+
+
+export const playAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
+    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, playlistUrl + "/album", userToken, JSON.stringify(albumId))    
+}
+
+export const addAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
+    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, playlistUrl + "/album", userToken, JSON.stringify(albumId))    
 }

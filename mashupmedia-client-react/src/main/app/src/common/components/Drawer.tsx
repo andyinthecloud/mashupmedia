@@ -159,9 +159,9 @@ export default function TemporaryDrawer() {
     );
 
     return (
-        <div className="Drawer">
+        <div className="Drawer" id="drawer-menu">
 
-            <IconButton onClick={toggleDrawer('right', true)}>
+            <IconButton onClick={toggleDrawer('right', true)} className="menu-icon">
                 <MenuIcon />
             </IconButton>
 

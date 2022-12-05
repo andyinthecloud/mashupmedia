@@ -1,12 +1,14 @@
 import { Add, PlayArrow } from "@mui/icons-material"
 import { Card, CardContent, CardMedia, IconButton, List, ListItem, ListItemText } from "@mui/material"
 import React, { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import ImagePopover, { ImagePopoverPayload } from "../../common/components/ImagePopover"
+import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
 import { RootState } from "../../common/redux/store"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
-import { albumArtImageUrl, AlbumWithSongsAndArtistPayload, getAlbum, ImageType } from "./rest/musicCalls"
+import { playMusic } from "./features/playMusicSlice"
+import { addAlbum, albumArtImageUrl, AlbumWithSongsAndArtistPayload, getAlbum, ImageType, playAlbum } from "./rest/musicCalls"
 
 const Album = () => {
 
@@ -67,6 +69,35 @@ const Album = () => {
         }))
     }
 
+
+    const dispatch = useDispatch()
+
+    const handlePlay = (albumId: number): void => {
+        playAlbum(albumId, userToken).then((response) => {
+            if (response.ok) {
+                dispatch(
+                    playMusic()
+                )
+                addNotification({
+                    message: "Added to playlist",
+                    notificationType: NotificationType.SUCCESS
+                })
+            }
+        })
+    }
+
+    const handleAdd = (albumId: number): void => {
+        addAlbum(albumId, userToken).then((response) => {
+            if (response.ok) {
+                addNotification({
+                    message: "Added to playlist",
+                    notificationType: NotificationType.SUCCESS
+                })
+            }
+        })
+    }
+
+
     return (
 
         <Card>
@@ -91,10 +122,16 @@ const Album = () => {
                             <ListItem
                                 secondaryAction={
                                     <div>
-                                        <IconButton edge="end" color="primary">
+                                        <IconButton
+                                            edge="end"
+                                            color="primary"
+                                            onClick={() => handlePlay(props.payload.albumPayload.id)}>
                                             <PlayArrow />
                                         </IconButton>
-                                        <IconButton edge="end" color="primary">
+                                        <IconButton
+                                            edge="end"
+                                            color="primary"
+                                            onClick={() => handleAdd(props.payload.albumPayload.id)}>
                                             <Add />
                                         </IconButton>
                                     </div>

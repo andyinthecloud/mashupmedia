@@ -1,79 +1,90 @@
 import { ChevronLeft, ChevronRight, Pause, PlayArrow } from "@mui/icons-material"
 import { IconButton, Slider } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
+import { PlayMusicPayload } from "../../../media/music/features/playMusicSlice"
 import { RootState } from "../../redux/store"
 import "./AudioPlayer.css"
 
 
-export type AudioPlayerPayload = {
-    playing?: boolean
-
-}
-
-const AudioPlayer = (payload: AudioPlayerPayload) => {
+const AudioPlayer = () => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
-    const [props, setProps] = useState<AudioPlayerPayload>()
-    const audio = document.getElementById("#audio-player-container audio"); 
+    const playTrigger = useSelector((state: RootState) => state.playMusic.trigger)
 
+    const [props, setProps] = useState<PlayMusicPayload>()
+    const audioPlayer = useRef(new Audio())
 
     useEffect(() => {
-        setProps(payload)
-    }, [payload])
+        console.log("trigger play", playTrigger)
+        setProps({ trigger: playTrigger })
+    }, [playTrigger])
 
 
-    const isPlaying = (): boolean => {
-        return props?.playing || false
+    const isPlaylistEmpty = (): boolean => {
+        return true;
     }
 
-    const handlePlay = () => {
-        setProps(p => ({
-            ...p,
-            playing: !props?.playing
-        }))
+
+
+    const renderPlayingInformation = () => {
+        if (isPlaylistEmpty()) {
+            return (
+                <span>Empty playlist</span>
+            )
+        } else {
+            return (
+                <div>
+                    <span className="artist">Bob Marley</span>
+                    <span className="title">No woman no cry</span>
+                </div>
+            )
+        }
     }
+
 
     return (
-        <header id="audio-player-container">
-
-            <audio className="nide">
-
-            </audio>
-
+        <div id="audio-player-container">
             <div className="track centre">
-                <span className="artist">Bob Marley</span>
-                <span className="title">No woman no cry</span>
+                {renderPlayingInformation()}
             </div>
-
-
             <div className="buttons centre">
-                <IconButton color="primary">
+                <IconButton
+                    color="primary"
+                    disabled={isPlaylistEmpty()}>
                     <ChevronLeft fontSize="medium" />
                 </IconButton>
 
-                <IconButton color="primary" onClick={handlePlay}>
-                    {isPlaying() &&
-                        <Pause sx={{ fontSize: 48 }} />
-                    }
-                    {!isPlaying() &&
-                        <PlayArrow sx={{ fontSize: 48 }} />
+                <IconButton
+                    color="primary"
+                    disabled={isPlaylistEmpty()}>
+
+                    {audioPlayer.current && audioPlayer.current.paused
+                        ? <PlayArrow sx={{ fontSize: 48 }} />
+                        : <Pause sx={{ fontSize: 48 }} />
                     }
 
                 </IconButton>
 
-                <IconButton color="primary">
+                <IconButton
+                    color="primary"
+                    disabled={isPlaylistEmpty()}>
                     <ChevronRight fontSize="medium" />
                 </IconButton>
             </div>
 
             <div className="duration centre">
                 <div className="beginning duration-time">0:00</div>
-                <Slider aria-label="Volume" min={0} max={100} defaultValue={45} />
+                <Slider
+                    aria-label="Volume"
+                    min={0}
+                    max={100}
+                    defaultValue={45}
+                    disabled={isPlaylistEmpty()} />
                 <div className="end duration-time">3:00</div>
             </div>
 
-        </header>
+        </div>
 
     )
 

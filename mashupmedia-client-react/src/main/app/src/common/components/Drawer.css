@@ -1,7 +1,13 @@
-.Drawer {
+#drawer-menu {
     float: right;
+}
+
+#drawer-menu .menu-icon {
+    z-index: 100;
+    background-color: white;
 }
 
 .nested-list {
     padding-left: 5em !important;
 }
+

@@ -1,12 +1,12 @@
 #audio-player-container {
     position: sticky;
     top: 1em;
-    width: 90%;
     border: 1px solid #e579e9;
     border-radius: 1em;
     padding: 0 1em;
-    margin: 1em auto 0 auto;
-    width: 85%;   
+    margin-bottom: 1em;
+    margin-left: 1em;
+    margin-right: 1em;
     background-color: white;
     z-index: 99;
 }
@@ -22,7 +22,7 @@
 }
 
 #audio-player-container div.track {
-    font-size: large;
+    font-size: medium;
 }
 
 #audio-player-container div.track span.artist{

@@ -1,17 +1,23 @@
 import { Add, PlayArrow } from '@mui/icons-material'
 import { Button, Card, CardMedia } from '@mui/material'
 import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { albumArtImageUrl, AlbumWithArtistPayload, ImageType } from '../../../media/music/rest/musicCalls'
+import { playMusic } from "../../../media/music/features/playMusicSlice"
+import { addAlbum, albumArtImageUrl, AlbumWithArtistPayload, ImageType, playAlbum } from '../../../media/music/rest/musicCalls'
 import { SecureMediaPayload } from '../../../media/rest/secureMediaPayload'
+import { addNotification, NotificationType } from "../../notification/notificationSlice"
+import { RootState } from "../../redux/store"
 import './AlbumSummary.css'
 
 const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
 
+    const userToken = useSelector((state: RootState) => state.security.payload?.token)
+
     const [props, setProps] = useState<SecureMediaPayload<AlbumWithArtistPayload>>({
         ...payload
     })
-    
+
     useEffect(() => {
         setProps(payload)
     }, [payload])
@@ -25,6 +31,33 @@ const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
 
     const handleArtistClick = () => {
         navigate("/music/artist/" + props.payload.artistPayload.id)
+    }
+
+    const dispatch = useDispatch()
+
+    const handlePlay = (albumId: number): void => {
+        playAlbum(albumId, userToken).then((response) => {
+            if (response.ok) {
+                dispatch(
+                    playMusic()
+                )
+                addNotification({
+                    message: "Added to playlist",
+                    notificationType: NotificationType.SUCCESS
+                })
+            }
+        })
+    }
+
+    const handleAdd = (albumId: number): void => {
+        addAlbum(albumId, userToken).then((response) => {
+            if (response.ok) {
+                addNotification({
+                    message: "Added to playlist",
+                    notificationType: NotificationType.SUCCESS
+                })
+            }
+        })
     }
 
     return (
@@ -49,17 +82,21 @@ const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
             </div>
 
             <div className="controls">
-                <Button variant="contained" startIcon={<PlayArrow />}>
+                <Button
+                    variant="contained"
+                    startIcon={<PlayArrow />}
+                    onClick={() => handlePlay(props.payload.albumPayload.id)}>
                     Play
                 </Button>
-                <Button variant="contained" startIcon={<Add />}>
+                <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={() => handleAdd(props.payload.albumPayload.id)}>
                     Add
                 </Button>
             </div>
 
         </Card>
-
-
     )
 
 }

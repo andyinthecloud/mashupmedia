@@ -1,5 +1,4 @@
 import { Grid } from "@mui/material"
-import { is } from "immer/dist/internal"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import AlbumSummary from "../../common/components/media/AlbumSummary"
@@ -82,8 +81,7 @@ const Albums = () => {
             if (node) observer.current.observe(node);
         },
         [infiniteScrollProps.loading]
-    );
-
+    )
 
     return (
         <div>
