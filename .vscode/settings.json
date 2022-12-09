@@ -2,6 +2,7 @@
     "JAVA_HOME": "C:\\stuff\\apps\\openjdk-11.0.11+9",
     "java.dependency.packagePresentation": "hierarchical",
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.import.generatesMetadataFilesAtProjectRoot": true
+    "java.import.generatesMetadataFilesAtProjectRoot": true,
+    "java.compile.nullAnalysis.mode": "automatic"
 
 }
