@@ -10,10 +10,10 @@
     <artifactId>mashupmedia-server</artifactId>
     <packaging>war</packaging>
 
-    <properties>
+    <!-- <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-    </properties>
+    </properties> -->
 
 
     <dependencies>
