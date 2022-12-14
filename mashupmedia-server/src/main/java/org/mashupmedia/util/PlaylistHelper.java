@@ -6,14 +6,14 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public class PlaylistHelper {
 
-	public static void replacePlaylist(Playlist playlist, List<? extends MediaItem> songs) {
+	public static void replacePlaylist(Playlist playlist, List<? extends MediaItem> tracks) {
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems != null) {
 			playlistMediaItems.clear();
@@ -22,16 +22,16 @@ public class PlaylistHelper {
 			playlist.setPlaylistMediaItems(playlistMediaItems);
 		}
 
-		if (songs == null || songs.isEmpty()) {
+		if (tracks == null || tracks.isEmpty()) {
 			return;
 		}
 
-		for (int i = 0; i < songs.size(); i++) {
-			PlaylistMediaItem playlistSong = new PlaylistMediaItem();
-			playlistSong.setMediaItem(songs.get(i));
-			playlistSong.setRanking(i);
-			playlistSong.setPlaylist(playlist);
-			playlistMediaItems.add(playlistSong);
+		for (int i = 0; i < tracks.size(); i++) {
+			PlaylistMediaItem playlistTrack = new PlaylistMediaItem();
+			playlistTrack.setMediaItem(tracks.get(i));
+			playlistTrack.setRanking(i);
+			playlistTrack.setPlaylist(playlist);
+			playlistMediaItems.add(playlistTrack);
 		}
 
 		if (playlistMediaItems.isEmpty()) {
@@ -80,14 +80,14 @@ public class PlaylistHelper {
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 	}
 
-	public static void replacePlaylist(Playlist playlist, Song song) {
-		if (song == null) {
+	public static void replacePlaylist(Playlist playlist, Track track) {
+		if (track == null) {
 			return;
 		}
 
-		List<Song> songs = new ArrayList<Song>();
-		songs.add(song);
-		replacePlaylist(playlist, songs);
+		List<Track> tracks = new ArrayList<Track>();
+		tracks.add(track);
+		replacePlaylist(playlist, tracks);
 	}
 
 	public static void appendPlaylist(Playlist playlist, MediaItem mediaItem) {

@@ -17,10 +17,10 @@ import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.music.AlbumArtImage;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.repository.media.music.MusicAlbumRepository;
-import org.mashupmedia.repository.media.music.SongRepository;
+import org.mashupmedia.repository.media.music.TrackRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -36,7 +36,7 @@ public class MusicLibraryUpdateManagerImplTest {
     private MediaDao mediaDao;
 
     @Mock
-    private SongRepository songRepository;
+    private TrackRepository trackRepository;
 
     @Mock
     private ArtistRepository artistRepository;
@@ -56,12 +56,12 @@ public class MusicLibraryUpdateManagerImplTest {
 
 
     @Test
-    void givenAMusicFolder_whenSaveSongs_thenGetFolderName() throws Exception {
+    void givenAMusicFolder_whenSaveTracks_thenGetFolderName() throws Exception {
 
-        Mockito.when(songRepository.findByLibraryIdAndPathAndLastModifiedOn(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong())).thenReturn(Optional.empty());
-        Mockito.doNothing().when(musicDao).saveSong(Mockito.isA(Song.class), Mockito.anyBoolean());
+        Mockito.when(trackRepository.findByLibraryIdAndPathAndLastModifiedOn(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong())).thenReturn(Optional.empty());
+        Mockito.doNothing().when(musicDao).saveTrack(Mockito.isA(Track.class), Mockito.anyBoolean());
         Mockito.doNothing().when(libraryManager).saveMediaItemLastUpdated(Mockito.anyLong());
-        Mockito.when(albumArtManager.getAlbumArtImage(Mockito.isA(MusicLibrary.class), Mockito.isA(Song.class))).thenReturn(new AlbumArtImage());
+        Mockito.when(albumArtManager.getAlbumArtImage(Mockito.isA(MusicLibrary.class), Mockito.isA(Track.class))).thenReturn(new AlbumArtImage());
 
         Mockito.when(artistRepository.findArtistByNameIgnoreCase(Mockito.anyString())).thenReturn(Optional.empty());
         Mockito.when(musicAlbumRepository.findByArtistNameAndAlbumNameIgnoreCase(Mockito.anyString(), Mockito.anyString())).thenReturn(Optional.empty());
@@ -70,7 +70,7 @@ public class MusicLibraryUpdateManagerImplTest {
         String path = "C:\\stuff\\data\\mm\\m";
 
         MusicLibrary musicLibrary = createMusicLibrary(path);
-        musicLibraryUpdateManagerImpl.prepareSongs(new Date(), new ArrayList<>(), new File(path), musicLibrary, null, null);
+        musicLibraryUpdateManagerImpl.prepareTracks(new Date(), new ArrayList<>(), new File(path), musicLibrary, null, null);
         
     
     }

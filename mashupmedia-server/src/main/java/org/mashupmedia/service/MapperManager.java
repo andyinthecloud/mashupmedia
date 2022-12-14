@@ -19,7 +19,7 @@ package org.mashupmedia.service;
 
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.Library.LibraryType;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 
 public interface MapperManager {
 
@@ -27,8 +27,8 @@ public interface MapperManager {
 
 	public void writeEndRemoteMusicLibraryXml(long libraryId) throws Exception;
 
-	public void writeSongToXml(long libraryId, Song song) throws Exception;
+	public void writeTrackToXml(long libraryId, Track track) throws Exception;
 
-	public void saveXmltoSongs(MusicLibrary musicLibrary, String xml) throws Exception;
+	public void saveXmltoTracks(MusicLibrary musicLibrary, String xml) throws Exception;
 
 }

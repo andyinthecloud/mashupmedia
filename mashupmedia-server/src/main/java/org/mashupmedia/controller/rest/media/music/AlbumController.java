@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.media.SecureMediaPayload;
 import org.mashupmedia.dto.media.music.AlbumWithArtistPayload;
-import org.mashupmedia.dto.media.music.AlbumWithSongsAndArtistPayload;
+import org.mashupmedia.dto.media.music.AlbumWithTracksAndArtistPayload;
 import org.mashupmedia.mapper.media.music.AlbumWithArtistMapper;
-import org.mashupmedia.mapper.media.music.AlbumWithSongsMapper;
+import org.mashupmedia.mapper.media.music.AlbumWithTracksMapper;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.service.MashupMediaSecurityManager;
@@ -35,7 +35,7 @@ public class AlbumController {
 
     private final AlbumWithArtistMapper albumWithArtistMapper;
 
-    private final AlbumWithSongsMapper albumWithSongsMapper;
+    private final AlbumWithTracksMapper albumWithTracksMapper;
 
     private enum SortAlbum {
         RANDOM
@@ -59,11 +59,11 @@ public class AlbumController {
     }
 
     @GetMapping(value = "/{albumId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public SecureMediaPayload<AlbumWithSongsAndArtistPayload> getArtist(@PathVariable long albumId) {
+    public SecureMediaPayload<AlbumWithTracksAndArtistPayload> getArtist(@PathVariable long albumId) {
         User user = AdminHelper.getLoggedInUser();
         String streamingToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
         Album album = musicManager.getAlbum(albumId);
-        return albumWithSongsMapper.toDto(album, streamingToken);
+        return albumWithTracksMapper.toDto(album, streamingToken);
     }
 
 }

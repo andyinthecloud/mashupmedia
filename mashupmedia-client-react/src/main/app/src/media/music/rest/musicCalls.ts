@@ -18,7 +18,7 @@ export type AlbumWithArtistPayload = {
     albumPayload: AlbumPayload
 }
 
-export type SongPayload = {
+export type TrackPayload = {
     id: number
     name: string
     minutes?: number
@@ -28,7 +28,7 @@ export type SongPayload = {
 export type AlbumWithSongsAndArtistPayload = {
     artistPayload: ArtistPayload
     albumPayload: AlbumPayload
-    songPayloads: SongPayload[]
+    songPayloads: TrackPayload[]
 }
 
 export type ArtistWithAlbumsPayload = {
@@ -71,9 +71,9 @@ const playlistUrl = "/api/playlist/music"
 
 
 export const playAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
-    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, playlistUrl + "/album", userToken, JSON.stringify(albumId))    
+    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, playlistUrl + "/play-album", userToken, ''+albumId)    
 }
 
 export const addAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
-    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, playlistUrl + "/album", userToken, JSON.stringify(albumId))    
+    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, playlistUrl + "/add-album", userToken, ''+albumId)    
 }

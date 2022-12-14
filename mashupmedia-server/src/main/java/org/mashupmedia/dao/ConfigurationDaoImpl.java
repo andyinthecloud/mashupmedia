@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ConfigurationDaoImpl extends BaseDaoImpl implements ConfigurationDao {
 
 	@Override
-	@org.springframework.data.jpa.repository.Query("select c from Configuration where key = :key")
 	public Configuration getConfiguration(@Param("key") String key) {
 		Query query = entityManager.createQuery("from Configuration where key = :key");
 		query.setParameter("key", key);

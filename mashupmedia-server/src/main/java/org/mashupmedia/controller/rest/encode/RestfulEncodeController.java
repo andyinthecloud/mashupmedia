@@ -11,7 +11,7 @@ import org.mashupmedia.exception.MediaItemEncodeException.EncodeExceptionType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
@@ -55,8 +55,8 @@ public class RestfulEncodeController {
 	@Autowired
 	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
 
-	@RequestMapping(value = "/song", method = RequestMethod.POST)
-	public String encodeSong(@RequestParam(value = "id") long mediaItemId) {
+	@RequestMapping(value = "/track", method = RequestMethod.POST)
+	public String encodeTrack(@RequestParam(value = "id") long mediaItemId) {
 		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
 		if (mediaItem == null) {
 			return "encode.message.media-item-not-found";
@@ -92,7 +92,7 @@ public class RestfulEncodeController {
 			}
 
 			MediaContentType[] mediaContentTypes = null;
-			if (mediaItem.getClass().isAssignableFrom(Song.class)) {
+			if (mediaItem.getClass().isAssignableFrom(Track.class)) {
 				mediaContentTypes = musicEncodingMediaContentTypes;
 			}
 
@@ -166,16 +166,16 @@ public class RestfulEncodeController {
 			messageKeys = new HashMap<EncodeMessageType, String>();
 		}
 
-		// Reinitialise album to get containing songs
+		// Reinitialise album to get containing tracks
 		Album album = musicManager.getAlbum(albumId);
 		if (album == null) {
 			messageKeys.put(EncodeMessageType.ERROR, "encode.message.media-item-not-found");
 			return;
 		}
 
-		List<Song> songs = album.getSongs();
-		for (Song song : songs) {
-			encodeMediaItem(messageKeys, mediaContentTypes, song);
+		List<Track> tracks = album.getTracks();
+		for (Track track : tracks) {
+			encodeMediaItem(messageKeys, mediaContentTypes, track);
 		}
 	}
 

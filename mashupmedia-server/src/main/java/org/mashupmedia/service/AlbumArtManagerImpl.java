@@ -17,7 +17,7 @@ import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Artist;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
 import org.mashupmedia.util.ImageHelper;
@@ -44,23 +44,23 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 	private ConnectionManager connectionManager;
 
 	@Override
-	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
-		AlbumArtImage albumArtImage = getAlbumArtImage(song);
+	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Track track) throws Exception {
+		AlbumArtImage albumArtImage = getAlbumArtImage(track);
 		if (!isAlbumArtImageEmpty(albumArtImage)) {
 			return albumArtImage;
 		}
 
-		albumArtImage = getLocalAlbumArtImage(musicLibrary, song);
+		albumArtImage = getLocalAlbumArtImage(musicLibrary, track);
 		return albumArtImage;
 	}
 
-	private AlbumArtImage getAlbumArtImage(Song song) {
-		Artist artist = song.getArtist();
+	private AlbumArtImage getAlbumArtImage(Track track) {
+		Artist artist = track.getArtist();
 		if (artist == null) {
 			return null;
 		}
 
-		Album album = song.getAlbum();
+		Album album = track.getAlbum();
 		if (album == null) {
 			return null;
 		}
@@ -103,13 +103,13 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		return true;
 	}
 
-	private AlbumArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Song song) throws Exception {
+	private AlbumArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Track track) throws Exception {
 
 		if (musicLibrary.isRemote()) {
 			return null;
 		}
 
-		File musicFile = new File(song.getPath());
+		File musicFile = new File(track.getPath());
 		String imagePath = null;
 		String albumArtFileName = MashUpMediaConstants.COVER_ART_DEFAULT_NAME;
 		Artwork artwork = null;

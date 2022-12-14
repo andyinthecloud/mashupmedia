@@ -94,7 +94,7 @@ public class FileHelper {
 		return thumbnailFile;
 	}
 
-	public static boolean isSupportedSong(String fileName) {
+	public static boolean isSupportedTrack(String fileName) {
 		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
 		if (StringUtils.isEmpty(fileName)) {
 			return false;

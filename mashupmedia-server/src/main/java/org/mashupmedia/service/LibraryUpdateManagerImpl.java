@@ -144,7 +144,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 		long libraryId = library.getId();
 		if (library instanceof MusicLibrary) {
-			musicLibraryUpdateManager.deleteObsoleteSongs(libraryId, date);
+			musicLibraryUpdateManager.deleteObsoleteTracks(libraryId, date);
 		} else if (library instanceof VideoLibrary) {
 			videoLibraryUpdateManager.deleteObsoleteVideos(libraryId, date);
 		} else if (library instanceof PhotoLibrary) {

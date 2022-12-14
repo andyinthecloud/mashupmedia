@@ -53,7 +53,7 @@ public abstract class AbstractRestfulPlaylistController {
 
 	@RequestMapping(value = "/play/next", method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulMediaItem playNextSong(Model model) {
+	public RestfulMediaItem playNextTrack(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(getPlaylistType());
 		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(1, playlist);
 		if (playlistMediaItem == null) {
@@ -68,7 +68,7 @@ public abstract class AbstractRestfulPlaylistController {
 
 	@RequestMapping(value = "/play/previous", method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulMediaItem playPreviousSong(Model model) {
+	public RestfulMediaItem playPreviousTrack(Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);
 		if (playlistMediaItem == null) {

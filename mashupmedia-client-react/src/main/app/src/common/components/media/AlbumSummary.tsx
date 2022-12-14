@@ -41,10 +41,13 @@ const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
                 dispatch(
                     playMusic()
                 )
-                addNotification({
-                    message: "Added to playlist",
-                    notificationType: NotificationType.SUCCESS
-                })
+
+                dispatch(
+                    addNotification({
+                        message: "Added to playlist",
+                        notificationType: NotificationType.SUCCESS
+                    })
+                )
             }
         })
     }

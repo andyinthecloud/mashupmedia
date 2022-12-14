@@ -17,7 +17,7 @@ public interface ConfigurationManager {
 
 	public String getConfigurationDecryptedValue(String proxyPassword);
 
-	public void saveEncryptedConfiguration(String key, String value);
+	public void saveEncrypteConfiguration(String key, String value);
 
 	public void indexMediaItems();
 

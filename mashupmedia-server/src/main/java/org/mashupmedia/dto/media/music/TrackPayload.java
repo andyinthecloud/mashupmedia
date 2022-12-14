@@ -1,7 +1,5 @@
 package org.mashupmedia.dto.media.music;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class AlbumWithSongsAndArtistPayload {
-    private AlbumPayload albumPayload;
-    private ArtistPayload artistPayload;
-    private List<SongPayload> songPayloads;
+public class TrackPayload {
+    private long id;
+    private String name;
+    private int trackNumber;
+    private int minutes;
+    private int seconds;
+
 }

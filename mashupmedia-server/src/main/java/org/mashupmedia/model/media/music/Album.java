@@ -44,7 +44,7 @@ public class Album implements Serializable {
 	@OneToMany(mappedBy = "album")
 	@OrderBy("trackNumber")
 	@XmlTransient
-	private List<Song> songs;
+	private List<Track> tracks;
 	private String indexText;
 	private String indexLetter;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -114,12 +114,12 @@ public class Album implements Serializable {
 		this.albumArtImage = albumArtImage;
 	}
 
-	public List<Song> getSongs() {
-		return songs;
+	public List<Track> getTracks() {
+		return tracks;
 	}
 
-	public void setSongs(List<Song> songs) {
-		this.songs = songs;
+	public void setTracks(List<Track> tracks) {
+		this.tracks = tracks;
 	}
 
 	@Override
@@ -168,8 +168,8 @@ public class Album implements Serializable {
 		}
 		builder.append(", albumArtImage=");
 		builder.append(albumArtImage);
-		builder.append(", songs=");
-		builder.append(songs);
+		builder.append(", tracks=");
+		builder.append(tracks);
 		builder.append(", indexName=");
 		builder.append(indexText);
 		builder.append(", indexLetter=");

@@ -5,13 +5,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 
 public interface MusicLibraryUpdateManager {
 
-	public void saveSongs(MusicLibrary musicLibrary, List<Song> songs, Date date);
+	public void saveTracks(MusicLibrary musicLibrary, List<Track> tracks, Date date);
 
-	public void deleteSongs(List<Song> songs);
+	public void deleteTracks(List<Track> tracks);
 
 	public void deleteEmpty();
 
@@ -19,7 +19,7 @@ public interface MusicLibraryUpdateManager {
 
 	public void updateLibrary(MusicLibrary library, File folder, Date date);
 
-	public void deleteObsoleteSongs(long libraryId, Date date);
+	public void deleteObsoleteTracks(long libraryId, Date date);
 
 	public void saveFile(MusicLibrary library, File file, Date date);
 

@@ -25,7 +25,7 @@ import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.web.restful.RestfulStream;
 
@@ -114,7 +114,7 @@ public class MediaItemHelper {
 	public static MediaSortType getMediaSortType(String mediaSortTypeValue) {
 		mediaSortTypeValue = StringUtils.trimToEmpty(mediaSortTypeValue);
 		if (StringUtils.isEmpty(mediaSortTypeValue)) {
-			return MediaSortType.SONG_TITLE;
+			return MediaSortType.TRACK_TITLE;
 		}
 
 		MediaSortType[] mediaSortTypes = MediaSortType.values();
@@ -124,7 +124,7 @@ public class MediaItemHelper {
 			}
 		}
 
-		return MediaSortType.SONG_TITLE;
+		return MediaSortType.TRACK_TITLE;
 	}
 
 	public static MediaContentType getMediaContentType(String format) {
@@ -246,8 +246,8 @@ public class MediaItemHelper {
 			return duration;
 		}
 		
-		if (mediaItem instanceof Song) {			
-			duration = ((Song) mediaItem).getTrackLength();
+		if (mediaItem instanceof Track) {			
+			duration = ((Track) mediaItem).getTrackLength();
 			return duration;
 		}
 		

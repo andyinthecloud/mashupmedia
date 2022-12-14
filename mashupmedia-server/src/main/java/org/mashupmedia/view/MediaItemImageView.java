@@ -44,7 +44,7 @@ public class MediaItemImageView implements View {
 			HttpServletResponse response) throws Exception {
 		if (FileHelper.isEmptyBytes(imageBytes)) {
 			String imageNotFound = "";
-			if (mediaType == MediaType.SONG) {
+			if (mediaType == MediaType.TRACK) {
 				imageNotFound = IMAGE_PATH_DEFAULT_ALBUM_ART;
 			} else if (mediaType == MediaType.PHOTO) {
 				imageNotFound = IMAGE_PATH_DEFAULT_PHOTO;

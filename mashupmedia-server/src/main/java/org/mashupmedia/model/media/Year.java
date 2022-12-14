@@ -21,6 +21,7 @@ public class Year implements Serializable {
 	@XmlTransient
 	private long id;
 	@Field(analyze = Analyze.NO)
+	@Column(name = "year_number")
 	private int year;
 
 	public long getId() {

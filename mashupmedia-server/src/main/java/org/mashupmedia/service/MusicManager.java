@@ -6,7 +6,7 @@ import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 
 public interface MusicManager {
 
@@ -22,7 +22,7 @@ public interface MusicManager {
 
 	public Album getAlbum(String artistName, String albumName);
 
-	public List<Song> getSongs(Long albumId);
+	public List<Track> getTracks(Long albumId);
 
 	public void saveAlbum(Album album);
 
@@ -36,11 +36,11 @@ public interface MusicManager {
 
 	public List<Genre> getGenres();
 
-	public List<Song> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria);
+	public List<Track> findTracks(MediaItemSearchCriteria mediaItemSearchCriteria);
 
 	public void saveArtist(Artist artist);
 
-	public long getTotalSongsFromLibrary(long libraryId);
+	public long getTotalTracksFromLibrary(long libraryId);
 
 	public List<Album> getLatestAlbums(int pageNumber, int maxResults);
 	

@@ -2,11 +2,11 @@ package org.mashupmedia.web.restful;
 
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
-public class RestfulSong extends RestfulMediaItem {
+public class RestfulTrack extends RestfulMediaItem {
 
 	private String artistName;
 	private String artistUrl;
@@ -16,18 +16,18 @@ public class RestfulSong extends RestfulMediaItem {
 	
 	
 
-	public RestfulSong(Song song, MediaContentType[] supppliedMediaContentTypes) {
-		super(song, supppliedMediaContentTypes);
+	public RestfulTrack(Track track, MediaContentType[] supppliedMediaContentTypes) {
+		super(track, supppliedMediaContentTypes);
 
 		if (getId() == 0) {
 			return;
 		}
 		
-		Artist artist = song.getArtist();
+		Artist artist = track.getArtist();
 		this.artistName = artist.getName();
 		this.artistUrl = getContextPath() + "/music/artist/" + artist.getId();
 
-		Album album = song.getAlbum();
+		Album album = track.getAlbum();
 		this.albumName = album.getName();
 		this.albumUrl = getContextPath() + "/music/album/" + album.getId();
 		this.albumArtUrl = getContextPath() + "/music/album-art/" + ImageType.THUMBNAIL.name().toLowerCase() + "/"
@@ -78,7 +78,7 @@ public class RestfulSong extends RestfulMediaItem {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("RestfulSong [artistName=");
+		builder.append("RestfulTrack [artistName=");
 		builder.append(artistName);
 		builder.append(", artistUrl=");
 		builder.append(artistUrl);

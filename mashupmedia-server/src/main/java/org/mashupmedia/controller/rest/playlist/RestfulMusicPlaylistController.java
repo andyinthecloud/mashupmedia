@@ -7,7 +7,7 @@ import org.mashupmedia.exception.PageNotFoundException;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
@@ -17,7 +17,7 @@ import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.web.restful.RestfulMediaItem;
-import org.mashupmedia.web.restful.RestfulSong;
+import org.mashupmedia.web.restful.RestfulTrack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
@@ -42,147 +42,147 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 
 	@RequestMapping(value = "/play-album", method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulSong playAlbum(@RequestParam("albumId") Long albumId) {
+	public RestfulTrack playAlbum(@RequestParam("albumId") Long albumId) {
 		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		Album album = musicManager.getAlbum(albumId);
-		List<Song> songs = album.getSongs();
-		PlaylistHelper.replacePlaylist(playlist, songs);
+		List<Track> tracks = album.getTracks();
+		PlaylistHelper.replacePlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
 				true);
-		Song song = (Song) playlistMediaItem.getMediaItem();
+		Track track = (Track) playlistMediaItem.getMediaItem();
 
 		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
 				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
-		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
-		return restfulSong;
+		RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
+		return restfulTrack;
 	}
 
 	@RequestMapping(value = "append-album", method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulSong appendAlbum(@RequestParam("albumId") Long albumId, Model model) {
+	public RestfulTrack appendAlbum(@RequestParam("albumId") Long albumId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		Album album = musicManager.getAlbum(albumId);
-		List<Song> songs = album.getSongs();
-		PlaylistHelper.appendPlaylist(playlist, songs);
+		List<Track> tracks = album.getTracks();
+		PlaylistHelper.appendPlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
 				true);
 
-		// if playlist was empty get the first song in the new list
+		// if playlist was empty get the first track in the new list
 		if (playlistMediaItem == null) {
 			playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
 		}
 
-		Song song = (Song) playlistMediaItem.getMediaItem();
+		Track track = (Track) playlistMediaItem.getMediaItem();
 
 		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
 				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
-		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
-		return restfulSong;
+		RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
+		return restfulTrack;
 	}
 
 	@RequestMapping(value = "/play-artist", method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulSong playArtist(@RequestParam("artistId") Long artistId, Model model) {
+	public RestfulTrack playArtist(@RequestParam("artistId") Long artistId, Model model) {
 		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		List<Album> albums = musicManager.getAlbumsByArtist(artistId);
 		if (albums == null || albums.isEmpty()) {
-			throw new PageNotFoundException("No songs found for artist id = " + artistId);
+			throw new PageNotFoundException("No tracks found for artist id = " + artistId);
 		}
 
-		List<Song> songs = new ArrayList<Song>();
+		List<Track> tracks = new ArrayList<Track>();
 		for (Album album : albums) {
-			songs.addAll(album.getSongs());
+			tracks.addAll(album.getTracks());
 		}
 
-		PlaylistHelper.replacePlaylist(playlist, songs);
+		PlaylistHelper.replacePlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
 				true);
 
-		Song song = (Song) playlistMediaItem.getMediaItem();
+		Track track = (Track) playlistMediaItem.getMediaItem();
 
 		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
 				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
-		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
-		return restfulSong;
+		RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
+		return restfulTrack;
 	}
 
 	@RequestMapping(value = "append-artist", method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulSong appendArtist(@RequestParam("artistId") Long artistId, Model model) {
+	public RestfulTrack appendArtist(@RequestParam("artistId") Long artistId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
 		List<Album> albums = musicManager.getAlbumsByArtist(artistId);
 		if (albums == null || albums.isEmpty()) {
-			throw new PageNotFoundException("No songs found for artist id = " + artistId);
+			throw new PageNotFoundException("No tracks found for artist id = " + artistId);
 		}
 
-		List<Song> songs = new ArrayList<Song>();
+		List<Track> tracks = new ArrayList<Track>();
 		for (Album album : albums) {
-			songs.addAll(album.getSongs());
+			tracks.addAll(album.getTracks());
 		}
 
-		PlaylistHelper.appendPlaylist(playlist, songs);
+		PlaylistHelper.appendPlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
 				true);
 
-		Song song = (Song) playlistMediaItem.getMediaItem();
+		Track track = (Track) playlistMediaItem.getMediaItem();
 
 		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
 				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
-		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
-		return restfulSong;
+		RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
+		return restfulTrack;
 	}
 
-	@RequestMapping(value = "/play-song", method = RequestMethod.GET)
+	@RequestMapping(value = "/play-track", method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulSong playSong(@RequestParam("songId") Long songId, Model model) {
+	public RestfulTrack playTrack(@RequestParam("trackId") Long trackId, Model model) {
 		Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
-		MediaItem mediaItem = mediaManager.getMediaItem(songId);
-		if (!(mediaItem instanceof Song)) {
+		MediaItem mediaItem = mediaManager.getMediaItem(trackId);
+		if (!(mediaItem instanceof Track)) {
 			return null;
 		}
 
-		Song song = (Song) mediaItem;
+		Track track = (Track) mediaItem;
 
-		PlaylistHelper.replacePlaylist(playlist, song);
+		PlaylistHelper.replacePlaylist(playlist, track);
 		savePlaylist(playlist);
 
 		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
 				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
-		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
-		return restfulSong;
+		RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
+		return restfulTrack;
 	}
 
-	@RequestMapping(value = "append-song", method = RequestMethod.GET)
+	@RequestMapping(value = "append-track", method = RequestMethod.GET)
 	@ResponseBody
-	public RestfulSong appendSong(@RequestParam("songId") Long songId, Model model) {
+	public RestfulTrack appendTrack(@RequestParam("trackId") Long trackId, Model model) {
 		Playlist playlist = playlistManager.getLastAccessedPlaylistForCurrentUser(PlaylistType.MUSIC);
 
-		MediaItem mediaItem = mediaManager.getMediaItem(songId);
-		if (!(mediaItem instanceof Song)) {
-			throw new PageNotFoundException("Unable to find song: " + songId);
+		MediaItem mediaItem = mediaManager.getMediaItem(trackId);
+		if (!(mediaItem instanceof Track)) {
+			throw new PageNotFoundException("Unable to find track: " + trackId);
 		}
 
-		Song song = (Song) mediaItem;
-		PlaylistHelper.appendPlaylist(playlist, song);
+		Track track = (Track) mediaItem;
+		PlaylistHelper.appendPlaylist(playlist, track);
 		savePlaylist(playlist);
 
 		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
 				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
-		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
-		return restfulSong;
+		RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
+		return restfulTrack;
 
 	}
 
@@ -194,16 +194,16 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 	@Override
 	protected RestfulMediaItem convertToRestfulMediaItem(PlaylistMediaItem playlistMediaItem) {
 
-		Song song = new Song();
+		Track track = new Track();
 		MediaContentType[] suppliedStreamingMediaContentTypes = new MediaContentType[] { MediaContentType.UNSUPPORTED };
 
 		if (playlistMediaItem != null) {
-			song = (Song) playlistMediaItem.getMediaItem();
+			track = (Track) playlistMediaItem.getMediaItem();
 			suppliedStreamingMediaContentTypes = mediaManager.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
 		}
 
-		RestfulSong restfulSong = new RestfulSong(song, suppliedStreamingMediaContentTypes);
-		return restfulSong;
+		RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
+		return restfulTrack;
 	}
 
 }

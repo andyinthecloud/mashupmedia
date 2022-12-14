@@ -34,7 +34,7 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.MediaManager;
@@ -99,9 +99,9 @@ public class RemoteLibraryController {
 		return new ModelAndView("forward:" + servletPathBuilder.toString());
 	}
 
-	@RequestMapping(value = "/album-art/{uniqueName}/{imageTypeValue}/{songId}", method = { RequestMethod.GET, RequestMethod.HEAD })
+	@RequestMapping(value = "/album-art/{uniqueName}/{imageTypeValue}/{trackId}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView handleAlbumArt(HttpServletRequest request, @PathVariable String uniqueName, @PathVariable String imageTypeValue,
-			@PathVariable Long songId, Model model) throws IOException {
+			@PathVariable Long trackId, Model model) throws IOException {
 		Library remoteLibrary = getRemoteLibrary(uniqueName, request, true);
 		if (remoteLibrary == null) {
 			log.info("Unable to load album art, unknown host: " + request.getRemoteHost());
@@ -114,12 +114,12 @@ public class RemoteLibraryController {
 		StringBuilder servletPathBuilder = new StringBuilder(request.getServletPath());
 		servletPathBuilder.append("/music/album-art");
 		servletPathBuilder.append("/" + imageType.toString().toLowerCase());
-		MediaItem mediaItem = mediaManager.getMediaItem(songId);
-		if (mediaItem == null || !(mediaItem instanceof Song)) {
+		MediaItem mediaItem = mediaManager.getMediaItem(trackId);
+		if (mediaItem == null || !(mediaItem instanceof Track)) {
 			return null;
 		}
-		Song song = (Song) mediaItem;
-		Album album = song.getAlbum();
+		Track track = (Track) mediaItem;
+		Album album = track.getAlbum();
 		long albumId = album.getId();
 
 		servletPathBuilder.append("/" + albumId);

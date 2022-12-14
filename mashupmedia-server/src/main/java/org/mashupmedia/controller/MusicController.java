@@ -16,7 +16,7 @@ import org.mashupmedia.model.media.MediaItem.MediaType;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Artist;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.service.AlbumArtManager;
@@ -249,11 +249,11 @@ public class MusicController extends BaseController {
 			imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage, imageType);
 			if (imageBytes == null || imageBytes.length == 0) {
 				// Try to regenerate the album art if the image is empty
-				List<Song> songs = album.getSongs();
-				if (songs != null && !songs.isEmpty()) {
-					Song song = songs.get(0);
-					MusicLibrary musicLibrary = (MusicLibrary) song.getLibrary();
-					albumArtImage = albumArtManager.getAlbumArtImage(musicLibrary, song);
+				List<Track> tracks = album.getTracks();
+				if (tracks != null && !tracks.isEmpty()) {
+					Track track = tracks.get(0);
+					MusicLibrary musicLibrary = (MusicLibrary) track.getLibrary();
+					albumArtImage = albumArtManager.getAlbumArtImage(musicLibrary, track);
 					imageBytes = connectionManager.getAlbumArtImageBytes(albumArtImage, imageType);					
 				}				
 			}
@@ -262,14 +262,14 @@ public class MusicController extends BaseController {
 			log.info("Unable to read album art: " + albumArtImage.getUrl(), e);
 		}
 
-		Song remoteSong = getFirstRemoteSongInAlbum(album);
+		Track remoteTrack = getFirstRemoteTrackInAlbum(album);
 
-		if (remoteSong != null && FileHelper.isEmptyBytes(imageBytes)) {
-			Library library = remoteSong.getLibrary();
+		if (remoteTrack != null && FileHelper.isEmptyBytes(imageBytes)) {
+			Library library = remoteTrack.getLibrary();
 			Location location = library.getLocation();
 			String path = location.getPath();
 			path = LibraryHelper.getRemoteAlbumArtPath(path);
-			long remoteMediaItemId = NumberUtils.toLong(remoteSong.getPath());
+			long remoteMediaItemId = NumberUtils.toLong(remoteTrack.getPath());
 
 			if (StringUtils.isNotBlank(path) && remoteMediaItemId > 0) {
 				String imageTypeValue = imageType.toString().toLowerCase();
@@ -288,20 +288,20 @@ public class MusicController extends BaseController {
 		}
 
 		ModelAndView modelAndView = new ModelAndView(
-				new MediaItemImageView(imageBytes, mediaContentType, MediaType.SONG));
+				new MediaItemImageView(imageBytes, mediaContentType, MediaType.TRACK));
 		return modelAndView;
 	}
 
-	private Song getFirstRemoteSongInAlbum(Album album) {
-		List<Song> songs = album.getSongs();
-		if (songs == null || songs.isEmpty()) {
+	private Track getFirstRemoteTrackInAlbum(Album album) {
+		List<Track> tracks = album.getTracks();
+		if (tracks == null || tracks.isEmpty()) {
 			return null;
 		}
 
-		for (Song song : songs) {
-			Library library = song.getLibrary();
+		for (Track track : tracks) {
+			Library library = track.getLibrary();
 			if (library.isRemote()) {
-				return song;
+				return track;
 			}
 		}
 
@@ -324,10 +324,10 @@ public class MusicController extends BaseController {
 	public String getAlbum(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment,
 			@PathVariable("albumId") Long albumId, Model model) throws Exception {
 		Album album = musicManager.getAlbum(albumId);
-		List<Song> songs = album.getSongs();
+		List<Track> tracks = album.getTracks();
 		AlbumPage albumPage = new AlbumPage();
 		albumPage.setAlbum(album);
-		albumPage.setSongs(songs);
+		albumPage.setTracks(tracks);
 		model.addAttribute(albumPage);
 
 		List<Breadcrumb> breadcrumbs = prepareBreadcrumbs();

@@ -65,7 +65,7 @@ public class AjaxSearchController extends AjaxBaseController {
 
 		MediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
 		if (mediaType == null) {
-			mediaType = MediaType.SONG;
+			mediaType = MediaType.TRACK;
 		}
 		mediaItemSearchCriteria.setMediaType(mediaType);
 
@@ -86,18 +86,18 @@ public class AjaxSearchController extends AjaxBaseController {
 		MediaSortType mediaSortType = MediaItemHelper.getMediaSortType(orderBy);
 		mediaItemSearchCriteria.setMediaSortType(mediaSortType);
 
-		List<? extends MediaItem> songs = null;
+		List<? extends MediaItem> tracks = null;
 
-		if (mediaType == MediaType.SONG) {
-			songs = musicManager.findSongs(mediaItemSearchCriteria);
+		if (mediaType == MediaType.TRACK) {
+			tracks = musicManager.findTracks(mediaItemSearchCriteria);
 		} else {
-			songs = mediaManager.findMediaItems(mediaItemSearchCriteria);
+			tracks = mediaManager.findMediaItems(mediaItemSearchCriteria);
 		}
 
 		ActionType actionType = WebHelper.getActionType(action);
 		
 		boolean isAppend = BooleanUtils.toBoolean(isAppendValue); 
-		String page = preparePage(model, actionType, pageNumber, songs, mediaSortType, mediaType, isAscending, isAppend);
+		String page = preparePage(model, actionType, pageNumber, tracks, mediaSortType, mediaType, isAscending, isAppend);
 		return page;
 	}
 
@@ -112,10 +112,10 @@ public class AjaxSearchController extends AjaxBaseController {
 			model.addAttribute("orderBy", mediaSortType.toString().toLowerCase());
 			model.addAttribute("ascending", isAscending);
 
-			if (mediaType == MediaType.SONG) {
+			if (mediaType == MediaType.TRACK) {
 				model.addAttribute("pageNumber", pageNumber);
-				model.addAttribute("songs", mediaItems);
-				return "ajax/search/songs";
+				model.addAttribute("tracks", mediaItems);
+				return "ajax/search/tracks";
 			}
 		}
 

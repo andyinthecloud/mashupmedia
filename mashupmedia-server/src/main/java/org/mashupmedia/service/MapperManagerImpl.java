@@ -36,7 +36,7 @@ import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.StringHelper;
 import org.mashupmedia.xml.PartialUnmarshaller;
@@ -66,7 +66,7 @@ public class MapperManagerImpl implements MapperManager {
 			return marshaller;
 		}
 
-		JAXBContext jaxbContext = JAXBContext.newInstance(Song.class);
+		JAXBContext jaxbContext = JAXBContext.newInstance(Track.class);
 		marshaller = jaxbContext.createMarshaller();
 		marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FRAGMENT, true);
 		return marshaller;
@@ -91,82 +91,82 @@ public class MapperManagerImpl implements MapperManager {
 	}
 
 	@Override
-	public void writeSongToXml(long libraryId, Song song) throws Exception {
-		if (song == null) {
+	public void writeTrackToXml(long libraryId, Track track) throws Exception {
+		if (track == null) {
 			return;
 		}
 
-		Song clonedSong = SerializationUtils.clone(song);
-		clonedSong.setId(0);
-		clonedSong.setPath(String.valueOf(song.getId()));
+		Track clonedTrack = SerializationUtils.clone(track);
+		clonedTrack.setId(0);
+		clonedTrack.setPath(String.valueOf(track.getId()));
 
-		String fileName = clonedSong.getFileName();
-		clonedSong.setFileName(StringHelper.escapeXml(fileName));
+		String fileName = clonedTrack.getFileName();
+		clonedTrack.setFileName(StringHelper.escapeXml(fileName));
 
-		String songTitle = clonedSong.getTitle();
-		clonedSong.setTitle(StringHelper.escapeXml(songTitle));
+		String trackTitle = clonedTrack.getTitle();
+		clonedTrack.setTitle(StringHelper.escapeXml(trackTitle));
 
-		String songSearchText = clonedSong.getSearchText();
-		clonedSong.setSearchText(StringHelper.escapeXml(songSearchText));
+		String trackSearchText = clonedTrack.getSearchText();
+		clonedTrack.setSearchText(StringHelper.escapeXml(trackSearchText));
 
-		String summary = clonedSong.getSummary();
-		clonedSong.setSummary(StringHelper.escapeXml(summary));
+		String summary = clonedTrack.getSummary();
+		clonedTrack.setSummary(StringHelper.escapeXml(summary));
 
-		String displayTitle = clonedSong.getDisplayTitle();
-		clonedSong.setDisplayTitle(StringHelper.escapeXml(displayTitle));
+		String displayTitle = clonedTrack.getDisplayTitle();
+		clonedTrack.setDisplayTitle(StringHelper.escapeXml(displayTitle));
 
-		Artist clonedArtist = SerializationUtils.clone(song.getArtist());
+		Artist clonedArtist = SerializationUtils.clone(track.getArtist());
 		String artistName = clonedArtist.getName();
 		clonedArtist.setName(StringHelper.escapeXml(artistName));
 		String artistIndexText = clonedArtist.getIndexText();
 		clonedArtist.setIndexText(StringHelper.escapeXml(artistIndexText));
-		clonedSong.setArtist(clonedArtist);
+		clonedTrack.setArtist(clonedArtist);
 
-		Album clonedAlbum = SerializationUtils.clone(song.getAlbum());
+		Album clonedAlbum = SerializationUtils.clone(track.getAlbum());
 		String albumName = clonedAlbum.getName();
 		clonedAlbum.setName(StringHelper.escapeXml(albumName));
 		String albumFolderName = clonedAlbum.getFolderName();
 		clonedAlbum.setFolderName(StringHelper.escapeXml(albumFolderName));
-		clonedSong.setAlbum(clonedAlbum);
+		clonedTrack.setAlbum(clonedAlbum);
 		File file = FileHelper.getLibraryXmlFile(libraryId);
-		objectMapper.writeValue(file, clonedSong);
+		objectMapper.writeValue(file, clonedTrack);
 	}
 
 	@Override
-	public void saveXmltoSongs(MusicLibrary musicLibrary, String xml) throws Exception {
+	public void saveXmltoTracks(MusicLibrary musicLibrary, String xml) throws Exception {
 
 		String libraryPath = StringUtils.trimToEmpty(musicLibrary.getLocation().getPath());
 		libraryPath = libraryPath.replaceFirst("/.*", "");
 
-		List<Song> songs = new ArrayList<Song>();
+		List<Track> tracks = new ArrayList<Track>();
 
 		if (StringUtils.isBlank(xml)) {
-			log.error("Unable to save remote songs, xml is empty");
+			log.error("Unable to save remote tracks, xml is empty");
 			return;
 		}
 
 		InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
 
-		PartialUnmarshaller<Song> partialUnmarshaller = new PartialUnmarshaller<Song>(inputStream, Song.class);
+		PartialUnmarshaller<Track> partialUnmarshaller = new PartialUnmarshaller<Track>(inputStream, Track.class);
 
 		Date date = new Date();
 		while (partialUnmarshaller.hasNext()) {
-			Song song = partialUnmarshaller.next();
-			String title = StringEscapeUtils.unescapeXml(song.getTitle());
-			song.setTitle(title);
-			Album album = song.getAlbum();
+			Track track = partialUnmarshaller.next();
+			String title = StringEscapeUtils.unescapeXml(track.getTitle());
+			track.setTitle(title);
+			Album album = track.getAlbum();
 			album.setId(0);
 
-			songs.add(song);
+			tracks.add(track);
 
-			if (songs.size() == 10) {
-				musicLibraryUpdateManager.saveSongs(musicLibrary, songs, date);
-				songs.clear();
+			if (tracks.size() == 10) {
+				musicLibraryUpdateManager.saveTracks(musicLibrary, tracks, date);
+				tracks.clear();
 			}
 		}
 
 		partialUnmarshaller.close();
-		musicLibraryUpdateManager.saveSongs(musicLibrary, songs, date);
+		musicLibraryUpdateManager.saveTracks(musicLibrary, tracks, date);
 
 	}
 

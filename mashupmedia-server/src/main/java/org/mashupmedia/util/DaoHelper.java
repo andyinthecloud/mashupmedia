@@ -37,7 +37,7 @@ public class DaoHelper {
 	}
 
 	/**
-	 * Assumes that the hql object Song s has already been declared
+	 * Assumes that the hql object Track has already been declared
 	 * 
 	 * @param queryBuilder
 	 * @param groupIds

@@ -21,7 +21,7 @@ import java.util.Comparator;
 
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MediaType;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 
 public class MediaItemComparator implements Comparator<MediaItem>{
 
@@ -30,16 +30,16 @@ public class MediaItemComparator implements Comparator<MediaItem>{
 		MediaType mediaType =  o1.getMediaType();
 		
 		int compare = 0;
-		if (mediaType == MediaType.SONG) {
-			Song song1 = (Song) o1;
-			Song song2 = (Song) o2;
-			compare = compare(song1, song2);
+		if (mediaType == MediaType.TRACK) {
+			Track track1 = (Track) o1;
+			Track track2 = (Track) o2;
+			compare = compare(track1, track2);
 		}		
 		
 		return compare;
 	}
 	
-	public int compare(Song o1, Song o2) {
+	public int compare(Track o1, Track o2) {
 		String o1DisplayTitle = o1.getDisplayTitle();
 		String o2DisplayTitle = o2.getDisplayTitle();
 		int compare = o1DisplayTitle.compareToIgnoreCase(o2DisplayTitle);

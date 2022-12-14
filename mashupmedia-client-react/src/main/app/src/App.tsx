@@ -9,11 +9,15 @@ import { addNotification, NotificationType } from "./common/notification/notific
 import { RootState } from "./common/redux/store";
 import { mashupTheme } from "./common/utils/formUtils";
 import { MashupRoutes } from "./MashupRoutes";
+import { securityToken } from "./common/security/securityUtils"
 
 function App() {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const dispatch = useDispatch()
+    const hasUserToken = (): boolean => (
+        securityToken(userToken) ? true : false
+    )
 
     const handleClick = () => {
         dispatch(
@@ -29,7 +33,7 @@ function App() {
             <div className={"App"}>
                 <Drawer></Drawer>
                 <Container className="main-container" maxWidth="md">
-                    {userToken && <AudioPlayer />}
+                    {hasUserToken() && <AudioPlayer />}
                     <AlertBoxes />
                     <MashupRoutes />
                 </Container>

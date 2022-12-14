@@ -48,7 +48,7 @@ public class MediaItem implements Serializable {
 	public final static String TITLE_SEPERATOR = " - ";
 
 	public enum MediaType {
-		SONG, VIDEO, PHOTO;
+		TRACK, VIDEO, PHOTO;
 	}
 
 	@Id

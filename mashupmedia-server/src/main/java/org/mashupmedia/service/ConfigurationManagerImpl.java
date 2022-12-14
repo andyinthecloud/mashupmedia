@@ -64,7 +64,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 	}
 
 	@Override
-	public void saveEncryptedConfiguration(String key, String value) {
+	public void saveEncrypteConfiguration(String key, String value) {
 		value = StringUtils.trimToEmpty(value);
 		String encryptedValue = encryptService.encrypt(value);
 		saveConfiguration(key, encryptedValue);

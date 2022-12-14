@@ -44,6 +44,7 @@ const Albums = () => {
         }
 
         setInfiniteScrollLoadingProps(true)
+
         getAlbums(userToken)
             .then(response => {
                 if (response.parsedBody) {

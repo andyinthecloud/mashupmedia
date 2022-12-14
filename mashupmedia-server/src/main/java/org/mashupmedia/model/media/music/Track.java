@@ -17,11 +17,11 @@ import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 @Entity
-@Table(name = "songs")
+@Table(name = "tracks")
 @Indexed
 @Cacheable
 @XmlRootElement
-public class Song extends MediaItem {
+public class Track extends MediaItem {
 
 	private static final long serialVersionUID = -8767965461920368852L;
 
@@ -44,11 +44,11 @@ public class Song extends MediaItem {
 	private long bitRate;
 	private boolean readableTag;
 
-	public Song() {
-		setMediaType(MediaType.SONG);
+	public Track() {
+		setMediaType(MediaType.TRACK);
 	}
 
-	public Song(Song song) {
+	public Track(Track track) {
 
 	}
 
@@ -141,7 +141,7 @@ public class Song extends MediaItem {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Song other = (Song) obj;
+		Track other = (Track) obj;
 		if (album == null) {
 			if (other.album != null)
 				return false;
@@ -158,7 +158,7 @@ public class Song extends MediaItem {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Song [trackNumber=");
+		builder.append("Track [trackNumber=");
 		builder.append(trackNumber);
 		builder.append(", title=");
 		builder.append(title);

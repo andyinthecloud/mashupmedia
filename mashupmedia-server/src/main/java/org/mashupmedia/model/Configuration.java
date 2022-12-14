@@ -6,15 +6,17 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Entity
-@Cacheable
 @Table(name = "configurations")
+@Cacheable
 public class Configuration implements Serializable {
 
 	private static final long serialVersionUID = 713342154279495594L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+	@Column(name = "configuration_key")
 	private String key;
+	@Column(name = "configuration_value")
 	private String value;
 	private Date createdOn;
 

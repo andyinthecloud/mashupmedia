@@ -7,7 +7,7 @@ public class MediaItemSearchCriteria {
 	private final static int DEFAULT_FETCH_SIZE = 20;
 
 	public enum MediaSortType {
-		LAST_PLAYED, FAVOURITES, SONG_TITLE, ALBUM_NAME, ARTIST_NAME;
+		LAST_PLAYED, FAVOURITES, TRACK_TITLE, ALBUM_NAME, ARTIST_NAME;
 	}
 
 	private String searchWords;
@@ -56,7 +56,7 @@ public class MediaItemSearchCriteria {
 
 	public MediaItemSearchCriteria() {
 		setMaximumResults(DEFAULT_FETCH_SIZE);
-		setMediaSortType(MediaSortType.SONG_TITLE);
+		setMediaSortType(MediaSortType.TRACK_TITLE);
 		setAscending(true);
 		setEnabled(true);
 	}

@@ -24,7 +24,7 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;

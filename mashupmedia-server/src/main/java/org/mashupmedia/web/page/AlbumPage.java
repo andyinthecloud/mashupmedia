@@ -3,12 +3,12 @@ package org.mashupmedia.web.page;
 import java.util.List;
 
 import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 
 public class AlbumPage {
 
 	private Album album;
-	private List<Song> songs;
+	private List<Track> tracks;
 
 	public Album getAlbum() {
 		return album;
@@ -18,12 +18,12 @@ public class AlbumPage {
 		this.album = album;
 	}
 
-	public List<Song> getSongs() {
-		return songs;
+	public List<Track> getTracks() {
+		return tracks;
 	}
 
-	public void setSongs(List<Song> songs) {
-		this.songs = songs;
+	public void setTracks(List<Track> tracks) {
+		this.tracks = tracks;
 	}
 
 }

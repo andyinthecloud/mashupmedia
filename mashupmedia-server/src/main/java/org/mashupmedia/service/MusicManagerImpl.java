@@ -11,7 +11,7 @@ import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.util.AdminHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,8 +94,8 @@ public class MusicManagerImpl implements MusicManager {
 			return null;
 		}
 
-		List<Song> songs = album.getSongs();
-		if (songs == null || songs.isEmpty()) {
+		List<Track> tracks = album.getTracks();
+		if (tracks == null || tracks.isEmpty()) {
 			return null;
 		}		
 
@@ -166,17 +166,17 @@ public class MusicManagerImpl implements MusicManager {
 		}
 
 		for (Album album : albums) {
-			Hibernate.initialize(album.getSongs());
+			Hibernate.initialize(album.getTracks());
 		}
 
 		return albums;
 	}
 
 	@Override
-	public List<Song> getSongs(Long albumId) {
+	public List<Track> getTracks(Long albumId) {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		List<Song> songs = musicDao.getSongs(userGroupIds, albumId);
-		return songs;
+		List<Track> tracks = musicDao.getTracks(userGroupIds, albumId);
+		return tracks;
 	}
 
 	@Override
@@ -217,16 +217,16 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public List<Song> findSongs(MediaItemSearchCriteria mediaItemSearchCriteria) {
+	public List<Track> findTracks(MediaItemSearchCriteria mediaItemSearchCriteria) {
 		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		List<Song> songs = musicDao.findSongs(userGroupIds, mediaItemSearchCriteria);
-		return songs;
+		List<Track> tracks = musicDao.findTracks(userGroupIds, mediaItemSearchCriteria);
+		return tracks;
 	}
 
 	@Override
-	public long getTotalSongsFromLibrary(long libraryId) {
-		long totalSongsFromLibrary = musicDao.getTotalSongsFromLibrary(libraryId);
-		return totalSongsFromLibrary;
+	public long getTotalTracksFromLibrary(long libraryId) {
+		long totalTracksFromLibrary = musicDao.getTotalTracksFromLibrary(libraryId);
+		return totalTracksFromLibrary;
 	}
 
 }

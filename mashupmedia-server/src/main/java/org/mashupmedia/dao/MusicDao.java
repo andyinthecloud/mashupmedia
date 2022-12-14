@@ -8,7 +8,7 @@ import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
-import org.mashupmedia.model.media.music.Song;
+import org.mashupmedia.model.media.music.Track;
 
 public interface MusicDao {
 
@@ -16,16 +16,15 @@ public interface MusicDao {
 
 	public List<Artist> getArtists(List<Long> groupIds);
 
-	public Song getSong(List<Long> groupIds, long libraryId, String songPath, long fileLastModifiedOn);
+	public Track getTrack(List<Long> groupIds, long libraryId, String trackPath, long fileLastModifiedOn);
 
 	public Album getAlbum(List<Long> groupIds, String artistName, String albumName);
 
-	public void saveSong(Song song);
+	public void saveTrack(Track track);
 
-//	public void deleteSongs(List<Song> songsToDelete);
-	public void deleteSong(Song song);
+	public void deleteTrack(Track track);
 
-	public List<Song> getSongsToDelete(long libraryId, Date date);
+	public List<Track> getTracksToDelete(long libraryId, Date date);
 
 	public void saveAlbum(Album album);
 
@@ -37,7 +36,7 @@ public interface MusicDao {
 
 	public Year getYear(int year);
 
-	public List<Song> getSongs(List<Long> groupIds, Long albumId);
+	public List<Track> getTracks(List<Long> groupIds, Long albumId);
 
 
 	public List<Album> getAlbumsByArtist(List<Long> groupIds, long artistId);
@@ -48,18 +47,17 @@ public interface MusicDao {
 
 	public Artist getArtist(List<Long> groupIds, Long artistId);
 
-	public void saveSong(Song song, boolean isSessionFlush);
+	public void saveTrack(Track track, boolean isSessionFlush);
 
 	public List<String> getAlbumIndexLetters(List<Long> groupIds);
 
 	public List<Genre> getGenres();
 	
-	public List<Song> findSongs(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria);
+	public List<Track> findTracks(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria);
 
-	public long getTotalSongsFromLibrary(long libraryId);
+	public long getTotalTracksFromLibrary(long libraryId);
 
-//	public void deleteObsoleteSongs(List<Song> songsToDelete);
-	public void deleteObsoleteSong(Song songToDelete);
+	public void deleteObsoleteTrack(Track trackToDelete);
 
 	public void deleteEmptyAlbums();
 
@@ -67,7 +65,7 @@ public interface MusicDao {
 
 	public List<Album> getLatestAlbums(List<Long> userGroupIds, int pageNumber, int maxResults);
 
-	public Song getSong(String path);
+	public Track getTrack(String path);
 	
 	
 }
