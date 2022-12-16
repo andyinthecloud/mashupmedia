@@ -100,7 +100,7 @@ public class PlaylistHelper {
 		appendPlaylist(playlist, mediaItems);
 	}
 
-	public static PlaylistMediaItem processRelativePlayingMediaItemFromPlaylist(Playlist playlist, int relativeOffset, boolean isSetPlayingStatus) {
+	public static PlaylistMediaItem navigatePlaylist(Playlist playlist, int relativeOffset, boolean isSetPlayingStatus) {
 
 		PlaylistMediaItem emptyPlaylistMediaItem = new PlaylistMediaItem();
 		emptyPlaylistMediaItem.setPlaylist(playlist);

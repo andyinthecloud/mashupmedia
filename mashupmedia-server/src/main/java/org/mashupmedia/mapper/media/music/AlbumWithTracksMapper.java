@@ -9,8 +9,6 @@ import org.mashupmedia.dto.media.music.ArtistPayload;
 import org.mashupmedia.dto.media.music.TrackPayload;
 import org.mashupmedia.mapper.SecureMediaDomainMapper;
 import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.util.TimeHelper;
-import org.mashupmedia.util.TimeHelper.TimeUnit;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class AlbumWithTracksMapper extends SecureMediaDomainMapper<Album, AlbumWithTracksAndArtistPayload> {
 
     private final ArtistMapper artistMapper;
+    private final TrackMapper trackMapper;
 
     @Override
     public AlbumWithTracksAndArtistPayload toDto(Album domain) {
@@ -34,16 +33,7 @@ public class AlbumWithTracksMapper extends SecureMediaDomainMapper<Album, AlbumW
 
         List<TrackPayload> trackPayloads = domain.getTracks()
                 .stream()
-                .map(track -> TrackPayload
-                        .builder()
-                        .id(track.getId())
-                        .name(track.getDisplayTitle())
-                        .trackNumber(track.getTrackNumber())
-                        .minutes(TimeHelper.getDurationUnit(track.getTrackLength(),
-                                TimeUnit.MINUTE))
-                        .seconds(TimeHelper.getDurationUnit(track.getTrackLength(),
-                                TimeUnit.SECOND))
-                        .build())
+                .map(track -> trackMapper.toDto(track))
                 .collect(Collectors.toList());
 
         return AlbumWithTracksAndArtistPayload

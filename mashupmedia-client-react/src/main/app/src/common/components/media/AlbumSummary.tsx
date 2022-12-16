@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { playMusic } from "../../../media/music/features/playMusicSlice"
-import { addAlbum, albumArtImageUrl, AlbumWithArtistPayload, ImageType, playAlbum } from '../../../media/music/rest/musicCalls'
+import { albumArtImageUrl, AlbumWithArtistPayload, ImageType } from '../../../media/music/rest/musicCalls'
+import { addAlbum, playAlbum } from "../../../media/music/rest/playlistCalls"
 import { SecureMediaPayload } from '../../../media/rest/secureMediaPayload'
 import { addNotification, NotificationType } from "../../notification/notificationSlice"
 import { RootState } from "../../redux/store"

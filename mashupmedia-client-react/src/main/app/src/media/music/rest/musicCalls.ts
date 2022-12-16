@@ -1,4 +1,3 @@
-import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
 import { backendUrl, callMashupMediaApi, HttpMethod, HttpResponse } from '../../../common/utils/httpUtils'
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
 
@@ -65,15 +64,3 @@ export const getAlbum = (albumId: number, userToken?: string): Promise<HttpRespo
     return callMashupMediaApi<SecureMediaPayload<AlbumWithSongsAndArtistPayload>>(HttpMethod.GET, albumUrl + "/" + albumId, userToken)
 }
 
-// playlist calls
-
-const playlistUrl = "/api/playlist/music"
-
-
-export const playAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
-    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, playlistUrl + "/play-album", userToken, ''+albumId)    
-}
-
-export const addAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
-    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, playlistUrl + "/add-album", userToken, ''+albumId)    
-}

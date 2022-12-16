@@ -50,7 +50,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.replacePlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0,
 				true);
 		Track track = (Track) playlistMediaItem.getMediaItem();
 
@@ -70,12 +70,12 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.appendPlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0,
 				true);
 
 		// if playlist was empty get the first track in the new list
 		if (playlistMediaItem == null) {
-			playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
+			playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0, true);
 		}
 
 		Track track = (Track) playlistMediaItem.getMediaItem();
@@ -104,7 +104,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.replacePlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0,
 				true);
 
 		Track track = (Track) playlistMediaItem.getMediaItem();
@@ -133,7 +133,7 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.appendPlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist, 0,
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0,
 				true);
 
 		Track track = (Track) playlistMediaItem.getMediaItem();

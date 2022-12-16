@@ -44,7 +44,7 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 		model.addAttribute("playlist", playlist);
 
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper
-				.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
+				.navigatePlaylist(playlist, 0, true);
 		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM,
 				mediaItem);
@@ -239,7 +239,7 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 		savePlaylist(playlist);
 
 		PlaylistMediaItem playlistMediaItem = PlaylistHelper
-				.processRelativePlayingMediaItemFromPlaylist(playlist, 0, true);
+				.navigatePlaylist(playlist, 0, true);
 		MediaItem mediaItem = playlistMediaItem.getMediaItem();
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM,
 				mediaItem);

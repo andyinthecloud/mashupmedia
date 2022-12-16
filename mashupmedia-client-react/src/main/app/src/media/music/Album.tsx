@@ -8,7 +8,8 @@ import { addNotification, NotificationType } from "../../common/notification/not
 import { RootState } from "../../common/redux/store"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
 import { playMusic } from "./features/playMusicSlice"
-import { addAlbum, albumArtImageUrl, AlbumWithSongsAndArtistPayload, getAlbum, ImageType, playAlbum } from "./rest/musicCalls"
+import { albumArtImageUrl, AlbumWithSongsAndArtistPayload, getAlbum, ImageType } from "./rest/musicCalls"
+import { addAlbum, playAlbum } from "./rest/playlistCalls"
 
 const Album = () => {
 

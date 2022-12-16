@@ -161,7 +161,7 @@ public class StreamingController {
 		boolean isEndOfPlaylist = false;
 
 		while (isEndOfPlaylist == false) {
-			PlaylistMediaItem playlistMediaItem = PlaylistHelper.processRelativePlayingMediaItemFromPlaylist(playlist,
+			PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist,
 					offset, false);
 			if (playlistMediaItem == null || playlistMediaItem.getId() == 0) {
 				isEndOfPlaylist = true;
