@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.web.restful.RestfulStream;
@@ -32,20 +32,20 @@ import org.mashupmedia.web.restful.RestfulStream;
 public class MediaItemHelper {
 
 	public enum MediaContentType {
-		MP3("audio/mpeg", "mp3", "mp3", 1), 
-		M4A("audio/m4a", "m4a", "m4a", 2), 
-		OGA("audio/ogg", "oga", "oga", 3), 
-		WAV("audio/wav", "wav", "wav", 3), 
-		FLAC("audio/flac", "flac", "flac", 4), 
-		WMA("audio/x-ms-wma", "wma", "wma", 5), 
-		UNSUPPORTED("media/unsupported", "unsupported", "unsupported", 100), 
-		MP4("video/mp4", "m4v", "mp4", 1), 
-		WEBM("video/webm", "webmv", "webm", 2), 
-		OGV("video/ogg", "ogv", "ogv", 3), 
-		WMV("video/x-ms-wmv", "wmv", "wmv", 4), 
-		JPEG("image/jpeg", "jpg", "jpg", 1), 
-		PNG("image/png", "png", "png", 2), 
-		GIF("image/gif", "gif", "gif", 3), 
+		MP3("audio/mpeg", "mp3", "mp3", 1),
+		M4A("audio/m4a", "m4a", "m4a", 2),
+		OGA("audio/ogg", "oga", "oga", 3),
+		WAV("audio/wav", "wav", "wav", 3),
+		FLAC("audio/flac", "flac", "flac", 4),
+		WMA("audio/x-ms-wma", "wma", "wma", 5),
+		UNSUPPORTED("media/unsupported", "unsupported", "unsupported", 100),
+		MP4("video/mp4", "m4v", "mp4", 1),
+		WEBM("video/webm", "webmv", "webm", 2),
+		OGV("video/ogg", "ogv", "ogv", 3),
+		WMV("video/x-ms-wmv", "wmv", "wmv", 4),
+		JPEG("image/jpeg", "jpg", "jpg", 1),
+		PNG("image/png", "png", "png", 2),
+		GIF("image/gif", "gif", "gif", 3),
 		TIF("image/tiff", "tiff", "tiff", 4);
 
 		private final String mimeContentType;
@@ -77,20 +77,18 @@ public class MediaItemHelper {
 		}
 
 	}
-	
-	
+
 	public enum MediaItemSequenceType {
 		PHOTO_ALBUM, LATEST, ALPHABETICAL
 	}
 
-
-	public static MediaType getMediaType(String mediaTypeValue) {
+	public static MashupMediaType getMediaType(String mediaTypeValue) {
 		if (mediaTypeValue == null) {
 			return null;
 		}
 
-		MediaType[] mediaTypes = MediaType.values();
-		for (MediaType mediaType : mediaTypes) {
+		MashupMediaType[] mediaTypes = MashupMediaType.values();
+		for (MashupMediaType mediaType : mediaTypes) {
 			if (mediaTypeValue.equalsIgnoreCase(mediaType.toString())) {
 				return mediaType;
 			}
@@ -200,7 +198,7 @@ public class MediaItemHelper {
 		}
 
 		for (MediaEncoding mediaEncoding : mediaEncodings) {
-			if (mediaContentType  == mediaEncoding.getMediaContentType()) {
+			if (mediaContentType == mediaEncoding.getMediaContentType()) {
 				return true;
 			}
 		}
@@ -212,19 +210,21 @@ public class MediaItemHelper {
 		urlBuilder.append("/streaming/media/");
 		urlBuilder.append(mediaItemId);
 		urlBuilder.append("/");
-		urlBuilder.append(format);		
-		
+		urlBuilder.append(format);
+
 		return urlBuilder.toString();
 	}
 
-	public static void addSuppliedStreamUrls(MediaContentType[] suppliedMediaContentTypes, String contextPath, long mediaItemId,
+	public static void addSuppliedStreamUrls(MediaContentType[] suppliedMediaContentTypes, String contextPath,
+			long mediaItemId,
 			List<RestfulStream> restfulStreamList) {
-		
+
 		for (MediaContentType suppliedMediaContentType : suppliedMediaContentTypes) {
 			if (!isFormatPresent(restfulStreamList, suppliedMediaContentType)) {
 				String jPlayerContentType = suppliedMediaContentType.getjPlayerContentType();
-				restfulStreamList.add(new RestfulStream(jPlayerContentType, prepareUrlStream(contextPath, mediaItemId, jPlayerContentType)));
-			}			
+				restfulStreamList.add(new RestfulStream(jPlayerContentType,
+						prepareUrlStream(contextPath, mediaItemId, jPlayerContentType)));
+			}
 		}
 
 	}
@@ -236,7 +236,7 @@ public class MediaItemHelper {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -245,16 +245,16 @@ public class MediaItemHelper {
 		if (mediaItem == null) {
 			return duration;
 		}
-		
-		if (mediaItem instanceof Track) {			
+
+		if (mediaItem instanceof Track) {
 			duration = ((Track) mediaItem).getTrackLength();
 			return duration;
 		}
-		
+
 		if (mediaItem instanceof Video) {
-//			duration = ((Video) mediaItem.get);
+			// duration = ((Video) mediaItem.get);
 		}
-		
+
 		return duration;
 	}
 
@@ -263,15 +263,15 @@ public class MediaItemHelper {
 		if (StringUtils.isEmpty(sequenceTypeValue)) {
 			return MediaItemSequenceType.LATEST;
 		}
-		
-		MediaItemSequenceType[]  mediaItemSequenceTypes = MediaItemSequenceType.values();
+
+		MediaItemSequenceType[] mediaItemSequenceTypes = MediaItemSequenceType.values();
 		for (MediaItemSequenceType mediaItemSequenceType : mediaItemSequenceTypes) {
 			if (sequenceTypeValue.equalsIgnoreCase(mediaItemSequenceType.name())) {
 				return mediaItemSequenceType;
 			}
 		}
-		
-		return MediaItemSequenceType.LATEST;	
+
+		return MediaItemSequenceType.LATEST;
 	}
 
 }

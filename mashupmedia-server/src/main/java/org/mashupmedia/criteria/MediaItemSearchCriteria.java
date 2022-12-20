@@ -1,6 +1,6 @@
 package org.mashupmedia.criteria;
 
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 
 public class MediaItemSearchCriteria {
 
@@ -13,7 +13,7 @@ public class MediaItemSearchCriteria {
 	private String searchWords;
 	private int pageNumber;
 	private int maximumResults;
-	private MediaType mediaType;
+	private MashupMediaType mediaType;
 	private MediaSortType mediaSortType;
 	boolean ascending;
 	boolean enabled;
@@ -61,11 +61,11 @@ public class MediaItemSearchCriteria {
 		setEnabled(true);
 	}
 
-	public MediaType getMediaType() {
+	public MashupMediaType getMediaType() {
 		return mediaType;
 	}
 
-	public void setMediaType(MediaType mediaType) {
+	public void setMediaType(MashupMediaType mediaType) {
 		this.mediaType = mediaType;
 	}
 

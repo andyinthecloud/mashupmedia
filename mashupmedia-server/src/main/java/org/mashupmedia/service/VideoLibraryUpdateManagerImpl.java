@@ -15,7 +15,7 @@ import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
 import org.mashupmedia.model.media.MediaEncoding;
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.task.EncodeMediaItemTaskManager;
 import org.mashupmedia.util.FileHelper;
@@ -138,7 +138,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			video.setEnabled(true);
 			video.setFileLastModifiedOn(file.lastModified());
 			video.setFileName(fileName);
-			video.setMediaType(MediaType.VIDEO);
+			video.setMashupMediaType(MashupMediaType.VIDEO);
 			video.setPath(path);
 			video.setSizeInBytes(file.length());
 

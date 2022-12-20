@@ -18,7 +18,7 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
@@ -67,8 +67,8 @@ public class StreamingController {
 			}
 		}
 
-		MediaType mediaType = mediaItem.getMediaType();
-		if (mediaType == MediaType.PHOTO) {
+		MashupMediaType mediaType = mediaItem.getMashupMediaType();
+		if (mediaType == MashupMediaType.PHOTO) {
 			Photo photo = (Photo) mediaItem;
 			writeImageStream(photo, mediaContentTypeValue, request, response);
 			return;

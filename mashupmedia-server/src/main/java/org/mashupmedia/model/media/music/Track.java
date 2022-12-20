@@ -45,7 +45,7 @@ public class Track extends MediaItem {
 	private boolean readableTag;
 
 	public Track() {
-		setMediaType(MediaType.TRACK);
+		setMashupMediaType(MashupMediaType.TRACK);
 	}
 
 	public Track(Track track) {

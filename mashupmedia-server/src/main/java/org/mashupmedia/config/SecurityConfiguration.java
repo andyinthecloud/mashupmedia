@@ -92,7 +92,7 @@ public SecurityFilterChain filterChain(HttpSecurity httpSecurity, Authentication
     .and()
     .authorizeRequests()
     .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()
-    .antMatchers(SecurityConstants.MEDIA_URL).permitAll()                
+    .antMatchers(SecurityConstants.STREAM_URL).permitAll()                
     .anyRequest()
     .authenticated()
     .and()

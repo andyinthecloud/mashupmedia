@@ -2,6 +2,7 @@ package org.mashupmedia.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.User;
@@ -100,15 +101,12 @@ public class PlaylistHelper {
 		appendPlaylist(playlist, mediaItems);
 	}
 
-	public static PlaylistMediaItem navigatePlaylist(Playlist playlist, int relativeOffset, boolean isSetPlayingStatus) {
-
-		PlaylistMediaItem emptyPlaylistMediaItem = new PlaylistMediaItem();
-		emptyPlaylistMediaItem.setPlaylist(playlist);
-		emptyPlaylistMediaItem.setMediaItem(new MediaItem());
+	public static PlaylistMediaItem navigatePlaylist(Playlist playlist, int relativeOffset,
+			boolean isSetPlayingStatus) {
 
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-			return emptyPlaylistMediaItem;
+			return null;
 		}
 
 		User user = AdminHelper.getLoggedInUser();
@@ -120,7 +118,7 @@ public class PlaylistHelper {
 			if (playlistMediaItem.equals(currentPlaylistMediaItem)) {
 				playingIndex = i;
 			}
-			
+
 			if (isSetPlayingStatus) {
 				playlistMediaItem.setPlaying(false);
 			}
@@ -129,7 +127,7 @@ public class PlaylistHelper {
 		int newPlayingIndex = playingIndex + relativeOffset;
 		if (newPlayingIndex < 0 || newPlayingIndex > (playlistMediaItems.size() - 1)) {
 			playlistMediaItems.get(playingIndex).setPlaying(true);
-			return emptyPlaylistMediaItem;
+			return currentPlaylistMediaItem;
 		}
 
 		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(newPlayingIndex);
@@ -202,7 +200,7 @@ public class PlaylistHelper {
 				return;
 			}
 		}
-		
+
 		playlistMediaItems.get(0).setPlaying(true);
 
 	}
@@ -223,12 +221,13 @@ public class PlaylistHelper {
 
 	}
 
-	public static PlaylistMediaItem getPlaylistMediaItem(Playlist playlist, Long mediaItemId) {
-		
+	public static PlaylistMediaItem getPlaylistMediaItem(Playlist playlist, Long mediaItemId,
+			boolean isSetPlayingStatus) {
+
 		if (mediaItemId == null || mediaItemId == 0) {
 			return null;
 		}
-		
+
 		if (playlist == null) {
 			return null;
 		}
@@ -242,20 +241,23 @@ public class PlaylistHelper {
 		if (user == null) {
 			return null;
 		}
-		
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			MediaItem mediaItem = playlistMediaItem.getMediaItem(); 
-			if (mediaItem.getId() == mediaItemId) {
-				return playlistMediaItem;
+
+		if (isSetPlayingStatus) {
+			for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
+				playlistMediaItem.setPlaying(false);
 			}
 		}
-		
-		return null;
-		
+
+		Optional<PlaylistMediaItem> optionalPlaylistMediaItem = playlistMediaItems.stream()
+				.filter(pmi -> pmi.getMediaItem().getId() == mediaItemId)
+				.findAny();
+
+		if (isSetPlayingStatus && optionalPlaylistMediaItem.isPresent()) {
+			optionalPlaylistMediaItem.get().setPlaying(true);			
+		}
+
+		return optionalPlaylistMediaItem.orElse(null);
+
 	}
-
-
-
-
 
 }

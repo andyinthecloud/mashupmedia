@@ -24,10 +24,10 @@ export type TrackPayload = {
     seconds?: number
 }
 
-export type AlbumWithSongsAndArtistPayload = {
+export type AlbumWithTracksAndArtistPayload = {
     artistPayload: ArtistPayload
     albumPayload: AlbumPayload
-    songPayloads: TrackPayload[]
+    trackPayloads: TrackPayload[]
 }
 
 export type ArtistWithAlbumsPayload = {
@@ -45,7 +45,7 @@ const artistUri = musicUri + "/artists"
 const albumUrl = musicUri + "/albums"
 
 export const albumArtImageUrl = (albumId: number, imageType: ImageType, mediaToken: string): string => {
-    return `${backendUrl('/media/music/album-art')}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}`
+    return `${backendUrl('/stream/secure/music/album-art')}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}`
 }
 
 export const getArtists = (userToken?: string): Promise<HttpResponse<ArtistPayload[]>> => {
@@ -60,7 +60,12 @@ export const getAlbums = (userToken?: string): Promise<HttpResponse<SecureMediaP
     return callMashupMediaApi<SecureMediaPayload<AlbumWithArtistPayload>[]>(HttpMethod.GET, albumUrl + "/", userToken)
 }
 
-export const getAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<SecureMediaPayload<AlbumWithSongsAndArtistPayload>>> => {
-    return callMashupMediaApi<SecureMediaPayload<AlbumWithSongsAndArtistPayload>>(HttpMethod.GET, albumUrl + "/" + albumId, userToken)
+export const getAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<SecureMediaPayload<AlbumWithTracksAndArtistPayload>>> => {
+    return callMashupMediaApi<SecureMediaPayload<AlbumWithTracksAndArtistPayload>>(HttpMethod.GET, albumUrl + "/" + albumId, userToken)
+}
+
+
+export const mediaStreamUrl = (mediaItemId: number, mediaToken: string): string => {
+    return `${backendUrl('/stream/secure/media')}/${mediaItemId}?mediaToken=${mediaToken}`
 }
 

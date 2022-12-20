@@ -8,7 +8,7 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
@@ -63,9 +63,9 @@ public class AjaxSearchController extends AjaxBaseController {
 			mediaItemSearchCriteria.setMaximumResults(maximumResults);
 		}
 
-		MediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
+		MashupMediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
 		if (mediaType == null) {
-			mediaType = MediaType.TRACK;
+			mediaType = MashupMediaType.TRACK;
 		}
 		mediaItemSearchCriteria.setMediaType(mediaType);
 
@@ -88,7 +88,7 @@ public class AjaxSearchController extends AjaxBaseController {
 
 		List<? extends MediaItem> tracks = null;
 
-		if (mediaType == MediaType.TRACK) {
+		if (mediaType == MashupMediaType.TRACK) {
 			tracks = musicManager.findTracks(mediaItemSearchCriteria);
 		} else {
 			tracks = mediaManager.findMediaItems(mediaItemSearchCriteria);
@@ -102,7 +102,7 @@ public class AjaxSearchController extends AjaxBaseController {
 	}
 
 	private String preparePage(Model model, ActionType actionType, int pageNumber,
-			List<? extends MediaItem> mediaItems, MediaSortType mediaSortType, MediaType mediaType, boolean isAscending, boolean isAppend) {
+			List<? extends MediaItem> mediaItems, MediaSortType mediaSortType, MashupMediaType mediaType, boolean isAscending, boolean isAppend) {
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_IS_APPEND, isAppend);
 		if (actionType == ActionType.NONE) {
 			if (pageNumber == 0 && mediaItems.isEmpty()) {
@@ -112,7 +112,7 @@ public class AjaxSearchController extends AjaxBaseController {
 			model.addAttribute("orderBy", mediaSortType.toString().toLowerCase());
 			model.addAttribute("ascending", isAscending);
 
-			if (mediaType == MediaType.TRACK) {
+			if (mediaType == MashupMediaType.TRACK) {
 				model.addAttribute("pageNumber", pageNumber);
 				model.addAttribute("tracks", mediaItems);
 				return "ajax/search/tracks";

@@ -20,17 +20,17 @@ package org.mashupmedia.comparator;
 import java.util.Comparator;
 
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.music.Track;
 
 public class MediaItemComparator implements Comparator<MediaItem>{
 
 	@Override
 	public int compare(MediaItem o1, MediaItem o2) {
-		MediaType mediaType =  o1.getMediaType();
+		MashupMediaType mediaType =  o1.getMashupMediaType();
 		
 		int compare = 0;
-		if (mediaType == MediaType.TRACK) {
+		if (mediaType == MashupMediaType.TRACK) {
 			Track track1 = (Track) o1;
 			Track track2 = (Track) o2;
 			compare = compare(track1, track2);

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.web.servlet.View;
@@ -20,10 +20,10 @@ public class MediaItemImageView implements View {
 	
 	private byte[] imageBytes;
 	private MediaContentType mediaContentType;
-	private MediaType mediaType;
+	private MashupMediaType mediaType;
 
 	public MediaItemImageView(byte[] imageBytes, MediaContentType mediaContentType,
-			MediaType mediaType) {
+			MashupMediaType mediaType) {
 
 		this.imageBytes = imageBytes;
 
@@ -44,9 +44,9 @@ public class MediaItemImageView implements View {
 			HttpServletResponse response) throws Exception {
 		if (FileHelper.isEmptyBytes(imageBytes)) {
 			String imageNotFound = "";
-			if (mediaType == MediaType.TRACK) {
+			if (mediaType == MashupMediaType.TRACK) {
 				imageNotFound = IMAGE_PATH_DEFAULT_ALBUM_ART;
-			} else if (mediaType == MediaType.PHOTO) {
+			} else if (mediaType == MashupMediaType.PHOTO) {
 				imageNotFound = IMAGE_PATH_DEFAULT_PHOTO;
 
 			}

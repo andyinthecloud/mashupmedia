@@ -2,7 +2,9 @@ import { ChevronLeft, ChevronRight, Pause, PlayArrow } from "@mui/icons-material
 import { IconButton, Slider } from "@mui/material"
 import { useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
+import { mediaStreamUrl } from "../../../media/music/rest/musicCalls"
 import { NavigatePlaylistPayload, NavigatePlaylistType, navigateTrack, TrackWithArtistPayload } from "../../../media/music/rest/playlistCalls"
+import { SecureMediaPayload } from "../../../media/rest/secureMediaPayload"
 import { RootState } from "../../redux/store"
 import "./AudioPlayer.css"
 
@@ -11,17 +13,25 @@ export type AudioPlayerPlayload = {
     playTrigger?: number
     trackWithArtistPayload?: TrackWithArtistPayload
     isReadyToPlay: boolean
+    isPlaying: boolean
 }
 
 const AudioPlayer = () => {
 
+    // https://stackoverflow.com/questions/47686345/playing-sound-in-react-js
+
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const playTrigger = useSelector((state: RootState) => state.playMusic.trigger)
 
-    const [props, setProps] = useState<AudioPlayerPlayload>({ isReadyToPlay: false })
+    const [props, setProps] = useState<SecureMediaPayload<AudioPlayerPlayload>>({
+        mediaToken: "",
+        payload: {
+            isReadyToPlay: false,
+            isPlaying: false
+        }
+    })
 
     const audioPlayer = useRef(new Audio())
-
 
     useEffect(() => {
         console.log("AudioPlayer: usertoken", userToken)
@@ -32,20 +42,19 @@ const AudioPlayer = () => {
         console.log("trigger play", playTrigger)
         setProps({
             ...props,
-            playTrigger
+            payload: {
+                ...props.payload,
+                playTrigger
+            }
         })
     }, [playTrigger])
 
-    useEffect(() => {
-        console.log("isReadyToPlay", props.isReadyToPlay)
-    }, [props.isReadyToPlay])
-
     const renderPlayingInformation = () => {
-        if (props.isReadyToPlay) {
+        if (!isEmptyPlaylist()) {
             return (
                 <div>
-                    <span className="artist">{props.trackWithArtistPayload?.artistPayload.name}</span>
-                    <span className="title">{props.trackWithArtistPayload?.trackPayload.name}</span>
+                    <span className="artist">{props.payload.trackWithArtistPayload?.artistPayload.name}</span>
+                    <span className="title">{props.payload.trackWithArtistPayload?.trackPayload.name}</span>
                 </div>
             )
         } else {
@@ -53,6 +62,10 @@ const AudioPlayer = () => {
                 <span>Empty playlist</span>
             )
         }
+    }
+
+    const isEmptyPlaylist = (): boolean => {
+        return props.payload.trackWithArtistPayload?.trackPayload.name ? false : true
     }
 
     const handleNavigate = (navigatePlaylistType: NavigatePlaylistType): void => {
@@ -65,31 +78,52 @@ const AudioPlayer = () => {
             if (response.ok) {
                 setProps({
                     ...props,
-                    trackWithArtistPayload: response.parsedBody?.payload,
-                    isReadyToPlay: true
-                })
-            } else {
-                setProps({
-                    ...props,
-                    isReadyToPlay: false
-                })
+                    mediaToken: response.parsedBody?.mediaToken || "",
+                    payload: {
+                        ...props.payload,
+                        isReadyToPlay: response.ok,
+                        trackWithArtistPayload: response.parsedBody?.payload
+                    }
+                })    
             }
         })
     }
 
-    const handlePlay = (): void => {
-        audioPlayer.current.src = ''
+    useEffect(() => {
+        const trackId = props.payload.trackWithArtistPayload?.trackPayload.id
+        if (trackId) {
+            console.log("cueing song", trackId)
+            audioPlayer.current.src = mediaStreamUrl(trackId, props.mediaToken)
+            if (props.payload.isPlaying) {
+                audioPlayer.current.play()
+            }
+        } 
+    }, [props.payload.trackWithArtistPayload?.trackPayload.id])
 
-        if (audioPlayer.current.paused) {
-            audioPlayer.current.play
-        } else {
-            audioPlayer.current.pause
-        }
+    const handlePlay = (): void => {
+        setProps({
+            ...props,
+            payload: {
+                ...props.payload,
+                isPlaying: !props.payload.isPlaying
+            }
+        })
     }
+
+    useEffect(() => {
+        const isPlaying = props.payload.isPlaying
+        if (isPlaying) {
+            audioPlayer.current.play()
+        } else {
+            audioPlayer.current.pause()
+        }
+
+    }, [props.payload.isPlaying])
+
 
     const trackLength = (minutes?: number, seconds?: number) => {
         const formattedMinutes = minutes || 0;
-        const formattedSeconds = seconds || 0;        
+        const formattedSeconds = seconds || 0;
         const secondsValue = (formattedSeconds < 10) ? "0" + formattedSeconds : formattedSeconds;
 
         return (
@@ -97,8 +131,12 @@ const AudioPlayer = () => {
         )
     }
 
+    const audioPlayerDisplayClass = (): string => {
+        return props.payload.isReadyToPlay ? "" : "hide"
+    }
+
     return (
-        <div id="audio-player-container">
+        <div id="audio-player-container" className={audioPlayerDisplayClass()} >
             <div className="track centre">
                 {renderPlayingInformation()}
             </div>
@@ -106,24 +144,24 @@ const AudioPlayer = () => {
                 <IconButton
                     color="primary"
                     onClick={() => handleNavigate(NavigatePlaylistType.PREVIOUS)}
-                    disabled={!props.isReadyToPlay}>
+                    disabled={isEmptyPlaylist()}>
                     <ChevronLeft fontSize="medium" />
                 </IconButton>
 
                 <IconButton
                     color="primary"
                     onClick={() => handlePlay()}
-                    disabled={!props.isReadyToPlay}>
-                    {audioPlayer.current && audioPlayer.current.paused
-                        ? <PlayArrow sx={{ fontSize: 48 }} />
-                        : <Pause sx={{ fontSize: 48 }} />
+                    disabled={isEmptyPlaylist()}>
+                    {props.payload.isPlaying
+                        ? <Pause sx={{ fontSize: 48 }} />
+                        : <PlayArrow sx={{ fontSize: 48 }} />
                     }
                 </IconButton>
 
                 <IconButton
                     color="primary"
                     onClick={() => handleNavigate(NavigatePlaylistType.NEXT)}
-                    disabled={!props.isReadyToPlay}>
+                    disabled={isEmptyPlaylist()}>
                     <ChevronRight fontSize="medium" />
                 </IconButton>
             </div>
@@ -135,12 +173,10 @@ const AudioPlayer = () => {
                     min={0}
                     max={100}
                     defaultValue={45}
-                    disabled={!props.isReadyToPlay} />
-                <div className="end duration-time">{trackLength(props.trackWithArtistPayload?.trackPayload.minutes, props.trackWithArtistPayload?.trackPayload.seconds)} </div>
+                    disabled={isEmptyPlaylist()} />
+                <div className="end duration-time">{trackLength(props.payload.trackWithArtistPayload?.trackPayload.minutes, props.payload.trackWithArtistPayload?.trackPayload.seconds)} </div>
             </div>
-
         </div>
-
     )
 
 }

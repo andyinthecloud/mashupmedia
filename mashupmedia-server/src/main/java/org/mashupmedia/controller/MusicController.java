@@ -12,7 +12,7 @@ import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Artist;
@@ -288,7 +288,7 @@ public class MusicController extends BaseController {
 		}
 
 		ModelAndView modelAndView = new ModelAndView(
-				new MediaItemImageView(imageBytes, mediaContentType, MediaType.TRACK));
+				new MediaItemImageView(imageBytes, mediaContentType, MashupMediaType.TRACK));
 		return modelAndView;
 	}
 

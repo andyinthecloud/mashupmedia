@@ -17,7 +17,7 @@ import org.hibernate.search.query.dsl.QueryBuilder;
 import org.mashupmedia.comparator.MediaItemComparator;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.util.StringHelper;
@@ -153,7 +153,7 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 					.createQuery());
 		}
 
-		MediaType mediaType = mediaItemSearchCriteria.getMediaType();
+		MashupMediaType mediaType = mediaItemSearchCriteria.getMediaType();
 		if (mediaType != null) {
 			String mediaTypeValue = StringHelper.normaliseTextForDatabase(mediaType.toString());
 			booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue)

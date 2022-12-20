@@ -47,7 +47,7 @@ public class MediaItem implements Serializable {
 
 	public final static String TITLE_SEPERATOR = " - ";
 
-	public enum MediaType {
+	public enum MashupMediaType {
 		TRACK, VIDEO, PHOTO;
 	}
 
@@ -180,12 +180,12 @@ public class MediaItem implements Serializable {
 		this.mediaTypeValue = mediaTypeValue;
 	}
 
-	public MediaType getMediaType() {
-		MediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
+	public MashupMediaType getMashupMediaType() {
+		MashupMediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
 		return mediaType;
 	}
 
-	public void setMediaType(MediaType mediaType) {
+	public void setMashupMediaType(MashupMediaType mediaType) {
 		mediaTypeValue = StringHelper.normaliseTextForDatabase(mediaType
 				.toString());
 	}

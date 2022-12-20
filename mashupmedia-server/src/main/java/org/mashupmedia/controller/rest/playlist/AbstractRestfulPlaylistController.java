@@ -147,7 +147,7 @@ public abstract class AbstractRestfulPlaylistController {
 			throw new MashupMediaRuntimeException("Unable to play media item. mediaItemId = " + mediaItemId);
 		}
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, mediaItemId);
+		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, mediaItemId, false);
 		if (playlistMediaItem == null) {
 			throw new MashupMediaRuntimeException("Unable to play media item. mediaItemId = " + mediaItemId);
 		}

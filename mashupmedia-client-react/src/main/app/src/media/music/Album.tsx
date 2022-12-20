@@ -8,7 +8,7 @@ import { addNotification, NotificationType } from "../../common/notification/not
 import { RootState } from "../../common/redux/store"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
 import { playMusic } from "./features/playMusicSlice"
-import { albumArtImageUrl, AlbumWithSongsAndArtistPayload, getAlbum, ImageType } from "./rest/musicCalls"
+import { albumArtImageUrl, AlbumWithTracksAndArtistPayload, getAlbum, ImageType } from "./rest/musicCalls"
 import { addAlbum, playAlbum } from "./rest/playlistCalls"
 
 const Album = () => {
@@ -17,7 +17,7 @@ const Album = () => {
 
     const { albumId } = useParams()
 
-    const [props, setProps] = useState<SecureMediaPayload<AlbumWithSongsAndArtistPayload>>({
+    const [props, setProps] = useState<SecureMediaPayload<AlbumWithTracksAndArtistPayload>>({
         mediaToken: "",
         payload: {
             albumPayload: {
@@ -29,7 +29,7 @@ const Album = () => {
                 indexLetter: "",
                 name: ""
             },
-            songPayloads: []
+            trackPayloads: []
         }
     })
 
@@ -118,7 +118,7 @@ const Album = () => {
                 <h2>{props.payload.artistPayload.name}</h2>
 
                 <List>
-                    {props.payload.songPayloads.map(function (songPayload) {
+                    {props.payload.trackPayloads.map(function (songPayload) {
                         return (
                             <ListItem
                                 secondaryAction={

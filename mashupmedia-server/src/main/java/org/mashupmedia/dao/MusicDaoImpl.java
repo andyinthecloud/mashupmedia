@@ -25,7 +25,7 @@ import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
@@ -469,7 +469,7 @@ query.setParameter("genreId", genre.getId());
 			}
 		}
 
-		String mediaTypeValue = StringHelper.normaliseTextForDatabase(MediaType.TRACK.toString());
+		String mediaTypeValue = StringHelper.normaliseTextForDatabase(MashupMediaType.TRACK.toString());
 		booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());
 		booleanJunction.must(
 				queryBuilder.keyword().onField("enabled").matching(mediaItemSearchCriteria.isEnabled()).createQuery());

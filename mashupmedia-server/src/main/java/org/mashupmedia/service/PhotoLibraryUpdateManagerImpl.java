@@ -15,7 +15,7 @@ import org.mashupmedia.dao.PhotoDao;
 import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.media.MediaEncoding;
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.FileHelper;
@@ -219,7 +219,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setTakenOn(new Date(lastModified));
 
 			photo.setFileName(fileName);
-			photo.setMediaType(MediaType.PHOTO);
+			photo.setMashupMediaType(MashupMediaType.PHOTO);
 			photo.setPath(path);
 			photo.setSizeInBytes(file.length());
 

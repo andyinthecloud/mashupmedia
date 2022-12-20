@@ -35,7 +35,7 @@ import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MediaType;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
@@ -354,7 +354,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		// Clean up
 		List<MediaItem> duplicateMediaItems = mediaDao.getMediaItems(file.getPath());
 		for (MediaItem duplicateMediaItem : duplicateMediaItems) {
-			if (duplicateMediaItem.getMediaType().equals(MediaType.TRACK)) {
+			if (duplicateMediaItem.getMashupMediaType().equals(MashupMediaType.TRACK)) {
 				Track duplicateTrack = (Track) duplicateMediaItem;
 				deleteTrack(duplicateTrack);
 			}

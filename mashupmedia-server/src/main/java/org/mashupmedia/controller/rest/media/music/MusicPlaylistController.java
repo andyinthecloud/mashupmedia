@@ -25,15 +25,15 @@ import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.ValidationUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
-@Controller
+@RestController
 @RequestMapping("/api/playlist/music")
 @RequiredArgsConstructor
 public class MusicPlaylistController {
@@ -97,47 +97,31 @@ public class MusicPlaylistController {
     public ResponseEntity<SecureMediaPayload<TrackWithArtistPayload>> navigatePlaylist(
             @RequestBody NavigatePlaylistPayload navigatePlaylistPayload) {
         Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
-        MediaItem mediaItem = getMediaItemToPlay(navigatePlaylistPayload, playlist);
-        if (mediaItem == null) {
+        
+        PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, navigatePlaylistPayload.getMediaItemId(), true);
+
+        if (playlistMediaItem == null) {
+            int relativeOffset = getRelativeOffset(navigatePlaylistPayload.getNavigatePlaylistType());
+            playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, relativeOffset, true);
+        }
+
+        if (playlistMediaItem == null) {
             return ResponseEntity.badRequest().build();
         }
 
         playlistManager.savePlaylist(playlist);
         User user = AdminHelper.getLoggedInUser();
         String mediaToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
-        return ResponseEntity.ok(trackWithArtistMapper.toDto(mediaItem, mediaToken));
+        return ResponseEntity.ok(trackWithArtistMapper.toDto(playlistMediaItem.getMediaItem(), mediaToken));
     }
 
-    private MediaItem getMediaItemToPlay(NavigatePlaylistPayload navigatePlaylistPayload, Playlist playlist) {
-
-        List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
-        if (playlistMediaItems.isEmpty()) {
-            return null;
-        }
-
-        Optional<PlaylistMediaItem> optionalPlaylistMediaItem = Optional.empty();
-        Integer playlistMediaItemId = navigatePlaylistPayload.getMediaItemId();
-        if (playlistMediaItemId != null) {
-            optionalPlaylistMediaItem = playlist.getAccessiblePlaylistMediaItems().stream()
-                    .filter(pmi -> pmi.getId() == playlistMediaItemId)
-                    .findAny();
-        }
-
-        if (optionalPlaylistMediaItem.isPresent()) {
-            optionalPlaylistMediaItem.get().setPlaying(true);
-            return optionalPlaylistMediaItem.get().getMediaItem();
-        }
-
-        NavigatePlaylistType navigatePlaylistType = navigatePlaylistPayload.getNavigatePlaylistType();
-        int relativeOffset = switch (navigatePlaylistType) {
+    private int getRelativeOffset(NavigatePlaylistType navigatePlaylistType) {
+        return  switch (navigatePlaylistType) {
             case PREVIOUS -> -1;
             case CURRENT -> 0;
             case NEXT -> 1;
             default -> 0;
         };
-
-        PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, relativeOffset, true);
-        return playlistMediaItem.getMediaItem();
     }
 
 }

@@ -1,20 +1,19 @@
-package org.mashupmedia.controller.media.music;
+package org.mashupmedia.controller.stream;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MusicManager;
-import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
+import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/media/music/album-art")
+@RequestMapping("/stream/secure/music/album-art")
 @RequiredArgsConstructor
 public class AlbumArtController {
 
@@ -36,7 +35,7 @@ public class AlbumArtController {
     private final MashupMediaSecurityManager securityManager;
 
     @GetMapping(value = "/{albumId}")
-    public @ResponseBody byte[] getAlbumArt(@PathVariable long albumId,
+    public @ResponseBody Resource getAlbumArt(@PathVariable long albumId,
             @RequestParam String mediaToken,
             @RequestParam(value = "imageType", required = false) ImageType imageType,
             final HttpServletResponse httpServletResponse) throws IOException {
@@ -52,16 +51,17 @@ public class AlbumArtController {
         httpServletResponse.setContentType(mediaContentType.getMimeContentType());
 
         String imagePath = getImagePath(imageType, albumArtImage);
+
+        FileSystemResource fileSystemResource = null;
         File albumArtFile = new File(imagePath);
 
-        InputStream inputStream = null;
         if (albumArtFile.isFile()) {
-            inputStream = new FileInputStream(albumArtFile);
+            fileSystemResource = new FileSystemResource(albumArtFile);
         } else {
-            inputStream = getClass().getResourceAsStream(IMAGE_PATH_DEFAULT_ALBUM_ART);
+            fileSystemResource = new FileSystemResource(IMAGE_PATH_DEFAULT_ALBUM_ART);
         }
 
-        return IOUtils.toByteArray(inputStream);
+        return fileSystemResource;
     }
 
     private String getImagePath(ImageType imageType, AlbumArtImage albumArtImage) {
