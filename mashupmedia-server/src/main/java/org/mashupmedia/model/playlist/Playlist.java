@@ -3,6 +3,7 @@ package org.mashupmedia.model.playlist;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -49,6 +50,9 @@ public class Playlist implements Serializable {
 
 	@ManyToOne
 	private User updatedBy;
+
+	@OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<UserPlaylistPosition> userPlaylistPositions;
 
 	private boolean userDefault;
 

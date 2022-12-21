@@ -1,10 +1,11 @@
 package org.mashupmedia.mapper.media.music;
 
-import org.mashupmedia.dto.media.music.TrackWithArtistPayload;
+import org.mashupmedia.dto.media.music.MusicPlaylistTrackPayload;
 import org.mashupmedia.mapper.SecureMediaDomainMapper;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Track;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -12,25 +13,28 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Component
-public class TrackWithArtistMapper extends SecureMediaDomainMapper<MediaItem, TrackWithArtistPayload> {
+public class MusicPlaylistTrackMapper extends SecureMediaDomainMapper<PlaylistMediaItem, MusicPlaylistTrackPayload> {
 
     private final ArtistMapper artistMapper;
     private final TrackMapper trackMapper;
 
     @Override
-    public TrackWithArtistPayload toDto(MediaItem domain) {
-        
-        Assert.isInstanceOf(Track.class, domain, "Playlist media item should be a music track");
+    public MusicPlaylistTrackPayload toDto(PlaylistMediaItem domain) {
 
-        Track track = (Track) domain;
+        MediaItem mediaItem = domain.getMediaItem();        
+        Assert.isInstanceOf(Track.class, mediaItem, "Playlist media item should be a music track");
+
+        Track track = (Track) mediaItem;
         Assert.notNull(track, "Track should not be null");
 
         Artist artist = track.getArtist();
         Assert.notNull(artist, "Artist should not be null");
 
-        return TrackWithArtistPayload.builder()
+        return MusicPlaylistTrackPayload.builder()
                 .artistPayload(artistMapper.toDto(artist))
                 .trackPayload(trackMapper.toDto(track))
+                .first(domain.isFirst())
+                .last(domain.isLast())
                 .build();
     }
 

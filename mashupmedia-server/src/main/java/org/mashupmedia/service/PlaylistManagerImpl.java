@@ -3,39 +3,40 @@ package org.mashupmedia.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.PlaylistDao;
-import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.exception.UnauthorisedException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.model.playlist.UserPlaylistPosition;
+import org.mashupmedia.model.playlist.UserPlaylistPositionId;
+import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MessageHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 @Transactional
 public class PlaylistManagerImpl implements PlaylistManager {
 
-	@Autowired
-	private PlaylistDao playlistDao;
+	private final PlaylistDao playlistDao;
 
-	@Autowired
-	private MediaDao mediaDao;
+	private final MediaDao mediaDao;
 
-	@Autowired
-	private MashupMediaSecurityManager securityManager;
+	private final MashupMediaSecurityManager securityManager;
 
-	@Autowired
-	private AdminManager adminManager;
+	private final UserPlaylistPositionRepository userPlaylistPositionRepository;
 
 	@Override
 	public List<Playlist> getPlaylists(PlaylistType playlistType) {
@@ -55,21 +56,19 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		}
 
 		Hibernate.initialize(playlist.getPlaylistMediaItems());
-
-		List<PlaylistMediaItem> accessiblePlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			MediaItem mediaItem = playlistMediaItem.getMediaItem();
-			if (!mediaItem.isEnabled()) {
-				continue;
-			}
-
-			if (securityManager.canAccessPlaylistMediaItem(playlistMediaItem)) {
-				accessiblePlaylistMediaItems.add(playlistMediaItem);
-			}
-		}
+		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlistMediaItems.stream()
+				.filter(pmi -> pmi.getMediaItem().isEnabled())
+				.filter(pmi -> securityManager.canAccessMediaItem(pmi.getMediaItem()))
+				.collect(Collectors.toList());
 		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
 
+		if (accessiblePlaylistMediaItems.isEmpty()) {
+			return;
+		}
+
+		accessiblePlaylistMediaItems.get(0).setFirst(true);
+		accessiblePlaylistMediaItems.get(accessiblePlaylistMediaItems.size() - 1).setLast(true);
 	}
 
 	@Override
@@ -92,9 +91,6 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		}
 
 		playlistMediaItems.removeAll(playlistMediaItemsToDelete);
-
-		// playlist.setPlaylistMediaItems(playlistMediaItems);
-
 		return playlist;
 	}
 
@@ -149,8 +145,35 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 		playlist.setUpdatedBy(user);
 		playlist.setUpdatedOn(date);
-
 		playlistDao.savePlaylist(playlist);
+		saveUserPlaylistPosition(playlist);
+	}
+
+	private void saveUserPlaylistPosition(Playlist playlist) {
+		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+		if (accessiblePlaylistMediaItems == null || accessiblePlaylistMediaItems.isEmpty()) {
+			return;
+		}
+
+		Optional<PlaylistMediaItem> playingPlaylistMediaItem = accessiblePlaylistMediaItems
+				.stream()
+				.filter(pmi -> pmi.isPlaying())
+				.findAny();
+
+		if (playingPlaylistMediaItem.isEmpty()) {
+			return;
+		}
+
+		User user = AdminHelper.getLoggedInUser();
+
+		UserPlaylistPosition userPlaylistPosition = UserPlaylistPosition
+				.builder()
+				.playlistId(playlist.getId())
+				.userId(user.getId())
+				.playlistMediaId(playingPlaylistMediaItem.get().getId())
+				.build();
+
+		userPlaylistPositionRepository.save(userPlaylistPosition);
 	}
 
 	@Override
@@ -186,20 +209,58 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
-	public void saveUserPlaylistMediaItem(User user, PlaylistMediaItem playlistMediaItem) {
-		if (user == null || playlistMediaItem == null) {
-			return;
+	public PlaylistMediaItem navigateToPlaylistMediaItem(Playlist playlist, int relativeOffset) {
+
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return null;
 		}
 
-		if (user.getId() == 0) {
-			throw new MashupMediaRuntimeException("Can only update the playlistMediaItem for an existing user.");
+		User user = AdminHelper.getLoggedInUser();
+
+		UserPlaylistPositionId userPlaylistPositionId = new UserPlaylistPositionId(user.getId(), playlist.getId());
+		Optional<UserPlaylistPosition> optionalUserPlaylistPosition = userPlaylistPositionRepository
+				.findById(userPlaylistPositionId);
+
+		long playlistMediaId = optionalUserPlaylistPosition.isPresent()
+				? optionalUserPlaylistPosition.get().getPlaylistMediaId()
+				: playlistMediaItems.get(0).getId();
+
+		int playingIndex = getPlayingIndex(playlistMediaItems, playlistMediaId, relativeOffset);
+
+		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(playingIndex);
+		playlistMediaItem.setPlaying(true);
+		return playlistMediaItem;
+	}
+
+	private int getPlayingIndex(List<PlaylistMediaItem> playlistMediaItems, long playlistMediaId, int relativeOffset) {
+
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return 0;
 		}
 
-		user.setPlaylistMediaItem(playlistMediaItem);
-		savePlaylist(playlistMediaItem.getPlaylist());
+		Optional<PlaylistMediaItem> playlistMediaItem = playlistMediaItems
+				.stream()
+				.filter(pmi -> pmi.getId() == playlistMediaId)
+				.findAny();
 
-		adminManager.updateUser(user);
+		if (playlistMediaItem.isEmpty()) {
+			return 0;
+		}
 
+		int index = playlistMediaItems.indexOf(playlistMediaItem.get());
+
+		index += relativeOffset;
+
+		if (index < 0) {
+			return 0;
+		}
+
+		if (index >= playlistMediaItems.size()) {
+			return playlistMediaItems.size() - 1;
+		}
+
+		return index;
 	}
 
 }

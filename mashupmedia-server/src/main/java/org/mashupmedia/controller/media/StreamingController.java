@@ -161,14 +161,14 @@ public class StreamingController {
 		boolean isEndOfPlaylist = false;
 
 		while (isEndOfPlaylist == false) {
-			PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist,
-					offset, false);
-			if (playlistMediaItem == null || playlistMediaItem.getId() == 0) {
-				isEndOfPlaylist = true;
-				continue;
-			}
+			// PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist,
+			// 		offset);
+			// if (playlistMediaItem == null || playlistMediaItem.getId() == 0) {
+			// 	isEndOfPlaylist = true;
+			// 	continue;
+			// }
 
-			playlistMediaItems.add(playlistMediaItem);
+			// playlistMediaItems.add(playlistMediaItem);
 			offset++;
 		}
 

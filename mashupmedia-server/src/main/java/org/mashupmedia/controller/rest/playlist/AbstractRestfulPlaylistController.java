@@ -61,7 +61,7 @@ public abstract class AbstractRestfulPlaylistController {
 		}
 
 		User user = AdminHelper.getLoggedInUser();
-		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
+		// playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
 		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
 		return restfulMediaItem;
 	}
@@ -76,19 +76,21 @@ public abstract class AbstractRestfulPlaylistController {
 		}
 
 		User user = AdminHelper.getLoggedInUser();
-		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
+		// playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
 		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
 		return restfulMediaItem;
 	}
 
 	protected PlaylistMediaItem getMediaItemFromPlaylist(int relativePosition, Playlist playlist) {
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist,
-				relativePosition, true);
-		if (playlistMediaItem == null || playlistMediaItem.getId() < 1) {
-			return null;
-		}
+		// PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist,
+		// 		relativePosition);
+		// if (playlistMediaItem == null || playlistMediaItem.getId() < 1) {
+		// 	return null;
+		// }
 
-		return playlistMediaItem;
+		// return playlistMediaItem;
+	
+			return null;
 	}
 
 	protected void savePlaylist(Playlist playlist) {
@@ -147,16 +149,17 @@ public abstract class AbstractRestfulPlaylistController {
 			throw new MashupMediaRuntimeException("Unable to play media item. mediaItemId = " + mediaItemId);
 		}
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, mediaItemId, false);
-		if (playlistMediaItem == null) {
-			throw new MashupMediaRuntimeException("Unable to play media item. mediaItemId = " + mediaItemId);
-		}
+		// PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, mediaItemId, false);
+		// if (playlistMediaItem == null) {
+		// 	throw new MashupMediaRuntimeException("Unable to play media item. mediaItemId = " + mediaItemId);
+		// }
 
-		User user = AdminHelper.getLoggedInUser();
-		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
+		// User user = AdminHelper.getLoggedInUser();
+		// playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
 
-		RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
-		return restfulMediaItem;
+		// RestfulMediaItem restfulMediaItem = convertToRestfulMediaItem(playlistMediaItem);
+		// return restfulMediaItem;
+		return null;
 	}
 
 	@RequestMapping(value = "/new-playlist", method = RequestMethod.POST)
@@ -192,7 +195,7 @@ public abstract class AbstractRestfulPlaylistController {
 		}
 
 		PlaylistHelper.replacePlaylist(playlist, mediaItems);
-		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
+		// PlaylistHelper.initialiseCurrentlyPlaying(playlist);
 
 		playlistManager.savePlaylist(playlist);
 		PlaylistMediaItem playlistMediaItem = getMediaItemFromPlaylist(-1, playlist);

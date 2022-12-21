@@ -31,7 +31,7 @@ public abstract class AbstractPlaylistController extends BaseController {
 
 		playlistId = playlist.getId();
 
-		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
+		// PlaylistHelper.initialiseCurrentlyPlaying(playlist);
 
 		model.addAttribute("playlist", playlist);
 

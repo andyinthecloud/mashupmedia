@@ -50,14 +50,15 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.replacePlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0,
-				true);
-		Track track = (Track) playlistMediaItem.getMediaItem();
+		// PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0);
+		// Track track = (Track) playlistMediaItem.getMediaItem();
 
-		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
-				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
-		RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
-		return restfulTrack;
+		// MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
+		// 		.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+		// RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
+		// return restfulTrack;
+	
+		return null;
 	}
 
 	@RequestMapping(value = "append-album", method = RequestMethod.GET)
@@ -70,20 +71,21 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.appendPlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0,
-				true);
+		// PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0);
 
-		// if playlist was empty get the first track in the new list
-		if (playlistMediaItem == null) {
-			playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0, true);
-		}
+		// // if playlist was empty get the first track in the new list
+		// if (playlistMediaItem == null) {
+		// 	playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0);
+		// }
 
-		Track track = (Track) playlistMediaItem.getMediaItem();
+		// Track track = (Track) playlistMediaItem.getMediaItem();
 
-		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
-				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
-		RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
-		return restfulTrack;
+		// MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
+		// 		.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+		// RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
+		// return restfulTrack;
+
+		return null;
 	}
 
 	@RequestMapping(value = "/play-artist", method = RequestMethod.GET)
@@ -104,15 +106,16 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.replacePlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0,
-				true);
+		// PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0);
 
-		Track track = (Track) playlistMediaItem.getMediaItem();
+		// Track track = (Track) playlistMediaItem.getMediaItem();
 
-		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
-				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
-		RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
-		return restfulTrack;
+		// MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
+		// 		.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+		// RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
+		// return restfulTrack;
+
+		return null;
 	}
 
 	@RequestMapping(value = "append-artist", method = RequestMethod.GET)
@@ -133,15 +136,15 @@ public class RestfulMusicPlaylistController extends AbstractRestfulPlaylistContr
 		PlaylistHelper.appendPlaylist(playlist, tracks);
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0,
-				true);
+		// PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, 0);
 
-		Track track = (Track) playlistMediaItem.getMediaItem();
+		// Track track = (Track) playlistMediaItem.getMediaItem();
 
-		MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
-				.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
-		RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
-		return restfulTrack;
+		// MediaContentType[] suppliedStreamingMediaContentTypes = mediaManager
+		// 		.getSuppliedStreamingMediaContentTypes(LibraryType.MUSIC);
+		// RestfulTrack restfulTrack = new RestfulTrack(track, suppliedStreamingMediaContentTypes);
+		// return restfulTrack;
+		return null;
 	}
 
 	@RequestMapping(value = "/play-track", method = RequestMethod.GET)

@@ -101,55 +101,6 @@ public class PlaylistHelper {
 		appendPlaylist(playlist, mediaItems);
 	}
 
-	public static PlaylistMediaItem navigatePlaylist(Playlist playlist, int relativeOffset,
-			boolean isSetPlayingStatus) {
-
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
-		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-			return null;
-		}
-
-		User user = AdminHelper.getLoggedInUser();
-		PlaylistMediaItem currentPlaylistMediaItem = user.getPlaylistMediaItem();
-
-		int playingIndex = 0;
-		for (int i = 0; i < playlistMediaItems.size(); i++) {
-			PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(i);
-			if (playlistMediaItem.equals(currentPlaylistMediaItem)) {
-				playingIndex = i;
-			}
-
-			if (isSetPlayingStatus) {
-				playlistMediaItem.setPlaying(false);
-			}
-		}
-
-		int newPlayingIndex = playingIndex + relativeOffset;
-		if (newPlayingIndex < 0 || newPlayingIndex > (playlistMediaItems.size() - 1)) {
-			playlistMediaItems.get(playingIndex).setPlaying(true);
-			return currentPlaylistMediaItem;
-		}
-
-		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(newPlayingIndex);
-		if (isSetPlayingStatus) {
-			playlistMediaItem.setPlaying(true);
-		}
-		return playlistMediaItem;
-	}
-
-	public static PlaylistMediaItem getFirstPlayListMediaItem(Playlist playlist) {
-		if (playlist == null) {
-			return null;
-		}
-
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-			return null;
-		}
-
-		return playlistMediaItems.get(0);
-	}
-
 	public static boolean canSavePlaylist(Playlist playlist) {
 		if (playlist == null) {
 			return false;
@@ -171,40 +122,6 @@ public class PlaylistHelper {
 		return false;
 	}
 
-	public static void initialiseCurrentlyPlaying(Playlist playlist) {
-		if (playlist == null) {
-			return;
-		}
-
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
-		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
-			return;
-		}
-
-		User user = AdminHelper.getLoggedInUser();
-		if (user == null) {
-			return;
-		}
-
-		PlaylistMediaItem userPlaylistMediaItem = user.getPlaylistMediaItem();
-		if (userPlaylistMediaItem == null) {
-			playlistMediaItems.get(0).setPlaying(true);
-			return;
-		}
-
-		long userPlaylistMediaItemId = userPlaylistMediaItem.getMediaItem().getId();
-		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-			long playlistMediaItemId = playlistMediaItem.getMediaItem().getId();
-			if (playlistMediaItemId == userPlaylistMediaItemId) {
-				playlistMediaItem.setPlaying(true);
-				return;
-			}
-		}
-
-		playlistMediaItems.get(0).setPlaying(true);
-
-	}
-
 	public static PlaylistType getPlaylistType(String playlistTypeValue) {
 		playlistTypeValue = StringUtils.trimToEmpty(playlistTypeValue);
 		if (StringUtils.isEmpty(playlistTypeValue)) {
@@ -221,8 +138,7 @@ public class PlaylistHelper {
 
 	}
 
-	public static PlaylistMediaItem getPlaylistMediaItem(Playlist playlist, Long mediaItemId,
-			boolean isSetPlayingStatus) {
+	public static PlaylistMediaItem getPlaylistMediaItem(Playlist playlist, Long mediaItemId) {
 
 		if (mediaItemId == null || mediaItemId == 0) {
 			return null;
@@ -242,18 +158,12 @@ public class PlaylistHelper {
 			return null;
 		}
 
-		if (isSetPlayingStatus) {
-			for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
-				playlistMediaItem.setPlaying(false);
-			}
-		}
-
 		Optional<PlaylistMediaItem> optionalPlaylistMediaItem = playlistMediaItems.stream()
 				.filter(pmi -> pmi.getMediaItem().getId() == mediaItemId)
 				.findAny();
 
-		if (isSetPlayingStatus && optionalPlaylistMediaItem.isPresent()) {
-			optionalPlaylistMediaItem.get().setPlaying(true);			
+		if (optionalPlaylistMediaItem.isPresent()) {
+			optionalPlaylistMediaItem.get().setPlaying(true);
 		}
 
 		return optionalPlaylistMediaItem.orElse(null);

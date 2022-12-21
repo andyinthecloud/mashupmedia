@@ -3,17 +3,28 @@ package org.mashupmedia.model;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
+
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.model.playlist.UserPlaylistPosition;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
@@ -21,6 +32,8 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class User implements UserDetails {
 	
 	public static String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
@@ -41,113 +54,8 @@ public class User implements UserDetails {
 	private Set<Group> groups;
 	private Date createdOn;
 	private Date updatedOn;
-	private long playlistMediaItemId;
-	@Transient
-	private PlaylistMediaItem playlistMediaItem;
-	
-	public boolean isSystem() {
-		return system;
-	}
-
-	public void setSystem(boolean system) {
-		this.system = system;
-	}
-
-	public long getPlaylistMediaItemId() {
-		return playlistMediaItemId;
-	}
-
-	public void setPlaylistMediaItemId(long playlistMediaItemId) {
-		this.playlistMediaItemId = playlistMediaItemId;
-	}
-
-	public PlaylistMediaItem getPlaylistMediaItem() {
-		return playlistMediaItem;
-	}
-
-	public void setPlaylistMediaItem(PlaylistMediaItem playlistMediaItem) {
-		this.playlistMediaItem = playlistMediaItem;
-	}
-
-	public boolean isEditable() {
-		return editable;
-	}
-	
-	public void setEditable(boolean editable) {
-		this.editable = editable;
-	}
-
-	public Set<Group> getGroups() {
-		return groups;
-	}
-
-	public void setGroups(Set<Group> groups) {
-		this.groups = groups;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Date getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public Date getUpdatedOn() {
-		return updatedOn;
-	}
-
-	public void setUpdatedOn(Date lastModifiedOn) {
-		this.updatedOn = lastModifiedOn;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public Set<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<UserPlaylistPosition> userPlaylistPositions;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -179,7 +87,6 @@ public class User implements UserDetails {
 		
 		return false;
 	}
-	
 
 	@Override
 	public int hashCode() {
@@ -231,10 +138,6 @@ public class User implements UserDetails {
 		builder.append(createdOn);
 		builder.append(", updatedOn=");
 		builder.append(updatedOn);
-		builder.append(", playlistMediaItemId=");
-		builder.append(playlistMediaItemId);
-		builder.append(", playlistMediaItem=");
-		builder.append(playlistMediaItem);
 		builder.append("]");
 		return builder.toString();
 	}

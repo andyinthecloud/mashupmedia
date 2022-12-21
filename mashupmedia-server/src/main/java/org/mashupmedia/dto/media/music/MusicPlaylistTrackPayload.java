@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class TrackWithArtistPayload {
+public class MusicPlaylistTrackPayload {
     private ArtistPayload artistPayload; 
     private TrackPayload trackPayload;
+    private boolean first;
+    private boolean last;
 }

@@ -1,17 +1,14 @@
 package org.mashupmedia.controller.rest.media.music;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.media.SecureMediaPayload;
-import org.mashupmedia.dto.media.music.TrackWithArtistPayload;
+import org.mashupmedia.dto.media.music.MusicPlaylistTrackPayload;
 import org.mashupmedia.dto.media.playlist.NavigatePlaylistPayload;
 import org.mashupmedia.dto.media.playlist.NavigatePlaylistType;
 import org.mashupmedia.dto.share.ServerResponsePayload;
-import org.mashupmedia.mapper.media.music.TrackWithArtistMapper;
+import org.mashupmedia.mapper.media.music.MusicPlaylistTrackMapper;
 import org.mashupmedia.model.User;
-import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.playlist.Playlist;
@@ -40,7 +37,7 @@ public class MusicPlaylistController {
 
     private final PlaylistManager playlistManager;
     private final MusicManager musicManager;
-    private final TrackWithArtistMapper trackWithArtistMapper;
+    private final MusicPlaylistTrackMapper musicPlaylistTrackMapper;
     private final MashupMediaSecurityManager mashupMediaSecurityManager;
 
     @PutMapping(value = "/play-album", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -94,25 +91,28 @@ public class MusicPlaylistController {
     }
 
     @PutMapping(value = "/navigate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SecureMediaPayload<TrackWithArtistPayload>> navigatePlaylist(
+    public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> navigatePlaylist(
             @RequestBody NavigatePlaylistPayload navigatePlaylistPayload) {
         Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
+        if (playlist == null) {
+            return ResponseEntity.badRequest().build();
+        }
         
-        PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, navigatePlaylistPayload.getMediaItemId(), true);
+        PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist, navigatePlaylistPayload.getMediaItemId());
 
         if (playlistMediaItem == null) {
             int relativeOffset = getRelativeOffset(navigatePlaylistPayload.getNavigatePlaylistType());
-            playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist, relativeOffset, true);
+            playlistMediaItem = playlistManager.navigateToPlaylistMediaItem(playlist, relativeOffset);
         }
 
         if (playlistMediaItem == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.noContent().build();
         }
 
         playlistManager.savePlaylist(playlist);
         User user = AdminHelper.getLoggedInUser();
         String mediaToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
-        return ResponseEntity.ok(trackWithArtistMapper.toDto(playlistMediaItem.getMediaItem(), mediaToken));
+        return ResponseEntity.ok(musicPlaylistTrackMapper.toDto(playlistMediaItem, mediaToken));
     }
 
     private int getRelativeOffset(NavigatePlaylistType navigatePlaylistType) {

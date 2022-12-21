@@ -36,7 +36,7 @@ export const backendUrl = (uri: string): string => (
     (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + uri
 )
 
-export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string, userToken?: string, body?: string, isDisableRedirectOnError?: boolean): Promise<HttpResponse<T>> => {
+export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string, userToken?: string, body?: string): Promise<HttpResponse<T>> => {
 
     const url = backendUrl(uri)
 
@@ -54,7 +54,7 @@ export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string,
         console.log('Error getting json', exception)
     }
 
-    if (!isDisableRedirectOnError && (response.status == HttpStatus.FORBIDDEN || response.status == HttpStatus.SERVER_ERROR)) {        
+    if (response.status == HttpStatus.FORBIDDEN || response.status == HttpStatus.SERVER_ERROR) {        
         redirectLogin(response.status)        
     }
 

@@ -43,11 +43,11 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
 		model.addAttribute("playlist", playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper
-				.navigatePlaylist(playlist, 0, true);
-		MediaItem mediaItem = playlistMediaItem.getMediaItem();
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM,
-				mediaItem);
+		// PlaylistMediaItem playlistMediaItem = PlaylistHelper
+		// 		.navigatePlaylist(playlist, 0);
+		// MediaItem mediaItem = playlistMediaItem.getMediaItem();
+		// model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM,
+		// 		mediaItem);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST,
 				playlist);
 		return "ajax/json/media-item";
@@ -238,11 +238,11 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 		}
 		savePlaylist(playlist);
 
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper
-				.navigatePlaylist(playlist, 0, true);
-		MediaItem mediaItem = playlistMediaItem.getMediaItem();
-		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM,
-				mediaItem);
+		// PlaylistMediaItem playlistMediaItem = PlaylistHelper
+		// 		.navigatePlaylist(playlist, 0);
+		// MediaItem mediaItem = playlistMediaItem.getMediaItem();
+		// model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_MEDIA_ITEM,
+		// 		mediaItem);
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_PLAYLIST,
 				playlist);
 	}
@@ -267,7 +267,7 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 		}
 
 		PlaylistHelper.replacePlaylist(playlist, mediaItems);
-		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
+		// PlaylistHelper.initialiseCurrentlyPlaying(playlist);
 
 		playlistName = StringUtils.trimToEmpty(playlistName);
 		if (StringUtils.isNotEmpty(playlistName)) {
@@ -307,10 +307,10 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 
 		PlaylistHelper.replacePlaylist(playlist, mediaItems);
 		playlistManager.savePlaylist(playlist);
-		PlaylistMediaItem playlistMediaItem = PlaylistHelper
-				.getFirstPlayListMediaItem(playlist);
-		User user = AdminHelper.getLoggedInUser();
-		playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
+		// PlaylistMediaItem playlistMediaItem = PlaylistHelper
+		// 		.getFirstPlayListMediaItem(playlist);
+		// User user = AdminHelper.getLoggedInUser();
+		// playlistManager.saveUserPlaylistMediaItem(user, playlistMediaItem);
 
 		model.addAttribute(MashUpMediaConstants.MODEL_KEY_JSON_IS_SUCCESSFUL,
 				true);
@@ -373,7 +373,7 @@ public class AjaxMusicPlaylistController extends AjaxBaseController {
 			@RequestParam(value = "updateLastAccessedToNow", required = false) Boolean isUpdateLastAccessedToNow,
 			Model model) {
 		Playlist playlist = playlistManager.getPlaylist(playlistId);
-		PlaylistHelper.initialiseCurrentlyPlaying(playlist);
+		// PlaylistHelper.initialiseCurrentlyPlaying(playlist);
 
 		if (isUpdateLastAccessedToNow != null && isUpdateLastAccessedToNow) {
 			playlistManager.savePlaylist(playlist);

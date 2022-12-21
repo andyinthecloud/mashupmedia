@@ -1,14 +1,24 @@
 package org.mashupmedia.model.playlist;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.*;
 
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "playlist_media_items")
 @Cacheable
+@Getter
+@Setter
+@NoArgsConstructor
 public class PlaylistMediaItem implements Serializable {
 
 	private static final long serialVersionUID = 7640930812327773777L;
@@ -16,53 +26,23 @@ public class PlaylistMediaItem implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+	
 	private int ranking;
+	
 	@Transient
 	private boolean playing;
+	
 	@ManyToOne
 	private Playlist playlist;
+	
 	@ManyToOne
 	private MediaItem mediaItem;
 
-	public boolean isPlaying() {
-		return playing;
-	}
+	@Transient
+	private boolean isFirst;
 
-	public void setPlaying(boolean playing) {
-		this.playing = playing;
-	}
-
-	public MediaItem getMediaItem() {
-		return mediaItem;
-	}
-
-	public void setMediaItem(MediaItem mediaItem) {
-		this.mediaItem = mediaItem;
-	}
-
-	public Playlist getPlaylist() {
-		return playlist;
-	}
-
-	public void setPlaylist(Playlist playlist) {
-		this.playlist = playlist;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public int getRanking() {
-		return ranking;
-	}
-
-	public void setRanking(int ranking) {
-		this.ranking = ranking;
-	}
+	@Transient
+	private boolean isLast;
 
 	@Override
 	public int hashCode() {
@@ -96,23 +76,6 @@ public class PlaylistMediaItem implements Serializable {
 		if (ranking != other.ranking)
 			return false;
 		return true;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("PlaylistMediaItem [id=");
-		builder.append(id);
-		builder.append(", ranking=");
-		builder.append(ranking);
-		builder.append(", playing=");
-		builder.append(playing);
-		builder.append(", playlist=");
-		builder.append(playlist.getId());
-		builder.append(", mediaItem=");
-		builder.append(mediaItem.getId());
-		builder.append("]");
-		return builder.toString();
 	}
 
 }

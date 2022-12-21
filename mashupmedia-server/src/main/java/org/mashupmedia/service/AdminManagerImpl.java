@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.RolesAllowed;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,9 +20,6 @@ import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
-import org.mashupmedia.model.playlist.PlaylistMediaItem;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,18 +46,7 @@ public class AdminManagerImpl implements AdminManager {
 	@Override
 	public User getUser(String username) {
 		User user = userDao.getUser(username);
-		initialisePlaylistMediaItem(user);
 		return user;
-	}
-
-	private void initialisePlaylistMediaItem(User user) {
-		if (user == null) {
-			return;
-		}
-
-		long playlistMediaItemId = user.getPlaylistMediaItemId();
-		PlaylistMediaItem playlistMediaItem = playlistDao.getPlaylistMediaItem(playlistMediaItemId);
-		user.setPlaylistMediaItem(playlistMediaItem);
 	}
 
 	@Override
@@ -74,7 +59,6 @@ public class AdminManagerImpl implements AdminManager {
 		User user = userDao.getUser(username);
 		return user != null ? user.getId() : 0;
 	}
-
 
 	@Override
 	@RolesAllowed("ROLE_ADMINISTRATOR")
@@ -101,7 +85,6 @@ public class AdminManagerImpl implements AdminManager {
 			User savedUser = getUser(userId);
 			user.setCreatedOn(savedUser.getCreatedOn());
 			user.setPassword(savedUser.getPassword());
-			user.setPlaylistMediaItem(savedUser.getPlaylistMediaItem());
 		}
 
 		user.setUpdatedOn(date);
@@ -120,9 +103,6 @@ public class AdminManagerImpl implements AdminManager {
 			throw new MashupMediaRuntimeException("Can only update an existing user.");
 		}
 
-		PlaylistMediaItem playlistMediaItem = user.getPlaylistMediaItem();
-		long playlistMediaItemId = playlistMediaItem.getId();
-		user.setPlaylistMediaItemId(playlistMediaItemId);
 		userDao.saveUser(user);
 	}
 

@@ -3,7 +3,7 @@ import { IconButton, Slider } from "@mui/material"
 import { useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import { mediaStreamUrl } from "../../../media/music/rest/musicCalls"
-import { NavigatePlaylistPayload, NavigatePlaylistType, navigateTrack, TrackWithArtistPayload } from "../../../media/music/rest/playlistCalls"
+import { NavigatePlaylistPayload, NavigatePlaylistType, navigateTrack, MusicPlaylistTrackPayload } from "../../../media/music/rest/playlistCalls"
 import { SecureMediaPayload } from "../../../media/rest/secureMediaPayload"
 import { RootState } from "../../redux/store"
 import "./AudioPlayer.css"
@@ -11,7 +11,7 @@ import "./AudioPlayer.css"
 
 export type AudioPlayerPlayload = {
     playTrigger?: number
-    trackWithArtistPayload?: TrackWithArtistPayload
+    trackWithArtistPayload?: MusicPlaylistTrackPayload
     isReadyToPlay: boolean
     isPlaying: boolean
 }
@@ -47,6 +47,7 @@ const AudioPlayer = () => {
                 playTrigger
             }
         })
+        handleNavigate(NavigatePlaylistType.CURRENT)
     }, [playTrigger])
 
     const renderPlayingInformation = () => {
@@ -67,6 +68,23 @@ const AudioPlayer = () => {
     const isEmptyPlaylist = (): boolean => {
         return props.payload.trackWithArtistPayload?.trackPayload.name ? false : true
     }
+
+    const disablePrevious = (): boolean => {
+        if (props.payload.trackWithArtistPayload?.first) {
+            return true
+        }
+
+        return isEmptyPlaylist()
+    }
+
+    const disableNext = (): boolean => {
+        if (props.payload.trackWithArtistPayload?.last) {
+            return true
+        }
+
+        return isEmptyPlaylist()
+    }
+
 
     const handleNavigate = (navigatePlaylistType: NavigatePlaylistType): void => {
 
@@ -144,7 +162,7 @@ const AudioPlayer = () => {
                 <IconButton
                     color="primary"
                     onClick={() => handleNavigate(NavigatePlaylistType.PREVIOUS)}
-                    disabled={isEmptyPlaylist()}>
+                    disabled={disablePrevious()}>
                     <ChevronLeft fontSize="medium" />
                 </IconButton>
 
@@ -161,7 +179,7 @@ const AudioPlayer = () => {
                 <IconButton
                     color="primary"
                     onClick={() => handleNavigate(NavigatePlaylistType.NEXT)}
-                    disabled={isEmptyPlaylist()}>
+                    disabled={disableNext()}>
                     <ChevronRight fontSize="medium" />
                 </IconButton>
             </div>
