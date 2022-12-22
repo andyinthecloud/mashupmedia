@@ -1,5 +1,5 @@
 import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
-import { callMashupMediaApi, HttpMethod, HttpResponse } from "../../../common/utils/httpUtils"
+import { callMashupMediaApi, callMashupMediaApiNoRedirect, HttpMethod, HttpResponse } from "../../../common/utils/httpUtils"
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
 import { ArtistPayload, TrackPayload } from "./musicCalls"
 
@@ -32,5 +32,5 @@ export const addAlbum = (albumId: number, userToken?: string): Promise<HttpRespo
 }
 
 export const navigateTrack = (navigatePlaylistPayload: NavigatePlaylistPayload, userToken?: string): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {
-    return callMashupMediaApi<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.PUT, playlistUrl + "/navigate", userToken, JSON.stringify(navigatePlaylistPayload))
+    return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.PUT, playlistUrl + "/navigate", userToken, JSON.stringify(navigatePlaylistPayload))
 }

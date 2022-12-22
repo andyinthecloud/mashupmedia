@@ -61,6 +61,29 @@ export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string,
     return response
 }
 
+export const callMashupMediaApiNoRedirect = async <T>(httpMethod: HttpMethod, uri: string, userToken?: string, body?: string): Promise<HttpResponse<T>> => {
+
+    const url = backendUrl(uri)
+
+    const response: HttpResponse<T> = await fetch(url, {
+        method: httpMethod.toString(),
+        mode: 'cors',
+        credentials: 'omit',
+        headers: restHeaders(securityToken(userToken)),
+        body: body
+    })
+
+    response.parsedBody = await response.json()
+
+    // try {
+    //     response.parsedBody = await response.json()
+    // } catch (exception) {
+    //     console.log('Error getting json', exception)
+    // }
+
+    return response
+}
+
 
 export const redirectInternal = (internalUri: string): void => {    
     window.location.href = internalUri

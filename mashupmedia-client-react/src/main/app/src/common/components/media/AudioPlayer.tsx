@@ -14,11 +14,13 @@ export type AudioPlayerPlayload = {
     trackWithArtistPayload?: MusicPlaylistTrackPayload
     isReadyToPlay: boolean
     isPlaying: boolean
+    progress: number
 }
 
 const AudioPlayer = () => {
 
-    // https://stackoverflow.com/questions/47686345/playing-sound-in-react-js
+    // https://stackoverflow.com/questions/62612178/react-how-to-add-state-changing-event-listeners-in-hooks
+    // https://letsbuildui.dev/articles/building-an-audio-player-with-react-hooks
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const playTrigger = useSelector((state: RootState) => state.playMusic.trigger)
@@ -27,11 +29,14 @@ const AudioPlayer = () => {
         mediaToken: "",
         payload: {
             isReadyToPlay: false,
-            isPlaying: false
+            isPlaying: false,
+            progress: 0
         }
     })
 
+    // const audioPlayer = useRef(new Audio())
     const audioPlayer = useRef(new Audio())
+
 
     useEffect(() => {
         console.log("AudioPlayer: usertoken", userToken)
@@ -102,7 +107,7 @@ const AudioPlayer = () => {
                         isReadyToPlay: response.ok,
                         trackWithArtistPayload: response.parsedBody?.payload
                     }
-                })    
+                })
             }
         })
     }
@@ -114,8 +119,17 @@ const AudioPlayer = () => {
             audioPlayer.current.src = mediaStreamUrl(trackId, props.mediaToken)
             if (props.payload.isPlaying) {
                 audioPlayer.current.play()
+
+                audioPlayer.current.onplay = (e) => {
+                    console.log("playing")
+                }
+
+                audioPlayer.current.onended = (event) => {
+                    console.log("ended", event)
+                }
+
             }
-        } 
+        }
     }, [props.payload.trackWithArtistPayload?.trackPayload.id])
 
     const handlePlay = (): void => {
@@ -126,6 +140,14 @@ const AudioPlayer = () => {
                 isPlaying: !props.payload.isPlaying
             }
         })
+    }
+
+    const handleNextTrack = (): void => {
+        if (props.payload.trackWithArtistPayload?.last) {
+            return
+        }
+
+        handleNavigate(NavigatePlaylistType.NEXT)
     }
 
     useEffect(() => {
@@ -155,6 +177,16 @@ const AudioPlayer = () => {
 
     return (
         <div id="audio-player-container" className={audioPlayerDisplayClass()} >
+
+
+            <audio
+                ref={audioPlayer}
+                className="hide"
+                onEnded={e => handleNextTrack()}
+                onTimeUpdate={e => console.log("onTimeUpdate", e.target)}
+            >
+            </audio>
+
             <div className="track centre">
                 {renderPlayingInformation()}
             </div>
