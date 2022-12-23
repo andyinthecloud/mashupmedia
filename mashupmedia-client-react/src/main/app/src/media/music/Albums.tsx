@@ -64,7 +64,7 @@ const Albums = () => {
 
     const observer = useRef<IntersectionObserver>();
     const lastItemRef = useCallback(
-        (node) => {
+        (node: HTMLDivElement) => {
             if (infiniteScrollProps.loading) {
                 return
             }
