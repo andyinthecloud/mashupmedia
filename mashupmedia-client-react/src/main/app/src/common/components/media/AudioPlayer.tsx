@@ -19,9 +19,6 @@ export type AudioPlayerPlayload = {
 
 const AudioPlayer = () => {
 
-    // https://stackoverflow.com/questions/62612178/react-how-to-add-state-changing-event-listeners-in-hooks
-    // https://letsbuildui.dev/articles/building-an-audio-player-with-react-hooks
-
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const playTrigger = useSelector((state: RootState) => state.playMusic.trigger)
 
@@ -86,13 +83,6 @@ const AudioPlayer = () => {
         }
 
         return isEmptyPlaylist()
-    }
-
-
-    const calculateTrackLengthSeconds = (minutes?: number, seconds?: number) => {
-        const processedMinutes = (minutes ? minutes : 0) * 60;
-        const processSeconds = seconds ? seconds : 0;
-        return processedMinutes + processSeconds
     }
 
 
