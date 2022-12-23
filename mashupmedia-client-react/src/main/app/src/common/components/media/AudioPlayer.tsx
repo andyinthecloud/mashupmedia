@@ -34,9 +34,7 @@ const AudioPlayer = () => {
         }
     })
 
-    // const audioPlayer = useRef(new Audio())
     const audioPlayer = useRef(new Audio())
-
 
     useEffect(() => {
         console.log("AudioPlayer: usertoken", userToken)
@@ -88,6 +86,13 @@ const AudioPlayer = () => {
         }
 
         return isEmptyPlaylist()
+    }
+
+
+    const calculateTrackLengthSeconds = (minutes?: number, seconds?: number) => {
+        const processedMinutes = (minutes ? minutes : 0) * 60;
+        const processSeconds = seconds ? seconds : 0;
+        return processedMinutes + processSeconds
     }
 
 
@@ -160,6 +165,37 @@ const AudioPlayer = () => {
 
     }, [props.payload.isPlaying])
 
+    const handleTimeUpdate = (element: HTMLAudioElement) => {
+        setProps({
+            ...props,
+            payload: {
+                ...props.payload,
+                progress: element.currentTime
+            }
+        })
+    }
+
+    const handleSlide = (value: number | number[]) => {
+
+        const seconds = Array.isArray(value) ? value[0] : value
+        const trackId = props.payload.trackWithArtistPayload?.trackPayload.id
+        if (trackId) {
+            audioPlayer.current.pause()
+            audioPlayer.current.src = mediaStreamUrl(trackId, props.mediaToken, seconds)
+            if (props.payload.isPlaying) {
+                audioPlayer.current.play()
+            }
+        }
+
+
+        setProps({
+            ...props,
+            payload: {
+                ...props.payload,                
+                progress: seconds
+            }
+        })
+    }
 
     const trackLength = (minutes?: number, seconds?: number) => {
         const formattedMinutes = minutes || 0;
@@ -177,13 +213,11 @@ const AudioPlayer = () => {
 
     return (
         <div id="audio-player-container" className={audioPlayerDisplayClass()} >
-
-
             <audio
                 ref={audioPlayer}
                 className="hide"
-                onEnded={e => handleNextTrack()}
-                onTimeUpdate={e => console.log("onTimeUpdate", e.target)}
+                onEnded={() => handleNextTrack()}
+                onTimeUpdate={e => handleTimeUpdate(e.currentTarget)}
             >
             </audio>
 
@@ -221,9 +255,10 @@ const AudioPlayer = () => {
                 <Slider
                     aria-label="Volume"
                     min={0}
-                    max={100}
-                    defaultValue={45}
-                    disabled={isEmptyPlaylist()} />
+                    max={props.payload.trackWithArtistPayload?.trackPayload.totalSeconds}                    
+                    value={props.payload.progress}
+                    disabled={isEmptyPlaylist()} 
+                    onChangeCommitted={(event, value) => handleSlide(value)}/>
                 <div className="end duration-time">{trackLength(props.payload.trackWithArtistPayload?.trackPayload.minutes, props.payload.trackWithArtistPayload?.trackPayload.seconds)} </div>
             </div>
         </div>

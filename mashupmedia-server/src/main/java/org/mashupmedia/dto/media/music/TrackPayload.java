@@ -15,5 +15,6 @@ public class TrackPayload {
     private int trackNumber;
     private int minutes;
     private int seconds;
+    private long totalSeconds;
 
 }

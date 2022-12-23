@@ -16,6 +16,7 @@ public class TrackMapper implements DomainMapper<Track, TrackPayload> {
                 .id(domain.getId())
                 .name(domain.getDisplayTitle())
                 .trackNumber(domain.getTrackNumber())
+                .totalSeconds(domain.getTrackLength())
                 .minutes(TimeHelper.getDurationUnit(domain.getTrackLength(),
                         TimeUnit.MINUTE))
                 .seconds(TimeHelper.getDurationUnit(domain.getTrackLength(),

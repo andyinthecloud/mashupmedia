@@ -20,6 +20,7 @@ export type AlbumWithArtistPayload = {
 export type TrackPayload = {
     id: number
     name: string
+    totalSeconds: number
     minutes?: number
     seconds?: number
 }
@@ -65,7 +66,8 @@ export const getAlbum = (albumId: number, userToken?: string): Promise<HttpRespo
 }
 
 
-export const mediaStreamUrl = (mediaItemId: number, mediaToken: string): string => {
-    return `${backendUrl('/stream/secure/media')}/${mediaItemId}?mediaToken=${mediaToken}`
+export const mediaStreamUrl = (mediaItemId: number, mediaToken: string, seconds?: number): string => {
+    const timeFragment = seconds ? `#t=${seconds}` : ''
+    return `${backendUrl('/stream/secure/media')}/${mediaItemId}?mediaToken=${mediaToken}${timeFragment}`
 }
 
