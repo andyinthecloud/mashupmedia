@@ -1,3 +1,4 @@
 **/node/**
 **/build/**
 **/node_modules/**
+.settings/
