@@ -1,8 +1,5 @@
-**/bin/
-**/target/
-**/node_modules/
-**/classes/
-**/org.mashupmedia.*/
-**/node/
+**/bin/**
+**/target/**
+**/org.mashupmedia.*/**
 
 
