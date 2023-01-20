@@ -35,6 +35,13 @@ public class LoginController {
 
     private final MashupMediaSecurityManager securityManager;
 
+
+    @GetMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getLogin() {
+        return ResponseEntity.ok().body("login");
+    }
+
+
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserTokenPayload> login(@RequestBody @Valid LoginPayload loginPayload) throws Exception{
         User user = adminManager.getUser(loginPayload.getUsername());

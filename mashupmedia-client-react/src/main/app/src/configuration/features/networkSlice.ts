@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { PayloadAction } from "../../common/redux/actions"
 import type { PayloadState, SecurePayload } from "../../common/redux/store"
 import { securityToken } from "../../common/security/securityUtils"
-import { restHeaders } from "../../common/utils/httpUtils"
+import { backendUrl, restHeaders } from "../../common/utils/httpUtils"
 
 export type NetworkProxyPayload = {
     enabled: boolean
@@ -25,7 +25,7 @@ const initialState: PayloadState<NetworkProxyPayload> = {
 }
 
 
-const networkProxyUrl: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + '/api/admin/proxy/'
+const networkProxyUrl: string = backendUrl('/api/admin/proxy/')
 
 export const getNetworkProxy = createAsyncThunk(
     'networkProxy/getDetails',

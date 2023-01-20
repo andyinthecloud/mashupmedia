@@ -6,12 +6,12 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class MashupMediaApplication extends SpringBootServletInitializer {
+public class MashupMediaApplication {
 
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(MashupMediaApplication.class);
-	}
+	// @Override
+	// protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+	// 	return application.sources(MashupMediaApplication.class);
+	// }
 
 	public static void main(String[] args) {
 		SpringApplication.run(MashupMediaApplication.class, args);

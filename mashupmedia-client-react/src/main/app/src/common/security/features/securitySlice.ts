@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { PayloadState } from "../../redux/store"
-import { HttpMethod, restHeaders } from "../../utils/httpUtils"
+import { backendUrl, HttpMethod, restHeaders } from "../../utils/httpUtils"
 
 export type UserLogInPayload = {
     username: string
@@ -20,7 +20,7 @@ const initialState: PayloadState<UserTokenPayload> = {
 export const logIn = createAsyncThunk<UserTokenPayload, UserLogInPayload>(
     'security/login',
     async (userLoginPayload: UserLogInPayload) => {
-        const loginUrl: string = (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + '/api/security/login';
+        const loginUrl: string = backendUrl('/api/security/login')
         const response = await fetch(loginUrl, {
             method: HttpMethod.POST,
             mode: 'cors',

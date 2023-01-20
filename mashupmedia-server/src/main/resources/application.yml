@@ -8,12 +8,16 @@ spring:
   application:
     name: mashupmedia
 
-  mvc:
-    view:
-      prefix: /WEB-INF
-      suffix: .jsp
-    servlet:
-      path: /      
+    
+
+    
+
+  # mvc:
+  #   view:
+  #     prefix: /WEB-INF
+  #     suffix: .jsp
+  #   servlet:
+  #     path: /      
   jpa:
     hibernate:
       ddl-auto: update
@@ -42,7 +46,7 @@ server:
 
 springdoc:
   api-docs:
-    enabled: true
+    enabled: false
   swagger-ui:
     operations-sorter: method
-    path: /swagger-ui.html
+    path: /swagger/swagger-ui.html
