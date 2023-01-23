@@ -9,17 +9,12 @@ import { mashupTheme } from "./common/utils/formUtils";
 import './index.css';
 import reportWebVitals from "./reportWebVitals";
 
-
-// const store = createStore(rootReducer);
-
 ReactDOM.render(
-
-    
     <React.StrictMode>
         <Provider store={store}>
             <ThemeProvider theme={mashupTheme}>
-                <BrowserRouter>
-                <App />
+                <BrowserRouter basename={process.env.PUBLIC_URL}>
+                    <App />
                 </BrowserRouter>
             </ThemeProvider>
         </Provider>

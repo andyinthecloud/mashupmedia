@@ -32,13 +32,13 @@ export interface HttpResponse<T> extends Response {
     parsedBlob?: Blob
 }
 
-export const backendUrl = (uri: string): string => (
+export const backEndUrl = (uri: string): string => (
     (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + uri
 )
-
+ 
 export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string, userToken?: string, body?: string): Promise<HttpResponse<T>> => {
 
-    const url = backendUrl(uri)
+    const url = backEndUrl(uri)
 
     const response: HttpResponse<T> = await fetch(url, {
         method: httpMethod.toString(),
@@ -63,7 +63,7 @@ export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string,
 
 export const callMashupMediaApiNoRedirect = async <T>(httpMethod: HttpMethod, uri: string, userToken?: string, body?: string): Promise<HttpResponse<T>> => {
 
-    const url = backendUrl(uri)
+    const url = backEndUrl(uri)
 
     const response: HttpResponse<T> = await fetch(url, {
         method: httpMethod.toString(),
@@ -74,19 +74,13 @@ export const callMashupMediaApiNoRedirect = async <T>(httpMethod: HttpMethod, ur
     })
 
     response.parsedBody = await response.json()
-
-    // try {
-    //     response.parsedBody = await response.json()
-    // } catch (exception) {
-    //     console.log('Error getting json', exception)
-    // }
-
     return response
 }
 
 
 export const redirectInternal = (internalUri: string): void => {    
-    window.location.href = internalUri
+
+    window.location.href = process.env.PUBLIC_URL + internalUri
 }
 
 export const codeParamName = 'code'

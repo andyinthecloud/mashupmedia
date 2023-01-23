@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadState } from "../../redux/store";
-import { backendUrl, HttpMethod, restHeaders } from "../../utils/httpUtils";
+import { backEndUrl, HttpMethod, restHeaders } from "../../utils/httpUtils";
 import { securityToken } from "../securityUtils";
 
 export type UserPolicyPayload = {
@@ -20,7 +20,7 @@ const initialState: PayloadState<UserPolicyPayload> = {
 export const loadUserPolicyIntoState = createAsyncThunk(
     'security/user',
     async (userToken: string | undefined) => {
-        const url: string = backendUrl('/api/security/user-policy')
+        const url: string = backEndUrl('/api/security/user-policy')
         const response = await fetch(url, {
             method: HttpMethod.GET,
             mode: 'cors',

@@ -1,4 +1,4 @@
-import { backendUrl, callMashupMediaApi, HttpMethod, HttpResponse } from '../../../common/utils/httpUtils'
+import { backEndUrl, callMashupMediaApi, HttpMethod, HttpResponse } from '../../../common/utils/httpUtils'
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
 
 export type ArtistPayload = {
@@ -46,7 +46,7 @@ const artistUri = musicUri + "/artists"
 const albumUrl = musicUri + "/albums"
 
 export const albumArtImageUrl = (albumId: number, imageType: ImageType, mediaToken: string): string => {
-    return `${backendUrl('/stream/secure/music/album-art')}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}`
+    return `${backEndUrl('/stream/secure/music/album-art')}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}`
 }
 
 export const getArtists = (userToken?: string): Promise<HttpResponse<ArtistPayload[]>> => {
@@ -68,6 +68,6 @@ export const getAlbum = (albumId: number, userToken?: string): Promise<HttpRespo
 
 export const mediaStreamUrl = (mediaItemId: number, mediaToken: string, seconds?: number): string => {
     const timeFragment = seconds ? `#t=${seconds}` : ''
-    return `${backendUrl('/stream/secure/media')}/${mediaItemId}?mediaToken=${mediaToken}${timeFragment}`
+    return `${backEndUrl('/stream/secure/media')}/${mediaItemId}?mediaToken=${mediaToken}${timeFragment}`
 }
 
