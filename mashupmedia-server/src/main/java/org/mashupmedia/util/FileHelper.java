@@ -19,7 +19,7 @@ import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 @Slf4j
 public class FileHelper {
 
-	private static String MASHUP_MEDIA_HOME = "MASHUP_MEDIA_HOME";
+	private static String MASHUP_MEDIA_HOME = "mashupMediaHome";
 
 	public final static String ALBUM_ART_FOLDER = "cover-art";
 	private static File applicationHomeFolder = null;

@@ -1,21 +1,31 @@
-import MenuIcon from '@mui/icons-material/Menu';
-import { Collapse, IconButton } from '@mui/material';
+import { Collapse } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import * as React from 'react';
+import { Fragment, useEffect, useState } from "react";
 
 import { AccountBox, ExpandLess, ExpandMore, LibraryMusic, Login, Logout } from "@mui/icons-material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../common/redux/store';
-import './Drawer.css';
+import { useSelector } from "react-redux";
+import { RootState } from '../redux/store';
 import ListItemRoute from './ListItemRoute';
+import './MenuDrawer.css';
+
+
+export type MenuDrawerPayload = {
+    openMenu: boolean
+}
+
+type SubMenuPayload = {
+    musicMenuOpen: boolean
+    settingsMenuOpen: boolean
+}
+
 
 const useStyles = makeStyles({
     list: {
@@ -28,54 +38,52 @@ const useStyles = makeStyles({
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
-type MenuState = {
-    isMusicMenuOpen: boolean
-    isSettingsMenuOpen: boolean
-}
-
 enum MenuType {
     MUSIC, SETTINGS
 }
 
 
-export default function TemporaryDrawer() {
+const MenuDrawer = (payload: MenuDrawerPayload) => {
     const classes = useStyles();
-    const [state, setState] = React.useState({
-        top: false,
-        left: false,
-        bottom: false,
-        right: false,
-    });
+    
+    const [props, setProps] = useState<MenuDrawerPayload>({
+        openMenu: false
+    })
+
+    const [subMenuPayload, setSubMenuPayload] = useState<SubMenuPayload>({
+        musicMenuOpen: false,
+        settingsMenuOpen: false
+    })
 
 
-    const [props, setProps] = React.useState<MenuState>({
-        isMusicMenuOpen: false,
-        isSettingsMenuOpen: false
-    });
-
+    useEffect(() => {
+        setProps(payload)
+    }, [payload])
+    
     const handleMenuClick = (menuType: MenuType): void => {
 
         switch (menuType) {
             case MenuType.MUSIC:
-                setProps(p => ({
+                setSubMenuPayload(p => ({
                     ...p,
-                    isMusicMenuOpen: !props.isMusicMenuOpen
+                    musicMenuOpen: !subMenuPayload.musicMenuOpen
                 }))
                 break;
 
             case MenuType.SETTINGS:
-                setProps(p => ({
+                setSubMenuPayload(p => ({
                     ...p,
-                    isSettingsMenuOpen: !props.isSettingsMenuOpen
+                    settingsMenuOpen: !subMenuPayload.settingsMenuOpen
                 }))
                 break;
         }
     }
 
 
-    const toggleDrawer = (anchor: Anchor, open: boolean) => (
+    const closeDrawer = () => (
         event: React.KeyboardEvent | React.MouseEvent,
     ) => {
+
         if (
             event.type === 'keydown' &&
             ((event as React.KeyboardEvent).key === 'Tab' ||
@@ -84,7 +92,10 @@ export default function TemporaryDrawer() {
             return;
         }
 
-        setState({ ...state, [anchor]: open });
+        setProps({
+            openMenu: false
+        })
+
     };
 
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
@@ -107,9 +118,9 @@ export default function TemporaryDrawer() {
                             <LibraryMusic />
                         </ListItemIcon>
                         <ListItemText primary="Music" />
-                        {props.isMusicMenuOpen ? <ExpandLess /> : <ExpandMore />}
+                        {subMenuPayload.musicMenuOpen ? <ExpandLess /> : <ExpandMore />}
                     </ListItem>
-                    <Collapse in={props.isMusicMenuOpen} timeout="auto" unmountOnExit>
+                    <Collapse in={subMenuPayload.musicMenuOpen} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding className="nested-list">
                             <ListItemRoute label="Albums" toRoute="/music/albums" />
                             <ListItemRoute label="Artists" toRoute="/music/artists" />
@@ -128,9 +139,9 @@ export default function TemporaryDrawer() {
                             <SettingsIcon />
                         </ListItemIcon>
                         <ListItemText primary="Settings" />
-                        {props.isSettingsMenuOpen ? <ExpandLess /> : <ExpandMore />}
+                        {subMenuPayload.settingsMenuOpen ? <ExpandLess /> : <ExpandMore />}
                     </ListItem>
-                    <Collapse in={props.isSettingsMenuOpen} timeout="auto" unmountOnExit>
+                    <Collapse in={subMenuPayload.settingsMenuOpen} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding className="nested-list">
 
                             <ListItemRoute label="Users" toRoute="/configuration/users" />
@@ -161,18 +172,20 @@ export default function TemporaryDrawer() {
     return (
         <div className="Drawer" id="drawer-menu">
 
-            <IconButton onClick={toggleDrawer('right', true)} className="menu-icon">
+            {/* <IconButton onClick={toggleDrawer('right', true)} className="menu-icon">
                 <MenuIcon />
-            </IconButton>
+            </IconButton> */}
 
-            {(['right'] as Anchor[]).map((anchor) => (
-                <React.Fragment key={anchor}>
+            {(['left'] as Anchor[]).map((anchor) => (
+                <Fragment key={anchor}>
 
-                    <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
+                    <Drawer anchor={anchor} open={props.openMenu} onClose={closeDrawer()}>
                         {list(anchor)}
                     </Drawer>
-                </React.Fragment>
+                </Fragment>
             ))}
         </div>
     );
 }
+
+export default MenuDrawer

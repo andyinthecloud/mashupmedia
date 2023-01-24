@@ -2,7 +2,7 @@ import { Container, ThemeProvider } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import './App.css';
 import AlertBoxes from "./common/components/AlertBoxes";
-import Drawer from "./common/components/Drawer";
+import Drawer from "./common/components/MenuDrawer";
 import Footer from "./common/components/Footer";
 import AudioPlayer from "./common/components/media/AudioPlayer";
 import { addNotification, NotificationType } from "./common/notification/notificationSlice";
@@ -10,6 +10,7 @@ import { RootState } from "./common/redux/store";
 import { mashupTheme } from "./common/utils/formUtils";
 import { MashupRoutes } from "./MashupRoutes";
 import { securityToken } from "./common/security/securityUtils"
+import MashupBar from "./common/components/MashupBar";
 
 function App() {
 
@@ -31,7 +32,8 @@ function App() {
     return (
         <ThemeProvider theme={mashupTheme}>
             <div className={"App"}>
-                <Drawer></Drawer>
+                <MashupBar />
+                {/* <Drawer></Drawer> */}
                 <Container className="main-container" maxWidth="md">
                     {hasUserToken() && <AudioPlayer />}
                     <AlertBoxes />
