@@ -3,21 +3,20 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [
-    
-        
+    "configurations": [    
         {
             "type": "java",
-            "name": "Spring Boot-MashupMediaApplication<mashupmedia-server>",
+            "name": "Mashup Media on local",
             "request": "launch",
             "cwd": "${workspaceFolder}/mashupmedia-server",
             "console": "internalConsole",
             "mainClass": "org.mashupmedia.MashupMediaApplication",
             "projectName": "mashupmedia-server",
-            "args": "",            
+            "vmArgs": "-DmashupMediaHome=C:\\stuff\\data\\mm-home",        
             "env": {
                 "mashupmediaHome": "C:\\stuff\\data\\mm-home"
             }
         }
     ]
+
 }

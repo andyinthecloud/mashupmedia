@@ -1,9 +1,8 @@
-import { Alert, AlertColor, AlertTitle } from "@mui/material"
+import { Alert, AlertColor } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { clearNotification, NotificationPayload, NotificationType } from "../../common/notification/notificationSlice"
 import { RootState } from "../../common/redux/store"
-
 
 
 export type AlertBoxPayload = {
@@ -13,7 +12,6 @@ export type AlertBoxPayload = {
 const AlertBoxes = () => {
 
     const notificationPayloadsState = useSelector((state: RootState) => state.notification)
-
 
     const [props, setProps] = useState<AlertBoxPayload>()
 
@@ -29,14 +27,12 @@ const AlertBoxes = () => {
                         key={notificationPayload.id}
                         id={notificationPayload.id}
                         notificationType={notificationPayload.notificationType}
-                        message={notificationPayload.message} />
+                        message={notificationPayload.message}
+                    />
                 )
             })}
-
         </div>
     )
-
-
 }
 
 export default AlertBoxes
@@ -61,29 +57,6 @@ const AlertBox = (payload: NotificationPayload) => {
         return (alertColor) ? alertColor : defaultAlertColour
     }
 
-    const title = (alertType: NotificationType | null): string => {
-        let title: string
-        switch (alertType) {
-            case NotificationType.ERROR:
-                title = 'Error'
-                break
-            case NotificationType.INFO:
-                title = 'Information'
-                break
-            case NotificationType.SUCCESS:
-                title = 'Success'
-                break
-            case NotificationType.WARNING:
-                title = 'Warning'
-                break
-            default:
-                title = 'Warning'
-                break
-
-        }
-        return title
-    }
-
     const dispatch = useDispatch()
 
     const handleClose = (notificationId: number | undefined): void => {
@@ -96,11 +69,16 @@ const AlertBox = (payload: NotificationPayload) => {
     }
 
     return (
-        <Alert key={props.id} severity={severity(props.notificationType)} onClose={() => handleClose(props.id)}  >
-            <AlertTitle>{title(props.notificationType)}</AlertTitle>
+        <Alert
+            key={props.id}
+            severity={severity(props.notificationType)}
+            onClose={() => handleClose(props.id)}
+            sx={{
+                marginBottom: 10
+            }}
+        >
             {props.message}
         </Alert>
     )
-
 
 }

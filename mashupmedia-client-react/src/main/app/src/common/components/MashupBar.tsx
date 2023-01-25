@@ -22,7 +22,8 @@ const MashupBar = () => {
     return (
         <Box sx={{ flexGrow: 1 }} id="mashup-bar">
             <MenuDrawer {...menuDrawerPayload} />
-            <AppBar position="static">
+            <AppBar
+            >
                 <Toolbar>
                     <IconButton
                         size="large"
@@ -39,7 +40,6 @@ const MashupBar = () => {
                         <img src={logoSmall} className="logo" />
                     </Link>
 
-                    <Divider />
 
                     <TextField
                         className="search"

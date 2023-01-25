@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Pause, PlayArrow } from "@mui/icons-material"
+import { ArrowUpward, ArrowUpwardOutlined, ArrowUpwardRounded, ChevronLeft, ChevronRight, Pause, PlayArrow } from "@mui/icons-material"
 import { IconButton, Slider } from "@mui/material"
 import { useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
@@ -177,11 +177,10 @@ const AudioPlayer = () => {
             }
         }
 
-
         setProps({
             ...props,
             payload: {
-                ...props.payload,                
+                ...props.payload,
                 progress: seconds
             }
         })
@@ -245,12 +244,13 @@ const AudioPlayer = () => {
                 <Slider
                     aria-label="Volume"
                     min={0}
-                    max={props.payload.trackWithArtistPayload?.trackPayload.totalSeconds}                    
+                    max={props.payload.trackWithArtistPayload?.trackPayload.totalSeconds}
                     value={props.payload.progress}
-                    disabled={isEmptyPlaylist()} 
-                    onChangeCommitted={(event, value) => handleSlide(value)}/>
+                    disabled={isEmptyPlaylist()}
+                    onChangeCommitted={(event, value) => handleSlide(value)} />
                 <div className="end duration-time">{trackLength(props.payload.trackWithArtistPayload?.trackPayload.minutes, props.payload.trackWithArtistPayload?.trackPayload.seconds)} </div>
             </div>
+
         </div>
     )
 

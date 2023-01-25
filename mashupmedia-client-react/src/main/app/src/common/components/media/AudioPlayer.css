@@ -1,6 +1,6 @@
 #audio-player-container {
     position: sticky;
-    top: 1em;
+    top: 5em;
     border: 1px solid #e579e9;
     border-radius: 1em;
     padding: 0 1em;
@@ -15,6 +15,8 @@
     position: fixed;
     top: 0;
 }
+
+
 
 #audio-player-container .centre {
     margin: 0 auto;
@@ -52,3 +54,6 @@
     right: 0;
 }
 
+#audio-player-container button.top {
+    left: 0;
+}
