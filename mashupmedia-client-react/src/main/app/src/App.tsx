@@ -3,8 +3,7 @@ import { useSelector } from "react-redux";
 import './App.css';
 import AlertBoxes from "./common/components/AlertBoxes";
 import Footer from "./common/components/Footer";
-import MashupBar from "./common/components/MashupBar";
-import AudioPlayer from "./common/components/media/AudioPlayer";
+import Header from "./common/components/Header";
 import { RootState } from "./common/redux/store";
 import { securityToken } from "./common/security/securityUtils";
 import { mashupTheme } from "./common/utils/formUtils";
@@ -20,13 +19,12 @@ function App() {
     return (
         <ThemeProvider theme={mashupTheme}>
             <div className={"App"}>
-                <MashupBar />
-                {hasUserToken() && <AudioPlayer />}
+                <Header />
                 <Container
                     className="main-container"
                     maxWidth="md"
                     sx={{
-                        mt: hasUserToken() ? 10 : 0
+                        mt: hasUserToken() ? 24 : 0
                     }}
                 >
                     <AlertBoxes />

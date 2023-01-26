@@ -1,7 +1,3 @@
-#mashup-bar {
-    position: sticky;
-    z-index: 99;
-}
 #mashup-bar img.logo {
     background-color: white;
     margin-right: 2em;
@@ -10,7 +6,6 @@
 #mashup-bar button {
     margin-left: 0 !important;
 }
-
 
 #mashup-bar .search {
     margin-left: auto;

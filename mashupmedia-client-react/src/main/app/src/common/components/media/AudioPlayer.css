@@ -1,6 +1,5 @@
 #audio-player-container {
-    position: sticky;
-    top: 5em;
+    margin-top: 5em;
     border: 1px solid #e579e9;
     border-radius: 1em;
     padding: 0 1em;
@@ -8,7 +7,7 @@
     margin-left: 1em;
     margin-right: 1em;
     background-color: white;
-    z-index: 99;
+    width: auto;
 }
 
 #audio-player-container .sticky{
