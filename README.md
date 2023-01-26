@@ -5,8 +5,8 @@ Mashup Media is a free open source web media centre designed to play, listen, vi
 Mashup Media eliminates the need to worry about online privacy and corporate small print, it puts you back in control of your media content. Define groups to help separate your media with friends, family, colleagues and clients. Your private life remains private and you can choose who you want to share it with.
 
 ### Table of contents
--[Music](#music)
--[Photos](#photos)
+* [Music](#music)
+* [Photos](#photos)
 
 
 
@@ -22,7 +22,7 @@ You can listen to your music on all modern web browsers on desktops, tablets and
 You can create and share music playlists.
 
 ### Support for many music formats 
-Mashup Media uses ![FFMpeg](https://www.ffmpeg.org/) to provide support for the most common music encoding formats.
+Mashup Media uses [FFmpeg](https://ffmpeg.org/) to provide support for the most common music encoding formats.
 
 ## Photos
 Finally a secure way to store and view your photos! All you have to do is let Mashup Media know where your images are located and it will index them, create thumbnails and organise them into albums. 
@@ -46,15 +46,19 @@ Mashup Media is developed in Java, React Javascript and an embedded database.
 
 ## Instructions
 
-1. Create a web container file. 
+1. Install [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) 
+2. Install [Maven](https://maven.apache.org/download.cgi)
+3. Install [Git](https://git-scm.com/downloads)
+4. Checkout the Mashup Media project
+5. Open a terminal and in the mashupmedia parent folder run the build 
 ```
 mvn -skipTests clean package
 ```
-This will build a file called *mashupmedia.jar* located in the the target folder.
+This will build a file called *mashupmedia-server-x.x.x-RELEASE.jar* located in the the mashupmedia-server/target folder.
 
-2. Start Mashup Media.
+6. Start Mashup Media
 ```
-java -DmashupMediaHome="C:\Users\user\stuff\mashup-media"  -jar mashupmedia-server\target\mashupmedia-server-0.0.1-SNAPSHOT.jar
+java -DmashupMediaHome="C:\Users\user\stuff\mashup-media" -Dserver.port=8080 -jar mashupmedia-server\target\mashupmedia-server-x.x.x-RELEASE.jar
 ```
 
 
