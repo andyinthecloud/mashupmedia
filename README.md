@@ -11,17 +11,15 @@ Mashup Media eliminates the need to worry about online privacy and corporate sma
 
 
 ## Music
-![Mashup Media - music home page](src/misc/screehshots/music-random.png)
 Add as many music libraries as you like and Mashup Media will provide a clean, elegant interface to quickly access and play your tunes.
 
 A lot of time has been dedicated into making the Mashup Media music experience very special. Music is categorised into artists, albums, genre and year by the music tags or failing that the folder structure. Libraries can contain very large amount of files with minimal impact to performance. Any changes to the library files are synchronised.
 
 ### Compatibility
 You can listen to your music on all modern web browsers on desktops, tablets and mobile devices.
+
 ### Playlists
 You can create and share music playlists.
-
-![Mashup Media - music home page](src/misc/screehshots/music-playlist.png)
 
 ### Support for many music formats 
 Mashup Media uses ![FFMpeg](https://www.ffmpeg.org/) to provide support for the most common music encoding formats.
@@ -57,6 +55,7 @@ This will build a file called *mashupmedia.jar* located in the the target folder
 2. Start Mashup Media.
 ```
 java -DmashupMediaHome="C:\Users\user\stuff\mashup-media"  -jar mashupmedia-server\target\mashupmedia-server-0.0.1-SNAPSHOT.jar
+```
 
 
 
