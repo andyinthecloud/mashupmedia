@@ -16,7 +16,7 @@
 	<groupId>org.mashupmedia</groupId>
 	<artifactId>mashupmedia</artifactId>
 	<name>mashupmedia</name>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>4.0.0-RELEASE</version>
 	<packaging>pom</packaging>
 
 	<properties>

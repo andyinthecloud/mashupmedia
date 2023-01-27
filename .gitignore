@@ -1,6 +1,7 @@
-**/bin/**
-**/target/**
-**/org.mashupmedia.*/**
-**/.settings/**
-
+**/bin
+**/target
+**/node_modules
+**/classes
+**/.settings
+**/.factorypath
 
