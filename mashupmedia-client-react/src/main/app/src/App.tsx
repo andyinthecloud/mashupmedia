@@ -24,7 +24,7 @@ function App() {
                     className="main-container"
                     maxWidth="md"
                     sx={{
-                        mt: hasUserToken() ? 24 : 0
+                        mt: hasUserToken() ? 24 : 10
                     }}
                 >
                     <AlertBoxes />

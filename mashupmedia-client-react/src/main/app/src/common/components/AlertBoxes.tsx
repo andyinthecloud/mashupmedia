@@ -74,7 +74,7 @@ const AlertBox = (payload: NotificationPayload) => {
             severity={severity(props.notificationType)}
             onClose={() => handleClose(props.id)}
             sx={{
-                marginBottom: 10
+                marginBottom: 5
             }}
         >
             {props.message}

@@ -10,7 +10,7 @@ public class MashupMediaErrorController implements ErrorController{
 
     @RequestMapping("/error")
     public String handleError() {        
-        return "redirect:/?code=404";
+        return "forward:/";
     }
     
 }
