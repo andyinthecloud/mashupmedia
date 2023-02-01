@@ -126,7 +126,6 @@ const NetworkForm = () => {
                 </Button>
             </div>
 
-            <pre>{JSON.stringify(props)}</pre>
         </form>
     )
 }

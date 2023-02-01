@@ -34,3 +34,7 @@ export const addAlbum = (albumId: number, userToken?: string): Promise<HttpRespo
 export const navigateTrack = (navigatePlaylistPayload: NavigatePlaylistPayload, userToken?: string): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {
     return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.PUT, playlistUrl + "/navigate", userToken, JSON.stringify(navigatePlaylistPayload))
 }
+
+export const hasPlaylist = (userToken: string | undefined): Promise<HttpResponse<ServerResponsePayload<string>>> => {
+    return callMashupMediaApiNoRedirect<ServerResponsePayload<string>>(HttpMethod.GET, playlistUrl + "/initialised", userToken)
+}

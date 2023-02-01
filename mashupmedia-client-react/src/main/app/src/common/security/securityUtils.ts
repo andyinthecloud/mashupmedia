@@ -1,5 +1,5 @@
 
-const TOKEN_KEY = 'jwt'
+export const TOKEN_KEY = 'jwt'
 
 export function setTokenCookie(token: string | undefined): void {
     if (!token?.length) {
@@ -26,4 +26,8 @@ export function getCookieValue (name: string): string | null {
 
 export const securityToken = (userToken: string | undefined): string | null => 
     userToken ? userToken : getCookieValue(TOKEN_KEY)
+
+export const removeTokenCookie = (): void => {
+    document.cookie = `${TOKEN_KEY}=; expires = Thu, 01 Jan 1970 00:00:01 GMT; path = /`
+}
 

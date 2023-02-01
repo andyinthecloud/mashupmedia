@@ -65,7 +65,6 @@ export const getAlbum = (albumId: number, userToken?: string): Promise<HttpRespo
     return callMashupMediaApi<SecureMediaPayload<AlbumWithTracksAndArtistPayload>>(HttpMethod.GET, albumUrl + "/" + albumId, userToken)
 }
 
-
 export const mediaStreamUrl = (mediaItemId: number, mediaToken: string, seconds?: number): string => {
     const timeFragment = seconds ? `#t=${seconds}` : ''
     return `${backEndUrl('/stream/secure/media')}/${mediaItemId}?mediaToken=${mediaToken}${timeFragment}`

@@ -3,7 +3,7 @@ import { useSelector } from "react-redux"
 import { useAppDispatch } from "../redux/hooks"
 import type { RootState } from "../redux/store"
 import { redirectLogin } from "../utils/httpUtils"
-import { loadUserPolicyIntoState } from "./features/userPolicySlice"
+import { userPolicy } from "./features/userPolicySlice"
 import { securityToken } from "./securityUtils"
 
 export function RequireAuthenication({ children }: { children: JSX.Element }): any {
@@ -21,7 +21,7 @@ export function RequireAuthenication({ children }: { children: JSX.Element }): a
         const token = securityToken(tokenPayload)
         if (token) {
             dispatch(
-                loadUserPolicyIntoState(token)
+                userPolicy(token)
             )
         } else {
             redirectLogin()

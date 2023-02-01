@@ -6,6 +6,7 @@ import { mediaStreamUrl } from "../../../media/music/rest/musicCalls"
 import { NavigatePlaylistPayload, NavigatePlaylistType, navigateTrack, MusicPlaylistTrackPayload } from "../../../media/music/rest/playlistCalls"
 import { SecureMediaPayload } from "../../../media/rest/secureMediaPayload"
 import { RootState } from "../../redux/store"
+import { displayDuration } from "../../utils/dateUtils"
 import "./AudioPlayer.css"
 
 
@@ -34,12 +35,18 @@ const AudioPlayer = () => {
     const audioPlayer = useRef(new Audio())
 
     useEffect(() => {
-        console.log("AudioPlayer: usertoken", userToken)
+        if (!userToken) {
+            return
+        }
         handleNavigate(NavigatePlaylistType.CURRENT)
     }, [userToken])
 
     useEffect(() => {
-        console.log("trigger play", playTrigger)
+
+        if (!playTrigger) {
+            return
+        }
+
         setProps({
             ...props,
             payload: {
@@ -48,14 +55,15 @@ const AudioPlayer = () => {
             }
         })
         handleNavigate(NavigatePlaylistType.CURRENT)
+
     }, [playTrigger])
 
     const renderPlayingInformation = () => {
         if (!isEmptyPlaylist()) {
             return (
                 <div>
-                    <span className="artist">{props.payload.trackWithArtistPayload?.artistPayload.name}</span>
                     <span className="title">{props.payload.trackWithArtistPayload?.trackPayload.name}</span>
+                    <span className="artist">{props.payload.trackWithArtistPayload?.artistPayload.name}</span>
                 </div>
             )
         } else {
@@ -103,6 +111,15 @@ const AudioPlayer = () => {
                         trackWithArtistPayload: response.parsedBody?.payload
                     }
                 })
+            } else {
+                setProps({
+                    ...props,
+                    payload: {
+                        ...props.payload,
+                        trackWithArtistPayload: undefined
+                    }
+                })
+
             }
         })
     }
@@ -141,7 +158,6 @@ const AudioPlayer = () => {
         if (props.payload.trackWithArtistPayload?.last) {
             return
         }
-
         handleNavigate(NavigatePlaylistType.NEXT)
     }
 
@@ -200,6 +216,8 @@ const AudioPlayer = () => {
         return props.payload.isReadyToPlay ? "" : "hide"
     }
 
+
+
     return (
         <div id="audio-player-container" className={audioPlayerDisplayClass()} >
             <audio
@@ -240,7 +258,7 @@ const AudioPlayer = () => {
             </div>
 
             <div className="duration centre">
-                <div className="beginning duration-time">0:00</div>
+                <div className="beginning duration-time">{displayDuration(props.payload.progress)}</div>
                 <Slider
                     aria-label="Volume"
                     min={0}

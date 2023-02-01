@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Introduction from "./common/components/Introduction";
 import LogIn from "./common/security/LogIn";
+import LogOut from "./common/security/LogOut";
 import { RequireAuthenication } from "./common/security/RequireAuthentication";
 import ChangeUserPassword from "./configuration/ChangeUserPassword";
 import Group from "./configuration/Group";
@@ -21,6 +22,7 @@ export const MashupRoutes = () => {
         <Routes>
             <Route path="/" element={<Introduction />} />
             <Route path="/login" element={<LogIn />} />
+            <Route path="/logout" element={<LogOut />} />
 
             <Route path="/configuration">
                 <Route index element={
