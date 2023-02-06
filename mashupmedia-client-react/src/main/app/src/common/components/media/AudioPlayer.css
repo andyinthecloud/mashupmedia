@@ -1,47 +1,15 @@
 #audio-player-container {
-    margin-top: 5em;
+    margin-top: 4em;
     border: 1px solid #e579e9;
-    border-radius: 1em;
-    padding: 0 1em;
-    margin-bottom: 1em;
-    margin-left: 1em;
-    margin-right: 1em;
-    background-color: white;
-    width: auto;
 }
 
-#audio-player-container .sticky{
+#audio-player-container .sticky {
     position: fixed;
     top: 0;
 }
 
 #audio-player-container .centre {
     margin: 0 auto;
-    text-align: center;
-}
-
-#audio-player-container div.track {
-    font-size: medium;
-}
-
-#audio-player-container div.track > div  {
-    vertical-align: middle;
-}
-
-#audio-player-container div.track span.title{
-    font-size: 1.2em;
-}
-
-
-/* #audio-player-container div.track span.artist::after{
-    margin: 0 0.5em;
-     content: '-'; 
-} */
-
-#audio-player-container div.track span.artist{
-    opacity: 0.7;
-    margin-left: 0.5em;
-    font-size: 0.9em;
 }
 
 #audio-player-container div.duration {
@@ -63,6 +31,69 @@
     right: 0;
 }
 
-#audio-player-container button.top {
+#audio-player-container div.audio-buttons {
+    position: relative;
+    height: 3.5em;
+}
+
+#audio-player-container div.button-container {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
     left: 0;
+    right: 0;
+    text-align: center;
+}
+
+
+#audio-player-container div.audio-buttons button {
+    padding: 0;
+    color: white;
+}
+
+#audio-player-container .expand-more {
+    position: absolute;
+    right: 0;
+    top: 1em
+}
+
+#audio-player-container div.button-container .play-button {
+    margin: 0 1em;
+}
+
+#audio-player-container div.track {
+    font-size: medium;
+    text-align: left;
+}
+
+#audio-player-container div.track div.title {
+    font-size: 1.5em;
+}
+
+#audio-player-container div.track div.artist {
+    opacity: 0.8;
+    font-size: 0.9em;
+}
+
+#audio-player-container div.album-art {
+    margin-top: 1em;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    height: 20em;
+}
+
+
+
+#audio-player-container div.expand {
+    background-color: white;
+    padding: 1em;
+}
+
+
+@media only screen and (max-width: 768px) {
+    #audio-player-container div.track {
+        font-size: small;
+    }
+
 }

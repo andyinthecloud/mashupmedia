@@ -37,6 +37,17 @@
   }
 }
 
+
+div {
+  text-align: left;
+}
+
+.align-centre {
+  display: block;
+  margin: 0 auto;
+}
+
+
 div.main-container {
   padding: 1em 0;
 }
@@ -50,9 +61,9 @@ div.new-line {
   text-align: right;
 }
 
-button {
+/* button {
   margin-left: 1em !important;
-}
+} */
 
 h1 {
   color: rgb(160, 84, 163);

@@ -70,3 +70,7 @@ export const mediaStreamUrl = (mediaItemId: number, mediaToken: string, seconds?
     return `${backEndUrl('/stream/secure/media')}/${mediaItemId}?mediaToken=${mediaToken}${timeFragment}`
 }
 
+export const playlistStreamUrl = (playlistId: number, mediaToken: string, seconds?: number): string => {
+    const timeFragment = seconds ? `#t=${seconds}` : ''
+    return `${backEndUrl('/stream/secure/playlist')}/${playlistId}?mediaToken=${mediaToken}${timeFragment}`
+}

@@ -23,7 +23,7 @@ const MashupBar = () => {
     return (
         <Box sx={{ flexGrow: 1 }} id="mashup-bar">
             <MenuDrawer {...props} />
-            <AppBar>
+            <AppBar elevation={0}>
                 <Toolbar>
                     <IconButton
                         size="large"

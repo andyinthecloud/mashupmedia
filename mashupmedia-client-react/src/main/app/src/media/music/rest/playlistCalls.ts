@@ -1,7 +1,7 @@
 import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
 import { callMashupMediaApi, callMashupMediaApiNoRedirect, HttpMethod, HttpResponse } from "../../../common/utils/httpUtils"
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
-import { ArtistPayload, TrackPayload } from "./musicCalls"
+import { AlbumPayload, ArtistPayload, TrackPayload } from "./musicCalls"
 
 export enum NavigatePlaylistType {
     PREVIOUS = "PREVIOUS",
@@ -14,9 +14,16 @@ export type NavigatePlaylistPayload = {
     mediaItemId?: number
 }
 
+export type PlaylistPayload = {
+    id: number
+    name: string
+}
+
 export type MusicPlaylistTrackPayload = {
     trackPayload: TrackPayload
     artistPayload: ArtistPayload
+    albumPayload: AlbumPayload
+    playlistPayload: PlaylistPayload
     first: boolean
     last: boolean
 }

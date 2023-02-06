@@ -28,7 +28,7 @@ export const mashupTheme = createTheme({
             secondary: {
                 main: '#7de979',
                 contrastText: '#ffffff',
-            },
+            }
         }
     }
 )
