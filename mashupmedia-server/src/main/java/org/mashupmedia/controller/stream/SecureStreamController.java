@@ -1,38 +1,39 @@
 package org.mashupmedia.controller.stream;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.SequenceInputStream;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.io.IOUtils;
 import org.mashupmedia.controller.stream.resource.MediaResourceHttpRequestHandler;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/stream/secure")
 @RequiredArgsConstructor
+@Slf4j
 public class SecureStreamController {
 
     private final MashupMediaSecurityManager securityManager;
@@ -55,7 +56,7 @@ public class SecureStreamController {
     }
 
     @RequestMapping(value = "/playlist/{playlistId}", method = RequestMethod.GET)
-    public ResponseEntity<InputStreamResource> streamPlaylist(@Valid @PathVariable Long playlistId,
+    public ResponseEntity<StreamingResponseBody> streamPlaylist(@Valid @PathVariable Long playlistId,
             @RequestParam String mediaToken,
             HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
@@ -66,25 +67,32 @@ public class SecureStreamController {
 
         Playlist playlist = playlistManager.getPlaylist(playlistId);
 
-        List<InputStream> inputStreams = playlist.getAccessiblePlaylistMediaItems()
-                .stream()
-                .map(pmi -> pmi.getMediaItem())
-                .map(mi -> getInputStream(mi.getPath()))
-                .filter(is -> is != null)
-                .collect(Collectors.toList());
+        List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
 
-        Enumeration<InputStream> enumeration = Collections.enumeration(inputStreams);
-        InputStream inputStream = new SequenceInputStream(enumeration);
-        InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
+        PlaylistMediaItem currenPlaylistMediaItem = playlistManager.navigateToPlaylistMediaItem(playlist, 0);
+        int index = playlistMediaItems.indexOf(currenPlaylistMediaItem);
+        List<PlaylistMediaItem> unplayedMediaItems = playlistMediaItems.subList(index, playlistMediaItems.size() - 1);
+
+        StreamingResponseBody streamingResponseBody = out -> {
+            unplayedMediaItems.forEach(playlistMediaItem -> {
+                MediaItem mediaItem = playlistMediaItem.getMediaItem();
+                File file = new File(mediaItem.getPath());
+
+                if (file.isFile()) {
+                    Path path = file.toPath();
+                    try {
+                        Files.copy(path, out);
+                    } catch (IOException e) {
+                        log.error("Error closing media stream", e);
+                    }
+                }
+            });
+            IOUtils.closeQuietly(out);
+        };
+
         response.setContentType(MediaContentType.MP3.getMimeContentType());
-        return ResponseEntity.ok().body(inputStreamResource);
+
+        return ResponseEntity.ok().body(streamingResponseBody);
     }
 
-    private InputStream getInputStream(String path) {
-        try {
-            return new FileInputStream(path);
-        } catch (FileNotFoundException e) {
-            return null;
-        }
-    }
 }

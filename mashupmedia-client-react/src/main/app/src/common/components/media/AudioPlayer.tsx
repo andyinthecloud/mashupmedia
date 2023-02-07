@@ -17,6 +17,7 @@ type AudioPlayerPlayload = {
     isReadyToPlay: boolean
     isPlaying: boolean
     progress: number
+    currentPlaylistSeconds: number
     expand: boolean
 }
 
@@ -36,6 +37,7 @@ const AudioPlayer = () => {
             isReadyToPlay: false,
             isPlaying: false,
             progress: 0,
+            currentPlaylistSeconds: 0,
             expand: false
         }
     })
@@ -47,7 +49,6 @@ const AudioPlayer = () => {
 
 
     const handleWindowSizeChange = () => {
-        const mobileDisplay = window.innerWidth <= MOBILE_MAX_WIDTH
         setMobileDisplay(isMobileDisplay)
     }
 
@@ -128,11 +129,12 @@ const AudioPlayer = () => {
             if (response.ok) {
                 setProps({
                     ...props,
-                    mediaToken: response.parsedBody?.mediaToken || "",
+                    mediaToken: response.parsedBody?.mediaToken || "",                    
                     payload: {
                         ...props.payload,
                         isReadyToPlay: response.ok,
-                        trackWithArtistPayload: response.parsedBody?.payload
+                        trackWithArtistPayload: response.parsedBody?.payload,
+                        currentPlaylistSeconds: props.payload.currentPlaylistSeconds + (props.payload.trackWithArtistPayload?.trackPayload.totalSeconds || 0)
                     }
                 })
             } else {
@@ -148,6 +150,11 @@ const AudioPlayer = () => {
     }
 
     useEffect(() => {
+
+        if (mobileDisplay && !audioPlayer.current.paused) {
+            return
+        }
+
         let audioUrl = ''
 
         console.log("audio", props.payload.trackWithArtistPayload)
@@ -165,25 +172,8 @@ const AudioPlayer = () => {
         }
 
         audioPlayer.current.src = audioUrl
+        audioPlayer.current.preload = "auto"
 
-        // if (trackId) {
-        //     console.log("cueing song", trackId)
-        //     audioPlayer.current.src = mediaStreamUrl(trackId, props.mediaToken)
-        //     if (props.payload.isPlaying) {
-        //         audioPlayer.current.play()
-
-        //         // audioPlayer.current.onplay = (e) => {
-        //         //     console.log("playing")
-        //         // }
-
-        //         // audioPlayer.current.onended = (event) => {
-        //         //     console.log("ended", event)
-        //         // }
-
-        //     }
-        // }
-    
-    
     }, [props.payload.trackWithArtistPayload?.trackPayload])
 
     const handlePlay = (): void => {
@@ -213,14 +203,40 @@ const AudioPlayer = () => {
 
     }, [props.payload.isPlaying])
 
-    const handleTimeUpdate = (element: HTMLAudioElement) => {
+
+
+
+    const handleTimeUpdate = (element: HTMLAudioElement): void => {
+        const trackProgress = element.currentTime
         setProps({
             ...props,
             payload: {
                 ...props.payload,
-                progress: element.currentTime
+                progress: trackProgress
             }
         })
+
+        if (!mobileDisplay) {
+            return
+        }
+
+        const totalTrackSeconds = props.payload.trackWithArtistPayload?.trackPayload.totalSeconds
+        if (!totalTrackSeconds) {
+            return
+        }
+
+        if (!mobileDisplay) {
+            return
+        }
+
+        console.log('handleTimeUpdate: trackProgress', trackProgress)
+        console.log('handleTimeUpdate: currentPlaylistSeconds', props.payload.currentPlaylistSeconds)
+        
+        if (trackProgress > props.payload.currentPlaylistSeconds) {
+            console.log('handleTimeUpdate: next track')
+            handleNavigate(NavigatePlaylistType.NEXT)
+        }
+
     }
 
     const handleSlide = (value: number | number[]) => {
@@ -346,10 +362,10 @@ const AudioPlayer = () => {
                             <div className="track">
                                 {renderPlayingInformation()}
                             </div>
-                            <div 
+                            <div
                                 className="album-art"
-                                style={{backgroundImage: `url(${albumArtImageUrl(props.payload.trackWithArtistPayload?.albumPayload.id || 0, ImageType.ORIGINAL, props.mediaToken)})`}}
-                                />
+                                style={{ backgroundImage: `url(${albumArtImageUrl(props.payload.trackWithArtistPayload?.albumPayload.id || 0, ImageType.ORIGINAL, props.mediaToken)})` }}
+                            />
                         </div>
 
 

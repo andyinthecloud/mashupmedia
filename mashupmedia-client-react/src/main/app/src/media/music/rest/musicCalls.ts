@@ -1,4 +1,4 @@
-import { backEndUrl, callMashupMediaApi, HttpMethod, HttpResponse } from '../../../common/utils/httpUtils'
+import { backEndUrl, callMashupMediaApi, HttpMethod, HttpResponse, timestamp } from '../../../common/utils/httpUtils'
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
 
 export type ArtistPayload = {
@@ -72,5 +72,5 @@ export const mediaStreamUrl = (mediaItemId: number, mediaToken: string, seconds?
 
 export const playlistStreamUrl = (playlistId: number, mediaToken: string, seconds?: number): string => {
     const timeFragment = seconds ? `#t=${seconds}` : ''
-    return `${backEndUrl('/stream/secure/playlist')}/${playlistId}?mediaToken=${mediaToken}${timeFragment}`
+    return `${backEndUrl('/stream/secure/playlist')}/${playlistId}?timestamp=${timestamp()}&mediaToken=${mediaToken}${timeFragment}`
 }

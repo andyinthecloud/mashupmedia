@@ -36,6 +36,10 @@ export interface HttpResponse<T> extends Response {
 export const backEndUrl = (uri: string): string => (
     (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + uri
 )
+
+export const timestamp = ():number => (
+    new Date().getTime()
+)
  
 export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string, userToken?: string, body?: string): Promise<HttpResponse<T>> => {
 
