@@ -12,13 +12,13 @@ import "./AudioPlayer.css"
 
 
 type AudioPlayerPlayload = {
-    playTrigger?: number
     trackWithArtistPayload?: MusicPlaylistTrackPayload
     isReadyToPlay: boolean
     isPlaying: boolean
     progress: number
     currentPlaylistSeconds: number
     expand: boolean
+    mobile: boolean
 }
 
 const AudioPlayer = () => {
@@ -38,26 +38,12 @@ const AudioPlayer = () => {
             isPlaying: false,
             progress: 0,
             currentPlaylistSeconds: 0,
-            expand: false
+            expand: false,
+            mobile: isMobileDisplay()
         }
     })
 
-    const [mobileDisplay, setMobileDisplay] = useState<boolean>(isMobileDisplay())
-
     const audioPlayer = useRef(new Audio())
-
-
-
-    const handleWindowSizeChange = () => {
-        setMobileDisplay(isMobileDisplay)
-    }
-
-    useEffect(() => {
-        window.addEventListener('resize', handleWindowSizeChange);
-        return () => {
-            window.removeEventListener('resize', handleWindowSizeChange);
-        }
-    }, []);
 
     useEffect(() => {
         if (!securityToken(userToken)) {
@@ -72,14 +58,17 @@ const AudioPlayer = () => {
             return
         }
 
-        setProps({
-            ...props,
-            payload: {
-                ...props.payload,
-                playTrigger
-            }
-        })
-        handleNavigate(NavigatePlaylistType.CURRENT)
+        if (props.payload.mobile) {
+            setProps({
+                ...props,
+                payload: {
+                    ...props.payload,
+                    currentPlaylistSeconds: 0
+                }
+            })
+        } else {
+            handleNavigate(NavigatePlaylistType.CURRENT)
+        }
 
     }, [playTrigger])
 
@@ -121,6 +110,8 @@ const AudioPlayer = () => {
 
     const handleNavigate = (navigatePlaylistType: NavigatePlaylistType): void => {
 
+        console.log('handleNavigate')
+
         const navigatePlaylistPayload: NavigatePlaylistPayload = {
             navigatePlaylistType
         }
@@ -129,7 +120,7 @@ const AudioPlayer = () => {
             if (response.ok) {
                 setProps({
                     ...props,
-                    mediaToken: response.parsedBody?.mediaToken || "",                    
+                    mediaToken: response.parsedBody?.mediaToken || "",
                     payload: {
                         ...props.payload,
                         isReadyToPlay: response.ok,
@@ -151,15 +142,19 @@ const AudioPlayer = () => {
 
     useEffect(() => {
 
-        if (mobileDisplay && !audioPlayer.current.paused) {
+        if (!props.payload.trackWithArtistPayload?.trackPayload) {
             return
         }
 
+
         let audioUrl = ''
+        const paused = audioPlayer.current.readyState > 1 ? audioPlayer.current.paused : false
+        // const paused = false
+        console.log("audio: trackWithArtistPayload", props.payload.trackWithArtistPayload)
+        console.log("audio: paused(before)", paused)
 
-        console.log("audio", props.payload.trackWithArtistPayload)
 
-        if (mobileDisplay) {
+        if (props.payload.mobile) {
             const playlistId = props.payload.trackWithArtistPayload?.playlistPayload.id || 0
             if (playlistId) {
                 audioUrl = playlistStreamUrl(playlistId, props.mediaToken)
@@ -172,7 +167,10 @@ const AudioPlayer = () => {
         }
 
         audioPlayer.current.src = audioUrl
-        audioPlayer.current.preload = "auto"
+        audioPlayer.current.load()
+        if (!paused) {
+            audioPlayer.current.play()
+        }
 
     }, [props.payload.trackWithArtistPayload?.trackPayload])
 
@@ -207,6 +205,14 @@ const AudioPlayer = () => {
 
 
     const handleTimeUpdate = (element: HTMLAudioElement): void => {
+
+        if (audioPlayer.current.paused) {
+            return
+        }
+
+
+        console.log('handleTimeUpdate: props.payload.mobile', props.payload.mobile)
+
         const trackProgress = element.currentTime
         setProps({
             ...props,
@@ -216,7 +222,7 @@ const AudioPlayer = () => {
             }
         })
 
-        if (!mobileDisplay) {
+        if (!props.payload.mobile) {
             return
         }
 
@@ -225,13 +231,13 @@ const AudioPlayer = () => {
             return
         }
 
-        if (!mobileDisplay) {
+        if (!props.payload.mobile) {
             return
         }
 
         console.log('handleTimeUpdate: trackProgress', trackProgress)
         console.log('handleTimeUpdate: currentPlaylistSeconds', props.payload.currentPlaylistSeconds)
-        
+
         if (trackProgress > props.payload.currentPlaylistSeconds) {
             console.log('handleTimeUpdate: next track')
             handleNavigate(NavigatePlaylistType.NEXT)
@@ -344,7 +350,7 @@ const AudioPlayer = () => {
 
                     <div className="container">
 
-                        {!mobileDisplay &&
+                        {!props.payload.mobile &&
                             <div className="duration centre">
                                 <div className="beginning duration-time">{displayDuration(props.payload.progress)}</div>
                                 <Slider
