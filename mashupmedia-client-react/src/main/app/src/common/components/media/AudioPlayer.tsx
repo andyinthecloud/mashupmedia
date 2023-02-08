@@ -19,6 +19,7 @@ type AudioPlayerPlayload = {
     currentPlaylistSeconds: number
     expand: boolean
     mobile: boolean
+    updateAudioSource: boolean
 }
 
 const AudioPlayer = () => {
@@ -39,7 +40,8 @@ const AudioPlayer = () => {
             progress: 0,
             currentPlaylistSeconds: 0,
             expand: false,
-            mobile: isMobileDisplay()
+            mobile: isMobileDisplay(),
+            updateAudioSource: true
         }
     })
 
@@ -49,7 +51,7 @@ const AudioPlayer = () => {
         if (!securityToken(userToken)) {
             return
         }
-        handleNavigate(NavigatePlaylistType.CURRENT)
+        handleNavigate(NavigatePlaylistType.CURRENT, true)
     }, [userToken])
 
     useEffect(() => {
@@ -57,6 +59,8 @@ const AudioPlayer = () => {
         if (!playTrigger) {
             return
         }
+
+        console.log('playtrigger')
 
         if (props.payload.mobile) {
             setProps({
@@ -66,9 +70,9 @@ const AudioPlayer = () => {
                     currentPlaylistSeconds: 0
                 }
             })
-        } else {
-            handleNavigate(NavigatePlaylistType.CURRENT)
-        }
+        } 
+        
+        handleNavigate(NavigatePlaylistType.CURRENT, true)
 
     }, [playTrigger])
 
@@ -108,7 +112,7 @@ const AudioPlayer = () => {
     }
 
 
-    const handleNavigate = (navigatePlaylistType: NavigatePlaylistType): void => {
+    const handleNavigate = (navigatePlaylistType: NavigatePlaylistType, updateAudioSource: boolean): void => {
 
         console.log('handleNavigate')
 
@@ -125,7 +129,8 @@ const AudioPlayer = () => {
                         ...props.payload,
                         isReadyToPlay: response.ok,
                         trackWithArtistPayload: response.parsedBody?.payload,
-                        currentPlaylistSeconds: props.payload.currentPlaylistSeconds + (props.payload.trackWithArtistPayload?.trackPayload.totalSeconds || 0)
+                        currentPlaylistSeconds: props.payload.currentPlaylistSeconds + (props.payload.trackWithArtistPayload?.trackPayload.totalSeconds || 0),
+                        updateAudioSource
                     }
                 })
             } else {
@@ -143,6 +148,10 @@ const AudioPlayer = () => {
     useEffect(() => {
 
         if (!props.payload.trackWithArtistPayload?.trackPayload) {
+            return
+        }
+
+        if (!props.payload.updateAudioSource) {
             return
         }
 
@@ -188,7 +197,7 @@ const AudioPlayer = () => {
         if (props.payload.trackWithArtistPayload?.last) {
             return
         }
-        handleNavigate(NavigatePlaylistType.NEXT)
+        handleNavigate(NavigatePlaylistType.NEXT, true)
     }
 
     useEffect(() => {
@@ -201,15 +210,11 @@ const AudioPlayer = () => {
 
     }, [props.payload.isPlaying])
 
-
-
-
     const handleTimeUpdate = (element: HTMLAudioElement): void => {
 
         if (audioPlayer.current.paused) {
             return
         }
-
 
         console.log('handleTimeUpdate: props.payload.mobile', props.payload.mobile)
 
@@ -235,12 +240,14 @@ const AudioPlayer = () => {
             return
         }
 
-        console.log('handleTimeUpdate: trackProgress', trackProgress)
-        console.log('handleTimeUpdate: currentPlaylistSeconds', props.payload.currentPlaylistSeconds)
 
-        if (trackProgress > props.payload.currentPlaylistSeconds) {
+        console.log('handleTimeUpdate: trackProgress', trackProgress)
+        const currentPlaylistSeconds = props.payload.currentPlaylistSeconds
+        console.log('handleTimeUpdate: currentPlaylistSeconds', currentPlaylistSeconds)
+
+        if (trackProgress > currentPlaylistSeconds) {
             console.log('handleTimeUpdate: next track')
-            handleNavigate(NavigatePlaylistType.NEXT)
+            handleNavigate(NavigatePlaylistType.NEXT, false)
         }
 
     }
@@ -305,7 +312,7 @@ const AudioPlayer = () => {
 
                 <div className="button-container">
                     <IconButton
-                        onClick={() => handleNavigate(NavigatePlaylistType.PREVIOUS)}
+                        onClick={() => handleNavigate(NavigatePlaylistType.PREVIOUS, true)}
                         disabled={disablePrevious()}>
                         <ChevronLeft fontSize="medium" />
                     </IconButton>
@@ -321,7 +328,7 @@ const AudioPlayer = () => {
                     </IconButton>
 
                     <IconButton
-                        onClick={() => handleNavigate(NavigatePlaylistType.NEXT)}
+                        onClick={() => handleNavigate(NavigatePlaylistType.NEXT, true)}
                         disabled={disableNext()}>
                         <ChevronRight fontSize="medium" />
                     </IconButton>
