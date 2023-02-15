@@ -26,15 +26,15 @@ public class PlaylistMediaItem implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	
+
 	private int ranking;
-	
+
 	@Transient
 	private boolean playing;
-	
+
 	@ManyToOne
 	private Playlist playlist;
-	
+
 	@ManyToOne
 	private MediaItem mediaItem;
 
@@ -43,6 +43,9 @@ public class PlaylistMediaItem implements Serializable {
 
 	@Transient
 	private boolean isLast;
+
+	@Transient
+	private long cumulativeEndSeconds;
 
 	@Override
 	public int hashCode() {

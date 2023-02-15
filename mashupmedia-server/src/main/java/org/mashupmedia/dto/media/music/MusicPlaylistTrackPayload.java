@@ -18,4 +18,5 @@ public class MusicPlaylistTrackPayload {
     private PlaylistPayload playlistPayload; 
     private boolean first;
     private boolean last;
+    private long cumulativeEndSeconds;
 }

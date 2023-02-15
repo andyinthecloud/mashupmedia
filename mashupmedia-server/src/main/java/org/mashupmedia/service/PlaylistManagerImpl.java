@@ -70,6 +70,23 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 		accessiblePlaylistMediaItems.get(0).setFirst(true);
 		accessiblePlaylistMediaItems.get(accessiblePlaylistMediaItems.size() - 1).setLast(true);
+
+		User user = AdminHelper.getLoggedInUser();
+		Optional<UserPlaylistPosition> userPlaylistPosition = playlist.getUserPlaylistPositions()
+				.stream()
+				.filter(upp -> upp.getUser().equals(user))
+				.findAny();
+
+		if (userPlaylistPosition.isEmpty()) {
+			return;
+		}
+
+		long userPlaylistMediaId = userPlaylistPosition.get().getPlaylistMediaId();
+
+		accessiblePlaylistMediaItems.forEach(pmi -> {
+			pmi.setPlaying(pmi.getId() == userPlaylistMediaId ? true : false);
+		});
+
 	}
 
 	@Override

@@ -28,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -135,6 +136,9 @@ public class MusicPlaylistController {
             return ResponseEntity.noContent().build();
         }
 
+        long cumulativeEndSeconds = PlaylistHelper.getCumulativeEndSeconds(playlist, playlistMediaItem);
+        playlistMediaItem.setCumulativeEndSeconds(cumulativeEndSeconds);
+
         playlistManager.savePlaylist(playlist);
         User user = AdminHelper.getLoggedInUser();
         String mediaToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
@@ -148,6 +152,24 @@ public class MusicPlaylistController {
             case NEXT -> 1;
             default -> 0;
         };
+    }
+
+    @GetMapping(value = "/playlist-progress/{progressSeconds}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> getPlaylistTrackByProgress(@PathVariable long progressSeconds) {
+        Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
+        if (playlist == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        
+        PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItemByProgress(playlist, progressSeconds);
+
+        playlistManager.savePlaylist(playlist);
+        User user = AdminHelper.getLoggedInUser();
+        String mediaToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
+
+        
+        return ResponseEntity.ok(musicPlaylistTrackMapper.toDto(playlistMediaItem, mediaToken));
     }
 
 }

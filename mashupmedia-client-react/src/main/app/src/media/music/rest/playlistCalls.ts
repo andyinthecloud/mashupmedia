@@ -26,6 +26,7 @@ export type MusicPlaylistTrackPayload = {
     playlistPayload: PlaylistPayload
     first: boolean
     last: boolean
+    cumulativeEndSeconds: number
 }
 
 const playlistUrl = "/api/playlist/music"
@@ -44,4 +45,8 @@ export const navigateTrack = (navigatePlaylistPayload: NavigatePlaylistPayload, 
 
 export const hasPlaylist = (userToken: string | undefined): Promise<HttpResponse<ServerResponsePayload<string>>> => {
     return callMashupMediaApiNoRedirect<ServerResponsePayload<string>>(HttpMethod.GET, playlistUrl + "/initialised", userToken)
+}
+
+export const trackProgress = (progress: number, userToken: string | undefined): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {
+    return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.GET, playlistUrl + "/playlist-progress/" + Math.round(progress), userToken)
 }

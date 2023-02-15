@@ -80,7 +80,7 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    height: 20em;
+    height: 30em;
 }
 
 
@@ -90,6 +90,9 @@
     padding: 1em;
 }
 
+#audio-player-container div.expand div.bottom {
+    text-align: right;
+}
 
 @media only screen and (max-width: 768px) {
     #audio-player-container div.track {

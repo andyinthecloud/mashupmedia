@@ -7,7 +7,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -32,16 +48,24 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Table(name = "media_items")
 @Indexed
 @AnalyzerDef(name = "customanalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
 		@TokenFilterDef(factory = LowerCaseFilterFactory.class),
 		@TokenFilterDef(factory = ASCIIFoldingFilterFactory.class),
-		@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = { @Parameter(name = "language", value = "English") }) })
+		@TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = {
+				@Parameter(name = "language", value = "English") }) })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 @XmlAccessorType(XmlAccessType.FIELD)
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MediaItem implements Serializable {
 	private static final long serialVersionUID = -6694717782091959485L;
 
@@ -56,12 +80,14 @@ public class MediaItem implements Serializable {
 	@XmlTransient
 	private long id;
 	private String fileName;
+	@EqualsAndHashCode.Include
 	private String path;
 	@IndexedEmbedded
-//	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@ManyToOne
 	@XmlTransient
+	@EqualsAndHashCode.Include
 	private Library library;
+	@EqualsAndHashCode.Include
 	private long sizeInBytes;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdOn;
@@ -108,78 +134,6 @@ public class MediaItem implements Serializable {
 		this.enabled = true;
 	}
 
-	public Set<MediaEncoding> getMediaEncodings() {
-		return mediaEncodings;
-	}
-
-	public void setMediaEncodings(Set<MediaEncoding> mediaEncodings) {
-		this.mediaEncodings = mediaEncodings;
-	}
-
-	public List<Comment> getComments() {
-		return comments;
-	}
-
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
-	}
-
-	public Set<Tag> getTags() {
-		return tags;
-	}
-
-	public void setTags(Set<Tag> tags) {
-		this.tags = tags;
-	}
-
-	public boolean isPublicAccess() {
-		return publicAccess;
-	}
-
-	public void setPublicAccess(boolean publicAccess) {
-		this.publicAccess = publicAccess;
-	}
-
-	public String getUniqueName() {
-		return uniqueName;
-	}
-
-	public void setUniqueName(String uniqueName) {
-		this.uniqueName = uniqueName;
-	}
-
-	public long getFileLastModifiedOn() {
-		return fileLastModifiedOn;
-	}
-
-	public void setFileLastModifiedOn(long fileLastModifiedOn) {
-		this.fileLastModifiedOn = fileLastModifiedOn;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public String getDisplayTitle() {
-		return displayTitle;
-	}
-
-	public void setDisplayTitle(String displayTitle) {
-		this.displayTitle = displayTitle;
-	}
-
-	public String getMediaTypeValue() {
-		return mediaTypeValue;
-	}
-
-	public void setMediaTypeValue(String mediaTypeValue) {
-		this.mediaTypeValue = mediaTypeValue;
-	}
-
 	public MashupMediaType getMashupMediaType() {
 		MashupMediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
 		return mediaType;
@@ -188,110 +142,6 @@ public class MediaItem implements Serializable {
 	public void setMashupMediaType(MashupMediaType mediaType) {
 		mediaTypeValue = StringHelper.normaliseTextForDatabase(mediaType
 				.toString());
-	}
-
-	public String getSummary() {
-		return summary;
-	}
-
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
-
-	public String getSearchText() {
-		return searchText;
-	}
-
-	public void setSearchText(String searchText) {
-		this.searchText = searchText;
-	}
-
-	public User getLastAccessedBy() {
-		return lastAccessedBy;
-	}
-
-	public void setLastAccessedBy(User lastAccessedBy) {
-		this.lastAccessedBy = lastAccessedBy;
-	}
-
-	public Date getLastAccessed() {
-		return lastAccessed;
-	}
-
-	public void setLastAccessed(Date lastAccessed) {
-		this.lastAccessed = lastAccessed;
-	}
-
-	public int getVote() {
-		return vote;
-	}
-
-	public void setVote(int votes) {
-		this.vote = votes;
-	}
-
-	public String getFormat() {
-		return format;
-	}
-
-	public void setFormat(String format) {
-		this.format = format;
-	}
-
-	public Date getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public Date getUpdatedOn() {
-		return updatedOn;
-	}
-
-	public void setUpdatedOn(Date updatedOn) {
-		this.updatedOn = updatedOn;
-	}
-
-	public long getSizeInBytes() {
-		return sizeInBytes;
-	}
-
-	public void setSizeInBytes(long sizeInBytes) {
-		this.sizeInBytes = sizeInBytes;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public Library getLibrary() {
-		return library;
-	}
-
-	public void setLibrary(Library library) {
-		this.library = library;
 	}
 
 	public MediaEncoding getBestMediaEncoding() {
@@ -303,40 +153,6 @@ public class MediaItem implements Serializable {
 				mediaEncodings);
 		Collections.sort(mediaEncodingsList, new MediaEncodingComparator());
 		return mediaEncodingsList.get(0);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((library == null) ? 0 : library.hashCode());
-		result = prime * result + ((path == null) ? 0 : path.hashCode());
-		result = prime * result + (int) (sizeInBytes ^ (sizeInBytes >>> 32));
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MediaItem other = (MediaItem) obj;
-		if (library == null) {
-			if (other.library != null)
-				return false;
-		} else if (!library.equals(other.library))
-			return false;
-		if (path == null) {
-			if (other.path != null)
-				return false;
-		} else if (!path.equals(other.path))
-			return false;
-		if (sizeInBytes != other.sizeInBytes)
-			return false;
-		return true;
 	}
 
 	@Override
@@ -383,7 +199,7 @@ public class MediaItem implements Serializable {
 		builder.append(", comments=");
 		builder.append(comments);
 		builder.append(", tags=");
-		builder.append(tags);		
+		builder.append(tags);
 		builder.append("]");
 		return builder.toString();
 	}
