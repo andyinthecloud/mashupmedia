@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -154,15 +155,15 @@ public class MusicPlaylistController {
         };
     }
 
-    @GetMapping(value = "/playlist-progress/{progressSeconds}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> getPlaylistTrackByProgress(@PathVariable long progressSeconds) {
+    @GetMapping(value = "/playlist-progress", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> getPlaylistTrackByProgress(@RequestParam long offset, @RequestParam long progress) {
         Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
         if (playlist == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        
-        PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItemByProgress(playlist, progressSeconds);
+        PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItemByProgress(playlist, offset, progress);
+        PlaylistHelper.processPlayingMediaItem(playlist, playlistMediaItem);
 
         playlistManager.savePlaylist(playlist);
         User user = AdminHelper.getLoggedInUser();

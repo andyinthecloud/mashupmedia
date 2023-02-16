@@ -26,7 +26,6 @@ export type MusicPlaylistTrackPayload = {
     playlistPayload: PlaylistPayload
     first: boolean
     last: boolean
-    cumulativeEndSeconds: number
 }
 
 const playlistUrl = "/api/playlist/music"

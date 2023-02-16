@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, ExpandLess, ExpandMore, Pause, PlayArrow } from "@mui/icons-material"
 import { IconButton, Slider } from "@mui/material"
+import { number } from "prop-types"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import { albumArtImageUrl, ImageType, mediaStreamUrl, playlistStreamUrl } from "../../../media/music/rest/musicCalls"
@@ -42,6 +43,8 @@ const AudioPlayer = () => {
     const [expanded, setExpanded] = useState<boolean>(false)
 
     const [playing, setPlaying] = useState<boolean>(false)
+    
+    const [playlistOffset, setPlaylistOffset] = useState<number>(0)
 
     const audioPlayer = useRef(new Audio())
 
@@ -232,17 +235,18 @@ const AudioPlayer = () => {
             return
         }
 
-        const trackProgress = element.currentTime
-        setProgress(trackProgress)
+        const progress = element.currentTime
+        setProgress(progress)
 
         if (!mobileDisplay) {
             return
         }
 
-        const cumulativeEndSeconds = props.payload.trackWithArtistPayload?.cumulativeEndSeconds || 0
-        if (trackProgress > cumulativeEndSeconds) {
+        const trackSeconds = props.payload.trackWithArtistPayload?.trackPayload.seconds || 0
+        if ((progress - playlistOffset) > trackSeconds) {
             console.log('handleTimeUpdate: next track')
-            displayNextTrack(trackProgress)
+            setPlaylistOffset(playlistOffset + trackSeconds)
+            displayNextTrack(progress)
         }
     }
 

@@ -84,7 +84,7 @@ public class SecureStreamController {
                     try {
                         Files.copy(path, out);
                     } catch (IOException e) {
-                        log.error("Error closing media stream", e);
+                        log.error("Error closing media stream");
                     }
                 }
             });

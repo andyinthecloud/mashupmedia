@@ -175,65 +175,72 @@ public class PlaylistHelper {
 			return null;
 		}
 
-		long cumulativeEndSeconds = 0;
+		
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
-		Optional<PlaylistMediaItem> currentPlaylistMediaItem = playlistMediaItems
+		Optional<PlaylistMediaItem> optionalPlayingMediaItem = playlistMediaItems
 			.stream()
 			.filter(pmi -> pmi.isPlaying())
 			.findFirst();
-		
-		PlaylistMediaItem playlistMediaItem = null;
-		
-		for (PlaylistMediaItem pmi : playlistMediaItems) {
-			if (!(pmi.getMediaItem() instanceof Track)) {
-				continue;
-			}
 
-			Track track = (Track) pmi.getMediaItem();
-			cumulativeEndSeconds += track.getTrackLength();
-			pmi.setCumulativeEndSeconds(cumulativeEndSeconds);
-
-			if (cumulativeEndSeconds > progress && playlistMediaItem == null) {
-				pmi.setPlaying(true);
-				playlistMediaItem = pmi;
-			} else {
-				pmi.setPlaying(false);
-			}
-		}
-
-		if (playlistMediaItem == null) {
-			playlistMediaItem = currentPlaylistMediaItem
-				.orElse(playlistMediaItems.get(playlistMediaItems.size() - 1));
-		}
-
-		return playlistMediaItem;
-	}
-
-	public static long getCumulativeEndSeconds(Playlist playlist, PlaylistMediaItem playlistMediaItem) {
-		if (playlist == null) {
-			return 0;
+		int index = 0;
+		if (optionalPlayingMediaItem.isPresent()) {
+			index = playlistMediaItems.indexOf(optionalPlayingMediaItem.get());
 		}
 
 		long cumulativeEndSeconds = 0;
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
-		for (PlaylistMediaItem pmi : playlistMediaItems) {
-			if (!(pmi.getMediaItem() instanceof Track)) {
-				continue;
-			}
+		List<PlaylistMediaItem> remainingPlaylistMediaItems = playlistMediaItems.subList(index, playlistMediaItems.size() - 1);
+		for(PlaylistMediaItem pmi : remainingPlaylistMediaItems) {
+			if (pmi.getMediaItem() instanceof Track track) {
+				cumulativeEndSeconds += track.getTrackLength();
+				if (progress < cumulativeEndSeconds) {
+					return pmi;
+				}
+			} 
+		};
 
-
-			Track track = (Track) pmi.getMediaItem();
-			cumulativeEndSeconds += track.getTrackLength();
-
-			
-			if (playlistMediaItem.equals(pmi)) {
-				return cumulativeEndSeconds;
-			}
-			
-		}
-
-		return 0;
+		return optionalPlayingMediaItem.orElse(playlistMediaItems.get(0));
 
 	}
+
+    public static void processPlayingMediaItem(Playlist playlist, PlaylistMediaItem playlistMediaItem) {
+		if (playlist == null) {
+			return;
+		}
+
+		if (playlistMediaItem == null) {
+			return;
+		}
+
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		for (PlaylistMediaItem pmi : playlistMediaItems) {
+			pmi.setPlaying(pmi.equals(playlistMediaItem));
+		}
+    }
+
+	// public static long getCumulativeEndSeconds(Playlist playlist, PlaylistMediaItem playlistMediaItem) {
+	// 	if (playlist == null) {
+	// 		return 0;
+	// 	}
+
+	// 	long cumulativeEndSeconds = 0;
+	// 	List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+	// 	for (PlaylistMediaItem pmi : playlistMediaItems) {
+	// 		if (!(pmi.getMediaItem() instanceof Track)) {
+	// 			continue;
+	// 		}
+
+	// 		Track track = (Track) pmi.getMediaItem();
+	// 		cumulativeEndSeconds += track.getTrackLength();
+
+			
+	// 		if (playlistMediaItem.equals(pmi)) {
+	// 			return cumulativeEndSeconds;
+	// 		}
+			
+	// 	}
+
+	// 	return 0;
+
+	// }
 
 }
