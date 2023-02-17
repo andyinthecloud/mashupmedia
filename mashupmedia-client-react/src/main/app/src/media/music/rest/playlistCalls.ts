@@ -47,5 +47,5 @@ export const hasPlaylist = (userToken: string | undefined): Promise<HttpResponse
 }
 
 export const trackProgress = (progress: number, userToken: string | undefined): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {
-    return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.GET, playlistUrl + "/playlist-progress/" + Math.round(progress), userToken)
+    return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.GET, playlistUrl + "/playlist-progress/?progress=" + Math.round(progress), userToken)
 }

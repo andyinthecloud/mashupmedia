@@ -178,7 +178,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		Optional<PlaylistMediaItem> playingPlaylistMediaItem = accessiblePlaylistMediaItems
 				.stream()
 				.filter(pmi -> pmi.isPlaying())
-				.findAny();
+				.findFirst();
 
 		if (playingPlaylistMediaItem.isEmpty()) {
 			return;

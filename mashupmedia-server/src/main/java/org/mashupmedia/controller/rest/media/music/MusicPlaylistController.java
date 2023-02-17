@@ -137,8 +137,8 @@ public class MusicPlaylistController {
             return ResponseEntity.noContent().build();
         }
 
-        long cumulativeEndSeconds = PlaylistHelper.getCumulativeEndSeconds(playlist, playlistMediaItem);
-        playlistMediaItem.setCumulativeEndSeconds(cumulativeEndSeconds);
+        // long cumulativeEndSeconds = PlaylistHelper.getCumulativeEndSeconds(playlist, playlistMediaItem);
+        // playlistMediaItem.setCumulativeEndSeconds(cumulativeEndSeconds);
 
         playlistManager.savePlaylist(playlist);
         User user = AdminHelper.getLoggedInUser();
@@ -156,13 +156,13 @@ public class MusicPlaylistController {
     }
 
     @GetMapping(value = "/playlist-progress", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> getPlaylistTrackByProgress(@RequestParam long offset, @RequestParam long progress) {
+    public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> getPlaylistTrackByProgress(@RequestParam long progress) {
         Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
         if (playlist == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItemByProgress(playlist, offset, progress);
+        PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItemByProgress(playlist, progress);
         PlaylistHelper.processPlayingMediaItem(playlist, playlistMediaItem);
 
         playlistManager.savePlaylist(playlist);

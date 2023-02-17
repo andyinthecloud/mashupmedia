@@ -46,7 +46,6 @@ public class MusicPlaylistTrackMapper extends SecureMediaDomainMapper<PlaylistMe
                 .playlistPayload(playlistMapper.toDto(playlist))
                 .first(domain.isFirst())
                 .last(domain.isLast())
-                .cumulativeEndSeconds(domain.getCumulativeEndSeconds())
                 .build();
     }
 

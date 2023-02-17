@@ -242,7 +242,7 @@ const AudioPlayer = () => {
             return
         }
 
-        const trackSeconds = props.payload.trackWithArtistPayload?.trackPayload.seconds || 0
+        const trackSeconds = props.payload.trackWithArtistPayload?.trackPayload.totalSeconds || 0
         if ((progress - playlistOffset) > trackSeconds) {
             console.log('handleTimeUpdate: next track')
             setPlaylistOffset(playlistOffset + trackSeconds)
