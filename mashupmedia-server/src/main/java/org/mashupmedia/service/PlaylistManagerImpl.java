@@ -20,6 +20,7 @@ import org.mashupmedia.model.playlist.UserPlaylistPositionId;
 import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MessageHelper;
+import org.mashupmedia.util.PlaylistHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -249,7 +250,8 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		int playingIndex = getPlayingIndex(playlistMediaItems, playlistMediaId, relativeOffset);
 
 		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(playingIndex);
-		playlistMediaItem.setPlaying(true);
+		PlaylistHelper.setPlayingMediaItem(playlist, playlistMediaItem);
+
 		return playlistMediaItem;
 	}
 

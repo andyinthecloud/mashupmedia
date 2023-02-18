@@ -153,27 +153,27 @@ public class StreamingController {
 		return mediaItem.getBestMediaEncoding();
 	}
 
-	protected List<PlaylistMediaItem> getPlaylistMediaItems(Playlist playlist) throws Exception {
+	// protected List<PlaylistMediaItem> getPlaylistMediaItems(Playlist playlist) throws Exception {
 
-		List<PlaylistMediaItem> playlistMediaItems = new ArrayList<PlaylistMediaItem>();
+	// 	List<PlaylistMediaItem> playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 
-		int offset = 0;
-		boolean isEndOfPlaylist = false;
+	// 	int offset = 0;
+	// 	boolean isEndOfPlaylist = false;
 
-		while (isEndOfPlaylist == false) {
-			// PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist,
-			// 		offset);
-			// if (playlistMediaItem == null || playlistMediaItem.getId() == 0) {
-			// 	isEndOfPlaylist = true;
-			// 	continue;
-			// }
+	// 	while (isEndOfPlaylist == false) {
+	// 		// PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist,
+	// 		// 		offset);
+	// 		// if (playlistMediaItem == null || playlistMediaItem.getId() == 0) {
+	// 		// 	isEndOfPlaylist = true;
+	// 		// 	continue;
+	// 		// }
 
-			// playlistMediaItems.add(playlistMediaItem);
-			offset++;
-		}
+	// 		// playlistMediaItems.add(playlistMediaItem);
+	// 		offset++;
+	// 	}
 
-		return playlistMediaItems;
-	}
+	// 	return playlistMediaItems;
+	// }
 
 	private File getMediaFile(MediaItem mediaItem, MediaEncoding mediaEncoding) {
 		File mediaFile = FileHelper.getMediaFile(mediaItem, mediaEncoding);

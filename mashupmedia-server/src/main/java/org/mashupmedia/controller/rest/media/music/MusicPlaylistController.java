@@ -137,9 +137,6 @@ public class MusicPlaylistController {
             return ResponseEntity.noContent().build();
         }
 
-        // long cumulativeEndSeconds = PlaylistHelper.getCumulativeEndSeconds(playlist, playlistMediaItem);
-        // playlistMediaItem.setCumulativeEndSeconds(cumulativeEndSeconds);
-
         playlistManager.savePlaylist(playlist);
         User user = AdminHelper.getLoggedInUser();
         String mediaToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
@@ -163,7 +160,7 @@ public class MusicPlaylistController {
         }
 
         PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItemByProgress(playlist, progress);
-        PlaylistHelper.processPlayingMediaItem(playlist, playlistMediaItem);
+        PlaylistHelper.setPlayingMediaItem(playlist, playlistMediaItem);
 
         playlistManager.savePlaylist(playlist);
         User user = AdminHelper.getLoggedInUser();

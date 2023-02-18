@@ -202,7 +202,7 @@ public class PlaylistHelper {
 
 	}
 
-    public static void processPlayingMediaItem(Playlist playlist, PlaylistMediaItem playlistMediaItem) {
+    public static void setPlayingMediaItem(Playlist playlist, PlaylistMediaItem playlistMediaItem) {
 		if (playlist == null) {
 			return;
 		}

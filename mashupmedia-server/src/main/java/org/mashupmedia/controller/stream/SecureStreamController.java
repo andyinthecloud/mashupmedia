@@ -1,6 +1,8 @@
 package org.mashupmedia.controller.stream;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.coyote.CloseNowException;
 import org.mashupmedia.controller.stream.resource.MediaResourceHttpRequestHandler;
@@ -80,11 +83,14 @@ public class SecureStreamController {
                 File file = new File(mediaItem.getPath());
 
                 if (file.isFile()) {
-                    Path path = file.toPath();
+                    FileInputStream fileInputStream = null;
                     try {
-                        Files.copy(path, out);
+                        fileInputStream = new FileInputStream(file);
+                        IOUtils.copyLarge(fileInputStream, out);
                     } catch (IOException e) {
                         log.error("Error closing media stream");
+                    } finally {
+                        IOUtils.closeQuietly(fileInputStream);
                     }
                 }
             });
