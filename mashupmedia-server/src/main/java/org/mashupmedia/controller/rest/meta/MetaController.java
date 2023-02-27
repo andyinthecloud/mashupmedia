@@ -3,7 +3,7 @@ package org.mashupmedia.controller.rest.meta;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.NameValuePayload;

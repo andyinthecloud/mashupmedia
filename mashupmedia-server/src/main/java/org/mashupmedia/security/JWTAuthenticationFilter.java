@@ -5,10 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.mashupmedia.dto.login.LoginPayload;
 import org.mashupmedia.dto.login.SecurityPayload;
 import org.mashupmedia.model.User;
@@ -23,6 +19,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -62,12 +62,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         LocalDateTime localDateExpires = LocalDateTime.now().plusHours(SecurityConstants.EXPIRATION_HOURS);
         Date dateExpires = DateHelper.toDate(localDateExpires);
-        // Date dateExpires = DateHelper.toDate(LocalDateTime.now().minusMinutes(1));
 
+        Algorithm algorithm = Algorithm.HMAC512(SecurityConstants.SECRET);
         String token = JWT.create()
+                .withIssuer(SecurityConstants.ISSUER)
                 .withSubject(((User) authentication.getPrincipal()).getUsername())
                 .withExpiresAt(dateExpires)
-                .sign(Algorithm.HMAC512(SecurityConstants.SECRET.getBytes()));
+                .sign(algorithm);
 
         SecurityPayload userPayload = SecurityPayload
                 .builder()

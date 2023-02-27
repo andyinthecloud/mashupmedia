@@ -5,9 +5,8 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
-import org.apache.commons.collections4.list.SetUniqueList;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.photo.Album;
@@ -111,9 +110,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		query.setMaxResults(totalItems * totalGroups);
 		query.setFirstResult(firstResult);
 
-		@SuppressWarnings("unchecked")
-		List<Photo> photos = SetUniqueList.setUniqueList(query.getResultList());
-		return photos;
+		return query.getResultList();
 	}
 
 	@Override
@@ -300,8 +297,8 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		photoQuery.setMaxResults(maxResults);
 		// photoQuery.setFetchSize(maxResults);
 
-		@SuppressWarnings("unchecked")
-		List<Photo> photos = SetUniqueList.setUniqueList(photoQuery.getResultList());
+		// @SuppressWarnings("unchecked")
+		List<Photo> photos = photoQuery.getResultList();
 
 		if (photos == null || photos.isEmpty()) {
 			return null;

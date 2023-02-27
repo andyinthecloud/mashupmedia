@@ -1,18 +1,19 @@
 package org.mashupmedia.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.InitialisationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class InitialisationInterceptor extends HandlerInterceptorAdapter {
+public class InitialisationInterceptor implements HandlerInterceptor {
 
 
 	@Autowired
@@ -29,7 +30,7 @@ public class InitialisationInterceptor extends HandlerInterceptorAdapter {
 			initialisationManager.initialiseApplication();
 			log.info("Initialised mashupmedia.");
 		}
-		return super.preHandle(request, response, handler);
+		return true;
 	}
 
 }

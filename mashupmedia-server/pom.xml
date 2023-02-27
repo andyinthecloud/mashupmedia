@@ -66,7 +66,7 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>3.19.2</version>
+            <version>4.3.0</version>
         </dependency>
 
 
@@ -112,7 +112,7 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
             <!-- <version>5.2.2.RELEASE</version> -->
-            <version>5.7.1</version>
+            <version>6.0.2</version>
         </dependency>
 
 
@@ -120,7 +120,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.9</version>
+            <version>1.6.14</version>
             <!-- <exclusions>
                 <exclusion>
                     <groupId>org.apache.commons</groupId>
@@ -137,7 +137,7 @@
         </dependency>
 
 
-        <dependency>
+        <!-- <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-search-orm</artifactId>
             <version>5.11.10.Final</version>
@@ -147,7 +147,17 @@
                     <artifactId>hibernate-commons-annotations</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency> -->
+
+
+
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.1.7.Final</version>
         </dependency>
+        
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -159,11 +169,11 @@
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.1</version>
-        </dependency>
+        </dependency> -->
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -173,7 +183,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.15.3</version>
+            <version>1.15.4</version>
         </dependency>
 
         <dependency>
@@ -231,11 +241,11 @@
             <version>3.0.8</version>
         </dependency>
 
-        <dependency>
+        <!-- <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
             <scope>provided</scope>
-        </dependency>
+        </dependency> -->
 
         <!--		<dependency>-->
         <!--			<groupId>org.springframework.boot</groupId>-->

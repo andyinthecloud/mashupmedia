@@ -3,8 +3,8 @@ package org.mashupmedia.dto.admin;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import org.mashupmedia.dto.share.NameValuePayload;
 

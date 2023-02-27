@@ -2,7 +2,7 @@ package org.mashupmedia.dao;
 
 import java.util.List;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.mashupmedia.model.Role;
 import org.springframework.stereotype.Repository;

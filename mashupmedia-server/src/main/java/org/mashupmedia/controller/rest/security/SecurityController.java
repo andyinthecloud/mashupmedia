@@ -1,6 +1,6 @@
-package org.mashupmedia.controller.rest;
+package org.mashupmedia.controller.rest.security;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.mashupmedia.dto.login.LoginPayload;
 import org.mashupmedia.dto.login.UserPolicyPayload;
@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/security")
 @RequiredArgsConstructor
-public class LoginController {
+public class SecurityController {
 
     private final AdminManager adminManager;
 

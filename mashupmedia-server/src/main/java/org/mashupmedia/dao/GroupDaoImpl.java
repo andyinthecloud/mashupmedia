@@ -3,12 +3,12 @@ package org.mashupmedia.dao;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Query;
-
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.springframework.stereotype.Repository;
+
+import jakarta.persistence.Query;
 
 @Repository
 public class GroupDaoImpl extends BaseDaoImpl implements GroupDao {

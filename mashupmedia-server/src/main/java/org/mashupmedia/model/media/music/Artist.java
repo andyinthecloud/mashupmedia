@@ -3,13 +3,19 @@ package org.mashupmedia.model.media.music;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlTransient;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
 
 @Entity
 @Table(name = "artists")
@@ -21,7 +27,6 @@ public class Artist implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@XmlTransient
 	private long id;
-	@Field(analyze = Analyze.NO)
 	@Column(unique = true)
 	private String name;
 	private String folderName;

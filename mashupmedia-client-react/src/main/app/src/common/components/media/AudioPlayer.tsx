@@ -1,8 +1,8 @@
-import { ChevronLeft, ChevronRight, ExpandLess, ExpandMore, Pause, PlayArrow } from "@mui/icons-material"
+import { ChevronLeft, ChevronRight, ExpandLess, ExpandMore, Pause, PlayArrow, QueueMusic } from "@mui/icons-material"
 import { IconButton, Slider } from "@mui/material"
-import { number } from "prop-types"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
+import { Link } from "react-router-dom"
 import { albumArtImageUrl, ImageType, mediaStreamUrl, playlistStreamUrl } from "../../../media/music/rest/musicCalls"
 import { MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, navigateTrack, trackProgress } from "../../../media/music/rest/playlistCalls"
 import { SecureMediaPayload } from "../../../media/rest/secureMediaPayload"
@@ -43,7 +43,7 @@ const AudioPlayer = () => {
     const [expanded, setExpanded] = useState<boolean>(false)
 
     const [playing, setPlaying] = useState<boolean>(false)
-    
+
     const [playlistOffset, setPlaylistOffset] = useState<number>(0)
 
     const audioPlayer = useRef(new Audio())
@@ -82,9 +82,30 @@ const AudioPlayer = () => {
     const renderPlayingInformation = () => {
         if (!isEmptyPlaylist()) {
             return (
-                <div>
+                <div >
+                    <div style={{ float: "right" }}>
+                        <Link
+                            to={"/music/music-playlist/" + props.payload.trackWithArtistPayload?.playlistPayload.id}
+                            onClick={() => setExpanded(false)}
+                            className="link-no-underlne"
+                        >
+                            <QueueMusic
+                                color="primary"
+                                fontSize="large"
+                            />
+                        </Link>
+                    </div>
                     <div className="title">{props.payload.trackWithArtistPayload?.trackPayload.name}</div>
-                    <div className="artist">{props.payload.trackWithArtistPayload?.artistPayload.name}</div>
+                    <div className="artist">
+                        <Link
+                            to={"/music/artist/" + props.payload.trackWithArtistPayload?.artistPayload.id}
+                            onClick={() => setExpanded(false)}
+                            className="link-no-underlne"
+                        >
+                            {props.payload.trackWithArtistPayload?.artistPayload.name}
+                        </Link>
+                    </div>
+
                 </div>
             )
         } else {
@@ -150,7 +171,7 @@ const AudioPlayer = () => {
                     ...props,
                     mediaToken: response.parsedBody?.mediaToken || "",
                     payload: {
-                        ...props.payload,                        
+                        ...props.payload,
                         isReadyToPlay: response.ok,
                         trackWithArtistPayload: response.parsedBody?.payload,
                         triggerPlay: timestamp()
@@ -201,6 +222,7 @@ const AudioPlayer = () => {
             return
         }
 
+        setPlaylistOffset(0)
         audioPlayer.current.src = audioUrl
         audioPlayer.current.load()
         if (audioWasPlaying) {

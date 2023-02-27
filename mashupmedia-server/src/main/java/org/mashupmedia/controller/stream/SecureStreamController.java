@@ -1,36 +1,31 @@
 package org.mashupmedia.controller.stream;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.SequenceInputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.coyote.CloseNowException;
 import org.mashupmedia.controller.stream.resource.MediaResourceHttpRequestHandler;
-import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,7 +55,7 @@ public class SecureStreamController {
     }
 
     @RequestMapping(value = "/playlist/{playlistId}", method = RequestMethod.GET)
-    public ResponseEntity<StreamingResponseBody> streamPlaylist(@Valid @PathVariable Long playlistId,
+    public void streamPlaylist(@Valid @PathVariable Long playlistId,
             @RequestParam String mediaToken,
             HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
@@ -76,30 +71,24 @@ public class SecureStreamController {
         PlaylistMediaItem currenPlaylistMediaItem = playlistManager.navigateToPlaylistMediaItem(playlist, 0);
         int index = playlistMediaItems.indexOf(currenPlaylistMediaItem);
         List<PlaylistMediaItem> unplayedMediaItems = playlistMediaItems.subList(index, playlistMediaItems.size() - 1);
-
-        StreamingResponseBody streamingResponseBody = out -> {
-            unplayedMediaItems.forEach(playlistMediaItem -> {
-                MediaItem mediaItem = playlistMediaItem.getMediaItem();
-                File file = new File(mediaItem.getPath());
-
-                if (file.isFile()) {
-                    FileInputStream fileInputStream = null;
-                    try {
-                        fileInputStream = new FileInputStream(file);
-                        IOUtils.copyLarge(fileInputStream, out);
-                    } catch (IOException e) {
-                        log.error("Error closing media stream");
-                    } finally {
-                        IOUtils.closeQuietly(fileInputStream);
-                    }
-                }
-            });
-            IOUtils.closeQuietly(out);
-        };
+        long fileLength = 0;
+        List<FileInputStream> fileInputStreams = new ArrayList<>();
+        for (PlaylistMediaItem pmi : unplayedMediaItems) {
+            if (pmi.getMediaItem() instanceof Track track) {
+                fileLength += track.getSizeInBytes();
+                fileInputStreams.add(new FileInputStream(track.getPath()));
+            }
+        }
 
         response.setContentType(MediaContentType.MP3.getMimeContentType());
+        response.setContentLengthLong(fileLength);
 
-        return ResponseEntity.ok().body(streamingResponseBody);
+        Enumeration<FileInputStream> fileInputStreamsEnumeration = Collections.enumeration(fileInputStreams);
+        SequenceInputStream sequenceInputStream = new SequenceInputStream(fileInputStreamsEnumeration);
+        
+        IOUtils.copy(sequenceInputStream, response.getOutputStream());
+        response.flushBuffer();
+        
     }
 
 }

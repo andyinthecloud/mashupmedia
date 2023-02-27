@@ -2,34 +2,24 @@ package org.mashupmedia.model.media.photo;
 
 import java.util.Date;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Resolution;
 import org.mashupmedia.model.media.MediaItem;
 
 @Entity
 @Table(name = "photos")
-@Indexed
 @Cacheable
 @XmlRootElement
 public class Photo extends MediaItem {
 
 	private static final long serialVersionUID = -2278500438492214953L;
 
-	@IndexedEmbedded
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
 	private String webOptimisedImagePath;
 	private int orientation;
 	@Temporal(TemporalType.TIMESTAMP)
-	@Field(analyze = Analyze.NO)
-	@DateBridge(resolution = Resolution.MILLISECOND)
 	private Date takenOn;
 
 	@Transient

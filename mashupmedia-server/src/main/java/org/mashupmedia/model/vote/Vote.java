@@ -3,7 +3,7 @@ package org.mashupmedia.model.vote;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;

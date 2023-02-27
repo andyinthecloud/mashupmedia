@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.mashupmedia.model.User;
 import org.mashupmedia.util.PlaylistHelper;
