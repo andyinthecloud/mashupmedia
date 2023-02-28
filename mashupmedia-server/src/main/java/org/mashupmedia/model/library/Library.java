@@ -5,27 +5,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.location.Location;
+
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "libraries")
@@ -45,16 +44,15 @@ public abstract class Library implements Serializable {
 	private Location location;
 	private Date createdOn;
 	@ManyToOne
-//	@JoinColumn(name = "created_by_id")
+	// @JoinColumn(name = "created_by_id")
 	private User createdBy;
 	private Date updatedOn;
 	@ManyToOne
-//	@JoinColumn(name = "updated_by_id")
+	// @JoinColumn(name = "updated_by_id")
 	private User updatedBy;
 	private boolean enabled;
 	private String scanMinutesInterval;
 	private Date lastSuccessfulScanOn;
-	@IndexedEmbedded
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Group> groups;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

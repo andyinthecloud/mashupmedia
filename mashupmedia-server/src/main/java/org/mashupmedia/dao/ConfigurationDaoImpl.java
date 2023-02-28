@@ -2,10 +2,9 @@ package org.mashupmedia.dao;
 
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
+import org.apache.http.MethodNotSupportedException;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.Configuration;
 import org.springframework.data.repository.query.Param;
@@ -38,14 +37,17 @@ public class ConfigurationDaoImpl extends BaseDaoImpl implements ConfigurationDa
 
 	@Override
 	public void indexMediaItems() {
-		log.info("About to start indexing...");
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
-		try {
-			fullTextEntityManager.createIndexer().startAndWait();
-			log.info("Indexation finished.");
-		} catch (InterruptedException e) {
-			throw new MashupMediaRuntimeException("Error indexing content", e);
-		}
+
+		throw new UnsupportedOperationException("no longer supported");
+
+		// log.info("About to start indexing...");
+		// FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+		// try {
+		// 	fullTextEntityManager.createIndexer().startAndWait();
+		// 	log.info("Indexation finished.");
+		// } catch (InterruptedException e) {
+		// 	throw new MashupMediaRuntimeException("Error indexing content", e);
+		// }
 	}
 
 }

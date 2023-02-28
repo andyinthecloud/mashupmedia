@@ -1,6 +1,6 @@
 import { Search } from "@mui/icons-material";
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Box, Divider, IconButton, InputAdornment, TextField, Toolbar } from "@mui/material";
+import { AppBar, Box, IconButton, InputAdornment, TextField, Toolbar } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import logoSmall from '../../logo-small.png';
@@ -9,20 +9,21 @@ import MenuDrawer, { MenuDrawerPayload } from "./MenuDrawer";
 
 const MashupBar = () => {
 
-    const [menuDrawerPayload, setMenuDrawerPayload] = useState<MenuDrawerPayload>({
+    const [props, setProps] = useState<MenuDrawerPayload>({
         openMenu: false
     })
 
     const handleMenuClick = () => {
-        setMenuDrawerPayload({
+        setProps(p => ({
+            ...props,
             openMenu: true
-        })
+        }))
     }
 
     return (
         <Box sx={{ flexGrow: 1 }} id="mashup-bar">
-            <MenuDrawer {...menuDrawerPayload} />
-            <AppBar>
+            <MenuDrawer {...props} />
+            <AppBar elevation={0}>
                 <Toolbar>
                     <IconButton
                         size="large"

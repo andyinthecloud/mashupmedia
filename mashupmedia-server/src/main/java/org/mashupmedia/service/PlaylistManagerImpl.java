@@ -20,8 +20,10 @@ import org.mashupmedia.model.playlist.UserPlaylistPositionId;
 import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MessageHelper;
+import org.mashupmedia.util.PlaylistHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import lombok.AllArgsConstructor;
 
@@ -69,6 +71,23 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 		accessiblePlaylistMediaItems.get(0).setFirst(true);
 		accessiblePlaylistMediaItems.get(accessiblePlaylistMediaItems.size() - 1).setLast(true);
+
+		User user = AdminHelper.getLoggedInUser();
+		Optional<UserPlaylistPosition> userPlaylistPosition = playlist.getUserPlaylistPositions()
+				.stream()
+				.filter(upp -> upp.getUser().equals(user))
+				.findAny();
+
+		if (userPlaylistPosition.isEmpty()) {
+			return;
+		}
+
+		long userPlaylistMediaId = userPlaylistPosition.get().getPlaylistMediaId();
+
+		accessiblePlaylistMediaItems.forEach(pmi -> {
+			pmi.setPlaying(pmi.getId() == userPlaylistMediaId ? true : false);
+		});
+
 	}
 
 	@Override
@@ -110,6 +129,8 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	@Override
 	public Playlist getDefaultPlaylistForCurrentUser(PlaylistType playlistType) {
 		User user = AdminHelper.getLoggedInUser();
+		Assert.notNull(user, "User should not be null");
+
 		Playlist playlist = playlistDao.getDefaultPlaylistForUser(user.getId(), playlistType);
 		if (playlist != null) {
 			initialisePlaylist(playlist);
@@ -158,7 +179,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		Optional<PlaylistMediaItem> playingPlaylistMediaItem = accessiblePlaylistMediaItems
 				.stream()
 				.filter(pmi -> pmi.isPlaying())
-				.findAny();
+				.findFirst();
 
 		if (playingPlaylistMediaItem.isEmpty()) {
 			return;
@@ -229,7 +250,8 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		int playingIndex = getPlayingIndex(playlistMediaItems, playlistMediaId, relativeOffset);
 
 		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(playingIndex);
-		playlistMediaItem.setPlaying(true);
+		PlaylistHelper.setPlayingMediaItem(playlist, playlistMediaItem);
+
 		return playlistMediaItem;
 	}
 

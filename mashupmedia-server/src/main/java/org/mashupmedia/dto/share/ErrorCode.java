@@ -6,6 +6,9 @@ public enum ErrorCode {
     INCORRECT_PASSWORD("error.password.incorrect"),
     NON_MATCHING_PASSWORDS("error.password.matching"),
     LIBRARY_INVALID_PATH("error.library.invalid-path"),
+    NOT_LOGGED_IN("error.not-logged-in"),
+    GENERAL_ERROR("error.general"),
+    LIBRARIES_UNINITIALISED("error.libraries.uninitialised")
     
     ;
     

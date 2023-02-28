@@ -5,14 +5,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.mashupmedia.model.User;
 import org.mashupmedia.util.PlaylistHelper;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
 @Table(name = "playlists")
 @Cacheable
+@Getter
+@Setter
+@NoArgsConstructor
 public class Playlist implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -61,38 +68,6 @@ public class Playlist implements Serializable {
 	private boolean privatePlaylist;
 	private boolean editOnlyByOwner;
 	
-	public boolean isEditOnlyByOwner() {
-		return editOnlyByOwner;
-	}
-
-	public void setEditOnlyByOwner(boolean editOnlyByOwner) {
-		this.editOnlyByOwner = editOnlyByOwner;
-	}
-
-	public boolean isUserDefault() {
-		return userDefault;
-	}
-
-	public void setUserDefault(boolean userDefault) {
-		this.userDefault = userDefault;
-	}
-
-	public boolean isPrivatePlaylist() {
-		return privatePlaylist;
-	}
-
-	public void setPrivatePlaylist(boolean privatePlaylist) {
-		this.privatePlaylist = privatePlaylist;
-	}
-
-	public String getPlaylistTypeValue() {
-		return playlistTypeValue;
-	}
-
-	public void setPlaylistTypeValue(String playlistTypeValue) {
-		this.playlistTypeValue = playlistTypeValue;
-	}
-
 	public void setPlaylistType(PlaylistType playlistType) {
 		this.playlistTypeValue = playlistType.getValue();
 	}
@@ -100,70 +75,6 @@ public class Playlist implements Serializable {
 	public PlaylistType getPlaylistType() {
 		PlaylistType playlistType = PlaylistHelper.getPlaylistType(getPlaylistTypeValue());
 		return playlistType;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public List<PlaylistMediaItem> getPlaylistMediaItems() {
-		return playlistMediaItems;
-	}
-
-	public List<PlaylistMediaItem> getAccessiblePlaylistMediaItems() {
-		return accessiblePlaylistMediaItems;
-	}
-
-	public void setAccessiblePlaylistMediaItems(List<PlaylistMediaItem> accessiblePlaylistMediaItems) {
-		this.accessiblePlaylistMediaItems = accessiblePlaylistMediaItems;
-	}
-
-	public void setPlaylistMediaItems(List<PlaylistMediaItem> playlistMediaItems) {
-		this.playlistMediaItems = playlistMediaItems;
-	}
-
-	public User getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(User createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Date getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public Date getUpdatedOn() {
-		return updatedOn;
-	}
-
-	public void setUpdatedOn(Date updatedOn) {
-		this.updatedOn = updatedOn;
-	}
-
-	public User getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(User updatedBy) {
-		this.updatedBy = updatedBy;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override

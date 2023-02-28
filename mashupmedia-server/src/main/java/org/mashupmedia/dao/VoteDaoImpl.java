@@ -2,8 +2,8 @@ package org.mashupmedia.dao;
 
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.mashupmedia.model.vote.DislikeVote;
 import org.mashupmedia.model.vote.LikeVote;

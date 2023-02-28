@@ -2,13 +2,16 @@ package org.mashupmedia.model.media;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "years")
@@ -20,7 +23,6 @@ public class Year implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@XmlTransient
 	private long id;
-	@Field(analyze = Analyze.NO)
 	@Column(name = "year_number")
 	private int year;
 
@@ -72,7 +74,5 @@ public class Year implements Serializable {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

@@ -25,9 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -46,6 +44,9 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -68,7 +69,7 @@ public class MapperManagerImpl implements MapperManager {
 
 		JAXBContext jaxbContext = JAXBContext.newInstance(Track.class);
 		marshaller = jaxbContext.createMarshaller();
-		marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FRAGMENT, true);
+		marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 		return marshaller;
 	}
 
@@ -148,7 +149,6 @@ public class MapperManagerImpl implements MapperManager {
 		InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
 
 		PartialUnmarshaller<Track> partialUnmarshaller = new PartialUnmarshaller<Track>(inputStream, Track.class);
-
 		Date date = new Date();
 		while (partialUnmarshaller.hasNext()) {
 			Track track = partialUnmarshaller.next();

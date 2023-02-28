@@ -3,7 +3,7 @@ package org.mashupmedia.model.media;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.mashupmedia.model.User;
 

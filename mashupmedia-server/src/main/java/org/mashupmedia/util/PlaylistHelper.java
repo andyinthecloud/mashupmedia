@@ -170,4 +170,77 @@ public class PlaylistHelper {
 
 	}
 
+	public static PlaylistMediaItem getPlaylistMediaItemByProgress(Playlist playlist, long progress) {
+		if (playlist == null) {
+			return null;
+		}
+
+		
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+		Optional<PlaylistMediaItem> optionalPlayingMediaItem = playlistMediaItems
+			.stream()
+			.filter(pmi -> pmi.isPlaying())
+			.findFirst();
+
+		int index = 0;
+		if (optionalPlayingMediaItem.isPresent()) {
+			index = playlistMediaItems.indexOf(optionalPlayingMediaItem.get());
+		}
+
+		long cumulativeEndSeconds = 0;
+		List<PlaylistMediaItem> remainingPlaylistMediaItems = playlistMediaItems.subList(index, playlistMediaItems.size() - 1);
+		for(PlaylistMediaItem pmi : remainingPlaylistMediaItems) {
+			if (pmi.getMediaItem() instanceof Track track) {
+				cumulativeEndSeconds += track.getTrackLength();
+				if (progress < cumulativeEndSeconds) {
+					return pmi;
+				}
+			} 
+		};
+
+		return optionalPlayingMediaItem.orElse(playlistMediaItems.get(0));
+
+	}
+
+    public static void setPlayingMediaItem(Playlist playlist, PlaylistMediaItem playlistMediaItem) {
+		if (playlist == null) {
+			return;
+		}
+
+		if (playlistMediaItem == null) {
+			return;
+		}
+
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		for (PlaylistMediaItem pmi : playlistMediaItems) {
+			pmi.setPlaying(pmi.equals(playlistMediaItem));
+		}
+    }
+
+	// public static long getCumulativeEndSeconds(Playlist playlist, PlaylistMediaItem playlistMediaItem) {
+	// 	if (playlist == null) {
+	// 		return 0;
+	// 	}
+
+	// 	long cumulativeEndSeconds = 0;
+	// 	List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+	// 	for (PlaylistMediaItem pmi : playlistMediaItems) {
+	// 		if (!(pmi.getMediaItem() instanceof Track)) {
+	// 			continue;
+	// 		}
+
+	// 		Track track = (Track) pmi.getMediaItem();
+	// 		cumulativeEndSeconds += track.getTrackLength();
+
+			
+	// 		if (playlistMediaItem.equals(pmi)) {
+	// 			return cumulativeEndSeconds;
+	// 		}
+			
+	// 	}
+
+	// 	return 0;
+
+	// }
+
 }

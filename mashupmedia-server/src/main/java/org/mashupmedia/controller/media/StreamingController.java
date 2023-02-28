@@ -5,12 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -20,8 +15,6 @@ import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.photo.Photo;
-import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
@@ -29,7 +22,6 @@ import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
-import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.WebHelper;
 import org.mashupmedia.view.MediaItemImageView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +29,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/streaming")
@@ -153,27 +148,27 @@ public class StreamingController {
 		return mediaItem.getBestMediaEncoding();
 	}
 
-	protected List<PlaylistMediaItem> getPlaylistMediaItems(Playlist playlist) throws Exception {
+	// protected List<PlaylistMediaItem> getPlaylistMediaItems(Playlist playlist) throws Exception {
 
-		List<PlaylistMediaItem> playlistMediaItems = new ArrayList<PlaylistMediaItem>();
+	// 	List<PlaylistMediaItem> playlistMediaItems = new ArrayList<PlaylistMediaItem>();
 
-		int offset = 0;
-		boolean isEndOfPlaylist = false;
+	// 	int offset = 0;
+	// 	boolean isEndOfPlaylist = false;
 
-		while (isEndOfPlaylist == false) {
-			// PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist,
-			// 		offset);
-			// if (playlistMediaItem == null || playlistMediaItem.getId() == 0) {
-			// 	isEndOfPlaylist = true;
-			// 	continue;
-			// }
+	// 	while (isEndOfPlaylist == false) {
+	// 		// PlaylistMediaItem playlistMediaItem = PlaylistHelper.navigatePlaylist(playlist,
+	// 		// 		offset);
+	// 		// if (playlistMediaItem == null || playlistMediaItem.getId() == 0) {
+	// 		// 	isEndOfPlaylist = true;
+	// 		// 	continue;
+	// 		// }
 
-			// playlistMediaItems.add(playlistMediaItem);
-			offset++;
-		}
+	// 		// playlistMediaItems.add(playlistMediaItem);
+	// 		offset++;
+	// 	}
 
-		return playlistMediaItems;
-	}
+	// 	return playlistMediaItems;
+	// }
 
 	private File getMediaFile(MediaItem mediaItem, MediaEncoding mediaEncoding) {
 		File mediaFile = FileHelper.getMediaFile(mediaItem, mediaEncoding);

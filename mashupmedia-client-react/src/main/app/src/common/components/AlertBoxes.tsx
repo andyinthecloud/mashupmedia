@@ -4,16 +4,17 @@ import { useDispatch, useSelector } from "react-redux"
 import { clearNotification, NotificationPayload, NotificationType } from "../../common/notification/notificationSlice"
 import { RootState } from "../../common/redux/store"
 
-
 export type AlertBoxPayload = {
     notificationPayloads: NotificationPayload[]
 }
+
 
 const AlertBoxes = () => {
 
     const notificationPayloadsState = useSelector((state: RootState) => state.notification)
 
     const [props, setProps] = useState<AlertBoxPayload>()
+
 
     useEffect(() => {
         setProps(notificationPayloadsState)
@@ -42,8 +43,16 @@ const AlertBox = (payload: NotificationPayload) => {
     const [props, setProps] = useState<NotificationPayload>({
         ...payload
     })
+
+    const [fade, setFade] = useState<boolean>(false)
+
     useEffect(() => {
         setProps(payload)
+        setTimeout(() => {
+            dispatch(
+                clearNotification(payload.id || 0)
+            )
+        }, 5000)
     }, [payload])
 
 
@@ -74,8 +83,9 @@ const AlertBox = (payload: NotificationPayload) => {
             severity={severity(props.notificationType)}
             onClose={() => handleClose(props.id)}
             sx={{
-                marginBottom: 10
+                marginBottom: 5
             }}
+
         >
             {props.message}
         </Alert>

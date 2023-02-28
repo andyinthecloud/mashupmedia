@@ -1,11 +1,10 @@
-package org.mashupmedia.controller.rest;
+package org.mashupmedia.controller.rest.security;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.mashupmedia.dto.login.LoginPayload;
 import org.mashupmedia.dto.login.UserPolicyPayload;
 import org.mashupmedia.dto.login.UserTokenPayload;
-import org.mashupmedia.mapper.UserPolicyMapper;
 import org.mashupmedia.model.User;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MashupMediaSecurityManager;
@@ -25,25 +24,16 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/security")
 @RequiredArgsConstructor
-public class LoginController {
+public class SecurityController {
 
     private final AdminManager adminManager;
 
     private final PasswordEncoder passwordEncoder;
 
-    private final UserPolicyMapper userPolicyMapper;
-
     private final MashupMediaSecurityManager securityManager;
 
-
-    @GetMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getLogin() {
-        return ResponseEntity.ok().body("login");
-    }
-
-
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserTokenPayload> login(@RequestBody @Valid LoginPayload loginPayload) throws Exception{
+    public ResponseEntity<UserTokenPayload> login(@RequestBody @Valid LoginPayload loginPayload) throws Exception {
         User user = adminManager.getUser(loginPayload.getUsername());
 
         if (!passwordEncoder.matches(loginPayload.getPassword(), user.getPassword())) {
@@ -52,7 +42,6 @@ public class LoginController {
 
         String username = loginPayload.getUsername();
         String token = passwordEncoder.encode(username);
-        
 
         return ResponseEntity.ok(
                 UserTokenPayload
@@ -70,15 +59,11 @@ public class LoginController {
         String streamingToken = securityManager.generateMediaToken(user.getUsername());
 
         return ResponseEntity.ok(UserPolicyPayload
-        .builder()
-        .administrator(user.isAdministrator())
-        .name(user.getName())
-        .username(user.getUsername())
-        .streamingToken(streamingToken)
-        .build());
-
-
-
-        // return ResponseEntity.ok(userPolicyMapper.toDto(user));
+                .builder()
+                .administrator(user.isAdministrator())
+                .name(user.getName())
+                .username(user.getUsername())
+                .streamingToken(streamingToken)
+                .build());
     }
 }

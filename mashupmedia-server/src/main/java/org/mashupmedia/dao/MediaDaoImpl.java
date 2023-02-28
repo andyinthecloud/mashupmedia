@@ -7,13 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.Search;
-import org.hibernate.search.query.dsl.BooleanJunction;
-import org.hibernate.search.query.dsl.QueryBuilder;
+
 import org.mashupmedia.comparator.MediaItemComparator;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.MediaItem;
@@ -137,40 +134,41 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 
 	@Override
 	public List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria) {
+		throw new UnsupportedOperationException("Operation no longer supported");
 		
-		FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+		// FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
 
 
-		QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(MediaItem.class)
-				.get();
-		@SuppressWarnings("rawtypes")
-		BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
+		// QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(MediaItem.class)
+		// 		.get();
+		// @SuppressWarnings("rawtypes")
+		// BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
 
-		String searchWordsValue = mediaItemSearchCriteria.getSearchWords();
-		String[] searchWords = searchWordsValue.split("\\s");
-		for (String searchWord : searchWords) {
-			booleanJunction.must(queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord)
-					.createQuery());
-		}
+		// String searchWordsValue = mediaItemSearchCriteria.getSearchWords();
+		// String[] searchWords = searchWordsValue.split("\\s");
+		// for (String searchWord : searchWords) {
+		// 	booleanJunction.must(queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord)
+		// 			.createQuery());
+		// }
 
-		MashupMediaType mediaType = mediaItemSearchCriteria.getMediaType();
-		if (mediaType != null) {
-			String mediaTypeValue = StringHelper.normaliseTextForDatabase(mediaType.toString());
-			booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue)
-					.createQuery());
-		}
+		// MashupMediaType mediaType = mediaItemSearchCriteria.getMediaType();
+		// if (mediaType != null) {
+		// 	String mediaTypeValue = StringHelper.normaliseTextForDatabase(mediaType.toString());
+		// 	booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue)
+		// 			.createQuery());
+		// }
 
-		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
-		Query query = fullTextEntityManager.createFullTextQuery(luceneQuery, MediaItem.class);
-		int maximumResults = mediaItemSearchCriteria.getMaximumResults();
-		int firstResult = mediaItemSearchCriteria.getPageNumber() * maximumResults;
-		query.setFirstResult(firstResult);
-		query.setMaxResults(maximumResults);
+		// org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
+		// Query query = fullTextEntityManager.createFullTextQuery(luceneQuery, MediaItem.class);
+		// int maximumResults = mediaItemSearchCriteria.getMaximumResults();
+		// int firstResult = mediaItemSearchCriteria.getPageNumber() * maximumResults;
+		// query.setFirstResult(firstResult);
+		// query.setMaxResults(maximumResults);
 
-		@SuppressWarnings("unchecked")
-		List<MediaItem> mediaItems = query.getResultList();
-		Collections.sort(mediaItems, new MediaItemComparator());
-		return mediaItems;
+		// @SuppressWarnings("unchecked")
+		// List<MediaItem> mediaItems = query.getResultList();
+		// Collections.sort(mediaItems, new MediaItemComparator());
+		// return mediaItems;
 	}
 
 	@Override

@@ -3,9 +3,16 @@ package org.mashupmedia.model.library;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.*;
-
 import org.mashupmedia.model.User;
+
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "remote_shares")

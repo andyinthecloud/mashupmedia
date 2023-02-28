@@ -2,7 +2,7 @@ package org.mashupmedia.model.media.music;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "album_art_images")

@@ -17,7 +17,7 @@ const initialState: PayloadState<UserPolicyPayload> = {
     loading: false
 }
 
-export const loadUserPolicyIntoState = createAsyncThunk(
+export const userPolicy = createAsyncThunk(
     'security/user',
     async (userToken: string | undefined) => {
         const url: string = backEndUrl('/api/security/user-policy')
@@ -35,24 +35,29 @@ const userPolicySlice = createSlice({
     name: 'loggedInUser',
     initialState,
     reducers: {
+        removeUserPolicy: (state) => {
+            state.payload = null
+        }
     },
     extraReducers: (builder) => {
-        builder.addCase(loadUserPolicyIntoState.pending, (state) => {
+        builder.addCase(userPolicy.pending, (state) => {
             state.loading = true
             state.error = null
             state.payload = null
         })
-        builder.addCase(loadUserPolicyIntoState.rejected, (state, action) => {
+        builder.addCase(userPolicy.rejected, (state, action) => {
             state.loading = false
             state.error = action?.payload ? String(action?.payload) : 'Failed to fetch payload'
             state.payload = null
         })
-        builder.addCase(loadUserPolicyIntoState.fulfilled, (state, action) => {
+        builder.addCase(userPolicy.fulfilled, (state, action) => {
             state.loading = false
             state.error = null
             state.payload = action.payload
         })
     }
 })
+
+export const {removeUserPolicy} = userPolicySlice.actions
 
 export default userPolicySlice

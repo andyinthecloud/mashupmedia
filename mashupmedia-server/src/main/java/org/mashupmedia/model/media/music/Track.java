@@ -1,13 +1,6 @@
 package org.mashupmedia.model.media.music;
 
-import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Year;
@@ -16,9 +9,16 @@ import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 @Entity
 @Table(name = "tracks")
-@Indexed
 @Cacheable
 @XmlRootElement
 public class Track extends MediaItem {
@@ -26,19 +26,15 @@ public class Track extends MediaItem {
 	private static final long serialVersionUID = -8767965461920368852L;
 
 	private int trackNumber;
-	@Field(analyze = Analyze.NO)
 	@Column(length = 1000)
 	private String title;
-	@IndexedEmbedded
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
 	@ManyToOne
 	private Genre genre;
 	@ManyToOne
-	@IndexedEmbedded
 	private Year year;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	@IndexedEmbedded
 	private Artist artist;
 	private long trackLength;
 	private long bitRate;

@@ -2,7 +2,7 @@ package org.mashupmedia.model.media;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 

@@ -67,7 +67,7 @@ const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
     }
 
     return (
-        <Card className="album-summary" sx={{ width: 300 }}>
+        <Card className="album-summary">
             <CardMedia
                 component="img"
                 image={albumArtImageUrl(props.payload.albumPayload.id, ImageType.THUMBNAIL, props.mediaToken)}

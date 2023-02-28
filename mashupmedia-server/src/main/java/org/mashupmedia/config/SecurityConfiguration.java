@@ -28,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-
     private final ObjectMapper objectMapper;
 
     private final AdminManager adminManager;
@@ -43,7 +42,6 @@ public class SecurityConfiguration {
                 .and()
                 .build();
     }
-
 
     @Bean
     protected CorsConfigurationSource corsConfigurationSource() {
@@ -63,19 +61,29 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf()
                 .disable()
-                .authorizeRequests()
-                .and()
+                // .authorizeHttpRequests(
+                //         authorise -> authorise
+                //                 .anyRequest().authenticated()
+
+                // )
                 .cors()
                 .and()
-                .authorizeRequests()
-                .regexMatchers(".*/api(?!.*(security/login)).*").authenticated()
-                .antMatchers("/**").permitAll()
-                .and()
+                .authorizeHttpRequests(
+                    authorise -> authorise
+                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/**").permitAll()
+                )
+
+                // .and()
+                // .regexMatchers(".*/api(?!.*(security/login)).*").authenticated()
+                // .ant
+                // .antMatchers(".*/api(?!.*(security/login)).*").authenticated()
+                // .antMatchers("/**").permitAll()
+                // .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager, this.objectMapper))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager, adminManager))
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)   
-                ;
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         return httpSecurity.build();
     }

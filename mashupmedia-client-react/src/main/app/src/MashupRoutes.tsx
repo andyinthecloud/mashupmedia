@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Introduction from "./common/components/Introduction";
 import LogIn from "./common/security/LogIn";
+import LogOut from "./common/security/LogOut";
 import { RequireAuthenication } from "./common/security/RequireAuthentication";
 import ChangeUserPassword from "./configuration/ChangeUserPassword";
 import Group from "./configuration/Group";
@@ -14,6 +15,7 @@ import Album from "./media/music/Album";
 import Albums from './media/music/Albums';
 import Artist from './media/music/Artist';
 import Artists from './media/music/Artists';
+import MusicPlaylist from "./media/music/MusicPlaylist";
 
 
 export const MashupRoutes = () => {
@@ -21,6 +23,7 @@ export const MashupRoutes = () => {
         <Routes>
             <Route path="/" element={<Introduction />} />
             <Route path="/login" element={<LogIn />} />
+            <Route path="/logout" element={<LogOut />} />
 
             <Route path="/configuration">
                 <Route index element={
@@ -147,6 +150,15 @@ export const MashupRoutes = () => {
                         </RequireAuthenication>
                     } />
                 </Route>
+
+                <Route path="music-playlist">
+                    <Route path=":playlistId" element={
+                        <RequireAuthenication>
+                            <MusicPlaylist />
+                        </RequireAuthenication>
+                    } />
+                </Route>
+
             </Route>
         </Routes>
     )

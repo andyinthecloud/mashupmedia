@@ -106,18 +106,6 @@ const LogIn = () => {
 
 
 
-    // const userPolicy = useSelector((state: RootState) => state.userPolicy)
-
-    // useEffect(() => {
-    //     if (userPolicy.payload) {
-    //         const navigateUri = encodedJumpUri ? decodeURI(encodedJumpUri) : '/'
-    //         navigate(navigateUri)
-    //     }
-
-    // }, [userPolicy])
-
-
-
     return (
 
         <form onSubmit={useHandleSubmit}>

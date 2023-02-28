@@ -1,6 +1,6 @@
 package org.mashupmedia.dto.share;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

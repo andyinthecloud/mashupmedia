@@ -8,18 +8,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.hibernate.search.jpa.FullTextEntityManager;
-import org.hibernate.search.jpa.FullTextQuery;
-import org.hibernate.search.jpa.Search;
-import org.hibernate.search.query.dsl.BooleanJunction;
-import org.hibernate.search.query.dsl.QueryBuilder;
+
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.Group;
@@ -454,69 +448,71 @@ query.setParameter("genreId", genre.getId());
 	@Override
 	public List<Track> findTracks(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria) {
 
-		FullTextEntityManager fullTextSession = Search.getFullTextEntityManager(entityManager);
+		throw new UnsupportedOperationException();
 
-		QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(Track.class).get();
-		@SuppressWarnings("rawtypes")
-		BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
+		// FullTextEntityManager fullTextSession = Search.getFullTextEntityManager(entityManager);
 
-		String searchWordsValue = mediaItemSearchCriteria.getSearchWords();
-		if (StringUtils.isNotBlank(searchWordsValue)) {
-			String[] searchWords = searchWordsValue.split("\\s");
-			for (String searchWord : searchWords) {
-				booleanJunction.must(
-						queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord).createQuery());
-			}
-		}
+		// QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(Track.class).get();
+		// @SuppressWarnings("rawtypes")
+		// BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
 
-		String mediaTypeValue = StringHelper.normaliseTextForDatabase(MashupMediaType.TRACK.toString());
-		booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());
-		booleanJunction.must(
-				queryBuilder.keyword().onField("enabled").matching(mediaItemSearchCriteria.isEnabled()).createQuery());
-
-		@SuppressWarnings("rawtypes")
-		BooleanJunction<BooleanJunction> groupJunction = queryBuilder.bool();
-		for (Long groupId : groupIds) {
-			groupJunction.should(queryBuilder.keyword().onField("library.groups.id").matching(groupId).createQuery());
-		}
-		booleanJunction.must(groupJunction.createQuery());
-
-		// long libraryId = mediaItemSearchCriteria.getLibraryId();
-		// if (libraryId > 0) {
-		// booleanJunction.must(queryBuilder.keyword().onField("library.id").matching(libraryId).createQuery());
+		// String searchWordsValue = mediaItemSearchCriteria.getSearchWords();
+		// if (StringUtils.isNotBlank(searchWordsValue)) {
+		// 	String[] searchWords = searchWordsValue.split("\\s");
+		// 	for (String searchWord : searchWords) {
+		// 		booleanJunction.must(
+		// 				queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord).createQuery());
+		// 	}
 		// }
 
-		org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
-		FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, Track.class,
-				MediaItem.class);
+		// String mediaTypeValue = StringHelper.normaliseTextForDatabase(MashupMediaType.TRACK.toString());
+		// booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());
+		// booleanJunction.must(
+		// 		queryBuilder.keyword().onField("enabled").matching(mediaItemSearchCriteria.isEnabled()).createQuery());
 
-		boolean isReverse = !mediaItemSearchCriteria.isAscending();
+		// @SuppressWarnings("rawtypes")
+		// BooleanJunction<BooleanJunction> groupJunction = queryBuilder.bool();
+		// for (Long groupId : groupIds) {
+		// 	groupJunction.should(queryBuilder.keyword().onField("library.groups.id").matching(groupId).createQuery());
+		// }
+		// booleanJunction.must(groupJunction.createQuery());
 
-		Sort sort = new Sort(new SortField("displayTitle", SortField.Type.STRING, isReverse));
-		// Sort sort = new Sort(new SortField("lastAccessed", SortField.LONG,
-		// isReverse));
-		MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaSortType();
+		// // long libraryId = mediaItemSearchCriteria.getLibraryId();
+		// // if (libraryId > 0) {
+		// // booleanJunction.must(queryBuilder.keyword().onField("library.id").matching(libraryId).createQuery());
+		// // }
 
-		if (mediaSortType == MediaSortType.FAVOURITES) {
-			sort = new Sort(new SortField("vote", SortField.Type.INT, isReverse));
-		} else if (mediaSortType == MediaSortType.LAST_PLAYED) {
-			sort = new Sort(new SortField("lastAccessed", SortField.Type.LONG, isReverse));
-		} else if (mediaSortType == MediaSortType.ALBUM_NAME) {
-			sort = new Sort(new SortField("album.indexText", SortField.Type.STRING, isReverse));
-		} else if (mediaSortType == MediaSortType.ARTIST_NAME) {
-			sort = new Sort(new SortField("artist.indexText", SortField.Type.STRING, isReverse));
-		}
+		// org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
+		// FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, Track.class,
+		// 		MediaItem.class);
 
-		query.setSort(sort);
+		// boolean isReverse = !mediaItemSearchCriteria.isAscending();
 
-		int maximumResults = mediaItemSearchCriteria.getMaximumResults();
-		int firstResult = mediaItemSearchCriteria.getPageNumber() * maximumResults;
-		query.setFirstResult(firstResult);
-		query.setMaxResults(maximumResults);
+		// Sort sort = new Sort(new SortField("displayTitle", SortField.Type.STRING, isReverse));
+		// // Sort sort = new Sort(new SortField("lastAccessed", SortField.LONG,
+		// // isReverse));
+		// MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaSortType();
 
-		@SuppressWarnings("unchecked")
-		List<Track> tracks = query.getResultList();
-		return tracks;
+		// if (mediaSortType == MediaSortType.FAVOURITES) {
+		// 	sort = new Sort(new SortField("vote", SortField.Type.INT, isReverse));
+		// } else if (mediaSortType == MediaSortType.LAST_PLAYED) {
+		// 	sort = new Sort(new SortField("lastAccessed", SortField.Type.LONG, isReverse));
+		// } else if (mediaSortType == MediaSortType.ALBUM_NAME) {
+		// 	sort = new Sort(new SortField("album.indexText", SortField.Type.STRING, isReverse));
+		// } else if (mediaSortType == MediaSortType.ARTIST_NAME) {
+		// 	sort = new Sort(new SortField("artist.indexText", SortField.Type.STRING, isReverse));
+		// }
+
+		// query.setSort(sort);
+
+		// int maximumResults = mediaItemSearchCriteria.getMaximumResults();
+		// int firstResult = mediaItemSearchCriteria.getPageNumber() * maximumResults;
+		// query.setFirstResult(firstResult);
+		// query.setMaxResults(maximumResults);
+
+		// @SuppressWarnings("unchecked")
+		// List<Track> tracks = query.getResultList();
+		// return tracks;
 	}
 
 	@Override

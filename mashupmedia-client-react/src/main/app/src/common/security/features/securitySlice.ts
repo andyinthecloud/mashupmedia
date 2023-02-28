@@ -18,9 +18,9 @@ const initialState: PayloadState<UserTokenPayload> = {
 }
 
 export const logIn = createAsyncThunk<UserTokenPayload, UserLogInPayload>(
-    'security/login',
+    'login',
     async (userLoginPayload: UserLogInPayload) => {
-        const loginUrl: string = backEndUrl('/api/security/login')
+        const loginUrl: string = backEndUrl('/login/')
         const response = await fetch(loginUrl, {
             method: HttpMethod.POST,
             mode: 'cors',
@@ -34,9 +34,13 @@ export const logIn = createAsyncThunk<UserTokenPayload, UserLogInPayload>(
 
 
 const securitySlice = createSlice({
-    name: 'security/login',
+    name: 'login',
     initialState,
-    reducers: {},
+    reducers: {
+        logOut: (state) => {
+            state.payload = null
+        }
+    },
     extraReducers: (builder) => {
         builder.addCase(logIn.pending, (state) => {
             state.loading = true
@@ -55,5 +59,7 @@ const securitySlice = createSlice({
         })
     }
 })
+
+export const {logOut} = securitySlice.actions
 
 export default securitySlice

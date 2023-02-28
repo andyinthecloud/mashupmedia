@@ -3,7 +3,7 @@ package org.mashupmedia.controller.remote;
 import java.net.ConnectException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.controller.ajax.AjaxBaseController;

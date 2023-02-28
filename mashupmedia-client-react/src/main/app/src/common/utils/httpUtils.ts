@@ -1,3 +1,4 @@
+import { env } from "process"
 import { securityToken } from "../security/securityUtils"
 
 export const restHeaders = (userToken?: string | null): Headers => {
@@ -35,6 +36,10 @@ export interface HttpResponse<T> extends Response {
 export const backEndUrl = (uri: string): string => (
     (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + uri
 )
+
+export const timestamp = () :number => (
+    new Date().getTime()
+)
  
 export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string, userToken?: string, body?: string): Promise<HttpResponse<T>> => {
 
@@ -51,7 +56,7 @@ export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string,
     try {
         response.parsedBody = await response.json()
     } catch (exception) {
-        console.log('Error getting json', exception)
+        console.log('Error getting json', response)
     }
 
     if (response.status == HttpStatus.FORBIDDEN || response.status == HttpStatus.SERVER_ERROR) {        
@@ -79,7 +84,6 @@ export const callMashupMediaApiNoRedirect = async <T>(httpMethod: HttpMethod, ur
 
 
 export const redirectInternal = (internalUri: string): void => {    
-
     window.location.href = process.env.PUBLIC_URL + internalUri
 }
 
@@ -97,7 +101,8 @@ export const redirectLogin = (statusCode?: number): void => {
         searchParams.append(codeParamName, '' + statusCode)
     }
 
-    searchParams.append(jumpUriParamName, window.location.pathname + window.location.search)
+    const uri = window.location.pathname.replace(process.env.PUBLIC_URL, '')
+    searchParams.append(jumpUriParamName, uri + window.location.search)
 
     redirectInternal(loginUri + '?' + searchParams.toString())
 }

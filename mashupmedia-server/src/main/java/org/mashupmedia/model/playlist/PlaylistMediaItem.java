@@ -1,12 +1,16 @@
 package org.mashupmedia.model.playlist;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.*;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
-import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 
 import lombok.Getter;
@@ -26,15 +30,15 @@ public class PlaylistMediaItem implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	
+
 	private int ranking;
-	
+
 	@Transient
 	private boolean playing;
-	
+
 	@ManyToOne
 	private Playlist playlist;
-	
+
 	@ManyToOne
 	private MediaItem mediaItem;
 

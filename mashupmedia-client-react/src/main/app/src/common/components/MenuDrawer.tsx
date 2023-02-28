@@ -1,8 +1,7 @@
-import { Collapse } from '@mui/material';
+import { Collapse, ListItemButton } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { Fragment, useEffect, useState } from "react";
@@ -15,17 +14,25 @@ import { useSelector } from "react-redux";
 import { RootState } from '../redux/store';
 import ListItemRoute from './ListItemRoute';
 import './MenuDrawer.css';
-
+import { useAppDispatch } from "../redux/hooks";
+import { userPolicy } from "../security/features/userPolicySlice";
+import { redirectInternal } from "../utils/httpUtils";
 
 export type MenuDrawerPayload = {
     openMenu: boolean
 }
 
-type SubMenuPayload = {
+type InternalMenuDrawerPayload = {
+    openMenu: boolean
+    loggedIn: boolean
+    administrator: boolean
+    internalSubMenuPayload: InternalSubMenuPayload
+}
+
+type InternalSubMenuPayload = {
     musicMenuOpen: boolean
     settingsMenuOpen: boolean
 }
-
 
 const useStyles = makeStyles({
     list: {
@@ -42,48 +49,73 @@ enum MenuType {
     MUSIC, SETTINGS
 }
 
-
-const MenuDrawer = (payload: MenuDrawerPayload) => {
+const MenuDrawer = (menuDrawerPayload: MenuDrawerPayload) => {
     const classes = useStyles();
-    
-    const [props, setProps] = useState<MenuDrawerPayload>({
-        openMenu: false
+
+    const [props, setProps] = useState<InternalMenuDrawerPayload>({
+        openMenu: false,
+        loggedIn: false,
+        administrator: false,
+        internalSubMenuPayload: {
+            musicMenuOpen: false,
+            settingsMenuOpen: false
+        }
     })
 
-    const [subMenuPayload, setSubMenuPayload] = useState<SubMenuPayload>({
-        musicMenuOpen: false,
-        settingsMenuOpen: false
-    })
+    const dispatch = useAppDispatch()
 
+    const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
+    const tokenPayload = useSelector((state: RootState) => state.security.payload?.token)
 
     useEffect(() => {
-        setProps(payload)
-    }, [payload])
-    
-    const handleMenuClick = (menuType: MenuType): void => {
+        setProps(({
+            ...props,
+            loggedIn: userPolicyPayload?.username ? true : false,
+            administrator: userPolicyPayload?.administrator || false,
+        }))
 
+    }, [userPolicyPayload])
+
+    useEffect(() => {
+        if (menuDrawerPayload.openMenu) {
+            dispatch(
+                userPolicy(tokenPayload)
+            )
+        }
+        setProps(p => ({
+            ...props,
+            openMenu: menuDrawerPayload.openMenu
+        }))
+    }, [menuDrawerPayload])
+
+    const setSubMenuPayloadProps = (subMenuPayload: InternalSubMenuPayload): void => {
+        setProps(p => ({
+            ...p,
+            internalSubMenuPayload: {
+                ...subMenuPayload
+            }
+        }))
+    }
+
+    const handleMenuClick = (menuType: MenuType): void => {
         switch (menuType) {
             case MenuType.MUSIC:
-                setSubMenuPayload(p => ({
-                    ...p,
-                    musicMenuOpen: !subMenuPayload.musicMenuOpen
-                }))
-                break;
+                setSubMenuPayloadProps({
+                    ...props.internalSubMenuPayload,
+                    musicMenuOpen: !props.internalSubMenuPayload.musicMenuOpen
+                })
+                break
 
             case MenuType.SETTINGS:
-                setSubMenuPayload(p => ({
-                    ...p,
-                    settingsMenuOpen: !subMenuPayload.settingsMenuOpen
-                }))
-                break;
+                setSubMenuPayloadProps({
+                    ...props.internalSubMenuPayload,
+                    settingsMenuOpen: !props.internalSubMenuPayload.settingsMenuOpen
+                })
+                break
         }
     }
 
-
-    const closeDrawer = () => (
-        event: React.KeyboardEvent | React.MouseEvent,
-    ) => {
-
+    const closeDrawer = () => (event: React.KeyboardEvent | React.MouseEvent) => {
         if (
             event.type === 'keydown' &&
             ((event as React.KeyboardEvent).key === 'Tab' ||
@@ -92,13 +124,24 @@ const MenuDrawer = (payload: MenuDrawerPayload) => {
             return;
         }
 
-        setProps({
+        setProps(p => ({
+            ...props,
             openMenu: false
-        })
+        }))
 
-    };
+    }
 
-    const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
+    const closeAfterNavigate = () => {
+        setProps(p => ({
+            ...props,
+            openMenu: false
+        }))
+    }
+
+    const handleLogOut = () => {
+        redirectInternal('/logout')
+
+    }
 
     const list = (anchor: Anchor) => (
         <div
@@ -108,49 +151,62 @@ const MenuDrawer = (payload: MenuDrawerPayload) => {
             role="presentation"
         >
 
-            <ListItemRoute label="My account" toRoute="/configuration/my-account" icon={<AccountBox />} />
-            <Divider />
+            {props.loggedIn &&
+                <ListItemRoute label="My account" toRoute="/configuration/my-account" icon={<AccountBox />} />
+            }
 
-            {userPolicyPayload &&
+            {props.loggedIn &&
+                <Divider />
+            }
+
+            {props.loggedIn &&
                 <List>
-                    <ListItem button onClick={() => handleMenuClick(MenuType.MUSIC)}>
+                    <ListItemButton onClick={() => handleMenuClick(MenuType.MUSIC)}>
                         <ListItemIcon>
                             <LibraryMusic />
                         </ListItemIcon>
                         <ListItemText primary="Music" />
-                        {subMenuPayload.musicMenuOpen ? <ExpandLess /> : <ExpandMore />}
-                    </ListItem>
-                    <Collapse in={subMenuPayload.musicMenuOpen} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding className="nested-list">
-                            <ListItemRoute label="Albums" toRoute="/music/albums" />
-                            <ListItemRoute label="Artists" toRoute="/music/artists" />
-
+                        {props.internalSubMenuPayload.musicMenuOpen ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                    <Collapse in={props.internalSubMenuPayload.musicMenuOpen} timeout="auto" unmountOnExit>
+                        <List
+                            component="div"
+                            disablePadding
+                            className="nested-list">
+                            <ListItemRoute label="Albums" toRoute="/music/albums" onClick={closeAfterNavigate} />
+                            <ListItemRoute label="Artists" toRoute="/music/artists" onClick={closeAfterNavigate} />
                         </List>
 
                     </Collapse>
                 </List>
             }
-            <Divider />
 
-            {userPolicyPayload && userPolicyPayload.administrator &&
+            {props.administrator &&
+                <Divider />
+            }
+
+            {props.administrator &&
                 <List>
-                    <ListItem button onClick={() => handleMenuClick(MenuType.SETTINGS)}>
+                    <ListItemButton onClick={() => handleMenuClick(MenuType.SETTINGS)}>
                         <ListItemIcon>
                             <SettingsIcon />
                         </ListItemIcon>
                         <ListItemText primary="Settings" />
-                        {subMenuPayload.settingsMenuOpen ? <ExpandLess /> : <ExpandMore />}
-                    </ListItem>
-                    <Collapse in={subMenuPayload.settingsMenuOpen} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding className="nested-list">
+                        {props.internalSubMenuPayload.settingsMenuOpen ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                    <Collapse in={props.internalSubMenuPayload.settingsMenuOpen} timeout="auto" unmountOnExit>
+                        <List
+                            component="div"
+                            disablePadding
+                            className="nested-list">
 
-                            <ListItemRoute label="Users" toRoute="/configuration/users" />
-                            <ListItemRoute label="Groups" toRoute="/configuration/groups" />
-                            <ListItemRoute label="Libraries" toRoute="/configuration/libraries" />
-                            <ListItemRoute label="Network" toRoute="/configuration/network" />
-                            <ListItem button>
+                            <ListItemRoute label="Users" toRoute="/configuration/users" onClick={closeAfterNavigate} />
+                            <ListItemRoute label="Groups" toRoute="/configuration/groups" onClick={closeAfterNavigate} />
+                            <ListItemRoute label="Libraries" toRoute="/configuration/libraries" onClick={closeAfterNavigate} />
+                            <ListItemRoute label="Network" toRoute="/configuration/network" onClick={closeAfterNavigate} />
+                            <ListItemButton>
                                 <ListItemText primary="Encoding" />
-                            </ListItem>
+                            </ListItemButton>
 
                         </List>
 
@@ -158,24 +214,20 @@ const MenuDrawer = (payload: MenuDrawerPayload) => {
                 </List>
             }
 
-            <Divider />
-            {userPolicyPayload &&
-                <ListItemRoute label="Log out" toRoute="/logout" icon={<Logout />} />
+            {props.loggedIn &&
+                <Divider />
             }
-            {!userPolicyPayload &&
-                <ListItemRoute label="Log in" toRoute="/login" icon={<Login />} />
+            {props.loggedIn &&
+                <ListItemRoute label="Log out" toRoute="/logout" icon={<Logout />} onClick={handleLogOut} />
             }
-
+            {!props.loggedIn &&
+                <ListItemRoute label="Log in" toRoute="/login" icon={<Login />} onClick={closeAfterNavigate} />
+            }
         </div>
-    );
+    )
 
     return (
         <div className="Drawer" id="drawer-menu">
-
-            {/* <IconButton onClick={toggleDrawer('right', true)} className="menu-icon">
-                <MenuIcon />
-            </IconButton> */}
-
             {(['left'] as Anchor[]).map((anchor) => (
                 <Fragment key={anchor}>
 
