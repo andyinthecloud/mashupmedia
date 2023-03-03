@@ -2,7 +2,12 @@ package org.mashupmedia.model;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
+
+import org.mashupmedia.model.playlist.UserPlaylistPosition;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -14,27 +19,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
-import org.mashupmedia.model.playlist.UserPlaylistPosition;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
+@Data
 @Entity
 @Table(name = "users")
 @Cacheable
 @Builder(toBuilder = true)
 @NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements UserDetails {
 	
@@ -58,8 +56,8 @@ public class User implements UserDetails {
 	private Set<Group> groups;
 	private Date createdOn;
 	private Date updatedOn;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<UserPlaylistPosition> userPlaylistPositions;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<UserPlaylistPosition> userPlaylistPositions;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

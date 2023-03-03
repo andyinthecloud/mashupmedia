@@ -1,5 +1,7 @@
 package org.mashupmedia.model.playlist;
 
+import org.mashupmedia.model.User;
+
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,32 +11,27 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
-
-import org.mashupmedia.model.User;
-
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "user_playlist_positions")
 @Cacheable
+@Data
 @Builder(toBuilder = true)
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 @IdClass(UserPlaylistPositionId.class)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserPlaylistPosition {
     
     @Id
     @Column(name = "user_id")
+    @EqualsAndHashCode.Include
     private long userId;
 
     @Id
     @Column(name = "playlist_id")
+    @EqualsAndHashCode.Include
     private long playlistId;
 
     @ManyToOne

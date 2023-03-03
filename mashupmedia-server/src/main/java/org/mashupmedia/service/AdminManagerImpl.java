@@ -198,38 +198,32 @@ public class AdminManagerImpl implements AdminManager {
 
 	@Override
 	public void initialiseAdminUser() {
-		User user = new User();
-		user.setName(MashUpMediaConstants.ADMIN_USER_DEFAULT_NAME);
-		user.setUsername(MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME);
-		user.setPassword(MashUpMediaConstants.ADMIN_USER_DEFAULT_PASSWORD);
+		User user = User.builder()
+				.name(MashUpMediaConstants.ADMIN_USER_DEFAULT_NAME)
+				.username(MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME)
+				.password(MashUpMediaConstants.ADMIN_USER_DEFAULT_PASSWORD)
+				.enabled(true)
+				.editable(false)
+				.roles(new HashSet<Role>(getRoles()))
+				.groups(new HashSet<>(getGroups()))
+				.build();
 
-		user.setEnabled(true);
-		user.setEditable(false);
-
-		Set<Role> roles = new HashSet<Role>(getRoles());
-		user.setRoles(roles);
-
-		List<Group> groups = getGroups();
-		user.setGroups(new HashSet<Group>(groups));
 		saveUser(user);
 	}
 
 	@Override
 	public void initialiseSystemUser() {
-		User user = new User();
-		user.setName(MashUpMediaConstants.SYSTEM_USER_DEFAULT_NAME);
-		user.setUsername(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME);
-		user.setPassword(MashUpMediaConstants.SYSTEM_USER_DEFAULT_PASSWORD);
+		User user = User.builder()
+				.name(MashUpMediaConstants.SYSTEM_USER_DEFAULT_NAME)
+				.username(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME)
+				.password(MashUpMediaConstants.SYSTEM_USER_DEFAULT_PASSWORD)
+				.enabled(true)
+				.editable(false)
+				.system(true)
+				.roles(new HashSet<>(getRoles()))
+				.groups(new HashSet<>(getGroups()))
+				.build();
 
-		user.setEnabled(true);
-		user.setEditable(false);
-		user.setSystem(true);
-
-		Set<Role> roles = new HashSet<Role>(getRoles());
-		user.setRoles(roles);
-
-		List<Group> groups = getGroups();
-		user.setGroups(new HashSet<Group>(groups));
 		saveUser(user);
 	}
 

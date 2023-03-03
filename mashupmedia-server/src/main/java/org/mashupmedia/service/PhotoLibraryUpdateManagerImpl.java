@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
@@ -318,32 +320,41 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		photo.setOrientation(orientation);
 	}
 
+
 	protected int getOrientatonFromMeta(Metadata metadata) throws MetadataException {
-		int orientation = 0;
-		ExifIFD0Directory directory = metadata.getDirectory(ExifIFD0Directory.class);
-		if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
-			orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-		}
+		Collection<ExifIFD0Directory> directories = metadata.getDirectoriesOfType(ExifIFD0Directory.class);
+		for (ExifIFD0Directory directory : directories) {
+			if (directory == null || !directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
+				continue;
+			}
+			return directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);			
+		} 
 
-		return orientation;
-
+		return 0;
 	}
 
 	protected Date getTakenOnDatefromMeta(File file, Metadata metadata) {
-		ExifIFD0Directory exifIFD0Directory = metadata.getDirectory(ExifIFD0Directory.class);
-		if (exifIFD0Directory != null) {
-			Date date = exifIFD0Directory.getDate(ExifIFD0Directory.TAG_DATETIME);
-			if (date != null) {
-				return date;
-			}
-		}
 
-		ExifSubIFDDirectory subDir = metadata.getDirectory(ExifSubIFDDirectory.class);
-		if (subDir != null) {
-			Date date = subDir.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
-			if (date != null) {
-				return date;
+		Iterable<Directory> directories = metadata.getDirectories();
+		for (Directory directory : directories) {
+			if (directory == null) {
+				continue;
 			}
+
+			if (directory instanceof ExifIFD0Directory exifIFD0Directory) {
+				Date date = exifIFD0Directory.getDate(ExifIFD0Directory.TAG_DATETIME);
+				if (date != null) {
+					return date;
+				}
+			}
+
+			if (directory instanceof ExifSubIFDDirectory exifSubIFDDirectory) {
+				Date date = exifSubIFDDirectory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+				if (date != null) {
+					return date;
+				}
+			}
+
 		}
 
 		return null;

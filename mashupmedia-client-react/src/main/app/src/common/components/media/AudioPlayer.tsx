@@ -137,7 +137,12 @@ const AudioPlayer = () => {
 
 
     const displayNextTrack = useCallback((progress: number) => {
-        trackProgress(progress, userToken).then(response => {
+        const playlistId = props.payload.trackWithArtistPayload?.playlistPayload.id
+        if (!playlistId) {
+            return
+        }
+        
+        trackProgress(playlistId, progress, userToken).then(response => {
             if (response.ok) {
                 setProps({
                     mediaToken: response.parsedBody?.mediaToken || "",
@@ -349,10 +354,10 @@ const AudioPlayer = () => {
                     <IconButton
                         onClick={handleExpand}>
                         {!expanded &&
-                            <ExpandMore />
+                            <ExpandMore fontSize="large"/>
                         }
                         {expanded &&
-                            <ExpandLess />
+                            <ExpandLess fontSize="large"/>
                         }
                     </IconButton>
 
@@ -394,7 +399,7 @@ const AudioPlayer = () => {
                             <IconButton
                                 color="primary"
                                 onClick={handleExpand}>
-                                <ExpandLess />
+                                <ExpandLess fontSize="large"/>
                             </IconButton>
                         </div>
                     </div>

@@ -20,6 +20,8 @@ package org.mashupmedia.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class DaoHelper {
 
@@ -46,7 +48,7 @@ public class DaoHelper {
 		if (groupIds == null || groupIds.isEmpty()) {
 			List<Integer> emptyGroupIds = new ArrayList<Integer>();
 			emptyGroupIds.add(-1);
-			groupIds = new ArrayList<Number>(emptyGroupIds);			
+			groupIds = new ArrayList<Number>(emptyGroupIds);
 		}
 
 		int whereIndex = queryBuilder.toString().toLowerCase().indexOf(" where");
@@ -57,6 +59,12 @@ public class DaoHelper {
 
 		String groupHqlText = convertToHqlParameters(groupIds);
 		queryBuilder.append(" " + keyword + " g.id in (" + groupHqlText + ")");
+	}
+
+	public static <T> List<T> removeDuplicateItems(List<T> items) {
+		return items.stream()
+				.distinct()
+				.collect(Collectors.toList());
 	}
 
 }

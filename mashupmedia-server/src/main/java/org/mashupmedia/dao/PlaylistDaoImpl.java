@@ -2,10 +2,9 @@ package org.mashupmedia.dao;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
@@ -19,6 +18,7 @@ import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
 import org.springframework.stereotype.Repository;
 
+import jakarta.persistence.TypedQuery;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
@@ -104,29 +104,34 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		if (playlists.size() > 1) {
 			throw new MashupMediaRuntimeException("Error, more than one default playlist found for user id: " + userId);
 		}
-
+		
 		return playlists.get(0);
 	}
 
 	@Override
 	public void savePlaylist(Playlist playlist) {
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		Collection<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 
 		long playlistId = playlist.getId();
 		Playlist savedPlaylist = getPlaylist(playlistId);
-//		savedPlaylist.getPlaylistMediaItems().clear();
-//		savedPlaylist.setPlaylistMediaItems(playlistMediaItems);
+		// savedPlaylist.getPlaylistMediaItems().clear();
+		// savedPlaylist.setPlaylistMediaItems(playlistMediaItems);
 		List<PlaylistMediaItem> savedPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
 		if (savedPlaylist != null) {
-//			savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
+			// savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
 			savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
+			savedPlaylistMediaItems.clear();
 		}
 
+		savedPlaylistMediaItems.addAll(playlistMediaItems);
+		playlist.setPlaylistMediaItems(savedPlaylistMediaItems);
 
-//		List<PlaylistMediaItem> newPlaylistMediaItems = playlist.getPlaylistMediaItems();
-//		synchronisePlaylistMediaItems(savedPlaylistMediaItems, newPlaylistMediaItems);
+		// List<PlaylistMediaItem> newPlaylistMediaItems =
+		// playlist.getPlaylistMediaItems();
+		// synchronisePlaylistMediaItems(savedPlaylistMediaItems,
+		// newPlaylistMediaItems);
 		saveOrMerge(playlist);
-//		saveOrMerge(savedPlaylist);
+		// saveOrMerge(savedPlaylist);
 
 		log.info("Playlist saved");
 	}
@@ -144,16 +149,16 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 		for (Iterator<PlaylistMediaItem> iterator = newPlaylistMediaItems.iterator(); iterator.hasNext();) {
 			PlaylistMediaItem newPlaylistMediaItem = (PlaylistMediaItem) iterator.next();
-//			if (savedPlaylistMediaItems.remove(newPlaylistMediaItem)) {
-//				iterator.remove();
-//				continue;
-//			}
+			// if (savedPlaylistMediaItems.remove(newPlaylistMediaItem)) {
+			// iterator.remove();
+			// continue;
+			// }
 			saveOrMerge(newPlaylistMediaItem);
 		}
 
 		List<Long> savedPlaylistMediaItemIds = new ArrayList<Long>();
 		for (PlaylistMediaItem savedPlaylistMediaItem : newPlaylistMediaItems) {
-//		for (PlaylistMediaItem savedPlaylistMediaItem : savedPlaylistMediaItems) {
+			// for (PlaylistMediaItem savedPlaylistMediaItem : savedPlaylistMediaItems) {
 			savedPlaylistMediaItemIds.add(savedPlaylistMediaItem.getId());
 		}
 
@@ -211,7 +216,6 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		for (File encodedMediaFile : encodedMediaFiles) {
 			FileHelper.deleteFile(encodedMediaFile);
 		}
-		
 
 	}
 

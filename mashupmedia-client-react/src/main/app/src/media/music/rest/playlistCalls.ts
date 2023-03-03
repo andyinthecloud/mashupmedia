@@ -46,6 +46,10 @@ export const hasPlaylist = (userToken: string | undefined): Promise<HttpResponse
     return callMashupMediaApiNoRedirect<ServerResponsePayload<string>>(HttpMethod.GET, playlistUrl + "/initialised", userToken)
 }
 
-export const trackProgress = (progress: number, userToken: string | undefined): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {
-    return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.GET, playlistUrl + "/playlist-progress/?progress=" + Math.round(progress), userToken)
+export const trackProgress = (playlistId: number, progress: number, userToken: string | undefined): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {
+    return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.GET, `${playlistUrl}/progress/${playlistId}?progress=${Math.round(progress)}`, userToken)
+}
+
+export const getPlaylistTracks = (playlistId: number, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
+    return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.GET, `${playlistUrl}/tracks/${playlistId}`, userToken)
 }

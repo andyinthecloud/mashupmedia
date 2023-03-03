@@ -103,9 +103,11 @@ public class EditUserController extends BaseController {
 
 	@RequestMapping(value = "/add-user", method = RequestMethod.GET)
 	public String addUser(@RequestParam(value = PARAM_FRAGMENT, required = false) Boolean isFragment, Model model) {
-		User user = new User();
-		user.setEnabled(true);
-		user.setEditable(true);
+		User user = User
+				.builder()
+				.enabled(true)
+				.editable(true)
+				.build();
 
 		processUserPage(user, model);
 		String path = getPath(isFragment, PAGE_PATH);
@@ -118,7 +120,7 @@ public class EditUserController extends BaseController {
 
 		new EditUserPageValidator().validate(editUserPage, bindingResult);
 		if (bindingResult.hasErrors()) {
-			model.addAttribute(MODEL_KEY_HAS_ERRORS, Boolean.TRUE.toString());			
+			model.addAttribute(MODEL_KEY_HAS_ERRORS, Boolean.TRUE.toString());
 			return PAGE_PATH + FRAGMENT_APPEND_PATH;
 		}
 

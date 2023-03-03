@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Component
-public class MusicPlaylistTrackMapper extends SecureMediaDomainMapper<PlaylistMediaItem, MusicPlaylistTrackPayload> {
+public class SecureMusicPlaylistTrackMapper extends SecureMediaDomainMapper<PlaylistMediaItem, MusicPlaylistTrackPayload> {
 
     private final ArtistMapper artistMapper;
     private final TrackMapper trackMapper;

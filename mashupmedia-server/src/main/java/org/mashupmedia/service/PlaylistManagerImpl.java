@@ -1,7 +1,9 @@
 package org.mashupmedia.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,8 +19,10 @@ import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.UserPlaylistPosition;
 import org.mashupmedia.model.playlist.UserPlaylistPositionId;
+import org.mashupmedia.repository.playlist.PlaylistRepository;
 import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
 import org.mashupmedia.util.AdminHelper;
+import org.mashupmedia.util.DaoHelper;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.PlaylistHelper;
 import org.springframework.stereotype.Service;
@@ -58,8 +62,12 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		}
 
 		Hibernate.initialize(playlist.getPlaylistMediaItems());
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlistMediaItems.stream()
+
+		// List<PlaylistMediaItem> playlistMediaItems =
+		// DaoHelper.removeDuplicateItems(playlist.getPlaylistMediaItems());
+		// playlist.setPlaylistMediaItems(playlistMediaItems);
+		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getPlaylistMediaItems()
+				.stream()
 				.filter(pmi -> pmi.getMediaItem().isEnabled())
 				.filter(pmi -> securityManager.canAccessMediaItem(pmi.getMediaItem()))
 				.collect(Collectors.toList());
@@ -99,8 +107,8 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 		initialisePlaylist(playlist);
 
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-		List<PlaylistMediaItem> playlistMediaItemsToDelete = new ArrayList<PlaylistMediaItem>();
+		Collection<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		Collection<PlaylistMediaItem> playlistMediaItemsToDelete = new ArrayList<PlaylistMediaItem>();
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
 			MediaItem mediaItem = playlistMediaItem.getMediaItem();
 			mediaItem = mediaDao.getMediaItem(mediaItem.getId());
@@ -132,6 +140,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		Assert.notNull(user, "User should not be null");
 
 		Playlist playlist = playlistDao.getDefaultPlaylistForUser(user.getId(), playlistType);
+
 		if (playlist != null) {
 			initialisePlaylist(playlist);
 			return playlist;

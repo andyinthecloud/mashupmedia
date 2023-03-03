@@ -1,5 +1,6 @@
 package org.mashupmedia.controller.rest.media.music;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.media.SecureMediaPayload;
@@ -8,7 +9,7 @@ import org.mashupmedia.dto.media.playlist.NavigatePlaylistPayload;
 import org.mashupmedia.dto.media.playlist.NavigatePlaylistType;
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.ServerResponsePayload;
-import org.mashupmedia.mapper.media.music.MusicPlaylistTrackMapper;
+import org.mashupmedia.mapper.media.music.SecureMusicPlaylistTrackMapper;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.media.music.Album;
@@ -44,7 +45,7 @@ public class MusicPlaylistController {
 
     private final PlaylistManager playlistManager;
     private final MusicManager musicManager;
-    private final MusicPlaylistTrackMapper musicPlaylistTrackMapper;
+    private final SecureMusicPlaylistTrackMapper musicPlaylistTrackMapper;
     private final MashupMediaSecurityManager mashupMediaSecurityManager;
     private final LibraryManager libraryManager;
 
@@ -152,8 +153,8 @@ public class MusicPlaylistController {
         };
     }
 
-    @GetMapping(value = "/playlist-progress", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> getPlaylistTrackByProgress(@RequestParam long progress) {
+    @GetMapping(value = "/progress/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> getPlaylistTrackByProgress(@PathVariable long playlistId, @RequestParam long progress) {
         Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
         if (playlist == null) {
             return ResponseEntity.badRequest().build();
@@ -168,6 +169,21 @@ public class MusicPlaylistController {
 
         
         return ResponseEntity.ok(musicPlaylistTrackMapper.toDto(playlistMediaItem, mediaToken));
+    }
+
+    @GetMapping(value = "/tracks/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<MusicPlaylistTrackPayload>> getPlaylistTracks(@PathVariable long playlistId) {
+        Playlist playlist = playlistManager.getPlaylist(playlistId);
+        if (playlist == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<MusicPlaylistTrackPayload> musicPlaylistTrackPayloads = playlist.getAccessiblePlaylistMediaItems()
+            .stream()
+            .map(pmi -> musicPlaylistTrackMapper.toDto(pmi))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(musicPlaylistTrackPayloads);
     }
 
 }

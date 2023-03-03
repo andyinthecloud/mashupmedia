@@ -1,5 +1,7 @@
 package org.mashupmedia.model.media.music;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
@@ -16,14 +18,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.Data;
 
 @Entity
 @Table(name = "tracks")
 @Cacheable
 @XmlRootElement
-public class Track extends MediaItem {
+@Data
+public class Track extends MediaItem implements Serializable{
 
-	private static final long serialVersionUID = -8767965461920368852L;
 
 	private int trackNumber;
 	@Column(length = 1000)
@@ -42,82 +45,6 @@ public class Track extends MediaItem {
 
 	public Track() {
 		setMashupMediaType(MashupMediaType.TRACK);
-	}
-
-	public Track(Track track) {
-
-	}
-
-	public boolean isReadableTag() {
-		return readableTag;
-	}
-
-	public void setReadableTag(boolean readableTag) {
-		this.readableTag = readableTag;
-	}
-
-	public long getTrackLength() {
-		return trackLength;
-	}
-
-	public void setTrackLength(long trackLength) {
-		this.trackLength = trackLength;
-	}
-
-	public long getBitRate() {
-		return bitRate;
-	}
-
-	public void setBitRate(long bitRate) {
-		this.bitRate = bitRate;
-	}
-
-	public Artist getArtist() {
-		return artist;
-	}
-
-	public void setArtist(Artist artist) {
-		this.artist = artist;
-	}
-
-	public int getTrackNumber() {
-		return trackNumber;
-	}
-
-	public void setTrackNumber(int trackNumber) {
-		this.trackNumber = trackNumber;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public Album getAlbum() {
-		return album;
-	}
-
-	public void setAlbum(Album album) {
-		this.album = album;
-	}
-
-	public Genre getGenre() {
-		return genre;
-	}
-
-	public void setGenre(Genre genre) {
-		this.genre = genre;
-	}
-
-	public Year getYear() {
-		return year;
-	}
-
-	public void setYear(Year year) {
-		this.year = year;
 	}
 
 	@Override
