@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
@@ -111,29 +112,20 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	@Override
 	public void savePlaylist(Playlist playlist) {
 		Collection<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
-
 		long playlistId = playlist.getId();
 		Playlist savedPlaylist = getPlaylist(playlistId);
-		// savedPlaylist.getPlaylistMediaItems().clear();
-		// savedPlaylist.setPlaylistMediaItems(playlistMediaItems);
-		List<PlaylistMediaItem> savedPlaylistMediaItems = new ArrayList<PlaylistMediaItem>();
-		if (savedPlaylist != null) {
-			// savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
-			savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
-			savedPlaylistMediaItems.clear();
+		if (savedPlaylist == null) {
+			saveOrMerge(playlist);
+			return;
+		}
+		
+		Set<PlaylistMediaItem> savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
+		if (savedPlaylistMediaItems != null && !savedPlaylistMediaItems.isEmpty()) {
+			savedPlaylist.getPlaylistMediaItems().clear();
 		}
 
-		savedPlaylistMediaItems.addAll(playlistMediaItems);
-		playlist.setPlaylistMediaItems(savedPlaylistMediaItems);
-
-		// List<PlaylistMediaItem> newPlaylistMediaItems =
-		// playlist.getPlaylistMediaItems();
-		// synchronisePlaylistMediaItems(savedPlaylistMediaItems,
-		// newPlaylistMediaItems);
-		saveOrMerge(playlist);
-		// saveOrMerge(savedPlaylist);
-
-		log.info("Playlist saved");
+		savedPlaylist.getPlaylistMediaItems().addAll(playlistMediaItems);
+		saveOrMerge(savedPlaylist);
 	}
 
 	protected List<PlaylistMediaItem> synchronisePlaylistMediaItems(List<PlaylistMediaItem> savedPlaylistMediaItems,

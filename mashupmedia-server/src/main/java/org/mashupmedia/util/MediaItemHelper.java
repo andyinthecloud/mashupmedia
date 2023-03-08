@@ -274,4 +274,22 @@ public class MediaItemHelper {
 		return MediaItemSequenceType.LATEST;
 	}
 
+	public static boolean isWebCompatibleEncoding(MashupMediaType mashupMediaType, MediaContentType mediaContentType) {
+		if (mashupMediaType == MashupMediaType.TRACK) {
+			return isFormat(mediaContentType, MediaContentType.MP3);
+		}
+
+		return false;
+	}
+
+	private static boolean isFormat(MediaContentType mediaContentType, MediaContentType... mediaContentTypeFormats) {
+		for (MediaContentType mediaContentTypeFormat : mediaContentTypeFormats) {
+			if (mediaContentTypeFormat == mediaContentType) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 }

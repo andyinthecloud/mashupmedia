@@ -40,6 +40,7 @@ public class SecureMusicPlaylistTrackMapper extends SecureMediaDomainMapper<Play
         Playlist playlist = domain.getPlaylist(); 
 
         return MusicPlaylistTrackPayload.builder()
+                .id(domain.getId())
                 .artistPayload(artistMapper.toDto(artist))
                 .trackPayload(trackMapper.toDto(track))
                 .albumPayload(albumMapper.toDto(album))

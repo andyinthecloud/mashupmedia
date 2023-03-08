@@ -21,19 +21,19 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-@Data
 @Entity
 @Table(name = "users")
 @Cacheable
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@Setter
 public class User implements UserDetails {
 	
 	public static String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
@@ -42,7 +42,6 @@ public class User implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	@EqualsAndHashCode.Include
 	private String username;	
 	private String password;
 	@ToString.Include
@@ -88,6 +87,33 @@ public class User implements UserDetails {
 		}
 		
 		return false;
+	}
+
+	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
+		return true;
 	}
 
 	@Override

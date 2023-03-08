@@ -1,6 +1,5 @@
 package org.mashupmedia.model.media;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -30,15 +29,17 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.xml.bind.annotation.XmlTransient;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "media_items")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-@Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Setter
+@Getter
+@NoArgsConstructor
 public class MediaItem {
 
 	public final static String TITLE_SEPERATOR = " - ";
@@ -52,7 +53,6 @@ public class MediaItem {
 	@XmlTransient
 	private long id;
 	private String fileName;
-	@EqualsAndHashCode.Include
 	private String path;
 	@ManyToOne
 	@XmlTransient
@@ -75,7 +75,7 @@ public class MediaItem {
 	@Column(length = 1000)
 	private String summary;
 	private String displayTitle;
-	private boolean enabled;
+	private boolean enabled = true;
 	private long fileLastModifiedOn;
 	private boolean publicAccess;
 	private String uniqueName;
@@ -90,9 +90,7 @@ public class MediaItem {
 	@XmlTransient
 	private Set<MediaEncoding> mediaEncodings;
 
-	public MediaItem() {
-		this.enabled = true;
-	}
+
 
 	public MashupMediaType getMashupMediaType() {
 		MashupMediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
@@ -113,6 +111,33 @@ public class MediaItem {
 				mediaEncodings);
 		Collections.sort(mediaEncodingsList, new MediaEncodingComparator());
 		return mediaEncodingsList.get(0);
+	}
+
+	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MediaItem other = (MediaItem) obj;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.equals(other.path))
+			return false;
+		return true;
 	}
 
 	@Override

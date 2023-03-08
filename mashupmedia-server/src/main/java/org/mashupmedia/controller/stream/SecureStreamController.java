@@ -27,12 +27,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/stream/secure")
 @RequiredArgsConstructor
-@Slf4j
 public class SecureStreamController {
 
     private final MashupMediaSecurityManager securityManager;

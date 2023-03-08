@@ -1,3 +1,4 @@
+import { number } from "prop-types"
 import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
 import { callMashupMediaApi, callMashupMediaApiNoRedirect, HttpMethod, HttpResponse } from "../../../common/utils/httpUtils"
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
@@ -20,12 +21,26 @@ export type PlaylistPayload = {
 }
 
 export type MusicPlaylistTrackPayload = {
+    id: number
     trackPayload: TrackPayload
     artistPayload: ArtistPayload
     albumPayload: AlbumPayload
     playlistPayload: PlaylistPayload
     first: boolean
     last: boolean
+}
+
+export enum PlaylistActionTypePayload {
+    NONE = "NONE",
+    DELETE = "DELETE",
+    MOVE_TOP = "MOVE_TOP",
+    MOVE_BOTTOM = "MOVE_BOTTOM"
+}
+
+export type PlaylistActionPayload = {
+    playlistActionTypePayload: PlaylistActionTypePayload
+    playlistId: number
+    playlistMediaItemIds: number[]
 }
 
 const playlistUrl = "/api/playlist/music"
@@ -52,4 +67,8 @@ export const trackProgress = (playlistId: number, progress: number, userToken: s
 
 export const getPlaylistTracks = (playlistId: number, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
     return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.GET, `${playlistUrl}/tracks/${playlistId}`, userToken)
+}
+
+export const updatePlaylist = (playlistActionPayload: PlaylistActionPayload, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
+    return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.PUT, `${playlistUrl}/update`, userToken, JSON.stringify(playlistActionPayload))
 }

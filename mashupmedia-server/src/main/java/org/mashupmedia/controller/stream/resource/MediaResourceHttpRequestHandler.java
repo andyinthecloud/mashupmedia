@@ -2,14 +2,9 @@ package org.mashupmedia.controller.stream.resource;
 
 import java.io.IOException;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.service.MediaManager;
-import org.mashupmedia.util.MediaItemHelper;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
@@ -17,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

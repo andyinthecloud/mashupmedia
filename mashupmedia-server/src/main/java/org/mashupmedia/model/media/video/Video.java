@@ -12,7 +12,6 @@ import org.mashupmedia.model.media.MediaItem;
 @Cacheable
 @XmlRootElement
 public class Video extends MediaItem {
-	private static final long serialVersionUID = 8105872585865313104L;
 
 	private String remoteId;
 	private boolean ignoreRemoteContent;

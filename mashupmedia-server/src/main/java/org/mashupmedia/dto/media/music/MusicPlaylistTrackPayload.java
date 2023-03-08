@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class MusicPlaylistTrackPayload {
+    private Long id;
     private ArtistPayload artistPayload; 
     private TrackPayload trackPayload;
     private AlbumPayload albumPayload;

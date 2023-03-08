@@ -1,6 +1,6 @@
 #audio-player-container {
     margin-top: 4em;
-    border: 1px solid #e579e9;
+    border: 1px solid #3a2944;
 }
 
 #audio-player-container .sticky {
@@ -48,7 +48,6 @@
 
 #audio-player-container div.audio-buttons button {
     padding: 0;
-    color: white;
 }
 
 #audio-player-container .expand-more {

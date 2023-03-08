@@ -1,5 +1,4 @@
 #mashup-bar img.logo {
-    background-color: white;
     margin-right: 2em;
 }
 
@@ -15,5 +14,5 @@
 }
 
 #mashup-bar .search input, #mashup-bar .search .adornment{
-    color: white !important;
+    color: #e579e9 !important;
 }

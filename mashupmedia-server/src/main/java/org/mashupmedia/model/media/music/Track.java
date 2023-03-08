@@ -18,13 +18,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "tracks")
 @Cacheable
 @XmlRootElement
-@Data
+@Getter
+@Setter
 public class Track extends MediaItem implements Serializable{
 
 

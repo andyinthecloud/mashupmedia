@@ -40,7 +40,7 @@ public abstract class Library implements Serializable {
 	private long id;
 	private String name;
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "location_id")
+	// @JoinColumn(name = "location_id")
 	private Location location;
 	private Date createdOn;
 	@ManyToOne

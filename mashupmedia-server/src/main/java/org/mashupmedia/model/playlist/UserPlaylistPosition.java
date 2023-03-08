@@ -11,38 +11,65 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "user_playlist_positions")
 @Cacheable
-@Data
 @Builder(toBuilder = true)
 @IdClass(UserPlaylistPositionId.class)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserPlaylistPosition {
     
     @Id
     @Column(name = "user_id")
-    @EqualsAndHashCode.Include
     private long userId;
 
     @Id
     @Column(name = "playlist_id")
-    @EqualsAndHashCode.Include
     private long playlistId;
 
     @ManyToOne
     @MapsId("userId")
-    @JoinColumn(name = "user_id")
     private User user;
     
     @ManyToOne
     @MapsId("playlistId")
-    @JoinColumn(name = "playlist_id")
     private Playlist playlist;
     
     private long playlistMediaId;
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (userId ^ (userId >>> 32));
+        result = prime * result + (int) (playlistId ^ (playlistId >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        UserPlaylistPosition other = (UserPlaylistPosition) obj;
+        if (userId != other.userId)
+            return false;
+        if (playlistId != other.playlistId)
+            return false;
+        return true;
+    }
+
+    
 }

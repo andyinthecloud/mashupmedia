@@ -141,7 +141,7 @@ const AudioPlayer = () => {
         if (!playlistId) {
             return
         }
-        
+
         trackProgress(playlistId, progress, userToken).then(response => {
             if (response.ok) {
                 setProps({
@@ -327,14 +327,18 @@ const AudioPlayer = () => {
                 <div className="button-container">
                     <IconButton
                         onClick={() => handleNavigate(NavigatePlaylistType.PREVIOUS)}
-                        disabled={disablePrevious()}>
-                        <ChevronLeft fontSize="medium" />
+                        disabled={disablePrevious()}
+                    >
+                        <ChevronLeft
+                            color="primary"
+                            fontSize="medium" />
                     </IconButton>
 
                     <IconButton
                         onClick={() => handlePlay()}
                         disabled={isEmptyPlaylist()}
-                        className="play-button">
+                        className="play-button"
+                        color="primary">
                         {playing
                             ? <Pause sx={{ fontSize: 48 }} />
                             : <PlayArrow sx={{ fontSize: 48 }} />
@@ -344,7 +348,9 @@ const AudioPlayer = () => {
                     <IconButton
                         onClick={() => handleNavigate(NavigatePlaylistType.NEXT)}
                         disabled={disableNext()}>
-                        <ChevronRight fontSize="medium" />
+                        <ChevronRight
+                            color="primary"
+                            fontSize="medium" />
                     </IconButton>
                 </div>
 
@@ -354,10 +360,14 @@ const AudioPlayer = () => {
                     <IconButton
                         onClick={handleExpand}>
                         {!expanded &&
-                            <ExpandMore fontSize="large"/>
+                            <ExpandMore
+                                fontSize="large"
+                                color="primary" />
                         }
                         {expanded &&
-                            <ExpandLess fontSize="large"/>
+                            <ExpandLess
+                                fontSize="large"
+                                color="primary" />
                         }
                     </IconButton>
 
@@ -399,7 +409,7 @@ const AudioPlayer = () => {
                             <IconButton
                                 color="primary"
                                 onClick={handleExpand}>
-                                <ExpandLess fontSize="large"/>
+                                <ExpandLess fontSize="large" />
                             </IconButton>
                         </div>
                     </div>

@@ -85,3 +85,7 @@ h2 {
 .link-no-underlne {
   text-decoration: none;
 }
+
+label {
+  margin: 0;
+}

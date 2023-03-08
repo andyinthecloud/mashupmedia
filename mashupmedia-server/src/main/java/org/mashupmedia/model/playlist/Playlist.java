@@ -1,8 +1,10 @@
 package org.mashupmedia.model.playlist;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.mashupmedia.model.User;
 import org.mashupmedia.util.PlaylistHelper;
@@ -20,14 +22,16 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "playlists")
 @Cacheable
-@Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Getter
+@Setter
+@NoArgsConstructor
 public class Playlist {
 
 	public enum PlaylistType {
@@ -41,15 +45,12 @@ public class Playlist {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@EqualsAndHashCode.Include
 	private long id;
 
-	@EqualsAndHashCode.Include
 	private String name;
 
-	@OneToMany(targetEntity = PlaylistMediaItem.class,  mappedBy = "playlist", cascade = CascadeType.PERSIST, orphanRemoval = true)
-	@OrderBy("ranking")
-	private List<PlaylistMediaItem> playlistMediaItems;
+	@OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<PlaylistMediaItem> playlistMediaItems = new HashSet<>();
 
 	@Transient
 	private List<PlaylistMediaItem> accessiblePlaylistMediaItems;
@@ -67,7 +68,7 @@ public class Playlist {
 	private User updatedBy;
 
 	@OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<UserPlaylistPosition> userPlaylistPositions;
+    Set<UserPlaylistPosition> userPlaylistPositions = new HashSet<>();
 
 	private boolean userDefault;
 
@@ -85,6 +86,45 @@ public class Playlist {
 		return playlistType;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
+		result = prime * result + ((playlistTypeValue == null) ? 0 : playlistTypeValue.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Playlist other = (Playlist) obj;
+		if (id != other.id)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (createdBy == null) {
+			if (other.createdBy != null)
+				return false;
+		} else if (!createdBy.equals(other.createdBy))
+			return false;
+		if (playlistTypeValue == null) {
+			if (other.playlistTypeValue != null)
+				return false;
+		} else if (!playlistTypeValue.equals(other.playlistTypeValue))
+			return false;
+		return true;
+	}
 
 	@Override
 	public String toString() {

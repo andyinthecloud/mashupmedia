@@ -1,17 +1,26 @@
 package org.mashupmedia.controller.rest.media.music;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.media.SecureMediaPayload;
 import org.mashupmedia.dto.media.music.MusicPlaylistTrackPayload;
 import org.mashupmedia.dto.media.playlist.NavigatePlaylistPayload;
 import org.mashupmedia.dto.media.playlist.NavigatePlaylistType;
+import org.mashupmedia.dto.media.playlist.PlaylistActionPayload;
+import org.mashupmedia.dto.media.playlist.PlaylistActionTypePayload;
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.media.music.SecureMusicPlaylistTrackMapper;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library.LibraryType;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.playlist.Playlist;
@@ -36,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -154,7 +164,8 @@ public class MusicPlaylistController {
     }
 
     @GetMapping(value = "/progress/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> getPlaylistTrackByProgress(@PathVariable long playlistId, @RequestParam long progress) {
+    public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> getPlaylistTrackByProgress(
+            @PathVariable long playlistId, @RequestParam long progress) {
         Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
         if (playlist == null) {
             return ResponseEntity.badRequest().build();
@@ -167,7 +178,6 @@ public class MusicPlaylistController {
         User user = AdminHelper.getLoggedInUser();
         String mediaToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
 
-        
         return ResponseEntity.ok(musicPlaylistTrackMapper.toDto(playlistMediaItem, mediaToken));
     }
 
@@ -179,9 +189,53 @@ public class MusicPlaylistController {
         }
 
         List<MusicPlaylistTrackPayload> musicPlaylistTrackPayloads = playlist.getAccessiblePlaylistMediaItems()
-            .stream()
-            .map(pmi -> musicPlaylistTrackMapper.toDto(pmi))
-            .collect(Collectors.toList());
+                .stream()
+                .map(pmi -> musicPlaylistTrackMapper.toDto(pmi))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(musicPlaylistTrackPayloads);
+    }
+
+    @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<MusicPlaylistTrackPayload>> updatePlaylist(
+            @Valid @RequestBody PlaylistActionPayload playlistActionPayload) {
+        Playlist playlist = playlistManager.getPlaylist(playlistActionPayload.getPlaylistId());
+
+        List<PlaylistMediaItem> playlistMediaItems = new ArrayList<>(playlist.getPlaylistMediaItems());
+
+        long[] playlistMediaItemIds = playlistActionPayload.getPlaylistMediaItemIds();
+        Predicate<PlaylistMediaItem> matchingPredicate = pmi -> Arrays.stream(playlistMediaItemIds)
+                .anyMatch(id -> id == pmi.getId());
+        List<PlaylistMediaItem> updatePlaylistMediaItems = playlist.getPlaylistMediaItems()
+                .stream()
+                .filter(matchingPredicate)
+                .collect(Collectors.toList());
+
+        PlaylistActionTypePayload playlistActionTypePayload = playlistActionPayload.getPlaylistActionTypePayload();
+        if (playlistActionTypePayload == PlaylistActionTypePayload.DELETE) {
+            playlistMediaItems.removeAll(updatePlaylistMediaItems);
+        } else if (playlistActionTypePayload == PlaylistActionTypePayload.MOVE_TOP) {
+            playlistMediaItems.removeAll(updatePlaylistMediaItems);
+            updatePlaylistMediaItems.addAll(playlistMediaItems);
+            playlistMediaItems = updatePlaylistMediaItems;
+        } else if (playlistActionTypePayload == PlaylistActionTypePayload.MOVE_BOTTOM) {
+            playlistMediaItems.removeAll(updatePlaylistMediaItems);
+            playlistMediaItems.addAll(updatePlaylistMediaItems);
+        }
+
+        List<MediaItem> mediaItems = playlistMediaItems
+                .stream()
+                .map(pmi -> pmi.getMediaItem())
+                .collect(Collectors.toList());
+
+        PlaylistHelper.replacePlaylist(playlist, mediaItems);
+
+        playlistManager.savePlaylist(playlist);
+
+        List<MusicPlaylistTrackPayload> musicPlaylistTrackPayloads = playlist.getAccessiblePlaylistMediaItems()
+                .stream()
+                .map(pmi -> musicPlaylistTrackMapper.toDto(pmi))
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(musicPlaylistTrackPayloads);
     }

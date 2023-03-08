@@ -1,8 +1,10 @@
 package org.mashupmedia.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.User;
@@ -15,11 +17,11 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 public class PlaylistHelper {
 
 	public static void replacePlaylist(Playlist playlist, List<? extends MediaItem> tracks) {
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		Set<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems != null) {
 			playlistMediaItems.clear();
 		} else {
-			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
+			playlistMediaItems = new HashSet<PlaylistMediaItem>();
 			playlist.setPlaylistMediaItems(playlistMediaItems);
 		}
 
@@ -31,6 +33,7 @@ public class PlaylistHelper {
 			PlaylistMediaItem playlistTrack = new PlaylistMediaItem();
 			playlistTrack.setMediaItem(tracks.get(i));
 			playlistTrack.setRanking(i);
+			playlistTrack.setPlaying(i == 0);
 			playlistTrack.setPlaylist(playlist);
 			playlistMediaItems.add(playlistTrack);
 		}
@@ -39,7 +42,6 @@ public class PlaylistHelper {
 			return;
 		}
 
-		playlistMediaItems.get(0).setPlaying(true);
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 	}
 
@@ -58,9 +60,9 @@ public class PlaylistHelper {
 
 	public static void appendPlaylist(Playlist playlist, List<? extends MediaItem> mediaItems) {
 
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		Set<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems == null) {
-			playlistMediaItems = new ArrayList<PlaylistMediaItem>();
+			playlistMediaItems = new HashSet<PlaylistMediaItem>();
 			playlist.setPlaylistMediaItems(playlistMediaItems);
 		}
 
@@ -211,7 +213,7 @@ public class PlaylistHelper {
 			return;
 		}
 
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+		Set<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		for (PlaylistMediaItem pmi : playlistMediaItems) {
 			pmi.setPlaying(pmi.equals(playlistMediaItem));
 		}

@@ -2,10 +2,12 @@ package org.mashupmedia.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
@@ -14,20 +16,26 @@ import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.exception.UnauthorisedException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.UserPlaylistPosition;
 import org.mashupmedia.model.playlist.UserPlaylistPositionId;
+import org.mashupmedia.repository.playlist.PlaylistMediaItemRepository;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
 import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.DaoHelper;
+import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MessageHelper;
 import org.mashupmedia.util.PlaylistHelper;
+import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+
 
 import lombok.AllArgsConstructor;
 
@@ -43,6 +51,8 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	private final MashupMediaSecurityManager securityManager;
 
 	private final UserPlaylistPositionRepository userPlaylistPositionRepository;
+
+	private final PlaylistMediaItemRepository playlistMediaItemRepository;
 
 	@Override
 	public List<Playlist> getPlaylists(PlaylistType playlistType) {
@@ -63,13 +73,18 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 		Hibernate.initialize(playlist.getPlaylistMediaItems());
 
-		// List<PlaylistMediaItem> playlistMediaItems =
-		// DaoHelper.removeDuplicateItems(playlist.getPlaylistMediaItems());
-		// playlist.setPlaylistMediaItems(playlistMediaItems);
+		Predicate<PlaylistMediaItem> predicateWebFormat = pmi -> {
+			MediaItem mediaItem = pmi.getMediaItem();
+			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaItem.getFormat());
+			return MediaItemHelper.isWebCompatibleEncoding(MashupMediaType.TRACK, mediaContentType);
+		};
+
 		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getPlaylistMediaItems()
 				.stream()
 				.filter(pmi -> pmi.getMediaItem().isEnabled())
+				.filter(predicateWebFormat)
 				.filter(pmi -> securityManager.canAccessMediaItem(pmi.getMediaItem()))
+				.sorted((pmi1, pmi2) -> pmi1.getRanking().compareTo(pmi2.getRanking()))
 				.collect(Collectors.toList());
 		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
 
@@ -152,7 +167,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		playlist.setUserDefault(true);
 		playlist.setCreatedBy(user);
 		playlist.setPlaylistType(PlaylistType.MUSIC);
-		playlist.setPlaylistMediaItems(new ArrayList<PlaylistMediaItem>());
+		playlist.setPlaylistMediaItems(new HashSet<PlaylistMediaItem>());
 
 		return playlist;
 	}
@@ -176,6 +191,12 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		playlist.setUpdatedBy(user);
 		playlist.setUpdatedOn(date);
 		playlistDao.savePlaylist(playlist);
+
+		// for (PlaylistMediaItem playlistMediaItem : playlist.getPlaylistMediaItems()) {
+		// 	playlistMediaItem.setPlaylist(playlist);
+		// 	playlistMediaItemRepository.save(playlistMediaItem);
+		// }
+
 		saveUserPlaylistPosition(playlist);
 	}
 

@@ -23,12 +23,16 @@ const MashupBar = () => {
     return (
         <Box sx={{ flexGrow: 1 }} id="mashup-bar">
             <MenuDrawer {...props} />
-            <AppBar elevation={0}>
+            <AppBar 
+            elevation={0}
+            style={{
+                background: "#3a2944"
+            }}>
                 <Toolbar>
                     <IconButton
                         size="large"
                         edge="start"
-                        color="inherit"
+                        color="primary"
                         aria-label="menu"
                         sx={{ mr: 2 }}
                         onClick={handleMenuClick}
@@ -55,6 +59,7 @@ const MashupBar = () => {
                                     className="adornment">
                                     <Search
                                         className="text-color"
+                                        color="primary"
                                     />
                                 </InputAdornment>
                             )
