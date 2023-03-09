@@ -192,11 +192,6 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		playlist.setUpdatedOn(date);
 		playlistDao.savePlaylist(playlist);
 
-		// for (PlaylistMediaItem playlistMediaItem : playlist.getPlaylistMediaItems()) {
-		// 	playlistMediaItem.setPlaylist(playlist);
-		// 	playlistMediaItemRepository.save(playlistMediaItem);
-		// }
-
 		saveUserPlaylistPosition(playlist);
 	}
 

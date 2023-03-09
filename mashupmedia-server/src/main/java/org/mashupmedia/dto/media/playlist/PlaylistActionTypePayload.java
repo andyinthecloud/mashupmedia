@@ -1,7 +1,8 @@
 package org.mashupmedia.dto.media.playlist;
 
 public enum PlaylistActionTypePayload {
-    DELETE,
+    REMOVE_ITEMS,
     MOVE_TOP,
-    MOVE_BOTTOM
+    MOVE_BOTTOM,
+    DELETE
 }

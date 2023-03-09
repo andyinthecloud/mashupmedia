@@ -112,7 +112,7 @@ const MusicPlaylist = () => {
                         onChange={e => handleChangeAction(e.target.value)}
                     >
                         <MenuItem value={PlaylistActionTypePayload.NONE}>Select action</MenuItem>
-                        <MenuItem value={PlaylistActionTypePayload.DELETE}>Delete</MenuItem>
+                        <MenuItem value={PlaylistActionTypePayload.REMOVE_ITEMS}>Remove items</MenuItem>
                         <MenuItem value={PlaylistActionTypePayload.MOVE_TOP}>Move to top of playlist</MenuItem>
                         <MenuItem value={PlaylistActionTypePayload.MOVE_BOTTOM}>Move to bottom of playlist</MenuItem>
                     </Select>
