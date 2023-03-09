@@ -48,6 +48,7 @@
 
 #audio-player-container div.audio-buttons button {
     padding: 0;
+    color: white;
 }
 
 #audio-player-container .expand-more {
