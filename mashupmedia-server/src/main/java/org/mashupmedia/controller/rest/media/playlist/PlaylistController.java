@@ -88,7 +88,7 @@ public class PlaylistController {
         return ResponseEntity.ok(musicPlaylistTrackPayloads);
     }
 
-    @DeleteMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServerResponsePayload<String>> deletePlaylist(@PathVariable long playlistId, Errors errors) {
         User user = AdminHelper.getLoggedInUser();
         Assert.notNull(user, "User should not be null");

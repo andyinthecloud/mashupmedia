@@ -21,9 +21,11 @@ type AudioPlayerPlayload = {
 
 const AudioPlayer = () => {
 
+    const MOBILE_MAX_WIDTH = 768
+
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const playTrigger = useSelector((state: RootState) => state.playMusic.trigger)
-    const MOBILE_MAX_WIDTH = 768
+
 
     const isMobileDisplay = (): boolean => (
         window.innerWidth <= MOBILE_MAX_WIDTH
@@ -37,13 +39,9 @@ const AudioPlayer = () => {
     })
 
     const [progress, setProgress] = useState<number>(0)
-
     const [mobileDisplay, setMobileDisplay] = useState<boolean>(isMobileDisplay())
-
     const [expanded, setExpanded] = useState<boolean>(false)
-
     const [playing, setPlaying] = useState<boolean>(false)
-
     const [playlistOffset, setPlaylistOffset] = useState<number>(0)
 
     const audioPlayer = useRef(new Audio())
@@ -136,11 +134,7 @@ const AudioPlayer = () => {
     }
 
 
-    const displayNextTrack = useCallback((progress: number) => {
-        const playlistId = props.payload.trackWithArtistPayload?.playlistPayload.id
-        if (!playlistId) {
-            return
-        }
+    const displayNextTrack = useCallback((playlistId: number, progress: number) => {
 
         trackProgress(playlistId, progress, userToken).then(response => {
             if (response.ok) {
@@ -169,16 +163,14 @@ const AudioPlayer = () => {
 
         navigateTrack(navigatePlaylistPayload, userToken).then((response) => {
             if (response.ok) {
-
-                console.log('navigateTrack', props)
-
+                const securePayload = response.parsedBody
                 setProps({
                     ...props,
-                    mediaToken: response.parsedBody?.mediaToken || "",
+                    mediaToken: securePayload?.mediaToken || "",
                     payload: {
                         ...props.payload,
                         isReadyToPlay: response.ok,
-                        trackWithArtistPayload: response.parsedBody?.payload,
+                        trackWithArtistPayload: securePayload?.payload,
                         triggerPlay: timestamp()
                     }
                 })
@@ -268,12 +260,15 @@ const AudioPlayer = () => {
         if (!mobileDisplay) {
             return
         }
+        const trackSeconds = props?.payload.trackWithArtistPayload?.trackPayload.totalSeconds || 0
 
-        const trackSeconds = props.payload.trackWithArtistPayload?.trackPayload.totalSeconds || 0
         if ((progress - playlistOffset) > trackSeconds) {
-            console.log('handleTimeUpdate: next track')
-            setPlaylistOffset(playlistOffset + trackSeconds)
-            displayNextTrack(progress)
+            const playlistId = props?.payload.trackWithArtistPayload?.playlistPayload.id
+            if (playlistId) {
+                setPlaylistOffset(playlistOffset + trackSeconds)            
+                displayNextTrack(playlistId, progress)    
+            }
+
         }
     }
 
@@ -338,10 +333,10 @@ const AudioPlayer = () => {
                         onClick={() => handlePlay()}
                         disabled={isEmptyPlaylist()}
                         className="play-button"
-                        color="primary">
+                    >
                         {playing
-                            ? <Pause sx={{ fontSize: 48 }} />
-                            : <PlayArrow sx={{ fontSize: 48 }} />
+                            ? <Pause sx={{ fontSize: 48 }} color="primary" />
+                            : <PlayArrow sx={{ fontSize: 48 }} color="primary" />
                         }
                     </IconButton>
 

@@ -33,8 +33,8 @@ const ImagePopover = (payload: ImagePopoverPayload) => {
             onClose={handleClose}
             onClick={handleClose}
             anchorOrigin={{
-                vertical: 'center',
-                horizontal: 'center',
+                vertical: "top",
+                horizontal: "left",
             }}
         >
             <img src={props?.imageSource} />
