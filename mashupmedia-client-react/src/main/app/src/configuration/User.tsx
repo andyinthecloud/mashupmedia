@@ -11,6 +11,7 @@ import { fieldErrorMessage, FormValidation, hasFieldError, ServerError, toFieldV
 import { HttpStatus, redirectLogin } from "../common/utils/httpUtils"
 import { getGroups, getRoles, NameValuePayload } from "./backend/metaCalls"
 import { deleteUserAccount, getMyAccount, saveUserAccount, userAccount, UserPayload } from "./backend/userCalls"
+import { timestamp } from "../common/utils/httpUtils"
 
 type UserValidationPayload = {
     userPayload: UserPayload
@@ -22,6 +23,9 @@ const User = () => {
     const enum FieldNames {
         USERNAME = 'username',
         NAME = 'name',
+        PASSWORD = 'password',
+        REPEAT_PASSWORD = 'repeatPassword',
+
     }
 
     const { userId } = useParams();
@@ -34,7 +38,8 @@ const User = () => {
             editable: false,
             name: '',
             username: '',
-            administrator: false
+            administrator: false,
+            exists: false
         },
         formValidation: { fieldValidations: [] }
     })
@@ -71,7 +76,8 @@ const User = () => {
                     enabled: true,
                     name: '',
                     username: '',
-                    password: ''
+                    password: '',
+                    exists: false
                 }
             }))
         }
@@ -211,9 +217,8 @@ const User = () => {
                     })
                 )
             })
-
-        navigate('/configuration/users')
-    }
+            navigate('/configuration/users', {state: {triggerRefresh: 1}})
+        }
 
     const hasDeletePermission = (): boolean => {
         if (userPolicyPayload?.username == props.userPayload.username) {
@@ -273,6 +278,39 @@ const User = () => {
                     helperText={fieldErrorMessage(FieldNames.USERNAME, props.formValidation)}
                 />
             </div>
+
+
+            {!props.userPayload.exists &&
+                <div className="new-line">
+                    <TextField
+                        name={FieldNames.PASSWORD}
+                        label="Password"
+                        disabled={isEditable()}
+                        value={props.userPayload.password}
+                        onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
+                        fullWidth={true}
+                        error={hasFieldError(FieldNames.PASSWORD, props.formValidation)}
+                        helperText={fieldErrorMessage(FieldNames.PASSWORD, props.formValidation)}
+                        type="password"
+                    />
+                </div>
+            }
+
+            {!props.userPayload.exists &&
+                <div className="new-line">
+                    <TextField
+                        name={FieldNames.REPEAT_PASSWORD}
+                        label="Repeat password"
+                        disabled={isEditable()}
+                        value={props.userPayload.repeatPassword}
+                        onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
+                        fullWidth={true}
+                        error={hasFieldError(FieldNames.REPEAT_PASSWORD, props.formValidation)}
+                        helperText={fieldErrorMessage(FieldNames.REPEAT_PASSWORD, props.formValidation)}
+                        type="password"
+                    />
+                </div>
+            }
 
             <div className="new-line">
                 <TextField
