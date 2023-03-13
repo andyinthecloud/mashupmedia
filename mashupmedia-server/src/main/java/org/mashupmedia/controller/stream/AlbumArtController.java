@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.service.MashupMediaSecurityManager;
@@ -12,6 +13,7 @@ import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
@@ -28,7 +30,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AlbumArtController {
 
-    public static final String IMAGE_PATH_DEFAULT_ALBUM_ART = "/images/default-album-art.png";
+    private static final String DEFAULT_MUSIC_ALBUM_ART = "/images/default-music-album-art.png";
+    private static final MediaContentType DEFAULT_MUSIC_ALBUM_ART_CONTENT_TYPE = MediaContentType.PNG;
 
     private final MusicManager musicManager;
 
@@ -47,24 +50,33 @@ public class AlbumArtController {
         Album album = musicManager.getAlbum(albumId);
         AlbumArtImage albumArtImage = album.getAlbumArtImage();
 
-        MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(albumArtImage.getContentType());
+        MediaContentType mediaContentType = albumArtImage == null
+                ? DEFAULT_MUSIC_ALBUM_ART_CONTENT_TYPE
+                : MediaItemHelper.getMediaContentType(albumArtImage.getContentType());
+
         httpServletResponse.setContentType(mediaContentType.getMimeContentType());
 
         String imagePath = getImagePath(imageType, albumArtImage);
+        File albumArtFile = StringUtils.isEmpty(imagePath)
+                ? null
+                : new File(imagePath);
 
-        FileSystemResource fileSystemResource = null;
-        File albumArtFile = new File(imagePath);
+        Resource resource = null;
 
-        if (albumArtFile.isFile()) {
-            fileSystemResource = new FileSystemResource(albumArtFile);
+        if (albumArtFile != null && albumArtFile.isFile()) {
+            resource = new FileSystemResource(albumArtFile);
         } else {
-            fileSystemResource = new FileSystemResource(IMAGE_PATH_DEFAULT_ALBUM_ART);
+            resource = new ClassPathResource(DEFAULT_MUSIC_ALBUM_ART);
         }
 
-        return fileSystemResource;
+        return resource;
     }
 
     private String getImagePath(ImageType imageType, AlbumArtImage albumArtImage) {
+        if (albumArtImage == null) {
+            return null;
+        }
+
         if (imageType == ImageType.THUMBNAIL) {
             return albumArtImage.getThumbnailUrl();
         } else {

@@ -1,7 +1,7 @@
-import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { DOMAttributes, MouseEventHandler } from "react";
+import { MouseEventHandler } from "react";
 import { Link } from 'react-router-dom';
+import './ListItemRoute.css';
 
 
 export interface ListItemRoutePayload {
@@ -15,13 +15,13 @@ const ListItemRoute = (payload: ListItemRoutePayload) => {
 
 
     return (
-        <Link to={payload.toRoute} style={{ textDecoration: "none" }}>
-            <ListItemButton
+        <Link to={payload.toRoute} style={{ textDecoration: "none" }} id="list-item-route">
+            <ListItemButton                
                 onClick={payload.onClick}>
                 {payload.icon &&
-                    <ListItemIcon>{payload?.icon}</ListItemIcon>
+                    <ListItemIcon >{payload?.icon}</ListItemIcon>
                 }
-                <ListItemText primary={payload.label} />
+                <ListItemText primary={payload.label}/>
             </ListItemButton>
         </Link>
     )

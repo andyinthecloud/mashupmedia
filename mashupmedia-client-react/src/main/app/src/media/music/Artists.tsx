@@ -58,7 +58,6 @@ const Artists = () => {
                 sx={{ marginBottom: 1 }}
                 fullWidth
                 onChange={(e) => handleArtistSearchChange(e.currentTarget.value)}
-                value={artistSearch}
                 InputProps={{
                     endAdornment: 
                     <IconButton onClick={e => handleArtistSearchChange("")}><Clear /></IconButton>

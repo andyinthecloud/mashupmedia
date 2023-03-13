@@ -72,7 +72,9 @@ const MenuDrawer = (menuDrawerPayload: MenuDrawerPayload) => {
             ...props,
             loggedIn: userPolicyPayload?.username ? true : false,
             administrator: userPolicyPayload?.administrator || false,
+            openMenu: menuDrawerPayload.openMenu
         }))
+
 
     }, [userPolicyPayload])
 
@@ -86,6 +88,7 @@ const MenuDrawer = (menuDrawerPayload: MenuDrawerPayload) => {
             ...props,
             openMenu: menuDrawerPayload.openMenu
         }))
+
     }, [menuDrawerPayload])
 
     const setSubMenuPayloadProps = (subMenuPayload: InternalSubMenuPayload): void => {
@@ -230,7 +233,6 @@ const MenuDrawer = (menuDrawerPayload: MenuDrawerPayload) => {
         <div className="Drawer" id="drawer-menu">
             {(['left'] as Anchor[]).map((anchor) => (
                 <Fragment key={anchor}>
-
                     <Drawer anchor={anchor} open={props.openMenu} onClose={closeDrawer()}>
                         {list(anchor)}
                     </Drawer>
