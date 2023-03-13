@@ -24,8 +24,8 @@ const Users = (listPayload: ListPayload) => {
                 }
             })
             .catch(() => redirectLogin(HttpStatus.FORBIDDEN))
-
     }, [userToken, listPayload.triggerRefresh])
+
 
     const userIcon = (userPayload: UserPayload) => {
         return userPayload.administrator
