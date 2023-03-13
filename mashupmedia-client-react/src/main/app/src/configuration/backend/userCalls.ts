@@ -7,11 +7,14 @@ export type UserPayload = {
     editable: boolean
     administrator: boolean
     username: string
+    password?: string
+    repeatPassword?: string    
     name: string
     createdOn?: string | null
     updatedOn?: string | null
     rolePayloads?: NameValuePayload<string>[]
     groupPayloads?: NameValuePayload<number>[]
+    exists: boolean
 }
 
 export type ChangeUserPasswordPayload = {

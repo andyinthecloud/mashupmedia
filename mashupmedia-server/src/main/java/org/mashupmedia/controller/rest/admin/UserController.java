@@ -74,6 +74,13 @@ public class UserController {
             throw new SecurityException("Only an administrator can update another user account");
         }
 
+        if (!isValidPassword(userPayload.isExists(), userPayload.getPassword(), userPayload.getRepeatPassword()) ) {            
+            errors.rejectValue(
+                "password",
+                ErrorCode.NON_MATCHING_PASSWORDS.getErrorCode(),
+                "The password and repeat password should be the same");  
+        }
+
         if (errors.hasErrors()) {
             return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
         }
@@ -81,6 +88,14 @@ public class UserController {
         User user = userMapper.toDomain(userPayload);
         adminManager.saveUser(user);
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+    }
+
+    private boolean isValidPassword(boolean exists, String password, String repeatPassword) {
+        if (StringUtils.isEmpty(password) || StringUtils.isEmpty(repeatPassword)) {
+            return false;
+        }
+        return password.equals(repeatPassword);
+
     }
 
     @PutMapping(value = "/change-password", produces = MediaType.APPLICATION_JSON_VALUE)

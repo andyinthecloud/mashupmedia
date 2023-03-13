@@ -4,10 +4,11 @@ import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { RootState } from "../common/redux/store"
+import { ListPayload } from "../common/utils/domainUtils"
 import { HttpStatus, redirectLogin } from "../common/utils/httpUtils"
 import { UserPayload, getUsers } from "./backend/userCalls"
 
-const Users = () => {
+const Users = (listPayload: ListPayload) => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
@@ -24,7 +25,7 @@ const Users = () => {
             })
             .catch(() => redirectLogin(HttpStatus.FORBIDDEN))
 
-    }, [userToken])
+    }, [userToken, listPayload.triggerRefresh])
 
     const userIcon = (userPayload: UserPayload) => {
         return userPayload.administrator
