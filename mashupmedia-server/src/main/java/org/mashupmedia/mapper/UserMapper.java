@@ -30,7 +30,6 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                 UserPayload userPayload = UserPayload.builder()
                                 .name(domain.getName())
                                 .username(domain.getUsername())
-                                .password(domain.getPassword())
                                 .editable(domain.isEditable())
                                 .enabled(domain.isEnabled())
                                 .administrator(domain.isAdministrator())
@@ -66,6 +65,7 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                                 .name(payload.getName())
                                 .enabled(payload.isEnabled())
                                 .editable(payload.isEditable())
+                                .password(payload.getPassword())
                                 .build();
 
                 if (!AdminHelper.isAdministrator()) {
@@ -86,12 +86,7 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                                         .collect(Collectors.toSet());
                 }
 
-                return User.builder()
-                                .username(payload.getUsername())
-                                .name(payload.getName())
-                                .enabled(payload.isEnabled())
-                                .editable(payload.isEditable())
-                                .system(payload.isSystem())
+                return user.toBuilder()
                                 .groups(groups)
                                 .roles(roles)
                                 .build();
