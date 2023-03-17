@@ -44,8 +44,4 @@ export const toNameValuePayloads = <T,>(values: T[]): NameValuePayload<T>[] => {
     return nameValuePayloads
 
 }
-
-export type ListPayload = {
-    triggerRefresh?: number
-}
      

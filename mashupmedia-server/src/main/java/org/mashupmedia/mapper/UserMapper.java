@@ -65,7 +65,6 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                                 .name(payload.getName())
                                 .enabled(payload.isEnabled())
                                 .editable(payload.isEditable())
-                                .password(payload.getPassword())
                                 .build();
 
                 if (!AdminHelper.isAdministrator()) {

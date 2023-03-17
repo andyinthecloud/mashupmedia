@@ -1,4 +1,3 @@
-import { number } from "prop-types"
 import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
 import { callMashupMediaApi, callMashupMediaApiNoRedirect, HttpMethod, HttpResponse } from "../../../common/utils/httpUtils"
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
@@ -12,7 +11,7 @@ export enum NavigatePlaylistType {
 
 export type NavigatePlaylistPayload = {
     navigatePlaylistType?: NavigatePlaylistType
-    mediaItemId?: number
+    playlistMediaItemId?: number
 }
 
 export type PlaylistPayload = {

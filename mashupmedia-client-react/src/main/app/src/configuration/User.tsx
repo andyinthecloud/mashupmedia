@@ -11,7 +11,6 @@ import { fieldErrorMessage, FormValidation, hasFieldError, ServerError, toFieldV
 import { HttpStatus, redirectLogin } from "../common/utils/httpUtils"
 import { getGroups, getRoles, NameValuePayload } from "./backend/metaCalls"
 import { deleteUserAccount, getMyAccount, saveUserAccount, userAccount, UserPayload } from "./backend/userCalls"
-import { timestamp } from "../common/utils/httpUtils"
 
 type UserValidationPayload = {
     userPayload: UserPayload
@@ -167,7 +166,7 @@ const User = () => {
                 if (response.ok) {
                     dispatch(
                         addNotification({
-                            message: 'Password saved.',
+                            message: 'User updated.',
                             notificationType: NotificationType.SUCCESS
                         })
                     )
@@ -217,8 +216,8 @@ const User = () => {
                     })
                 )
             })
-            navigate('/configuration/users', {state: {triggerRefresh: 1}})
-        }
+        navigate('/configuration/users')
+    }
 
     const hasDeletePermission = (): boolean => {
         if (userPolicyPayload?.username == props.userPayload.username) {

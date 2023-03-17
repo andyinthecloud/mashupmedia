@@ -1,7 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { timestamp } from "../../../common/utils/httpUtils";
 
 export type PlayMusicPayload = {
-    trigger?: number
+    triggerPlay?: number
+    currentTrackId?: number
+    requestPlaylistTrackId?: number
 }
 
 const initialState: PlayMusicPayload = ({})
@@ -10,12 +13,19 @@ const playMusicSlice = createSlice({
     name: 'media/music/play',
     initialState,
     reducers: {
-        playMusic(state) {
-            state.trigger = Date.now()
+        play(state) {
+            state.triggerPlay = timestamp()
+        },
+        playingTrackId(state, action: PayloadAction<number>) {
+            state.currentTrackId = action.payload
+        },
+        requestPlaylistTrackId(state, action: PayloadAction<number>) {
+            state.requestPlaylistTrackId = action.payload
+            state.triggerPlay = timestamp()
         }
     }
 })
 
-export const { playMusic } = playMusicSlice.actions
+export const { play, playingTrackId, requestPlaylistTrackId} = playMusicSlice.actions
 
 export default playMusicSlice

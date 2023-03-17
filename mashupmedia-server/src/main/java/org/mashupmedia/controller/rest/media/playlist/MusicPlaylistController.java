@@ -126,12 +126,14 @@ public class MusicPlaylistController {
             return ResponseEntity.badRequest().build();
         }
 
-        PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItem(playlist,
-                navigatePlaylistPayload.getMediaItemId());
+        PlaylistMediaItem playlistMediaItem = null;
 
-        if (playlistMediaItem == null) {
+        Long playlistMediaItemId = navigatePlaylistPayload.getPlaylistMediaItemId();                 
+        if (playlistMediaItemId == null) {
             int relativeOffset = getRelativeOffset(navigatePlaylistPayload.getNavigatePlaylistType());
-            playlistMediaItem = playlistManager.navigateToPlaylistMediaItem(playlist, relativeOffset);
+            playlistMediaItem = playlistManager.playRelativePlaylistMediaItem(playlist, relativeOffset);
+        } else {
+            playlistMediaItem = playlistManager.playPlaylistMediaItem(playlist, playlistMediaItemId);
         }
 
         if (playlistMediaItem == null) {

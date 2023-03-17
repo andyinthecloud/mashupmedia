@@ -1,5 +1,7 @@
 import { Popover } from "@mui/material"
 import { useEffect, useState } from "react"
+import './ImagePopover.css'
+
 
 export type ImagePopoverPayload = {
     imageSource?: string
@@ -33,9 +35,14 @@ const ImagePopover = (payload: ImagePopoverPayload) => {
             onClose={handleClose}
             onClick={handleClose}
             anchorOrigin={{
-                vertical: "top",
-                horizontal: "left",
+                vertical: 'top',
+                horizontal: 'left',
             }}
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+            }}
+        
         >
             <img src={props?.imageSource} />
         </Popover>

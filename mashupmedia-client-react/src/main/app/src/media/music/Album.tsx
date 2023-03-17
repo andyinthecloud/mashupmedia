@@ -7,7 +7,7 @@ import ImagePopover, { ImagePopoverPayload } from "../../common/components/Image
 import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
 import { RootState } from "../../common/redux/store"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
-import { playMusic } from "./features/playMusicSlice"
+import { play } from "./features/playMusicSlice"
 import { albumArtImageUrl, AlbumWithTracksAndArtistPayload, getAlbum, ImageType } from "./rest/musicCalls"
 import { addAlbum, playAlbum } from "./rest/playlistCalls"
 
@@ -77,7 +77,7 @@ const Album = () => {
         playAlbum(albumId, userToken).then((response) => {
             if (response.ok) {
                 dispatch(
-                    playMusic()
+                    play()
                 )
                 addNotification({
                     message: "Added to playlist",

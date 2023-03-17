@@ -4,17 +4,15 @@ import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { RootState } from "../common/redux/store"
-import { ListPayload } from "../common/utils/domainUtils"
 import { HttpStatus, redirectLogin } from "../common/utils/httpUtils"
 import { UserPayload, getUsers } from "./backend/userCalls"
 
-const Users = (listPayload: ListPayload) => {
+const Users = () => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
 
     const [props, setProps] = useState<UserPayload[]>([])
-
 
     useEffect(() => {
         getUsers(userToken)
@@ -23,8 +21,11 @@ const Users = (listPayload: ListPayload) => {
                     setProps(response.parsedBody)
                 }
             })
-            .catch(() => redirectLogin(HttpStatus.FORBIDDEN))
-    }, [userToken, listPayload.triggerRefresh])
+            .catch(() =>
+                redirectLogin(HttpStatus.FORBIDDEN)
+            )
+
+    }, [userToken])
 
 
     const userIcon = (userPayload: UserPayload) => {
@@ -54,7 +55,7 @@ const Users = (listPayload: ListPayload) => {
 
             <h1>Users</h1>
 
-            <List>
+            <List>                
                 {props.map(function (userPayload) {
                     return (
                         <ListItem key={userPayload.username} onClick={() => handleClickUser(userPayload.username)}>

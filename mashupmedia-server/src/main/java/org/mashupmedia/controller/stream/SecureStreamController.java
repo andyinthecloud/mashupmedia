@@ -66,7 +66,7 @@ public class SecureStreamController {
 
         List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
 
-        PlaylistMediaItem currenPlaylistMediaItem = playlistManager.navigateToPlaylistMediaItem(playlist, 0);
+        PlaylistMediaItem currenPlaylistMediaItem = playlistManager.playRelativePlaylistMediaItem(playlist, 0);
         int index = playlistMediaItems.indexOf(currenPlaylistMediaItem);
         List<PlaylistMediaItem> unplayedMediaItems = playlistMediaItems.subList(index, playlistMediaItems.size() - 1);
         long fileLength = 0;
@@ -83,10 +83,10 @@ public class SecureStreamController {
 
         Enumeration<FileInputStream> fileInputStreamsEnumeration = Collections.enumeration(fileInputStreams);
         SequenceInputStream sequenceInputStream = new SequenceInputStream(fileInputStreamsEnumeration);
-        
+
         IOUtils.copy(sequenceInputStream, response.getOutputStream());
         response.flushBuffer();
-        
+
     }
 
 }

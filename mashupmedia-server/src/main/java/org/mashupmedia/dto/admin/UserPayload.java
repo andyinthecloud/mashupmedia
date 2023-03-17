@@ -37,9 +37,7 @@ public class UserPayload {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime updatedOn;
 
-	@NotBlank(message = "The password value should not be empty.")
 	private String password;
-	@NotBlank(message = "The repeat password value should not be empty.")
 	private String repeatPassword;
 	private boolean exists;
 }

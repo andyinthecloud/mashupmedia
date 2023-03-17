@@ -26,7 +26,4 @@ public interface MediaManager {
 
 	public void saveMediaItem(MediaItem mediaItem);
 
-	public MediaContentType[] getSuppliedStreamingMediaContentTypes(LibraryType libraryType);
-
-
 }
