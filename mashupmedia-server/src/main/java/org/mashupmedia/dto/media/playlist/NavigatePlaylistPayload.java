@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class NavigatePlaylistPayload {
     private NavigatePlaylistType navigatePlaylistType;
-    private Long mediaItemId;
+    private Long playlistMediaItemId;
 }

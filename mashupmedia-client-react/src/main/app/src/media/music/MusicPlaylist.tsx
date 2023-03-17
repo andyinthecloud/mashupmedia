@@ -1,15 +1,18 @@
-import { Delete, PlayArrow } from "@mui/icons-material"
-import { Button, Checkbox, FormControl, IconButton, InputLabel, List, ListItem, ListItemButton, ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material"
+import { Equalizer, PlayArrow } from "@mui/icons-material"
+import { Button, Checkbox, FormControl, IconButton, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material"
+import { fontWeight } from "@mui/system"
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { RootState } from "../../common/redux/store"
+import { requestPlaylistTrackId } from "./features/playMusicSlice"
 import { getPlaylistTracks, MusicPlaylistTrackPayload, PlaylistActionPayload, PlaylistActionTypePayload, updatePlaylist } from "./rest/playlistCalls"
 
 const MusicPlaylist = () => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
+    const playlistTrackId = useSelector((state: RootState) => state.playMusic.currentTrackId)
 
     const { playlistId } = useParams()
 
@@ -19,6 +22,8 @@ const MusicPlaylist = () => {
         playlistActionTypePayload: PlaylistActionTypePayload.NONE,
         playlistMediaItemIds: []
     })
+
+    const dispatch = useDispatch()
 
     useEffect(() => {
         if (!playlistId) {
@@ -38,9 +43,13 @@ const MusicPlaylist = () => {
                 }
             }
         })
-
-
     }, [userToken, playlistId])
+
+
+    useEffect(() => {
+        console.log("playlistTrackId", playlistTrackId)
+    }, [playlistTrackId])
+
 
     const handleToggleTrack = (playlistMediaItemId: number) => {
         const index = playlistActionPayload.playlistMediaItemIds.indexOf(playlistMediaItemId)
@@ -78,7 +87,7 @@ const MusicPlaylist = () => {
 
         console.log("handleSubmitAction", playlistActionPayload)
 
-        if (!playlistActionPayload.playlistActionTypePayload || playlistActionPayload.playlistActionTypePayload === PlaylistActionTypePayload.NONE ) {
+        if (!playlistActionPayload.playlistActionTypePayload || playlistActionPayload.playlistActionTypePayload === PlaylistActionTypePayload.NONE) {
             return
         }
 
@@ -94,6 +103,14 @@ const MusicPlaylist = () => {
                 }
             }
         })
+    }
+
+    const handlePlayTrack = (playlistItemId: number): void => {
+        if (playlistItemId) {
+            dispatch(
+                requestPlaylistTrackId(playlistItemId)
+            )
+        }
     }
 
     return (
@@ -133,9 +150,21 @@ const MusicPlaylist = () => {
                             <ListItem
                                 key={payload.id}
                                 secondaryAction={
-                                    <IconButton edge="end" aria-label="play">
-                                        <PlayArrow />
-                                    </IconButton>
+                                    playlistTrackId === payload.id
+                                        ?
+                                        <IconButton
+                                            edge="end"
+                                            aria-label="playing"
+                                            onClick={e => handlePlayTrack(payload.id)}>
+                                            <Equalizer />
+                                        </IconButton>
+                                        :
+                                        <IconButton
+                                            edge="end"
+                                            aria-label="play"
+                                            onClick={e => handlePlayTrack(payload.id)}>
+                                            <PlayArrow />
+                                        </IconButton>
                                 }
                             >
 
@@ -153,7 +182,8 @@ const MusicPlaylist = () => {
                                     primary={`${index + 1} - ${payload.trackPayload.name}`}
                                     secondary={payload.artistPayload.name}
                                     sx={{
-                                        fontSize: "medium"
+                                        fontSize: "medium",
+                                        fontWeight: "bold"
                                     }}
                                 />
                             </ListItem>

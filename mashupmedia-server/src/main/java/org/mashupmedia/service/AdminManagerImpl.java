@@ -90,8 +90,8 @@ public class AdminManagerImpl implements AdminManager {
 		user.setUpdatedOn(date);
 		userDao.saveUser(user);
 
-		if (StringUtils.isNotBlank(password)) {
-			log.info("Updating user password...");
+		if (userId == 0 && StringUtils.isNotBlank(password)) {
+			log.info("Assigning user password");
 			updatePassword(username, password);
 		}
 

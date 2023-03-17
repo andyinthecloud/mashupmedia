@@ -24,6 +24,8 @@ public interface PlaylistManager {
 
 	public void deleteLibrary(long libraryId);
 
-    public PlaylistMediaItem navigateToPlaylistMediaItem(Playlist playlist, int relativeOffset);	
+    public PlaylistMediaItem playRelativePlaylistMediaItem(Playlist playlist, int relativeOffset);
+
+    public PlaylistMediaItem playPlaylistMediaItem(Playlist playlist, Long playlistMediaItemId);	
 
 }

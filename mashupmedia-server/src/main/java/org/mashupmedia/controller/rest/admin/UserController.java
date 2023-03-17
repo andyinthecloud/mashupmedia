@@ -34,6 +34,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/admin/user")
 public class UserController {
 
+    private final static int MINIMUM_PASSWORD_LENGTH = 3; 
+
     @Autowired
     private UserMapper userMapper;
 
@@ -74,12 +76,7 @@ public class UserController {
             throw new SecurityException("Only an administrator can update another user account");
         }
 
-        if (!isValidPassword(userPayload.isExists(), userPayload.getPassword(), userPayload.getRepeatPassword()) ) {            
-            errors.rejectValue(
-                "password",
-                ErrorCode.NON_MATCHING_PASSWORDS.getErrorCode(),
-                "The password and repeat password should be the same");  
-        }
+        validatePassword(userPayload.isExists(), userPayload.getPassword(), userPayload.getRepeatPassword(), errors);
 
         if (errors.hasErrors()) {
             return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
@@ -90,12 +87,25 @@ public class UserController {
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
-    private boolean isValidPassword(boolean exists, String password, String repeatPassword) {
-        if (StringUtils.isEmpty(password) || StringUtils.isEmpty(repeatPassword)) {
-            return false;
+    private void validatePassword(boolean userExists, String password, String repeatPassword, Errors errors) {
+        if (userExists) {
+            return;
         }
-        return password.equals(repeatPassword);
 
+        if (password.length() < MINIMUM_PASSWORD_LENGTH || repeatPassword.length() < MINIMUM_PASSWORD_LENGTH) {
+            errors.rejectValue(
+                "password",
+                ErrorCode.INCORRECT_PASSWORD.getErrorCode(),
+                "The password and repeat password is too short");  
+            return;
+        }
+
+        if (!password.equals(repeatPassword)) {
+            errors.rejectValue(
+                "password",
+                ErrorCode.NON_MATCHING_PASSWORDS.getErrorCode(),
+                "The password and repeat password should be the same");  
+        }
     }
 
     @PutMapping(value = "/change-password", produces = MediaType.APPLICATION_JSON_VALUE)

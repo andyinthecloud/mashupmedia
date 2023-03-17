@@ -255,7 +255,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
-	public PlaylistMediaItem navigateToPlaylistMediaItem(Playlist playlist, int relativeOffset) {
+	public PlaylistMediaItem playRelativePlaylistMediaItem(Playlist playlist, int relativeOffset) {
 
 		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
@@ -279,6 +279,38 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 		return playlistMediaItem;
 	}
+
+	public PlaylistMediaItem playPlaylistMediaItem(Playlist playlist, Long playlistMediaItemId) {
+		if (playlistMediaItemId == null || playlistMediaItemId == 0) {
+			return null;
+		}
+
+		if (playlist == null) {
+			return null;
+		}
+
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
+			return null;
+		}
+
+		User user = AdminHelper.getLoggedInUser();
+		if (user == null) {
+			return null;
+		}
+
+		PlaylistMediaItem playlistMediaItem = null; 
+		for (PlaylistMediaItem pmi : playlistMediaItems) {
+			if (pmi.getId() == playlistMediaItemId) {
+				pmi.setPlaying(true);
+				playlistMediaItem = pmi;
+			} else {
+				pmi.setPlaying(false);
+			} 
+		}
+
+		return playlistMediaItem;
+	}	
 
 	private int getPlayingIndex(List<PlaylistMediaItem> playlistMediaItems, long playlistMediaId, int relativeOffset) {
 

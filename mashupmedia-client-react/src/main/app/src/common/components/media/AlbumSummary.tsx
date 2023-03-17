@@ -3,7 +3,7 @@ import { Button, Card, CardMedia } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { playMusic } from "../../../media/music/features/playMusicSlice"
+import { play } from "../../../media/music/features/playMusicSlice"
 import { albumArtImageUrl, AlbumWithArtistPayload, ImageType } from '../../../media/music/rest/musicCalls'
 import { addAlbum, playAlbum } from "../../../media/music/rest/playlistCalls"
 import { SecureMediaPayload } from '../../../media/rest/secureMediaPayload'
@@ -40,7 +40,7 @@ const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
         playAlbum(albumId, userToken).then((response) => {
             if (response.ok) {
                 dispatch(
-                    playMusic()
+                    play()
                 )
 
                 dispatch(
