@@ -369,7 +369,7 @@ const User = () => {
                     Cancel
                 </Button>
 
-                {hasChangePasswordPermission() &&
+                {hasChangePasswordPermission() && props.userPayload.exists &&
                     <Button variant="contained" color="secondary" type="button" onClick={handleChangeUserPassword}>
                         Change password
                     </Button>
