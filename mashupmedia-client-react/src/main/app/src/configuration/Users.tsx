@@ -25,7 +25,7 @@ const Users = () => {
                 redirectLogin(HttpStatus.FORBIDDEN)
             )
 
-    }, [userToken])
+    }, [])
 
 
     const userIcon = (userPayload: UserPayload) => {
