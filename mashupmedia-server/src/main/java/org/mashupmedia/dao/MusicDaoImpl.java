@@ -257,21 +257,21 @@ query.setParameter("genreId", genre.getId());
 
 //		saveOrMerge(artist);
 
-		Album album = track.getAlbum();
-		saveOrMerge(album);
-		track.setAlbum(album);
+		// Album album = track.getAlbum();
+		// saveOrMerge(album);
+		// track.setAlbum(album);
 
-		saveOrMerge(track.getYear());
-		saveOrMerge(track.getGenre());
+		// saveOrMerge(track.getYear());
+		// saveOrMerge(track.getGenre());
 		saveOrUpdate(track);
 
-		Library library = track.getLibrary();
-//		saveOrUpdate(library.getLocation());
-		libraryDao.saveLibrary(library);
+// 		Library library = track.getLibrary();
+// //		saveOrUpdate(library.getLocation());
+// 		libraryDao.saveLibrary(library);
 
 		flushSession(isSessionFlush);
 
-		log.debug("Saved track: " + artist.getName() + " - " + album.getName() + " - " + track.getTitle());
+		log.debug("Saved track: " + track.getArtist().getName() + " - " + track.getAlbum().getName() + " - " + track.getTitle());
 	}
 
 	@Override

@@ -61,6 +61,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 	@Override
 	public void saveLibrary(Library library) {
+		saveOrMerge(library.getLocation());
 		saveOrMerge(library);
 	}
 

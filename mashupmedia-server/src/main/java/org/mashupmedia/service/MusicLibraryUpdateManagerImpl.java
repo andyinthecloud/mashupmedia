@@ -42,6 +42,7 @@ import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Track;
+import org.mashupmedia.repository.media.MediaRepository;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.repository.media.music.MusicAlbumRepository;
 import org.mashupmedia.repository.media.music.TrackRepository;
@@ -56,58 +57,58 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 @Slf4j
 public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager {
 	private final int BATCH_INSERT_ITEMS = 20;
 
-	@Autowired
-	private ConnectionManager connectionManager;
+	private final ConnectionManager connectionManager;
 
-	@Autowired
-	private AlbumArtManager albumArtManager;
+	private final AlbumArtManager albumArtManager;
 
 	// @Autowired
 	// private MapperManager mapperManager;
 
-	@Autowired
-	private MusicDao musicDao;
+	private final MusicDao musicDao;
 
-	@Autowired
-	private PlaylistDao playlistDao;
+	private final PlaylistDao playlistDao;
 
-	@Autowired
-	private GroupDao groupDao;
+	private final ProcessManager processManager;
 
-	@Autowired
-	private ProcessManager processManager;
+	private final LibraryManager libraryManager;
 
-	@Autowired
-	@Lazy
-	private LibraryManager libraryManager;
+	private final MediaDao mediaDao;
 
-	@Autowired
-	private MediaDao mediaDao;
+	private final ArtistRepository artistRepository;
 
-	@Autowired
-	private ArtistRepository artistRepository;
+	private final MusicAlbumRepository musicAlbumRepository;
 
-	@Autowired
-	private TrackRepository trackRepository;
+	private final MediaRepository mediaRepository;
 
-	@Autowired
-	private MusicAlbumRepository musicAlbumRepository;
 
-	public MusicLibraryUpdateManagerImpl() {
+	@PostConstruct
+	private void postConstruct() {
 		Logger[] loggers = new Logger[] { Logger.getLogger("org.jaudiotagger") };
 
 		for (Logger logger : loggers) {
 			logger.setLevel(Level.OFF);
 		}
+
 	}
+
+	// public MusicLibraryUpdateManagerImpl() {
+	// 	Logger[] loggers = new Logger[] { Logger.getLogger("org.jaudiotagger") };
+
+	// 	for (Logger logger : loggers) {
+	// 		logger.setLevel(Level.OFF);
+	// 	}
+	// }
 
 	@Override
 	public void deleteObsoleteTracks(long libraryId, Date date) {
@@ -168,7 +169,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		// List<Long> groupIds = getGroupIds();
 
-		long libraryId = musicLibrary.getId();
+		// long libraryId = musicLibrary.getId();
 		long totalTracksSaved = 0;
 
 		for (int i = 0; i < tracks.size(); i++) {
@@ -176,26 +177,26 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 			track.setLibrary(musicLibrary);
 
-			String trackPath = track.getPath();
-			long fileLastModifiedOn = track.getFileLastModifiedOn();
-			// Track savedTrack = getSavedTrack(groupIds, libraryId, trackPath,
-			// fileLastModifiedOn);
-			Optional<Track> optionalTrack = trackRepository.findByLibraryIdAndPathAndLastModifiedOn(libraryId, trackPath,
-					fileLastModifiedOn);
+			// String trackPath = track.getPath();
+			// long fileLastModifiedOn = track.getFileLastModifiedOn();
+			// // Track savedTrack = getSavedTrack(groupIds, libraryId, trackPath,
+			// // fileLastModifiedOn);
+			// Optional<Track> optionalTrack = trackRepository.findByLibraryIdAndPathAndLastModifiedOn(libraryId, trackPath,
+			// 		fileLastModifiedOn);
 
-			if (optionalTrack.isPresent()) {
-				Track savedTrack = optionalTrack.get();
-				long savedTrackId = savedTrack.getId();
-				track.setId(savedTrackId);
-				savedTrack.setUpdatedOn(track.getUpdatedOn());
-				savedTrack.setEnabled(true);
-				musicDao.saveTrack(savedTrack, false);
-				log.info("Track is already in database, updated track date.");
-				// writeTrackToXml(libraryId, savedTrack);
-				// encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedTrack,
-				// MediaContentType.MP3);
-				continue;
-			}
+			// if (optionalTrack.isPresent()) {
+			// 	Track savedTrack = optionalTrack.get();
+			// 	long savedTrackId = savedTrack.getId();
+			// 	track.setId(savedTrackId);
+			// 	savedTrack.setUpdatedOn(track.getUpdatedOn());
+			// 	savedTrack.setEnabled(true);
+			// 	musicDao.saveTrack(savedTrack, false);
+			// 	log.info("Track is already in database, updated track date.");
+			// 	// writeTrackToXml(libraryId, savedTrack);
+			// 	// encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedTrack,
+			// 	// MediaContentType.MP3);
+			// 	continue;
+			// }
 
 			String fileName = track.getFileName();
 			String fileExtension = FileHelper.getFileExtension(fileName);
@@ -289,15 +290,15 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	}
 
-	private List<Long> getGroupIds() {
-		List<Long> groupIds = groupDao.getGroupIds();
-		return groupIds;
-	}
+	// private List<Long> getGroupIds() {
+	// 	List<Long> groupIds = groupDao.getGroupIds();
+	// 	return groupIds;
+	// }
 
-	private Track getSavedTrack(List<Long> groupIds, long libraryId, String trackPath, long fileLastModifiedOn) {
-		Track savedTrack = musicDao.getTrack(groupIds, libraryId, trackPath, fileLastModifiedOn);
-		return savedTrack;
-	}
+	// private Track getSavedTrack(List<Long> groupIds, long libraryId, String trackPath, long fileLastModifiedOn) {
+	// 	Track savedTrack = musicDao.getTrack(groupIds, libraryId, trackPath, fileLastModifiedOn);
+	// 	return savedTrack;
+	// }
 
 	// protected void writeTrackToXml(long libraryId, Track track) {
 	// try {
@@ -442,10 +443,11 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 
 		if (FileHelper.isSupportedTrack(fileName)) {
-			musicFileCount++;
-			Track track = prepareTrack(file, date, musicFileCount, musicLibrary, folderArtistName, folderAlbumName);
-			tracks.add(track);
-
+			if (!mediaRepository.existsByPathAndFileLastModifiedOn(file.getPath(), file.lastModified()) ) {
+				musicFileCount++;
+				Track track = prepareTrack(file, date, musicFileCount, musicLibrary, folderArtistName, folderAlbumName);
+				tracks.add(track);					
+			}
 		}
 	}
 
@@ -513,6 +515,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		track.setLibrary(musicLibrary);
 		track.setSizeInBytes(file.length());
 		track.setFileLastModifiedOn(file.lastModified());
+		track.setEnabled(true);
 
 		if (yearValue > 0) {
 			Year year = new Year();

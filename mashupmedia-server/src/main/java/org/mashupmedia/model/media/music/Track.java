@@ -35,9 +35,9 @@ public class Track extends MediaItem implements Serializable{
 	private String title;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
-	@ManyToOne
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Genre genre;
-	@ManyToOne
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Year year;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Artist artist;
