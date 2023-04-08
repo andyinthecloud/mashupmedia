@@ -2,16 +2,16 @@ package org.mashupmedia.task;
 
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
 import org.mashupmedia.service.LibraryWatchManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -31,7 +31,8 @@ public class LibraryUpdateTaskManager {
 
 
 
-	public void updateLibrary(Library library) {
+	public void updateLibrary(long libraryId) {
+		Library library = libraryManager.getLibrary(libraryId);
 		LibraryUpdateTask libraryUpdateTask = new LibraryUpdateTask(library);
 		libraryUpdateThreadPoolTaskExecutor.execute(libraryUpdateTask);				
 //		libraryWatchManager.registerWatchLibraryListeners();
@@ -40,7 +41,7 @@ public class LibraryUpdateTaskManager {
 	public void updateLibraries() {
 		List<Library> libraries = libraryManager.getLibraries(LibraryType.ALL);
 		for (Library library : libraries) {
-			updateLibrary(library);
+			updateLibrary(library.getId());
 		}
 	}
 
@@ -52,9 +53,6 @@ public class LibraryUpdateTaskManager {
 			this.library = library;
 		}
 		
-		
-
-
 		@Override
 		public void run() {
 

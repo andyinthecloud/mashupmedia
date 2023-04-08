@@ -2,7 +2,6 @@ package org.mashupmedia.model;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.mashupmedia.model.playlist.UserPlaylistPosition;

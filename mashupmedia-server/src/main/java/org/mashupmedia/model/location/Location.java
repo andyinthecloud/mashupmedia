@@ -1,20 +1,31 @@
 package org.mashupmedia.model.location;
 
 import java.io.Serializable;
+import java.util.List;
+
+import org.mashupmedia.model.library.Library;
 
 import jakarta.persistence.Cacheable;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "locations")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
+@NoArgsConstructor
+@Getter
+@Setter
 public class Location implements Serializable {
 	private static final long serialVersionUID = -6003017428642508314L;
 	@Id
@@ -22,21 +33,8 @@ public class Location implements Serializable {
 	private long id;
 	private String path;
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "location")
+	private List<Library> libraries;
 
 	@Override
 	public int hashCode() {

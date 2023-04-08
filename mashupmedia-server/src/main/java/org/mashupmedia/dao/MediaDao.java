@@ -5,7 +5,6 @@ import java.util.List;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.AlbumArtImage;
-import org.mashupmedia.model.media.music.Track;
 
 public interface MediaDao {
 

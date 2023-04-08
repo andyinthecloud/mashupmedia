@@ -18,18 +18,23 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlTransient;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "libraries")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
+@Setter
+@Getter
+@NoArgsConstructor
 public abstract class Library implements Serializable {
 
 	private static final long serialVersionUID = 4337414530802373218L;
@@ -39,7 +44,7 @@ public abstract class Library implements Serializable {
 	@XmlTransient
 	private long id;
 	private String name;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	// @JoinColumn(name = "location_id")
 	private Location location;
 	private Date createdOn;
@@ -55,7 +60,7 @@ public abstract class Library implements Serializable {
 	private Date lastSuccessfulScanOn;
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Group> groups;
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "library")
 	@OrderBy("createdOn")
 	private List<RemoteShare> remoteShares;
 	private boolean remote;
@@ -86,129 +91,16 @@ public abstract class Library implements Serializable {
 		return LibraryStatusType.NONE;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
 	public void setLibraryStatusType(LibraryStatusType libraryStatusType) {
 		this.status = libraryStatusType.toString();
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public boolean isRemote() {
-		return remote;
-	}
-
-	public void setRemote(boolean remote) {
-		this.remote = remote;
-	}
-
-	public List<RemoteShare> getRemoteShares() {
-		return remoteShares;
-	}
-
-	public void setRemoteShares(List<RemoteShare> remoteShares) {
-		this.remoteShares = remoteShares;
-	}
-
-	public Set<Group> getGroups() {
-		return groups;
-	}
-
-	public void setGroups(Set<Group> groups) {
-		this.groups = groups;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Location getLocation() {
-		return location;
-	}
-
-	public void setLocation(Location location) {
-		this.location = location;
-	}
-
-	public Date getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public User getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(User createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Date getUpdatedOn() {
-		return updatedOn;
-	}
-
-	public void setUpdatedOn(Date lastModifiedOn) {
-		this.updatedOn = lastModifiedOn;
-	}
-
-	public User getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(User lastModifiedBy) {
-		this.updatedBy = lastModifiedBy;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public String getScanMinutesInterval() {
-		return scanMinutesInterval;
-	}
-
-	public void setScanMinutesInterval(String scanMinutesInterval) {
-		this.scanMinutesInterval = scanMinutesInterval;
-	}
-
-	public Date getLastSuccessfulScanOn() {
-		return lastSuccessfulScanOn;
-	}
-
-	public void setLastSuccessfulScanOn(Date lastSuccessfulScanOn) {
-		this.lastSuccessfulScanOn = lastSuccessfulScanOn;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + ((location == null) ? 0 : location.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((location == null) ? 0 : location.hashCode());
 		return result;
 	}
 
@@ -221,17 +113,15 @@ public abstract class Library implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Library other = (Library) obj;
-		if (id != other.id)
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
 			return false;
 		if (location == null) {
 			if (other.location != null)
 				return false;
 		} else if (!location.equals(other.location))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}

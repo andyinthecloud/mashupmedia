@@ -13,10 +13,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "remote_shares")
 @Cacheable
+@NoArgsConstructor
+@Getter
+@Setter
 public class RemoteShare implements Serializable {
 
 	private static final long serialVersionUID = 7908980996923387604L;
@@ -26,12 +32,15 @@ public class RemoteShare implements Serializable {
 	private long id;
 	private String uniqueName;
 	private String remoteUrl;
-	private Date createdOn;
+	private Date createdOn = new Date();
 	@ManyToOne
 	private User createdBy;
 	private Date lastAccessed;
 	private long totalPlayedMediaItems;
 	private String status;
+	@ManyToOne
+	private Library library;
+
 	@Transient
 	private RemoteShareStatusType statusType;
 	
@@ -55,66 +64,6 @@ public class RemoteShare implements Serializable {
 	public void setStatusType(RemoteShareStatusType remoteShareStatusType) {
 		this.statusType = remoteShareStatusType;
 		this.status = remoteShareStatusType.toString();
-	}
-
-	public RemoteShare() {
-		this.createdOn = new Date();
-	}
-	
-	public Date getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public User getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(User createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getUniqueName() {
-		return uniqueName;
-	}
-
-	public void setUniqueName(String uniqueName) {
-		this.uniqueName = uniqueName;
-	}
-
-	public String getRemoteUrl() {
-		return remoteUrl;
-	}
-
-	public void setRemoteUrl(String remoteUrl) {
-		this.remoteUrl = remoteUrl;
-	}
-
-	public Date getLastAccessed() {
-		return lastAccessed;
-	}
-
-	public void setLastAccessed(Date lastAccessed) {
-		this.lastAccessed = lastAccessed;
-	}
-
-	public long getTotalPlayedMediaItems() {
-		return totalPlayedMediaItems;
-	}
-
-	public void setTotalPlayedMediaItems(long totalPlayedMediaItems) {
-		this.totalPlayedMediaItems = totalPlayedMediaItems;
 	}
 
 	@Override

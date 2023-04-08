@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.mashupmedia.exception.LibraryUpdateException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryStatusType;
 import org.mashupmedia.model.library.Library.LibraryType;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,7 +65,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	@Override
 	public synchronized void updateLibrary(Library library) {
 
-		library = libraryManager.getLibrary(library.getId());
+		// library = libraryManager.getLibrary(library.getId());
 
 		if (!library.isEnabled()) {
 			log.info("Library is disabled, will not update:" + library.toString());
@@ -85,27 +87,28 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 		}
 
 		try {
-			library.setLastSuccessfulScanOn(new Date());
+			// library.setLastSuccessfulScanOn(new Date());
 			library.setLibraryStatusType(LibraryStatusType.WORKING);
 			libraryManager.saveLibrary(library, true);
+			// libraryManager.saveLibrary(library, true);
 
 			Location location = library.getLocation();
 			File folder = new File(location.getPath());
 			if (!folder.isDirectory()) {
-				log.error("Media library points to a file not a directory, exiting...");
-				return;
+				throw new LibraryUpdateException("Media library points to a file not a directory, exiting...");
 			}
 
 			processLibrary(library);
 
-			library.setLibraryStatusType(LibraryStatusType.OK);
 			library.setLastSuccessfulScanOn(new Date());
+			library.setLibraryStatusType(LibraryStatusType.OK);
 
 		} catch (Exception e) {
 			log.error("Error updating library", e);
+			// library.setLastSuccessfulScanOn(new Date());
 			library.setLibraryStatusType(LibraryStatusType.ERROR);
 		} finally {
-			libraryManager.saveLibrary(library);
+			libraryManager.saveLibrary(library, true);
 		}
 	}
 

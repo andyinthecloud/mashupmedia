@@ -121,6 +121,13 @@ public class LibraryManagerImpl implements LibraryManager {
 		savedLibrary.getLocation().setPath(library.getLocation().getPath());
 		savedLibrary.setEnabled(library.isEnabled());
 
+		
+		String status = library.getStatus();
+		savedLibrary.setStatus(StringUtils.isEmpty(status) ? savedLibrary.getStatus() : status);
+
+		Date lastSuccessfulScan = library.getLastSuccessfulScanOn();
+		savedLibrary.setLastSuccessfulScanOn(lastSuccessfulScan == null ? savedLibrary.getLastSuccessfulScanOn() : lastSuccessfulScan);
+
 		Set<Group> groups = savedLibrary.getGroups(); 
 		groups.clear();
 		groups.addAll(library.getGroups());

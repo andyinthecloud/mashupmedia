@@ -76,7 +76,7 @@ public class MediaItem {
 	private String summary;
 	private String displayTitle;
 	private boolean enabled = true;
-	private long fileLastModifiedOn;
+	private Long fileLastModifiedOn;
 	private boolean publicAccess;
 	private String uniqueName;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

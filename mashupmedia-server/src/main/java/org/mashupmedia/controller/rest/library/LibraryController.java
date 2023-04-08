@@ -91,8 +91,8 @@ public class LibraryController {
 
         Library library = libraryMapper.toDomain(libraryPayload);
         libraryManager.saveLibrary(library);
-        libraryManager.saveAndReinitialiseLibrary(library);
-        libraryUpdateTaskManager.updateLibrary(library);
+        // libraryManager.saveAndReinitialiseLibrary(library);
+        libraryUpdateTaskManager.updateLibrary(library.getId());
 
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }

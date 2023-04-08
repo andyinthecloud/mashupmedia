@@ -141,7 +141,7 @@ public abstract class AbstractLibraryController extends BaseController {
 		}
 		
 		libraryManager.saveAndReinitialiseLibrary(library);
-		libraryUpdateTaskManager.updateLibrary(library);
+		libraryUpdateTaskManager.updateLibrary(library.getId());
 	}
 
 	private void processDeleteAction(LibraryPage libraryPage) {
