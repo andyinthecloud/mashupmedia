@@ -103,32 +103,32 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 
 
-	@Override
-	public void deleteObsoleteTrack(Track track) {
-		Date updatedOn = track.getUpdatedOn();
-		Date deleteDate = DateUtils.addDays(updatedOn, NUMBER_OF_DAYS_TO_KEEP_DISABLED_TRACKS);
+	// @Override
+	// public void deleteObsoleteTrack(Track track) {
+	// 	Date updatedOn = track.getUpdatedOn();
+	// 	Date deleteDate = DateUtils.addDays(updatedOn, NUMBER_OF_DAYS_TO_KEEP_DISABLED_TRACKS);
 
-		if (deleteDate.after(new Date())) {
-			track.setEnabled(false);
-			entityManager.merge(track);
-		} else {
-			deleteTrack(track);
-		}
-	}
+	// 	if (deleteDate.after(new Date())) {
+	// 		track.setEnabled(false);
+	// 		entityManager.merge(track);
+	// 	} else {
+	// 		deleteTrack(track);
+	// 	}
+	// }
 
-	@Override
-	public void deleteTrack(Track track) {
-		Genre genre = track.getGenre();
-		deleteGenre(genre);
+	// @Override
+	// public void deleteTrack(Track track) {
+	// 	Genre genre = track.getGenre();
+	// 	deleteGenre(genre);
 
-		String path = track.getPath();
+	// 	String path = track.getPath();
 
-		StringBuilder queryBuilder = new StringBuilder("delete from Track  where path = :path");
+	// 	StringBuilder queryBuilder = new StringBuilder("delete from Track  where path = :path");
 
-		entityManager.createQuery(queryBuilder.toString()).setParameter("path", path)
-				.executeUpdate();
-		flushSession(true);
-	}
+	// 	entityManager.createQuery(queryBuilder.toString()).setParameter("path", path)
+	// 			.executeUpdate();
+	// 	flushSession(true);
+	// }
 
 	private void deleteGenre(Genre genre) {
 		if (genre == null) {
@@ -525,19 +525,4 @@ query.setParameter("genreId", genre.getId());
 		return totalTracks;
 	}
 
-	@Override
-	public void deleteEmptyAlbums() {
-		StringBuilder queryBuilder = new StringBuilder(
-				"delete org.mashupmedia.model.media.music.Album a where a.tracks is empty");
-		int albumsDeleted = entityManager.createQuery(queryBuilder.toString()).executeUpdate();
-		log.info(albumsDeleted + " empty albums deleted");
-
-	}
-
-	@Override
-	public void deleteEmptyArtists() {
-		StringBuilder queryBuilder = new StringBuilder("delete Artist a where a.albums is empty");
-		int albumsDeleted = entityManager.createQuery(queryBuilder.toString()).executeUpdate();
-		log.info(albumsDeleted + " empty artists deleted");
-	}
 }

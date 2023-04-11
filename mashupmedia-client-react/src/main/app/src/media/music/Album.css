@@ -1,0 +1,9 @@
+#album div.media-container {
+    position: relative;
+}
+
+#album div.controls {
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+}
