@@ -9,8 +9,10 @@ import java.util.Set;
 import org.mashupmedia.comparator.MediaEncodingComparator;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
+import org.springframework.beans.factory.config.PlaceholderConfigurerSupport;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -89,8 +91,8 @@ public class MediaItem {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	@XmlTransient
 	private Set<MediaEncoding> mediaEncodings;
-
-
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "mediaItem")
+	private Set<PlaylistMediaItem> playlistMediaItems;
 
 	public MashupMediaType getMashupMediaType() {
 		MashupMediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);

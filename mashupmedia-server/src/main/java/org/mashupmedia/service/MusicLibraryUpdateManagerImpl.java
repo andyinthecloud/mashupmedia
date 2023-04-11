@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +24,6 @@ import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
-import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
@@ -45,17 +43,14 @@ import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.MediaRepository;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.repository.media.music.MusicAlbumRepository;
-import org.mashupmedia.repository.media.music.TrackRepository;
+import org.mashupmedia.repository.playlist.PlaylistMediaItemRepository;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.StringHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -91,6 +86,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	private final MediaRepository mediaRepository;
 
+	private final PlaylistMediaItemRepository playlistMediaItemRepository;
 
 	@PostConstruct
 	private void postConstruct() {
@@ -102,13 +98,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	}
 
-	// public MusicLibraryUpdateManagerImpl() {
-	// 	Logger[] loggers = new Logger[] { Logger.getLogger("org.jaudiotagger") };
-
-	// 	for (Logger logger : loggers) {
-	// 		logger.setLevel(Level.OFF);
-	// 	}
-	// }
 
 	@Override
 	public void deleteObsoleteTracks(long libraryId, Date date) {
@@ -122,7 +111,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			return;
 		}
 
-		deleteEmpty();
+		cleanUp();
 		log.info("Cleaned library.");
 	}
 
@@ -136,12 +125,12 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 
 		deleteTrack(track);
-		deleteEmpty();
+		cleanUp();
 	}
 
 	private void deleteTrack(Track track) {
 		playlistDao.deletePlaylistMediaItem(track);
-		musicDao.deleteObsoleteTrack(track);
+		mediaRepository.delete(track);
 	}
 
 	@Override
@@ -181,21 +170,23 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			// long fileLastModifiedOn = track.getFileLastModifiedOn();
 			// // Track savedTrack = getSavedTrack(groupIds, libraryId, trackPath,
 			// // fileLastModifiedOn);
-			// Optional<Track> optionalTrack = trackRepository.findByLibraryIdAndPathAndLastModifiedOn(libraryId, trackPath,
-			// 		fileLastModifiedOn);
+			// Optional<Track> optionalTrack =
+			// trackRepository.findByLibraryIdAndPathAndLastModifiedOn(libraryId, trackPath,
+			// fileLastModifiedOn);
 
 			// if (optionalTrack.isPresent()) {
-			// 	Track savedTrack = optionalTrack.get();
-			// 	long savedTrackId = savedTrack.getId();
-			// 	track.setId(savedTrackId);
-			// 	savedTrack.setUpdatedOn(track.getUpdatedOn());
-			// 	savedTrack.setEnabled(true);
-			// 	musicDao.saveTrack(savedTrack, false);
-			// 	log.info("Track is already in database, updated track date.");
-			// 	// writeTrackToXml(libraryId, savedTrack);
-			// 	// encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedTrack,
-			// 	// MediaContentType.MP3);
-			// 	continue;
+			// Track savedTrack = optionalTrack.get();
+			// long savedTrackId = savedTrack.getId();
+			// track.setId(savedTrackId);
+			// savedTrack.setUpdatedOn(track.getUpdatedOn());
+			// savedTrack.setEnabled(true);
+			// musicDao.saveTrack(savedTrack, false);
+			// log.info("Track is already in database, updated track date.");
+			// // writeTrackToXml(libraryId, savedTrack);
+			// //
+			// encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedTrack,
+			// // MediaContentType.MP3);
+			// continue;
 			// }
 
 			String fileName = track.getFileName();
@@ -289,25 +280,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		log.info("Saved " + totalTracksSaved + " tracks.");
 
 	}
-
-	// private List<Long> getGroupIds() {
-	// 	List<Long> groupIds = groupDao.getGroupIds();
-	// 	return groupIds;
-	// }
-
-	// private Track getSavedTrack(List<Long> groupIds, long libraryId, String trackPath, long fileLastModifiedOn) {
-	// 	Track savedTrack = musicDao.getTrack(groupIds, libraryId, trackPath, fileLastModifiedOn);
-	// 	return savedTrack;
-	// }
-
-	// protected void writeTrackToXml(long libraryId, Track track) {
-	// try {
-	//// mapperManager.writeTrackToXml(libraryId, track);
-	// } catch (Exception e) {
-	// log.error("Error writing track to xml", e);
-	// }
-	//
-	// }
 
 	private Genre prepareGenre(Genre genre) {
 		if (genre == null || StringUtils.isBlank(genre.getName())) {
@@ -442,13 +414,27 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		}
 
-		if (FileHelper.isSupportedTrack(fileName)) {
-			if (!mediaRepository.existsByPathAndFileLastModifiedOn(file.getPath(), file.lastModified()) ) {
-				musicFileCount++;
-				Track track = prepareTrack(file, date, musicFileCount, musicLibrary, folderArtistName, folderAlbumName);
-				tracks.add(track);					
+		if (!FileHelper.isSupportedTrack(fileName)) {
+			return;
+		}
+
+		Optional<Date> optionalFileLastModifiedOn = mediaRepository.findFileLastModifiedOnByPath(file.getPath());
+		if (optionalFileLastModifiedOn.isPresent()) {
+			Optional<MediaItem> optionalMediaItem = mediaRepository.findByPath(file.getPath());
+			if (optionalMediaItem.isPresent()) {
+				MediaItem savedMediaItem = optionalMediaItem.get();
+				if (file.lastModified() == savedMediaItem.getFileLastModifiedOn()) {
+					savedMediaItem.setUpdatedOn(date);
+					mediaRepository.save(savedMediaItem);
+					return;
+				}
 			}
 		}
+
+		musicFileCount++;
+		Track track = prepareTrack(file, date, musicFileCount, musicLibrary, folderArtistName, folderAlbumName);
+		tracks.add(track);
+
 	}
 
 	private Track prepareTrack(File file, Date date, int musicFileCount, MusicLibrary musicLibrary,
@@ -612,23 +598,25 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return title;
 	}
 
-	@Override
-	public void deleteTracks(List<Track> tracks) {
+	// @Override
+	// public void deleteTracks(List<Track> tracks) {
 
-		for (Track track : tracks) {
-			processManager.killProcesses(track.getId());
-			playlistDao.deletePlaylistMediaItem(track);
-			musicDao.deleteTrack(track);
-		}
+	// 	for (Track track : tracks) {
+	// 		long trackId = track.getId();
+	// 		processManager.killProcesses(trackId);
+	// 		List<PlaylistMediaItem> playlistMediaItems = playlistMediaItemRepository.findByMediaItemId(trackId);
+	// 		playlistMediaItemRepository.deleteAll(playlistMediaItems);
+	// 		mediaRepository.delete(track);
+	// 	}
 
-		// playlistDao.deletePlaylistMediaItems(tracks);
-		// musicDao.deleteTracks(tracks);
+	// 	// playlistDao.deletePlaylistMediaItems(tracks);
+	// 	// musicDao.deleteTracks(tracks);
 
-		log.info("Deleted " + tracks.size() + " out of date tracks.");
+	// 	log.info("Deleted " + tracks.size() + " out of date tracks.");
 
-		deleteEmpty();
-		log.info("Cleaned library.");
-	}
+	// 	cleanUp();
+	// 	log.info("Cleaned library.");
+	// }
 
 	private Artist prepareArtist(Artist artist) {
 		// Artist savedArtist = musicDao.getArtist(userGroupIds, artist.getName());
@@ -648,9 +636,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	private Album prepareAlbum(Album album) {
 
-        log.debug("prepareAlbum name: " + album.getName());
-        log.debug("prepareAlbum folderName: " +  album.getFolderName());
-		
+		log.debug("prepareAlbum name: " + album.getName());
+		log.debug("prepareAlbum folderName: " + album.getFolderName());
 
 		Artist artist = album.getArtist();
 		String albumName = album.getName();
@@ -697,9 +684,14 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	@Override
-	public void deleteEmpty() {
-		musicDao.deleteEmptyAlbums();
-		musicDao.deleteEmptyArtists();
+	public void cleanUp() {
+		List<Album> albums = musicAlbumRepository.findAlbumsWithNoTracks();
+		log.info("Found " + albums.size() + " albums to delete");
+		musicAlbumRepository.deleteAll(albums);
+
+		List<Artist> artists = artistRepository.findAristsWithNoAlbums();
+		log.info("Found " + artists.size() + " artists to delete");
+		artistRepository.deleteAll(artists);
 	}
 
 }

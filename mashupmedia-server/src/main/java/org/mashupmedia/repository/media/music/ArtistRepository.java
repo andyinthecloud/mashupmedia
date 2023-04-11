@@ -19,4 +19,7 @@ public interface ArtistRepository extends MediaItemWithGroupsRepository<Artist, 
     @Override
     @Query("select distinct l.groups from Artist art join art.albums alb join alb.tracks s join s.library l where l.enabled = true and art.id = :artistId ")
     List<Group> findGroupsById(@Param("artistId") long artistId);
+
+    @Query("select a from from Artist a where a.albums is empty")
+    List<Artist> findAristsWithNoAlbums(); 
 }

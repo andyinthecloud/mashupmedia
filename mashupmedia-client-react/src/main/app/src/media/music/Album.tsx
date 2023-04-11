@@ -1,5 +1,5 @@
 import { Add, PlayArrow } from "@mui/icons-material"
-import { Card, CardContent, CardMedia, IconButton, List, ListItem, ListItemText } from "@mui/material"
+import { Button, Card, CardContent, CardMedia, IconButton, List, ListItem, ListItemText } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
@@ -10,6 +10,7 @@ import { SecureMediaPayload } from "../rest/secureMediaPayload"
 import { play } from "./features/playMusicSlice"
 import { albumArtImageUrl, AlbumWithTracksAndArtistPayload, getAlbum, ImageType } from "./rest/musicCalls"
 import { addAlbum, playAlbum } from "./rest/playlistCalls"
+import './Album.css';
 
 const Album = () => {
 
@@ -80,7 +81,7 @@ const Album = () => {
                     play()
                 )
                 addNotification({
-                    message: "Added to playlist",
+                    message: "Replaced playlist",
                     notificationType: NotificationType.SUCCESS
                 })
             }
@@ -101,7 +102,10 @@ const Album = () => {
 
     return (
 
-        <Card>
+        <Card id="album">
+
+            <div className="media-container">
+
 
             <CardMedia
                 component="img"
@@ -110,6 +114,25 @@ const Album = () => {
                 className="cursor-pointer"
                 onClick={handleImagePopover}
             />
+
+            <div className="controls">
+                <Button
+                    variant="contained"
+                    startIcon={<PlayArrow />}
+                    onClick={() => handlePlay(props.payload.albumPayload.id)}
+                    sx={{
+                        marginRight: "1em"
+                    }}>
+                    Play
+                </Button>
+                <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={() => handleAdd(props.payload.albumPayload.id)}>
+                    Add
+                </Button>
+            </div>
+            </div>
 
             <ImagePopover {...imagePopoverPayload} />
 

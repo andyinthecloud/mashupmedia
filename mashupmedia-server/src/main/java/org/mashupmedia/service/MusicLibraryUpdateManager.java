@@ -11,9 +11,9 @@ public interface MusicLibraryUpdateManager {
 
 	public void saveTracks(MusicLibrary musicLibrary, List<Track> tracks, Date date);
 
-	public void deleteTracks(List<Track> tracks);
+	// public void deleteTracks(List<Track> tracks);
 
-	public void deleteEmpty();
+	public void cleanUp();
 
 	public void updateRemoteLibrary(MusicLibrary musicLibrary) throws Exception;
 

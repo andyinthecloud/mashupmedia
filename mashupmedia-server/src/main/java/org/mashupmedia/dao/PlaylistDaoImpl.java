@@ -6,25 +6,36 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
+import org.mashupmedia.repository.playlist.PlaylistMediaItemRepository;
+import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.model.playlist.UserPlaylistPosition;
 import org.mashupmedia.util.DaoHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.TypedQuery;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @Slf4j
+@RequiredArgsConstructor
 public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
+
+	private final UserPlaylistPositionRepository userPlaylistPositionRepository;
+
+	private final PlaylistMediaItemRepository playlistMediaItemRepository;
 
 	@Override
 	public List<Playlist> getPlaylists(long userId, boolean isAdministrator, PlaylistType playlistType) {
@@ -105,7 +116,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		if (playlists.size() > 1) {
 			throw new MashupMediaRuntimeException("Error, more than one default playlist found for user id: " + userId);
 		}
-		
+
 		return playlists.get(0);
 	}
 
@@ -118,7 +129,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			saveOrMerge(playlist);
 			return;
 		}
-		
+
 		Set<PlaylistMediaItem> savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
 		if (savedPlaylistMediaItems != null && !savedPlaylistMediaItems.isEmpty()) {
 			savedPlaylist.getPlaylistMediaItems().clear();
@@ -141,10 +152,6 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 		for (Iterator<PlaylistMediaItem> iterator = newPlaylistMediaItems.iterator(); iterator.hasNext();) {
 			PlaylistMediaItem newPlaylistMediaItem = (PlaylistMediaItem) iterator.next();
-			// if (savedPlaylistMediaItems.remove(newPlaylistMediaItem)) {
-			// iterator.remove();
-			// continue;
-			// }
 			saveOrMerge(newPlaylistMediaItem);
 		}
 
@@ -184,22 +191,23 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	public void deletePlaylistMediaItem(MediaItem mediaItem) {
 		long mediaItemId = mediaItem.getId();
 
-		TypedQuery<PlaylistMediaItem> query = entityManager.createQuery(
-				"from PlaylistMediaItem pmi where pmi.mediaItem.id = :mediaItemId", PlaylistMediaItem.class);
-		query.setParameter("mediaItemId", mediaItemId);
-		List<PlaylistMediaItem> playlistMediaItems = query.getResultList();
+		// TypedQuery<PlaylistMediaItem> query = entityManager.createQuery(
+		// 		"from PlaylistMediaItem pmi where pmi.mediaItem.id = :mediaItemId", PlaylistMediaItem.class);
+		// query.setParameter("mediaItemId", mediaItemId);
+
+
+		// List<PlaylistMediaItem> playlistMediaItems = query.getResultList();
+		List<PlaylistMediaItem> playlistMediaItems = playlistMediaItemRepository.findByMediaItemId(mediaItemId);
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
 			return;
 		}
 
 		for (PlaylistMediaItem playlistMediaItem : playlistMediaItems) {
 			long playlistMediaItemId = playlistMediaItem.getId();
-			entityManager
-					.createQuery(
-							"update User set playlistMediaItemId = 0 where playlistMediaItemId = :playlistMediaItemId")
-					.setParameter("playlistMediaItemId", playlistMediaItemId).executeUpdate();
-
-			entityManager.remove(playlistMediaItem);
+			List<User> users = userPlaylistPositionRepository.findByPlaylistItem(playlistMediaItemId);
+			for (User user : users) {
+				removePlaylistMediaItemFromUser(user, playlistMediaItemId);
+			}
 		}
 
 		Library library = mediaItem.getLibrary();
@@ -209,6 +217,16 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			FileHelper.deleteFile(encodedMediaFile);
 		}
 
+	}
+
+	private void removePlaylistMediaItemFromUser(User user, long playlistMediaId) {
+		Set<UserPlaylistPosition> userPlaylistPositionToDelete = user.getUserPlaylistPositions()
+				.stream()
+				.filter(upp -> upp.getPlaylistMediaId() == playlistMediaId)
+				.collect(Collectors.toSet());
+
+		user.getUserPlaylistPositions().removeAll(userPlaylistPositionToDelete);
+		saveOrMerge(user);
 	}
 
 	@Override

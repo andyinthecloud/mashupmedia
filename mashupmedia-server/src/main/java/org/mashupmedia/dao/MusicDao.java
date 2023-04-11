@@ -22,8 +22,6 @@ public interface MusicDao {
 
 	public void saveTrack(Track track);
 
-	public void deleteTrack(Track track);
-
 	public List<Track> getTracksToDelete(long libraryId, Date date);
 
 	public void saveAlbum(Album album);
@@ -56,12 +54,6 @@ public interface MusicDao {
 	public List<Track> findTracks(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria);
 
 	public long getTotalTracksFromLibrary(long libraryId);
-
-	public void deleteObsoleteTrack(Track trackToDelete);
-
-	public void deleteEmptyAlbums();
-
-	public void deleteEmptyArtists();
 
 	public List<Album> getLatestAlbums(List<Long> userGroupIds, int pageNumber, int maxResults);
 
