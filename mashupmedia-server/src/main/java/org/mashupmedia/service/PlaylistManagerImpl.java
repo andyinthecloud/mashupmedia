@@ -2,57 +2,50 @@ package org.mashupmedia.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.PlaylistDao;
+import org.mashupmedia.encode.FfMpegManager;
+import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.exception.UnauthorisedException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MashupMediaType;
-import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.UserPlaylistPosition;
 import org.mashupmedia.model.playlist.UserPlaylistPositionId;
-import org.mashupmedia.repository.playlist.PlaylistMediaItemRepository;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
 import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.DaoHelper;
-import org.mashupmedia.util.MediaItemHelper;
-import org.mashupmedia.util.MessageHelper;
-import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.mashupmedia.util.MessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @AllArgsConstructor
 @Transactional
+@Slf4j
 public class PlaylistManagerImpl implements PlaylistManager {
 
 	private final PlaylistDao playlistDao;
-
 	private final MediaDao mediaDao;
-
 	private final MashupMediaSecurityManager securityManager;
-
 	private final UserPlaylistPositionRepository userPlaylistPositionRepository;
-
-	private final PlaylistMediaItemRepository playlistMediaItemRepository;
+	private final FfMpegManager ffMpegManager;
+	// private final PlaylistActionManager playlistActionManager;
 
 	@Override
 	public List<Playlist> getPlaylists(PlaylistType playlistType) {
@@ -65,7 +58,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		return playlists;
 	}
 
-	protected synchronized void initialisePlaylist(Playlist playlist) {
+	protected void initialisePlaylist(Playlist playlist) {
 
 		if (playlist == null) {
 			return;
@@ -73,19 +66,27 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 		Hibernate.initialize(playlist.getPlaylistMediaItems());
 
-		Predicate<PlaylistMediaItem> predicateWebFormat = pmi -> {
-			MediaItem mediaItem = pmi.getMediaItem();
-			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(mediaItem.getFormat());
-			return MediaItemHelper.isWebCompatibleEncoding(MashupMediaType.TRACK, mediaContentType);
-		};
-
 		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getPlaylistMediaItems()
 				.stream()
 				.filter(pmi -> pmi.getMediaItem().isEnabled())
-				.filter(predicateWebFormat)
 				.filter(pmi -> securityManager.canAccessMediaItem(pmi.getMediaItem()))
 				.sorted((pmi1, pmi2) -> pmi1.getRanking().compareTo(pmi2.getRanking()))
 				.collect(Collectors.toList());
+
+		Set<MediaItem> unencodedForWebMediaItems = accessiblePlaylistMediaItems
+				.stream()
+				.map(pmi -> pmi.getMediaItem())
+				.filter(mi -> !mi.isEncodedForWeb())
+				.collect(Collectors.toSet());
+
+		for (MediaItem mediaItem : unencodedForWebMediaItems) {
+			try {
+				ffMpegManager.queueMediaItemForEncoding(mediaItem, MediaContentType.AUDIO_MP3);
+			} catch (MediaItemEncodeException e) {
+				log.error("Error encoding media item", e);
+			}
+		}
+
 		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
 
 		if (accessiblePlaylistMediaItems.isEmpty()) {
@@ -168,6 +169,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		playlist.setCreatedBy(user);
 		playlist.setPlaylistType(PlaylistType.MUSIC);
 		playlist.setPlaylistMediaItems(new HashSet<PlaylistMediaItem>());
+		playlistDao.savePlaylist(playlist);
 
 		return playlist;
 	}
@@ -251,7 +253,6 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	@Override
 	public void deleteLibrary(long libraryId) {
 		playlistDao.deleteLibrary(libraryId);
-
 	}
 
 	@Override
@@ -275,8 +276,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		int playingIndex = getPlayingIndex(playlistMediaItems, playlistMediaId, relativeOffset);
 
 		PlaylistMediaItem playlistMediaItem = playlistMediaItems.get(playingIndex);
-		PlaylistHelper.setPlayingMediaItem(playlist, playlistMediaItem);
-
+		playlist.getPlaylistMediaItems().forEach(pmi -> pmi.setPlaying(pmi.equals(playlistMediaItem)));
 		return playlistMediaItem;
 	}
 
@@ -299,18 +299,18 @@ public class PlaylistManagerImpl implements PlaylistManager {
 			return null;
 		}
 
-		PlaylistMediaItem playlistMediaItem = null; 
+		PlaylistMediaItem playlistMediaItem = null;
 		for (PlaylistMediaItem pmi : playlistMediaItems) {
 			if (pmi.getId() == playlistMediaItemId) {
 				pmi.setPlaying(true);
 				playlistMediaItem = pmi;
 			} else {
 				pmi.setPlaying(false);
-			} 
+			}
 		}
 
 		return playlistMediaItem;
-	}	
+	}
 
 	private int getPlayingIndex(List<PlaylistMediaItem> playlistMediaItems, long playlistMediaId, int relativeOffset) {
 
@@ -341,5 +341,4 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 		return index;
 	}
-
 }

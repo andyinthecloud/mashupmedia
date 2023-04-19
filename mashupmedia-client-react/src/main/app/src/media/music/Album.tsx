@@ -9,7 +9,7 @@ import { RootState } from "../../common/redux/store"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
 import { play } from "./features/playMusicSlice"
 import { albumArtImageUrl, AlbumWithTracksAndArtistPayload, getAlbum, ImageType } from "./rest/musicCalls"
-import { addAlbum, playAlbum } from "./rest/playlistCalls"
+import { addAlbum, addTrack, playAlbum, playTrack } from "./rest/playlistCalls"
 import './Album.css';
 
 const Album = () => {
@@ -74,7 +74,7 @@ const Album = () => {
 
     const dispatch = useDispatch()
 
-    const handlePlay = (albumId: number): void => {
+    const handlePlayAlbum = (albumId: number): void => {
         playAlbum(albumId, userToken).then((response) => {
             if (response.ok) {
                 dispatch(
@@ -88,8 +88,33 @@ const Album = () => {
         })
     }
 
-    const handleAdd = (albumId: number): void => {
+    const handleAddAlbum = (albumId: number): void => {
         addAlbum(albumId, userToken).then((response) => {
+            if (response.ok) {
+                addNotification({
+                    message: "Added to playlist",
+                    notificationType: NotificationType.SUCCESS
+                })
+            }
+        })
+    }
+
+    const handlePlayTrack = (trackId: number): void => {
+        playTrack(trackId, userToken).then((response) => {
+            if (response.ok) {
+                dispatch(
+                    play()
+                )
+                addNotification({
+                    message: "Replaced playlist",
+                    notificationType: NotificationType.SUCCESS
+                })
+            }
+        })
+    }
+
+    const handleAddTrack = (trackId: number): void => {
+        addTrack(trackId, userToken).then((response) => {
             if (response.ok) {
                 addNotification({
                     message: "Added to playlist",
@@ -106,32 +131,31 @@ const Album = () => {
 
             <div className="media-container">
 
+                <CardMedia
+                    component="img"
+                    image={albumArtImageUrl(albumIdAsNumber(), ImageType.ORIGINAL, props?.mediaToken)}
+                    height="300"
+                    className="cursor-pointer"
+                    onClick={handleImagePopover}
+                />
 
-            <CardMedia
-                component="img"
-                image={albumArtImageUrl(albumIdAsNumber(), ImageType.ORIGINAL, props?.mediaToken)}
-                height="300"
-                className="cursor-pointer"
-                onClick={handleImagePopover}
-            />
-
-            <div className="controls">
-                <Button
-                    variant="contained"
-                    startIcon={<PlayArrow />}
-                    onClick={() => handlePlay(props.payload.albumPayload.id)}
-                    sx={{
-                        marginRight: "1em"
-                    }}>
-                    Play
-                </Button>
-                <Button
-                    variant="contained"
-                    startIcon={<Add />}
-                    onClick={() => handleAdd(props.payload.albumPayload.id)}>
-                    Add
-                </Button>
-            </div>
+                <div className="controls">
+                    <Button
+                        variant="contained"
+                        startIcon={<PlayArrow />}
+                        onClick={() => handlePlayAlbum(props.payload.albumPayload.id)}
+                        sx={{
+                            marginRight: "1em"
+                        }}>
+                        Play
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<Add />}
+                        onClick={() => handleAddAlbum(props.payload.albumPayload.id)}>
+                        Add
+                    </Button>
+                </div>
             </div>
 
             <ImagePopover {...imagePopoverPayload} />
@@ -141,32 +165,32 @@ const Album = () => {
                 <h2>{props.payload.artistPayload.name}</h2>
 
                 <List>
-                    {props.payload.trackPayloads.map(function (songPayload) {
+                    {props.payload.trackPayloads.map(function (trackPayload) {
                         return (
                             <ListItem
+                                className={trackPayload.encodedForWeb ? "" : "track-not-encoded-for-web"}
                                 secondaryAction={
                                     <div>
                                         <IconButton
                                             edge="end"
                                             color="primary"
-                                            onClick={() => handlePlay(props.payload.albumPayload.id)}>
+                                            onClick={() => handlePlayTrack(trackPayload.id)}>
                                             <PlayArrow />
                                         </IconButton>
                                         <IconButton
                                             edge="end"
                                             color="primary"
-                                            onClick={() => handleAdd(props.payload.albumPayload.id)}>
+                                            onClick={() => handleAddTrack(trackPayload.id)}>
                                             <Add />
                                         </IconButton>
                                     </div>
                                 }
 
-                                key={songPayload.id}>
-
+                                key={trackPayload.id}>
 
                                 <ListItemText
-                                    primary={songPayload.name}
-                                    secondary={`${songPayload.minutes} min ${songPayload.seconds} sec`}
+                                    primary={trackPayload.name}
+                                    secondary={`${trackPayload.minutes} min ${trackPayload.seconds} sec`}
                                 />
                             </ListItem>
                         )

@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { play } from "../../../media/music/features/playMusicSlice"
-import { albumArtImageUrl, AlbumWithArtistPayload, ImageType } from '../../../media/music/rest/musicCalls'
+import { AlbumWithArtistPayload, ImageType, albumArtImageUrl } from '../../../media/music/rest/musicCalls'
+import { playlistNotification } from "../../../media/music/rest/playlistActionUtils"
 import { addAlbum, playAlbum } from "../../../media/music/rest/playlistCalls"
 import { SecureMediaPayload } from '../../../media/rest/secureMediaPayload'
-import { addNotification, NotificationType } from "../../notification/notificationSlice"
+import { NotificationType, addNotification } from "../../notification/notificationSlice"
 import { RootState } from "../../redux/store"
 import './AlbumSummary.css'
 
@@ -39,15 +40,13 @@ const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
     const handlePlay = (albumId: number): void => {
         playAlbum(albumId, userToken).then((response) => {
             if (response.ok) {
+
                 dispatch(
                     play()
                 )
 
                 dispatch(
-                    addNotification({
-                        message: "Added to playlist",
-                        notificationType: NotificationType.SUCCESS
-                    })
+                    playlistNotification(response.parsedBody?.payload)
                 )
             }
         })

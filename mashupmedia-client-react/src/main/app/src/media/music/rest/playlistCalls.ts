@@ -36,6 +36,15 @@ export enum PlaylistActionTypePayload {
     MOVE_BOTTOM = "MOVE_BOTTOM"
 }
 
+
+export enum PlaylistActionStatusTypePayload {
+    OK = "OK",
+    FFMPEG_NOT_INSTALLED = "FFMPEG_NOT_INSTALLED",
+    ITEMS_SENT_FOR_ENCODING = "ITEMS_SENT_FOR_ENCODING",
+    ERROR = "ERROR"
+}
+
+
 export type PlaylistActionPayload = {
     playlistActionTypePayload: PlaylistActionTypePayload
     playlistId: number
@@ -49,20 +58,24 @@ export type CreatePlaylistPayload = {
 const playlistUrl = "/api/playlist"
 const musicPlaylistUrl = playlistUrl + "/music"
 
-export const playAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
-    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, musicPlaylistUrl + "/play-album", userToken, '' + albumId)
+export const playTrack = (trackId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<PlaylistActionStatusTypePayload>>> => {
+    return callMashupMediaApi<ServerResponsePayload<PlaylistActionStatusTypePayload>>(HttpMethod.PUT, musicPlaylistUrl + "/play-track", userToken, '' + trackId)
 }
 
-export const addAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
-    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, musicPlaylistUrl + "/add-album", userToken, '' + albumId)
+export const addTrack = (trackId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<PlaylistActionStatusTypePayload>>> => {
+    return callMashupMediaApi<ServerResponsePayload<PlaylistActionStatusTypePayload>>(HttpMethod.PUT, musicPlaylistUrl + "/add-track", userToken, '' + trackId)
+}
+
+export const playAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<PlaylistActionStatusTypePayload>>> => {
+    return callMashupMediaApi<ServerResponsePayload<PlaylistActionStatusTypePayload>>(HttpMethod.PUT, musicPlaylistUrl + "/play-album", userToken, '' + albumId)
+}
+
+export const addAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<PlaylistActionStatusTypePayload>>> => {
+    return callMashupMediaApi<ServerResponsePayload<PlaylistActionStatusTypePayload>>(HttpMethod.PUT, musicPlaylistUrl + "/add-album", userToken, '' + albumId)
 }
 
 export const navigateTrack = (navigatePlaylistPayload: NavigatePlaylistPayload, userToken?: string): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {
     return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.PUT, musicPlaylistUrl + "/navigate", userToken, JSON.stringify(navigatePlaylistPayload))
-}
-
-export const hasPlaylist = (userToken: string | undefined): Promise<HttpResponse<ServerResponsePayload<string>>> => {
-    return callMashupMediaApiNoRedirect<ServerResponsePayload<string>>(HttpMethod.GET, musicPlaylistUrl + "/initialised", userToken)
 }
 
 export const trackProgress = (playlistId: number, progress: number, userToken: string | undefined): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {

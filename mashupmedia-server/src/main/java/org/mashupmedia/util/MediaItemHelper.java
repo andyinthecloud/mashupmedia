@@ -17,7 +17,6 @@
 
 package org.mashupmedia.util;
 
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,55 +26,36 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.media.video.Video;
-import org.mashupmedia.web.restful.RestfulStream;
 
 public class MediaItemHelper {
 
 	public enum MediaContentType {
-		MP3("audio/mpeg", "mp3", "mp3", 1),
-		M4A("audio/m4a", "m4a", "m4a", 2),
-		OGA("audio/ogg", "oga", "oga", 3),
-		WAV("audio/wav", "wav", "wav", 3),
-		FLAC("audio/flac", "flac", "flac", 4),
-		WMA("audio/x-ms-wma", "wma", "wma", 5),
-		UNSUPPORTED("media/unsupported", "unsupported", "unsupported", 100),
-		MP4("video/mp4", "m4v", "mp4", 1),
-		WEBM("video/webm", "webmv", "webm", 2),
-		OGV("video/ogg", "ogv", "ogv", 3),
-		WMV("video/x-ms-wmv", "wmv", "wmv", 4),
-		JPEG("image/jpeg", "jpg", "jpg", 1),
-		PNG("image/png", "png", "png", 2),
-		GIF("image/gif", "gif", "gif", 3),
-		TIF("image/tiff", "tiff", "tiff", 4);
+		AUDIO_MP3("audio/mpeg", 1),		
+		VIDEO_MP4("video/mp4", 1),
+		VIDEO_WEBM("video/webm", 2),
+		VIDEO_OGG("video/ogg", 3),
+		VIDEO_WMV("video/x-ms-wmv", 4),
+		IMAGE_JPG("image/jpeg", 1),
+		IMAGE_PNG("image/png", 2),
+		IMAGE_GIF("image/gif", 3),
+		IMAGE_TIFF("image/tiff", 4),
+		MEDIA_UNSUPPORTED("media/unsupported", 100);
 
-		private final String mimeContentType;
-		private final String jPlayerContentType;
-		private final String name;
+		private final String contentType;
 		private final int ranking;
 
-		private MediaContentType(String mimeContentType, String jPlayerContentType, String name, int ranking) {
-			this.mimeContentType = mimeContentType;
-			this.jPlayerContentType = jPlayerContentType;
-			this.name = name;
+		private MediaContentType(String mimeContentType, int ranking) {
+			this.contentType = mimeContentType;
 			this.ranking = ranking;
 		}
 
-		public String getjPlayerContentType() {
-			return jPlayerContentType;
-		}
-
-		public String getMimeContentType() {
-			return mimeContentType;
-		}
-
-		public String getName() {
-			return name;
+		public String getContentType() {
+			return contentType;
 		}
 
 		public int getRanking() {
 			return ranking;
 		}
-
 	}
 
 	public enum MediaItemSequenceType {
@@ -130,41 +110,45 @@ public class MediaItemHelper {
 		format = StringUtils.trimToEmpty(format);
 
 		if (format.equalsIgnoreCase("MPEG-1 Layer 3") || format.equalsIgnoreCase("mp3")) {
-			return MediaContentType.MP3;
-		} else if (format.equalsIgnoreCase("Vorbis") || format.equalsIgnoreCase("ogg")
-				|| format.equalsIgnoreCase("oga")) {
-			return MediaContentType.OGA;
-		} else if (format.equalsIgnoreCase("Free Lossless Audio Codec") || format.equalsIgnoreCase("flac")) {
-			return MediaContentType.FLAC;
-		} else if (format.equalsIgnoreCase("webm")) {
-			return MediaContentType.WEBM;
+			return MediaContentType.AUDIO_MP3;
+		}  else if (format.equalsIgnoreCase("webm")) {
+			return MediaContentType.VIDEO_WEBM;
 		} else if (format.equalsIgnoreCase("mp4") || format.equalsIgnoreCase("m4v")) {
-			return MediaContentType.MP4;
+			return MediaContentType.VIDEO_MP4;
 		} else if (format.equalsIgnoreCase("ogv")) {
-			return MediaContentType.OGV;
+			return MediaContentType.VIDEO_OGG;
 		} else if (format.equalsIgnoreCase("jpg") || format.equalsIgnoreCase("jpeg")) {
-			return MediaContentType.JPEG;
+			return MediaContentType.IMAGE_JPG;
 		} else if (format.equalsIgnoreCase("png")) {
-			return MediaContentType.PNG;
+			return MediaContentType.IMAGE_PNG;
 		} else if (format.equalsIgnoreCase("gif")) {
-			return MediaContentType.GIF;
+			return MediaContentType.IMAGE_GIF;
 		} else if (format.equalsIgnoreCase("tif") || format.equalsIgnoreCase("tiff")) {
-			return MediaContentType.TIF;
+			return MediaContentType.IMAGE_TIFF;
 		}
 
-		return MediaContentType.UNSUPPORTED;
+		return MediaContentType.MEDIA_UNSUPPORTED;
+	}
+
+	public static MediaContentType getDefaultMediaContentType(MediaItem mediaItem) {
+		if (mediaItem instanceof Track) {
+			return MediaContentType.AUDIO_MP3;
+		}
+
+		return MediaContentType.MEDIA_UNSUPPORTED;
+
 	}
 
 	public static boolean isCompatibleVideoFormat(MediaContentType mediaContentType) {
-		if (mediaContentType == MediaContentType.MP4) {
+		if (mediaContentType == MediaContentType.VIDEO_MP4) {
 			return true;
 		}
 
-		if (mediaContentType == MediaContentType.WEBM) {
+		if (mediaContentType == MediaContentType.VIDEO_WEBM) {
 			return true;
 		}
 
-		if (mediaContentType == MediaContentType.OGV) {
+		if (mediaContentType == MediaContentType.VIDEO_OGG) {
 			return true;
 		}
 
@@ -172,19 +156,19 @@ public class MediaItemHelper {
 	}
 
 	public static boolean isCompatiblePhotoFormat(MediaContentType mediaContentType) {
-		if (mediaContentType == MediaContentType.JPEG) {
+		if (mediaContentType == MediaContentType.IMAGE_JPG) {
 			return true;
 		}
 
-		if (mediaContentType == MediaContentType.GIF) {
+		if (mediaContentType == MediaContentType.IMAGE_GIF) {
 			return true;
 		}
 
-		if (mediaContentType == MediaContentType.TIF) {
+		if (mediaContentType == MediaContentType.IMAGE_TIFF) {
 			return true;
 		}
 
-		if (mediaContentType == MediaContentType.PNG) {
+		if (mediaContentType == MediaContentType.IMAGE_PNG) {
 			return true;
 		}
 
@@ -215,30 +199,30 @@ public class MediaItemHelper {
 		return urlBuilder.toString();
 	}
 
-	public static void addSuppliedStreamUrls(MediaContentType[] suppliedMediaContentTypes, String contextPath,
-			long mediaItemId,
-			List<RestfulStream> restfulStreamList) {
+	// public static void addSuppliedStreamUrls(MediaContentType[] suppliedMediaContentTypes, String contextPath,
+	// 		long mediaItemId,
+	// 		List<RestfulStream> restfulStreamList) {
 
-		for (MediaContentType suppliedMediaContentType : suppliedMediaContentTypes) {
-			if (!isFormatPresent(restfulStreamList, suppliedMediaContentType)) {
-				String jPlayerContentType = suppliedMediaContentType.getjPlayerContentType();
-				restfulStreamList.add(new RestfulStream(jPlayerContentType,
-						prepareUrlStream(contextPath, mediaItemId, jPlayerContentType)));
-			}
-		}
+	// 	for (MediaContentType suppliedMediaContentType : suppliedMediaContentTypes) {
+	// 		if (!isFormatPresent(restfulStreamList, suppliedMediaContentType)) {
+	// 			String jPlayerContentType = suppliedMediaContentType.getjPlayerContentType();
+	// 			restfulStreamList.add(new RestfulStream(jPlayerContentType,
+	// 					prepareUrlStream(contextPath, mediaItemId, jPlayerContentType)));
+	// 		}
+	// 	}
 
-	}
+	// }
 
-	private static boolean isFormatPresent(List<RestfulStream> restfulStreamList, MediaContentType mediaContentType) {
-		for (RestfulStream restfulStream : restfulStreamList) {
-			String name = mediaContentType.getjPlayerContentType();
-			if (restfulStream.getFormat().equalsIgnoreCase(name)) {
-				return true;
-			}
-		}
+	// private static boolean isFormatPresent(List<RestfulStream> restfulStreamList, MediaContentType mediaContentType) {
+	// 	for (RestfulStream restfulStream : restfulStreamList) {
+	// 		String name = mediaContentType.getjPlayerContentType();
+	// 		if (restfulStream.getFormat().equalsIgnoreCase(name)) {
+	// 			return true;
+	// 		}
+	// 	}
 
-		return false;
-	}
+	// 	return false;
+	// }
 
 	public static long getMediaContentDuration(MediaItem mediaItem) {
 		long duration = 0;
@@ -276,7 +260,7 @@ public class MediaItemHelper {
 
 	public static boolean isWebCompatibleEncoding(MashupMediaType mashupMediaType, MediaContentType mediaContentType) {
 		if (mashupMediaType == MashupMediaType.TRACK) {
-			return isFormat(mediaContentType, MediaContentType.MP3);
+			return isFormat(mediaContentType, MediaContentType.AUDIO_MP3);
 		}
 
 		return false;

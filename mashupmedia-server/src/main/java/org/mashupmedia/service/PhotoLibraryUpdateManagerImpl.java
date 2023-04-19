@@ -210,7 +210,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			mediaEncodings.add(mediaEncoding);
 			photo.setMediaEncodings(mediaEncodings);
 
-			photo.setFormat(mediaContentType.getName());
+			photo.setFormat(mediaContentType.name());
 			photo.setEnabled(true);
 			long lastModified = file.lastModified();
 			photo.setFileLastModifiedOn(lastModified);

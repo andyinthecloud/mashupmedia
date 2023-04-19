@@ -3,8 +3,6 @@ package org.mashupmedia.controller.stream;
 import java.io.File;
 import java.io.IOException;
 
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
@@ -23,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -31,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class AlbumArtController {
 
     private static final String DEFAULT_MUSIC_ALBUM_ART = "/images/default-music-album-art.png";
-    private static final MediaContentType DEFAULT_MUSIC_ALBUM_ART_CONTENT_TYPE = MediaContentType.PNG;
+    private static final MediaContentType DEFAULT_MUSIC_ALBUM_ART_CONTENT_TYPE = MediaContentType.IMAGE_PNG;
 
     private final MusicManager musicManager;
 
@@ -54,7 +53,7 @@ public class AlbumArtController {
                 ? DEFAULT_MUSIC_ALBUM_ART_CONTENT_TYPE
                 : MediaItemHelper.getMediaContentType(albumArtImage.getContentType());
 
-        httpServletResponse.setContentType(mediaContentType.getMimeContentType());
+        httpServletResponse.setContentType(mediaContentType.getContentType());
 
         String imagePath = getImagePath(imageType, albumArtImage);
         File albumArtFile = StringUtils.isEmpty(imagePath)

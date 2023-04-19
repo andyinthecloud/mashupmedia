@@ -26,21 +26,18 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class EncodeMediaManagerImpl implements EncodeMediaManager {
 
-	@Autowired
-	private MediaManager mediaManager;
-
-	@Autowired
-	private ProcessManager processManager;
+	private final MediaManager mediaManager;
+	private final ProcessManager processManager;
 
 	@Override
 	public void encodeMedia(ProcessQueueItem processQueueItem) {
@@ -64,7 +61,7 @@ public class EncodeMediaManagerImpl implements EncodeMediaManager {
 
 			processManager.startProcess(processQueueItem);
 
-			log.info("Media file decoded to " + mediaContentType.getName());
+			log.info("Media file decoded to " + mediaContentType.name());
 			MediaEncoding mediaEncoding = new MediaEncoding();
 			mediaEncoding.setMediaContentType(mediaContentType);
 			mediaEncoding.setOriginal(false);

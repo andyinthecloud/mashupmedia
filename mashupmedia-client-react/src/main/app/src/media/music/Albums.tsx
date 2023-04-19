@@ -85,9 +85,12 @@ const Albums = () => {
     )
 
     return (
-        <div>
-
-            <Grid container spacing={5} columns={{ xs: 4, sm: 8, md: 12 }} display="flex">
+        <div>            
+            <Grid 
+                container 
+                spacing={5} 
+                columns={{ xs: 4, sm: 8, md: 12 }} 
+                display="flex">
 
                 {props?.map(function (albumWithArtistPayload, index) {
 

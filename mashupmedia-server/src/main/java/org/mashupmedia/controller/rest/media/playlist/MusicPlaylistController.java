@@ -7,26 +7,27 @@ import org.mashupmedia.dto.media.SecureMediaPayload;
 import org.mashupmedia.dto.media.music.MusicPlaylistTrackPayload;
 import org.mashupmedia.dto.media.playlist.NavigatePlaylistPayload;
 import org.mashupmedia.dto.media.playlist.NavigatePlaylistType;
-import org.mashupmedia.dto.share.ErrorCode;
+import org.mashupmedia.dto.media.playlist.PlaylistActionStatusType;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.media.music.SecureMusicPlaylistTrackMapper;
 import org.mashupmedia.model.User;
-import org.mashupmedia.model.library.Library.LibraryType;
+import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.MashupMediaSecurityManager;
+import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.service.playlist.PlaylistActionManager;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.ValidationUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,74 +49,94 @@ public class MusicPlaylistController {
     private final SecureMusicPlaylistTrackMapper musicPlaylistTrackMapper;
     private final MashupMediaSecurityManager mashupMediaSecurityManager;
     private final LibraryManager libraryManager;
-
-    @GetMapping(value = "/initialised", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<String>> getIsInitialised() {
-
-        User user = AdminHelper.getLoggedInUser();
-        Errors errors = new BindException(user, "user");
-
-        if (user == null) {
-            errors.reject(ErrorCode.NOT_LOGGED_IN.getErrorCode());
-            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
-        }
-
-        if (libraryManager.getLibraries(LibraryType.MUSIC).isEmpty()) {
-            errors.reject(ErrorCode.LIBRARIES_UNINITIALISED.getErrorCode());
-            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
-        }
-
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
-    }
+    private final MediaManager mediaManager;
+    private final PlaylistActionManager playlistActionManager;
 
     @PutMapping(value = "/play-album", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<String>> playAlbum(@RequestBody long albumId, Errors errors) {
+    public ResponseEntity<ServerResponsePayload<PlaylistActionStatusType>> playAlbum(@RequestBody long albumId,
+            Errors errors) {
+
         Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
         Album album = musicManager.getAlbum(albumId);
-        PlaylistHelper.replacePlaylist(playlist, album.getTracks());
-        playlistManager.savePlaylist(playlist);
 
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        PlaylistActionStatusType playlistActionStatusType = playlistActionManager.replacePlaylist(playlist.getId(),
+                album.getTracks());
+
+        return ValidationUtil.createResponseEntityPayload(playlistActionStatusType, errors);
     }
 
     @PutMapping(value = "/add-album", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<String>> addAlbum(@RequestBody long albumId, Errors errors) {
+    public ResponseEntity<ServerResponsePayload<PlaylistActionStatusType>> addAlbum(@RequestBody long albumId,
+            Errors errors) {
         Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
         Album album = musicManager.getAlbum(albumId);
-        PlaylistHelper.appendPlaylist(playlist, album.getTracks());
-        playlistManager.savePlaylist(playlist);
+        PlaylistActionStatusType playlistActionStatusType = playlistActionManager.appendPlaylist(playlist.getId(),
+                album.getTracks());
 
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        return ValidationUtil.createResponseEntityPayload(playlistActionStatusType, errors);
     }
 
     @PutMapping(value = "/play-artist", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<String>> playArtist(@RequestBody long artistId, Errors errors) {
+    public ResponseEntity<ServerResponsePayload<PlaylistActionStatusType>> playArtist(@RequestBody long artistId,
+            Errors errors) {
         Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
         Artist artist = musicManager.getArtist(artistId);
-        PlaylistHelper.replacePlaylist(playlist, artist.getAlbums()
+        List<Track> tracks = artist.getAlbums()
                 .stream()
                 .flatMap(album -> album.getTracks().stream())
-                .collect(Collectors.toList()));
-        playlistManager.savePlaylist(playlist);
+                .collect(Collectors.toList());
 
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        PlaylistActionStatusType playlistActionStatusType = playlistActionManager.replacePlaylist(
+                playlist.getId(),
+                tracks);
+
+        return ValidationUtil.createResponseEntityPayload(playlistActionStatusType, errors);
     }
 
     @PutMapping(value = "/add-artist", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<String>> addArtist(@RequestBody long artistId, Errors errors) {
+    public ResponseEntity<ServerResponsePayload<PlaylistActionStatusType>> addArtist(@RequestBody long artistId, Errors errors) {
         Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
 
         Artist artist = musicManager.getArtist(artistId);
-        PlaylistHelper.appendPlaylist(playlist, artist.getAlbums()
+        List<Track> tracks = artist.getAlbums()
                 .stream()
                 .flatMap(album -> album.getTracks().stream())
-                .collect(Collectors.toList()));
-        playlistManager.savePlaylist(playlist);
+                .collect(Collectors.toList());
 
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        PlaylistActionStatusType playlistActionStatusType = playlistActionManager.appendPlaylist(
+                playlist.getId(),
+                tracks);
+
+        return ValidationUtil.createResponseEntityPayload(playlistActionStatusType, errors);
+    }
+
+    @PutMapping(value = "/play-track", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ServerResponsePayload<PlaylistActionStatusType>> playTrack(@RequestBody long trackId, Errors errors) {
+        Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
+        MediaItem mediaItem = mediaManager.getMediaItem(trackId);
+        if (mediaItem instanceof Track track) {
+            PlaylistActionStatusType playlistActionStatusType = playlistActionManager.replacePlaylist(playlist.getId(),
+                    track);
+            return ValidationUtil.createResponseEntityPayload(playlistActionStatusType, errors);
+        } else {
+            return ValidationUtil.createResponseEntityPayload(PlaylistActionStatusType.ERROR, errors);
+        }
+    }
+
+    @PutMapping(value = "/add-track", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ServerResponsePayload<PlaylistActionStatusType>> addTrack(@RequestBody long trackId, Errors errors) {
+        Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(PlaylistType.MUSIC);
+        MediaItem mediaItem = mediaManager.getMediaItem(trackId);
+        if (mediaItem instanceof Track track) {
+            PlaylistActionStatusType playlistActionStatusType = playlistActionManager.appendPlaylist(playlist.getId(),
+                    track);
+            return ValidationUtil.createResponseEntityPayload(playlistActionStatusType, errors);
+        } else {
+            return ValidationUtil.createResponseEntityPayload(PlaylistActionStatusType.ERROR, errors);
+        }
     }
 
     @PutMapping(value = "/navigate", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -128,7 +149,7 @@ public class MusicPlaylistController {
 
         PlaylistMediaItem playlistMediaItem = null;
 
-        Long playlistMediaItemId = navigatePlaylistPayload.getPlaylistMediaItemId();                 
+        Long playlistMediaItemId = navigatePlaylistPayload.getPlaylistMediaItemId();
         if (playlistMediaItemId == null) {
             int relativeOffset = getRelativeOffset(navigatePlaylistPayload.getNavigatePlaylistType());
             playlistMediaItem = playlistManager.playRelativePlaylistMediaItem(playlist, relativeOffset);
@@ -163,8 +184,11 @@ public class MusicPlaylistController {
             return ResponseEntity.badRequest().build();
         }
 
-        PlaylistMediaItem playlistMediaItem = PlaylistHelper.getPlaylistMediaItemByProgress(playlist, progress);
-        PlaylistHelper.setPlayingMediaItem(playlist, playlistMediaItem);
+        PlaylistMediaItem playlistMediaItem = playlistActionManager.getPlaylistMediaItemByProgress(playlist.getId(),
+                progress);
+        if (playlistMediaItem != null) {
+            playlist.getPlaylistMediaItems().forEach(pmi -> pmi.setPlaying(pmi.equals(playlistMediaItem)));
+        }
 
         playlistManager.savePlaylist(playlist);
         User user = AdminHelper.getLoggedInUser();
@@ -187,6 +211,5 @@ public class MusicPlaylistController {
 
         return ResponseEntity.ok(musicPlaylistTrackPayloads);
     }
-         
 
 }

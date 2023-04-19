@@ -8,24 +8,25 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public interface PlaylistManager {
 
-	public List<Playlist> getPlaylists(PlaylistType playlistType);
+	List<Playlist> getPlaylists(PlaylistType playlistType);
 
-	public Playlist getPlaylist(long id);
+	Playlist getPlaylist(long id);
 
-	public Playlist getLastAccessedPlaylistForCurrentUser(PlaylistType playlistType);
+	Playlist getLastAccessedPlaylistForCurrentUser(PlaylistType playlistType);
 
-	public Playlist getDefaultPlaylistForCurrentUser(PlaylistType playlistType);
+	Playlist getDefaultPlaylistForCurrentUser(PlaylistType playlistType);
 
-	public void savePlaylist(Playlist playlist);
+	void savePlaylist(Playlist playlist);
 
-	public void deletePlaylist(long id);
+	void deletePlaylist(long id);
 
-	public List<Playlist> getPlaylistsForCurrentUser(PlaylistType playlistType);
+	List<Playlist> getPlaylistsForCurrentUser(PlaylistType playlistType);
 
-	public void deleteLibrary(long libraryId);
+	void deleteLibrary(long libraryId);
 
-    public PlaylistMediaItem playRelativePlaylistMediaItem(Playlist playlist, int relativeOffset);
+	PlaylistMediaItem playRelativePlaylistMediaItem(Playlist playlist, int relativeOffset);
 
-    public PlaylistMediaItem playPlaylistMediaItem(Playlist playlist, Long playlistMediaItemId);	
+	PlaylistMediaItem playPlaylistMediaItem(Playlist playlist, Long playlistMediaItemId);
+
 
 }

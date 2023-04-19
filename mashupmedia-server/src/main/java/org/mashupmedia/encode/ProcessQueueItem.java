@@ -5,6 +5,11 @@ import java.util.List;
 
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ProcessQueueItem {
 	private long mediaItemId;
 	private MediaContentType mediaContentType;
@@ -19,54 +24,6 @@ public class ProcessQueueItem {
 		this.mediaContentType = mediaContentType;
 		this.commands = commands;
 		this.createdOn = new Date();
-	}
-
-	public long getMediaItemId() {
-		return mediaItemId;
-	}
-
-	public void setMediaItemId(long mediaItemId) {
-		this.mediaItemId = mediaItemId;
-	}
-
-	public MediaContentType getMediaContentType() {
-		return mediaContentType;
-	}
-
-	public void setMediaContentType(MediaContentType mediaContentType) {
-		this.mediaContentType = mediaContentType;
-	}
-
-	public Date getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public List<String> getCommands() {
-		return commands;
-	}
-
-	public void setCommands(List<String> commands) {
-		this.commands = commands;
-	}
-
-	public Process getProcess() {
-		return process;
-	}
-
-	public void setProcess(Process process) {
-		this.process = process;
-	}
-
-	public Date getProcessStartedOn() {
-		return processStartedOn;
-	}
-
-	public void setProcessStartedOn(Date processStartedOn) {
-		this.processStartedOn = processStartedOn;
 	}
 
 	@Override

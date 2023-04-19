@@ -80,7 +80,7 @@ public class FileHelper {
 		mediaFolder.mkdirs();
 
 		String fileName = String.valueOf(mediaItem.getId());
-		fileName += "." + mediaContentType.getName().toLowerCase();
+		fileName += "." + mediaContentType.name().toLowerCase();
 
 		File file = new File(mediaFolder, fileName);
 		return file;

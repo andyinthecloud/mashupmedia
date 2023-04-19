@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.mashupmedia.model.User;
-import org.mashupmedia.util.PlaylistHelper;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -37,6 +36,15 @@ public class Playlist {
 
 		public String getValue() {
 			return toString().toLowerCase();
+		}
+
+		static public PlaylistType getPlaylistType(String value) {
+			for (PlaylistType playlistType : PlaylistType.values()) {
+				if (playlistType.getValue().equalsIgnoreCase(value)) {
+					return playlistType;
+				}
+			}
+			return PlaylistType.MUSIC;
 		}
 
 	}
@@ -80,7 +88,7 @@ public class Playlist {
 	}
 
 	public PlaylistType getPlaylistType() {
-		PlaylistType playlistType = PlaylistHelper.getPlaylistType(getPlaylistTypeValue());
+		PlaylistType playlistType =  PlaylistType.getPlaylistType(getPlaylistTypeValue());
 		return playlistType;
 	}
 

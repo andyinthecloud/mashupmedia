@@ -39,9 +39,9 @@ public class RestfulEncodeController {
 		ERROR, INFO, WARNING
 	}
 
-	private MediaContentType[] musicEncodingMediaContentTypes = new MediaContentType[] { MediaContentType.MP3 };
+	private MediaContentType[] musicEncodingMediaContentTypes = new MediaContentType[] { MediaContentType.AUDIO_MP3 };
 	
-	private MediaContentType[] videoEncodingMediaContentTypes = new MediaContentType[] { MediaContentType.MP4 };
+	private MediaContentType[] videoEncodingMediaContentTypes = new MediaContentType[] { MediaContentType.VIDEO_MP4 };
 
 	@Autowired
 	private MediaManager mediaManager;

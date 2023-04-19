@@ -10,11 +10,14 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.mashupmedia.controller.stream.resource.MediaResourceHttpRequestHandler;
+import org.mashupmedia.model.media.MediaEncoding;
+import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,23 +72,50 @@ public class SecureStreamController {
         PlaylistMediaItem currenPlaylistMediaItem = playlistManager.playRelativePlaylistMediaItem(playlist, 0);
         int index = playlistMediaItems.indexOf(currenPlaylistMediaItem);
         List<PlaylistMediaItem> unplayedMediaItems = playlistMediaItems.subList(index, playlistMediaItems.size() - 1);
-        long fileLength = 0;
-        List<FileInputStream> fileInputStreams = new ArrayList<>();
+
+        // MediaEncoding mediaEncoding =
+        // unplayedMediaItems.get(0).getMediaItem().getBestMediaEncoding();
+
+        // List<FileInputStream> fileInputStreams = new ArrayList<>();
+
+        boolean isStreaming = false;
+
         for (PlaylistMediaItem pmi : unplayedMediaItems) {
             if (pmi.getMediaItem() instanceof Track track) {
-                fileLength += track.getSizeInBytes();
-                fileInputStreams.add(new FileInputStream(track.getPath()));
+
+                MediaEncoding mediaEncoding = track.getBestMediaEncoding();
+                if (mediaEncoding.getMediaContentType() == MediaContentType.AUDIO_MP3) {
+                    isStreaming = true;
+                    IOUtils.copyLarge(new FileInputStream(track.getPath()), response.getOutputStream());
+
+                }
+                // fileLength += track.getSizeInBytes();
+                // fileInputStreams.add(new FileInputStream(track.getPath()));
+                // MediaEncoding mediaEncoding = track.getBestMediaEncoding();
+                // response.setContentType(mediaEncoding.getMediaContentType().getMimeContentType());
             }
         }
 
-        response.setContentType(MediaContentType.MP3.getMimeContentType());
-        response.setContentLengthLong(fileLength);
+        response.setContentType(MediaContentType.AUDIO_MP3.getContentType());
 
-        Enumeration<FileInputStream> fileInputStreamsEnumeration = Collections.enumeration(fileInputStreams);
-        SequenceInputStream sequenceInputStream = new SequenceInputStream(fileInputStreamsEnumeration);
+        if (isStreaming) {
+            response.setHeader("Transfer-Encoding", "chunked");
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
-        IOUtils.copy(sequenceInputStream, response.getOutputStream());
-        response.flushBuffer();
+        }
+
+        // response.setHeader("Accept-Ranges", "");
+
+        // response.setContentLengthLong(fileLength);
+
+        // Enumeration<FileInputStream> fileInputStreamsEnumeration =
+        // Collections.enumeration(fileInputStreams);
+        // SequenceInputStream sequenceInputStream = new
+        // SequenceInputStream(fileInputStreamsEnumeration);
+
+        // IOUtils.copyLarge(sequenceInputStream, response.getOutputStream());
+        // response.flushBuffer();
 
     }
 

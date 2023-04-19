@@ -134,7 +134,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			mediaEncodings.add(mediaEncoding);
 			video.setMediaEncodings(mediaEncodings);
 
-			video.setFormat(mediaContentType.getName());
+			video.setFormat(mediaContentType.name());
 			video.setEnabled(true);
 			video.setFileLastModifiedOn(file.lastModified());
 			video.setFileName(fileName);
@@ -166,7 +166,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		videoDao.saveVideo(video, isSessionFlush);
 
 		if (!library.isEncodeVideoOnDemand()) {
-			encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(video, MediaContentType.MP4);
+			encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(video, MediaContentType.VIDEO_MP4);
 		}
 	}
 

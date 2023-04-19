@@ -17,8 +17,8 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.service.playlist.PlaylistActionManager;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.PlaylistHelper;
 import org.mashupmedia.util.ValidationUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +42,7 @@ public class PlaylistController {
 
     private final PlaylistManager playlistManager;
     private final SecureMusicPlaylistTrackMapper secureMusicPlaylistTrackMapper;
+    private final PlaylistActionManager playlistActionManager;
 
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MusicPlaylistTrackPayload>> updatePlaylist(
@@ -76,7 +77,7 @@ public class PlaylistController {
                 .map(pmi -> pmi.getMediaItem())
                 .collect(Collectors.toList());
 
-        PlaylistHelper.replacePlaylist(playlist, mediaItems);
+        playlistActionManager.replacePlaylist(playlist.getId(), mediaItems);
 
         playlistManager.savePlaylist(playlist);
 
@@ -94,7 +95,7 @@ public class PlaylistController {
         Assert.notNull(user, "User should not be null");
 
         Playlist playlist = playlistManager.getPlaylist(playlistId);
-        if (!user.isAdministrator() || !playlist.getCreatedBy().equals(user) ) {
+        if (!user.isAdministrator() || !playlist.getCreatedBy().equals(user)) {
             throw new SecurityException("Only an administrator or the playlist creator can delete the playlist");
         }
 
@@ -103,7 +104,8 @@ public class PlaylistController {
     }
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<String>> createPlaylist(@Valid @RequestBody CreatePlaylistPayload createPlaylistPayload, Errors errors) {
+    public ResponseEntity<ServerResponsePayload<String>> createPlaylist(
+            @Valid @RequestBody CreatePlaylistPayload createPlaylistPayload, Errors errors) {
         User user = AdminHelper.getLoggedInUser();
         Assert.notNull(user, "User should not be null");
 

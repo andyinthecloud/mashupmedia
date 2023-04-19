@@ -76,8 +76,7 @@ public class ProcessManager {
 
 	public void addProcessToQueue(List<String> commands, long mediaItemId,
 			MediaContentType mediaContentType) {
-		ProcessQueueItem processQueueItem =
-				generateProcessQueueItem(mediaItemId, mediaContentType, commands);
+		ProcessQueueItem processQueueItem = generateProcessQueueItem(mediaItemId, mediaContentType, commands);
 		if (processQueueItems.contains(processQueueItem)) {
 			log.info("Media is already queued for encoding: " + processQueueItem.toString());
 			return;
@@ -89,8 +88,7 @@ public class ProcessManager {
 	protected ProcessQueueItem generateProcessQueueItem(long mediaItemId,
 			MediaContentType mediaContentType, List<String> commands) {
 
-		ProcessQueueItem processQueueItem =
-				new ProcessQueueItem(mediaItemId, mediaContentType, commands);
+		ProcessQueueItem processQueueItem = new ProcessQueueItem(mediaItemId, mediaContentType, commands);
 		return processQueueItem;
 	}
 
@@ -198,26 +196,6 @@ public class ProcessManager {
 		}
 	}
 
-	// public boolean isEncoding(long mediaItemId, MediaContentType
-	// mediaContentType) {
-	//
-	// ProcessQueueItem processQueueItem = getProcessQueueItem(mediaItemId,
-	// mediaContentType);
-	// if (processQueueItem == null) {
-	// return false;
-	// }
-	// // if (processQueueItem != null) {
-	// // return true;
-	// // }
-	//
-	// Process process = processQueueItem.getProcess();
-	// if (process == null) {
-	// return false;
-	// }
-	//
-	// return true;
-	// }
-
 	private ProcessQueueItem getProcessQueueItem(long mediaItemId,
 			MediaContentType mediaContentType) {
 		if (processQueueItems == null || processQueueItems.isEmpty()) {
@@ -307,6 +285,16 @@ public class ProcessManager {
 		processQueueItems.remove(processQueueItem);
 		processQueueItems.add(index, processQueueItem);
 		return true;
+	}
+
+	public boolean isInQueue(long mediaItemId) {
+		if (processQueueItems == null || processQueueItems.isEmpty()) {
+			return false;
+		}
+
+		return processQueueItems
+				.stream()
+				.anyMatch(pqi -> pqi.getMediaItemId() == mediaItemId);
 	}
 
 }

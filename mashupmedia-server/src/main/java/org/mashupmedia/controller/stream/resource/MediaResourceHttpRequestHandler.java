@@ -39,7 +39,7 @@ public class MediaResourceHttpRequestHandler extends ResourceHttpRequestHandler 
 
         Assert.isInstanceOf(MediaResource.class, resource, "resource should be of type MediaResource");
         MediaResource mediaResource = (MediaResource) resource;
-        response.setContentType(mediaResource.getMediaContentType().getMimeContentType());
+        response.setContentType(mediaResource.getMediaContentType().getContentType());
     }
 
 }
