@@ -21,6 +21,7 @@ public class TrackMapper implements DomainMapper<Track, TrackPayload> {
                         TimeUnit.MINUTE))
                 .seconds(TimeHelper.getDurationUnit(domain.getTrackLength(),
                         TimeUnit.SECOND))
+                .encodedForWeb(domain.isEncodedForWeb())
                 .build();
     }
 

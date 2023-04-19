@@ -94,6 +94,10 @@ public class MediaItem {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "mediaItem")
 	private Set<PlaylistMediaItem> playlistMediaItems;
 
+	public boolean isEncodedForWeb() {
+		return false;
+	}
+
 	public MashupMediaType getMashupMediaType() {
 		MashupMediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
 		return mediaType;

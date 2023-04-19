@@ -32,12 +32,13 @@ import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class FfMpegManager {
 
@@ -46,11 +47,9 @@ public class FfMpegManager {
 	private static final String[] FFMPEG_EXECUTABLE_EXTENSIONS = new String[] { "exe", "sh" };
 	private static final String FFMPEG_EXECUTABLE_LINK = "ffmpeg.txt";
 
-	@Autowired
-	private ProcessManager processManager;
+	private final ProcessManager processManager;
 
-	@Autowired
-	private ConfigurationManager configurationManager;
+	private final ConfigurationManager configurationManager;
 
 	public String getFFMpegFolderPath() {
 		File ffMpegFolder = new File(FileHelper.getApplicationFolder(), FFMPEG_FOLDER_NAME);
@@ -140,7 +139,25 @@ public class FfMpegManager {
 		return false;
 	}
 
-	public void queueMediaItemBeforeEncoding(MediaItem mediaItem, MediaContentType mediaContentType)
+	public boolean isFfMpegInstalled() {
+		File ffMpegExecutableFile = findFFMpegExecutable();
+		if (ffMpegExecutableFile == null) {
+			return false;
+		}
+
+		try {
+			String outputText = processManager.callProcess(ffMpegExecutableFile.getAbsolutePath());
+			if (outputText.contains(FFMPEG_EXECUTABLE_NAME)) {
+				return true;
+			}
+		} catch (IOException e) {
+			return false;
+		}
+
+		return false;
+	}
+
+	public void queueMediaItemForEncoding(MediaItem mediaItem, MediaContentType mediaContentType)
 			throws MediaItemEncodeException {
 
 		String pathToFfMpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
@@ -151,26 +168,29 @@ public class FfMpegManager {
 
 		long mediaItemId = mediaItem.getId();
 
+		if (processManager.isInQueue(mediaItemId)) {
+			return;
+		}
+
 		File inputFile = new File(mediaItem.getPath());
 		File outputFile = FileHelper.getEncodedMediaFile(mediaItem, mediaContentType);
 		boolean isDeleted = FileHelper.deleteFile(outputFile);
 
 		if (!isDeleted) {
-			String errorText = "Unable to delete encoded media file whil try when webserver stops: " + outputFile.getAbsolutePath();
+			String errorText = "Unable to delete encoded media file whil try when webserver stops: "
+					+ outputFile.getAbsolutePath();
 			log.error(errorText);
 		}
 
 		List<String> commands = new ArrayList<String>();
 
-		if (mediaContentType == MediaContentType.MP3) {
+		if (mediaContentType == MediaContentType.AUDIO_MP3) {
 			commands = queueEncodeAudioToMp3(pathToFfMpeg, inputFile, outputFile);
-		} else if (mediaContentType == MediaContentType.OGA) {
-			commands = queueEncodeAudioToOga(pathToFfMpeg, inputFile, outputFile);
-		} else if (mediaContentType == MediaContentType.MP4) {
+		} else if (mediaContentType == MediaContentType.VIDEO_MP4) {
 			commands = queueEncodeVideoToMp4(pathToFfMpeg, inputFile, outputFile);
-		} else if (mediaContentType == MediaContentType.WEBM) {
+		} else if (mediaContentType == MediaContentType.VIDEO_WEBM) {
 			commands = queueEncodeVideoToWebM(pathToFfMpeg, inputFile, outputFile);
-		} else if (mediaContentType == MediaContentType.OGV) {
+		} else if (mediaContentType == MediaContentType.VIDEO_OGG) {
 			commands = queueEncodeVideoToOgv(pathToFfMpeg, inputFile, outputFile);
 		} else {
 			throw new MediaItemEncodeException(EncodeExceptionType.UNSUPPORTED_ENCODING_FORMAT,
@@ -190,31 +210,34 @@ public class FfMpegManager {
 		commands.add(inputFile.getAbsolutePath());
 		commands.add("-codec:a");
 		commands.add("libmp3lame");
-		commands.add("-b:a");
-		commands.add("192k");
+		// commands.add("-b:a");
+		// commands.add("192k");
+		commands.add("-q:a");
+		commands.add("2");
 		commands.add("-f");
 		commands.add("mp3");
 		commands.add(outputFile.getAbsolutePath());
 
-		return commands;
-	}
-	
-	
-	private List<String> queueEncodeAudioToOga(String pathToFfMpeg, File inputFile, File outputFile) {
-
-		List<String> commands = new ArrayList<String>();
-		commands.add(pathToFfMpeg);
-		commands.add("-y");
-		commands.add("-i");
-		commands.add(inputFile.getAbsolutePath());
-		commands.add("-codec:a");
-		commands.add("libvorbis");
-		commands.add("-f");
-		commands.add("oga");
-		commands.add(outputFile.getAbsolutePath());
+		// ffmpeg -i input.wav -codec:a libmp3lame -q:a 2 output.mp3
 
 		return commands;
 	}
+
+	// private List<String> queueEncodeAudioToOga(String pathToFfMpeg, File inputFile, File outputFile) {
+
+	// 	List<String> commands = new ArrayList<String>();
+	// 	commands.add(pathToFfMpeg);
+	// 	commands.add("-y");
+	// 	commands.add("-i");
+	// 	commands.add(inputFile.getAbsolutePath());
+	// 	commands.add("-codec:a");
+	// 	commands.add("libvorbis");
+	// 	commands.add("-f");
+	// 	commands.add("oga");
+	// 	commands.add(outputFile.getAbsolutePath());
+
+	// 	return commands;
+	// }
 
 	private List<String> queueEncodeVideoToMp4(String pathToFfMpeg, File inputFile, File outputFile) {
 
@@ -295,13 +318,10 @@ public class FfMpegManager {
 
 		return commands;
 	}
-	
-	
 
-	
 	private List<String> removeAudioTags(String pathToFfMpeg, File inputFile, File outputFile) {
-//		ffmpeg -i tagged.mp3 -vn -codec:a copy -map_metadata -1 out.mp3
-		
+		// ffmpeg -i tagged.mp3 -vn -codec:a copy -map_metadata -1 out.mp3
+
 		List<String> commands = new ArrayList<String>();
 		commands.add(pathToFfMpeg);
 		commands.add("-y");
@@ -313,14 +333,12 @@ public class FfMpegManager {
 		commands.add("-map_metadata");
 		commands.add("-1");
 		commands.add(outputFile.getAbsolutePath());
-		
-		
+
 		return commands;
 	}
 
-
-
-	public List<String> queueCopyAudioWithoutTags(File mediaFile, File playlistTemporaryFile) throws MediaItemEncodeException{
+	public List<String> queueCopyAudioWithoutTags(File mediaFile, File playlistTemporaryFile)
+			throws MediaItemEncodeException {
 		String pathToFfMpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
 		if (StringUtils.isBlank(pathToFfMpeg)) {
 			String errorText = "Unable to encode media, ffmpeg is not configured.";
@@ -329,9 +347,7 @@ public class FfMpegManager {
 
 		List<String> commands = removeAudioTags(pathToFfMpeg, mediaFile, playlistTemporaryFile);
 		return commands;
-		
+
 	}
-	
-	
 
 }

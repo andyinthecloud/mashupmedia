@@ -23,7 +23,6 @@ export function getCookieValue (name: string): string | null {
     }
 }
 
-
 export const securityToken = (userToken: string | undefined): string | null => 
     userToken ? userToken : getCookieValue(TOKEN_KEY)
 

@@ -28,7 +28,7 @@ public class MediaItemImageView implements View {
 		this.imageBytes = imageBytes;
 
 		if (mediaContentType == null) {
-			mediaContentType = MediaContentType.JPEG;
+			mediaContentType = MediaContentType.IMAGE_JPG;
 		}
 		this.mediaContentType = mediaContentType;
 		this.mediaType = mediaType;
@@ -36,7 +36,7 @@ public class MediaItemImageView implements View {
 
 	@Override
 	public String getContentType() {
-		return mediaContentType.getMimeContentType();
+		return mediaContentType.getContentType();
 	}
 
 	@Override

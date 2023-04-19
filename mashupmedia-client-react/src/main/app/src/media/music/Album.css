@@ -7,3 +7,7 @@
     bottom: 30px;
     left: 20px;
 }
+
+#album .track-not-encoded-for-web {
+    opacity: 0.5;
+}

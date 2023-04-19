@@ -1,6 +1,7 @@
 package org.mashupmedia.model.media.music;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.media.MediaEncoding;
@@ -27,8 +28,7 @@ import lombok.Setter;
 @XmlRootElement
 @Getter
 @Setter
-public class Track extends MediaItem implements Serializable{
-
+public class Track extends MediaItem implements Serializable {
 
 	private int trackNumber;
 	@Column(length = 1000)
@@ -45,8 +45,22 @@ public class Track extends MediaItem implements Serializable{
 	private long bitRate;
 	private boolean readableTag;
 
-	public Track() {
-		setMashupMediaType(MashupMediaType.TRACK);
+	@Override
+	public MashupMediaType getMashupMediaType() {
+		return MashupMediaType.TRACK;
+	}
+
+	@Override
+	public boolean isEncodedForWeb() {
+		Collection<MediaEncoding> mediaEncodings = getMediaEncodings();
+		for (MediaEncoding mediaEncoding : mediaEncodings) {
+			if (MediaItemHelper.isWebCompatibleEncoding(
+					getMashupMediaType(),
+					mediaEncoding.getMediaContentType())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -140,21 +154,20 @@ public class Track extends MediaItem implements Serializable{
 		}
 
 		metaBuilder.append(" | ");
-		
+
 		MediaContentType mediaContentType = null;
 		MediaEncoding mediaEncoding = getBestMediaEncoding();
 		if (mediaEncoding != null) {
 			mediaContentType = mediaEncoding.getMediaContentType();
 		} else {
 			String format = getFormat();
-			mediaContentType = MediaItemHelper.getMediaContentType(format);			
+			mediaContentType = MediaItemHelper.getMediaContentType(format);
 		}
-				
-		metaBuilder.append(mediaContentType.getName());
+
+		metaBuilder.append(mediaContentType.name());
 		return metaBuilder.toString();
 
 	}
-
 
 	public String getDisplayTrackNumber() {
 

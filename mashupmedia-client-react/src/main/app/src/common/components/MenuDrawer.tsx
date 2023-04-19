@@ -68,6 +68,8 @@ const MenuDrawer = (menuDrawerPayload: MenuDrawerPayload) => {
     const tokenPayload = useSelector((state: RootState) => state.security.payload?.token)
 
     useEffect(() => {
+
+
         setProps(({
             ...props,
             loggedIn: userPolicyPayload?.username ? true : false,
@@ -207,9 +209,7 @@ const MenuDrawer = (menuDrawerPayload: MenuDrawerPayload) => {
                             <ListItemRoute label="Groups" toRoute="/configuration/groups" onClick={closeAfterNavigate} />
                             <ListItemRoute label="Libraries" toRoute="/configuration/libraries" onClick={closeAfterNavigate} />
                             <ListItemRoute label="Network" toRoute="/configuration/network" onClick={closeAfterNavigate} />
-                            <ListItemButton>
-                                <ListItemText primary="Encoding" />
-                            </ListItemButton>
+                            <ListItemRoute label="Encode" toRoute="/configuration/encode" onClick={closeAfterNavigate} />
 
                         </List>
 

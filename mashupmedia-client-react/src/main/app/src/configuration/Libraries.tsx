@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { RootState } from "../common/redux/store"
 import { getLibraries, LibraryNameValuePayload } from "./backend/libraryCalls"
 
-const  Libraries = () => {
+const Libraries = () => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)

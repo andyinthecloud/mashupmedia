@@ -20,7 +20,6 @@ package org.mashupmedia.task;
 import java.util.Date;
 import java.util.Iterator;
 
-import lombok.extern.slf4j.Slf4j;
 import org.mashupmedia.encode.EncodeMediaManager;
 import org.mashupmedia.encode.FfMpegManager;
 import org.mashupmedia.encode.ProcessManager;
@@ -30,9 +29,10 @@ import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -51,13 +51,13 @@ public class EncodeMediaItemTaskManager {
 	private ProcessManager processManager;
 
 	public void processMediaItemForEncodingDuringAutomaticUpdate(MediaItem mediaItem, MediaContentType mediaContentType) {
-		MediaContentType savedMediaContentType = MediaContentType.UNSUPPORTED;
+		MediaContentType savedMediaContentType = MediaContentType.MEDIA_UNSUPPORTED;
 		MediaEncoding mediaEncoding = mediaItem.getBestMediaEncoding();
 		if (mediaEncoding != null) {
 			savedMediaContentType = mediaEncoding.getMediaContentType();
 		}
 
-		if (savedMediaContentType == MediaContentType.UNSUPPORTED) {
+		if (savedMediaContentType == MediaContentType.MEDIA_UNSUPPORTED) {
 			try {
 				processMediaItemForEncoding(mediaItem, mediaContentType);
 			} catch (MediaItemEncodeException exception) {
@@ -67,7 +67,7 @@ public class EncodeMediaItemTaskManager {
 	}
 
 	public void processMediaItemForEncoding(MediaItem mediaItem, MediaContentType mediaContentType) throws MediaItemEncodeException {
-		ffMpegManager.queueMediaItemBeforeEncoding(mediaItem, mediaContentType);
+		ffMpegManager.queueMediaItemForEncoding(mediaItem, mediaContentType);
 		processQueue();
 	}
 	
