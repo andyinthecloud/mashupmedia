@@ -2,24 +2,19 @@ package org.mashupmedia.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.persistence.Query;
-
 import org.apache.commons.lang3.StringUtils;
-
-import org.mashupmedia.comparator.MediaItemComparator;
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
+import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
@@ -180,4 +175,11 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 			entityManager.merge(mediaItem);
 		}
 	}
+
+	@Override
+	public void saveAndFlushMediaItem(MediaItem mediaItem) {
+		saveMediaItem(mediaItem);
+		entityManager.flush();
+	}
+
 }

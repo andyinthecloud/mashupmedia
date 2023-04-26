@@ -27,6 +27,7 @@ export type MusicPlaylistTrackPayload = {
     playlistPayload: PlaylistPayload
     first: boolean
     last: boolean
+    encoderStatusType: EncoderStatusType
 }
 
 export enum PlaylistActionTypePayload {
@@ -37,10 +38,10 @@ export enum PlaylistActionTypePayload {
 }
 
 
-export enum PlaylistActionStatusTypePayload {
+export enum EncoderStatusType {
     OK = "OK",
-    FFMPEG_NOT_INSTALLED = "FFMPEG_NOT_INSTALLED",
-    ITEMS_SENT_FOR_ENCODING = "ITEMS_SENT_FOR_ENCODING",
+    ENODER_NOT_INSTALLED = "ENODER_NOT_INSTALLED",
+    SENT_FOR_ENCODING = "SENT_FOR_ENCODING",
     ERROR = "ERROR"
 }
 
@@ -58,28 +59,28 @@ export type CreatePlaylistPayload = {
 const playlistUrl = "/api/playlist"
 const musicPlaylistUrl = playlistUrl + "/music"
 
-export const playTrack = (trackId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<PlaylistActionStatusTypePayload>>> => {
-    return callMashupMediaApi<ServerResponsePayload<PlaylistActionStatusTypePayload>>(HttpMethod.PUT, musicPlaylistUrl + "/play-track", userToken, '' + trackId)
+export const playTrack = (trackId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {
+    return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/play-track", userToken, '' + trackId)
 }
 
-export const addTrack = (trackId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<PlaylistActionStatusTypePayload>>> => {
-    return callMashupMediaApi<ServerResponsePayload<PlaylistActionStatusTypePayload>>(HttpMethod.PUT, musicPlaylistUrl + "/add-track", userToken, '' + trackId)
+export const addTrack = (trackId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {
+    return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/add-track", userToken, '' + trackId)
 }
 
-export const playAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<PlaylistActionStatusTypePayload>>> => {
-    return callMashupMediaApi<ServerResponsePayload<PlaylistActionStatusTypePayload>>(HttpMethod.PUT, musicPlaylistUrl + "/play-album", userToken, '' + albumId)
+export const playAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {
+    return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/play-album", userToken, '' + albumId)
 }
 
-export const addAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<PlaylistActionStatusTypePayload>>> => {
-    return callMashupMediaApi<ServerResponsePayload<PlaylistActionStatusTypePayload>>(HttpMethod.PUT, musicPlaylistUrl + "/add-album", userToken, '' + albumId)
+export const addAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {
+    return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/add-album", userToken, '' + albumId)
 }
 
 export const navigateTrack = (navigatePlaylistPayload: NavigatePlaylistPayload, userToken?: string): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {
     return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.PUT, musicPlaylistUrl + "/navigate", userToken, JSON.stringify(navigatePlaylistPayload))
 }
 
-export const trackProgress = (playlistId: number, progress: number, userToken: string | undefined): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {
-    return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.GET, `${musicPlaylistUrl}/progress/${playlistId}?progress=${Math.round(progress)}`, userToken)
+export const currentTrack = (playlistId: number, userToken: string | undefined): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {
+    return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.GET, `${musicPlaylistUrl}/current/${playlistId}`, userToken)
 }
 
 export const getPlaylistTracks = (playlistId: number, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {

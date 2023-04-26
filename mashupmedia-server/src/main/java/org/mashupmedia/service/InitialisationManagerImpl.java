@@ -1,12 +1,8 @@
 package org.mashupmedia.service;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.encode.FfMpegManager;
-import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
@@ -28,9 +24,6 @@ public class InitialisationManagerImpl implements InitialisationManager {
 	@Autowired
 	private ConfigurationManager configurationManager;
 
-	@Autowired
-	private FfMpegManager ffMpegManager;
-
 	@Override
 	public void initialiseApplication() {
 		User user = adminManager.getUser(MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME);
@@ -44,31 +37,9 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		initialiseFirstRoles();
 		adminManager.initialiseAdminUser();
 		adminManager.initialiseSystemUser();
-		initialiseEncoder();		
 	}
 
 	
-
-	private void initialiseEncoder() {
-		// Set the default number of processes
-		configurationManager.saveConfiguration(ProcessManager.KEY_TOTAL_FFMPEG_PROCESSES, String.valueOf(ProcessManager.DEFAULT_TOTAL_FFMPEG_PROCESSES));
-
-		File ffMpegFile = ffMpegManager.findFFMpegExecutable();
-		Boolean isValidFfMpegConfiguration = false;
-		try {
-			isValidFfMpegConfiguration = ffMpegManager.isValidFfMpeg(ffMpegFile);
-		} catch (IOException e) {
-			log.info("Error validating ffmpeg", e);
-		}
-
-		if (!isValidFfMpegConfiguration) {
-			return;
-		}
-
-		configurationManager.saveConfiguration(MashUpMediaConstants.IS_FFMPEG_INSTALLED, Boolean.TRUE.toString());
-		configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegFile.getAbsolutePath());
-	}
-
 	private void initialiseUniqueInstallationName() {
 
 		StringBuilder uniqueNameBuilder = new StringBuilder();

@@ -1,0 +1,10 @@
+#music-playlist span.not-encoded {
+    display: block;
+}
+
+#music-playlist span.not-encoded > span {
+    background-color: red;
+    width: auto;
+    color: white;
+    padding: 2px;
+}

@@ -1,5 +1,6 @@
 package org.mashupmedia.model.playlist;
 
+import org.mashupmedia.dto.media.playlist.EncoderStatusType;
 import org.mashupmedia.model.media.MediaItem;
 
 import jakarta.persistence.Cacheable;
@@ -41,6 +42,9 @@ public class PlaylistMediaItem {
 
 	@Transient
 	private boolean isLast;
+
+	@Transient
+	private EncoderStatusType encoderStatusType;
 
 	@Override
 	public int hashCode() {

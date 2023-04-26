@@ -11,24 +11,24 @@ import { mashupTheme } from "./common/utils/formUtils";
 import { useSelector } from "react-redux";
 import { RootState } from "./common/redux/store";
 
-type AppPayload = {
-    loggedIn: boolean
-}
+// type AppPayload = {
+//     loggedIn: boolean
+// }
 
 function App() {
 
-    const userToken = useSelector((state: RootState) => state.security.payload?.token)
+    // const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
-    const [props, setProps] = useState<AppPayload>({
-        loggedIn: false
-    })
+    // const [props, setProps] = useState<AppPayload>({
+    //     loggedIn: false
+    // })
 
-    useEffect(() => {
-        isLoggedIn()
-            .then((response) => {
-                setProps({ loggedIn: response.parsedBody || false })
-            })
-    }, [userToken])
+    // useEffect(() => {
+    //     isLoggedIn()
+    //         .then((response) => {
+    //             setProps({ loggedIn: response.parsedBody || false })
+    //         })
+    // }, [userToken])
 
     return (
         <ThemeProvider theme={mashupTheme}>
@@ -38,7 +38,7 @@ function App() {
                     className="main-container"
                     maxWidth="md"
                     sx={{
-                        mt: props.loggedIn ? 15 : 10
+                        mt: 15
                     }}
                 >
                     <AlertBoxes />

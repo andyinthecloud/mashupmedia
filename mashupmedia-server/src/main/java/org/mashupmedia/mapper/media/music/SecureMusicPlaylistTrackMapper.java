@@ -47,6 +47,7 @@ public class SecureMusicPlaylistTrackMapper extends SecureMediaDomainMapper<Play
                 .playlistPayload(playlistMapper.toDto(playlist))
                 .first(domain.isFirst())
                 .last(domain.isLast())
+                .encoderStatusType(domain.getEncoderStatusType())
                 .build();
     }
 

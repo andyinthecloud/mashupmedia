@@ -1,13 +1,12 @@
 import { Equalizer, PlayArrow } from "@mui/icons-material"
 import { Button, Checkbox, FormControl, IconButton, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material"
-import { fontWeight } from "@mui/system"
 import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { RootState } from "../../common/redux/store"
 import { requestPlaylistTrackId } from "./features/playMusicSlice"
-import { getPlaylistTracks, MusicPlaylistTrackPayload, PlaylistActionPayload, PlaylistActionTypePayload, updatePlaylist } from "./rest/playlistCalls"
+import { MusicPlaylistTrackPayload, PlaylistActionPayload, PlaylistActionTypePayload, getPlaylistTracks, updatePlaylist } from "./rest/playlistCalls"
+import "./MusicPlaylist.css"
 
 const MusicPlaylist = () => {
 
@@ -114,7 +113,7 @@ const MusicPlaylist = () => {
     }
 
     return (
-        <div>
+        <div id="music-playlist">
             <h1>Music playlist</h1>
 
             <form onSubmit={handleSubmitAction}>
@@ -180,12 +179,22 @@ const MusicPlaylist = () => {
 
                                 <ListItemText
                                     primary={`${index + 1} - ${payload.trackPayload.name}`}
-                                    secondary={payload.artistPayload.name}
+                                    secondary={<span>
+                                        {payload.artistPayload.name}
+                                        {!payload.trackPayload.encodedForWeb &&
+                                            <span className="not-encoded">
+                                                <span>Incompatible format</span>
+                                            </span>
+                                        }
+                                    </span>
+                                    }
                                     sx={{
                                         fontSize: "medium",
                                         fontWeight: "bold"
                                     }}
                                 />
+
+
                             </ListItem>
                         )
                     })}

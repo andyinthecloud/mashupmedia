@@ -40,7 +40,6 @@ const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
     const handlePlay = (albumId: number): void => {
         playAlbum(albumId, userToken).then((response) => {
             if (response.ok) {
-
                 dispatch(
                     play()
                 )

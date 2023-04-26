@@ -8,22 +8,24 @@ import org.mashupmedia.model.media.music.AlbumArtImage;
 
 public interface MediaDao {
 
-	public List<MediaItem> getMediaItems(long libraryId);
+	List<MediaItem> getMediaItems(long libraryId);
 
-	public void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages);
+	void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages);
 
-	public List<AlbumArtImage> getAlbumArtImages(long libraryId);
+	List<AlbumArtImage> getAlbumArtImages(long libraryId);
 
-	public MediaItem getMediaItem(long mediaItemId);
+	MediaItem getMediaItem(long mediaItemId);
 
-	public void updateMediaItem(MediaItem mediaItem);
+	void updateMediaItem(MediaItem mediaItem);
 
-	public List<String> findAutoCompleteMediaItems(String searchWords);
+	List<String> findAutoCompleteMediaItems(String searchWords);
 
-	public List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria);
+	List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria);
 
-	public void saveMediaItem(MediaItem mediaItem);
+	void saveMediaItem(MediaItem mediaItem);
 
-	public List<MediaItem> getMediaItems(String path);
+	void saveAndFlushMediaItem(MediaItem mediaItem);
+
+	List<MediaItem> getMediaItems(String path);
 
 }

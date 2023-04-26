@@ -1,20 +1,18 @@
 import { ChevronLeft, ChevronRight, ExpandLess, ExpandMore, Pause, PlayArrow, QueueMusic } from "@mui/icons-material"
 import { IconButton, Slider } from "@mui/material"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useDispatch } from "react-redux"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 import { playingTrackId } from "../../../media/music/features/playMusicSlice"
-import { albumArtImageUrl, ImageType, mediaStreamUrl, playlistStreamUrl } from "../../../media/music/rest/musicCalls"
-import { MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, navigateTrack, trackProgress } from "../../../media/music/rest/playlistCalls"
+import { ImageType, albumArtImageUrl, mediaStreamUrl, playlistStreamUrl } from "../../../media/music/rest/musicCalls"
+import { EncoderStatusType, MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, navigateTrack, currentTrack } from "../../../media/music/rest/playlistCalls"
 import { SecureMediaPayload } from "../../../media/rest/secureMediaPayload"
+import { NotificationType, addNotification } from "../../notification/notificationSlice"
 import { RootState } from "../../redux/store"
 import { securityToken } from "../../security/securityUtils"
 import { displayDuration } from "../../utils/dateUtils"
 import { timestamp } from "../../utils/httpUtils"
 import "./AudioPlayer.css"
-import { NotificationType, addNotification } from "../../notification/notificationSlice"
-import { isLoggedIn } from "../../security/backend/loginCalls"
 
 
 type AudioPlayerPlayload = {
@@ -53,9 +51,6 @@ const AudioPlayer = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-
-
-
         if (!securityToken(userToken)) {
             return
         }
@@ -125,6 +120,7 @@ const AudioPlayer = () => {
                 <div>
                     <h1 className="title">Empty playlist</h1>
                     <p><Link to={"/music/albums"} onClick={() => setExpanded(false)}>Play</Link> some music to brighten up your day.</p>
+                    <p>If you have just installed Mashup Media congratulation!. Please add your music <Link to={"/configuration/libraries"} onClick={() => setExpanded(false)}>libraries</Link> to listen to your music.</p>
                 </div>
             )
         }
@@ -150,18 +146,16 @@ const AudioPlayer = () => {
         return isEmptyPlaylist()
     }
 
-
-
     const displayNextTrack = useCallback((playlistId: number, progress: number) => {
 
-        trackProgress(playlistId, progress, userToken).then(response => {
+        currentTrack(playlistId, userToken).then(response => {
             if (response.ok) {
                 const securePayload = response.parsedBody
 
                 setProps({
                     mediaToken: response.parsedBody?.mediaToken || "",
                     payload: {
-                        ...props.payload,
+                        ...props.payload,                        
                         isReadyToPlay: response.ok,
                         trackWithArtistPayload: securePayload?.payload,
                         triggerPlay: undefined
@@ -178,10 +172,8 @@ const AudioPlayer = () => {
 
     const handleNavigate = useCallback((navigatePlaylistPayload: NavigatePlaylistPayload) => {
 
-
-        console.log('handleNavigate', navigatePlaylistPayload)
-
         navigateTrack(navigatePlaylistPayload, userToken).then((response) => {
+
             if (response.ok) {
 
                 const securePayload = response.parsedBody
@@ -286,8 +278,10 @@ const AudioPlayer = () => {
         if (!mobileDisplay) {
             return
         }
+        
         const trackSeconds = props?.payload.trackWithArtistPayload?.trackPayload.totalSeconds || 0
 
+        console.log("trackSeconds = " + trackSeconds + ", progress = " + progress)
         if ((progress - playlistOffset) > trackSeconds) {
             const playlistId = props?.payload.trackWithArtistPayload?.playlistPayload.id
             if (playlistId) {
@@ -345,6 +339,23 @@ const AudioPlayer = () => {
 
     }
 
+    const encodeMessage = (encoderStatusType?: EncoderStatusType) => {
+        if (!encoderStatusType || encoderStatusType == EncoderStatusType.OK) {
+            return ""
+        }
+
+        let message = ""
+        if (encoderStatusType == EncoderStatusType.ENODER_NOT_INSTALLED) {
+            message = "Encoder is not yet configured and this track has an incompatible format for the web. Either configure the encoder through the menu under Settings -> Encode or replace this track with an mp3 file."
+        } else if (encoderStatusType == EncoderStatusType.SENT_FOR_ENCODING) {
+            message = "The track has been sent for encoding, it should be available soon."
+        }
+
+        return (
+            <small>{message}</small>
+        )
+    }
+
     return (
         <div id="audio-player-container" >
             <audio
@@ -356,61 +367,55 @@ const AudioPlayer = () => {
             >
             </audio>
 
+            <div className="audio-buttons">
 
-            {props.payload.isReadyToPlay &&
-                <div className="audio-buttons">
+                <div className="button-container">
+                    <IconButton
+                        onClick={() => handleNavigate({ navigatePlaylistType: NavigatePlaylistType.PREVIOUS })}
+                        disabled={disablePrevious()}
+                    >
+                        <ChevronLeft
+                            color="primary"
+                            fontSize="medium" />
+                    </IconButton>
 
-                    <div className="button-container">
-                        <IconButton
-                            onClick={() => handleNavigate({ navigatePlaylistType: NavigatePlaylistType.PREVIOUS })}
-                            disabled={disablePrevious()}
-                        >
-                            <ChevronLeft
-                                color="primary"
-                                fontSize="medium" />
-                        </IconButton>
+                    <IconButton
+                        onClick={() => handlePlay()}
+                        disabled={isEmptyPlaylist()}
+                        className="play-button"
+                    >
+                        {playing
+                            ? <Pause sx={{ fontSize: 48 }} color="primary" />
+                            : <PlayArrow sx={{ fontSize: 48 }} color="primary" />
+                        }
+                    </IconButton>
 
-                        <IconButton
-                            onClick={() => handlePlay()}
-                            disabled={isEmptyPlaylist()}
-                            className="play-button"
-                        >
-                            {playing
-                                ? <Pause sx={{ fontSize: 48 }} color="primary" />
-                                : <PlayArrow sx={{ fontSize: 48 }} color="primary" />
-                            }
-                        </IconButton>
-
-                        <IconButton
-                            onClick={() => handleNavigate({ navigatePlaylistType: NavigatePlaylistType.NEXT })}
-                            disabled={disableNext()}>
-                            <ChevronRight
-                                color="primary"
-                                fontSize="medium" />
-                        </IconButton>
-                    </div>
-
-
-
-                    <div className="expand-more">
-                        <IconButton
-                            onClick={handleExpand}>
-                            {!expanded &&
-                                <ExpandMore
-                                    fontSize="large"
-                                    color="primary" />
-                            }
-                            {expanded &&
-                                <ExpandLess
-                                    fontSize="large"
-                                    color="primary" />
-                            }
-                        </IconButton>
-
-                    </div>
+                    <IconButton
+                        onClick={() => handleNavigate({ navigatePlaylistType: NavigatePlaylistType.NEXT })}
+                        disabled={disableNext()}>
+                        <ChevronRight
+                            color="primary"
+                            fontSize="medium" />
+                    </IconButton>
                 </div>
 
-            }
+                <div className="expand-more">
+                    <IconButton
+                        onClick={handleExpand}>
+                        {!expanded &&
+                            <ExpandMore
+                                fontSize="large"
+                                color="primary" />
+                        }
+                        {expanded &&
+                            <ExpandLess
+                                fontSize="large"
+                                color="primary" />
+                        }
+                    </IconButton>
+
+                </div>
+            </div>
 
             {expanded &&
 
@@ -436,6 +441,9 @@ const AudioPlayer = () => {
                             <div className="track">
                                 {renderPlayingInformation()}
                             </div>
+
+                            {encodeMessage(props.payload.trackWithArtistPayload?.encoderStatusType)}
+
                             <div
                                 className="album-art"
                                 style={{ backgroundImage: `url(${albumArtImageUrl(props.payload.trackWithArtistPayload?.albumPayload.id || 0, ImageType.ORIGINAL, props.mediaToken)})` }}

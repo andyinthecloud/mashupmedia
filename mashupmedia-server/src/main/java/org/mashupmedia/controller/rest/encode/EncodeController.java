@@ -1,13 +1,8 @@
 package org.mashupmedia.controller.rest.encode;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
-import org.mashupmedia.encode.FfMpegManager;
-import org.mashupmedia.service.ConfigurationManager;
+import org.mashupmedia.task.EncodeMediaItemManager;
 import org.mashupmedia.util.ValidationUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,26 +17,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/encode")
 @RequiredArgsConstructor
-@Slf4j
 public class EncodeController {
 
-    private final FfMpegManager ffMpegManager;
-    private final ConfigurationManager configurationManager;
+    private final EncodeMediaItemManager encodeMediaItemManager;
 
     @Secured("ROLE_ADMINISTRATOR")
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NameValuePayload<String>> get() {
 
-        String pathToFfmpeg = configurationManager.getConfigurationValue(MashUpMediaConstants.FFMPEG_PATH);
+        String encoderPath = encodeMediaItemManager.getEncoderPath();
 
         NameValuePayload<String> ffMpegPayload = NameValuePayload.<String>builder()
                 .name("path")
-                .value(pathToFfmpeg)
+                .value(encoderPath)
                 .build();
 
         return ResponseEntity.ok().body(ffMpegPayload);
@@ -49,25 +41,16 @@ public class EncodeController {
 
     @Secured("ROLE_ADMINISTRATOR")
     @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<String>> post(@Valid @RequestBody NameValuePayload<String> ffMpegPayload,
+    public ResponseEntity<ServerResponsePayload<String>> post(
+            @Valid @RequestBody NameValuePayload<String> ffMpegPayload,
             Errors errors) {
-        configurationManager.saveConfiguration(MashUpMediaConstants.FFMPEG_PATH, ffMpegPayload.getValue());
+        encodeMediaItemManager.saveEncoderPath(ffMpegPayload.getValue());
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
     @Secured("ROLE_ADMINISTRATOR")
     @GetMapping(value = "/verify-installation", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> verifyInstallation(@RequestParam String path) {
-        File ffMpegExecutableFile = new File(path);
-
-        boolean isFfmpegInstalled = false;
-
-        try {
-            isFfmpegInstalled = ffMpegManager.isValidFfMpeg(ffMpegExecutableFile);
-        } catch (IOException e) {
-            log.info("Invalid ffmpeg path", e);
-        }
-
-        return ResponseEntity.ok().body(isFfmpegInstalled);
+        return ResponseEntity.ok().body(encodeMediaItemManager.isEncoderInstalled(path));
     }
 }

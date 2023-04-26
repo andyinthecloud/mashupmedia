@@ -13,7 +13,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.dao.PhotoDao;
-import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem.MashupMediaType;
@@ -21,16 +20,16 @@ import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
-import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.ImageHelper.ImageRotationType;
 import org.mashupmedia.util.ImageHelper.ImageType;
+import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.extern.slf4j.Slf4j;
+
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
@@ -38,6 +37,8 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
@@ -47,9 +48,6 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 	@Autowired
 	private PhotoDao photoDao;
-
-	@Autowired
-	private ProcessManager processManager;
 
 	@Autowired
 	private LibraryDao libraryDao;
@@ -74,7 +72,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	
 	
 	private void deletePhoto(Photo photo) {
-		processManager.killProcesses(photo.getId());
+		// processManager.killProcesses(photo.getId());
 		FileHelper.deleteFile(photo.getWebOptimisedImagePath());		
 	}
 	
