@@ -30,7 +30,7 @@ import org.mashupmedia.model.media.video.Video;
 public class MediaItemHelper {
 
 	public enum MediaContentType {
-		AUDIO_MP3("audio/mpeg", 1),		
+		AUDIO_MP3("audio/mpeg", 1),
 		VIDEO_MP4("video/mp4", 1),
 		VIDEO_WEBM("video/webm", 2),
 		VIDEO_OGG("video/ogg", 3),
@@ -105,13 +105,22 @@ public class MediaItemHelper {
 		return MediaSortType.TRACK_TITLE;
 	}
 
+	public static MediaEncoding createMediaEncoding(String fileName) {
+		String fileExtension = FileHelper.getFileExtension(fileName);
+		MediaEncoding mediaEncoding = new MediaEncoding();
+		mediaEncoding.setOriginal(true);
+		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
+		mediaEncoding.setMediaContentType(mediaContentType);
+		return mediaEncoding;
+	}
+
 	public static MediaContentType getMediaContentType(String format) {
 
 		format = StringUtils.trimToEmpty(format);
 
 		if (format.equalsIgnoreCase("MPEG-1 Layer 3") || format.equalsIgnoreCase("mp3")) {
 			return MediaContentType.AUDIO_MP3;
-		}  else if (format.equalsIgnoreCase("webm")) {
+		} else if (format.equalsIgnoreCase("webm")) {
 			return MediaContentType.VIDEO_WEBM;
 		} else if (format.equalsIgnoreCase("mp4") || format.equalsIgnoreCase("m4v")) {
 			return MediaContentType.VIDEO_MP4;
@@ -198,31 +207,6 @@ public class MediaItemHelper {
 
 		return urlBuilder.toString();
 	}
-
-	// public static void addSuppliedStreamUrls(MediaContentType[] suppliedMediaContentTypes, String contextPath,
-	// 		long mediaItemId,
-	// 		List<RestfulStream> restfulStreamList) {
-
-	// 	for (MediaContentType suppliedMediaContentType : suppliedMediaContentTypes) {
-	// 		if (!isFormatPresent(restfulStreamList, suppliedMediaContentType)) {
-	// 			String jPlayerContentType = suppliedMediaContentType.getjPlayerContentType();
-	// 			restfulStreamList.add(new RestfulStream(jPlayerContentType,
-	// 					prepareUrlStream(contextPath, mediaItemId, jPlayerContentType)));
-	// 		}
-	// 	}
-
-	// }
-
-	// private static boolean isFormatPresent(List<RestfulStream> restfulStreamList, MediaContentType mediaContentType) {
-	// 	for (RestfulStream restfulStream : restfulStreamList) {
-	// 		String name = mediaContentType.getjPlayerContentType();
-	// 		if (restfulStream.getFormat().equalsIgnoreCase(name)) {
-	// 			return true;
-	// 		}
-	// 	}
-
-	// 	return false;
-	// }
 
 	public static long getMediaContentDuration(MediaItem mediaItem) {
 		long duration = 0;

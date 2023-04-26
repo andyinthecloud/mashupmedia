@@ -4,26 +4,21 @@ import java.util.Date;
 import java.util.List;
 
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
-import org.mashupmedia.dao.ConfigurationDao;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.AlbumArtImage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.mashupmedia.repository.media.MediaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
-@Lazy
 @Transactional
+@RequiredArgsConstructor
 public class MediaManagerImpl implements MediaManager {
 
-	@Autowired
-	private MediaDao mediaDao;
-	
-	@Autowired
-	private ConfigurationDao configurationDao; 
-
+	private final MediaDao mediaDao;
 
 	@Override
 	public List<MediaItem> getMediaItemsForLibrary(long libraryId) {

@@ -8,16 +8,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.mashupmedia.dao.VideoDao;
-import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.video.Video;
-import org.mashupmedia.task.EncodeMediaItemTaskManager;
+import org.mashupmedia.task.EncodeMediaItemManager;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
@@ -40,10 +37,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 	private VideoDao videoDao;
 
 	@Autowired
-	private EncodeMediaItemTaskManager encodeMediaItemTaskManager;
-
-	@Autowired
-	private ProcessManager processManager;
+	private EncodeMediaItemManager encodeMediaItemManager;
 
 	@Override
 	public void updateLibrary(VideoLibrary library, File folder, Date date) {
@@ -69,7 +63,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		int totalDeletedVideos = videoDao.removeObsoleteVideos(libraryId, date);
 
 		for (Video video : videos) {
-			processManager.killProcesses(video.getId());
+			// processManager.killProcesses(video.getId());
 			FileHelper.deleteProcessedVideo(libraryId, video.getId());
 		}
 
@@ -166,7 +160,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		videoDao.saveVideo(video, isSessionFlush);
 
 		if (!library.isEncodeVideoOnDemand()) {
-			encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(video, MediaContentType.VIDEO_MP4);
+			encodeMediaItemManager.processMediaItemForEncodingDuringAutomaticUpdate(video, MediaContentType.VIDEO_MP4);
 		}
 	}
 

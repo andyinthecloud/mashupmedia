@@ -37,10 +37,10 @@ export const backEndUrl = (uri: string): string => (
     (process.env.REACT_APP_MASHUPMEDIA_BACKEND_URL as string) + uri
 )
 
-export const timestamp = () :number => (
+export const timestamp = (): number => (
     new Date().getTime()
 )
- 
+
 export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string, userToken?: string, body?: string): Promise<HttpResponse<T>> => {
 
     const url = backEndUrl(uri)
@@ -56,11 +56,11 @@ export const callMashupMediaApi = async <T>(httpMethod: HttpMethod, uri: string,
     try {
         response.parsedBody = await response.json()
     } catch (exception) {
-        console.log('Error getting json', response)
+        console.log('Error parsing json', response)
     }
 
-    if (response.status == HttpStatus.FORBIDDEN || response.status == HttpStatus.SERVER_ERROR) {        
-        redirectLogin(response.status)        
+    if (response.status == HttpStatus.FORBIDDEN || response.status == HttpStatus.SERVER_ERROR) {
+        redirectLogin(response.status)
     }
 
     return response
@@ -78,19 +78,24 @@ export const callMashupMediaApiNoRedirect = async <T>(httpMethod: HttpMethod, ur
         body: body
     })
 
-    response.parsedBody = await response.json()
+    try {
+        response.parsedBody = await response.json()
+    } catch (exception) {
+        console.log('Error parsing json', response)
+    }
+
     return response
 }
 
 
-export const redirectInternal = (internalUri: string): void => {    
+export const redirectInternal = (internalUri: string): void => {
     window.location.href = process.env.PUBLIC_URL + internalUri
 }
 
 export const codeParamName = 'code'
 export const jumpUriParamName = 'jump'
 
-export const redirectLogin = (statusCode?: number): void => {    
+export const redirectLogin = (statusCode?: number): void => {
 
     console.log('redirectLogin')
 

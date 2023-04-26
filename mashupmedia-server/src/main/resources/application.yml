@@ -8,9 +8,9 @@ spring:
   application:
     name: mashupmedia
   mvc:
-    aync:
-    
-
+    async:
+      request-timeout: 360000
+      
     
 
     

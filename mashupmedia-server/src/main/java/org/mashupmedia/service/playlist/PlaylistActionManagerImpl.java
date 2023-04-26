@@ -8,16 +8,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.dto.media.playlist.PlaylistActionStatusType;
-import org.mashupmedia.encode.FfMpegManager;
+import org.mashupmedia.dto.media.playlist.EncoderStatusType;
 import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
+import org.mashupmedia.task.EncodeMediaItemManager;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.springframework.stereotype.Service;
@@ -32,12 +31,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PlaylistActionManagerImpl implements PlaylistActionManager {
 
-	private final FfMpegManager ffMpegManager;
+	private final EncodeMediaItemManager encodeMediaItemManager;
 	private final PlaylistRepository playlistRepository;
 
 	@Override
-	public PlaylistActionStatusType replacePlaylist(long playlistId, List<? extends MediaItem> mediaItems) {
-		Playlist playlist = playlistRepository.getReferenceById(playlistId);
+	public EncoderStatusType replacePlaylist(long playlistId, List<? extends MediaItem> mediaItems) {
+		Optional<Playlist> optionalPlaylist = playlistRepository.findById(playlistId);
+		if (optionalPlaylist.isEmpty()) {
+			log.error("Unable to find playlist with id = " + playlistId);
+			return EncoderStatusType.ERROR;
+		}
+
+		Playlist playlist = optionalPlaylist.get();
 		Set<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
 		if (playlistMediaItems != null) {
 			playlistMediaItems.clear();
@@ -47,7 +52,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		}
 
 		if (mediaItems == null || mediaItems.isEmpty()) {
-			return PlaylistActionStatusType.OK;
+			return EncoderStatusType.OK;
 		}
 
 		for (int i = 0; i < mediaItems.size(); i++) {
@@ -60,7 +65,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		}
 
 		if (playlistMediaItems.isEmpty()) {
-			return PlaylistActionStatusType.OK;
+			return EncoderStatusType.OK;
 		}
 
 		playlist.setPlaylistMediaItems(playlistMediaItems);
@@ -69,8 +74,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		return sendForEncoding(playlistMediaItems);
 	}
 
-	private PlaylistActionStatusType sendForEncoding(Set<PlaylistMediaItem> playlistMediaItems) {
-
+	private EncoderStatusType sendForEncoding(Set<PlaylistMediaItem> playlistMediaItems) {
 
 		Set<MediaItem> mediaItemsForEncoding = playlistMediaItems
 				.stream()
@@ -79,28 +83,28 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 				.collect(Collectors.toSet());
 
 		if (mediaItemsForEncoding == null || mediaItemsForEncoding.isEmpty()) {
-			return PlaylistActionStatusType.OK;
+			return EncoderStatusType.OK;
 		}
 
-		if (!ffMpegManager.isFfMpegInstalled()) {
-			return PlaylistActionStatusType.FFMPEG_NOT_INSTALLED;
+		if (!encodeMediaItemManager.isEncoderInstalled()) {
+			return EncoderStatusType.ENODER_NOT_INSTALLED;
 		}
 
 		for (MediaItem mediaItem : mediaItemsForEncoding) {
 			try {
-				ffMpegManager.queueMediaItemForEncoding(mediaItem,
+				encodeMediaItemManager.processMediaItemForEncoding(mediaItem,
 						MediaItemHelper.getDefaultMediaContentType(mediaItem));
 			} catch (MediaItemEncodeException e) {
 				log.error("Error encoding media", e);
 			}
 		}
 
-		return PlaylistActionStatusType.ITEMS_SENT_FOR_ENCODING;
+		return EncoderStatusType.SENT_FOR_ENCODING;
 
 	}
 
 	@Override
-	public PlaylistActionStatusType appendPlaylist(long playlistId, List<? extends MediaItem> mediaItems) {
+	public EncoderStatusType appendPlaylist(long playlistId, List<? extends MediaItem> mediaItems) {
 		Playlist playlist = playlistRepository.getReferenceById(playlistId);
 
 		Set<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
@@ -110,7 +114,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		}
 
 		if (mediaItems == null || mediaItems.isEmpty()) {
-			return PlaylistActionStatusType.OK;
+			return EncoderStatusType.OK;
 		}
 
 		int totalPlaylistItems = playlistMediaItems.size();
@@ -125,14 +129,14 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 		playlistRepository.save(playlist);
-		
+
 		return sendForEncoding(playlistMediaItems);
 	}
 
 	@Override
-	public PlaylistActionStatusType replacePlaylist(long playlistId, MediaItem mediaItem) {
+	public EncoderStatusType replacePlaylist(long playlistId, MediaItem mediaItem) {
 		if (mediaItem == null) {
-			return PlaylistActionStatusType.OK;
+			return EncoderStatusType.OK;
 		}
 
 		List<MediaItem> mediaItems = new ArrayList<>();
@@ -141,9 +145,9 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 	}
 
 	@Override
-	public PlaylistActionStatusType appendPlaylist(long playlistId, MediaItem mediaItem) {
+	public EncoderStatusType appendPlaylist(long playlistId, MediaItem mediaItem) {
 		if (mediaItem == null) {
-			return PlaylistActionStatusType.OK;
+			return EncoderStatusType.OK;
 		}
 
 		List<MediaItem> mediaItems = new ArrayList<MediaItem>();
@@ -190,39 +194,37 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		return PlaylistType.MUSIC;
 	}
 
-	@Override
-	public PlaylistMediaItem getPlaylistMediaItemByProgress(long playlistId, long progress) {
-		Playlist playlist = playlistRepository.getReferenceById(playlistId);
-		if (playlist == null) {
-			return null;
-		}
+	// @Override
+	// public PlaylistMediaItem getPlaylistMediaItemByProgress(long playlistId, long progress) {
+	// 	Playlist playlist = playlistRepository.getReferenceById(playlistId);
+	// 	if (playlist == null) {
+	// 		return null;
+	// 	}
 
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
-		Optional<PlaylistMediaItem> optionalPlayingMediaItem = playlistMediaItems
-				.stream()
-				.filter(pmi -> pmi.isPlaying())
-				.findFirst();
+	// 	List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+	// 	Optional<PlaylistMediaItem> optionalPlayingMediaItem = playlistMediaItems
+	// 			.stream()
+	// 			.filter(pmi -> pmi.isPlaying())
+	// 			.findFirst();
 
-		int index = 0;
-		if (optionalPlayingMediaItem.isPresent()) {
-			index = playlistMediaItems.indexOf(optionalPlayingMediaItem.get());
-		}
+	// 	int index = 0;
+	// 	if (optionalPlayingMediaItem.isPresent()) {
+	// 		index = playlistMediaItems.indexOf(optionalPlayingMediaItem.get());
+	// 	}
 
-		long cumulativeEndSeconds = 0;
-		List<PlaylistMediaItem> remainingPlaylistMediaItems = playlistMediaItems.subList(index,
-				playlistMediaItems.size() - 1);
-		for (PlaylistMediaItem pmi : remainingPlaylistMediaItems) {
-			if (pmi.getMediaItem() instanceof Track track) {
-				cumulativeEndSeconds += track.getTrackLength();
-				if (progress < cumulativeEndSeconds) {
-					return pmi;
-				}
-			}
-		}		
+	// 	long cumulativeEndSeconds = 0;
+	// 	List<PlaylistMediaItem> remainingPlaylistMediaItems = playlistMediaItems.subList(index,
+	// 			playlistMediaItems.size() - 1);
+	// 	for (PlaylistMediaItem pmi : remainingPlaylistMediaItems) {
+	// 		if (pmi.getMediaItem() instanceof Track track && track.isEncodedForWeb()) {
+	// 			cumulativeEndSeconds += track.getTrackLength();
+	// 			if (progress < cumulativeEndSeconds) {
+	// 				return pmi;
+	// 			}
+	// 		}
+	// 	}
 
-		return optionalPlayingMediaItem.orElse(playlistMediaItems.get(0));
-	}
-
-
+	// 	return optionalPlayingMediaItem.orElse(playlistMediaItems.get(0));
+	// }
 
 }

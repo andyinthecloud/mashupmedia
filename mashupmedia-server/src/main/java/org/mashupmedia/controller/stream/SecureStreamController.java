@@ -1,22 +1,22 @@
 package org.mashupmedia.controller.stream;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.SequenceInputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.mashupmedia.controller.stream.resource.MediaResourceHttpRequestHandler;
+import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.model.media.MediaEncoding;
-import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.MashupMediaSecurityManager;
+import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.PlaylistManager;
+import org.mashupmedia.task.EncodeMediaItemManager;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.stereotype.Controller;
@@ -30,17 +30,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/stream/secure")
 @RequiredArgsConstructor
+@Slf4j
 public class SecureStreamController {
 
     private final MashupMediaSecurityManager securityManager;
-
     private final MediaResourceHttpRequestHandler mediaResourceHttpRequestHandler;
-
     private final PlaylistManager playlistManager;
+    private final MediaManager mediaManager;
+    private final EncodeMediaItemManager encodeMediaItemManager;
 
     @RequestMapping(value = "/media/{mediaItemId}", method = RequestMethod.GET)
     public void streamMedia(@Valid @PathVariable Long mediaItemId,
@@ -66,57 +68,92 @@ public class SecureStreamController {
         }
 
         Playlist playlist = playlistManager.getPlaylist(playlistId);
-
-        List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
-
-        PlaylistMediaItem currenPlaylistMediaItem = playlistManager.playRelativePlaylistMediaItem(playlist, 0);
-        int index = playlistMediaItems.indexOf(currenPlaylistMediaItem);
-        List<PlaylistMediaItem> unplayedMediaItems = playlistMediaItems.subList(index, playlistMediaItems.size() - 1);
-
-        // MediaEncoding mediaEncoding =
-        // unplayedMediaItems.get(0).getMediaItem().getBestMediaEncoding();
-
-        // List<FileInputStream> fileInputStreams = new ArrayList<>();
-
-        boolean isStreaming = false;
-
-        for (PlaylistMediaItem pmi : unplayedMediaItems) {
-            if (pmi.getMediaItem() instanceof Track track) {
-
-                MediaEncoding mediaEncoding = track.getBestMediaEncoding();
-                if (mediaEncoding.getMediaContentType() == MediaContentType.AUDIO_MP3) {
-                    isStreaming = true;
-                    IOUtils.copyLarge(new FileInputStream(track.getPath()), response.getOutputStream());
-
-                }
-                // fileLength += track.getSizeInBytes();
-                // fileInputStreams.add(new FileInputStream(track.getPath()));
-                // MediaEncoding mediaEncoding = track.getBestMediaEncoding();
-                // response.setContentType(mediaEncoding.getMediaContentType().getMimeContentType());
-            }
-        }
-
+        List<PlaylistMediaItem> unplayedMediaItems = getUnplayedPlaylistMediaItems(playlist);
+        response.setHeader("Transfer-Encoding", "chunked");
         response.setContentType(MediaContentType.AUDIO_MP3.getContentType());
 
-        if (isStreaming) {
-            response.setHeader("Transfer-Encoding", "chunked");
-        } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        LocalDateTime endTrackDateTime = LocalDateTime.now();
 
+        for (PlaylistMediaItem playlistMediaItem : unplayedMediaItems) {
+
+            if (playlistMediaItem.getMediaItem() instanceof Track track && track.isEncodedForWeb()) {
+
+                if (!isInPlaylistMediaItems(unplayedMediaItems, playlistMediaItem)) {
+                    return;
+                }
+
+                endTrackDateTime = endTrackDateTime.plusSeconds(track.getTrackLength());
+
+                playlist.getPlaylistMediaItems().forEach(pmi -> pmi.setPlaying(pmi.equals(playlistMediaItem)));
+                playlistManager.savePlaylist(playlist);
+
+                log.info("Streaming mediaItem: " + track.getDisplayTitle());
+
+                FileInputStream fileInputStream = null;
+                try {
+                    File mediaFile = track.getStreamingFile();
+                    if (mediaFile.isFile()) {
+                        fileInputStream = new FileInputStream(track.getStreamingFile());
+                        IOUtils.copy(fileInputStream, response.getOutputStream());
+                    } else {
+                        log.info("Cannot find media file, will send for encoding");
+                        track.getMediaEncodings().clear();
+                        MediaEncoding mediaEncoding = MediaItemHelper.createMediaEncoding(track.getFileName());
+                        track.getMediaEncodings().add(mediaEncoding);
+                        mediaManager.saveMediaItem(track);
+                        encodeMediaItemManager.processMediaItemForEncoding(track, MediaContentType.AUDIO_MP3);
+                    }
+
+                } catch (IOException e) {
+                    log.error("Error copying media to output stream, resetting to original file", e);
+                    endTrackDateTime = LocalDateTime.now().minusSeconds(1);
+                    continue;
+                } catch (MediaItemEncodeException e) {
+                    log.error("Error encoding media", e);
+                    continue;
+                } finally {
+                    IOUtils.closeQuietly(fileInputStream);
+                }
+
+                int sleepCount = 0;
+                while (LocalDateTime.now().isBefore(endTrackDateTime)) {
+                    try {
+                        sleepCount++;
+                        log.info("sleeping and streaming " + track.getDisplayTitle());
+                        if (sleepCount % 10 == 0) {
+                            log.info("Checking if item is still in playlist, sleepCount = " + sleepCount);
+                            if(!isCurrentlyPlaying(playlistId, playlistMediaItem)) {
+                                return;
+                            }
+                        }
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        log.error("Error sleeping", e);
+                        return;
+                    }
+                }
+            }
         }
+    }
 
-        // response.setHeader("Accept-Ranges", "");
+    private boolean isCurrentlyPlaying(@Valid Long playlistId, PlaylistMediaItem playlistMediaItem) {
+        Playlist playlist = playlistManager.getPlaylist(playlistId);
+        PlaylistMediaItem currentPlaylistMediaItem = playlistManager.playRelativePlaylistMediaItem(playlist, 0);
+        return currentPlaylistMediaItem.equals(playlistMediaItem);
+	}
 
-        // response.setContentLengthLong(fileLength);
+	private List<PlaylistMediaItem> getUnplayedPlaylistMediaItems(Playlist playlist) {
+        PlaylistMediaItem currenPlaylistMediaItem = playlistManager.playRelativePlaylistMediaItem(playlist, 0);
+        List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+        int index = playlistMediaItems.indexOf(currenPlaylistMediaItem);
+        return playlistMediaItems.subList(index, playlistMediaItems.size());
+    }
 
-        // Enumeration<FileInputStream> fileInputStreamsEnumeration =
-        // Collections.enumeration(fileInputStreams);
-        // SequenceInputStream sequenceInputStream = new
-        // SequenceInputStream(fileInputStreamsEnumeration);
-
-        // IOUtils.copyLarge(sequenceInputStream, response.getOutputStream());
-        // response.flushBuffer();
-
+    private boolean isInPlaylistMediaItems(List<PlaylistMediaItem> playlistMediaItems,
+            PlaylistMediaItem playlistMediaItem) {
+        return playlistMediaItems
+                .stream()
+                .anyMatch(pmi -> pmi.equals(playlistMediaItem));
     }
 
 }

@@ -27,7 +27,6 @@ import org.jaudiotagger.tag.TagException;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
-import org.mashupmedia.encode.ProcessManager;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
@@ -43,7 +42,6 @@ import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.MediaRepository;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.repository.media.music.MusicAlbumRepository;
-import org.mashupmedia.repository.playlist.PlaylistMediaItemRepository;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
@@ -62,31 +60,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager {
 	private final int BATCH_INSERT_ITEMS = 20;
-
 	private final ConnectionManager connectionManager;
-
 	private final AlbumArtManager albumArtManager;
-
-	// @Autowired
-	// private MapperManager mapperManager;
-
 	private final MusicDao musicDao;
-
 	private final PlaylistDao playlistDao;
-
-	private final ProcessManager processManager;
-
 	private final LibraryManager libraryManager;
-
 	private final MediaDao mediaDao;
-
 	private final ArtistRepository artistRepository;
-
 	private final MusicAlbumRepository musicAlbumRepository;
-
 	private final MediaRepository mediaRepository;
 
-	private final PlaylistMediaItemRepository playlistMediaItemRepository;
 
 	@PostConstruct
 	private void postConstruct() {
@@ -189,13 +172,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			// continue;
 			// }
 
-			String fileName = track.getFileName();
-			String fileExtension = FileHelper.getFileExtension(fileName);
-
-			MediaEncoding mediaEncoding = new MediaEncoding();
-			mediaEncoding.setOriginal(true);
-			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
-			mediaEncoding.setMediaContentType(mediaContentType);
+			
+			MediaEncoding mediaEncoding = MediaItemHelper.createMediaEncoding(track.getFileName());			
 			Set<MediaEncoding> mediaEncodings = track.getMediaEncodings();
 			if (mediaEncodings == null) {
 				mediaEncodings = new HashSet<MediaEncoding>();

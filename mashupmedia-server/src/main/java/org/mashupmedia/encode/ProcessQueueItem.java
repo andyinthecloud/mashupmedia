@@ -5,26 +5,25 @@ import java.util.List;
 
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Builder(toBuilder = true)
 @Getter
 @Setter
 public class ProcessQueueItem {
-	private long mediaItemId;
-	private MediaContentType mediaContentType;
+	private final long mediaItemId;
+	private final MediaContentType mediaContentType;
+	private final List<String> commands;
+	private final Date createdOn = new Date();
+
 	private Process process;
-	private Date createdOn;
 	private Date processStartedOn;
-	private List<String> commands;
-
-
-	public ProcessQueueItem(long mediaItemId, MediaContentType mediaContentType, List<String> commands) {
-		this.mediaItemId = mediaItemId;
-		this.mediaContentType = mediaContentType;
-		this.commands = commands;
-		this.createdOn = new Date();
-	}
 
 	@Override
 	public int hashCode() {

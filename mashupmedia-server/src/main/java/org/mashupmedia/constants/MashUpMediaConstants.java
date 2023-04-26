@@ -7,7 +7,7 @@ public interface MashUpMediaConstants {
 	public static final String PROXY_PASSWORD = "proxyPassword";
 	public static final String PROXY_ENABLED = "proxyEnabled";
 
-	public static final String FFMPEG_PATH = "ffmpegPath";
+	
 
 	public static final String ACTION_SAVE = "save";
 	public static final String ACTION_DELETE = "delete";

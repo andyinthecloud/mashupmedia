@@ -1,5 +1,6 @@
 package org.mashupmedia.model.media;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -10,6 +11,7 @@ import org.mashupmedia.comparator.MediaEncodingComparator;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
+import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.config.PlaceholderConfigurerSupport;
@@ -119,7 +121,13 @@ public class MediaItem {
 		return mediaEncodingsList.get(0);
 	}
 
-	
+	public File getStreamingFile() {
+		MediaEncoding mediaEncoding = getBestMediaEncoding();
+		if (mediaEncoding.isOriginal()) {
+			return new File(getPath());
+		}
+		return FileHelper.getEncodedMediaFile(this, mediaEncoding.getMediaContentType());      
+	}
 
 	@Override
 	public int hashCode() {
