@@ -19,15 +19,13 @@ package org.mashupmedia.service;
 
 import java.util.Date;
 
-import org.mashupmedia.model.library.Library;
-
 public interface LibraryUpdateManager {
 	
-	public void updateLibrary(Library library);
+	public void asynchronousUpdateLibrary(long libraryId);
 
-	public void updateRemoteLibrary(Library library);
+	public void updateRemoteLibrary(long libraryId);
 	
-	public void deleteObsoleteMediaItems(Library library, Date date);
+	public void deleteObsoleteMediaItems(long libraryId, Date date);
 
 	public void deleteLibrary(long libraryId);
 

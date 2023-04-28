@@ -17,7 +17,7 @@ import org.mashupmedia.mapper.LibraryNameValueMapper;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.service.LibraryManager;
-import org.mashupmedia.task.LibraryUpdateTaskManager;
+import org.mashupmedia.service.LibraryUpdateManager;
 import org.mashupmedia.util.ValidationUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +45,8 @@ public class LibraryController {
     private final LibraryMapper libraryMapper;
     private final LibraryNameValueMapper libraryNameValueMapper;
     private final LibraryManager libraryManager;
-    private final LibraryUpdateTaskManager libraryUpdateTaskManager;
+    // private final LibraryUpdateTaskManager libraryUpdateTaskManager;
+    private final LibraryUpdateManager libraryUpdateManager;
 
     @Secured("ROLE_ADMINISTRATOR")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -92,7 +93,8 @@ public class LibraryController {
         Library library = libraryMapper.toDomain(libraryPayload);
         libraryManager.saveLibrary(library);
         // libraryManager.saveAndReinitialiseLibrary(library);
-        libraryUpdateTaskManager.updateLibrary(library.getId());
+        // libraryUpdateTaskManager.updateLibrary(library.getId());
+        libraryUpdateManager.asynchronousUpdateLibrary(library.getId());
 
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
