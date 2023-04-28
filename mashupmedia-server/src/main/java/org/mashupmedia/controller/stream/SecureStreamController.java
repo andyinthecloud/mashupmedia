@@ -87,8 +87,6 @@ public class SecureStreamController {
                 playlist.getPlaylistMediaItems().forEach(pmi -> pmi.setPlaying(pmi.equals(playlistMediaItem)));
                 playlistManager.savePlaylist(playlist);
 
-                log.info("Streaming mediaItem: " + track.getDisplayTitle());
-
                 FileInputStream fileInputStream = null;
                 try {
                     File mediaFile = track.getStreamingFile();
@@ -119,12 +117,11 @@ public class SecureStreamController {
                 while (LocalDateTime.now().isBefore(endTrackDateTime)) {
                     try {
                         sleepCount++;
-                        log.info("sleeping and streaming " + track.getDisplayTitle());
                         if (sleepCount % 10 == 0) {
-                            log.info("Checking if item is still in playlist, sleepCount = " + sleepCount);
                             if(!isCurrentlyPlaying(playlistId, playlistMediaItem)) {
+                                log.debug(track.getTitle() + " is NOT in playlist, sleepCount = " + sleepCount);
                                 return;
-                            }
+                            } 
                         }
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {

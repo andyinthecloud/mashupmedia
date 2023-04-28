@@ -14,7 +14,7 @@ public class TrackMapper implements DomainMapper<Track, TrackPayload> {
     public TrackPayload toDto(Track domain) {
         return TrackPayload.builder()
                 .id(domain.getId())
-                .name(domain.getDisplayTitle())
+                .name(domain.getTitle())
                 .trackNumber(domain.getTrackNumber())
                 .totalSeconds(domain.getTrackLength())
                 .minutes(TimeHelper.getDurationUnit(domain.getTrackLength(),

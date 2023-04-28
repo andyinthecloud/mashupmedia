@@ -15,13 +15,17 @@ const playMusicSlice = createSlice({
     reducers: {
         play(state) {
             state.triggerPlay = timestamp()
+            state.currentTrackId = undefined
+            state.requestPlaylistTrackId = undefined
         },
         playingTrackId(state, action: PayloadAction<number>) {
             state.currentTrackId = action.payload
+            state.requestPlaylistTrackId = undefined
         },
         requestPlaylistTrackId(state, action: PayloadAction<number>) {
-            state.requestPlaylistTrackId = action.payload
             state.triggerPlay = timestamp()
+            state.currentTrackId = undefined
+            state.requestPlaylistTrackId = action.payload
         }
     }
 })

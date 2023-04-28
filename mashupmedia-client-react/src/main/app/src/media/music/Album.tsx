@@ -165,7 +165,7 @@ const Album = () => {
                 <h2>{props.payload.artistPayload.name}</h2>
 
                 <List>
-                    {props.payload.trackPayloads.map(function (trackPayload) {
+                    {props.payload.trackPayloads.map(function (trackPayload, index) {
                         return (
                             <ListItem
                                 className={trackPayload.encodedForWeb ? "" : "track-not-encoded-for-web"}
@@ -189,7 +189,7 @@ const Album = () => {
                                 key={trackPayload.id}>
 
                                 <ListItemText
-                                    primary={trackPayload.name}
+                                    primary={`${index + 1} - ${trackPayload.name}`}
                                     secondary={`${trackPayload.minutes} min ${trackPayload.seconds} sec`}
                                 />
                             </ListItem>
