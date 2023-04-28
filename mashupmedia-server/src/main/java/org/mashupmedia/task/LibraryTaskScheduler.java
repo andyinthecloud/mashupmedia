@@ -36,7 +36,7 @@ public class LibraryTaskScheduler {
 			if (library.isRemote()) {
 				continue;
 			}
-			libraryUpdateManager.updateLibrary(library);
+			libraryUpdateManager.asynchronousUpdateLibrary(library.getId());
 			log.info("Library updated: " + library.getName());
 		}
 		

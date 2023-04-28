@@ -25,17 +25,14 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.mashupmedia.exception.LibraryUpdateException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryStatusType;
-import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.util.LibraryHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,28 +41,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
-
 	private final int LIBRARY_UPDATE_TIMEOUT_HOURS = 1;
-
 	private final MusicLibraryUpdateManager musicLibraryUpdateManager;
-
-	private final  VideoLibraryUpdateManager videoLibraryUpdateManager;
-
+	private final VideoLibraryUpdateManager videoLibraryUpdateManager;
 	private final PhotoLibraryUpdateManager photoLibraryUpdateManager;
-
-//	@Autowired
-//	private MapperManager mapperManager;
-
 	private final LibraryManager libraryManager;
-
 	private final ConfigurationManager configurationManager;
 
-	private final LibraryWatchManager libraryWatchManager;
-
 	@Override
-	public synchronized void updateLibrary(Library library) {
-
-		// library = libraryManager.getLibrary(library.getId());
+	@Async
+	public void asynchronousUpdateLibrary(long libraryId) {
+		Library library = libraryManager.getLibrary(libraryId);
 
 		if (!library.isEnabled()) {
 			log.info("Library is disabled, will not update:" + library.toString());
@@ -114,9 +100,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 
 	protected void processLibrary(Library library) throws Exception {
 		Date updatingOn = new Date();
-		long libraryId = library.getId();
-		LibraryType libraryType = library.getLibraryType();
-//		mapperManager.writeStartRemoteMusicLibraryXml(libraryId, libraryType);
+		// mapperManager.writeStartRemoteMusicLibraryXml(libraryId, libraryType);
 		Location location = library.getLocation();
 		File locationFolder = new File(location.getPath());
 		File[] files = locationFolder.listFiles();
@@ -135,17 +119,18 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			}
 		}
 
-		deleteObsoleteMediaItems(library, updatingOn);
-//		mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
+		deleteObsoleteMediaItems(library.getId(), updatingOn);
+		// mapperManager.writeEndRemoteMusicLibraryXml(libraryId);
 
 	}
 
 	@Override
-	public void deleteObsoleteMediaItems(Library library, Date date) {
+	public void deleteObsoleteMediaItems(long libraryId, Date date) {
 
-//		libraryWatchManager.removeWatchLibraryListeners();
+		Library library = libraryManager.getLibrary(libraryId);
 
-		long libraryId = library.getId();
+		// libraryWatchManager.removeWatchLibraryListeners();
+
 		if (library instanceof MusicLibrary) {
 			musicLibraryUpdateManager.deleteObsoleteTracks(libraryId, date);
 		} else if (library instanceof VideoLibrary) {
@@ -154,12 +139,13 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			photoLibraryUpdateManager.deleteObsoletePhotos(libraryId, date);
 		}
 
-//		libraryWatchManager.registerWatchLibraryListeners();
+		// libraryWatchManager.registerWatchLibraryListeners();
 	}
 
 	@Override
-	public void updateRemoteLibrary(Library library) {
-		library = libraryManager.getLibrary(library.getId());
+	public void updateRemoteLibrary(long libraryId) {
+
+		Library library = libraryManager.getLibrary(libraryId);
 
 		if (!library.isEnabled()) {
 			log.info("Library is disabled, exiting..");

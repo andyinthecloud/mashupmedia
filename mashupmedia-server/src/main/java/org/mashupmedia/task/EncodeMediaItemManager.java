@@ -19,6 +19,7 @@ package org.mashupmedia.task;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -90,10 +91,12 @@ public class EncodeMediaItemManager {
 			return false;
 		}
 
-		File encoderFile = new File(encoderPath);
-
+		List<String> commands = new ArrayList<>();
+		commands.add(encoderPath);
+		commands.add("-version");
+		
 		try {
-			String outputText = ProcessHelper.callProcess(encoderFile.getAbsolutePath());
+			String outputText = ProcessHelper.callProcess(commands);
 			return outputText.contains(encodeCommands.getTestOutputParameter());
 		} catch (IOException e) {
 			log.info("Error calling ffMpeg", e);
@@ -101,6 +104,7 @@ public class EncodeMediaItemManager {
 		}
 	}
 
+	@Async
 	public void processMediaItemForEncoding(MediaItem mediaItem, MediaContentType mediaContentType)
 			throws MediaItemEncodeException {
 		String encoderPath = configurationManager.getConfigurationValue(encodeCommands.getEncoderPathKey());
@@ -129,8 +133,6 @@ public class EncodeMediaItemManager {
 		encodeQueue();
 	}
 
-
-	@Async
 	private void encodeQueue() {
 
 		processQueueItems.iterator().forEachRemaining(processQueueItem -> {
