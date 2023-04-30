@@ -82,6 +82,8 @@ public class SecureStreamController {
                     return;
                 }
 
+                log.info("Streaming: playing track: " + track.getTitle());
+
                 endTrackDateTime = endTrackDateTime.plusSeconds(track.getTrackLength());
 
                 playlist.getPlaylistMediaItems().forEach(pmi -> pmi.setPlaying(pmi.equals(playlistMediaItem)));
@@ -94,7 +96,7 @@ public class SecureStreamController {
                         fileInputStream = new FileInputStream(track.getStreamingFile());
                         IOUtils.copy(fileInputStream, response.getOutputStream());
                     } else {
-                        log.info("Cannot find media file, will send for encoding");
+                        log.info("Streaming: cannot find media file, will send for encoding");
                         track.getMediaEncodings().clear();
                         MediaEncoding mediaEncoding = MediaItemHelper.createMediaEncoding(track.getFileName());
                         track.getMediaEncodings().add(mediaEncoding);
@@ -103,11 +105,11 @@ public class SecureStreamController {
                     }
 
                 } catch (IOException e) {
-                    log.error("Error copying media to output stream, resetting to original file", e);
-                    endTrackDateTime = LocalDateTime.now().minusSeconds(1);
-                    continue;
+                    log.error("Streaming: error copying media to output stream", e);
+                    return;
                 } catch (MediaItemEncodeException e) {
-                    log.error("Error encoding media", e);
+                    log.error("Streaming: error encoding media", e);
+                    endTrackDateTime = endTrackDateTime.minusSeconds(track.getTrackLength());
                     continue;
                 } finally {
                     IOUtils.closeQuietly(fileInputStream);
@@ -119,13 +121,13 @@ public class SecureStreamController {
                         sleepCount++;
                         if (sleepCount % 10 == 0) {
                             if(!isCurrentlyPlaying(playlistId, playlistMediaItem)) {
-                                log.debug(track.getTitle() + " is NOT in playlist, sleepCount = " + sleepCount);
+                                log.debug("Streaming: " + track.getTitle() + " is NOT in playlist, sleepCount = " + sleepCount);
                                 return;
                             } 
                         }
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
-                        log.error("Error sleeping", e);
+                        log.error("Streaming: interrupted sleeping", e);
                         return;
                     }
                 }

@@ -2,7 +2,7 @@ import { Add, PlayArrow } from "@mui/icons-material"
 import { Button, Card, CardContent, CardMedia, IconButton, List, ListItem, ListItemText } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import ImagePopover, { ImagePopoverPayload } from "../../common/components/ImagePopover"
 import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
 import { RootState } from "../../common/redux/store"
@@ -161,8 +161,13 @@ const Album = () => {
             <ImagePopover {...imagePopoverPayload} />
 
             <CardContent>
-                <h1>{props.payload.albumPayload.name}</h1>
-                <h2>{props.payload.artistPayload.name}</h2>
+                <div className="album-name">{props.payload.albumPayload.name}</div>
+                <div className="artist-name">
+                    <Link
+                        className="link-no-underlne"
+                        to={"/music/artist/" + props.payload.artistPayload.id}>{props.payload.artistPayload.name}
+                    </Link>
+                </div>
 
                 <List>
                     {props.payload.trackPayloads.map(function (trackPayload, index) {
