@@ -11,3 +11,13 @@
 #album .track-not-encoded-for-web {
     opacity: 0.5;
 }
+
+#album div.album-name {
+    font-size: 1.5em;
+    opacity: 0.8;
+
+}
+
+#album div.artist-name {
+    font-size: 1em;
+}

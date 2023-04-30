@@ -72,7 +72,7 @@
 
 #audio-player-container div.track div.artist {
     opacity: 0.8;
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 #audio-player-container div.album-art {

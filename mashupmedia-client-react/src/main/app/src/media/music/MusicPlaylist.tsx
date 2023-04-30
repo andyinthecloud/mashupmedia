@@ -2,7 +2,7 @@ import { Equalizer, PlayArrow } from "@mui/icons-material"
 import { Button, Checkbox, FormControl, IconButton, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { RootState } from "../../common/redux/store"
 import { requestPlaylistTrackId } from "./features/playMusicSlice"
 import { MusicPlaylistTrackPayload, PlaylistActionPayload, PlaylistActionTypePayload, getPlaylistTracks, updatePlaylist } from "./rest/playlistCalls"
@@ -154,14 +154,14 @@ const MusicPlaylist = () => {
                                         <IconButton
                                             edge="end"
                                             aria-label="playing"
-                                            onClick={e => handlePlayTrack(payload.id)}>
+                                            onClick={() => handlePlayTrack(payload.id)}>
                                             <Equalizer />
                                         </IconButton>
                                         :
                                         <IconButton
                                             edge="end"
                                             aria-label="play"
-                                            onClick={e => handlePlayTrack(payload.id)}>
+                                            onClick={() => handlePlayTrack(payload.id)}>
                                             <PlayArrow />
                                         </IconButton>
                                 }
@@ -180,7 +180,12 @@ const MusicPlaylist = () => {
                                 <ListItemText
                                     primary={`${index + 1} - ${payload.trackPayload.name}`}
                                     secondary={<span>
-                                        {payload.artistPayload.name}
+                                        <Link
+                                            to={"/music/artist/" + payload.artistPayload.id}
+                                            className="link-no-underlne"
+                                        >{
+                                                payload.artistPayload.name}
+                                        </Link>
                                         {!payload.trackPayload.encodedForWeb &&
                                             <span className="not-encoded">
                                                 <span>Incompatible format</span>
