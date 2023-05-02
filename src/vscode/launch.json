@@ -12,9 +12,10 @@
             "console": "internalConsole",
             "mainClass": "org.mashupmedia.MashupMediaApplication",
             "projectName": "mashupmedia-server",
-            "vmArgs": "-DmashupMediaHome=C:\\stuff\\data\\mm-home",        
+            "vmArgs": "-DmashupMediaHome=/home/andy/Development/mashup-media-home",   
+            "args": "--spring.profiles.active=local",     
             "env": {
-                "mashupmediaHome": "C:\\stuff\\data\\mm-home"
+                "mashupmediaHome": "/home/andy/Development/mashup-media-home"
             }
         }
     ]
