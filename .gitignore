@@ -5,3 +5,8 @@
 **/.settings
 **/.factorypath
 
+mashupmedia-server/src/main/resources/application-local.yml
+mashupmedia.code-workspace
+.vscode/launch.json
+.vscode/launch.json
+.vscode/launch.json
