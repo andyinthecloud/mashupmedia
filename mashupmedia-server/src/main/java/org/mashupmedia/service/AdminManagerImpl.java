@@ -19,7 +19,6 @@ import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -182,7 +181,7 @@ public class AdminManagerImpl implements AdminManager {
 	@Override
 	public void deleteUser(long userId) {
 		User user = getUser(userId);
-		List<Playlist> playlists = playlistDao.getPlaylistsForCurrentUser(userId, PlaylistType.ALL);
+		List<Playlist> playlists = playlistDao.getPlaylistsForCurrentUser(userId, null);
 		for (Playlist playlist : playlists) {
 			playlistDao.deletePlaylist(playlist);
 		}

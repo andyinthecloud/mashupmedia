@@ -1,6 +1,6 @@
 package org.mashupmedia.criteria;
 
-import org.mashupmedia.model.media.MediaItem.MashupMediaType;
+import org.mashupmedia.constants.MashupMediaType;
 
 public class MediaItemSearchCriteria {
 

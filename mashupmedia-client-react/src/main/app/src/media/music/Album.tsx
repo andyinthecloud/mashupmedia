@@ -9,7 +9,7 @@ import { RootState } from "../../common/redux/store"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
 import { play } from "./features/playMusicSlice"
 import { albumArtImageUrl, AlbumWithTracksAndArtistPayload, getAlbum, ImageType } from "./rest/musicCalls"
-import { addAlbum, addTrack, playAlbum, playTrack } from "./rest/playlistCalls"
+import { addAlbum, addTrack, playAlbum, playTrack } from "./rest/playlistActionCalls"
 import './Album.css';
 
 const Album = () => {

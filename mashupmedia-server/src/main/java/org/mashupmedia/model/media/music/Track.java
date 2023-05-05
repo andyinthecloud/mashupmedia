@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Year;
@@ -47,7 +48,7 @@ public class Track extends MediaItem implements Serializable {
 
 	@Override
 	public MashupMediaType getMashupMediaType() {
-		return MashupMediaType.TRACK;
+		return MashupMediaType.MUSIC;
 	}
 
 	@Override

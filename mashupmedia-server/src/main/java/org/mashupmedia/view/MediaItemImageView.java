@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.mashupmedia.model.media.MediaItem.MashupMediaType;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.web.servlet.View;
@@ -44,7 +44,7 @@ public class MediaItemImageView implements View {
 			HttpServletResponse response) throws Exception {
 		if (FileHelper.isEmptyBytes(imageBytes)) {
 			String imageNotFound = "";
-			if (mediaType == MashupMediaType.TRACK) {
+			if (mediaType == MashupMediaType.MUSIC) {
 				imageNotFound = IMAGE_PATH_DEFAULT_ALBUM_ART;
 			} else if (mediaType == MashupMediaType.PHOTO) {
 				imageNotFound = IMAGE_PATH_DEFAULT_PHOTO;

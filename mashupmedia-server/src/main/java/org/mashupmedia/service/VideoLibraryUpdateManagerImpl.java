@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.VideoDao;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
 import org.mashupmedia.model.media.MediaEncoding;
-import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.video.Video;
 import org.mashupmedia.task.EncodeMediaItemManager;
 import org.mashupmedia.util.FileHelper;

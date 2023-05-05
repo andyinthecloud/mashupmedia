@@ -20,10 +20,10 @@ package org.mashupmedia.util;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.media.video.Video;
 
@@ -60,21 +60,6 @@ public class MediaItemHelper {
 
 	public enum MediaItemSequenceType {
 		PHOTO_ALBUM, LATEST, ALPHABETICAL
-	}
-
-	public static MashupMediaType getMediaType(String mediaTypeValue) {
-		if (mediaTypeValue == null) {
-			return null;
-		}
-
-		MashupMediaType[] mediaTypes = MashupMediaType.values();
-		for (MashupMediaType mediaType : mediaTypes) {
-			if (mediaTypeValue.equalsIgnoreCase(mediaType.toString())) {
-				return mediaType;
-			}
-		}
-
-		return null;
 	}
 
 	public static boolean isEquals(MediaItem mediaItem1, MediaItem mediaItem2) {
@@ -243,7 +228,7 @@ public class MediaItemHelper {
 	}
 
 	public static boolean isWebCompatibleEncoding(MashupMediaType mashupMediaType, MediaContentType mediaContentType) {
-		if (mashupMediaType == MashupMediaType.TRACK) {
+		if (mashupMediaType == MashupMediaType.MUSIC) {
 			return isFormat(mediaContentType, MediaContentType.AUDIO_MP3);
 		}
 

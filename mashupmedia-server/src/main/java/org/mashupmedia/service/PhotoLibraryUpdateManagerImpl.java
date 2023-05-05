@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.dao.PhotoDao;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.media.MediaEncoding;
-import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.FileHelper;

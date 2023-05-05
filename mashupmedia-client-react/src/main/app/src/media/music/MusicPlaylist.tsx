@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { Link, useParams } from "react-router-dom"
 import { RootState } from "../../common/redux/store"
 import { requestPlaylistTrackId } from "./features/playMusicSlice"
-import { MusicPlaylistTrackPayload, PlaylistActionPayload, PlaylistActionTypePayload, getPlaylistTracks, updatePlaylist } from "./rest/playlistCalls"
+import { PlaylistActionPayload, PlaylistActionTypePayload, PlaylistTrackPayload, PlaylistWithMediaItemsPayload, PlaylistWithTracksPayload, getPlaylist } from "./rest/playlistActionCalls"
 import "./MusicPlaylist.css"
 
 const MusicPlaylist = () => {
@@ -15,7 +15,7 @@ const MusicPlaylist = () => {
 
     const { playlistId } = useParams()
 
-    const [props, setProps] = useState<MusicPlaylistTrackPayload[]>([])
+    const [props, setProps] = useState<PlaylistWithTracksPayload>()
     const [playlistActionPayload, setPlaylistActionPayload] = useState<PlaylistActionPayload>({
         playlistId: 0,
         playlistActionTypePayload: PlaylistActionTypePayload.NONE,
@@ -34,11 +34,15 @@ const MusicPlaylist = () => {
             playlistId: +playlistId
         })
 
-        getPlaylistTracks(+playlistId, userToken).then(response => {
+        getPlaylist(+playlistId, userToken).then(response => {
             if (response.ok) {
                 const parsedBody = response.parsedBody
                 if (parsedBody) {
-                    setProps(parsedBody)
+                    setProps({
+                        mashupMediaType: parsedBody.mashupMediaType,
+                        playlistPayload: parsedBody.playlistPayload,
+                        playlistMediaItemPayloads: parsedBody.playlistMediaItemPayloads as (PlaylistTrackPayload[])
+                    })
                 }
             }
         })
@@ -94,14 +98,14 @@ const MusicPlaylist = () => {
             return
         }
 
-        updatePlaylist(playlistActionPayload, userToken).then(response => {
-            if (response.ok) {
-                const parsedBody = response.parsedBody
-                if (parsedBody) {
-                    setProps(parsedBody)
-                }
-            }
-        })
+        // updatePlaylist(playlistActionPayload, userToken).then(response => {
+        //     if (response.ok) {
+        //         const parsedBody = response.parsedBody
+        //         if (parsedBody) {
+        //             setProps(parsedBody)
+        //         }
+        //     }
+        // })
     }
 
     const handlePlayTrack = (playlistItemId: number): void => {
@@ -114,7 +118,7 @@ const MusicPlaylist = () => {
 
     return (
         <div id="music-playlist">
-            <h1>Music playlist</h1>
+            <h1>{props?.playlistPayload.name}</h1>
 
             <form onSubmit={handleSubmitAction}>
 
@@ -144,24 +148,24 @@ const MusicPlaylist = () => {
                 </Button>
 
                 <List>
-                    {props.map(function (payload, index) {
+                    {props?.playlistMediaItemPayloads.map(function (track, index) {
                         return (
                             <ListItem
-                                key={payload.id}
+                                key={track.playlistMediaItemId}
                                 secondaryAction={
-                                    playlistTrackId === payload.id
+                                    playlistTrackId === track.playlistMediaItemId
                                         ?
                                         <IconButton
                                             edge="end"
                                             aria-label="playing"
-                                            onClick={() => handlePlayTrack(payload.id)}>
+                                            onClick={() => handlePlayTrack(track.playlistMediaItemId)}>
                                             <Equalizer />
                                         </IconButton>
                                         :
                                         <IconButton
                                             edge="end"
                                             aria-label="play"
-                                            onClick={() => handlePlayTrack(payload.id)}>
+                                            onClick={() => handlePlayTrack(track.playlistMediaItemId)}>
                                             <PlayArrow />
                                         </IconButton>
                                 }
@@ -172,21 +176,21 @@ const MusicPlaylist = () => {
                                         edge="start"
                                         tabIndex={-1}
                                         disableRipple
-                                        value={payload.id}
+                                        value={track.playlistMediaItemId}
                                         onChange={(e) => handleToggleTrack(+e.target.value)}
                                     />
                                 </ListItemIcon>
 
                                 <ListItemText
-                                    primary={`${index + 1} - ${payload.trackPayload.name}`}
+                                    primary={`${index + 1} - ${track.trackPayload.name}`}
                                     secondary={<span>
                                         <Link
-                                            to={"/music/artist/" + payload.artistPayload.id}
+                                            to={"/music/artist/" + track.artistPayload.id}
                                             className="link-no-underlne"
-                                        >{
-                                                payload.artistPayload.name}
+                                        >
+                                            {track.artistPayload.name}
                                         </Link>
-                                        {!payload.trackPayload.encodedForWeb &&
+                                        {!track.trackPayload.encodedForWeb &&
                                             <span className="not-encoded">
                                                 <span>Incompatible format</span>
                                             </span>

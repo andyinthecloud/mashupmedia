@@ -5,16 +5,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.repository.playlist.PlaylistMediaItemRepository;
 import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
@@ -38,7 +39,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	private final PlaylistMediaItemRepository playlistMediaItemRepository;
 
 	@Override
-	public List<Playlist> getPlaylists(long userId, boolean isAdministrator, PlaylistType playlistType) {
+	public List<Playlist> getPlaylists(long userId, boolean isAdministrator, MashupMediaType mashupMediaType) {
 
 		StringBuilder hqlBuilder = new StringBuilder();
 		hqlBuilder.append("from Playlist");
@@ -50,8 +51,8 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			hqlBuilder.append(" )");
 		}
 
-		if (playlistType != PlaylistType.ALL) {
-			hqlBuilder.append(" and playlistTypeValue = '" + playlistType.getValue() + "'");
+		if (mashupMediaType != null) {
+			hqlBuilder.append(" and mediaTypeValue = '" + mashupMediaType.name() + "'");
 		}
 		hqlBuilder.append(" order by name");
 
@@ -62,13 +63,13 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	}
 
 	@Override
-	public List<Playlist> getPlaylistsForCurrentUser(long userId, PlaylistType playlistType) {
+	public List<Playlist> getPlaylistsForCurrentUser(long userId, MashupMediaType mashupMediaType) {
 		StringBuilder hqlBuilder = new StringBuilder();
 		hqlBuilder.append("from Playlist");
 		hqlBuilder.append(" where createdBy.id = :userId ");
 
-		if (playlistType != PlaylistType.ALL) {
-			hqlBuilder.append(" and playlistTypeValue = '" + playlistType.getValue() + "'");
+		if (mashupMediaType != null) {
+			hqlBuilder.append(" and mediaTypeValue = '" + mashupMediaType.name() + "'");
 		}
 
 		TypedQuery<Playlist> query = entityManager.createQuery(hqlBuilder.toString(), Playlist.class);
@@ -87,12 +88,12 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	}
 
 	@Override
-	public Playlist getLastAccessedPlaylist(long userId, PlaylistType playlistType) {
+	public Playlist getLastAccessedPlaylist(long userId, MashupMediaType mashupMediaType) {
 		TypedQuery<Playlist> query = entityManager.createQuery(
-				"from Playlist as p where p.updatedBy.id = :userId and p.playlistTypeValue = :playlistTypeValue and p.updatedOn = (select max(tmp.updatedOn) from Playlist as tmp)",
+				"from Playlist as p where p.updatedBy.id = :userId and p.mediaTypeValue = :mediaTypeValue and p.updatedOn = (select max(tmp.updatedOn) from Playlist as tmp)",
 				Playlist.class);
 		query.setParameter("userId", userId);
-		query.setParameter("playlistTypeValue", PlaylistType.MUSIC.getValue());
+		query.setParameter("mediaTypeValue", mashupMediaType.name());
 		List<Playlist> playlists = query.getResultList();
 		if (playlists == null || playlists.isEmpty()) {
 			return null;
@@ -102,12 +103,12 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	}
 
 	@Override
-	public Playlist getDefaultPlaylistForUser(long userId, PlaylistType playlistType) {
+	public Playlist getDefaultPlaylistForUser(long userId, MashupMediaType mashupMediaType) {
 		TypedQuery<Playlist> query = entityManager.createQuery(
-				"from Playlist where createdBy.id = :userId and userDefault = true and playlistTypeValue = :playlistTypeValue",
+				"from Playlist where createdBy.id = :userId and userDefault = true and mediaTypeValue = :mediaTypeValue",
 				Playlist.class);
 		query.setParameter("userId", userId);
-		query.setParameter("playlistTypeValue", playlistType.getValue());
+		query.setParameter("mediaTypeValue", mashupMediaType.name());
 		List<Playlist> playlists = query.getResultList();
 		if (playlists == null || playlists.isEmpty()) {
 			return null;
@@ -123,9 +124,11 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 	@Override
 	public void savePlaylist(Playlist playlist) {
 		Collection<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
+
 		long playlistId = playlist.getId();
 		Playlist savedPlaylist = getPlaylist(playlistId);
 		if (savedPlaylist == null) {
+			playlist.setMashupMediaType(getMashupMediaType(playlistMediaItems));
 			saveOrMerge(playlist);
 			return;
 		}
@@ -137,6 +140,15 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 		savedPlaylist.getPlaylistMediaItems().addAll(playlistMediaItems);
 		saveOrMerge(savedPlaylist);
+	}
+
+	private MashupMediaType getMashupMediaType(Collection<PlaylistMediaItem> playlistMediaItems) {
+		Optional<MashupMediaType> optionalMashupMediaType = playlistMediaItems
+				.stream()
+				.map(pmi -> pmi.getMediaItem().getMashupMediaType())
+				.findAny();
+
+		return optionalMashupMediaType.orElse(MashupMediaType.MUSIC);
 	}
 
 	protected List<PlaylistMediaItem> synchronisePlaylistMediaItems(List<PlaylistMediaItem> savedPlaylistMediaItems,
@@ -192,9 +204,9 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		long mediaItemId = mediaItem.getId();
 
 		// TypedQuery<PlaylistMediaItem> query = entityManager.createQuery(
-		// 		"from PlaylistMediaItem pmi where pmi.mediaItem.id = :mediaItemId", PlaylistMediaItem.class);
+		// "from PlaylistMediaItem pmi where pmi.mediaItem.id = :mediaItemId",
+		// PlaylistMediaItem.class);
 		// query.setParameter("mediaItemId", mediaItemId);
-
 
 		// List<PlaylistMediaItem> playlistMediaItems = query.getResultList();
 		List<PlaylistMediaItem> playlistMediaItems = playlistMediaItemRepository.findByMediaItemId(mediaItemId);

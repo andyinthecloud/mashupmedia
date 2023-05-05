@@ -24,6 +24,7 @@ import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
@@ -32,7 +33,6 @@ import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
@@ -305,7 +305,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		// Clean up
 		List<MediaItem> duplicateMediaItems = mediaDao.getMediaItems(file.getPath());
 		for (MediaItem duplicateMediaItem : duplicateMediaItems) {
-			if (duplicateMediaItem.getMashupMediaType().equals(MashupMediaType.TRACK)) {
+			if (duplicateMediaItem.getMashupMediaType().equals(MashupMediaType.MUSIC)) {
 				Track duplicateTrack = (Track) duplicateMediaItem;
 				deleteTrack(duplicateTrack);
 			}

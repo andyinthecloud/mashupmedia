@@ -6,12 +6,17 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dto.media.music.MusicPlaylistTrackPayload;
-import org.mashupmedia.dto.media.playlist.CreatePlaylistPayload;
 import org.mashupmedia.dto.media.playlist.PlaylistActionPayload;
 import org.mashupmedia.dto.media.playlist.PlaylistActionTypePayload;
+import org.mashupmedia.dto.media.playlist.PlaylistPayload;
+import org.mashupmedia.dto.media.playlist.PlaylistWithMediaItemsPayload;
+import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.media.music.SecureMusicPlaylistTrackMapper;
+import org.mashupmedia.mapper.playlist.PlaylistMapper;
+import org.mashupmedia.mapper.playlist.PlaylistWithTracksMapper;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
@@ -25,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -43,6 +49,25 @@ public class PlaylistController {
     private final PlaylistManager playlistManager;
     private final SecureMusicPlaylistTrackMapper secureMusicPlaylistTrackMapper;
     private final PlaylistActionManager playlistActionManager;
+    private final PlaylistWithTracksMapper playlistWithTracksMapper;
+    private final PlaylistMapper playlistMapper;
+
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PlaylistPayload>> get() {
+        return ResponseEntity.ok(
+                playlistManager.getPlaylists(MashupMediaType.MUSIC)
+                        .stream()
+                        .map(playlistMapper::toDto)
+                        .collect(Collectors.toList()));
+    }
+    
+    @GetMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PlaylistWithMediaItemsPayload> getPlaylist( @PathVariable long playlistId) {
+        Playlist playlist = playlistManager.getPlaylist(playlistId);
+        return ResponseEntity.ok(
+            playlistWithTracksMapper.toDto(playlist)
+        );
+    }
 
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MusicPlaylistTrackPayload>> updatePlaylist(
@@ -105,12 +130,12 @@ public class PlaylistController {
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServerResponsePayload<String>> createPlaylist(
-            @Valid @RequestBody CreatePlaylistPayload createPlaylistPayload, Errors errors) {
+            @Valid @RequestBody PlaylistPayload playlistPayload, Errors errors) {
         User user = AdminHelper.getLoggedInUser();
         Assert.notNull(user, "User should not be null");
 
         Playlist playlist = new Playlist();
-        playlist.setName(createPlaylistPayload.getName());
+        playlist.setName(playlistPayload.getName());
         playlist.setCreatedBy(user);
         playlistManager.savePlaylist(playlist);
 

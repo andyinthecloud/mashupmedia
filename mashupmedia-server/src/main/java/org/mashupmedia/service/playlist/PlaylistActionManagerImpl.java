@@ -13,7 +13,6 @@ import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
 import org.mashupmedia.task.EncodeMediaItemManager;
@@ -178,21 +177,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		return false;
 	}
 
-	@Override
-	public PlaylistType getPlaylistType(String playlistTypeValue) {
-		playlistTypeValue = StringUtils.trimToEmpty(playlistTypeValue);
-		if (StringUtils.isEmpty(playlistTypeValue)) {
-			return PlaylistType.MUSIC;
-		}
 
-		PlaylistType[] playlistTypes = PlaylistType.values();
-		for (PlaylistType playlistType : playlistTypes) {
-			if (playlistType.getValue().equalsIgnoreCase(playlistTypeValue)) {
-				return playlistType;
-			}
-		}
-		return PlaylistType.MUSIC;
-	}
 
 	// @Override
 	// public PlaylistMediaItem getPlaylistMediaItemByProgress(long playlistId, long progress) {

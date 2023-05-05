@@ -17,6 +17,7 @@ import Artist from './media/music/Artist';
 import Artists from './media/music/Artists';
 import MusicPlaylist from "./media/music/MusicPlaylist";
 import Encode from "./configuration/Encode";
+import Playlists from "./media/playlist/Playlists";
 
 
 export const MashupRoutes = () => {
@@ -129,6 +130,13 @@ export const MashupRoutes = () => {
                 } />
 
             </Route>
+
+            <Route path="/playlists" element={
+                <RequireAuthenication>
+                    <Playlists />
+                </RequireAuthenication>
+            } />
+
 
             <Route path="/music">
                 <Route path="artists" element={

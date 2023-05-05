@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { play } from "../../../media/music/features/playMusicSlice"
 import { AlbumWithArtistPayload, ImageType, albumArtImageUrl } from '../../../media/music/rest/musicCalls'
 import { playlistNotification } from "../../../media/music/rest/playlistActionUtils"
-import { addAlbum, playAlbum } from "../../../media/music/rest/playlistCalls"
+import { addAlbum, playAlbum } from "../../../media/music/rest/playlistActionCalls"
 import { SecureMediaPayload } from '../../../media/rest/secureMediaPayload'
 import { NotificationType, addNotification } from "../../notification/notificationSlice"
 import { RootState } from "../../redux/store"
