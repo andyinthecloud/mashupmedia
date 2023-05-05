@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 import { playingTrackId } from "../../../media/music/features/playMusicSlice"
 import { ImageType, albumArtImageUrl, mediaStreamUrl, playlistStreamUrl } from "../../../media/music/rest/musicCalls"
-import { EncoderStatusType, MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, navigateTrack, currentTrack } from "../../../media/music/rest/playlistCalls"
+import { EncoderStatusType, MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, navigateTrack, currentTrack } from "../../../media/music/rest/playlistActionCalls"
 import { SecureMediaPayload } from "../../../media/rest/secureMediaPayload"
 import { NotificationType, addNotification } from "../../notification/notificationSlice"
 import { RootState } from "../../redux/store"
@@ -158,7 +158,7 @@ const AudioPlayer = () => {
                         ...props.payload,                        
                         isReadyToPlay: response.ok,
                         trackWithArtistPayload: securePayload?.payload,
-                        triggerPlay: undefined
+                        triggerPlay: undefined                        
                     }
                 })
 

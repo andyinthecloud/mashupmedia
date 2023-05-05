@@ -4,6 +4,7 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ListIcon from '@mui/icons-material/List';
 import { Fragment, useEffect, useState } from "react";
 
 import { AccountBox, ExpandLess, ExpandMore, LibraryMusic, Login, Logout } from "@mui/icons-material";
@@ -145,7 +146,10 @@ const MenuDrawer = (menuDrawerPayload: MenuDrawerPayload) => {
 
     const handleLogOut = () => {
         redirectInternal('/logout')
+    }
 
+    const handlePlaylistClick = () => {
+        redirectInternal('/playlists')
     }
 
     const list = (anchor: Anchor) => (
@@ -183,6 +187,20 @@ const MenuDrawer = (menuDrawerPayload: MenuDrawerPayload) => {
                         </List>
 
                     </Collapse>
+                </List>
+            }
+            {props.loggedIn &&
+                <Divider />
+            }
+
+            {props.loggedIn &&
+                <List>
+                    <ListItemButton onClick={() => handlePlaylistClick()}>
+                        <ListItemIcon>
+                            <ListIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Playlists" />
+                    </ListItemButton>
                 </List>
             }
 

@@ -9,6 +9,12 @@ export enum NavigatePlaylistType {
     NEXT = "NEXT"
 }
 
+export enum MashupMediaType {
+    MUSIC = "MUSIC", 
+    VIDEO = "VIDEO", 
+    PHOTO = "PHOTO"
+}
+
 export type NavigatePlaylistPayload = {
     navigatePlaylistType?: NavigatePlaylistType
     playlistMediaItemId?: number
@@ -17,6 +23,7 @@ export type NavigatePlaylistPayload = {
 export type PlaylistPayload = {
     id: number
     name: string
+    mashupMediaType: MashupMediaType
 }
 
 export type MusicPlaylistTrackPayload = {
@@ -52,8 +59,23 @@ export type PlaylistActionPayload = {
     playlistMediaItemIds: number[]
 }
 
-export type CreatePlaylistPayload = {
-    name: string
+export type PlaylistMediaItemPayload = {
+    playlistMediaItemId: number
+}
+
+export type PlaylistTrackPayload = PlaylistMediaItemPayload & {
+    artistPayload: ArtistPayload
+    trackPayload: TrackPayload
+}
+
+export interface PlaylistWithMediaItemsPayload {
+    mashupMediaType: MashupMediaType
+    playlistPayload: PlaylistPayload
+    playlistMediaItemPayloads: PlaylistMediaItemPayload[]
+}
+
+export interface PlaylistWithTracksPayload extends PlaylistWithMediaItemsPayload {
+    playlistMediaItemPayloads: PlaylistTrackPayload[]
 }
 
 const playlistUrl = "/api/playlist"
@@ -83,18 +105,23 @@ export const currentTrack = (playlistId: number, userToken: string | undefined):
     return callMashupMediaApiNoRedirect<SecureMediaPayload<MusicPlaylistTrackPayload>>(HttpMethod.GET, `${musicPlaylistUrl}/current/${playlistId}`, userToken)
 }
 
-export const getPlaylistTracks = (playlistId: number, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
-    return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.GET, `${musicPlaylistUrl}/tracks/${playlistId}`, userToken)
+export const getPlaylist = (playlistId: number, userToken: string | undefined): Promise<HttpResponse<PlaylistWithMediaItemsPayload>> => {
+    return callMashupMediaApi<PlaylistWithMediaItemsPayload> (HttpMethod.GET, `${playlistUrl}/${playlistId}`, userToken)
 }
 
-export const updatePlaylist = (playlistActionPayload: PlaylistActionPayload, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
-    return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.PUT, playlistUrl, userToken, JSON.stringify(playlistActionPayload))
-}
 
-export const createPlaylist = (createPlaylistPayload: CreatePlaylistPayload, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
-    return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.POST, playlistUrl, userToken, JSON.stringify(createPlaylistPayload))
-}
+// export const getPlaylistTracks = (playlistId: number, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
+//     return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.GET, `${musicPlaylistUrl}/tracks/${playlistId}`, userToken)
+// }
 
-export const deletePlaylist = (playlistId: number, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
-    return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.DELETE, `${playlistUrl}/${playlistId}`, userToken)
-}
+// export const updatePlaylist = (playlistActionPayload: PlaylistActionPayload, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
+//     return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.PUT, playlistUrl, userToken, JSON.stringify(playlistActionPayload))
+// }
+
+// export const createPlaylist = (playlistPayload: PlaylistPayload, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
+//     return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.POST, playlistUrl, userToken, JSON.stringify(playlistPayload))
+// }
+
+// export const deletePlaylist = (playlistId: number, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
+//     return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.DELETE, `${playlistUrl}/${playlistId}`, userToken)
+// }

@@ -9,13 +9,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.exception.UnauthorisedException;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.UserPlaylistPosition;
 import org.mashupmedia.model.playlist.UserPlaylistPositionId;
@@ -39,13 +39,13 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	private final UserPlaylistPositionRepository userPlaylistPositionRepository;
 
 	@Override
-	public List<Playlist> getPlaylists(PlaylistType playlistType) {
+	public List<Playlist> getPlaylists(MashupMediaType mashupMediaType) {
 
 		User user = AdminHelper.getLoggedInUser();
 		long userId = user.getId();
 		boolean isAdministrator = AdminHelper.isAdministrator(user);
 
-		List<Playlist> playlists = playlistDao.getPlaylists(userId, isAdministrator, playlistType);
+		List<Playlist> playlists = playlistDao.getPlaylists(userId, isAdministrator, mashupMediaType);
 		return playlists;
 	}
 
@@ -115,11 +115,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
-	public Playlist getLastAccessedPlaylistForCurrentUser(PlaylistType playlistType) {
+	public Playlist getLastAccessedPlaylistForCurrentUser(MashupMediaType mashupMediaType) {
 		User user = AdminHelper.getLoggedInUser();
-		Playlist playlist = playlistDao.getLastAccessedPlaylist(user.getId(), playlistType);
+		Playlist playlist = playlistDao.getLastAccessedPlaylist(user.getId(), mashupMediaType);
 		if (playlist == null) {
-			playlist = getDefaultPlaylistForCurrentUser(playlistType);
+			playlist = getDefaultPlaylistForCurrentUser(mashupMediaType);
 		}
 
 		initialisePlaylist(playlist);
@@ -128,11 +128,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
-	public Playlist getDefaultPlaylistForCurrentUser(PlaylistType playlistType) {
+	public Playlist getDefaultPlaylistForCurrentUser(MashupMediaType mashupMediaType) {
 		User user = AdminHelper.getLoggedInUser();
 		Assert.notNull(user, "User should not be null");
 
-		Playlist playlist = playlistDao.getDefaultPlaylistForUser(user.getId(), playlistType);
+		Playlist playlist = playlistDao.getDefaultPlaylistForUser(user.getId(), mashupMediaType);
 
 		if (playlist != null) {
 			initialisePlaylist(playlist);
@@ -144,7 +144,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		playlist.setName(name + "'s " + MessageHelper.getMessage("music.playlist.default.name"));
 		playlist.setUserDefault(true);
 		playlist.setCreatedBy(user);
-		playlist.setPlaylistType(PlaylistType.MUSIC);
+		playlist.setMashupMediaType(mashupMediaType);
 		playlist.setPlaylistMediaItems(new HashSet<PlaylistMediaItem>());
 		playlistDao.savePlaylist(playlist);
 
@@ -202,14 +202,14 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
-	public List<Playlist> getPlaylistsForCurrentUser(PlaylistType playlistType) {
+	public List<Playlist> getPlaylistsForCurrentUser(MashupMediaType mashupMediaType) {
 		User user = AdminHelper.getLoggedInUser();
 		if (user == null) {
 			return null;
 		}
 
 		long userId = user.getId();
-		List<Playlist> playlists = playlistDao.getPlaylistsForCurrentUser(userId, playlistType);
+		List<Playlist> playlists = playlistDao.getPlaylistsForCurrentUser(userId, mashupMediaType);
 		return playlists;
 	}
 

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.GroupDaoImpl;
 import org.mashupmedia.dao.LibraryDao;
@@ -26,7 +27,6 @@ import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
-import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -41,9 +41,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         LibraryDaoImpl.class,
         MusicDaoImpl.class })
 public class PlaylistManagerTest {
-
-    @Autowired
-    private TestEntityManager entityManager;
 
     @Autowired
     private PlaylistDao playlistDao;
@@ -134,7 +131,7 @@ public class PlaylistManagerTest {
         
 
         Playlist playlist = new Playlist();
-        playlist.setPlaylistType(PlaylistType.MUSIC);
+        playlist.setMashupMediaType(MashupMediaType.MUSIC);
         playlist.setName("playlist");
         playlist.setPlaylistMediaItems(new HashSet<>());
         playlistDao.savePlaylist(playlist);

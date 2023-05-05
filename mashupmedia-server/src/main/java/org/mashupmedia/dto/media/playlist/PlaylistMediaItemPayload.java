@@ -1,15 +1,15 @@
 package org.mashupmedia.dto.media.playlist;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
-public class CreatePlaylistPayload {
-    private String name;
-    
+@SuperBuilder(toBuilder = true)
+public class PlaylistMediaItemPayload {
+    private long playlistMediaItemId;
+
 }

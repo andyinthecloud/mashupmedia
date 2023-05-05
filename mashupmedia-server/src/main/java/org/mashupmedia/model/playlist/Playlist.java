@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.model.User;
 
 import jakarta.persistence.Cacheable;
@@ -19,6 +20,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,25 +32,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class Playlist {
-
-	public enum PlaylistType {
-		ALL, MUSIC;
-
-		public String getValue() {
-			return toString().toLowerCase();
-		}
-
-		static public PlaylistType getPlaylistType(String value) {
-			for (PlaylistType playlistType : PlaylistType.values()) {
-				if (playlistType.getValue().equalsIgnoreCase(value)) {
-					return playlistType;
-				}
-			}
-			return PlaylistType.MUSIC;
-		}
-
-	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -56,6 +43,7 @@ public class Playlist {
 	private String name;
 
 	@OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Builder.Default
 	private Set<PlaylistMediaItem> playlistMediaItems = new HashSet<>();
 
 	@Transient
@@ -74,22 +62,22 @@ public class Playlist {
 	private User updatedBy;
 
 	@OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Builder.Default
     Set<UserPlaylistPosition> userPlaylistPositions = new HashSet<>();
 
 	private boolean userDefault;
 
-	private String playlistTypeValue;
+	private String mediaTypeValue;
 
 	private boolean privatePlaylist;
 	private boolean editOnlyByOwner;
 	
-	public void setPlaylistType(PlaylistType playlistType) {
-		this.playlistTypeValue = playlistType.getValue();
+	public void setMashupMediaType(MashupMediaType mashupMediaType) {
+		this.mediaTypeValue = mashupMediaType.name();
 	}
 
-	public PlaylistType getPlaylistType() {
-		PlaylistType playlistType =  PlaylistType.getPlaylistType(getPlaylistTypeValue());
-		return playlistType;
+	public MashupMediaType getMashupMediaType() {
+		return MashupMediaType.getMediaType(mediaTypeValue);
 	}
 
 	@Override
@@ -99,7 +87,7 @@ public class Playlist {
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
-		result = prime * result + ((playlistTypeValue == null) ? 0 : playlistTypeValue.hashCode());
+		result = prime * result + ((mediaTypeValue == null) ? 0 : mediaTypeValue.hashCode());
 		return result;
 	}
 
@@ -124,10 +112,10 @@ public class Playlist {
 				return false;
 		} else if (!createdBy.equals(other.createdBy))
 			return false;
-		if (playlistTypeValue == null) {
-			if (other.playlistTypeValue != null)
+		if (mediaTypeValue == null) {
+			if (other.mediaTypeValue != null)
 				return false;
-		} else if (!playlistTypeValue.equals(other.playlistTypeValue))
+		} else if (!mediaTypeValue.equals(other.mediaTypeValue))
 			return false;
 		return true;
 	}
@@ -153,8 +141,8 @@ public class Playlist {
 		builder.append(updatedBy);
 		builder.append(", userDefault=");
 		builder.append(userDefault);
-		builder.append(", playlistTypeValue=");
-		builder.append(playlistTypeValue);
+		builder.append(", mediaTypeValue=");
+		builder.append(mediaTypeValue);
 		builder.append(", privatePlaylist=");
 		builder.append(privatePlaylist);
 		builder.append(", editOnlyByOwner=");

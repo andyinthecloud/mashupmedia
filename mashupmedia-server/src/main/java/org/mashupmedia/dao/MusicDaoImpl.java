@@ -1,45 +1,28 @@
 package org.mashupmedia.dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
-
-import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
-import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
-import org.mashupmedia.model.Group;
-import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MashupMediaType;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.ArtistRepository;
-import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.DaoHelper;
-import org.mashupmedia.util.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import jakarta.persistence.TypedQuery;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @Slf4j
 public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
-
-	@Autowired
-	private LibraryDao libraryDao;
 
 	@Autowired
 	private GroupDao groupDao;

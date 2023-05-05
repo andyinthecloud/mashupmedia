@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.mashupmedia.dto.media.playlist.EncoderStatusType;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 
 public interface PlaylistActionManager {
 
@@ -18,5 +17,4 @@ public interface PlaylistActionManager {
 
     boolean canSavePlaylist(long playlistId);
 
-    PlaylistType getPlaylistType(String playlistTypeValue);
 }

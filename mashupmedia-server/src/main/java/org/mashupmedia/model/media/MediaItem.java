@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.mashupmedia.comparator.MediaEncodingComparator;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
@@ -47,11 +49,7 @@ import lombok.Setter;
 public class MediaItem {
 
 	public final static String TITLE_SEPERATOR = " - ";
-
-	public enum MashupMediaType {
-		TRACK, VIDEO, PHOTO;
-	}
-
+	
 	@Id
 	@GeneratedValue
 	@XmlTransient
@@ -101,8 +99,7 @@ public class MediaItem {
 	}
 
 	public MashupMediaType getMashupMediaType() {
-		MashupMediaType mediaType = MediaItemHelper.getMediaType(mediaTypeValue);
-		return mediaType;
+		return MashupMediaType.getMediaType(mediaTypeValue);
 	}
 
 	public void setMashupMediaType(MashupMediaType mediaType) {

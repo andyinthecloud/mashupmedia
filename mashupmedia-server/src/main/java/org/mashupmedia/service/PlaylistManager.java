@@ -2,25 +2,25 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.model.playlist.Playlist;
-import org.mashupmedia.model.playlist.Playlist.PlaylistType;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public interface PlaylistManager {
 
-	List<Playlist> getPlaylists(PlaylistType playlistType);
+	List<Playlist> getPlaylists(MashupMediaType mashupMediaType);
 
 	Playlist getPlaylist(long id);
 
-	Playlist getLastAccessedPlaylistForCurrentUser(PlaylistType playlistType);
+	Playlist getLastAccessedPlaylistForCurrentUser(MashupMediaType mashupMediaType);
 
-	Playlist getDefaultPlaylistForCurrentUser(PlaylistType playlistType);
+	Playlist getDefaultPlaylistForCurrentUser(MashupMediaType mashupMediaType);
 
 	void savePlaylist(Playlist playlist);
 
 	void deletePlaylist(long id);
 
-	List<Playlist> getPlaylistsForCurrentUser(PlaylistType playlistType);
+	List<Playlist> getPlaylistsForCurrentUser(MashupMediaType mashupMediaType);
 
 	void deleteLibrary(long libraryId);
 

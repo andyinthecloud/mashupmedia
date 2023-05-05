@@ -13,14 +13,6 @@ spring:
       
     
 
-    
-
-  # mvc:
-  #   view:
-  #     prefix: /WEB-INF
-  #     suffix: .jsp
-  #   servlet:
-  #     path: /      
   jpa:
     hibernate:
       ddl-auto: update
@@ -40,7 +32,7 @@ spring:
     default-property-inclusion: non-absent
 
 server:
-  port: 1009
+  port: 8080
   
   servlet:
     context-path: /mashupmedia

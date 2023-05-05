@@ -20,34 +20,30 @@ package org.mashupmedia.comparator;
 import java.util.Comparator;
 
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.MediaItem.MashupMediaType;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.model.media.music.Track;
 
-public class MediaItemComparator implements Comparator<MediaItem>{
+public class MediaItemComparator implements Comparator<MediaItem> {
 
 	@Override
 	public int compare(MediaItem o1, MediaItem o2) {
-		MashupMediaType mediaType =  o1.getMashupMediaType();
-		
+		MashupMediaType mediaType = o1.getMashupMediaType();
+
 		int compare = 0;
-		if (mediaType == MashupMediaType.TRACK) {
+		if (mediaType == MashupMediaType.MUSIC) {
 			Track track1 = (Track) o1;
 			Track track2 = (Track) o2;
 			compare = compare(track1, track2);
-		}		
-		
+		}
+
 		return compare;
 	}
-	
+
 	public int compare(Track o1, Track o2) {
 		String o1DisplayTitle = o1.getDisplayTitle();
 		String o2DisplayTitle = o2.getDisplayTitle();
 		int compare = o1DisplayTitle.compareToIgnoreCase(o2DisplayTitle);
 		return compare;
 	}
-	
-	
-	
-	
 
 }
