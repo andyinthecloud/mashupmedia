@@ -149,7 +149,7 @@ const MenuDrawer = (menuDrawerPayload: MenuDrawerPayload) => {
     }
 
     const handlePlaylistClick = () => {
-        redirectInternal('/playlists')
+        redirectInternal('/playlists/all')
     }
 
     const list = (anchor: Anchor) => (

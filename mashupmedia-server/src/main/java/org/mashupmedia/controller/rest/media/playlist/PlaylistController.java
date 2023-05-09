@@ -1,20 +1,16 @@
 package org.mashupmedia.controller.rest.media.playlist;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashupMediaType;
-import org.mashupmedia.dto.media.music.MusicPlaylistTrackPayload;
-import org.mashupmedia.dto.media.playlist.PlaylistActionPayload;
 import org.mashupmedia.dto.media.playlist.PlaylistActionTypePayload;
 import org.mashupmedia.dto.media.playlist.PlaylistPayload;
 import org.mashupmedia.dto.media.playlist.PlaylistWithMediaItemsPayload;
-import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
-import org.mashupmedia.mapper.media.music.SecureMusicPlaylistTrackMapper;
 import org.mashupmedia.mapper.playlist.PlaylistMapper;
 import org.mashupmedia.mapper.playlist.PlaylistWithTracksMapper;
 import org.mashupmedia.model.User;
@@ -47,10 +43,9 @@ import lombok.RequiredArgsConstructor;
 public class PlaylistController {
 
     private final PlaylistManager playlistManager;
-    private final SecureMusicPlaylistTrackMapper secureMusicPlaylistTrackMapper;
-    private final PlaylistActionManager playlistActionManager;
     private final PlaylistWithTracksMapper playlistWithTracksMapper;
     private final PlaylistMapper playlistMapper;
+    private final PlaylistActionManager playlistActionManager;
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PlaylistPayload>> get() {
@@ -60,58 +55,65 @@ public class PlaylistController {
                         .map(playlistMapper::toDto)
                         .collect(Collectors.toList()));
     }
-    
+
     @GetMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PlaylistWithMediaItemsPayload> getPlaylist( @PathVariable long playlistId) {
+    public ResponseEntity<PlaylistWithMediaItemsPayload> getPlaylist(@PathVariable long playlistId) {
         Playlist playlist = playlistManager.getPlaylist(playlistId);
         return ResponseEntity.ok(
-            playlistWithTracksMapper.toDto(playlist)
-        );
+                playlistWithTracksMapper.toDto(playlist));
     }
 
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MusicPlaylistTrackPayload>> updatePlaylist(
-            @Valid @RequestBody PlaylistActionPayload playlistActionPayload) {
-        Playlist playlist = playlistManager.getPlaylist(playlistActionPayload.getPlaylistId());
+    public ResponseEntity<ServerResponsePayload<String>> updatePlaylist(
+            @Valid @RequestBody PlaylistWithMediaItemsPayload playlistWithMediaItemsPayload, Errors errors) {
+
+        long playlistId = playlistWithMediaItemsPayload.getPlaylistPayload().getId();
+        Playlist playlist = playlistManager.getPlaylist(playlistId);
         Assert.notNull(playlist, "Expecting a playlist");
+
+        String name = StringUtils.trim(playlistWithMediaItemsPayload.getPlaylistPayload().getName());
+        playlist.setName(name);
 
         List<PlaylistMediaItem> playlistMediaItems = new ArrayList<>(playlist.getPlaylistMediaItems());
 
-        long[] playlistMediaItemIds = playlistActionPayload.getPlaylistMediaItemIds();
-        Predicate<PlaylistMediaItem> matchingPredicate = pmi -> Arrays.stream(playlistMediaItemIds)
+        List<Long> selectedPlaylistMediaItemIds = playlistWithMediaItemsPayload.getPlaylistMediaItemPayloads()
+                .stream()
+                .filter(pmi -> pmi.isSelected())
+                .map(pmi -> pmi.getPlaylistMediaItemId())
+                .collect(Collectors.toList());
+
+        PlaylistActionTypePayload playlistActionTypePayload = playlistWithMediaItemsPayload
+                .getPlaylistActionTypePayload();
+
+        Predicate<PlaylistMediaItem> matchingPredicate = pmi -> selectedPlaylistMediaItemIds
+                .stream()
                 .anyMatch(id -> id == pmi.getId());
-        List<PlaylistMediaItem> updatePlaylistMediaItems = playlist.getPlaylistMediaItems()
+        List<PlaylistMediaItem> selectedPlaylistMediaItems = playlist.getPlaylistMediaItems()
                 .stream()
                 .filter(matchingPredicate)
                 .collect(Collectors.toList());
 
-        PlaylistActionTypePayload playlistActionTypePayload = playlistActionPayload.getPlaylistActionTypePayload();
         if (playlistActionTypePayload == PlaylistActionTypePayload.REMOVE_ITEMS) {
-            playlistMediaItems.removeAll(updatePlaylistMediaItems);
+            playlistMediaItems.removeAll(selectedPlaylistMediaItems);
         } else if (playlistActionTypePayload == PlaylistActionTypePayload.MOVE_TOP) {
-            playlistMediaItems.removeAll(updatePlaylistMediaItems);
-            updatePlaylistMediaItems.addAll(playlistMediaItems);
-            playlistMediaItems = updatePlaylistMediaItems;
+            playlistMediaItems.removeAll(selectedPlaylistMediaItems);
+            for (int i = 0; i < selectedPlaylistMediaItems.size(); i++) {
+                playlistMediaItems.add(i, selectedPlaylistMediaItems.get(i));
+            }
         } else if (playlistActionTypePayload == PlaylistActionTypePayload.MOVE_BOTTOM) {
-            playlistMediaItems.removeAll(updatePlaylistMediaItems);
-            playlistMediaItems.addAll(updatePlaylistMediaItems);
+            playlistMediaItems.removeAll(selectedPlaylistMediaItems);
+            playlistMediaItems.addAll(selectedPlaylistMediaItems);
         }
-
-        List<MediaItem> mediaItems = playlistMediaItems
-                .stream()
-                .map(pmi -> pmi.getMediaItem())
-                .collect(Collectors.toList());
-
-        playlistActionManager.replacePlaylist(playlist.getId(), mediaItems);
 
         playlistManager.savePlaylist(playlist);
 
-        List<MusicPlaylistTrackPayload> musicPlaylistTrackPayloads = playlist.getAccessiblePlaylistMediaItems()
-                .stream()
-                .map(pmi -> secureMusicPlaylistTrackMapper.toDto(pmi))
+        List<MediaItem> mediaItems = playlistMediaItems.stream()
+                .map(pmi -> pmi.getMediaItem())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(musicPlaylistTrackPayloads);
+        playlistActionManager.replacePlaylist(playlistId, mediaItems);
+
+        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
     @DeleteMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)

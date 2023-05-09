@@ -3,6 +3,7 @@ package org.mashupmedia.dto.media.playlist;
 
 import org.mashupmedia.constants.MashupMediaType;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,8 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class PlaylistPayload {
     private long id;
-    private String name;
+    @NotEmpty private String name;
     private MashupMediaType mashupMediaType; 
+    private boolean edit;
+    private boolean delete;
 }

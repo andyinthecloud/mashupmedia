@@ -2,7 +2,7 @@ import { Add, PlayArrow } from "@mui/icons-material"
 import { Button, Card, CardContent, CardMedia, IconButton, List, ListItem, ListItemText } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import ImagePopover, { ImagePopoverPayload } from "../../common/components/ImagePopover"
 import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
 import { RootState } from "../../common/redux/store"
@@ -88,15 +88,10 @@ const Album = () => {
         })
     }
 
+    const navigate = useNavigate()
+
     const handleAddAlbum = (albumId: number): void => {
-        addAlbum(albumId, userToken).then((response) => {
-            if (response.ok) {
-                addNotification({
-                    message: "Added to playlist",
-                    notificationType: NotificationType.SUCCESS
-                })
-            }
-        })
+        navigate("/playlists/music/select?albumId=" + albumId)
     }
 
     const handlePlayTrack = (trackId: number): void => {
@@ -114,14 +109,7 @@ const Album = () => {
     }
 
     const handleAddTrack = (trackId: number): void => {
-        addTrack(trackId, userToken).then((response) => {
-            if (response.ok) {
-                addNotification({
-                    message: "Added to playlist",
-                    notificationType: NotificationType.SUCCESS
-                })
-            }
-        })
+        navigate("/playlists/music/select?trackId=" + trackId)
     }
 
 

@@ -165,7 +165,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		if (playlistId == 0) {
 			playlist.setCreatedOn(date);
 			playlist.setCreatedBy(user);
-		}
+		} 
 
 		playlist.setUpdatedBy(user);
 		playlist.setUpdatedOn(date);

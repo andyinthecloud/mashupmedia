@@ -133,6 +133,10 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			return;
 		}
 
+		savedPlaylist.setName(playlist.getName());
+		savedPlaylist.setUpdatedBy(playlist.getUpdatedBy());
+		savedPlaylist.setUpdatedOn(playlist.getUpdatedOn());
+
 		Set<PlaylistMediaItem> savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
 		if (savedPlaylistMediaItems != null && !savedPlaylistMediaItems.isEmpty()) {
 			savedPlaylist.getPlaylistMediaItems().clear();

@@ -8,11 +8,8 @@ public enum ErrorCode {
     LIBRARY_INVALID_PATH("error.library.invalid-path"),
     NOT_LOGGED_IN("error.not-logged-in"),
     GENERAL_ERROR("error.general"),
-    LIBRARIES_UNINITIALISED("error.libraries.uninitialised")
-    
-    ;
-    
-
+    LIBRARIES_UNINITIALISED("error.libraries.uninitialised"),
+    PLAYLIST_NOT_FOUND("error.playlist.not-found");
 
     private String errorCode;
 

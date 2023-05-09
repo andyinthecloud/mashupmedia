@@ -92,7 +92,7 @@ const AudioPlayer = () => {
                 <div>
                     <div style={{ float: "right" }}>
                         <Link
-                            to={"/music/music-playlist/" + props.payload.trackWithArtistPayload?.playlistPayload.id}
+                            to={"/playlists/music/" + props.payload.trackWithArtistPayload?.playlistPayload.id}
                             onClick={() => setExpanded(false)}
                             className="link-no-underlne"
                         >

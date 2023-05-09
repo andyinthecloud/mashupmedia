@@ -1,3 +1,4 @@
+import { number } from "prop-types"
 import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
 import { callMashupMediaApi, callMashupMediaApiNoRedirect, HttpMethod, HttpResponse } from "../../../common/utils/httpUtils"
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
@@ -24,6 +25,9 @@ export type PlaylistPayload = {
     id: number
     name: string
     mashupMediaType: MashupMediaType
+    edit: boolean
+    delete: boolean
+    selected?: boolean
 }
 
 export type MusicPlaylistTrackPayload = {
@@ -38,7 +42,6 @@ export type MusicPlaylistTrackPayload = {
 }
 
 export enum PlaylistActionTypePayload {
-    NONE = "NONE",
     REMOVE_ITEMS = "REMOVE_ITEMS",
     MOVE_TOP = "MOVE_TOP",
     MOVE_BOTTOM = "MOVE_BOTTOM"
@@ -61,6 +64,7 @@ export type PlaylistActionPayload = {
 
 export type PlaylistMediaItemPayload = {
     playlistMediaItemId: number
+    selected?: boolean
 }
 
 export type PlaylistTrackPayload = PlaylistMediaItemPayload & {
@@ -69,6 +73,7 @@ export type PlaylistTrackPayload = PlaylistMediaItemPayload & {
 }
 
 export interface PlaylistWithMediaItemsPayload {
+    playlistActionTypePayload?: PlaylistActionTypePayload
     mashupMediaType: MashupMediaType
     playlistPayload: PlaylistPayload
     playlistMediaItemPayloads: PlaylistMediaItemPayload[]
@@ -78,6 +83,23 @@ export interface PlaylistWithTracksPayload extends PlaylistWithMediaItemsPayload
     playlistMediaItemPayloads: PlaylistTrackPayload[]
 }
 
+export interface MusicQueuePlaylistPayload {
+    playlistId?: number
+    createPlaylistName?: string
+}
+
+export interface MusicQueueAlbumPlaylistPayload extends MusicQueuePlaylistPayload {
+    albumId: number
+}
+
+export interface MusicQueueArtistPlaylistPayload extends MusicQueuePlaylistPayload {
+    artistId: number
+}
+
+export interface MusicQueueTrackPlaylistPayload extends MusicQueuePlaylistPayload {
+    trackId: number
+}
+
 const playlistUrl = "/api/playlist"
 const musicPlaylistUrl = playlistUrl + "/music"
 
@@ -85,16 +107,24 @@ export const playTrack = (trackId: number, userToken?: string): Promise<HttpResp
     return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/play-track", userToken, '' + trackId)
 }
 
-export const addTrack = (trackId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {
-    return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/add-track", userToken, '' + trackId)
+export const addTrack = (musicQueueTrackPlaylistPayload: MusicQueueTrackPlaylistPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {
+    return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/add-track", userToken, JSON.stringify(musicQueueTrackPlaylistPayload))
 }
 
 export const playAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {
     return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/play-album", userToken, '' + albumId)
 }
 
-export const addAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {
-    return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/add-album", userToken, '' + albumId)
+export const addAlbum = (musicQueueAlbumPlaylistPayload: MusicQueueAlbumPlaylistPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {
+    return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/add-album", userToken, JSON.stringify(musicQueueAlbumPlaylistPayload))
+}
+
+export const playArtist = (artistId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {
+    return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/play-artist", userToken, '' + artistId)
+}
+
+export const addArtist = (musicQueueArtistPlaylistPayload: MusicQueueArtistPlaylistPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {
+    return callMashupMediaApi<ServerResponsePayload<EncoderStatusType>>(HttpMethod.PUT, musicPlaylistUrl + "/add-artist", userToken, JSON.stringify(musicQueueArtistPlaylistPayload))
 }
 
 export const navigateTrack = (navigatePlaylistPayload: NavigatePlaylistPayload, userToken?: string): Promise<HttpResponse<SecureMediaPayload<MusicPlaylistTrackPayload>>> => {
@@ -122,6 +152,3 @@ export const getPlaylist = (playlistId: number, userToken: string | undefined): 
 //     return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.POST, playlistUrl, userToken, JSON.stringify(playlistPayload))
 // }
 
-// export const deletePlaylist = (playlistId: number, userToken: string | undefined): Promise<HttpResponse<MusicPlaylistTrackPayload[]>> => {
-//     return callMashupMediaApiNoRedirect<MusicPlaylistTrackPayload[]> (HttpMethod.DELETE, `${playlistUrl}/${playlistId}`, userToken)
-// }
