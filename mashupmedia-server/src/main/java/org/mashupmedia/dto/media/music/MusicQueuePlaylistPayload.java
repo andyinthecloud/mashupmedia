@@ -1,4 +1,4 @@
-package org.mashupmedia.dto.media.playlist;
+package org.mashupmedia.dto.media.music;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +9,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class PlaylistMediaItemPayload {
-    private long playlistMediaItemId;
-    private boolean selected;
-
+public abstract class MusicQueuePlaylistPayload {
+    private Long playlistId;
+    private String createPlaylistName;
 }

@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 public class PlaylistWithMediaItemsPayload {
+    private PlaylistActionTypePayload playlistActionTypePayload;
     private PlaylistPayload playlistPayload;
     private List<PlaylistMediaItemPayload> playlistMediaItemPayloads;
 }

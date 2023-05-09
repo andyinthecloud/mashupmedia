@@ -13,6 +13,11 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jaudiotagger.audio.AudioFile;
@@ -70,7 +75,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	private final MusicAlbumRepository musicAlbumRepository;
 	private final MediaRepository mediaRepository;
 
-
 	@PostConstruct
 	private void postConstruct() {
 		Logger[] loggers = new Logger[] { Logger.getLogger("org.jaudiotagger") };
@@ -80,7 +84,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 
 	}
-
 
 	@Override
 	public void deleteObsoleteTracks(long libraryId, Date date) {
@@ -172,8 +175,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			// continue;
 			// }
 
-			
-			MediaEncoding mediaEncoding = MediaItemHelper.createMediaEncoding(track.getFileName());			
+			MediaEncoding mediaEncoding = MediaItemHelper.createMediaEncoding(track.getFileName());
 			Set<MediaEncoding> mediaEncodings = track.getMediaEncodings();
 			if (mediaEncodings == null) {
 				mediaEncodings = new HashSet<MediaEncoding>();
@@ -423,7 +425,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		Tag tag = null;
 		long bitRate = 0;
 		String format = FileHelper.getFileExtension(fileName);
-		int trackLength = 0;
+		long trackLength = getTrackLength(file);
 		String tagTrackTitle = null;
 		int trackNumber = 0;
 		String tagArtistName = null;
@@ -436,11 +438,13 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			AudioHeader audioHeader = audioFile.getAudioHeader();
 			bitRate = audioHeader.getBitRateAsNumber();
 			format = audioHeader.getFormat();
-			trackLength = audioHeader.getTrackLength();
+			if (trackLength == 0) {
+				trackLength = audioHeader.getTrackLength();
+			}
 			tag = audioFile.getTag();
 
 		} catch (Exception e) {
-			log.info("prepare track", e);
+			log.info("Error reading audio file", e);
 		}
 
 		if (tag != null) {
@@ -527,6 +531,20 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return track;
 	}
 
+	private long getTrackLength(File file) {
+		AudioInputStream audioInputStream;
+		try {
+			audioInputStream = AudioSystem.getAudioInputStream(file);
+			AudioFormat audioFormat = audioInputStream.getFormat();
+			long frames = audioInputStream.getFrameLength();
+			double durationInSeconds = frames / audioFormat.getFrameRate();
+			return Math.round(durationInSeconds);
+		} catch (UnsupportedAudioFileException | IOException e) {
+			log.error("Error reading track length using AudioSystem", e);
+			return 0;
+		}
+	}
+
 	private int processTrackNumber(String fileName, int musicFileCount) {
 		Pattern pattern = Pattern.compile("\\d+");
 		Matcher matcher = pattern.matcher(fileName);
@@ -579,21 +597,22 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	// @Override
 	// public void deleteTracks(List<Track> tracks) {
 
-	// 	for (Track track : tracks) {
-	// 		long trackId = track.getId();
-	// 		processManager.killProcesses(trackId);
-	// 		List<PlaylistMediaItem> playlistMediaItems = playlistMediaItemRepository.findByMediaItemId(trackId);
-	// 		playlistMediaItemRepository.deleteAll(playlistMediaItems);
-	// 		mediaRepository.delete(track);
-	// 	}
+	// for (Track track : tracks) {
+	// long trackId = track.getId();
+	// processManager.killProcesses(trackId);
+	// List<PlaylistMediaItem> playlistMediaItems =
+	// playlistMediaItemRepository.findByMediaItemId(trackId);
+	// playlistMediaItemRepository.deleteAll(playlistMediaItems);
+	// mediaRepository.delete(track);
+	// }
 
-	// 	// playlistDao.deletePlaylistMediaItems(tracks);
-	// 	// musicDao.deleteTracks(tracks);
+	// // playlistDao.deletePlaylistMediaItems(tracks);
+	// // musicDao.deleteTracks(tracks);
 
-	// 	log.info("Deleted " + tracks.size() + " out of date tracks.");
+	// log.info("Deleted " + tracks.size() + " out of date tracks.");
 
-	// 	cleanUp();
-	// 	log.info("Cleaned library.");
+	// cleanUp();
+	// log.info("Cleaned library.");
 	// }
 
 	private Artist prepareArtist(Artist artist) {

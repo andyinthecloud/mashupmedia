@@ -2,26 +2,21 @@ import { Equalizer, PlayArrow } from "@mui/icons-material"
 import { Button, Checkbox, FormControl, IconButton, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { Link, useParams } from "react-router-dom"
-import { RootState } from "../../common/redux/store"
-import { requestPlaylistTrackId } from "./features/playMusicSlice"
-import { PlaylistActionPayload, PlaylistActionTypePayload, PlaylistTrackPayload, PlaylistWithMediaItemsPayload, PlaylistWithTracksPayload, getPlaylist } from "./rest/playlistActionCalls"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import { NotificationType, addNotification } from "../../../common/notification/notificationSlice"
+import { RootState } from "../../../common/redux/store"
+import { deletePlaylist, updatePlaylist } from "../../playlist/rest/playlistCalls"
 import "./MusicPlaylist.css"
+import { PlaylistActionTypePayload, PlaylistTrackPayload, PlaylistWithTracksPayload, getPlaylist } from "../../music/rest/playlistActionCalls"
+import { requestPlaylistTrackId } from "../../music/features/playMusicSlice"
+
 
 const MusicPlaylist = () => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const playlistTrackId = useSelector((state: RootState) => state.playMusic.currentTrackId)
-
     const { playlistId } = useParams()
-
     const [props, setProps] = useState<PlaylistWithTracksPayload>()
-    const [playlistActionPayload, setPlaylistActionPayload] = useState<PlaylistActionPayload>({
-        playlistId: 0,
-        playlistActionTypePayload: PlaylistActionTypePayload.NONE,
-        playlistMediaItemIds: []
-    })
-
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -29,20 +24,16 @@ const MusicPlaylist = () => {
             return
         }
 
-        setPlaylistActionPayload({
-            ...playlistActionPayload,
-            playlistId: +playlistId
-        })
-
         getPlaylist(+playlistId, userToken).then(response => {
             if (response.ok) {
                 const parsedBody = response.parsedBody
                 if (parsedBody) {
-                    setProps({
+                    setProps(previous => ({
+                        ...previous,
                         mashupMediaType: parsedBody.mashupMediaType,
                         playlistPayload: parsedBody.playlistPayload,
                         playlistMediaItemPayloads: parsedBody.playlistMediaItemPayloads as (PlaylistTrackPayload[])
-                    })
+                    }))
                 }
             }
         })
@@ -55,18 +46,18 @@ const MusicPlaylist = () => {
 
 
     const handleToggleTrack = (playlistMediaItemId: number) => {
-        const index = playlistActionPayload.playlistMediaItemIds.indexOf(playlistMediaItemId)
-        let playlistMediaItemIds = playlistActionPayload.playlistMediaItemIds
-        if (index >= 0) {
-            playlistMediaItemIds = playlistActionPayload.playlistMediaItemIds.splice(index)
-        } else {
-            playlistMediaItemIds.push(playlistMediaItemId)
+        if (!props) {
+            return
         }
 
-        setPlaylistActionPayload({
-            ...playlistActionPayload,
-            playlistMediaItemIds
-        })
+        const playlistTrackPayload = props?.playlistMediaItemPayloads
+            .find(pmi => pmi.playlistMediaItemId === playlistMediaItemId)
+
+        if (!playlistTrackPayload) {
+            return
+        }
+
+        playlistTrackPayload.selected = playlistTrackPayload.selected ? false : true
 
     }
 
@@ -74,38 +65,52 @@ const MusicPlaylist = () => {
 
         console.log("handleChangeAction: action", action)
 
+        if (!props) {
+            return
+        }
+
         const playlistActionTypePayload = Object.values(PlaylistActionTypePayload).find(
             value => value === action
-        );
+        )
 
-        setPlaylistActionPayload({
-            ...playlistActionPayload,
-            playlistActionTypePayload: playlistActionTypePayload || PlaylistActionTypePayload.NONE
+        setProps({
+            ...props,
+            playlistActionTypePayload
         })
 
     }
 
+    const navigate = useNavigate()
+
     const handleSubmitAction = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        console.log("handleSubmitAction", playlistActionPayload)
-
-        if (!playlistActionPayload.playlistActionTypePayload || playlistActionPayload.playlistActionTypePayload === PlaylistActionTypePayload.NONE) {
+        if (!props) {
             return
         }
 
-        if (playlistActionPayload.playlistMediaItemIds.length === 0) {
-            return
-        }
-
-        // updatePlaylist(playlistActionPayload, userToken).then(response => {
-        //     if (response.ok) {
-        //         const parsedBody = response.parsedBody
-        //         if (parsedBody) {
-        //             setProps(parsedBody)
-        //         }
-        //     }
-        // })
+        updatePlaylist(props, userToken).then(response => {
+            if (response.ok) {
+                if (response.ok) {
+                    dispatch(
+                        addNotification({
+                            message: 'Playlist saved.',
+                            notificationType: NotificationType.SUCCESS
+                        })
+                    )
+                    navigate("/playlists/all")
+                }
+            }else {
+                response.parsedBody?.errorPayload.objectErrors.map(function (serverError) {
+                    dispatch(
+                        addNotification({
+                            message: serverError.defaultMessage,
+                            notificationType: NotificationType.ERROR
+                        })
+                    )
+                })
+            }
+        })
     }
 
     const handlePlayTrack = (playlistItemId: number): void => {
@@ -116,9 +121,35 @@ const MusicPlaylist = () => {
         }
     }
 
+    const handleChangeName = (name: string): void => {
+        if (!props) {
+            return
+        }
+
+        setProps({
+            ...props,
+            playlistPayload: ({
+                ...props.playlistPayload,
+                name
+            })
+        })
+    }
+
+    const handleDelete = (): void => {
+        
+        if (!props?.playlistPayload.id) {
+            return
+        }
+
+        deletePlaylist(props.playlistPayload.id, userToken).then
+    }
+
     return (
         <div id="music-playlist">
-            <h1>{props?.playlistPayload.name}</h1>
+            <h1
+                contentEditable={props?.playlistPayload.edit}
+                suppressContentEditableWarning={true}
+                onBlur={e => handleChangeName(e.target.innerText)}>{props?.playlistPayload.name}</h1>
 
             <form onSubmit={handleSubmitAction}>
 
@@ -128,10 +159,10 @@ const MusicPlaylist = () => {
                         labelId="playlist-action-label"
                         id="playlist-action"
                         label="Action"
-                        value={playlistActionPayload.playlistActionTypePayload}
+                        value={props?.playlistActionTypePayload || ""}
                         onChange={e => handleChangeAction(e.target.value)}
                     >
-                        <MenuItem value={PlaylistActionTypePayload.NONE}>Select action</MenuItem>
+                        <MenuItem value=""></MenuItem>
                         <MenuItem value={PlaylistActionTypePayload.REMOVE_ITEMS}>Remove items</MenuItem>
                         <MenuItem value={PlaylistActionTypePayload.MOVE_TOP}>Move to top of playlist</MenuItem>
                         <MenuItem value={PlaylistActionTypePayload.MOVE_BOTTOM}>Move to bottom of playlist</MenuItem>
@@ -144,8 +175,20 @@ const MusicPlaylist = () => {
                     type="submit"
                     sx={{ margin: 1 }}
                 >
-                    OK
+                    Save
                 </Button>
+
+                {props?.playlistPayload.delete &&
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        type="button"
+                        onClick={handleDelete}
+                        sx={{ margin: 1 }}
+                    >
+                        Delete
+                    </Button>
+                }
 
                 <List>
                     {props?.playlistMediaItemPayloads.map(function (track, index) {
@@ -190,8 +233,11 @@ const MusicPlaylist = () => {
                                         >
                                             {track.artistPayload.name}
                                         </Link>
+                                        <span className="block small">
+                                            {track.trackPayload.minutes} min {track.trackPayload.seconds} sec
+                                        </span>
                                         {!track.trackPayload.encodedForWeb &&
-                                            <span className="not-encoded">
+                                            <span className="block not-encoded">
                                                 <span>Incompatible format</span>
                                             </span>
                                         }
@@ -202,13 +248,10 @@ const MusicPlaylist = () => {
                                         fontWeight: "bold"
                                     }}
                                 />
-
-
                             </ListItem>
                         )
                     })}
                 </List>
-
             </form>
         </div>
     )

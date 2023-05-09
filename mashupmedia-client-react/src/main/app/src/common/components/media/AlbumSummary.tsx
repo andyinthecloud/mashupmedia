@@ -52,16 +52,7 @@ const AlbumSummary = (payload: SecureMediaPayload<AlbumWithArtistPayload>) => {
     }
 
     const handleAdd = (albumId: number): void => {
-        addAlbum(albumId, userToken).then((response) => {
-            if (response.ok) {
-                dispatch(
-                    addNotification({
-                        message: "Added to playlist",
-                        notificationType: NotificationType.SUCCESS
-                    })
-                )
-            }
-        })
+        navigate("/playlists/music/select?albumId=" + albumId)
     }
 
     return (

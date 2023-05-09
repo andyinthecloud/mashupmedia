@@ -15,9 +15,10 @@ import Album from "./media/music/Album";
 import Albums from './media/music/Albums';
 import Artist from './media/music/Artist';
 import Artists from './media/music/Artists';
-import MusicPlaylist from "./media/music/MusicPlaylist";
 import Encode from "./configuration/Encode";
 import Playlists from "./media/playlist/Playlists";
+import MusicPlaylist from "./media/playlist/music/MusicPlaylist";
+import SelectMusicPlaylist from "./media/playlist/music/SelectMusicPlaylist";
 
 
 export const MashupRoutes = () => {
@@ -131,11 +132,32 @@ export const MashupRoutes = () => {
 
             </Route>
 
-            <Route path="/playlists" element={
-                <RequireAuthenication>
-                    <Playlists />
-                </RequireAuthenication>
-            } />
+
+            <Route path="/playlists">
+
+                <Route path="all" element={
+                    <RequireAuthenication>
+                        <Playlists />
+                    </RequireAuthenication>
+                } />
+
+                <Route path="music">
+                    <Route path=":playlistId" element={
+                        <RequireAuthenication>
+                            <MusicPlaylist />
+                        </RequireAuthenication>
+                    } />
+
+                    <Route path="select" element={
+                        <RequireAuthenication>
+                            <SelectMusicPlaylist />
+                        </RequireAuthenication>
+                    } />
+
+                </Route>
+
+            </Route>
+
 
 
             <Route path="/music">
@@ -167,13 +189,7 @@ export const MashupRoutes = () => {
                     } />
                 </Route>
 
-                <Route path="music-playlist">
-                    <Route path=":playlistId" element={
-                        <RequireAuthenication>
-                            <MusicPlaylist />
-                        </RequireAuthenication>
-                    } />
-                </Route>
+
 
             </Route>
         </Routes>

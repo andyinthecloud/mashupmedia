@@ -12,6 +12,7 @@ export type ServerError = {
     name: string
     field?: string
     defaultMessage: string
+    code?: string
 }
 
 export type ServerResponsePayload<T> = {
@@ -51,3 +52,11 @@ export const toFieldValidation = (serverError: ServerError): FieldValidation => 
     name: serverError.field || serverError.name,
     message: serverError.defaultMessage
 })
+
+export const getFirstObjectErrorDefaultMessage = (serverErrors?: ServerError[]): string | null => {
+    if (!serverErrors || serverErrors.length === 0) {
+        return null
+    }
+
+    return serverErrors[0].defaultMessage || null
+}
