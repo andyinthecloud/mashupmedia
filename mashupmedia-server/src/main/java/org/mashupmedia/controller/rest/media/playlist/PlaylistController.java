@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dto.media.playlist.PlaylistActionTypePayload;
 import org.mashupmedia.dto.media.playlist.PlaylistPayload;
 import org.mashupmedia.dto.media.playlist.PlaylistWithMediaItemsPayload;
+import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.playlist.PlaylistMapper;
 import org.mashupmedia.mapper.playlist.PlaylistWithTracksMapper;
@@ -20,6 +20,7 @@ import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.service.playlist.PlaylistActionManager;
 import org.mashupmedia.util.AdminHelper;
+import org.mashupmedia.util.JsonHelper;
 import org.mashupmedia.util.ValidationUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -63,16 +64,26 @@ public class PlaylistController {
                 playlistWithTracksMapper.toDto(playlist));
     }
 
+    @PutMapping(value = "/load/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<NameValuePayload<String>> loadPlaylist(@PathVariable long playlistId) {
+        Playlist playlist = playlistManager.getPlaylist(playlistId);
+        playlistManager.savePlaylist(playlist);
+        return ResponseEntity.ok(JsonHelper.createDefaultNameValueSuccessMessage());
+    }
+
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServerResponsePayload<String>> updatePlaylist(
             @Valid @RequestBody PlaylistWithMediaItemsPayload playlistWithMediaItemsPayload, Errors errors) {
 
-        long playlistId = playlistWithMediaItemsPayload.getPlaylistPayload().getId();
-        Playlist playlist = playlistManager.getPlaylist(playlistId);
-        Assert.notNull(playlist, "Expecting a playlist");
+        Playlist playlist = playlistMapper.toDomain(playlistWithMediaItemsPayload.getPlaylistPayload());
 
-        String name = StringUtils.trim(playlistWithMediaItemsPayload.getPlaylistPayload().getName());
-        playlist.setName(name);
+        long playlistId = playlist.getId();
+        if (playlistId > 0) {
+            Playlist savedPlaylist = playlistManager.getPlaylist(playlistId);
+            playlist.setPlaylistMediaItems(savedPlaylist.getPlaylistMediaItems());
+        }
+
+        playlistManager.savePlaylist(playlist);
 
         List<PlaylistMediaItem> playlistMediaItems = new ArrayList<>(playlist.getPlaylistMediaItems());
 
@@ -105,19 +116,17 @@ public class PlaylistController {
             playlistMediaItems.addAll(selectedPlaylistMediaItems);
         }
 
-        playlistManager.savePlaylist(playlist);
-
         List<MediaItem> mediaItems = playlistMediaItems.stream()
                 .map(pmi -> pmi.getMediaItem())
                 .collect(Collectors.toList());
 
-        playlistActionManager.replacePlaylist(playlistId, mediaItems);
+        playlistActionManager.replacePlaylist(playlist.getId(), mediaItems);
 
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
     @DeleteMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<String>> deletePlaylist(@PathVariable long playlistId, Errors errors) {
+    public ResponseEntity<NameValuePayload<String>> deletePlaylist(@PathVariable long playlistId) {
         User user = AdminHelper.getLoggedInUser();
         Assert.notNull(user, "User should not be null");
 
@@ -127,7 +136,7 @@ public class PlaylistController {
         }
 
         playlistManager.deletePlaylist(playlistId);
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        return ResponseEntity.ok(JsonHelper.createDefaultNameValueSuccessMessage());
     }
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -1,20 +1,19 @@
 import { Equalizer, PlayArrow } from "@mui/icons-material"
-import { Button, Checkbox, FormControl, IconButton, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material"
-import { useEffect, useState } from "react"
+import { Button, Checkbox, FormControl, FormControlLabel, IconButton, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, TextField } from "@mui/material"
+import { ChangeEvent, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { NotificationType, addNotification } from "../../../common/notification/notificationSlice"
 import { RootState } from "../../../common/redux/store"
+import { loadTrack } from "../../music/features/playMusicSlice"
+import { PlaylistActionTypePayload, PlaylistTrackPayload, PlaylistWithTracksPayload, getPlaylist } from "../../music/rest/playlistActionCalls"
 import { deletePlaylist, updatePlaylist } from "../../playlist/rest/playlistCalls"
 import "./MusicPlaylist.css"
-import { PlaylistActionTypePayload, PlaylistTrackPayload, PlaylistWithTracksPayload, getPlaylist } from "../../music/rest/playlistActionCalls"
-import { requestPlaylistTrackId } from "../../music/features/playMusicSlice"
-
 
 const MusicPlaylist = () => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
-    const playlistTrackId = useSelector((state: RootState) => state.playMusic.currentTrackId)
+    const playMusic = useSelector((state: RootState) => state.playMusic)
     const { playlistId } = useParams()
     const [props, setProps] = useState<PlaylistWithTracksPayload>()
     const dispatch = useDispatch()
@@ -38,12 +37,6 @@ const MusicPlaylist = () => {
             }
         })
     }, [userToken, playlistId])
-
-
-    useEffect(() => {
-        console.log("playlistTrackId", playlistTrackId)
-    }, [playlistTrackId])
-
 
     const handleToggleTrack = (playlistMediaItemId: number) => {
         if (!props) {
@@ -100,7 +93,7 @@ const MusicPlaylist = () => {
                     )
                     navigate("/playlists/all")
                 }
-            }else {
+            } else {
                 response.parsedBody?.errorPayload.objectErrors.map(function (serverError) {
                     dispatch(
                         addNotification({
@@ -113,10 +106,13 @@ const MusicPlaylist = () => {
         })
     }
 
-    const handlePlayTrack = (playlistItemId: number): void => {
-        if (playlistItemId) {
+    const handlePlayTrack = (loadPlaylistMediaItemId: number): void => {
+        if (loadPlaylistMediaItemId) {
             dispatch(
-                requestPlaylistTrackId(playlistItemId)
+                loadTrack({ 
+                    loadPlaylistId: props?.playlistPayload.id,    
+                    loadPlaylistMediaItemId 
+                })
             )
         }
     }
@@ -136,24 +132,216 @@ const MusicPlaylist = () => {
     }
 
     const handleDelete = (): void => {
-        
+
         if (!props?.playlistPayload.id) {
             return
         }
 
-        deletePlaylist(props.playlistPayload.id, userToken).then
+        deletePlaylist(props.playlistPayload.id, userToken).then(response => {
+            if (response.ok) {
+                dispatch(
+                    addNotification({
+                        message: "Playlist deleted",
+                        notificationType: NotificationType.SUCCESS
+                    })
+                )
+                navigate("/playlists/all")
+            } else {
+                dispatch(
+                    addNotification({
+                        message: "You do not have permission to delete this playlist.",
+                        notificationType: NotificationType.ERROR
+                    })
+                )
+            }
+
+        })
+    }
+
+    const handleCancel = (): void => {
+        navigate("/playlists/all")
+    }
+
+    const handleChangePrivate = (e: ChangeEvent<HTMLInputElement>): void => {
+        if (!props) {
+            return
+        }
+
+        setProps({
+            ...props,
+            playlistPayload: {
+                ...props?.playlistPayload,
+                privatePlaylist: e.target.checked
+            }
+        })
+    }
+
+    const handleToggleAllTracks = (e: ChangeEvent<HTMLInputElement>) => {
+        if (!props) {
+            return
+        }
+
+        console.log("handleToggleAllTracks")
+
+        const playlistMediaItemPayloads = props.playlistMediaItemPayloads
+        playlistMediaItemPayloads.forEach(pmi => {
+            pmi.selected = e.target.checked
+        })
+
+        setProps({
+            ...props,
+            playlistMediaItemPayloads
+        })
+    }
+
+    const handlePlayPlaylist = () => {
+        console.log("handlePlayPlaylist", props)
+        if (!props) {
+            return
+        }
+
+        dispatch(
+            addNotification({
+                message: "Loaded playlist.",
+                notificationType: NotificationType.SUCCESS
+            })
+        )
+
+        dispatch(            
+            loadTrack({
+                loadPlaylistId: props.playlistPayload.id,
+            })
+        )
+    }
+
+    const isTrackPlaying = (playlistMediaItemId: number, index: number): boolean => {
+        if (!playMusic.loadedPlaylistMediaItemId) {
+            return index === 0
+        }
+
+        return playlistMediaItemId == playMusic.loadedPlaylistMediaItemId
+
     }
 
     return (
-        <div id="music-playlist">
-            <h1
-                contentEditable={props?.playlistPayload.edit}
-                suppressContentEditableWarning={true}
-                onBlur={e => handleChangeName(e.target.innerText)}>{props?.playlistPayload.name}</h1>
+        <form id="music-playlist" onSubmit={handleSubmitAction} >
 
-            <form onSubmit={handleSubmitAction}>
+            {playlistId &&
+                <h1
+                    contentEditable={props?.playlistPayload.edit}
+                    suppressContentEditableWarning={true}
+                    onBlur={e => handleChangeName(e.target.innerText)}>{props?.playlistPayload.name}</h1>
 
-                <FormControl sx={{ width: "10em" }}>
+            }
+
+            {!playlistId &&
+                <div className="new-line">
+                    <TextField
+                        name="playlistName"
+                        label="Playlist name"
+                        value={props?.playlistPayload.name || ""}
+                        onChange={e => handleChangeName(e.target.value)}
+                        fullWidth={true}
+                    />
+                </div>
+            }
+
+            <List>
+                <ListItem
+                    secondaryAction={
+
+                        <Button
+                            variant="contained"
+                            startIcon={<PlayArrow />}
+                            onClick={handlePlayPlaylist}>
+                            Play
+                        </Button>
+                    }>
+                    <ListItemIcon>
+                        <Checkbox
+                            edge="start"
+                            tabIndex={-1}
+                            disableRipple
+                            onChange={handleToggleAllTracks}
+                        />
+                    </ListItemIcon>
+                </ListItem>
+
+                {props?.playlistMediaItemPayloads.map(function (track, index) {
+                    return (
+                        <ListItem
+                            key={track.playlistMediaItemId}
+                            secondaryAction={
+                                isTrackPlaying(track.playlistMediaItemId, index)
+                                    ?
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="playing"
+                                        onClick={() => handlePlayTrack(track.playlistMediaItemId)}>
+                                        <Equalizer
+                                            color="primary"
+                                        />
+                                    </IconButton>
+                                    :
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="play"
+                                        onClick={() => handlePlayTrack(track.playlistMediaItemId)}>
+                                        <PlayArrow
+                                            color="primary"
+                                        />
+                                    </IconButton>
+                            }
+                        >
+
+                            <ListItemIcon>
+                                <Checkbox
+                                    edge="start"
+                                    tabIndex={-1}
+                                    disableRipple
+                                    value={track.playlistMediaItemId}
+                                    checked={track.selected || false}
+                                    onChange={(e) => handleToggleTrack(+e.target.value)}
+                                />
+                            </ListItemIcon>
+
+                            <ListItemText
+                                primary={`${index + 1} - ${track.trackPayload.name}`}
+                                secondary={<span>
+                                    <Link
+                                        to={"/music/artist/" + track.artistPayload.id}
+                                        className="link-no-underlne"
+                                    >
+                                        {track.artistPayload.name}
+                                    </Link>
+                                    <span className="block small">
+                                        {track.trackPayload.minutes} min {track.trackPayload.seconds} sec
+                                    </span>
+                                    {!track.trackPayload.encodedForWeb &&
+                                        <span className="block not-encoded">
+                                            <span>Incompatible format</span>
+                                        </span>
+                                    }
+                                </span>
+                                }
+                                sx={{
+                                    fontSize: "medium",
+                                    fontWeight: "bold"
+                                }}
+                            />
+                        </ListItem>
+                    )
+                })}
+            </List>
+
+
+            {playlistId &&
+                <FormControl
+                    sx={{
+                        width: "10em",
+                        marginTop: "1em",
+                        marginBottom: "1em"
+                    }}>
                     <InputLabel id="playlist-action-label">Action</InputLabel>
                     <Select
                         labelId="playlist-action-label"
@@ -164,16 +352,31 @@ const MusicPlaylist = () => {
                     >
                         <MenuItem value=""></MenuItem>
                         <MenuItem value={PlaylistActionTypePayload.REMOVE_ITEMS}>Remove items</MenuItem>
-                        <MenuItem value={PlaylistActionTypePayload.MOVE_TOP}>Move to top of playlist</MenuItem>
-                        <MenuItem value={PlaylistActionTypePayload.MOVE_BOTTOM}>Move to bottom of playlist</MenuItem>
+                        <MenuItem value={PlaylistActionTypePayload.MOVE_TOP}>Move to top</MenuItem>
+                        <MenuItem value={PlaylistActionTypePayload.MOVE_BOTTOM}>Move to bottom</MenuItem>
                     </Select>
                 </FormControl>
+            }
 
+            <div className="new-line">
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={props?.playlistPayload.privatePlaylist || false}
+                            onChange={handleChangePrivate}
+                        />}
+                    label="Private playlist" />
+            </div>
+
+            <div className="new-line right">
                 <Button
                     variant="contained"
                     color="primary"
                     type="submit"
-                    sx={{ margin: 1 }}
+                    sx={{
+                        margin: 1,
+                        textAlign: "right"
+                    }}
                 >
                     Save
                 </Button>
@@ -181,7 +384,7 @@ const MusicPlaylist = () => {
                 {props?.playlistPayload.delete &&
                     <Button
                         variant="contained"
-                        color="primary"
+                        color="secondary"
                         type="button"
                         onClick={handleDelete}
                         sx={{ margin: 1 }}
@@ -190,70 +393,18 @@ const MusicPlaylist = () => {
                     </Button>
                 }
 
-                <List>
-                    {props?.playlistMediaItemPayloads.map(function (track, index) {
-                        return (
-                            <ListItem
-                                key={track.playlistMediaItemId}
-                                secondaryAction={
-                                    playlistTrackId === track.playlistMediaItemId
-                                        ?
-                                        <IconButton
-                                            edge="end"
-                                            aria-label="playing"
-                                            onClick={() => handlePlayTrack(track.playlistMediaItemId)}>
-                                            <Equalizer />
-                                        </IconButton>
-                                        :
-                                        <IconButton
-                                            edge="end"
-                                            aria-label="play"
-                                            onClick={() => handlePlayTrack(track.playlistMediaItemId)}>
-                                            <PlayArrow />
-                                        </IconButton>
-                                }
-                            >
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    type="button"
+                    onClick={handleCancel}
+                    sx={{ margin: 1 }}
+                >
+                    Cancel
+                </Button>
 
-                                <ListItemIcon>
-                                    <Checkbox
-                                        edge="start"
-                                        tabIndex={-1}
-                                        disableRipple
-                                        value={track.playlistMediaItemId}
-                                        onChange={(e) => handleToggleTrack(+e.target.value)}
-                                    />
-                                </ListItemIcon>
-
-                                <ListItemText
-                                    primary={`${index + 1} - ${track.trackPayload.name}`}
-                                    secondary={<span>
-                                        <Link
-                                            to={"/music/artist/" + track.artistPayload.id}
-                                            className="link-no-underlne"
-                                        >
-                                            {track.artistPayload.name}
-                                        </Link>
-                                        <span className="block small">
-                                            {track.trackPayload.minutes} min {track.trackPayload.seconds} sec
-                                        </span>
-                                        {!track.trackPayload.encodedForWeb &&
-                                            <span className="block not-encoded">
-                                                <span>Incompatible format</span>
-                                            </span>
-                                        }
-                                    </span>
-                                    }
-                                    sx={{
-                                        fontSize: "medium",
-                                        fontWeight: "bold"
-                                    }}
-                                />
-                            </ListItem>
-                        )
-                    })}
-                </List>
-            </form>
-        </div>
+            </div>
+        </form>
     )
 }
 

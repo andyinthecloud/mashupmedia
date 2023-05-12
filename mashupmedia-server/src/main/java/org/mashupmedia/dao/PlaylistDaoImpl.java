@@ -136,6 +136,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		savedPlaylist.setName(playlist.getName());
 		savedPlaylist.setUpdatedBy(playlist.getUpdatedBy());
 		savedPlaylist.setUpdatedOn(playlist.getUpdatedOn());
+		savedPlaylist.setPrivatePlaylist(playlist.isPrivatePlaylist());
 
 		Set<PlaylistMediaItem> savedPlaylistMediaItems = savedPlaylist.getPlaylistMediaItems();
 		if (savedPlaylistMediaItems != null && !savedPlaylistMediaItems.isEmpty()) {
@@ -193,14 +194,6 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		}
 
 		return newPlaylistMediaItems;
-	}
-
-	@Override
-	public void deletePlaylist(Playlist playlist) {
-		entityManager
-				.createQuery("delete PlaylistMediaItem pmi where pmi.playlist.id = :playlistId")
-				.setParameter("playlistId", playlist.getId()).executeUpdate();
-		entityManager.remove(playlist);
 	}
 
 	@Override

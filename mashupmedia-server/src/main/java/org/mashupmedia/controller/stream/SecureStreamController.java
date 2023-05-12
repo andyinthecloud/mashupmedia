@@ -83,6 +83,7 @@ public class SecureStreamController {
                 }
 
                 log.info("Streaming: playing track: " + track.getTitle());
+                boolean isStreamingTrack = false;
 
                 endTrackDateTime = endTrackDateTime.plusSeconds(track.getTrackLength());
 
@@ -93,6 +94,7 @@ public class SecureStreamController {
                 try {
                     File mediaFile = track.getStreamingFile();
                     if (mediaFile.isFile()) {
+                        isStreamingTrack = true;
                         fileInputStream = new FileInputStream(track.getStreamingFile());
                         IOUtils.copy(fileInputStream, response.getOutputStream());
                     } else {
@@ -113,10 +115,11 @@ public class SecureStreamController {
                     continue;
                 } finally {
                     IOUtils.closeQuietly(fileInputStream);
+                    isStreamingTrack = false;
                 }
 
                 int sleepCount = 0;
-                while (LocalDateTime.now().isBefore(endTrackDateTime)) {
+                while (LocalDateTime.now().isBefore(endTrackDateTime) || isStreamingTrack) {
                     try {
                         sleepCount++;
                         if (sleepCount % 10 == 0) {

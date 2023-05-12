@@ -7,7 +7,7 @@ import ImagePopover, { ImagePopoverPayload } from "../../common/components/Image
 import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
 import { RootState } from "../../common/redux/store"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
-import { play } from "./features/playMusicSlice"
+import { loadTrack } from "./features/playMusicSlice"
 import { albumArtImageUrl, AlbumWithTracksAndArtistPayload, getAlbum, ImageType } from "./rest/musicCalls"
 import { addAlbum, addTrack, playAlbum, playTrack } from "./rest/playlistActionCalls"
 import './Album.css';
@@ -78,7 +78,7 @@ const Album = () => {
         playAlbum(albumId, userToken).then((response) => {
             if (response.ok) {
                 dispatch(
-                    play()
+                    loadTrack({})
                 )
                 addNotification({
                     message: "Replaced playlist",
@@ -98,7 +98,7 @@ const Album = () => {
         playTrack(trackId, userToken).then((response) => {
             if (response.ok) {
                 dispatch(
-                    play()
+                    loadTrack({})
                 )
                 addNotification({
                     message: "Replaced playlist",

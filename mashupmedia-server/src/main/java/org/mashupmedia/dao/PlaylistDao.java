@@ -19,8 +19,6 @@ public interface PlaylistDao {
 
 	public List<Playlist> getPlaylistsForCurrentUser(long userId, MashupMediaType mashupMediaType);
 
-	public void deletePlaylist(Playlist playlist);
-
 	public Playlist getDefaultPlaylistForUser(long userId, MashupMediaType mashupMediaType);
 
 	public void deletePlaylistMediaItem(MediaItem mediaItem);

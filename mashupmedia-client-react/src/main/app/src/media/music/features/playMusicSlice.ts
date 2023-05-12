@@ -1,10 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { timestamp } from "../../../common/utils/httpUtils";
 
+
+export type LoadPlayMusicPayload = {
+    loadPlaylistMediaItemId?: number 
+    loadPlaylistId?: number
+}
+
 export type PlayMusicPayload = {
     triggerPlay?: number
-    currentTrackId?: number
-    requestPlaylistTrackId?: number
+    loadPlaylistMediaItemId?: number 
+    loadPlaylistId?: number
+    loadedPlaylistMediaItemId?: number
 }
 
 const initialState: PlayMusicPayload = ({})
@@ -13,23 +20,22 @@ const playMusicSlice = createSlice({
     name: 'media/music/play',
     initialState,
     reducers: {
-        play(state) {
+        loadTrack(state, action: PayloadAction<LoadPlayMusicPayload>) {
             state.triggerPlay = timestamp()
-            state.currentTrackId = undefined
-            state.requestPlaylistTrackId = undefined
+            state.loadPlaylistMediaItemId = action.payload.loadPlaylistMediaItemId
+            state.loadPlaylistId = action.payload.loadPlaylistId
+            state.loadedPlaylistMediaItemId = undefined
         },
-        playingTrackId(state, action: PayloadAction<number>) {
-            state.currentTrackId = action.payload
-            state.requestPlaylistTrackId = undefined
-        },
-        requestPlaylistTrackId(state, action: PayloadAction<number>) {
-            state.triggerPlay = timestamp()
-            state.currentTrackId = undefined
-            state.requestPlaylistTrackId = action.payload
+        loadedTrack(state, action: PayloadAction<number>) {
+            state.triggerPlay = undefined
+            state.loadPlaylistMediaItemId = undefined
+            state.loadPlaylistId = undefined
+            state.loadedPlaylistMediaItemId = action.payload
         }
     }
 })
 
-export const { play, playingTrackId, requestPlaylistTrackId} = playMusicSlice.actions
+export const { loadTrack, loadedTrack} = playMusicSlice.actions
+
 
 export default playMusicSlice

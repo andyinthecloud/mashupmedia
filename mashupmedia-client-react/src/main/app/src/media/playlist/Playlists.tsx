@@ -8,7 +8,6 @@ import { getPlaylists } from "./rest/playlistCalls"
 
 type PlaylistsPayload = {
     playlistPayloads: PlaylistPayload[]
-    createPlaylistName?: string
 }
 
 const Playlists = () => {
@@ -19,7 +18,7 @@ const Playlists = () => {
     useEffect(() => {
         getPlaylists(userToken).then(response => {
             if (response.parsedBody !== undefined) {
-                setProps({playlistPayloads: response.parsedBody})
+                setProps({ playlistPayloads: response.parsedBody })
             }
         })
 
@@ -29,7 +28,7 @@ const Playlists = () => {
         switch (mashupMediaType) {
             case MashupMediaType.MUSIC:
                 navigate("/playlists/music/" + playlistId)
-                break;        
+                break;
             default:
                 break;
         }
@@ -41,33 +40,13 @@ const Playlists = () => {
         navigate('/')
     }
 
-    const handleCreatePlaylist = () => {
-        console.log("handleCreatePlaylist")
-    }
-
-    const handleChangeNewPlaylistName = (name: string) => {
-        console.log("handleCreatePlaylist")
+    function handleNewPlaylist(): void {
+        navigate('/playlists/music')
     }
 
     return (
         <form>
             <h1>Playlists</h1>
-
-            <div className="new-line">
-                <TextField
-                    name="createPlaylistName"
-                    label="New playlist"
-                    value={props?.createPlaylistName}
-                    onChange={e => handleChangeNewPlaylistName(e.target.value)}
-                    fullWidth={true}
-                    helperText="Choose a name for your new playlist"
-                />
-            </div>
-            <div className="new-line right">
-                <Button variant="contained" color="primary" type="button" onClick={handleCreatePlaylist}>
-                    Create
-                </Button>
-            </div>
 
             <List>
                 {props?.playlistPayloads.map(function (playlist) {
@@ -82,6 +61,9 @@ const Playlists = () => {
             </List>
 
             <div className="new-line right">
+                <Button variant="contained" color="primary" type="button" onClick={handleNewPlaylist}>
+                    New
+                </Button>
                 <Button variant="contained" color="secondary" type="button" onClick={handleCancel}>
                     Cancel
                 </Button>

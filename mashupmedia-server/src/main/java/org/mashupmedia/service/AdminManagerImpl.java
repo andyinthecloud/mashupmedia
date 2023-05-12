@@ -19,6 +19,7 @@ import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.repository.playlist.PlaylistRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,13 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 public class AdminManagerImpl implements AdminManager {
 
 	private final UserDao userDao;
-
 	private final RoleDao roleDao;
-
 	private final GroupDao groupDao;
-
 	private final PlaylistDao playlistDao;
-
+	private final PlaylistRepository playlistRepository;
 	private final PasswordEncoder passwordEncoder;
 
 	@Override
@@ -183,7 +181,7 @@ public class AdminManagerImpl implements AdminManager {
 		User user = getUser(userId);
 		List<Playlist> playlists = playlistDao.getPlaylistsForCurrentUser(userId, null);
 		for (Playlist playlist : playlists) {
-			playlistDao.deletePlaylist(playlist);
+			playlistRepository.delete(playlist);
 		}
 
 		userDao.deleteUser(user);
