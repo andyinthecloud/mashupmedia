@@ -62,9 +62,9 @@ This will build a file called *mashupmedia-server-x.x.x-RELEASE.jar* located in 
 ```
 java -DmashupMediaHome="C:\Users\user\stuff\mashup-media" -Dserver.port=8080 -jar mashupmedia-server\target\mashupmedia-server-x.x.x-RELEASE.jar
 ```
-7. Open the url http://localhost:8080/mashupmedia in a web browser and log in using admin / admin.
-8. Create a library and you are ready.
-9. Recommended. Change the admin password immediately.
+7. Open http://localhost:8080/mashupmedia in a web browser and log in using admin / admin.
+8. Create a media library.
+9. Recommended. Change the admin password.
 10. Optional. Install and configure Ffmpeg at https://ffmpeg.org/download.html to make all your media compatible with Mashup Media.   
 
 
