@@ -13,11 +13,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jaudiotagger.audio.AudioFile;
@@ -50,7 +45,6 @@ import org.mashupmedia.repository.media.music.MusicAlbumRepository;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -425,7 +419,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		Tag tag = null;
 		long bitRate = 0;
 		String format = FileHelper.getFileExtension(fileName);
-		long trackLength = getTrackLength(file);
+		long trackLength = 0;
 		String tagTrackTitle = null;
 		int trackNumber = 0;
 		String tagArtistName = null;
@@ -438,9 +432,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			AudioHeader audioHeader = audioFile.getAudioHeader();
 			bitRate = audioHeader.getBitRateAsNumber();
 			format = audioHeader.getFormat();
-			if (trackLength == 0) {
-				trackLength = audioHeader.getTrackLength();
-			}
+			trackLength = audioHeader.getTrackLength();
 			tag = audioFile.getTag();
 
 		} catch (Exception e) {
@@ -529,20 +521,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		track.setDisplayTitle(displayTitle);
 
 		return track;
-	}
-
-	private long getTrackLength(File file) {
-		AudioInputStream audioInputStream;
-		try {
-			audioInputStream = AudioSystem.getAudioInputStream(file);
-			AudioFormat audioFormat = audioInputStream.getFormat();
-			long frames = audioInputStream.getFrameLength();
-			double durationInSeconds = frames / audioFormat.getFrameRate();
-			return Math.round(durationInSeconds);
-		} catch (UnsupportedAudioFileException | IOException e) {
-			log.error("Error reading track length using AudioSystem", e);
-			return 0;
-		}
 	}
 
 	private int processTrackNumber(String fileName, int musicFileCount) {

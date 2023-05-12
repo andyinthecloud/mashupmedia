@@ -4,7 +4,6 @@ import { RequireAuthenication } from '../common/security/RequireAuthentication'
 import ChangeUserPassword from './ChangeUserPassword'
 import Libraries from './Libraries'
 import Library from './Library'
-import NetworkForm from './NetworkForm'
 import User from './User'
 import Users from './Users'
 
@@ -54,11 +53,6 @@ export const ConfigurationRoutes = () => {
                 } />
             </Route>
 
-            <Route path="network" element={
-                <RequireAuthenication>
-                    <NetworkForm />
-                </RequireAuthenication>
-            } />
 
             <Route path="users" element={
                 <RequireAuthenication>

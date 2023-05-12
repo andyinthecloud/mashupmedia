@@ -2,18 +2,13 @@ package org.mashupmedia.dao;
 
 import java.util.List;
 
-import jakarta.persistence.Query;
-
-import org.apache.http.MethodNotSupportedException;
-import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.Configuration;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import lombok.extern.slf4j.Slf4j;
+import jakarta.persistence.Query;
 
 @Repository
-@Slf4j
 public class ConfigurationDaoImpl extends BaseDaoImpl implements ConfigurationDao {
 
 	@Override

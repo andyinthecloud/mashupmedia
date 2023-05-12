@@ -16,4 +16,5 @@ import lombok.experimental.SuperBuilder;
 public class PlaylistTrackPayload extends PlaylistMediaItemPayload{
     private ArtistPayload artistPayload;
     private TrackPayload trackPayload;
+    private boolean playing;
 }

@@ -1,4 +1,3 @@
-import { number } from "prop-types"
 import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
 import { callMashupMediaApi, callMashupMediaApiNoRedirect, HttpMethod, HttpResponse } from "../../../common/utils/httpUtils"
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
@@ -19,6 +18,7 @@ export enum MashupMediaType {
 export type NavigatePlaylistPayload = {
     navigatePlaylistType?: NavigatePlaylistType
     playlistMediaItemId?: number
+    playlistId?: number
 }
 
 export type PlaylistPayload = {
@@ -28,6 +28,7 @@ export type PlaylistPayload = {
     edit: boolean
     delete: boolean
     selected?: boolean
+    privatePlaylist?: boolean
 }
 
 export type MusicPlaylistTrackPayload = {
@@ -65,6 +66,7 @@ export type PlaylistActionPayload = {
 export type PlaylistMediaItemPayload = {
     playlistMediaItemId: number
     selected?: boolean
+    playing: boolean
 }
 
 export type PlaylistTrackPayload = PlaylistMediaItemPayload & {

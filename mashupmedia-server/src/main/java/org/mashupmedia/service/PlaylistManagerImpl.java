@@ -19,6 +19,7 @@ import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.UserPlaylistPosition;
 import org.mashupmedia.model.playlist.UserPlaylistPositionId;
+import org.mashupmedia.repository.playlist.PlaylistRepository;
 import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MessageHelper;
@@ -37,6 +38,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	private final MediaDao mediaDao;
 	private final MashupMediaSecurityManager securityManager;
 	private final UserPlaylistPositionRepository userPlaylistPositionRepository;
+	private final PlaylistRepository playlistRepository;
 
 	@Override
 	public List<Playlist> getPlaylists(MashupMediaType mashupMediaType) {
@@ -165,7 +167,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		if (playlistId == 0) {
 			playlist.setCreatedOn(date);
 			playlist.setCreatedBy(user);
-		} 
+		}
 
 		playlist.setUpdatedBy(user);
 		playlist.setUpdatedOn(date);
@@ -214,8 +216,8 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	@Override
-	public void deletePlaylist(long id) {
-		Playlist playlist = getPlaylist(id);
+	public void deletePlaylist(long playlistId) {
+		Playlist playlist = getPlaylist(playlistId);
 
 		User createdbyUser = playlist.getCreatedBy();
 		User user = AdminHelper.getLoggedInUser();
@@ -224,7 +226,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
 			throw new UnauthorisedException("Unable to delete user playlist");
 		}
 
-		playlistDao.deletePlaylist(playlist);
+		List<UserPlaylistPosition> userPlaylistPositions = userPlaylistPositionRepository.findByPlaylistId(playlistId);
+		userPlaylistPositionRepository.deleteAll(userPlaylistPositions);
+		playlistRepository.delete(playlist);
 	}
 
 	@Override

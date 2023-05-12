@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class NavigatePlaylistPayload {
     private NavigatePlaylistType navigatePlaylistType;
     private Long playlistMediaItemId;
+    private Long playlistId;
 }

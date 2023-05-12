@@ -53,10 +53,3 @@ export const toFieldValidation = (serverError: ServerError): FieldValidation => 
     message: serverError.defaultMessage
 })
 
-export const getFirstObjectErrorDefaultMessage = (serverErrors?: ServerError[]): string | null => {
-    if (!serverErrors || serverErrors.length === 0) {
-        return null
-    }
-
-    return serverErrors[0].defaultMessage || null
-}

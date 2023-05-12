@@ -148,10 +148,6 @@ const MenuDrawer = (menuDrawerPayload: MenuDrawerPayload) => {
         redirectInternal('/logout')
     }
 
-    const handlePlaylistClick = () => {
-        redirectInternal('/playlists/all')
-    }
-
     const list = (anchor: Anchor) => (
         <div
             className={clsx(classes.list, {
@@ -194,14 +190,7 @@ const MenuDrawer = (menuDrawerPayload: MenuDrawerPayload) => {
             }
 
             {props.loggedIn &&
-                <List>
-                    <ListItemButton onClick={() => handlePlaylistClick()}>
-                        <ListItemIcon>
-                            <ListIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Playlists" />
-                    </ListItemButton>
-                </List>
+                <ListItemRoute label="Playlists" toRoute="/playlists/all" icon={<ListItemIcon />} />
             }
 
             {props.administrator &&

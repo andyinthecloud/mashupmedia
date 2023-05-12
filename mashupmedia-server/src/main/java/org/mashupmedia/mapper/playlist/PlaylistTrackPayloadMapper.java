@@ -27,6 +27,7 @@ public class PlaylistTrackPayloadMapper implements DomainMapper<PlaylistMediaIte
             .playlistMediaItemId(domain.getId())
             .artistPayload(artistMapper.toDto(track.getArtist()))
             .trackPayload(trackMapper.toDto(track))
+            .playing(domain.isPlaying())
             .build();
         }
 

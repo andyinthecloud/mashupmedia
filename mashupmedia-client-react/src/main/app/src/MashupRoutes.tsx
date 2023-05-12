@@ -4,18 +4,17 @@ import LogIn from "./common/security/LogIn";
 import LogOut from "./common/security/LogOut";
 import { RequireAuthenication } from "./common/security/RequireAuthentication";
 import ChangeUserPassword from "./configuration/ChangeUserPassword";
+import Encode from "./configuration/Encode";
 import Group from "./configuration/Group";
 import Groups from "./configuration/Groups";
 import Libraries from "./configuration/Libraries";
 import Library from "./configuration/Library";
-import NetworkForm from "./configuration/NetworkForm";
 import User from "./configuration/User";
 import Users from "./configuration/Users";
 import Album from "./media/music/Album";
 import Albums from './media/music/Albums';
 import Artist from './media/music/Artist';
 import Artists from './media/music/Artists';
-import Encode from "./configuration/Encode";
 import Playlists from "./media/playlist/Playlists";
 import MusicPlaylist from "./media/playlist/music/MusicPlaylist";
 import SelectMusicPlaylist from "./media/playlist/music/SelectMusicPlaylist";
@@ -71,12 +70,6 @@ export const MashupRoutes = () => {
                         </RequireAuthenication>
                     } />
                 </Route>
-
-                <Route path="network" element={
-                    <RequireAuthenication>
-                        <NetworkForm />
-                    </RequireAuthenication>
-                } />
 
                 <Route path="users" element={
                     <RequireAuthenication>
@@ -143,6 +136,12 @@ export const MashupRoutes = () => {
 
                 <Route path="music">
                     <Route path=":playlistId" element={
+                        <RequireAuthenication>
+                            <MusicPlaylist />
+                        </RequireAuthenication>
+                    } />
+
+                    <Route path="" element={
                         <RequireAuthenication>
                             <MusicPlaylist />
                         </RequireAuthenication>

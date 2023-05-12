@@ -17,6 +17,7 @@ public class PlaylistMapper implements DomainMapper<Playlist, PlaylistPayload> {
                 .name(domain.getName())
                 .edit(isEdit(domain))
                 .delete(isDelete(domain))
+                .privatePlaylist(domain.isPrivatePlaylist())
                 .mashupMediaType(domain.getMashupMediaType())
                 .build();
     }
@@ -43,6 +44,7 @@ public class PlaylistMapper implements DomainMapper<Playlist, PlaylistPayload> {
         return Playlist.builder()
                 .name(payload.getName())
                 .id(payload.getId())
+                .privatePlaylist(payload.isPrivatePlaylist())
                 .build();
     }
 

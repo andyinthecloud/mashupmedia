@@ -3,13 +3,12 @@ import { IconButton, Slider } from "@mui/material"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
-import { playingTrackId } from "../../../media/music/features/playMusicSlice"
+import { loadTrack, loadedTrack } from "../../../media/music/features/playMusicSlice"
 import { ImageType, albumArtImageUrl, mediaStreamUrl, playlistStreamUrl } from "../../../media/music/rest/musicCalls"
-import { EncoderStatusType, MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, navigateTrack, currentTrack } from "../../../media/music/rest/playlistActionCalls"
+import { EncoderStatusType, MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, currentTrack, navigateTrack } from "../../../media/music/rest/playlistActionCalls"
 import { SecureMediaPayload } from "../../../media/rest/secureMediaPayload"
 import { NotificationType, addNotification } from "../../notification/notificationSlice"
 import { RootState } from "../../redux/store"
-import { securityToken } from "../../security/securityUtils"
 import { displayDuration } from "../../utils/dateUtils"
 import { timestamp } from "../../utils/httpUtils"
 import "./AudioPlayer.css"
@@ -51,11 +50,11 @@ const AudioPlayer = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        if (!securityToken(userToken)) {
-            return
-        }
-        handleNavigate({ navigatePlaylistType: NavigatePlaylistType.CURRENT })
-
+        handleNavigate({
+            navigatePlaylistType: playMusic.loadPlaylistMediaItemId ? undefined : NavigatePlaylistType.CURRENT,
+            playlistMediaItemId: playMusic.loadPlaylistMediaItemId,
+            playlistId: playMusic.loadPlaylistId
+        })
 
     }, [userToken])
 
@@ -65,8 +64,9 @@ const AudioPlayer = () => {
         }
 
         handleNavigate({
-            navigatePlaylistType: playMusic.requestPlaylistTrackId ? undefined : NavigatePlaylistType.CURRENT,
-            playlistMediaItemId: playMusic.requestPlaylistTrackId
+            navigatePlaylistType: playMusic.loadPlaylistMediaItemId ? undefined : NavigatePlaylistType.CURRENT,
+            playlistMediaItemId: playMusic.loadPlaylistMediaItemId,
+            playlistId: playMusic.loadPlaylistId
         })
 
     }, [playMusic.triggerPlay])
@@ -83,8 +83,6 @@ const AudioPlayer = () => {
         };
 
     }, []);
-
-
 
     const renderPlayingInformation = () => {
         if (!isEmptyPlaylist()) {
@@ -146,7 +144,7 @@ const AudioPlayer = () => {
         return isEmptyPlaylist()
     }
 
-    const displayNextTrack = useCallback((playlistId: number, progress: number) => {
+    const displayNextTrack = useCallback((playlistId: number) => {
 
         currentTrack(playlistId, userToken).then(response => {
             if (response.ok) {
@@ -155,15 +153,15 @@ const AudioPlayer = () => {
                 setProps({
                     mediaToken: response.parsedBody?.mediaToken || "",
                     payload: {
-                        ...props.payload,                        
+                        ...props.payload,
                         isReadyToPlay: response.ok,
                         trackWithArtistPayload: securePayload?.payload,
-                        triggerPlay: undefined                        
+                        triggerPlay: undefined
                     }
                 })
 
                 dispatch(
-                    playingTrackId(securePayload?.payload.id || 0)
+                    loadTrack({ loadPlaylistMediaItemId: securePayload?.payload.id })
                 )
             }
         })
@@ -171,6 +169,8 @@ const AudioPlayer = () => {
 
 
     const handleNavigate = useCallback((navigatePlaylistPayload: NavigatePlaylistPayload) => {
+
+        console.log("handleNavigate", navigatePlaylistPayload)
 
         navigateTrack(navigatePlaylistPayload, userToken).then((response) => {
 
@@ -188,9 +188,11 @@ const AudioPlayer = () => {
                     }
                 })
 
-                dispatch(
-                    playingTrackId(securePayload?.payload.id || 0)
-                )
+                if (securePayload?.payload.id) {
+                    dispatch(
+                        loadedTrack(securePayload.payload.id)
+                    )
+                }
 
             } else {
                 setProps({
@@ -278,7 +280,7 @@ const AudioPlayer = () => {
         if (!mobileDisplay) {
             return
         }
-        
+
         const trackSeconds = props?.payload.trackWithArtistPayload?.trackPayload.totalSeconds || 0
 
         console.log("trackSeconds = " + trackSeconds + ", progress = " + progress)
@@ -286,7 +288,7 @@ const AudioPlayer = () => {
             const playlistId = props?.payload.trackWithArtistPayload?.playlistPayload.id
             if (playlistId) {
                 setPlaylistOffset(playlistOffset + trackSeconds)
-                displayNextTrack(playlistId, progress)
+                displayNextTrack(playlistId)
             }
 
         }
@@ -371,7 +373,10 @@ const AudioPlayer = () => {
 
                 <div className="button-container">
                     <IconButton
-                        onClick={() => handleNavigate({ navigatePlaylistType: NavigatePlaylistType.PREVIOUS })}
+                        onClick={() => handleNavigate({ 
+                            navigatePlaylistType: NavigatePlaylistType.PREVIOUS, 
+                            playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id 
+                        })}
                         disabled={disablePrevious()}
                     >
                         <ChevronLeft
@@ -391,7 +396,10 @@ const AudioPlayer = () => {
                     </IconButton>
 
                     <IconButton
-                        onClick={() => handleNavigate({ navigatePlaylistType: NavigatePlaylistType.NEXT })}
+                        onClick={() => handleNavigate({ 
+                            navigatePlaylistType: NavigatePlaylistType.NEXT,
+                            playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id 
+                        })}
                         disabled={disableNext()}>
                         <ChevronRight
                             color="primary"

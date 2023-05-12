@@ -1,15 +1,14 @@
 import { Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Radio, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useSearchParams } from "react-router-dom"
-import { RootState } from "../../../common/redux/store"
-import { EncoderStatusType, PlaylistPayload, addAlbum, addArtist, addTrack } from "../../music/rest/playlistActionCalls"
-import { getPlaylists } from "../rest/playlistCalls"
-import { ServerResponsePayload, getFirstObjectErrorDefaultMessage } from "../../../common/utils/formValidationUtils"
 import { NotificationType, addNotification } from "../../../common/notification/notificationSlice"
+import { RootState } from "../../../common/redux/store"
+import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
 import { HttpResponse } from "../../../common/utils/httpUtils"
+import { EncoderStatusType, PlaylistPayload, addAlbum, addArtist, addTrack } from "../../music/rest/playlistActionCalls"
 import { playlistNotification } from "../../music/rest/playlistActionUtils"
-import { useDispatch } from "react-redux"
+import { getPlaylists } from "../rest/playlistCalls"
 
 type SelectMusicPlaylistPayload = {
     playlistPayloads: PlaylistPayload[]
@@ -39,7 +38,7 @@ const SelectMusicPlaylist = () => {
                 })
             }
         })
-    }, [userToken])
+    }, [userToken, queryParameters])
 
     const getNumberValue = (name: string, queryParameters: URLSearchParams): number | undefined => {
         const value = queryParameters.get(name)
@@ -107,13 +106,14 @@ const SelectMusicPlaylist = () => {
             )
             navigate(-1)
         } else {
-            const defaultMessage = getFirstObjectErrorDefaultMessage(response.parsedBody?.errorPayload.objectErrors)
-            dispatch(
-                addNotification({
-                    message: defaultMessage,
-                    notificationType: NotificationType.ERROR
-                })
-            )
+            response.parsedBody?.errorPayload.objectErrors.map(function (serverError) {
+                dispatch(
+                    addNotification({
+                        message: serverError.defaultMessage,
+                        notificationType: NotificationType.ERROR
+                    })
+                )
+            })
         }
     }
 
@@ -121,20 +121,15 @@ const SelectMusicPlaylist = () => {
         <form>
             <h1>Select playlist</h1>
 
-            <div className="new-line">
+            <div >
                 <TextField
                     name="createPlaylistName"
                     label="New playlist"
-                    value={props?.createPlaylistName}
+                    value={props?.createPlaylistName || ""}
                     onChange={e => handleChangeNewPlaylistName(e.target.value)}
                     fullWidth={true}
                     helperText="Choose a name for your new playlist"
                 />
-            </div>
-            <div className="new-line right">
-                <Button variant="contained" color="primary" type="button" onClick={handleSelectPlaylist}>
-                    Create
-                </Button>
             </div>
 
             <List>
@@ -158,9 +153,11 @@ const SelectMusicPlaylist = () => {
             </List>
 
             <div className="new-line right">
+
                 <Button variant="contained" color="primary" type="button" onClick={handleSelectPlaylist}>
                     Select
                 </Button>
+
                 <Button variant="contained" color="secondary" type="button" onClick={handleCancel}>
                     Cancel
                 </Button>

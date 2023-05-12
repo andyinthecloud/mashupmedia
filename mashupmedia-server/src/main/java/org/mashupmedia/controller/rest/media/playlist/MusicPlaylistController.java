@@ -179,7 +179,8 @@ public class MusicPlaylistController {
             return playlist;
         }
 
-        errors.reject(ErrorCode.PLAYLIST_NOT_FOUND.getErrorCode(), "Please either select a playlist or enter a new playlist name");
+        errors.reject(ErrorCode.PLAYLIST_NOT_FOUND.getErrorCode(),
+                "Please either select a playlist or enter a new playlist name");
         return null;
 
     }
@@ -187,7 +188,15 @@ public class MusicPlaylistController {
     @PutMapping(value = "/navigate", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> navigatePlaylist(
             @RequestBody NavigatePlaylistPayload navigatePlaylistPayload) {
-        Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(MashupMediaType.MUSIC);
+
+        Playlist playlist;
+
+        if (navigatePlaylistPayload.getPlaylistId() == null) {
+            playlist = playlistManager.getDefaultPlaylistForCurrentUser(MashupMediaType.MUSIC);
+        } else {
+            playlist = playlistManager.getPlaylist(navigatePlaylistPayload.getPlaylistId());
+        }
+
         if (playlist == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -203,7 +212,7 @@ public class MusicPlaylistController {
         }
 
         if (playlistMediaItem == null) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.noContent().build();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
         }
 
         playlistManager.savePlaylist(playlist);
@@ -255,5 +264,5 @@ public class MusicPlaylistController {
 
         return ResponseEntity.ok(musicPlaylistTrackMapper.toDto(playlistMediaItem, mediaToken));
     }
-    
+
 }

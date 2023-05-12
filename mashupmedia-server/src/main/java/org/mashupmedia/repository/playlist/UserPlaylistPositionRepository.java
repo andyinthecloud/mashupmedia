@@ -13,4 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface UserPlaylistPositionRepository extends JpaRepository<UserPlaylistPosition, UserPlaylistPositionId>{
     @Query("select upp.user from UserPlaylistPosition upp where upp.playlistMediaId = :playlistMediaId")
     List<User> findByPlaylistItem(long playlistMediaId);
+
+    List<UserPlaylistPosition> findByPlaylistId(long playlistId);
+
 }

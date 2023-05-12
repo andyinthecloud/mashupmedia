@@ -19,4 +19,5 @@ public class PlaylistPayload {
     private MashupMediaType mashupMediaType; 
     private boolean edit;
     private boolean delete;
+    private boolean privatePlaylist;
 }
