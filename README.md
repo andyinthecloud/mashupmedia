@@ -11,9 +11,9 @@ Mashup Media eliminates the need to worry about online privacy and corporate sma
 
 
 ## Music
-Add as many music libraries as you like and Mashup Media will provide a clean, elegant interface to quickly access and play your tunes.
+Group your media in libraries and Mashup Media will provide a clean, elegant interface to quickly access and play your content.
 
-A lot of time has been dedicated into making the Mashup Media music experience very special. Music is categorised into artists, albums, genre and year by the music tags or failing that the folder structure. Libraries can contain very large amount of files with minimal impact to performance. Any changes to the library files are synchronised.
+A lot of time has been dedicated into making the Mashup Media music experience very special. Music is categorised into artists, albums, genres and years. Libraries can contain a large amount of files with minimal impact to performance.
 
 ### Compatibility
 You can listen to your music on all modern web browsers on desktops, tablets and mobile devices.
@@ -33,7 +33,7 @@ Imagine all your videos available to watch through a web browser! This is what M
 Watch this space!
 
 ## Security
-Security is a key aspect of Mashup Media. The application can only be accessed with a valid username and password. Media access can be finetuned through groups, for example members of the group "family" could just be given access to family photographs. User passwords are encrypted before being stored in the Mashup Media 
+Security is a key aspect of Mashup Media. The application can only be accessed with valid credentials. Media access can be finetuned through groups, for example members of the group "family" could just be given access to family photographs. User passwords are encrypted before being stored in the Mashup Media 
 
 ## Configuration
 ### Out of the box
@@ -49,7 +49,7 @@ Mashup Media is developed in Java, React Javascript and an embedded database.
 1. Install [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) 
 2. Install [Maven](https://maven.apache.org/download.cgi)
 3. Install [Git](https://git-scm.com/downloads)
-4. Checkout the Mashup Media project
+4. Checkout the Mashup Media project master branch
 5. Open a terminal and in the mashupmedia parent folder run the build 
 ```
 mvn -skipTests clean package
@@ -60,6 +60,9 @@ This will build a file called *mashupmedia-server-x.x.x-RELEASE.jar* located in 
 ```
 java -DmashupMediaHome="C:\Users\user\stuff\mashup-media" -Dserver.port=8080 -jar mashupmedia-server\target\mashupmedia-server-x.x.x-RELEASE.jar
 ```
-
+7. Open http://localhost:8080/mashupmedia in a web browser and log in using admin / admin.
+8. Create a media library.
+9. Recommended. Change the admin password.
+10. Optional. Install and configure Ffmpeg at https://ffmpeg.org/download.html to make all your media compatible with Mashup Media.   
 
 
