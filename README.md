@@ -12,7 +12,9 @@ Mashup Media eliminates the need to worry about online privacy and corporate sma
 
 ## Music
 Group your media in libraries and Mashup Media will provide a clean, elegant interface to quickly access and play your content.
+Group your media in libraries and Mashup Media will provide a clean, elegant interface to quickly access and play your content.
 
+A lot of time has been dedicated into making the Mashup Media music experience very special. Music is categorised into artists, albums, genres and years. Libraries can contain a large amount of files with minimal impact to performance.
 A lot of time has been dedicated into making the Mashup Media music experience very special. Music is categorised into artists, albums, genres and years. Libraries can contain a large amount of files with minimal impact to performance.
 
 ### Compatibility
@@ -60,9 +62,9 @@ This will build a file called *mashupmedia-server-x.x.x-RELEASE.jar* located in 
 ```
 java -DmashupMediaHome="C:\Users\user\stuff\mashup-media" -Dserver.port=8080 -jar mashupmedia-server\target\mashupmedia-server-x.x.x-RELEASE.jar
 ```
-7. Open http://localhost:8080/mashupmedia in a web browser and log in using admin / admin.
-8. Create a media library.
-9. Recommended. Change the admin password.
+7. Open the url http://localhost:8080/mashupmedia in a web browser and log in using admin / admin.
+8. Create a library and you are ready.
+9. Recommended. Change the admin password immediately.
 10. Optional. Install and configure Ffmpeg at https://ffmpeg.org/download.html to make all your media compatible with Mashup Media.   
 
 
