@@ -251,7 +251,7 @@ public class MusicPlaylistController {
     @GetMapping(value = "/current/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SecureMediaPayload<MusicPlaylistTrackPayload>> getPlaylistTrackByProgress(
             @PathVariable long playlistId) {
-        Playlist playlist = playlistManager.getDefaultPlaylistForCurrentUser(MashupMediaType.MUSIC);
+        Playlist playlist = playlistManager.getPlaylist(playlistId);
         if (playlist == null) {
             return ResponseEntity.badRequest().build();
         }
