@@ -38,25 +38,7 @@ const MusicPlaylist = () => {
         })
     }, [userToken, playlistId])
 
-    const handleToggleTrack = (playlistMediaItemId: number) => {
-        if (!props) {
-            return
-        }
-
-        const playlistTrackPayload = props?.playlistMediaItemPayloads
-            .find(pmi => pmi.playlistMediaItemId === playlistMediaItemId)
-
-        if (!playlistTrackPayload) {
-            return
-        }
-
-        playlistTrackPayload.selected = playlistTrackPayload.selected ? false : true
-
-    }
-
     const handleChangeAction = (action: string): void => {
-
-        console.log("handleChangeAction: action", action)
 
         if (!props) {
             return
@@ -104,17 +86,6 @@ const MusicPlaylist = () => {
                 })
             }
         })
-    }
-
-    const handlePlayTrack = (loadPlaylistMediaItemId: number): void => {
-        if (loadPlaylistMediaItemId) {
-            dispatch(
-                loadTrack({ 
-                    loadPlaylistId: props?.playlistPayload.id,    
-                    loadPlaylistMediaItemId 
-                })
-            )
-        }
     }
 
     const handleChangeName = (name: string): void => {
@@ -176,6 +147,31 @@ const MusicPlaylist = () => {
         })
     }
 
+    const handleToggleTrack = (e: ChangeEvent<HTMLInputElement>) => {
+        if (!props) {
+            return
+        }
+
+        const index = props?.playlistMediaItemPayloads
+            .findIndex(pmi => pmi.playlistMediaItemId === +e.target.value)
+
+        console.log("handleToggleTrack", index)
+
+        if (index < 0) {
+            return
+        }
+
+        const playlistMediaItemPayloads = props.playlistMediaItemPayloads
+        playlistMediaItemPayloads[index].selected = e.target.checked
+
+
+        setProps({
+            ...props,
+            playlistMediaItemPayloads
+        })
+
+    }
+
     const handleToggleAllTracks = (e: ChangeEvent<HTMLInputElement>) => {
         if (!props) {
             return
@@ -193,6 +189,18 @@ const MusicPlaylist = () => {
             playlistMediaItemPayloads
         })
     }
+
+    const handlePlayTrack = (loadPlaylistMediaItemId: number): void => {
+        if (loadPlaylistMediaItemId) {
+            dispatch(
+                loadTrack({ 
+                    loadPlaylistId: props?.playlistPayload.id,    
+                    loadPlaylistMediaItemId 
+                })
+            )
+        }
+    }
+
 
     const handlePlayPlaylist = () => {
         console.log("handlePlayPlaylist", props)
@@ -301,7 +309,7 @@ const MusicPlaylist = () => {
                                     disableRipple
                                     value={track.playlistMediaItemId}
                                     checked={track.selected || false}
-                                    onChange={(e) => handleToggleTrack(+e.target.value)}
+                                    onChange={(e) => handleToggleTrack(e)}
                                 />
                             </ListItemIcon>
 

@@ -3,7 +3,7 @@ import { IconButton, Slider } from "@mui/material"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
-import { loadTrack, loadedTrack } from "../../../media/music/features/playMusicSlice"
+import { loadedTrack } from "../../../media/music/features/playMusicSlice"
 import { ImageType, albumArtImageUrl, mediaStreamUrl, playlistStreamUrl } from "../../../media/music/rest/musicCalls"
 import { EncoderStatusType, MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, currentTrack, navigateTrack } from "../../../media/music/rest/playlistActionCalls"
 import { SecureMediaPayload } from "../../../media/rest/secureMediaPayload"
@@ -160,9 +160,11 @@ const AudioPlayer = () => {
                     }
                 })
 
-                dispatch(
-                    loadTrack({ loadPlaylistMediaItemId: securePayload?.payload.id })
-                )
+                handleNavigate({
+                    playlistId: securePayload?.payload.playlistPayload.id,
+                    playlistMediaItemId: securePayload?.payload.id,
+                    withoutPlayTrigger: true
+                })
             }
         })
     }, [])
@@ -184,7 +186,7 @@ const AudioPlayer = () => {
                         ...props.payload,
                         isReadyToPlay: true,
                         trackWithArtistPayload: securePayload?.payload,
-                        triggerPlay: timestamp()
+                        triggerPlay: navigatePlaylistPayload.withoutPlayTrigger ? undefined : timestamp()
                     }
                 })
 
