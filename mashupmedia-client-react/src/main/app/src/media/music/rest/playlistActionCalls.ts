@@ -19,7 +19,7 @@ export type NavigatePlaylistPayload = {
     navigatePlaylistType?: NavigatePlaylistType
     playlistMediaItemId?: number
     playlistId?: number
-    withoutPlayTrigger?: boolean 
+    loadStream: boolean 
 }
 
 export type PlaylistPayload = {

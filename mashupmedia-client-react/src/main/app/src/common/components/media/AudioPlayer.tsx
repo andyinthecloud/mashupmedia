@@ -17,7 +17,7 @@ import "./AudioPlayer.css"
 type AudioPlayerPlayload = {
     trackWithArtistPayload?: MusicPlaylistTrackPayload
     isReadyToPlay: boolean
-    triggerPlay?: number
+    loadStreamTrigger?: number
 }
 
 const AudioPlayer = () => {
@@ -53,7 +53,8 @@ const AudioPlayer = () => {
         handleNavigate({
             navigatePlaylistType: playMusic.loadPlaylistMediaItemId ? undefined : NavigatePlaylistType.CURRENT,
             playlistMediaItemId: playMusic.loadPlaylistMediaItemId,
-            playlistId: playMusic.loadPlaylistId
+            playlistId: playMusic.loadPlaylistId,
+            loadStream: true
         })
 
     }, [userToken])
@@ -66,7 +67,9 @@ const AudioPlayer = () => {
         handleNavigate({
             navigatePlaylistType: playMusic.loadPlaylistMediaItemId ? undefined : NavigatePlaylistType.CURRENT,
             playlistMediaItemId: playMusic.loadPlaylistMediaItemId,
-            playlistId: playMusic.loadPlaylistId
+            playlistId: playMusic.loadPlaylistId,
+            loadStream: true
+
         })
 
     }, [playMusic.triggerPlay])
@@ -156,14 +159,14 @@ const AudioPlayer = () => {
                         ...props.payload,
                         isReadyToPlay: response.ok,
                         trackWithArtistPayload: securePayload?.payload,
-                        triggerPlay: undefined
+                        loadStreamTrigger: undefined
                     }
                 })
 
                 handleNavigate({
                     playlistId: securePayload?.payload.playlistPayload.id,
                     playlistMediaItemId: securePayload?.payload.id,
-                    withoutPlayTrigger: true
+                    loadStream: false
                 })
             }
         })
@@ -186,7 +189,7 @@ const AudioPlayer = () => {
                         ...props.payload,
                         isReadyToPlay: true,
                         trackWithArtistPayload: securePayload?.payload,
-                        triggerPlay: navigatePlaylistPayload.withoutPlayTrigger ? undefined : timestamp()
+                        loadStreamTrigger: navigatePlaylistPayload.loadStream ? timestamp() : undefined
                     }
                 })
 
@@ -214,7 +217,7 @@ const AudioPlayer = () => {
 
     useEffect(() => {
 
-        if (!props.payload.triggerPlay) {
+        if (!props.payload.loadStreamTrigger) {
             return
         }
 
@@ -248,7 +251,7 @@ const AudioPlayer = () => {
             audioPlayer.current.play()
         }
 
-    }, [props.payload.triggerPlay])
+    }, [props.payload.loadStreamTrigger])
 
     const handlePlay = (): void => {
         setPlaying(!playing)
@@ -267,7 +270,10 @@ const AudioPlayer = () => {
         if (props.payload.trackWithArtistPayload?.last) {
             return
         }
-        handleNavigate({ navigatePlaylistType: NavigatePlaylistType.NEXT })
+        handleNavigate({ 
+            navigatePlaylistType: NavigatePlaylistType.NEXT, 
+            loadStream: true 
+        })
     }
 
     const handleTimeUpdate = (element: HTMLAudioElement): void => {
@@ -377,7 +383,8 @@ const AudioPlayer = () => {
                     <IconButton
                         onClick={() => handleNavigate({ 
                             navigatePlaylistType: NavigatePlaylistType.PREVIOUS, 
-                            playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id 
+                            playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id,
+                            loadStream: true
                         })}
                         disabled={disablePrevious()}
                     >
@@ -400,7 +407,8 @@ const AudioPlayer = () => {
                     <IconButton
                         onClick={() => handleNavigate({ 
                             navigatePlaylistType: NavigatePlaylistType.NEXT,
-                            playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id 
+                            playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id,
+                            loadStream: true
                         })}
                         disabled={disableNext()}>
                         <ChevronRight
