@@ -1,55 +1,50 @@
 import { Search } from "@mui/icons-material";
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Box, IconButton, InputAdornment, TextField, Toolbar } from "@mui/material";
+import { AppBar, Box, IconButton, TextField, Toolbar } from "@mui/material";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import logoSmall from '../../logo-small.png';
-import './MashupBar.css';
-import MenuDrawer, { MenuDrawerPayload } from "./MenuDrawer";
 import { isEnterKey } from "../utils/formUtils";
+import './MashupBar.css';
+import MenuDrawer from "./MenuDrawer";
+import { openMenu } from "./features/menuSlice";
 
 type MashupBarPayload = {
     searchText?: string
-    menuDrawerPayload: MenuDrawerPayload
 }
 
 const MashupBar = () => {
 
-    const [props, setProps] = useState<MashupBarPayload>({
-        menuDrawerPayload: ({
-            openMenu: false
-        })
-    })
+    const [props, setProps] = useState<MashupBarPayload>()
 
     const handleChangeSearchText = (searchText: string): void => {
         setProps({
-            searchText,
-            menuDrawerPayload: {
-                openMenu: false
-            }
+            searchText
         })
     }
 
     const navigate = useNavigate()
     const handleClickSearch = (): void => {
-        if (!props.searchText) {
+        if (!props?.searchText) {
             return
         }
         navigate(`/search/media?search=${encodeURIComponent(props.searchText)}`)
     }
 
+    const dispatch = useDispatch()
+
     const handleClickToggleOpenMenu = () => {
-        setProps(p => ({
-            ...p,
-            menuDrawerPayload: {
-                openMenu: true
-            }
-        }))
+        console.log("handleClickToggleOpenMenu")
+
+        dispatch(
+            openMenu()
+        )
     }
 
     return (
         <Box sx={{ flexGrow: 1 }} id="mashup-bar">
-            <MenuDrawer {...props.menuDrawerPayload} />
+            <MenuDrawer />
             <AppBar
                 elevation={0}
                 style={{
@@ -78,7 +73,7 @@ const MashupBar = () => {
                         placeholder="Search"
                         variant="outlined"
                         name="searchText"
-                        value={props.searchText || ""}
+                        value={props?.searchText || ""}
                         onChange={e => handleChangeSearchText(e.target.value)}
                         onKeyDown={e => isEnterKey(e.key) && handleClickSearch()}
                         sx={{
