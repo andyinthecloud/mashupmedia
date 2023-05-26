@@ -8,8 +8,6 @@ Mashup Media eliminates the need to worry about online privacy and corporate sma
 * [Music](#music)
 * [Photos](#photos)
 
-
-
 ## Music
 Group your media in libraries and Mashup Media will provide a clean, elegant interface to quickly access and play your content.
 Group your media in libraries and Mashup Media will provide a clean, elegant interface to quickly access and play your content.
@@ -17,14 +15,20 @@ Group your media in libraries and Mashup Media will provide a clean, elegant int
 A lot of time has been dedicated into making the Mashup Media music experience very special. Music is categorised into artists, albums, genres and years. Libraries can contain a large amount of files with minimal impact to performance.
 A lot of time has been dedicated into making the Mashup Media music experience very special. Music is categorised into artists, albums, genres and years. Libraries can contain a large amount of files with minimal impact to performance.
 
+![image](https://github.com/andyinthecloud/mashupmedia/assets/2725234/a7342963-bdab-472c-a840-24d4d7d81724)
+
 ### Compatibility
 You can listen to your music on all modern web browsers on desktops, tablets and mobile devices.
 
 ### Playlists
 You can create and share music playlists.
 
+![image](https://github.com/andyinthecloud/mashupmedia/assets/2725234/c0633837-b687-4af2-b50a-6159047108f4)
+
 ### Support for many music formats 
 Mashup Media uses [FFmpeg](https://ffmpeg.org/) to provide support for the most common music encoding formats.
+
+![image](https://github.com/andyinthecloud/mashupmedia/assets/2725234/f6c10224-38e6-4670-85e3-5e29fadff17e)
 
 ## Photos
 Finally a secure way to store and view your photos! All you have to do is let Mashup Media know where your images are located and it will index them, create thumbnails and organise them into albums. 
@@ -38,10 +42,14 @@ Watch this space!
 Security is a key aspect of Mashup Media. The application can only be accessed with valid credentials. Media access can be finetuned through groups, for example members of the group "family" could just be given access to family photographs. User passwords are encrypted before being stored in the Mashup Media 
 
 ## Configuration
+
 ### Out of the box
 Mashup Media will work out of the box, just add a library and point it to a folder containing your photos, music or videos and it will index them automatically and then in real time whenever a file is added, updated or removed.
+
 ### User management
 The user set up is very simple. Users can be added to multiple groups which are linked to libraries.
+
+![image](https://github.com/andyinthecloud/mashupmedia/assets/2725234/c5111e25-f3cb-45dc-9037-686e7501dab0)
 
 ## Technology
 Mashup Media is developed in Java, React Javascript and an embedded database. 
