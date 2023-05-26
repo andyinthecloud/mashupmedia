@@ -4,7 +4,6 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import ListIcon from '@mui/icons-material/List';
 import { Fragment, useEffect, useState } from "react";
 
 import { AccountBox, ExpandLess, ExpandMore, LibraryMusic, Login, Logout } from "@mui/icons-material";
@@ -12,12 +11,12 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
 import { useSelector } from "react-redux";
-import { RootState } from '../redux/store';
-import ListItemRoute from './ListItemRoute';
-import './MenuDrawer.css';
 import { useAppDispatch } from "../redux/hooks";
+import { RootState } from '../redux/store';
 import { userPolicy } from "../security/features/userPolicySlice";
 import { redirectInternal } from "../utils/httpUtils";
+import ListItemRoute from './ListItemRoute';
+import './MenuDrawer.css';
 
 export type MenuDrawerPayload = {
     openMenu: boolean

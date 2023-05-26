@@ -44,7 +44,7 @@ const Artists = () => {
             )
         )
 
-    }, [artistSearch])
+    }, [artistSearch, props])
 
 
 
@@ -60,7 +60,7 @@ const Artists = () => {
                 onChange={(e) => handleArtistSearchChange(e.currentTarget.value)}
                 InputProps={{
                     endAdornment: 
-                    <IconButton onClick={e => handleArtistSearchChange("")}><Clear /></IconButton>
+                    <IconButton onClick={() => handleArtistSearchChange("")}><Clear /></IconButton>
                 }}
 
             />

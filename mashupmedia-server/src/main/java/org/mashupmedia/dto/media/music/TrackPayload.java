@@ -17,4 +17,5 @@ public class TrackPayload {
     private int seconds;
     private long totalSeconds;
     private boolean encodedForWeb;
+    private int year;
 }

@@ -2,6 +2,7 @@ package org.mashupmedia.mapper.media.music;
 
 import org.mashupmedia.dto.media.music.TrackPayload;
 import org.mashupmedia.mapper.DomainMapper;
+import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.util.TimeHelper;
 import org.mashupmedia.util.TimeHelper.TimeUnit;
@@ -12,6 +13,8 @@ public class TrackMapper implements DomainMapper<Track, TrackPayload> {
 
     @Override
     public TrackPayload toDto(Track domain) {
+        Year year = domain.getYear();
+
         return TrackPayload.builder()
                 .id(domain.getId())
                 .name(domain.getTitle())
@@ -21,6 +24,7 @@ public class TrackMapper implements DomainMapper<Track, TrackPayload> {
                         TimeUnit.MINUTE))
                 .seconds(TimeHelper.getDurationUnit(domain.getTrackLength(),
                         TimeUnit.SECOND))
+                .year(year != null ? year.getYear() : 0)
                 .encodedForWeb(domain.isEncodedForWeb())
                 .build();
     }

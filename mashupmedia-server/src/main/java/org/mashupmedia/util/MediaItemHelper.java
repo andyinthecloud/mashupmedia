@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashupMediaType;
-import org.mashupmedia.criteria.MediaItemSearchCriteria.MediaSortType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Track;
@@ -72,22 +71,6 @@ public class MediaItemHelper {
 		}
 
 		return false;
-	}
-
-	public static MediaSortType getMediaSortType(String mediaSortTypeValue) {
-		mediaSortTypeValue = StringUtils.trimToEmpty(mediaSortTypeValue);
-		if (StringUtils.isEmpty(mediaSortTypeValue)) {
-			return MediaSortType.TRACK_TITLE;
-		}
-
-		MediaSortType[] mediaSortTypes = MediaSortType.values();
-		for (MediaSortType mediaSortType : mediaSortTypes) {
-			if (mediaSortType.toString().equalsIgnoreCase(mediaSortTypeValue)) {
-				return mediaSortType;
-			}
-		}
-
-		return MediaSortType.TRACK_TITLE;
 	}
 
 	public static MediaEncoding createMediaEncoding(String fileName) {

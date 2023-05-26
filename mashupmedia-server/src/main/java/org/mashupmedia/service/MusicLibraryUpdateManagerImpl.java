@@ -124,9 +124,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 	@Override
 	public void updateRemoteLibrary(MusicLibrary musicLibrary) throws Exception {
-		Location location = musicLibrary.getLocation();
-		String remoteLibraryUrl = location.getPath();
-		String libraryXml = connectionManager.proceessRemoteLibraryConnection(remoteLibraryUrl);
+		throw new UnsupportedOperationException("Not implemented, updateRemoteLibrary");
+		// Location location = musicLibrary.getLocation();
+		// String remoteLibraryUrl = location.getPath();
+		// String libraryXml = connectionManager.proceessRemoteLibraryConnection(remoteLibraryUrl);
 		// mapperManager.saveXmltoTracks(musicLibrary, libraryXml);
 	}
 

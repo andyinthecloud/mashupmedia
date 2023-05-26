@@ -16,7 +16,6 @@ public interface MediaRepository extends CrudRepository<MediaItem, Long>{
 
     Optional<MediaItem> findByPath(String path);
 
-
     boolean existsByPathAndFileLastModifiedOn(String path, long fileLastModifiedOn);
     
 }

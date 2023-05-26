@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.SearchMediaItem;
 import org.mashupmedia.model.media.music.AlbumArtImage;
 
 public interface MediaManager {
@@ -18,9 +19,7 @@ public interface MediaManager {
 
 	void updateMediaItem(MediaItem mediaItem);
 
-	List<String> findAutoCompleteMediaItems(String searchWords);
-
-	List<MediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria);
+	List<SearchMediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria);
 
 	void saveMediaItem(MediaItem mediaItem);
 
