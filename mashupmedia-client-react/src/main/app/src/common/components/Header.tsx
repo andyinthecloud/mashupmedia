@@ -5,7 +5,6 @@ import AudioPlayer from "./media/AudioPlayer"
 
 const Header = () => {
 
-
     return (
         <header
             id="top-bar">

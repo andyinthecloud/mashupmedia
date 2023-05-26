@@ -112,4 +112,11 @@ export const redirectLogin = (statusCode?: number): void => {
     redirectInternal(loginUri + '?' + searchParams.toString())
 }
 
+export const getQueryNumberValue = (name: string, queryParameters: URLSearchParams): number | undefined => {
+    const value = queryParameters.get(name)
+    return value ? +value : undefined
+}
+
+
+
 

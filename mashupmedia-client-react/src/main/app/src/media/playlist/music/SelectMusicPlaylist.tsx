@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 import { NotificationType, addNotification } from "../../../common/notification/notificationSlice"
 import { RootState } from "../../../common/redux/store"
 import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
-import { HttpResponse } from "../../../common/utils/httpUtils"
+import { HttpResponse, getQueryNumberValue } from "../../../common/utils/httpUtils"
 import { EncoderStatusType, PlaylistPayload, addAlbum, addArtist, addTrack } from "../../music/rest/playlistActionCalls"
 import { playlistNotification } from "../../music/rest/playlistActionUtils"
 import { getPlaylists } from "../rest/playlistCalls"
@@ -32,18 +32,13 @@ const SelectMusicPlaylist = () => {
                     .filter((playlist: PlaylistPayload) => playlist.edit)
                 setProps({
                     playlistPayloads,
-                    trackId: getNumberValue("trackId", queryParameters),
-                    albumId: getNumberValue("albumId", queryParameters),
-                    artistId: getNumberValue("artistId", queryParameters)
+                    trackId: getQueryNumberValue("trackId", queryParameters),
+                    albumId: getQueryNumberValue("albumId", queryParameters),
+                    artistId: getQueryNumberValue("artistId", queryParameters)
                 })
             }
         })
     }, [userToken, queryParameters])
-
-    const getNumberValue = (name: string, queryParameters: URLSearchParams): number | undefined => {
-        const value = queryParameters.get(name)
-        return value ? +value : undefined
-    }
 
     const handleClickPlaylist = (playlistId: number): void => {
         const playlistPayloads: PlaylistPayload[] = []

@@ -24,6 +24,7 @@ export type TrackPayload = {
     minutes?: number
     seconds?: number
     encodedForWeb?: boolean 
+    year: number
 }
 
 export type AlbumWithTracksAndArtistPayload = {

@@ -18,6 +18,7 @@ import Artists from './media/music/Artists';
 import Playlists from "./media/playlist/Playlists";
 import MusicPlaylist from "./media/playlist/music/MusicPlaylist";
 import SelectMusicPlaylist from "./media/playlist/music/SelectMusicPlaylist";
+import MediaSearchResults from "./media/search/MediaSearchResults";
 
 
 export const MashupRoutes = () => {
@@ -187,10 +188,16 @@ export const MashupRoutes = () => {
                         </RequireAuthenication>
                     } />
                 </Route>
-
-
-
             </Route>
+
+            <Route path="/search">
+                <Route path="media" element={
+                    <RequireAuthenication>
+                        <MediaSearchResults />
+                    </RequireAuthenication>
+                } />
+            </Route>
+
         </Routes>
     )
 

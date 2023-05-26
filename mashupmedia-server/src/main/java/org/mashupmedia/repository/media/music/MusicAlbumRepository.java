@@ -15,4 +15,6 @@ public interface MusicAlbumRepository extends JpaRepository<Album, Long> {
 
     @Query("select a from from org.mashupmedia.model.media.music.Album a where a.tracks is empty")
     List<Album> findAlbumsWithNoTracks(); 
+
+    List<Album> findByNameContainingIgnoreCaseOrderByName(String name);
 }

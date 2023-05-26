@@ -96,7 +96,7 @@ public class MusicPlaylistController {
         Artist artist = musicManager.getArtist(artistId);
         List<Track> tracks = artist.getAlbums()
                 .stream()
-                .flatMap(album -> album.getTracks().stream())
+                .flatMap(album -> musicManager.getAlbum(album.getId()).getTracks().stream())
                 .collect(Collectors.toList());
 
         EncoderStatusType encoderStatusType = playlistActionManager.replacePlaylist(
@@ -119,7 +119,7 @@ public class MusicPlaylistController {
         Artist artist = musicManager.getArtist(musicQueueArtistPlaylistPayload.getArtistId());
         List<Track> tracks = artist.getAlbums()
                 .stream()
-                .flatMap(album -> album.getTracks().stream())
+                .flatMap(album -> musicManager.getAlbum(album.getId()).getTracks().stream())
                 .collect(Collectors.toList());
 
         EncoderStatusType encoderStatusType = playlistActionManager.appendPlaylist(

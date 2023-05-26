@@ -1,4 +1,4 @@
-import {createTheme} from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 
 export interface NameValue {
     name: string
@@ -20,18 +20,26 @@ export const getNameValueFromEvent = (event: any): NameValue => {
 
 export const mashupTheme = createTheme({
 
-        palette: {
-            primary: {
-                main: '#e579e9',
-                contrastText: '#ffffff'
-            },
-            secondary: {
-                main: '#7de979',
-                contrastText: '#ffffff',
-            }
+    palette: {
+        primary: {
+            main: '#e579e9',
+            contrastText: '#ffffff'
+        },
+        secondary: {
+            main: '#7de979',
+            contrastText: '#ffffff',
         }
     }
+}
 )
+
+export const isEnterKey = (code: string): boolean => {    
+    if (code && code === "Enter" || code === "NumpadEnter") {
+        return true
+    } else {
+        return false
+    }
+}
 
 
 

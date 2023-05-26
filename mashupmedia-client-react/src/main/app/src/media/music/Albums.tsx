@@ -81,7 +81,7 @@ const Albums = () => {
 
             if (node) observer.current.observe(node);
         },
-        [infiniteScrollProps.loading]
+        [infiniteScrollProps]
     )
 
     return (

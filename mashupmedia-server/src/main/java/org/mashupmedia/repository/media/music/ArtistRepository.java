@@ -22,4 +22,6 @@ public interface ArtistRepository extends MediaItemWithGroupsRepository<Artist, 
 
     @Query("select a from from Artist a where a.albums is empty")
     List<Artist> findAristsWithNoAlbums(); 
+
+    List<Artist> findByNameContainingIgnoreCaseOrderByName(String name);
 }
