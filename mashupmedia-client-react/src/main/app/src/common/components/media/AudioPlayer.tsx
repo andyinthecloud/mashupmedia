@@ -18,6 +18,7 @@ type AudioPlayerPlayload = {
     trackWithArtistPayload?: MusicPlaylistTrackPayload
     isReadyToPlay: boolean
     loadStreamTrigger?: number
+    loggedIn?: boolean
 }
 
 const AudioPlayer = () => {
@@ -376,8 +377,8 @@ const AudioPlayer = () => {
                 onError={handleAudioError}
             >
             </audio>
-
             <div className="audio-buttons">
+
 
                 <div className="button-container">
                     <IconButton

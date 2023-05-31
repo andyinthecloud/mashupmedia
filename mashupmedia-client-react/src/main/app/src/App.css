@@ -98,3 +98,12 @@ label {
 .small {
   font-size: small;
 }
+
+.zero-top-margin {
+  margin-top: -3em;
+}
+
+.icon-link {
+  cursor: pointer;
+  margin-left: 0.2em;
+} 

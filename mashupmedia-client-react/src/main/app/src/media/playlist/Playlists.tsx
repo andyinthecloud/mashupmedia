@@ -16,9 +16,6 @@ const Playlists = () => {
     const [props, setProps] = useState<PlaylistsPayload>()
 
     useEffect(() => {
-
-
-
         console.log("userEffect: userToken", userToken)
         getPlaylists(userToken).then(response => {
             if (response.parsedBody !== undefined) {
