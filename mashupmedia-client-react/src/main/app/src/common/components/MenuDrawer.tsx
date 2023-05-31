@@ -1,8 +1,8 @@
+import ListIcon from '@mui/icons-material/List';
 import { Collapse, ListItemButton, ListItemIcon } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import ListIcon from '@mui/icons-material/List';
 import ListItemText from '@mui/material/ListItemText';
 import { Fragment, useEffect, useState } from "react";
 
@@ -17,12 +17,10 @@ import { userPolicy } from "../security/features/userPolicySlice";
 import { redirectInternal } from "../utils/httpUtils";
 import ListItemRoute from './ListItemRoute';
 import './MenuDrawer.css';
-import { useNavigate } from "react-router-dom";
 import { closeMenu } from "./features/menuSlice";
 
 
 type InternalMenuDrawerPayload = {
-    // openMenu: boolean
     loggedIn: boolean
     administrator: boolean
     internalSubMenuPayload: InternalSubMenuPayload
@@ -215,7 +213,6 @@ const MenuDrawer = () => {
                             <ListItemRoute label="Users" toRoute="/configuration/users" onClick={closeAfterNavigate} />
                             <ListItemRoute label="Groups" toRoute="/configuration/groups" onClick={closeAfterNavigate} />
                             <ListItemRoute label="Libraries" toRoute="/configuration/libraries" onClick={closeAfterNavigate} />
-                            <ListItemRoute label="Network" toRoute="/configuration/network" onClick={closeAfterNavigate} />
                             <ListItemRoute label="Encode" toRoute="/configuration/encode" onClick={closeAfterNavigate} />
 
                         </List>

@@ -19,7 +19,7 @@ const LogOut = () => {
     }, [])
 
     return (
-        <div>
+        <div className="zero-top-margin">
             <h1>Logged Out</h1>
         </div>
     )

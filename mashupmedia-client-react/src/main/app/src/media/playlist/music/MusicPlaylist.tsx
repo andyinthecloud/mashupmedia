@@ -1,4 +1,4 @@
-import { Equalizer, PlayArrow } from "@mui/icons-material"
+import { Equalizer, PlayArrow, Refresh } from "@mui/icons-material"
 import { Button, Checkbox, FormControl, FormControlLabel, IconButton, InputLabel, List, ListItem, ListItemIcon, ListItemText, MenuItem, Select, TextField } from "@mui/material"
 import { ChangeEvent, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -193,9 +193,9 @@ const MusicPlaylist = () => {
     const handlePlayTrack = (loadPlaylistMediaItemId: number): void => {
         if (loadPlaylistMediaItemId) {
             dispatch(
-                loadTrack({ 
-                    loadPlaylistId: props?.playlistPayload.id,    
-                    loadPlaylistMediaItemId 
+                loadTrack({
+                    loadPlaylistId: props?.playlistPayload.id,
+                    loadPlaylistMediaItemId
                 })
             )
         }
@@ -215,7 +215,7 @@ const MusicPlaylist = () => {
             })
         )
 
-        dispatch(            
+        dispatch(
             loadTrack({
                 loadPlaylistId: props.playlistPayload.id,
             })
@@ -231,6 +231,26 @@ const MusicPlaylist = () => {
 
     }
 
+    const handleReload = () => {
+        if (!props?.playlistPayload.id) {
+            return
+        }
+
+        getPlaylist(props.playlistPayload.id, userToken).then(response => {
+            if (response.ok) {
+                const parsedBody = response.parsedBody
+                if (parsedBody) {
+                    setProps(previous => ({
+                        ...previous,
+                        mashupMediaType: parsedBody.mashupMediaType,
+                        playlistPayload: parsedBody.playlistPayload,
+                        playlistMediaItemPayloads: parsedBody.playlistMediaItemPayloads as (PlaylistTrackPayload[])
+                    }))
+                }
+            }
+        })
+    }
+
     return (
         <form id="music-playlist" onSubmit={handleSubmitAction} >
 
@@ -238,7 +258,12 @@ const MusicPlaylist = () => {
                 <h1
                     contentEditable={props?.playlistPayload.edit}
                     suppressContentEditableWarning={true}
-                    onBlur={e => handleChangeName(e.target.innerText)}>{props?.playlistPayload.name}</h1>
+                    onBlur={e => handleChangeName(e.target.innerText)}>{props?.playlistPayload.name}
+                    <Refresh
+                        className="icon-link"
+                        onClick={handleReload}
+                        color="primary" />
+                </h1>
 
             }
 

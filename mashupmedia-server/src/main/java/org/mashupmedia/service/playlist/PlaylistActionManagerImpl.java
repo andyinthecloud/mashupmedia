@@ -2,12 +2,12 @@ package org.mashupmedia.service.playlist;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.dto.media.playlist.EncoderStatusType;
 import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.model.User;
@@ -79,7 +79,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 				.stream()
 				.map(pmi -> pmi.getMediaItem())
 				.filter(mi -> !mi.isEncodedForWeb())
-				.collect(Collectors.toSet());
+				.collect(Collectors.toCollection(LinkedHashSet::new));
 
 		if (mediaItemsForEncoding == null || mediaItemsForEncoding.isEmpty()) {
 			return EncoderStatusType.OK;
@@ -176,40 +176,5 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 
 		return false;
 	}
-
-
-
-	// @Override
-	// public PlaylistMediaItem getPlaylistMediaItemByProgress(long playlistId, long progress) {
-	// 	Playlist playlist = playlistRepository.getReferenceById(playlistId);
-	// 	if (playlist == null) {
-	// 		return null;
-	// 	}
-
-	// 	List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
-	// 	Optional<PlaylistMediaItem> optionalPlayingMediaItem = playlistMediaItems
-	// 			.stream()
-	// 			.filter(pmi -> pmi.isPlaying())
-	// 			.findFirst();
-
-	// 	int index = 0;
-	// 	if (optionalPlayingMediaItem.isPresent()) {
-	// 		index = playlistMediaItems.indexOf(optionalPlayingMediaItem.get());
-	// 	}
-
-	// 	long cumulativeEndSeconds = 0;
-	// 	List<PlaylistMediaItem> remainingPlaylistMediaItems = playlistMediaItems.subList(index,
-	// 			playlistMediaItems.size() - 1);
-	// 	for (PlaylistMediaItem pmi : remainingPlaylistMediaItems) {
-	// 		if (pmi.getMediaItem() instanceof Track track && track.isEncodedForWeb()) {
-	// 			cumulativeEndSeconds += track.getTrackLength();
-	// 			if (progress < cumulativeEndSeconds) {
-	// 				return pmi;
-	// 			}
-	// 		}
-	// 	}
-
-	// 	return optionalPlayingMediaItem.orElse(playlistMediaItems.get(0));
-	// }
 
 }

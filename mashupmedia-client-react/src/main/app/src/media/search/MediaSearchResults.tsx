@@ -218,8 +218,6 @@ const MediaSearchResults = () => {
         }
     }
 
-
-
     const getSearchMediaItemIcon = (mediaSearchResultType: MediaSearchResultType) => {
         if (mediaSearchResultType === MediaSearchResultType.TRACK) {
             return (<Audiotrack />)
@@ -235,17 +233,27 @@ const MediaSearchResults = () => {
 
     }
 
+    const hasSearchResults = (): boolean => {
+        return props?.mediaSearchResultPayloads?.length ? true : false
+    }
+
     return (
         <div>
             <h1>Search results</h1>
 
-            <List>
-                {props?.mediaSearchResultPayloads.map(function (mediaSearchResultPayload, index) {
-                    return (
-                        displaySearchResult(mediaSearchResultPayload, index)
-                    )
-                })}
-            </List>
+            {hasSearchResults() &&
+                <List>
+                    {props?.mediaSearchResultPayloads.map(function (mediaSearchResultPayload, index) {
+                        return (
+                            displaySearchResult(mediaSearchResultPayload, index)
+                        )
+                    })}
+                </List>
+            }
+
+            {!hasSearchResults() &&
+                <p>Unable to find anything matching your search</p>
+            }
 
         </div>
     )
