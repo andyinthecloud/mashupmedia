@@ -142,12 +142,6 @@ export const MashupRoutes = () => {
                         </RequireAuthenication>
                     } />
 
-                    <Route path="" element={
-                        <RequireAuthenication>
-                            <MusicPlaylist />
-                        </RequireAuthenication>
-                    } />
-
                     <Route path="select" element={
                         <RequireAuthenication>
                             <SelectMusicPlaylist />
