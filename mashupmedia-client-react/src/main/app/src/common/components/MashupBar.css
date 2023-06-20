@@ -1,5 +1,7 @@
 #mashup-bar img.logo {
     margin-right: 2em;
+    width: 50px;
+    height: auto;
 }
 
 #mashup-bar button {

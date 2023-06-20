@@ -4,7 +4,7 @@ import { AppBar, Box, IconButton, TextField, Toolbar } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import logoSmall from '../../logo-small.png';
+import icon from '../../icon.png';
 import { isEnterKey } from "../utils/formUtils";
 import './MashupBar.css';
 import MenuDrawer from "./MenuDrawer";
@@ -65,7 +65,7 @@ const MashupBar = () => {
                     </IconButton>
 
                     <Link to={"/"}>
-                        <img src={logoSmall} className="logo" />
+                        <img src={icon} className="icon" />
                     </Link>
 
                     <TextField

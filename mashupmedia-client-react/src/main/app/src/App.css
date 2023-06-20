@@ -7,6 +7,20 @@
   pointer-events: none;
 }
 
+img.logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+  min-width: 300px;
+  height: auto;
+}
+
+img.icon {
+  width: 50px;
+  height: auto;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -37,6 +51,9 @@
   }
 }
 
+html {
+  color: #3a2944;
+}
 
 div {
   text-align: left;

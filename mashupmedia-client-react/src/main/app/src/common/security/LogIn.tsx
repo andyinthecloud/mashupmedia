@@ -110,7 +110,7 @@ const LogIn = () => {
 
         <form onSubmit={useHandleSubmit} className="zero-top-margin">
 
-            <img src={logo} alt="Mashup Media" />
+            <img src={logo} className="logo" alt="Mashup Media" />
 
             <h1>Log in</h1>
 
