@@ -1,8 +1,8 @@
-#mashup-bar img.logo {
+#mashup-bar img.icon {
     margin-right: 2em;
     width: 50px;
     height: auto;
-}
+}  
 
 #mashup-bar button {
     margin-left: 0 !important;
