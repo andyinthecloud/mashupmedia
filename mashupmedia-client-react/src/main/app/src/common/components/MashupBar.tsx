@@ -1,4 +1,4 @@
-import { Search } from "@mui/icons-material";
+import { Clear, Search } from "@mui/icons-material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Box, IconButton, TextField, Toolbar } from "@mui/material";
 import { useState } from "react";
@@ -25,12 +25,20 @@ const MashupBar = () => {
     }
 
     const navigate = useNavigate()
+
     const handleClickSearch = (): void => {
         if (!props?.searchText) {
             return
         }
         navigate(`/search/media?search=${encodeURIComponent(props.searchText)}`)
     }
+
+    const handleClearSearch = (): void => {
+        setProps({
+
+        })
+    }
+
 
     const dispatch = useDispatch()
 
@@ -83,9 +91,9 @@ const MashupBar = () => {
                             endAdornment: (
 
                                 <IconButton
-                                    onClick={handleClickSearch}
+                                    onClick={handleClearSearch}
                                 >
-                                    <Search
+                                    <Clear
                                         className="text-color"
                                         color="primary"
                                     />
@@ -94,6 +102,14 @@ const MashupBar = () => {
                             )
                         }}
                     />
+                    <IconButton
+                        onClick={handleClickSearch}
+                    >
+                        <Search
+                            className="text-color"
+                            color="primary"
+                        />
+                    </IconButton>
                 </Toolbar>
             </AppBar>
         </Box>

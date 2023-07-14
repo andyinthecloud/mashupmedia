@@ -263,8 +263,13 @@ const Library = () => {
                     fullWidth={true}
                     error={hasFieldError(FieldNames.PATH, props.formValidation)}
                     helperText={fieldErrorMessage(FieldNames.PATH, props.formValidation)}
-                    InputProps={{ endAdornment: <IconButton onClick={handleCheckPath}><Check /></IconButton> }}
                 />
+            </div>
+
+            <div className="new-line right">
+                <Button variant="contained" color="secondary" type="button" onClick={handleCheckPath}>
+                    Check path
+                </Button>
             </div>
 
             {props.libraryPayload.createdOn &&
