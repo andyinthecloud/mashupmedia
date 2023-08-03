@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.annotation.security.RolesAllowed;
-
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.dao.RoleDao;
@@ -20,10 +19,12 @@ import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
+import org.mashupmedia.util.MessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -195,8 +196,10 @@ public class AdminManagerImpl implements AdminManager {
 
 	@Override
 	public void initialiseAdminUser() {
+
+		String name = MashUpMediaConstants.ADMIN_USER_DEFAULT_NAME;
 		User user = User.builder()
-				.name(MashUpMediaConstants.ADMIN_USER_DEFAULT_NAME)
+				.name(name)
 				.username(MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME)
 				.password(MashUpMediaConstants.ADMIN_USER_DEFAULT_PASSWORD)
 				.enabled(true)
@@ -206,6 +209,16 @@ public class AdminManagerImpl implements AdminManager {
 				.build();
 
 		saveUser(user);
+
+		Playlist playlist = Playlist.builder()
+				.name(name + "'s " + MessageHelper.getMessage("music.playlist.default.name"))				
+				.userDefault(true)
+				.createdBy(user)
+				.mediaTypeValue(MashupMediaType.MUSIC.name())
+				.playlistMediaItems(new HashSet<>())
+				.build();
+		playlistDao.savePlaylist(playlist);
+
 	}
 
 	@Override

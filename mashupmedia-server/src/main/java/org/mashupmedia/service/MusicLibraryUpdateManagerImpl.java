@@ -43,6 +43,7 @@ import org.mashupmedia.repository.media.MediaRepository;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.repository.media.music.MusicAlbumRepository;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.GenreHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
@@ -147,29 +148,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 			track.setLibrary(musicLibrary);
 
-			// String trackPath = track.getPath();
-			// long fileLastModifiedOn = track.getFileLastModifiedOn();
-			// // Track savedTrack = getSavedTrack(groupIds, libraryId, trackPath,
-			// // fileLastModifiedOn);
-			// Optional<Track> optionalTrack =
-			// trackRepository.findByLibraryIdAndPathAndLastModifiedOn(libraryId, trackPath,
-			// fileLastModifiedOn);
-
-			// if (optionalTrack.isPresent()) {
-			// Track savedTrack = optionalTrack.get();
-			// long savedTrackId = savedTrack.getId();
-			// track.setId(savedTrackId);
-			// savedTrack.setUpdatedOn(track.getUpdatedOn());
-			// savedTrack.setEnabled(true);
-			// musicDao.saveTrack(savedTrack, false);
-			// log.info("Track is already in database, updated track date.");
-			// // writeTrackToXml(libraryId, savedTrack);
-			// //
-			// encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(savedTrack,
-			// // MediaContentType.MP3);
-			// continue;
-			// }
-
 			MediaEncoding mediaEncoding = MediaItemHelper.createMediaEncoding(track.getFileName());
 			Set<MediaEncoding> mediaEncodings = track.getMediaEncodings();
 			if (mediaEncodings == null) {
@@ -219,37 +197,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				isSessionFlush = true;
 			}
 
-			StringBuilder searchTextBuilder = new StringBuilder();
-			if (artist != null) {
-				searchTextBuilder.append(" " + artist.getIndexText());
-			}
-
-			if (album != null) {
-				searchTextBuilder.append(" " + album.getIndexText());
-			}
-
-			if (genre != null) {
-				searchTextBuilder.append(" " + genre.getName());
-			}
-
-			if (year != null) {
-				searchTextBuilder.append(" " + year.getYear());
-			}
-
-			searchTextBuilder.append(" " + track.getTitle());
-			String searchText = StringUtils.trimToEmpty(searchTextBuilder.toString());
-			searchText = searchText.replaceAll("\\s*\\b", " ");
-			searchText = StringHelper.normaliseTextForDatabase(searchText);
-			track.setSearchText(searchText);
-
 			musicDao.saveTrack(track, isSessionFlush);
-			// writeTrackToXml(libraryId, track);
-
-			// encodeMediaItemTaskManager.processMediaItemForEncodingDuringAutomaticUpdate(track,
-			// MediaContentType.MP3);
-
 			totalTracksSaved++;
-
 		}
 
 		log.info("Saved " + totalTracksSaved + " tracks.");
@@ -484,11 +433,14 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			track.setYear(year);
 		}
 
-		if (StringUtils.isNotEmpty(genreValue)) {
-			Genre genre = new Genre();
-			genre.setName(genreValue);
-			track.setGenre(genre);
-		}
+		Genre genre = GenreHelper.getGenre(genreValue);
+		track.setGenre(genre);
+
+		// if (StringUtils.isNotEmpty(genreValue)) {
+		// 	Genre genre = new Genre();
+		// 	genre.setName(genreValue);
+		// 	track.setGenre(genre);
+		// }
 
 		Album album = new Album();
 		if (StringUtils.isEmpty(tagAlbumName)) {
@@ -573,41 +525,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return title;
 	}
 
-	// @Override
-	// public void deleteTracks(List<Track> tracks) {
-
-	// for (Track track : tracks) {
-	// long trackId = track.getId();
-	// processManager.killProcesses(trackId);
-	// List<PlaylistMediaItem> playlistMediaItems =
-	// playlistMediaItemRepository.findByMediaItemId(trackId);
-	// playlistMediaItemRepository.deleteAll(playlistMediaItems);
-	// mediaRepository.delete(track);
-	// }
-
-	// // playlistDao.deletePlaylistMediaItems(tracks);
-	// // musicDao.deleteTracks(tracks);
-
-	// log.info("Deleted " + tracks.size() + " out of date tracks.");
-
-	// cleanUp();
-	// log.info("Cleaned library.");
-	// }
-
 	private Artist prepareArtist(Artist artist) {
-		// Artist savedArtist = musicDao.getArtist(userGroupIds, artist.getName());
-		Optional<Artist> artistOptional = artistRepository.findArtistByNameIgnoreCase(artist.getName());
-
-		if (artistOptional.isPresent()) {
-			return artistOptional.get();
-		}
-
-		String artistName = artist.getName();
-		String artistSearchIndexLetter = StringHelper.getSearchIndexLetter(artistName);
-		artist.setIndexLetter(artistSearchIndexLetter);
-		String artistSearchIndexText = StringHelper.getSearchIndexText(artistName);
-		artist.setIndexText(artistSearchIndexText);
-		return artist;
+		return artistRepository.findArtistByNameIgnoreCase(artist.getName()).orElse(artist);
 	}
 
 	private Album prepareAlbum(Album album) {
@@ -649,10 +568,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			return savedAlbum;
 		}
 
-		String albumIndexLetter = StringHelper.getSearchIndexLetter(albumName);
-		album.setIndexLetter(albumIndexLetter);
-		String albumIndexText = StringHelper.getSearchIndexText(albumName);
-		album.setIndexText(albumIndexText);
 		album.setAlbumArtImage(albumArtImage);
 
 		return album;

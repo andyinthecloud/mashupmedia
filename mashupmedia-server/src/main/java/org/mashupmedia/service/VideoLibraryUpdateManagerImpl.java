@@ -148,7 +148,6 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 		video.setLibrary(library);
 		String searchText = videoDisplayTitle;
 		video.setDisplayTitle(videoDisplayTitle);
-		video.setSearchText(searchText);
 		video.setUpdatedOn(date);
 		videos.add(video);
 

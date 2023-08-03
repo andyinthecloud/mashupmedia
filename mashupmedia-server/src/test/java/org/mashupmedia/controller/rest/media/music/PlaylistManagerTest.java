@@ -90,7 +90,6 @@ public class PlaylistManagerTest {
     private Artist createAndPersistArtist() {
         Artist artist = new Artist();
         artist.setFolderName("folderName");
-        artist.setIndexLetter("i");
         artist.setName("name");
         musicDao.saveArtist(artist);
         return artist;

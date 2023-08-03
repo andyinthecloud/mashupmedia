@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class ArtistPayload {
+public class GenrePayload {
     private long id;
-    private String name;
+    private String idName;
 }

@@ -27,7 +27,6 @@ const Album = () => {
             },
             artistPayload: {
                 id: 0,
-                indexLetter: "",
                 name: ""
             },
             trackPayloads: []

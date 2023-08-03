@@ -328,7 +328,7 @@ const Library = () => {
                         value={props.libraryPayload.albumArtImagePattern}
                         onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                         fullWidth={true}
-                        helperText={'Something like this'}
+                        helperText={'Default name pattern: folder*,cover*,albumart* '}
                     />
                 </div>
             }

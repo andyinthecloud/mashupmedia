@@ -3,7 +3,6 @@ package org.mashupmedia.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,7 +21,6 @@ import org.mashupmedia.model.playlist.UserPlaylistPositionId;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
 import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.MessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -135,21 +133,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
 		Assert.notNull(user, "User should not be null");
 
 		Playlist playlist = playlistDao.getDefaultPlaylistForUser(user.getId(), mashupMediaType);
-
-		if (playlist != null) {
-			initialisePlaylist(playlist);
-			return playlist;
+		if (playlist == null) {
+			return null;
 		}
 
-		playlist = new Playlist();
-		String name = user.getName();
-		playlist.setName(name + "'s " + MessageHelper.getMessage("music.playlist.default.name"));
-		playlist.setUserDefault(true);
-		playlist.setCreatedBy(user);
-		playlist.setMashupMediaType(mashupMediaType);
-		playlist.setPlaylistMediaItems(new HashSet<PlaylistMediaItem>());
-		playlistDao.savePlaylist(playlist);
-
+		initialisePlaylist(playlist);
 		return playlist;
 	}
 

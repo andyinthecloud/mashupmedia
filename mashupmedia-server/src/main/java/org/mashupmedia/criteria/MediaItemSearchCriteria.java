@@ -1,5 +1,7 @@
 package org.mashupmedia.criteria;
 
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +16,10 @@ public class MediaItemSearchCriteria {
 
 	private final static int DEFAULT_FETCH_SIZE = 20;
 
-	private String text;
+	private String searchText;
+	private List<String> genreIdNames;
+	private List<Integer> decades;
+
 	private int pageNumber;
 	@Builder.Default
 	private int maximumResults = DEFAULT_FETCH_SIZE;

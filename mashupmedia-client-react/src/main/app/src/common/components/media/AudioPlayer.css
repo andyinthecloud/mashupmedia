@@ -14,7 +14,8 @@
 
 #audio-player-container div.duration {
     position: relative;
-    width: 95%;
+    padding-left: 1em;
+    padding-right: 1em;
 }
 
 #audio-player-container div.duration-time {
@@ -70,18 +71,21 @@
     font-size: 1.5em;
 }
 
+#audio-player-container div.track div.album {
+    font-size: 1.2em;
+}
+
 #audio-player-container div.track div.artist {
     opacity: 0.8;
     font-size: 1em;
 }
 
 #audio-player-container div.album-art {
-    margin-top: 1em;
+    position: relative;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    height: 30em;
-    cursor: pointer;
+    height: 20em;
 }
 
 
@@ -92,6 +96,9 @@
 }
 
 #audio-player-container div.expand div.bottom {
+    position: absolute;
+    bottom: 0;
+    right: 0;
     text-align: right;
 }
 

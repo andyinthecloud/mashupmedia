@@ -90,6 +90,10 @@ h2 {
   font-size: small;
 }
 
+.blur-background {
+  background-color:  rgb(255, 255, 255, 0.8);
+}
+
 .hide {
   display: none;
 }

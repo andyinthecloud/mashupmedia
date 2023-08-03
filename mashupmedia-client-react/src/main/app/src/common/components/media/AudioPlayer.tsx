@@ -105,6 +105,16 @@ const AudioPlayer = () => {
                         </Link>
                     </div>
                     <div className="title">{props.payload.trackWithArtistPayload?.trackPayload.name}</div>
+                    <div className="album">
+                        <Link
+                            to={"/music/album/" + props.payload.trackWithArtistPayload?.albumPayload.id}
+                            onClick={() => setExpanded(false)}
+                            className="link-no-underlne"
+                        >
+                            {props.payload.trackWithArtistPayload?.albumPayload.name}
+                        </Link>
+                    </div>
+
                     <div className="artist">
                         <Link
                             to={"/music/artist/" + props.payload.trackWithArtistPayload?.artistPayload.id}
@@ -271,9 +281,9 @@ const AudioPlayer = () => {
         if (props.payload.trackWithArtistPayload?.last) {
             return
         }
-        handleNavigate({ 
-            navigatePlaylistType: NavigatePlaylistType.NEXT, 
-            loadStream: true 
+        handleNavigate({
+            navigatePlaylistType: NavigatePlaylistType.NEXT,
+            loadStream: true
         })
     }
 
@@ -382,8 +392,8 @@ const AudioPlayer = () => {
 
                 <div className="button-container">
                     <IconButton
-                        onClick={() => handleNavigate({ 
-                            navigatePlaylistType: NavigatePlaylistType.PREVIOUS, 
+                        onClick={() => handleNavigate({
+                            navigatePlaylistType: NavigatePlaylistType.PREVIOUS,
                             playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id,
                             loadStream: true
                         })}
@@ -406,7 +416,7 @@ const AudioPlayer = () => {
                     </IconButton>
 
                     <IconButton
-                        onClick={() => handleNavigate({ 
+                        onClick={() => handleNavigate({
                             navigatePlaylistType: NavigatePlaylistType.NEXT,
                             playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id,
                             loadStream: true
@@ -440,10 +450,13 @@ const AudioPlayer = () => {
 
                 <div className="expand">
 
-                    <div className="container">
+                    <div
+                        className="container album-art"
+                        style={{ backgroundImage: `url(${albumArtImageUrl(props.payload.trackWithArtistPayload?.albumPayload.id || 0, ImageType.ORIGINAL, props.mediaToken)})` }}
+                    >
 
                         {!mobileDisplay &&
-                            <div className="duration centre">
+                            <div className="duration centre blur-background">
                                 <div className="beginning duration-time">{displayDuration(progress)}</div>
                                 <Slider
                                     aria-label="Volume"
@@ -456,21 +469,14 @@ const AudioPlayer = () => {
                             </div>
                         }
 
-                        <div className="track-information">
+                        <div className="track-information blur-background">
                             <div className="track">
                                 {renderPlayingInformation()}
                             </div>
-
                             {encodeMessage(props.payload.trackWithArtistPayload?.encoderStatusType)}
-
-                            <div
-                                className="album-art"
-                                style={{ backgroundImage: `url(${albumArtImageUrl(props.payload.trackWithArtistPayload?.albumPayload.id || 0, ImageType.ORIGINAL, props.mediaToken)})` }}
-                                onClick={() => handleAlbumClick(props.payload.trackWithArtistPayload?.albumPayload.id || 0)}
-                            />
                         </div>
 
-                        <div className="bottom">
+                        <div className="bottom blur-background">
                             <IconButton
                                 color="primary"
                                 onClick={handleExpand}>

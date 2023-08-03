@@ -16,6 +16,8 @@ import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.repository.media.music.MusicAlbumRepository;
 import org.mashupmedia.repository.media.music.TrackRepository;
+import org.mashupmedia.repository.media.music.TrackSpecifications;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,7 @@ public class MediaManagerImpl implements MediaManager {
 	private final TrackRepository trackRepository;
 	private final MusicAlbumRepository musicAlbumRepository;
 	private final ArtistRepository artistRepository;
+	private final MashupMediaSecurityManager mashupMediaSecurityManager;
 
 	@Override
 	public List<MediaItem> getMediaItemsForLibrary(long libraryId) {
@@ -65,7 +68,7 @@ public class MediaManagerImpl implements MediaManager {
 	public List<SearchMediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria) {
 
 		List<SearchMediaItem> searchMediaItems = new ArrayList<>();
-		String text = mediaItemSearchCriteria.getText();
+		String text = mediaItemSearchCriteria.getSearchText();
 
 		List<Artist> artists = artistRepository.findByNameContainingIgnoreCaseOrderByName(text);
 		searchMediaItems.addAll(artists.stream()
@@ -81,7 +84,18 @@ public class MediaManagerImpl implements MediaManager {
 						.build())
 				.collect(Collectors.toList()));
 
-		List<Track> tracks = trackRepository.findByTitleContainingIgnoreCaseOrderByTitle(text);
+		List<Long> userGroupIds = mashupMediaSecurityManager.getLoggedInUserGroupIds();
+		
+		Specification<Track> specification = TrackSpecifications.hasGroup(userGroupIds)
+				.and(TrackSpecifications.hasTitleLike(text))
+				.and(TrackSpecifications.hasGenre(mediaItemSearchCriteria.getGenreIdNames()));
+
+		for(Integer decade: mediaItemSearchCriteria.getDecades()) {
+			specification = specification.and(TrackSpecifications.hasDecade(decade));
+		}
+
+		List<Track> tracks = trackRepository.findAll(specification);
+
 		searchMediaItems.addAll(tracks.stream()
 				.map(track -> SearchMediaItem.builder()
 						.result(track)

@@ -1,48 +1,35 @@
-import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
-import { useNavigate, useSearchParams } from "react-router-dom"
-import { RootState } from "../../common/redux/store"
-import { MediaSearchResultPayload, MusicSearchResultPayload, searchMedia } from "./rest/searchCalls"
+import { Add, Album, Audiotrack, Person, PlayArrow } from "@mui/icons-material"
 import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
-import { MashupMediaType, playAlbum, playArtist, playTrack } from "../music/rest/playlistActionCalls"
-import { Add, Album, Audiotrack, Inbox, Person, PlayArrow } from "@mui/icons-material"
-import { getTrackYearInBrackets } from "../music/utils/musicItemUtils"
-import { useDispatch } from "react-redux"
-import { loadTrack } from "../music/features/playMusicSlice"
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import { NotificationType, addNotification } from "../../common/notification/notificationSlice"
+import { RootState } from "../../common/redux/store"
+import { loadTrack } from "../music/features/playMusicSlice"
+import { MashupMediaType, playAlbum, playArtist, playTrack } from "../music/rest/playlistActionCalls"
+import { getTrackYearInBrackets } from "../music/utils/musicItemUtils"
+import { MediaSearchResultPayload, MusicSearchResultPayload } from "./rest/searchCalls"
 
 
-type MediaSearchResultsPayload = {
-    mediaSearchResultPayloads: MediaSearchResultPayload[]
+export type MediaSearchResultsPayload = {
+    mediaSearchResultPayloads?: MediaSearchResultPayload[]
 }
 
 enum MediaSearchResultType {
     TRACK, ALBUM, ARTIST, NONE
 }
 
-const MediaSearchResults = () => {
+const MediaSearchResults = (mediaSearchResultsPayload: MediaSearchResultsPayload) => {
 
-    const userToken = useSelector((state: RootState) => state.security.payload?.token)
-    const [queryParameters] = useSearchParams()
     const [props, setProps] = useState<MediaSearchResultsPayload>()
+    const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
     useEffect(() => {
+        setProps(
+            mediaSearchResultsPayload
+        )
 
-        const searchText = queryParameters.get("search")
-        if (!searchText) {
-            return
-        }
-
-        searchMedia(searchText, userToken).then(response => {
-            console.log("searchMedia", response.parsedBody)
-            if (response.ok) {
-                setProps({
-                    mediaSearchResultPayloads: response.parsedBody || []
-                })
-            }
-        })
-
-    }, [userToken, queryParameters])
+    }, [mediaSearchResultsPayload])
 
     const dispatch = useDispatch()
     const handlePlayItem = (mediaItemId: number, mediaSearchResultType: MediaSearchResultType): void => {
@@ -239,11 +226,11 @@ const MediaSearchResults = () => {
 
     return (
         <div>
-            <h1>Search results</h1>
+            <h2>Results</h2>
 
             {hasSearchResults() &&
                 <List>
-                    {props?.mediaSearchResultPayloads.map(function (mediaSearchResultPayload, index) {
+                    {props?.mediaSearchResultPayloads?.map(function (mediaSearchResultPayload, index) {
                         return (
                             displaySearchResult(mediaSearchResultPayload, index)
                         )

@@ -4,7 +4,6 @@ import { SecureMediaPayload } from "../../rest/secureMediaPayload"
 export type ArtistPayload = {
     id: number
     name: string
-    indexLetter: string
 }
 
 export type AlbumPayload = {

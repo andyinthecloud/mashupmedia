@@ -11,11 +11,23 @@ import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlTransient;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "genres")
 @Cacheable
 @XmlAccessorType(XmlAccessType.FIELD)
+@Setter
+@Getter
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Genre implements Serializable {
 	private static final long serialVersionUID = 6276317371160122830L;
 	@Id
@@ -23,22 +35,6 @@ public class Genre implements Serializable {
 	@XmlTransient
 	private long id;
 	private String name;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	@Override
 	public int hashCode() {
@@ -63,17 +59,6 @@ public class Genre implements Serializable {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Genre [id=");
-		builder.append(id);
-		builder.append(", name=");
-		builder.append(name);
-		builder.append("]");
-		return builder.toString();
 	}
 
 }

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.mashupmedia.comparator.MediaEncodingComparator;
@@ -14,9 +13,7 @@ import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.StringHelper;
-import org.springframework.beans.factory.config.PlaceholderConfigurerSupport;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -71,8 +68,6 @@ public class MediaItem {
 	@ManyToOne(cascade = { CascadeType.PERSIST })
 	@XmlTransient
 	private User lastAccessedBy;
-	@Column(length = 1000)
-	private String searchText;
 	private String mediaTypeValue;
 	@Column(length = 1000)
 	private String summary;
@@ -176,8 +171,6 @@ public class MediaItem {
 		builder.append(lastAccessed);
 		builder.append(", lastAccessedBy=");
 		builder.append(lastAccessedBy);
-		builder.append(", searchText=");
-		builder.append(searchText);
 		builder.append(", mediaTypeValue=");
 		builder.append(mediaTypeValue);
 		builder.append(", summary=");

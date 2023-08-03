@@ -118,5 +118,28 @@ export const getQueryNumberValue = (name: string, queryParameters: URLSearchPara
 }
 
 
+export const objectToQueryParameters = (object: any): string => {
+    let urlParameters = ""
+
+    Object.keys(object).map(key => {
+        urlParameters += `${urlParameters ? "&" : "?"}${key}=${primitiveValueToQueryValue(object[key])}`
+    })
+
+    return urlParameters
+}
+
+
+const primitiveValueToQueryValue = (value: any): string => {
+    
+    let urlValue = ""
+    
+    if (Array.isArray(value)) {
+        urlValue = value.join(",")    
+    } else {
+        urlValue = value
+    }
+
+    return encodeURI(urlValue)
+}
 
 
