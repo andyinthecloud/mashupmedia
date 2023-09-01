@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.Year;
+import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Track;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,8 +33,45 @@ public class TrackSpecifications {
 
     }
 
-    public static Specification<Track> hasFirstNameLike(String name) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.<String>get("title"), "%" + name + "%");
+    public static Specification<Track> hasAlbumNameLike(String searchText) {
+
+        String processedSearchText = StringUtils.isNotBlank(searchText)
+                ? "%" + searchText.toUpperCase() + "%"
+                : null;
+
+        return (root, query, builder) -> {
+            if (Objects.isNull(processedSearchText)) {
+                return builder.conjunction();
+            } else {
+                Join<Library, Album> tracksAlbum = root.join("album");
+                return builder.like(
+                        builder.upper(tracksAlbum.get("name")),
+                        processedSearchText,
+                        '\\');
+
+            }
+        };
+    }
+
+
+    public static Specification<Track> hasArtistNameLike(String searchText) {
+
+        String processedSearchText = StringUtils.isNotBlank(searchText)
+                ? "%" + searchText.toUpperCase() + "%"
+                : null;
+
+        return (root, query, builder) -> {
+            if (Objects.isNull(processedSearchText)) {
+                return builder.conjunction();
+            } else {
+                Join<Library, Album> tracksArtist = root.join("artist");
+                return builder.like(
+                        builder.upper(tracksArtist.get("name")),
+                        processedSearchText,
+                        '\\');
+
+            }
+        };
     }
 
     public static Specification<Track> hasGroup(List<Long> groupIds) {
@@ -65,17 +103,11 @@ public class TrackSpecifications {
             } else {
                 double yearTenth = year / 10;
                 DecimalFormat decimalFormat = new DecimalFormat("#");
-
-                decimalFormat.format(0, null, null);
-
-                decimalFormat.setRoundingMode(RoundingMode.UP);
-                int maximumYear = 19;
-
-                decimalFormat.setRoundingMode(RoundingMode.DOWN);
-                int minimumYear = Integer.parseInt(decimalFormat.format(yearTenth));
-
+                decimalFormat.setRoundingMode(RoundingMode.FLOOR);
+                int floor = Integer.valueOf(decimalFormat.format(yearTenth)) * 10;
+                int ceiling = floor + 9;
                 Join<Year, Track> yearsTrack = root.join("year");
-                return criteriaBuilder.between(yearsTrack.get("year"), minimumYear, maximumYear);
+                return criteriaBuilder.between(yearsTrack.get("year"), floor, ceiling);
             }
         };
     }

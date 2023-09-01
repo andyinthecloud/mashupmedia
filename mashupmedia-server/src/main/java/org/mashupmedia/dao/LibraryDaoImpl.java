@@ -2,10 +2,6 @@ package org.mashupmedia.dao;
 
 import java.util.List;
 
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
-
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
@@ -13,6 +9,8 @@ import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.RemoteShare;
 import org.springframework.stereotype.Repository;
 
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
@@ -38,7 +36,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		}
 
 		Query query = entityManager
-				.createQuery("from " + libraryClassName + " where remote = false and enabled = true order by name");		
+				.createQuery("from " + libraryClassName + " where remote = false and enabled = true order by name");
 		@SuppressWarnings("unchecked")
 		List<Library> libraries = query.getResultList();
 		return libraries;
@@ -54,7 +52,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 			libraryClassName = Library.class.getName();
 		}
 
-		TypedQuery<Library> query = entityManager.createQuery("from " + libraryClassName + " order by name", Library.class);
+		TypedQuery<Library> query = entityManager.createQuery("from " + libraryClassName + " order by name",
+				Library.class);
 		List<Library> libraries = query.getResultList();
 		return libraries;
 	}
@@ -108,7 +107,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 	@Override
 	public Library getRemoteLibrary(long libraryId) {
-		TypedQuery<Library> query = entityManager.createQuery("from Library where id = :id and remote = true", Library.class);
+		TypedQuery<Library> query = entityManager.createQuery("from Library where id = :id and remote = true",
+				Library.class);
 		query.setParameter("id", libraryId);
 		Library library = getUniqueResult(query);
 		return library;
@@ -153,7 +153,8 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	@Override
 	public List<Library> getLibrariesForGroup(long groupId) {
 		TypedQuery<Library> query = entityManager
-				.createQuery("select l from Library l inner join l.groups g where g.id = :groupId order by l.name", Library.class);
+				.createQuery("select l from Library l inner join l.groups g where g.id = :groupId order by l.name",
+						Library.class);
 		query.setParameter("groupId", groupId);
 		List<Library> libraries = query.getResultList();
 		return libraries;

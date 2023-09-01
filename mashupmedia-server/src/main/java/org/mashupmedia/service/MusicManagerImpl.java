@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Hibernate;
-import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
+import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;

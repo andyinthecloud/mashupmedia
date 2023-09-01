@@ -2,7 +2,7 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
-import org.mashupmedia.criteria.MediaItemSearchCriteria;
+import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;

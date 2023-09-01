@@ -2,10 +2,12 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
-import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.SearchMediaItem;
+import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.model.media.music.Track;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface MediaManager {
 
@@ -19,7 +21,7 @@ public interface MediaManager {
 
 	void updateMediaItem(MediaItem mediaItem);
 
-	List<SearchMediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria);
+	Page<Track> findMusic(MediaItemSearchCriteria mediaItemSearchCriteria, Pageable pageable);
 
 	void saveMediaItem(MediaItem mediaItem);
 

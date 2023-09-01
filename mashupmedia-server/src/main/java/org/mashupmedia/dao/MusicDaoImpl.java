@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.criteria.MediaItemSearchCriteria;
+import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
@@ -14,7 +14,6 @@ import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.util.DaoHelper;
-import org.mashupmedia.util.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
