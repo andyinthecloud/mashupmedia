@@ -122,7 +122,10 @@ export const objectToQueryParameters = (object: any): string => {
     let urlParameters = ""
 
     Object.keys(object).map(key => {
-        urlParameters += `${urlParameters ? "&" : "?"}${key}=${primitiveValueToQueryValue(object[key])}`
+        const value = primitiveValueToQueryValue(object[key])
+        if (value) {
+            urlParameters += `${urlParameters ? "&" : "?"}${key}=${value}`
+        }
     })
 
     return urlParameters
@@ -131,7 +134,7 @@ export const objectToQueryParameters = (object: any): string => {
 
 const primitiveValueToQueryValue = (value: any): string => {
     
-    let urlValue = ""
+    let urlValue = ''
     
     if (Array.isArray(value)) {
         urlValue = value.join(",")    
@@ -139,7 +142,7 @@ const primitiveValueToQueryValue = (value: any): string => {
         urlValue = value
     }
 
-    return encodeURI(urlValue)
+    return urlValue ? encodeURI(urlValue) : ''
 }
 
 

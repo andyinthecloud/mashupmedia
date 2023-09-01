@@ -1,15 +1,17 @@
 import { useSearchParams } from "react-router-dom"
-import MediaSearchResults from "./MediaSearchResults"
+import MusicSearchResults from "./MusicSearchResults"
 import SearchForm from "./SearchForm"
 import { useEffect, useState } from "react"
-import { MediaItemSearchCriteriaPayload, MediaSearchResultPayload, searchMedia } from "./rest/searchCalls"
+import { MediaItemSearchCriteriaPayload, MediaSearchResultPayload, MusicSearchResultPayload, searchMedia } from "./rest/searchCalls"
 import { useSelector } from "react-redux"
 import { RootState } from "../../common/redux/store"
+import { MashupMediaType } from "../music/rest/playlistActionCalls"
+import { PagePayload } from "../../common/payload/container"
 
 type MediaSearchPayload = {
     isShowResults: boolean
     mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload
-    mediaSearchResultPayloads?: MediaSearchResultPayload[]
+    pagePayload?: PagePayload<MediaSearchResultPayload>
 }
 
 const MediaSearch = () => {
@@ -27,8 +29,7 @@ const MediaSearch = () => {
             return
         }
 
-        callSearchMedia({ searchText })
-
+        callSearchMedia({ searchText, mashupMediaType: MashupMediaType.MUSIC })
 
     }, [userToken, queryParameters])
 
@@ -36,10 +37,13 @@ const MediaSearch = () => {
     const callSearchMedia = (mediaItemSearchCriteriaPayload: MediaItemSearchCriteriaPayload) => {
         searchMedia(mediaItemSearchCriteriaPayload, userToken).then(response => {
             if (response.ok) {
+
+                console.log('callSearchMedia', response.parsedBody)
+
                 setProps(p => ({
                     ...p,
                     mediaItemSearchCriteriaPayload,
-                    mediaSearchResultPayloads: response.parsedBody || [],
+                    pagePayload: response.parsedBody,
                     isShowResults: true
                 })
                 )
@@ -60,12 +64,12 @@ const MediaSearch = () => {
         <div>
             <h1>Search media</h1>
             <SearchForm
-                mediaItemSearchCriteriaPayload={{ searchText: props?.mediaItemSearchCriteriaPayload?.searchText }}
+                mediaItemSearchCriteriaPayload={props?.mediaItemSearchCriteriaPayload}
                 handleSearchMedia={(mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload) => handleSearchMedia(mediaItemSearchCriteriaPayload)}
             />
 
             {props.isShowResults &&
-                <MediaSearchResults mediaSearchResultPayloads={props?.mediaSearchResultPayloads} />
+                <MusicSearchResults pagePayload={props.pagePayload} />
             }
         </div>
     )

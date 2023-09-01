@@ -5,12 +5,15 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../common/redux/store";
 import { prepareGenrePayloads } from "../../common/utils/genreUtils";
-import { GenrePayload, MediaItemSearchCriteriaPayload, getGenres } from "./rest/searchCalls";
+import { GenrePayload, MediaItemSearchCriteriaPayload, SortType, getGenres, getOrderByNames } from "./rest/searchCalls";
+import { NameValuePayload } from "../../configuration/backend/metaCalls";
+import { MashupMediaType } from "../music/rest/playlistActionCalls";
 
 type SearchFormPayload = {
     mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload
     genrePayloads: GenrePayload[]
     decades: number[]
+    orderBys: NameValuePayload<string>[]
 }
 
 export type ExternalSearchFormPayload = {
@@ -24,7 +27,11 @@ const SearchForm = (externalSearchFormPayload: ExternalSearchFormPayload) => {
 
     const [props, setProps] = useState<SearchFormPayload>({
         genrePayloads: [],
-        decades: []
+        decades: [],
+        orderBys: [],
+        mediaItemSearchCriteriaPayload: {
+            mashupMediaType: MashupMediaType.MUSIC
+        }
     })
 
     useEffect(() => {
@@ -49,10 +56,18 @@ const SearchForm = (externalSearchFormPayload: ExternalSearchFormPayload) => {
         getGenres(userToken)
             .then(response => {
                 const genrePayloads = prepareGenrePayloads(response.parsedBody || [])
-
                 setProps(p => ({
                     ...p,
                     genrePayloads
+                }))
+            })
+
+        getOrderByNames(userToken)
+            .then(response => {
+                const orderBys = response.parsedBody || []
+                setProps(p => ({
+                    ...p,
+                    orderBys
                 }))
             })
 
@@ -90,6 +105,36 @@ const SearchForm = (externalSearchFormPayload: ExternalSearchFormPayload) => {
             }
         }))
     }
+
+    const handleOrderByChange = (value: string): void => {
+        console.log('handleOrderByChange', value)
+
+        const orderBy = props.orderBys.find(orderBy => orderBy.value === value)
+
+        setProps(p => ({
+            ...p,
+            mediaItemSearchCriteriaPayload: {
+                ...p.mediaItemSearchCriteriaPayload,
+                orderBy: orderBy?.value
+            }
+        }))
+
+
+    }
+
+    const handleSortByChange = (sortBy: SortType): void => {
+        console.log('handleSortByChange',sortBy)
+
+
+        setProps(p => ({
+            ...p,
+            mediaItemSearchCriteriaPayload: {
+                ...p.mediaItemSearchCriteriaPayload,
+                sortBy
+            }
+        }))
+    }
+
 
     const navigate = useNavigate()
 
@@ -169,6 +214,35 @@ const SearchForm = (externalSearchFormPayload: ExternalSearchFormPayload) => {
 
                             </Select>
 
+                        </FormControl>
+                    </div>
+
+                    <div className="new-line">
+                        <FormControl sx={{ minWidth: 0.3 }}>
+                            <InputLabel id="order-property-label">Order by</InputLabel>
+                            <Select
+                                labelId="order-property-label"
+                                label="Order by"
+                                value={props.mediaItemSearchCriteriaPayload?.orderBy || ''}
+                                onChange={e => handleOrderByChange(e.target.value)}
+                            >
+                                {props.orderBys.map(orderBy => (
+                                    <MenuItem key={orderBy.value} value={orderBy.value}>{orderBy.name}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        <FormControl sx={{ marginLeft: 5, minWidth: 0.3 }}>
+                            <InputLabel id="sort-property-label">Sort by</InputLabel>
+                            <Select
+                                labelId="sort-property-label"
+                                label="Sort by"
+                                value={props.mediaItemSearchCriteriaPayload?.sortBy || ""}
+                                onChange={e => handleSortByChange(e.target.value as SortType)}
+                            >
+                                <MenuItem value={SortType.ASC}>Ascending</MenuItem>
+                                <MenuItem value={SortType.DESC}>Descending</MenuItem>
+                            </Select>
                         </FormControl>
                     </div>
 
