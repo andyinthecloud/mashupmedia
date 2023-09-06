@@ -5,7 +5,7 @@ import { RootState } from "../../common/redux/store"
 import MediaSearchResults from "./MediaSearchResults"
 import SearchForm from "./SearchForm"
 import { MediaItemSearchCriteriaPayload, SortType } from "./features/searchMediaSlice"
-import { toArray, toInt, toNumberArray } from "../../common/utils/httpUtils"
+import { toArray, toInt } from "../../common/utils/httpUtils"
 import { MashupMediaType } from "../music/rest/playlistActionCalls"
 
 const MediaSearch = () => {
@@ -22,7 +22,7 @@ const MediaSearch = () => {
         
         setProps({
             searchText: queryParameters.get('searchText') || '',
-            decades: toNumberArray(queryParameters.get('decades') || ''),
+            decades: toArray(queryParameters.get('decades') || ''),
             genreIdNames: toArray(queryParameters.get('genreIdNames') || ''),
             mashupMediaType: MashupMediaType.MUSIC,
             orderBy: queryParameters.get('orderBy') || '',
@@ -42,10 +42,8 @@ const MediaSearch = () => {
             <SearchForm
                 {...props}
             />
-
             {showResults &&
-                <MediaSearchResults
-                />
+                <MediaSearchResults />
             }
         </div>
     )

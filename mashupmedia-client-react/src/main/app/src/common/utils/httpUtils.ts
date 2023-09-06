@@ -145,16 +145,14 @@ const primitiveValueToQueryValue = (value: any): string => {
     return urlValue ? encodeURI(urlValue) : ''
 }
 
-export const toArray = (commaDelimitedValue: string): string[] => {
+export const toArray = <T> (commaDelimitedValue: string): T[] => {
     if (!commaDelimitedValue) {
         return []
     }
-
-
-    return commaDelimitedValue.split(',');
+    const stringValues = commaDelimitedValue.split(',');
+    return stringValues.map(v => v as T)
 }
 
-export const toNumberArray = (commaDelimitedValue: string): number[] => {
-    const stringValues = toArray(commaDelimitedValue)
-    return stringValues.map(value => +value)
+export const toInt = (value: string): number => {
+    return Number.isNaN(value) ? 0 : +value
 }

@@ -37,12 +37,10 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
     useEffect(() => {
         setProps(p => ({
             ...p,
-            mediaItemSearchCriteriaPayload: {
-                searchText: mediaItemSearchCriteriaPayload?.searchText
-            },
+            mediaItemSearchCriteriaPayload,
             isAccordionExpanded: true
         }))
-    }, [mediaItemSearchCriteriaPayload?.searchText])
+    }, [mediaItemSearchCriteriaPayload])
 
     useEffect(() => {
         const decades: number[] = []
@@ -185,6 +183,7 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                 <h2>Filter</h2>
             </AccordionSummary>
             <AccordionDetails>
+
                 <form onSubmit={handleSubmit}>
 
                     <div className="new-line">
