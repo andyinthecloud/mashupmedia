@@ -3,25 +3,24 @@ import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, Inp
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../common/redux/hooks";
 import { RootState } from "../../common/redux/store";
 import { prepareGenrePayloads } from "../../common/utils/genreUtils";
-import { GenrePayload, MediaItemSearchCriteriaPayload, SortType, getGenres, getOrderByNames } from "./rest/searchCalls";
 import { NameValuePayload } from "../../configuration/backend/metaCalls";
 import { MashupMediaType } from "../music/rest/playlistActionCalls";
+import { MediaItemSearchCriteriaPayload, SortType, searchMedia } from "./features/searchMediaSlice";
+import { GenrePayload, getGenres, getOrderByNames } from "./rest/searchCalls";
+import { objectToQueryParameters } from "../../common/utils/httpUtils";
 
 type SearchFormPayload = {
     mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload
     genrePayloads: GenrePayload[]
     decades: number[]
     orderBys: NameValuePayload<string>[]
+    isAccordionExpanded: boolean
 }
 
-export type ExternalSearchFormPayload = {
-    mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload
-    handleSearchMedia: (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload) => void
-}
-
-const SearchForm = (externalSearchFormPayload: ExternalSearchFormPayload) => {
+const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload) => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
@@ -31,15 +30,19 @@ const SearchForm = (externalSearchFormPayload: ExternalSearchFormPayload) => {
         orderBys: [],
         mediaItemSearchCriteriaPayload: {
             mashupMediaType: MashupMediaType.MUSIC
-        }
+        },
+        isAccordionExpanded: true
     })
 
     useEffect(() => {
         setProps(p => ({
             ...p,
-            mediaItemSearchCriteriaPayload: externalSearchFormPayload.mediaItemSearchCriteriaPayload
+            mediaItemSearchCriteriaPayload: {
+                searchText: mediaItemSearchCriteriaPayload?.searchText
+            },
+            isAccordionExpanded: true
         }))
-    }, [externalSearchFormPayload])
+    }, [mediaItemSearchCriteriaPayload?.searchText])
 
     useEffect(() => {
         const decades: number[] = []
@@ -50,8 +53,8 @@ const SearchForm = (externalSearchFormPayload: ExternalSearchFormPayload) => {
         setProps(p => ({
             ...p,
             decades
-        })
-        )
+        }
+        ))
 
         getGenres(userToken)
             .then(response => {
@@ -70,12 +73,11 @@ const SearchForm = (externalSearchFormPayload: ExternalSearchFormPayload) => {
                     orderBys
                 }))
             })
-
     }, [userToken])
 
     const handleSearchTextChange = (searchText: string) => {
         setProps(p => ({
-            ...p,
+            ...p,            
             mediaItemSearchCriteriaPayload: {
                 ...p.mediaItemSearchCriteriaPayload,
                 searchText
@@ -123,7 +125,7 @@ const SearchForm = (externalSearchFormPayload: ExternalSearchFormPayload) => {
     }
 
     const handleSortByChange = (sortBy: SortType): void => {
-        console.log('handleSortByChange',sortBy)
+        console.log('handleSortByChange', sortBy)
 
 
         setProps(p => ({
@@ -135,22 +137,46 @@ const SearchForm = (externalSearchFormPayload: ExternalSearchFormPayload) => {
         }))
     }
 
-
     const navigate = useNavigate()
 
     function handleCancel(): void {
         navigate('/')
     }
 
+
+    const dispatch = useAppDispatch()
+
     function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault()
-        externalSearchFormPayload.handleSearchMedia(props.mediaItemSearchCriteriaPayload)
 
+        if (!props.mediaItemSearchCriteriaPayload) {
+            return
+        }
+
+        navigate(`/search/media/${objectToQueryParameters(props.mediaItemSearchCriteriaPayload)}`)
+
+        dispatch(
+            searchMedia({
+                token: userToken || '',
+                mediaItemSearchCriteriaPayload: props.mediaItemSearchCriteriaPayload
+            })
+        )
+    }
+
+    const toggleAccordionExpand = () => {
+        console.log('toggleAccordionExpand')
+        setProps(p => ({
+            ...p,
+            isAccordionExpanded: !p.isAccordionExpanded
+        }))
     }
 
     return (
 
-        <Accordion>
+        <Accordion
+            expanded={props.isAccordionExpanded}
+            onChange={toggleAccordionExpand}
+        >
             <AccordionSummary
                 expandIcon={<ExpandMore fontSize="medium" color="secondary" />}
                 aria-controls="panel1a-content"

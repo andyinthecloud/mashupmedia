@@ -1,75 +1,51 @@
-import { useSearchParams } from "react-router-dom"
-import MusicSearchResults from "./MusicSearchResults"
-import SearchForm from "./SearchForm"
 import { useEffect, useState } from "react"
-import { MediaItemSearchCriteriaPayload, MediaSearchResultPayload, MusicSearchResultPayload, searchMedia } from "./rest/searchCalls"
 import { useSelector } from "react-redux"
+import { useSearchParams } from "react-router-dom"
 import { RootState } from "../../common/redux/store"
+import MediaSearchResults from "./MediaSearchResults"
+import SearchForm from "./SearchForm"
+import { MediaItemSearchCriteriaPayload, SortType } from "./features/searchMediaSlice"
+import { toArray, toInt, toNumberArray } from "../../common/utils/httpUtils"
 import { MashupMediaType } from "../music/rest/playlistActionCalls"
-import { PagePayload } from "../../common/payload/container"
-
-type MediaSearchPayload = {
-    isShowResults: boolean
-    mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload
-    pagePayload?: PagePayload<MediaSearchResultPayload>
-}
 
 const MediaSearch = () => {
 
-    const userToken = useSelector((state: RootState) => state.security.payload?.token)
+    const showResults = useSelector((state: RootState) => state.searchMedia.payload ? true : false)
     const [queryParameters] = useSearchParams()
-    const [props, setProps] = useState<MediaSearchPayload>({
-        isShowResults: false
-    })
+    const [props, setProps] = useState<MediaItemSearchCriteriaPayload>()
+
 
     useEffect(() => {
-
-        const searchText = queryParameters.get("search")
-        if (!searchText) {
+        if (!queryParameters) {
             return
         }
-
-        callSearchMedia({ searchText, mashupMediaType: MashupMediaType.MUSIC })
-
-    }, [userToken, queryParameters])
-
-
-    const callSearchMedia = (mediaItemSearchCriteriaPayload: MediaItemSearchCriteriaPayload) => {
-        searchMedia(mediaItemSearchCriteriaPayload, userToken).then(response => {
-            if (response.ok) {
-
-                console.log('callSearchMedia', response.parsedBody)
-
-                setProps(p => ({
-                    ...p,
-                    mediaItemSearchCriteriaPayload,
-                    pagePayload: response.parsedBody,
-                    isShowResults: true
-                })
-                )
-            }
+        
+        setProps({
+            searchText: queryParameters.get('searchText') || '',
+            decades: toNumberArray(queryParameters.get('decades') || ''),
+            genreIdNames: toArray(queryParameters.get('genreIdNames') || ''),
+            mashupMediaType: MashupMediaType.MUSIC,
+            orderBy: queryParameters.get('orderBy') || '',
+            pageNumber: toInt(queryParameters.get('pageNumber') || ''),
+            sortBy:  Object.values(SortType).find(
+                value => value === queryParameters.get('sortBy')
+            )            
         })
-    }
 
+    }, [queryParameters])
 
-    const handleSearchMedia = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload) => {
-        if (!mediaItemSearchCriteriaPayload) {
-            return
-        }
-        callSearchMedia(mediaItemSearchCriteriaPayload)
-    }
 
 
     return (
         <div>
             <h1>Search media</h1>
             <SearchForm
-                mediaItemSearchCriteriaPayload={props?.mediaItemSearchCriteriaPayload}
-                handleSearchMedia={(mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload) => handleSearchMedia(mediaItemSearchCriteriaPayload)}
+                {...props}
             />
 
-            {props.isShowResults &&
-                <MusicSearchResults pagePayload={props.pagePayload} />
+            {showResults &&
+                <MediaSearchResults
+                />
             }
         </div>
     )

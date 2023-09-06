@@ -76,7 +76,7 @@ public class MediaSearchController {
             @RequestParam(required = false) List<Integer> decades,
             @RequestParam(required = false) List<String> genreIdNames,
             @RequestParam(required = false) Integer pageSize,
-            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @RequestParam(required = false) String orderBy) {
 
         MediaItemSearchCriteria mediaItemSearchCriteria = MediaItemSearchCriteria.builder()
@@ -86,7 +86,7 @@ public class MediaSearchController {
                 .mashupMediaType(MashupMediaType.MUSIC)
                 .build();
 
-        Pageable pageable = getPageable(page, pageSize, orderBy);
+        Pageable pageable = getPageable(pageNumber, pageSize, orderBy);
         MashupMediaType mashupMediaType = mediaItemSearchCriteria.getMashupMediaType();
         PagePayload<MediaSearchResultPayload> pagePayload = null;
 

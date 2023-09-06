@@ -9,7 +9,6 @@ import { isEnterKey } from "../utils/formUtils";
 import './MashupBar.css';
 import MenuDrawer from "./MenuDrawer";
 import { openMenu } from "./features/menuSlice";
-import { MediaItemSearchCriteriaPayload } from "../../media/search/rest/searchCalls";
 
 type MashupBarPayload = {
     searchText?: string
@@ -31,17 +30,14 @@ const MashupBar = () => {
         if (!props?.searchText) {
             return
         }
-        navigate(`/search/media?search=${encodeURIComponent(props.searchText)}`)
-        // const mediaItemSearchCriteriaPayload: MediaItemSearchCriteriaPayload = ({searchText: props.searchText}) 
-        // navigate("/search/media", {replace: true, state: {mediaItemSearchCriteriaPayload}})
+        navigate(`/search/media?searchText=${encodeURIComponent(props.searchText)}`)
     }
 
     const handleClearSearch = (): void => {
         setProps({
-
+            searchText: undefined
         })
     }
-
 
     const dispatch = useDispatch()
 

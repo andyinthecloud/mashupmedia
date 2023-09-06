@@ -18,7 +18,7 @@ import Artists from './media/music/Artists';
 import Playlists from "./media/playlist/Playlists";
 import MusicPlaylist from "./media/playlist/music/MusicPlaylist";
 import SelectMusicPlaylist from "./media/playlist/music/SelectMusicPlaylist";
-import MusicSearchResults from "./media/search/MusicSearchResults";
+import MediaSearchResults from "./media/search/MediaSearchResults";
 import Search from "./media/search/SearchForm";
 import SearchForm from "./media/search/SearchForm";
 import MediaSearch from "./media/search/MediaSearch";
