@@ -121,8 +121,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		}
 
 		TypedQuery<Long> query  =  entityManager
-				.createQuery("select count(s.id) from Track s where s.genre.id = :genreId", Long.class);
-query.setParameter("genreId", genre.getId());
+				.createQuery("select count(s.id) from Track s where s.genre.name = :name", Long.class);
+query.setParameter("name", genre.getName());
 		
 				Long numberOfTracks = getUniqueResult(query);
 				if (numberOfTracks > 0) {

@@ -6,7 +6,6 @@ export const prepareGenrePayloads = (genrePayloads: GenrePayload[]): GenrePayloa
 
     genrePayloads.map(genrePayload => {
         preparedGenrePayloads.push({
-            id: genrePayload.id,
             idName: genrePayload.idName,
             name: getGenreName(genrePayload.idName)
 
@@ -63,4 +62,19 @@ const getGenreName = (idName: string): string => {
         default:
             return "Other"
     }
+}
+
+export const genreNames = (genres: GenrePayload[], idNames: string[]): string[] => {
+    const names: string[] = []
+    
+    idNames.map(idName => {
+        names.push(genreName(genres, idName))
+    })
+
+    return names
+}
+
+const genreName = (genres: GenrePayload[], idName: string): string => {
+    const genre = genres.find(genre => genre.idName === idName)
+    return genre ? genre.name : ''
 }

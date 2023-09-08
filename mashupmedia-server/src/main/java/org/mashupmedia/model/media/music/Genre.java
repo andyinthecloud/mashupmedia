@@ -4,13 +4,8 @@ import java.io.Serializable;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlTransient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,7 +16,6 @@ import lombok.ToString;
 @Entity
 @Table(name = "genres")
 @Cacheable
-@XmlAccessorType(XmlAccessType.FIELD)
 @Setter
 @Getter
 @ToString
@@ -31,9 +25,6 @@ import lombok.ToString;
 public class Genre implements Serializable {
 	private static final long serialVersionUID = 6276317371160122830L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@XmlTransient
-	private long id;
 	private String name;
 
 	@Override

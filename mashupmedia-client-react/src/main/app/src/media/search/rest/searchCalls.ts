@@ -5,7 +5,6 @@ const searchUri = "/api/search"
 const searchMediaUri = searchUri + "/media"
 
 export type GenrePayload = {
-    id: number
     idName: string
     name: string
 }

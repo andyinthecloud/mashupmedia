@@ -73,6 +73,7 @@ public class MediaManagerImpl implements MediaManager {
 			specification = specification.and(TrackSpecifications.hasDecade(decade));
 		}
 
+
 		return trackRepository.findAll(specification, pageable);
 	}
 

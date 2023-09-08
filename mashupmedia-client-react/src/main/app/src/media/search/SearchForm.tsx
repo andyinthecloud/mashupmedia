@@ -1,16 +1,17 @@
 import { ExpandMore } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../common/redux/hooks";
 import { RootState } from "../../common/redux/store";
-import { prepareGenrePayloads } from "../../common/utils/genreUtils";
+import { genreNames, prepareGenrePayloads } from "../../common/utils/genreUtils";
 import { NameValuePayload } from "../../configuration/backend/metaCalls";
 import { MashupMediaType } from "../music/rest/playlistActionCalls";
 import { MediaItemSearchCriteriaPayload, SortType, searchMedia } from "./features/searchMediaSlice";
 import { GenrePayload, getGenres, getOrderByNames } from "./rest/searchCalls";
 import { objectToQueryParameters } from "../../common/utils/httpUtils";
+import { isInArray } from "../../common/utils/formUtils";
 
 type SearchFormPayload = {
     mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload
@@ -205,13 +206,15 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                                 value={props.mediaItemSearchCriteriaPayload?.genreIdNames || []}
                                 input={<OutlinedInput label="Genre" />}
                                 onChange={handleGenreChange}
+                                renderValue={(selected) =>  genreNames(props.genrePayloads, selected).join(', ')}
                             >
                                 {props.genrePayloads.map((genrePayload) => (
                                     <MenuItem
                                         key={genrePayload.idName}
                                         value={genrePayload.idName}
                                     >
-                                        {genrePayload.name}
+                                        <Checkbox checked={isInArray(props.mediaItemSearchCriteriaPayload?.genreIdNames, genrePayload.idName)} />
+                                        <ListItemText primary={genrePayload.name} />                                        
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -227,13 +230,16 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                                 value={props.mediaItemSearchCriteriaPayload?.decades || []}
                                 input={<OutlinedInput label="Decade" />}
                                 onChange={handleDecadeChange}
+                                renderValue={(selected) => selected.join(', ')}
                             >
                                 {props.decades.map((decade) => (
                                     <MenuItem
                                         key={decade}
                                         value={decade}
                                     >
-                                        {decade}
+                                        <Checkbox checked={isInArray(props.mediaItemSearchCriteriaPayload?.decades, decade)} />
+                                        <ListItemText primary={decade} />    
+                                        
                                     </MenuItem>
                                 ))}
 
@@ -251,6 +257,7 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                                 value={props.mediaItemSearchCriteriaPayload?.orderBy || ''}
                                 onChange={e => handleOrderByChange(e.target.value)}
                             >
+                                <MenuItem value=""><em>None</em></MenuItem>
                                 {props.orderBys.map(orderBy => (
                                     <MenuItem key={orderBy.value} value={orderBy.value}>{orderBy.name}</MenuItem>
                                 ))}
@@ -265,6 +272,7 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                                 value={props.mediaItemSearchCriteriaPayload?.sortBy || ""}
                                 onChange={e => handleSortByChange(e.target.value as SortType)}
                             >
+                                <MenuItem value=""><em>None</em></MenuItem>
                                 <MenuItem value={SortType.ASC}>Ascending</MenuItem>
                                 <MenuItem value={SortType.DESC}>Descending</MenuItem>
                             </Select>

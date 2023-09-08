@@ -436,12 +436,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		Genre genre = GenreHelper.getGenre(genreValue);
 		track.setGenre(genre);
 
-		// if (StringUtils.isNotEmpty(genreValue)) {
-		// 	Genre genre = new Genre();
-		// 	genre.setName(genreValue);
-		// 	track.setGenre(genre);
-		// }
-
 		Album album = new Album();
 		if (StringUtils.isEmpty(tagAlbumName)) {
 			tagAlbumName = folderAlbumName;
