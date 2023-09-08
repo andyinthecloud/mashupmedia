@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class PagePayload<T> {
     private final int totalPages;
     private final long totalElements;

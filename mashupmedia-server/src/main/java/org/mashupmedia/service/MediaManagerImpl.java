@@ -11,7 +11,9 @@ import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.TrackRepository;
 import org.mashupmedia.repository.media.music.TrackSpecifications;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,8 +76,16 @@ public class MediaManagerImpl implements MediaManager {
 		}
 
 
-		return trackRepository.findAll(specification, pageable);
+		Slice<Track> slice = trackRepository.findAll(specification, pageable);
+		long total = trackRepository.count(specification);
+
+		return new PageImpl<>(slice.getContent(), pageable, total); 
+
+		// return trackRepository.findAll(specification, pageable);
 	}
+
+
+
 
 	@Override
 	public void saveMediaItem(MediaItem mediaItem) {

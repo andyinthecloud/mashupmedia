@@ -119,8 +119,6 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                 orderBy: orderBy?.value
             }
         }))
-
-
     }
 
     const handleSortByChange = (sortBy: SortType): void => {

@@ -93,6 +93,16 @@ public class MediaSearchController {
         if (mashupMediaType == MashupMediaType.MUSIC) {
             Page<Track> pageTracks = mediaManager.findMusic(mediaItemSearchCriteria, pageable);
             pagePayload = musicSearchResultPagePayloadMapper.toPayload(pageTracks);
+
+            // if (pageTracks.getTotalElements() < pageTracks.getSize()) {
+            //     Pageable pageableWitoutSort = getPageable(pageNumber, pageSize, null); 
+            //     Page<Track> pageTracksWithoutSort = mediaManager.findMusic(mediaItemSearchCriteria, pageableWitoutSort);
+            //     pagePayload = pagePayload.toBuilder()
+            //             .totalElements(pageTracksWithoutSort.getTotalElements())
+            //             .totalPages(pageTracksWithoutSort.getTotalPages())
+            //             .build();
+            // }
+
         }
 
         return ResponseEntity.ok(pagePayload);
