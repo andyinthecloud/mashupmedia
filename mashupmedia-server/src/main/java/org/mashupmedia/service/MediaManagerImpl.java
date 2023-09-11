@@ -59,8 +59,7 @@ public class MediaManagerImpl implements MediaManager {
 		mediaDao.updateMediaItem(mediaItem);
 	}
 
-	@Override
-	public Page<Track> findMusic(MediaItemSearchCriteria mediaItemSearchCriteria, Pageable pageable) {
+	private Specification<Track> getFindSpecification(MediaItemSearchCriteria mediaItemSearchCriteria) {
 		List<Long> userGroupIds = mashupMediaSecurityManager.getLoggedInUserGroupIds();
 
 		String text = mediaItemSearchCriteria.getSearchText();
@@ -75,17 +74,22 @@ public class MediaManagerImpl implements MediaManager {
 			specification = specification.and(TrackSpecifications.hasDecade(decade));
 		}
 
-
-		Slice<Track> slice = trackRepository.findAll(specification, pageable);
-		long total = trackRepository.count(specification);
-
-		return new PageImpl<>(slice.getContent(), pageable, total); 
-
-		// return trackRepository.findAll(specification, pageable);
+		return specification;
 	}
 
 
+	@Override
+	public Page<Track> findMusicTracks(MediaItemSearchCriteria mediaItemSearchCriteria, Pageable pageable) {
+		Specification<Track> specification = getFindSpecification(mediaItemSearchCriteria);
+		Slice<Track> slice = trackRepository.findAll(specification, pageable);
+		return new PageImpl<>(slice.getContent(), pageable, 0);
+	}
 
+	@Override
+	public long countMusicTracks(MediaItemSearchCriteria mediaItemSearchCriteria) {
+		Specification<Track> specification = getFindSpecification(mediaItemSearchCriteria);
+		return trackRepository.count(specification);
+	}
 
 	@Override
 	public void saveMediaItem(MediaItem mediaItem) {

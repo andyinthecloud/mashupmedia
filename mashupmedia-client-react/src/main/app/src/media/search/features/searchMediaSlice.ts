@@ -30,6 +30,7 @@ export type MediaItemSearchCriteriaPayload = {
     sortBy?: SortType
     mashupMediaType?: MashupMediaType
     pageNumber?: number
+    totalElements?: number
 }
 
 export type SearchMediaCriteriaPayload = UserTokenPayload & {
@@ -40,8 +41,6 @@ export type MediaSearchResultsPayload = {
     mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload
     pagePayload?: PagePayload<MediaSearchResultPayload>
 }
-
-
 
 const initialState: PayloadState<MediaSearchResultsPayload> = {
     payload: null,
@@ -63,7 +62,8 @@ export const searchMedia = createAsyncThunk<MediaSearchResultsPayload, SearchMed
             decades: searchMediaCriteriaPayload.mediaItemSearchCriteriaPayload.decades,
             genreIdNames: searchMediaCriteriaPayload.mediaItemSearchCriteriaPayload.genreIdNames,
             orderBy: orderBy(searchMediaCriteriaPayload.mediaItemSearchCriteriaPayload?.orderBy || '', searchMediaCriteriaPayload.mediaItemSearchCriteriaPayload?.sortBy || ''),
-            pageNumber: searchMediaCriteriaPayload.mediaItemSearchCriteriaPayload.pageNumber
+            pageNumber: searchMediaCriteriaPayload.mediaItemSearchCriteriaPayload.pageNumber,
+            totalElements: searchMediaCriteriaPayload.mediaItemSearchCriteriaPayload.totalElements
         }
 
         const url: string = backEndUrl(searchMediaUri)

@@ -24,12 +24,15 @@ public class TrackSpecifications {
                 ? "%" + searchText.toUpperCase() + "%"
                 : null;
 
-        return (root, query, builder) -> Objects.isNull(processedSearchText)
-                ? builder.conjunction()
-                : builder.like(
-                        builder.upper(root.get("title")),
-                        processedSearchText,
-                        '\\');
+        return (root, query, builder) -> {
+            query.distinct(true);
+            return Objects.isNull(processedSearchText)
+                    ? builder.conjunction()
+                    : builder.like(
+                            builder.upper(root.get("title")),
+                            processedSearchText,
+                            '\\');
+        };
 
     }
 
@@ -52,7 +55,6 @@ public class TrackSpecifications {
             }
         };
     }
-
 
     public static Specification<Track> hasArtistNameLike(String searchText) {
 

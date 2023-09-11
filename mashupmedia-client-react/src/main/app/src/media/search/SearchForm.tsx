@@ -180,6 +180,7 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                 id="panel1a-header"
             >
                 <h2>Filter</h2>
+                
             </AccordionSummary>
             <AccordionDetails>
 
@@ -254,6 +255,7 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                                 label="Order by"
                                 value={props.mediaItemSearchCriteriaPayload?.orderBy || ''}
                                 onChange={e => handleOrderByChange(e.target.value)}
+                                sx={{minWidth: "10em"}}
                             >
                                 <MenuItem value=""><em>None</em></MenuItem>
                                 {props.orderBys.map(orderBy => (
@@ -262,13 +264,14 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                             </Select>
                         </FormControl>
 
-                        <FormControl sx={{ marginLeft: 5, minWidth: 0.3 }}>
+                        <FormControl sx={{ marginLeft: 2 }}>
                             <InputLabel id="sort-property-label">Sort by</InputLabel>
                             <Select
                                 labelId="sort-property-label"
                                 label="Sort by"
                                 value={props.mediaItemSearchCriteriaPayload?.sortBy || ""}
                                 onChange={e => handleSortByChange(e.target.value as SortType)}
+                                sx={{minWidth: "10em"}}
                             >
                                 <MenuItem value=""><em>None</em></MenuItem>
                                 <MenuItem value={SortType.ASC}>Ascending</MenuItem>

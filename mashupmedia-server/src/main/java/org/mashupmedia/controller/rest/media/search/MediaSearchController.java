@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dto.media.music.GenrePayload;
 import org.mashupmedia.dto.media.search.MediaSearchResultPayload;
@@ -17,6 +18,7 @@ import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -76,6 +78,7 @@ public class MediaSearchController {
             @RequestParam(required = false) List<Integer> decades,
             @RequestParam(required = false) List<String> genreIdNames,
             @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false) Long totalElements,
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @RequestParam(required = false) String orderBy) {
 
@@ -91,18 +94,13 @@ public class MediaSearchController {
         PagePayload<MediaSearchResultPayload> pagePayload = null;
 
         if (mashupMediaType == MashupMediaType.MUSIC) {
-            Page<Track> pageTracks = mediaManager.findMusic(mediaItemSearchCriteria, pageable);
+            Page<Track> pageTracks = mediaManager.findMusicTracks(mediaItemSearchCriteria, pageable);
+            if (totalElements == null || totalElements < 0) {
+                totalElements = mediaManager.countMusicTracks(mediaItemSearchCriteria);
+            }
+
+            pageTracks = new PageImpl<>(pageTracks.getContent(), pageable, totalElements);
             pagePayload = musicSearchResultPagePayloadMapper.toPayload(pageTracks);
-
-            // if (pageTracks.getTotalElements() < pageTracks.getSize()) {
-            //     Pageable pageableWitoutSort = getPageable(pageNumber, pageSize, null); 
-            //     Page<Track> pageTracksWithoutSort = mediaManager.findMusic(mediaItemSearchCriteria, pageableWitoutSort);
-            //     pagePayload = pagePayload.toBuilder()
-            //             .totalElements(pageTracksWithoutSort.getTotalElements())
-            //             .totalPages(pageTracksWithoutSort.getTotalPages())
-            //             .build();
-            // }
-
         }
 
         return ResponseEntity.ok(pagePayload);

@@ -21,7 +21,9 @@ public interface MediaManager {
 
 	void updateMediaItem(MediaItem mediaItem);
 
-	Page<Track> findMusic(MediaItemSearchCriteria mediaItemSearchCriteria, Pageable pageable);
+	Page<Track> findMusicTracks(MediaItemSearchCriteria mediaItemSearchCriteria, Pageable pageable);
+
+	long countMusicTracks(MediaItemSearchCriteria mediaItemSearchCriteria);
 
 	void saveMediaItem(MediaItem mediaItem);
 

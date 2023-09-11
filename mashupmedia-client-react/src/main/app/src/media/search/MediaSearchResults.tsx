@@ -16,12 +16,7 @@ const MediaSearchResults = () => {
     const [props, setProps] = useState<MediaSearchResultsPayload>()
 
     useEffect(() => {
-
-        console.log('MediaSearchResults', mediaSearchResultsPage)
-
         setProps(mediaSearchResultsPage || undefined)
-
-
     }, [mediaSearchResultsPage])
 
     const dispatch = useAppDispatch()
@@ -29,7 +24,8 @@ const MediaSearchResults = () => {
 
         const paginatedCriteria: MediaItemSearchCriteriaPayload = ({
             ...props?.mediaItemSearchCriteriaPayload,
-            pageNumber: pageNumber - 1
+            pageNumber: pageNumber - 1,
+            totalElements: props?.pagePayload?.totalElements
         })
 
         dispatch(
@@ -59,7 +55,7 @@ const MediaSearchResults = () => {
                         page={page(props?.pagePayload?.pageNumber)}
                         count={props?.pagePayload?.totalPages}
                         color="secondary"
-                        onChange={(_e, page) => handleChangePagination(page)}
+                        onChange={(_e, page) => handleChangePagination(page)}                        
                     />
                     <List>
                         {props?.pagePayload?.content?.map(function (mediaSearchResultPayload, index) {
