@@ -1,22 +1,13 @@
 package org.mashupmedia.dao;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.SearchMediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.AlbumArtImage;
-import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository

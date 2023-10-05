@@ -7,6 +7,15 @@
   pointer-events: none;
 }
 
+img.logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+  min-width: 300px;
+  height: auto;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -37,6 +46,9 @@
   }
 }
 
+html {
+  color: #3a2944;
+}
 
 div {
   text-align: left;
@@ -78,13 +90,17 @@ h2 {
   font-size: small;
 }
 
+.blur-background {
+  background-color:  rgb(255, 255, 255, 0.8);
+}
+
 .hide {
   display: none;
 }
 
 .link-no-underlne {
   text-decoration: none;
-  color: rgb(87, 163, 84);
+  color: rgb(160, 84, 163);
 }
 
 label {

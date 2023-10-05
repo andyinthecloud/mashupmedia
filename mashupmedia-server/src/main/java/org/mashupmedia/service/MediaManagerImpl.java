@@ -1,21 +1,21 @@
 package org.mashupmedia.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.mashupmedia.criteria.MediaItemSearchCriteria;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.SearchMediaItem;
-import org.mashupmedia.model.media.music.Album;
+import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.music.AlbumArtImage;
-import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Track;
-import org.mashupmedia.repository.media.music.ArtistRepository;
-import org.mashupmedia.repository.media.music.MusicAlbumRepository;
 import org.mashupmedia.repository.media.music.TrackRepository;
+import org.mashupmedia.repository.media.music.TrackSpecifications;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +28,7 @@ public class MediaManagerImpl implements MediaManager {
 
 	private final MediaDao mediaDao;
 	private final TrackRepository trackRepository;
-	private final MusicAlbumRepository musicAlbumRepository;
-	private final ArtistRepository artistRepository;
+	private final MashupMediaSecurityManager mashupMediaSecurityManager;
 
 	@Override
 	public List<MediaItem> getMediaItemsForLibrary(long libraryId) {
@@ -61,34 +60,36 @@ public class MediaManagerImpl implements MediaManager {
 		mediaDao.updateMediaItem(mediaItem);
 	}
 
+	private Specification<Track> getFindSpecification(MediaItemSearchCriteria mediaItemSearchCriteria) {
+		List<Long> userGroupIds = mashupMediaSecurityManager.getLoggedInUserGroupIds();
+
+		String text = mediaItemSearchCriteria.getSearchText();
+
+		Specification<Track> specification = TrackSpecifications.hasGroup(userGroupIds)
+				.and(TrackSpecifications.hasTitleLike(text)
+						.or(TrackSpecifications.hasAlbumNameLike(text))
+						.or(TrackSpecifications.hasArtistNameLike(text)))
+				.and(TrackSpecifications.hasGenre(mediaItemSearchCriteria.getGenreIdNames()));
+
+		for (Integer decade : mediaItemSearchCriteria.getDecades()) {
+			specification = specification.and(TrackSpecifications.hasDecade(decade));
+		}
+
+		return specification;
+	}
+
+
 	@Override
-	public List<SearchMediaItem> findMediaItems(MediaItemSearchCriteria mediaItemSearchCriteria) {
+	public Page<Track> findMusicTracks(MediaItemSearchCriteria mediaItemSearchCriteria, Pageable pageable) {
+		Specification<Track> specification = getFindSpecification(mediaItemSearchCriteria);
+		Slice<Track> slice = trackRepository.findAll(specification, pageable);
+		return new PageImpl<>(slice.getContent(), pageable, 0);
+	}
 
-		List<SearchMediaItem> searchMediaItems = new ArrayList<>();
-		String text = mediaItemSearchCriteria.getText();
-
-		List<Artist> artists = artistRepository.findByNameContainingIgnoreCaseOrderByName(text);
-		searchMediaItems.addAll(artists.stream()
-				.map(artist -> SearchMediaItem.builder()
-						.result(artist)
-						.build())
-				.collect(Collectors.toList()));
-
-		List<Album> albums = musicAlbumRepository.findByNameContainingIgnoreCaseOrderByName(text);
-		searchMediaItems.addAll(albums.stream()
-				.map(album -> SearchMediaItem.builder()
-						.result(album)
-						.build())
-				.collect(Collectors.toList()));
-
-		List<Track> tracks = trackRepository.findByTitleContainingIgnoreCaseOrderByTitle(text);
-		searchMediaItems.addAll(tracks.stream()
-				.map(track -> SearchMediaItem.builder()
-						.result(track)
-						.build())
-				.collect(Collectors.toList()));
-
-		return searchMediaItems;
+	@Override
+	public long countMusicTracks(MediaItemSearchCriteria mediaItemSearchCriteria) {
+		Specification<Track> specification = getFindSpecification(mediaItemSearchCriteria);
+		return trackRepository.count(specification);
 	}
 
 	@Override

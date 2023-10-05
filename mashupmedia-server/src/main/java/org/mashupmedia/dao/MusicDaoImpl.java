@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.criteria.MediaItemSearchCriteria;
+import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
@@ -62,14 +62,16 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 	@Override
 	public List<String> getAlbumIndexLetters(List<Long> groupIds) {
-		StringBuilder queryBuilder = new StringBuilder(
-				"select distinct a.indexLetter from org.mashupmedia.model.media.music.Album a join a.tracks s join s.library.groups g");
-		queryBuilder.append(" where s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" order by a.indexLetter");
-		TypedQuery<String> query = entityManager.createQuery(queryBuilder.toString(), String.class);
-		List<String> indexLetters = query.getResultList();
-		return indexLetters;
+		throw new UnsupportedOperationException("Not implemented");
+
+		// StringBuilder queryBuilder = new StringBuilder(
+		// 		"select distinct a.indexLetter from org.mashupmedia.model.media.music.Album a join a.tracks s join s.library.groups g");
+		// queryBuilder.append(" where s.library.enabled = true");
+		// DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+		// queryBuilder.append(" order by a.name");
+		// TypedQuery<String> query = entityManager.createQuery(queryBuilder.toString(), String.class);
+		// List<String> indexLetters = query.getResultList();
+		// return indexLetters;
 	}
 
 	@Override
@@ -78,7 +80,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 				"select distinct a from Artist a join a.albums album join album.tracks s join s.library.groups g");
 		queryBuilder.append(" where s.library.enabled = true");
 		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		queryBuilder.append(" order by a.indexText");
+		queryBuilder.append(" order by a.name");
 		TypedQuery<Artist> query = entityManager.createQuery(queryBuilder.toString(), Artist.class);
 		List<Artist> artists = query.getResultList();
 		return artists;
@@ -119,8 +121,8 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		}
 
 		TypedQuery<Long> query  =  entityManager
-				.createQuery("select count(s.id) from Track s where s.genre.id = :genreId", Long.class);
-query.setParameter("genreId", genre.getId());
+				.createQuery("select count(s.id) from Track s where s.genre.name = :name", Long.class);
+query.setParameter("name", genre.getName());
 		
 				Long numberOfTracks = getUniqueResult(query);
 				if (numberOfTracks > 0) {
@@ -269,28 +271,13 @@ query.setParameter("genreId", genre.getId());
 
 	@Override
 	public List<Album> getRandomAlbums(List<Long> groupIds, int numberOfAlbums) {
-
-		// List<Long> albumIds = getAlbumIds(groupIds);
 		List<Long> randomAlbumIds = getRandomAlbumIds(numberOfAlbums, groupIds);
-
-		// StringBuilder viewableAlbumIdsQueryBuilder = new StringBuilder(
-		// 		"select distinct(a.id) from org.mashupmedia.model.media.music.Album a join a.tracks s join s.library.groups g");
-		// viewableAlbumIdsQueryBuilder.append(" where s.library.enabled = true");
-		// DaoHelper.appendGroupFilter(viewableAlbumIdsQueryBuilder, groupIds);
-		// viewableAlbumIdsQueryBuilder.append(" and a.id in (:albumIds)");
-		// TypedQuery<Long> query = entityManager.createQuery(viewableAlbumIdsQueryBuilder.toString(),
-		// 		Long.class);
-		// query.setParameter("albumIds", randomAlbumIds);
-		// query.setMaxResults(numberOfAlbums);
-
-		// List<Long> allowedAlbumIds = query.getResultList();
 
 		StringBuilder randomAlbumsQueryBuilder = new StringBuilder(
 				"select a from org.mashupmedia.model.media.music.Album a where a.id in :albumIds");
 				TypedQuery<Album> randomAlbumsQuery = entityManager
 				.createQuery(randomAlbumsQueryBuilder.toString(), Album.class);
 		randomAlbumsQuery.setParameter("albumIds", randomAlbumIds);
-		// randomAlbumsQuery.setMaxResults(numberOfAlbums);
 		List<Album> randomAlbums = randomAlbumsQuery.getResultList();
 
 		return randomAlbums;
@@ -299,18 +286,6 @@ query.setParameter("genreId", genre.getId());
 	private List<Long> getRandomAlbumIds(int maxResults, List<Long> groupIds) {
 		List<Long> albumIds = getAlbumIds(groupIds);
 		Collections.shuffle(albumIds);
-
-
-		// List<Long> randomAlbumIds = new ArrayList<>();
-		// if (albumIds == null || albumIds.isEmpty()) {
-		// 	return randomAlbumIds;
-		// }
-
-		// while (randomAlbumIds.size() < maxResults) {
-		// 	int randomIndex = ThreadLocalRandom.current().nextInt(albumIds.size());
-		// 	long randomAlbumId = albumIds.get(randomIndex);
-		// 	randomAlbumIds.add(randomAlbumId);
-		// }
 
 		int totalAlbums = albumIds.size();
 		int toIndex = totalAlbums < maxResults ? totalAlbums : maxResults;  
@@ -325,8 +300,6 @@ query.setParameter("genreId", genre.getId());
 
 		TypedQuery<Long> query = entityManager.createQuery(queryBuilder.toString(), Long.class);
 
-		// @SuppressWarnings("unchecked")
-		// List<Long> albumIds = SetUniqueList.decorate(query.getResultList());
 		return query.getResultList();
 	}
 
@@ -430,8 +403,24 @@ query.setParameter("genreId", genre.getId());
 
 	@Override
 	public List<Track> findTracks(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria) {
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("select t from Track t ");
+		queryBuilder.append(" join t.library.groups g");
+		queryBuilder.append(" where t.enabled = true");
+		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+		// queryBuilder.append(" and lower(t.fileName) like '%" + mediaItemSearchCriteria.getSearchText() + "%'");
+		queryBuilder.append(" and upper(t.title) like %:searchText%");
+		queryBuilder.append(" order by t.title");
 
-		throw new UnsupportedOperationException();
+		TypedQuery<Track> query = entityManager.createQuery(queryBuilder.toString(), Track.class);
+		query.setParameter("searchText", mediaItemSearchCriteria.getSearchText());
+		return query.getResultList();
+
+
+
+
+
+		// throw new UnsupportedOperationException();
 
 		// FullTextEntityManager fullTextSession = Search.getFullTextEntityManager(entityManager);
 

@@ -118,5 +118,41 @@ export const getQueryNumberValue = (name: string, queryParameters: URLSearchPara
 }
 
 
+export const objectToQueryParameters = (object: any): string => {
+    let urlParameters = ""
+
+    Object.keys(object).map(key => {
+        const value = primitiveValueToQueryValue(object[key])
+        if (value) {
+            urlParameters += `${urlParameters ? "&" : "?"}${key}=${value}`
+        }
+    })
+
+    return urlParameters
+}
 
 
+const primitiveValueToQueryValue = (value: any): string => {
+    
+    let urlValue = ''
+    
+    if (Array.isArray(value)) {
+        urlValue = value.join(",")    
+    } else {
+        urlValue = value
+    }
+
+    return urlValue ? encodeURI(urlValue) : ''
+}
+
+export const toArray = <T> (commaDelimitedValue: string): T[] => {
+    if (!commaDelimitedValue) {
+        return []
+    }
+    const stringValues = commaDelimitedValue.split(',');
+    return stringValues.map(v => v as T)
+}
+
+export const toInt = (value: string): number => {
+    return Number.isNaN(value) ? 0 : +value
+}

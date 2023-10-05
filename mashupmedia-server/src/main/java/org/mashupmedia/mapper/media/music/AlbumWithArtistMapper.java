@@ -22,7 +22,6 @@ public class AlbumWithArtistMapper extends SecureMediaDomainMapper<Album, AlbumW
                 .builder()
                 .id(artist.getId())
                 .name(artist.getName())
-                .indexLetter(artist.getIndexLetter())
                 .build();
 
         AlbumPayload albumPayload = AlbumPayload

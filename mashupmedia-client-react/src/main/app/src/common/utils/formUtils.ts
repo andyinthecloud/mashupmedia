@@ -41,6 +41,15 @@ export const isEnterKey = (code: string): boolean => {
     }
 }
 
+export const isInArray = <T>(items: T[] | undefined, item: T): boolean => {
+    if (!items) {
+        return false
+    }
+
+    return items.some(v => v === item)
+
+}
+
 
 
 

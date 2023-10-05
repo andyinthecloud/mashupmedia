@@ -1,0 +1,7 @@
+#music-search-results .pagination li{
+    border: none;
+}
+
+#music-search-results .artist{
+    opacity: 0.7;
+}

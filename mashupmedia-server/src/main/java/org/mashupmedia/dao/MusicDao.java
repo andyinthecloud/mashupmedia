@@ -3,7 +3,7 @@ package org.mashupmedia.dao;
 import java.util.Date;
 import java.util.List;
 
-import org.mashupmedia.criteria.MediaItemSearchCriteria;
+import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;

@@ -380,7 +380,7 @@ const MusicPlaylist = () => {
                         labelId="playlist-action-label"
                         id="playlist-action"
                         label="Action"
-                        value={props?.playlistActionTypePayload || ""}
+                        value={props?.playlistActionTypePayload || ''}
                         onChange={e => handleChangeAction(e.target.value)}
                     >
                         <MenuItem value=""></MenuItem>

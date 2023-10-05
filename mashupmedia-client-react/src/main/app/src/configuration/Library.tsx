@@ -263,8 +263,13 @@ const Library = () => {
                     fullWidth={true}
                     error={hasFieldError(FieldNames.PATH, props.formValidation)}
                     helperText={fieldErrorMessage(FieldNames.PATH, props.formValidation)}
-                    InputProps={{ endAdornment: <IconButton onClick={handleCheckPath}><Check /></IconButton> }}
                 />
+            </div>
+
+            <div className="new-line right">
+                <Button variant="contained" color="secondary" type="button" onClick={handleCheckPath}>
+                    Check path
+                </Button>
             </div>
 
             {props.libraryPayload.createdOn &&
@@ -323,7 +328,7 @@ const Library = () => {
                         value={props.libraryPayload.albumArtImagePattern}
                         onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                         fullWidth={true}
-                        helperText={'Something like this'}
+                        helperText={'Default name pattern: folder*,cover*,albumart* '}
                     />
                 </div>
             }

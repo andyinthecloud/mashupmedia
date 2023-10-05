@@ -1,10 +1,10 @@
-import { Search } from "@mui/icons-material";
+import { Clear, Search } from "@mui/icons-material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Box, IconButton, TextField, Toolbar } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import logoSmall from '../../logo-small.png';
+import icon from '../../icon.png';
 import { isEnterKey } from "../utils/formUtils";
 import './MashupBar.css';
 import MenuDrawer from "./MenuDrawer";
@@ -29,7 +29,13 @@ const MashupBar = () => {
         if (!props?.searchText) {
             return
         }
-        navigate(`/search/media?search=${encodeURIComponent(props.searchText)}`)
+        navigate(`/search/media?searchText=${encodeURIComponent(props.searchText)}`)
+    }
+
+    const handleClearSearch = (): void => {
+        setProps({
+            searchText: undefined
+        })
     }
 
     const dispatch = useDispatch()
@@ -65,7 +71,7 @@ const MashupBar = () => {
                     </IconButton>
 
                     <Link to={"/"}>
-                        <img src={logoSmall} className="logo" />
+                        <img src={icon} className="icon" />
                     </Link>
 
                     <TextField
@@ -83,9 +89,9 @@ const MashupBar = () => {
                             endAdornment: (
 
                                 <IconButton
-                                    onClick={handleClickSearch}
+                                    onClick={handleClearSearch}
                                 >
-                                    <Search
+                                    <Clear
                                         className="text-color"
                                         color="primary"
                                     />
@@ -94,6 +100,14 @@ const MashupBar = () => {
                             )
                         }}
                     />
+                    <IconButton
+                        onClick={handleClickSearch}
+                    >
+                        <Search
+                            className="text-color"
+                            color="primary"
+                        />
+                    </IconButton>
                 </Toolbar>
             </AppBar>
         </Box>

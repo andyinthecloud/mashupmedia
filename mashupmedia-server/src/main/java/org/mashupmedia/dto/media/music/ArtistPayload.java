@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 public class ArtistPayload {
     private long id;
     private String name;
-    private String indexLetter;
 }

@@ -19,6 +19,9 @@ import Playlists from "./media/playlist/Playlists";
 import MusicPlaylist from "./media/playlist/music/MusicPlaylist";
 import SelectMusicPlaylist from "./media/playlist/music/SelectMusicPlaylist";
 import MediaSearchResults from "./media/search/MediaSearchResults";
+import Search from "./media/search/SearchForm";
+import SearchForm from "./media/search/SearchForm";
+import MediaSearch from "./media/search/MediaSearch";
 
 
 export const MashupRoutes = () => {
@@ -142,12 +145,6 @@ export const MashupRoutes = () => {
                         </RequireAuthenication>
                     } />
 
-                    <Route path="" element={
-                        <RequireAuthenication>
-                            <MusicPlaylist />
-                        </RequireAuthenication>
-                    } />
-
                     <Route path="select" element={
                         <RequireAuthenication>
                             <SelectMusicPlaylist />
@@ -189,11 +186,17 @@ export const MashupRoutes = () => {
                     } />
                 </Route>
             </Route>
+            
+            {/* <Route path="/search-form" element={
+                <RequireAuthenication>
+                    <SearchForm />
+                </RequireAuthenication>
+            } /> */}
 
             <Route path="/search">
                 <Route path="media" element={
                     <RequireAuthenication>
-                        <MediaSearchResults />
+                        <MediaSearch />
                     </RequireAuthenication>
                 } />
             </Route>

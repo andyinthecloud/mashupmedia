@@ -3,9 +3,9 @@ import logo from '../../logo.png';
 const Introduction = () => {
     return (
 
-        <div>
+        <div id="introduction">
 
-            <img className="align-centre" src={logo} alt="Mashup Media"/>
+            <img className="logo" src={logo} alt="Mashup Media"/>
 
             <p>
                 Mashup Media is a free, web enabled, open source HTML5 media centre that can run on any device using only a modern web browser.

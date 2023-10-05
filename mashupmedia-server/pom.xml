@@ -5,12 +5,17 @@
     <parent>
         <artifactId>mashupmedia</artifactId>
         <groupId>org.mashupmedia</groupId>
-        <version>4.0.0-RELEASE</version>
+        <version>4.0.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mashupmedia-server</artifactId>
     <packaging>jar</packaging>
+
+
+    <properties>
+		<maven.compiler.release>17</maven.compiler.release>
+	</properties>
 
     <dependencies>
 
@@ -73,24 +78,12 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-taglibs</artifactId>
-            <version>6.0.2</version>
-        </dependency> -->
-
 
         <!--        Swagger dependencies -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.14</version>
-            <!-- <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-                </exclusion>
-            </exclusions> -->
         </dependency>
 
 
@@ -100,29 +93,7 @@
             <scope>runtime</scope>
         </dependency>
 
-
-        <!-- <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-search-orm</artifactId>
-            <version>5.11.10.Final</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate.common</groupId>
-                    <artifactId>hibernate-commons-annotations</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency> -->
-
-
-
-
-        <!-- <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>6.1.7.Final</version>
-        </dependency> -->
-        
-
+    
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -133,11 +104,6 @@
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
         </dependency>
-        <!-- <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.1</version>
-        </dependency> -->
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -156,22 +122,10 @@
             <version>2.0.3</version>
         </dependency>
 
-        <!-- <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
-        </dependency> -->
-
         <dependency>
             <groupId>com.drewnoakes</groupId>
             <artifactId>metadata-extractor</artifactId>
             <version>2.18.0</version>
-            <!-- <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-            </exclusions> -->
         </dependency>
 
         <dependency>
@@ -192,32 +146,6 @@
             <version>1.9.3</version>
         </dependency>
 
-        <!-- <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.2</version>
-        </dependency> -->
-
-
-        <!-- <dependency>
-            <groupId>org.apache.tiles</groupId>
-            <artifactId>tiles-jsp</artifactId>
-            <version>3.0.8</version>
-        </dependency> -->
-
-        <!-- <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-jasper</artifactId>
-            <scope>provided</scope>
-        </dependency> -->
-
-        <!--		<dependency>-->
-        <!--			<groupId>org.springframework.boot</groupId>-->
-        <!--			<artifactId>spring-boot-starter-thymeleaf</artifactId>-->
-        <!--			<version>2.3.4.RELEASE</version>-->
-        <!--		</dependency>-->
-
-
     </dependencies>
 
 
@@ -230,10 +158,6 @@
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
-            <!-- <resource>
-                <directory>static</directory>
-                <targetPath>static</targetPath>
-            </resource> -->
         </resources>
 
         <plugins>
@@ -249,27 +173,6 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
-
-            <!-- <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-            <packagingIncludes>${basedir}/../mashupmedia-client-react/target/classes/static</packagingIncludes>
-            </configuration>
-              </plugin> -->
-
-
-
-              <!-- <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>                
-                <configuration>
-                  <webResources>
-                    <resource>
-                      <directory>${basedir}/../mashupmedia-client-react/target/classes</directory>
-                    </resource>
-                  </webResources>
-                </configuration>
-              </plugin> -->
 
         </plugins>
     </build>

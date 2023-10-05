@@ -12,7 +12,6 @@ public class ArtistMapper implements DomainMapper<Artist, ArtistPayload> {
     public ArtistPayload toDto(Artist domain) {
         return ArtistPayload.builder()
                 .id(domain.getId())
-                .indexLetter(domain.getIndexLetter())
                 .name(domain.getName())
                 .build();
     }

@@ -14,9 +14,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -56,8 +58,14 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager)
+    public SecurityFilterChain filterChain(
+        HttpSecurity httpSecurity, 
+        AuthenticationManager authenticationManager,
+        HandlerMappingIntrospector introspector)
             throws Exception {
+
+
+
         httpSecurity
                 .csrf()
                 .disable()
