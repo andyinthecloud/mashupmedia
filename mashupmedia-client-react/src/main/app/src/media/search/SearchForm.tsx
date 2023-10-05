@@ -248,14 +248,14 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                     </div>
 
                     <div className="new-line">
-                        <FormControl sx={{ minWidth: 0.3 }}>
+                        <FormControl>
                             <InputLabel id="order-property-label">Order by</InputLabel>
                             <Select
                                 labelId="order-property-label"
                                 label="Order by"
                                 value={props.mediaItemSearchCriteriaPayload?.orderBy || ''}
                                 onChange={e => handleOrderByChange(e.target.value)}
-                                sx={{minWidth: "10em"}}
+                                sx={{minWidth: 120}}
                             >
                                 <MenuItem value=""><em>None</em></MenuItem>
                                 {props.orderBys.map(orderBy => (
@@ -271,7 +271,7 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                                 label="Sort by"
                                 value={props.mediaItemSearchCriteriaPayload?.sortBy || ""}
                                 onChange={e => handleSortByChange(e.target.value as SortType)}
-                                sx={{minWidth: "10em"}}
+                                sx={{minWidth: 120}}
                             >
                                 <MenuItem value=""><em>None</em></MenuItem>
                                 <MenuItem value={SortType.ASC}>Ascending</MenuItem>
