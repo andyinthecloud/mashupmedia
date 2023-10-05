@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.mashupmedia.comparator.MediaEncodingComparator;
@@ -14,6 +15,7 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.StringHelper;
+import org.springframework.beans.factory.config.PlaceholderConfigurerSupport;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;

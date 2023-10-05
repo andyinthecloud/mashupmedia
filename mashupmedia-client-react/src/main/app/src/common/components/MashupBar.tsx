@@ -25,7 +25,6 @@ const MashupBar = () => {
     }
 
     const navigate = useNavigate()
-
     const handleClickSearch = (): void => {
         if (!props?.searchText) {
             return

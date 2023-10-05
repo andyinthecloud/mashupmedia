@@ -2,6 +2,7 @@ package org.mashupmedia.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.model.media.MediaItem;
