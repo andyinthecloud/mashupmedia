@@ -18,10 +18,8 @@ import Artists from './media/music/Artists';
 import Playlists from "./media/playlist/Playlists";
 import MusicPlaylist from "./media/playlist/music/MusicPlaylist";
 import SelectMusicPlaylist from "./media/playlist/music/SelectMusicPlaylist";
-import MediaSearchResults from "./media/search/MediaSearchResults";
-import Search from "./media/search/SearchForm";
-import SearchForm from "./media/search/SearchForm";
 import MediaSearch from "./media/search/MediaSearch";
+import NewAccount from "./common/security/NewAccount";
 
 
 export const MashupRoutes = () => {
@@ -30,6 +28,7 @@ export const MashupRoutes = () => {
             <Route path="/" element={<Introduction />} />
             <Route path="/login" element={<LogIn />} />
             <Route path="/logout" element={<LogOut />} />
+            <Route path="/new-account" element={<NewAccount />} />
 
             <Route path="/configuration">
                 <Route index element={
@@ -186,12 +185,6 @@ export const MashupRoutes = () => {
                     } />
                 </Route>
             </Route>
-            
-            {/* <Route path="/search-form" element={
-                <RequireAuthenication>
-                    <SearchForm />
-                </RequireAuthenication>
-            } /> */}
 
             <Route path="/search">
                 <Route path="media" element={

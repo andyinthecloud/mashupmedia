@@ -41,6 +41,9 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
             mediaItemSearchCriteriaPayload,
             isAccordionExpanded: true
         }))
+
+        callSearchMedia()
+    
     }, [mediaItemSearchCriteriaPayload])
 
     useEffect(() => {
@@ -146,6 +149,24 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
     function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault()
 
+        callSearchMedia()
+
+        // if (!props.mediaItemSearchCriteriaPayload) {
+        //     return
+        // }
+
+        // navigate(`/search/media/${objectToQueryParameters(props.mediaItemSearchCriteriaPayload)}`)
+
+        // dispatch(
+        //     searchMedia({
+        //         token: userToken || '',
+        //         mediaItemSearchCriteriaPayload: props.mediaItemSearchCriteriaPayload
+        //     })
+        // )
+    }
+
+    const callSearchMedia = ():void => {
+
         if (!props.mediaItemSearchCriteriaPayload) {
             return
         }
@@ -158,6 +179,7 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
                 mediaItemSearchCriteriaPayload: props.mediaItemSearchCriteriaPayload
             })
         )
+
     }
 
     const toggleAccordionExpand = () => {

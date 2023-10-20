@@ -19,7 +19,7 @@ const MediaSearch = () => {
         if (!queryParameters) {
             return
         }
-        
+
         setProps({
             searchText: queryParameters.get('searchText') || '',
             decades: toArray(queryParameters.get('decades') || ''),
@@ -27,7 +27,7 @@ const MediaSearch = () => {
             mashupMediaType: MashupMediaType.MUSIC,
             orderBy: queryParameters.get('orderBy') || '',
             pageNumber: toInt(queryParameters.get('pageNumber') || ''),
-            sortBy:  Object.values(SortType).find(
+            sortBy: Object.values(SortType).find(
                 value => value === queryParameters.get('sortBy')
             )            
         })

@@ -6,7 +6,7 @@ import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import { Fragment, useEffect, useState } from "react";
 
-import { AccountBox, ExpandLess, ExpandMore, LibraryMusic, Login, Logout, Search } from "@mui/icons-material";
+import { AccountBox, ExpandLess, ExpandMore, LibraryMusic, Login, Logout, PersonAdd, Search } from "@mui/icons-material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
@@ -237,7 +237,10 @@ const MenuDrawer = () => {
                 <ListItemRoute label="Log out" toRoute="/logout" icon={<Logout />} onClick={handleLogOut} />
             }
             {!props.loggedIn &&
-                <ListItemRoute label="Log in" toRoute="/login" icon={<Login />} onClick={closeAfterNavigate} />
+                <List>
+                    <ListItemRoute label="Log in" toRoute="/login" icon={<Login />} onClick={closeAfterNavigate} />
+                    <ListItemRoute label="New user" toRoute="/new-account" icon={<PersonAdd />} onClick={closeAfterNavigate} />
+                </List>
             }
         </div>
     )

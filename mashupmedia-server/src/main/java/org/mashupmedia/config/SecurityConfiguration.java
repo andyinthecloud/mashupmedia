@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -48,7 +49,8 @@ public class SecurityConfiguration {
     @Bean
     protected CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.addAllowedOriginPattern(CorsConfiguration.ALL);
+        corsConfiguration.addAllowedMethod(CorsConfiguration.ALL);
         corsConfiguration.applyPermitDefaultValues();
 
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -59,39 +61,24 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(
-        HttpSecurity httpSecurity, 
-        AuthenticationManager authenticationManager,
-        HandlerMappingIntrospector introspector)
+            HttpSecurity httpSecurity,
+            AuthenticationManager authenticationManager,
+            HandlerMappingIntrospector introspector)
             throws Exception {
 
-
+        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
 
         httpSecurity
-                .csrf()
-                .disable()
-                // .authorizeHttpRequests(
-                //         authorise -> authorise
-                //                 .anyRequest().authenticated()
-
-                // )
-                .cors()
-                .and()
+                .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
-                    authorise -> authorise
-                        .requestMatchers("/api/**").authenticated()
-                        .requestMatchers("/**").permitAll()
-                )
-
-                // .and()
-                // .regexMatchers(".*/api(?!.*(security/login)).*").authenticated()
-                // .ant
-                // .antMatchers(".*/api(?!.*(security/login)).*").authenticated()
-                // .antMatchers("/**").permitAll()
-                // .and()
+                        authorise -> authorise
+                                .requestMatchers(mvcMatcherBuilder.pattern("/api/**")).authenticated()
+                                .requestMatchers(mvcMatcherBuilder.pattern("/**")).permitAll())
                 .addFilter(new JWTAuthenticationFilter(authenticationManager, this.objectMapper))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager, adminManager))
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement(
+                        sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return httpSecurity.build();
     }
