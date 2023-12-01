@@ -128,7 +128,7 @@ const Group = () => {
                     )
                     navigate('/configuration/groups')
                 } else {
-                    response.parsedBody?. errorPayload.fieldErrors.map(function (serverError) {
+                    response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
                         setServerFieldValidationState(serverError)
                     })
 

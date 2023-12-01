@@ -39,7 +39,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/playlist")
+@RequestMapping("/api/private/playlist")
 @RequiredArgsConstructor
 public class PlaylistController {
 

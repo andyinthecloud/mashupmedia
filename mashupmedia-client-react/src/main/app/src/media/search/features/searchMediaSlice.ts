@@ -48,7 +48,7 @@ const initialState: PayloadState<MediaSearchResultsPayload> = {
     loading: false
 }
 
-const searchUri = "/api/search"
+const searchUri = "/api/private/search"
 const searchMediaUri = searchUri + "/media"
 
 export const searchMedia = createAsyncThunk<MediaSearchResultsPayload, SearchMediaCriteriaPayload>(

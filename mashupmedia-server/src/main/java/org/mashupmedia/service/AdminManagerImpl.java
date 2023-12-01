@@ -67,10 +67,7 @@ public class AdminManagerImpl implements AdminManager {
 		long userId = getUserId(username);
 		user.setId(userId);
 
-		Set<Role> roles = user.getRoles().stream()
-				.map(r -> getRole(r.getIdName()))
-				.collect(Collectors.toSet());
-		user.setRoles(roles);
+		processRoles(user);
 
 		Set<Group> groups = user.getGroups().stream()
 				.map(g -> getGroup(g.getId()))
@@ -92,7 +89,17 @@ public class AdminManagerImpl implements AdminManager {
 			log.info("Assigning user password");
 			updatePassword(username, password);
 		}
+	}
 
+	private void processRoles(User user) {
+		if (user.getRoles() == null || user.getRoles().isEmpty()) {
+			return;
+		}
+
+		Set<Role> roles = user.getRoles().stream()
+				.map(r -> getRole(r.getIdName()))
+				.collect(Collectors.toSet());
+		user.setRoles(roles);
 	}
 
 	@Override

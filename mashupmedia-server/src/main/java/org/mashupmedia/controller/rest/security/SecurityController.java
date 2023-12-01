@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/security")
+@RequestMapping("/api/private/security")
 @RequiredArgsConstructor
 public class SecurityController {
 
@@ -32,23 +32,23 @@ public class SecurityController {
 
     private final MashupMediaSecurityManager securityManager;
 
-    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserTokenPayload> login(@RequestBody @Valid LoginPayload loginPayload) throws Exception {
-        User user = adminManager.getUser(loginPayload.getUsername());
+    // @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    // public ResponseEntity<UserTokenPayload> login(@RequestBody @Valid LoginPayload loginPayload) throws Exception {
+    //     User user = adminManager.getUser(loginPayload.getUsername());
 
-        if (!passwordEncoder.matches(loginPayload.getPassword(), user.getPassword())) {
-            throw new SecurityException("Invalid username / password combination");
-        }
+    //     if (!passwordEncoder.matches(loginPayload.getPassword(), user.getPassword())) {
+    //         throw new SecurityException("Invalid username / password combination");
+    //     }
 
-        String username = loginPayload.getUsername();
-        String token = passwordEncoder.encode(username);
+    //     String username = loginPayload.getUsername();
+    //     String token = passwordEncoder.encode(username);
 
-        return ResponseEntity.ok(
-                UserTokenPayload
-                        .builder()
-                        .token(token)
-                        .build());
-    }
+    //     return ResponseEntity.ok(
+    //             UserTokenPayload
+    //                     .builder()
+    //                     .token(token)
+    //                     .build());
+    // }
 
     @GetMapping(value = "/user-policy", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserPolicyPayload> userPolicy() {

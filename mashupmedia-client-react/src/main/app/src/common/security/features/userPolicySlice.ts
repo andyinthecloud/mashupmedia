@@ -20,7 +20,7 @@ const initialState: PayloadState<UserPolicyPayload> = {
 export const userPolicy = createAsyncThunk(
     'security/user',
     async (userToken: string | undefined) => {
-        const url: string = backEndUrl('/api/security/user-policy')
+        const url: string = backEndUrl('/api/private/security/user-policy')
         const response = await fetch(url, {
             method: HttpMethod.GET,
             mode: 'cors',

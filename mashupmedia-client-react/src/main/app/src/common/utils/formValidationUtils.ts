@@ -4,6 +4,11 @@ export type FieldValidation = {
     message: string
 }
 
+export type FormValidationPayload<T> = {
+    payload: T
+    formValidation: FormValidation
+}
+
 export type FormValidation = {
     fieldValidations: FieldValidation[]
 }
@@ -23,7 +28,7 @@ export type ServerResponsePayload<T> = {
     }
 }
 
-export const isEmpty = (value: string): boolean => !value?.trim().length
+export const isEmpty = (value?: string): boolean => !value?.trim().length
 
 export const emptyFieldValidation = (name: string, fieldLabel: string): FieldValidation => ({
     name,

@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/music/artists")
+@RequestMapping("/api/private/music/artists")
 public class ArtistController {
 
     private final MusicManager musicManager;

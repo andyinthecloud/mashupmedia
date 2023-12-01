@@ -8,7 +8,7 @@ export type UserPayload = {
     administrator: boolean
     username: string
     password?: string
-    repeatPassword?: string    
+    repeatPassword?: string
     name: string
     createdOn?: string | null
     updatedOn?: string | null
@@ -17,36 +17,24 @@ export type UserPayload = {
     exists: boolean
 }
 
-export type ChangeUserPasswordPayload = {
-    username?: string
-    currentPassword: string
-    newPassword: string
-    confirmPassword: string
-}
-
-const userUri = '/api/admin/user/'
+const userUri = '/api/private/admin/user/'
 
 export const userAccount = (userName: string, userToken?: string): Promise<HttpResponse<UserPayload>> => {
-    return callMashupMediaApi<UserPayload> (HttpMethod.GET, userUri + 'account/' + encodeURIComponent(userName), userToken)
+    return callMashupMediaApi<UserPayload>(HttpMethod.GET, userUri + 'account/' + encodeURIComponent(userName), userToken)
 }
 
 export const saveUserAccount = (userPayload: UserPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
-    return callMashupMediaApi<ServerResponsePayload<string>> (HttpMethod.PUT, userUri + 'account', userToken, JSON.stringify(userPayload))
+    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, userUri + 'account', userToken, JSON.stringify(userPayload))
 }
 
 export const getMyAccount = (userToken?: string): Promise<HttpResponse<UserPayload>> => {
-    return callMashupMediaApi<UserPayload> (HttpMethod.GET, userUri + 'my-account', userToken)
-}
-
-export const changePassword = (changeUserPasswordPayload: ChangeUserPasswordPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
-    return callMashupMediaApi<ServerResponsePayload<string>> (HttpMethod.PUT, userUri + 'change-password', userToken, JSON.stringify(changeUserPasswordPayload))
+    return callMashupMediaApi<UserPayload>(HttpMethod.GET, userUri + 'my-account', userToken)
 }
 
 export const getUsers = (userToken?: string): Promise<HttpResponse<UserPayload[]>> => {
-    return callMashupMediaApi<UserPayload[]> (HttpMethod.GET, userUri + 'all', userToken)
+    return callMashupMediaApi<UserPayload[]>(HttpMethod.GET, userUri + 'all', userToken)
 }
 
 export const deleteUserAccount = (username: string, userToken?: string): Promise<HttpResponse<boolean>> => {
-    return callMashupMediaApi<boolean> (HttpMethod.DELETE, userUri + 'delete-account', userToken, username)
+    return callMashupMediaApi<boolean>(HttpMethod.DELETE, userUri + 'delete-account', userToken, username)
 }
-

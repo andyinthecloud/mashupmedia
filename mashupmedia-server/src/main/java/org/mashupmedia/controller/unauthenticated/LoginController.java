@@ -1,4 +1,4 @@
-package org.mashupmedia.controller;
+package org.mashupmedia.controller.unauthenticated;
 
 import org.mashupmedia.dto.login.LoginPayload;
 import org.mashupmedia.dto.login.UserTokenPayload;
@@ -18,7 +18,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/api/public/login")
 @RequiredArgsConstructor
 public class LoginController {
 

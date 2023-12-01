@@ -56,10 +56,7 @@ const LogIn = () => {
         )
     }, [code])
 
-
     const navigate = useNavigate()
-
-
 
     const [props, setProps] = useState<UserLogInPayload>({
         username: '',
@@ -75,7 +72,7 @@ const LogIn = () => {
 
     const securityState = useSelector((state: RootState) => state.security)
 
-    const useHandleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         searchParams.delete(codeParamName)
         setSearchParams(searchParams)
@@ -85,6 +82,12 @@ const LogIn = () => {
     },
         [dispatch, props]
     )
+
+    const handleResetPassword = () => {
+        console.log('handleResetPassword')
+        navigate('/reset-password')
+    }
+
 
     useEffect(() => {
         if (securityState.error?.length) {
@@ -105,10 +108,9 @@ const LogIn = () => {
     }, [securityState])
 
 
-
     return (
 
-        <form onSubmit={useHandleSubmit} className="zero-top-margin">
+        <form onSubmit={handleSubmit} className="zero-top-margin">
 
             <img src={logo} className="logo" alt="Mashup Media" />
 
@@ -126,8 +128,12 @@ const LogIn = () => {
                     fullWidth={true} type={"password"} variant="standard" />
             </div>
 
-            <div className="new-line">
-                <Button variant="outlined" type="submit">
+            <div className="new-line right">
+                <Button variant="text" color="secondary" type="button" onClick={handleResetPassword}>
+                    Reset password
+                </Button>
+
+                <Button variant="contained" color="primary" type="submit">
                     Log in
                 </Button>
             </div>

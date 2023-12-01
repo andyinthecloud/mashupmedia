@@ -30,7 +30,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class AdminHelper {
 
 	public static final String ROLE_ADMIN_IDNAME = "role.admin";
-	public static final String ROLE_USER_IDNAME = "role.user";
 
 	public static boolean isAdministrator(User user) {
 		if (user == null) {

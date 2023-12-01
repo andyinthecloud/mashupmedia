@@ -3,7 +3,7 @@ import { HttpMethod, HttpResponse, callMashupMediaApi } from "../../../common/ut
 import { NameValuePayload } from "../../../configuration/backend/metaCalls"
 import { PlaylistPayload, PlaylistWithMediaItemsPayload } from "../../music/rest/playlistActionCalls"
 
-const playlistUrl = "/api/playlist"
+const playlistUrl = "/api/private/playlist"
 
 export const getPlaylists = (userToken?: string): Promise<HttpResponse<PlaylistPayload[]>> => {
     return callMashupMediaApi<PlaylistPayload[]>(HttpMethod.GET, playlistUrl, userToken,)

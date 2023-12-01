@@ -3,7 +3,6 @@ package org.mashupmedia.controller.rest.admin;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.dto.admin.ChangeUserPasswordPayload;
 import org.mashupmedia.dto.admin.UserPayload;
@@ -31,10 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/admin/user")
+@RequestMapping("/api/private/admin/user")
 public class UserController {
-
-    private final static int MINIMUM_PASSWORD_LENGTH = 3; 
 
     @Autowired
     private UserMapper userMapper;
@@ -76,7 +73,9 @@ public class UserController {
             throw new SecurityException("Only an administrator can update another user account");
         }
 
-        validatePassword(userPayload.isExists(), userPayload.getPassword(), userPayload.getRepeatPassword(), errors);
+        if (!userPayload.isExists()) {
+            ValidationUtil.validatePassword(userPayload.getPassword(), userPayload.getRepeatPassword(), errors);
+        }
 
         if (errors.hasErrors()) {
             return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
@@ -87,28 +86,7 @@ public class UserController {
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
-    private void validatePassword(boolean userExists, String password, String repeatPassword, Errors errors) {
-        if (userExists) {
-            return;
-        }
-
-        if (password.length() < MINIMUM_PASSWORD_LENGTH || repeatPassword.length() < MINIMUM_PASSWORD_LENGTH) {
-            errors.rejectValue(
-                "password",
-                ErrorCode.INCORRECT_PASSWORD.getErrorCode(),
-                "The password and repeat password is too short");  
-            return;
-        }
-
-        if (!password.equals(repeatPassword)) {
-            errors.rejectValue(
-                "password",
-                ErrorCode.NON_MATCHING_PASSWORDS.getErrorCode(),
-                "The password and repeat password should be the same");  
-        }
-    }
-
-    @PutMapping(value = "/change-password", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/reset-password", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServerResponsePayload<String>> changePassword(
             @Valid @RequestBody ChangeUserPasswordPayload changeUserPasswordPayload, Errors errors) {
 

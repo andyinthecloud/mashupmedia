@@ -12,7 +12,6 @@ import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.library.RemoteShare;

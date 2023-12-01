@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/search/media")
+@RequestMapping("/api/private/search/media")
 public class MediaSearchController {
 
     private final static int DEFAULT_PAGE_SIZE = 50;

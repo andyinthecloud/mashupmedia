@@ -25,7 +25,7 @@ export type LibraryPayload = {
     albumArtImagePattern?: string    
 }
 
-const libraryUri = '/api/library/'
+const libraryUri = '/api/private/library/'
 
 export const getLibraries = (userToken?: string): Promise<HttpResponse<LibraryNameValuePayload[]>> => {
     return callMashupMediaApi<LibraryNameValuePayload[]> (HttpMethod.GET, libraryUri + 'all', userToken)

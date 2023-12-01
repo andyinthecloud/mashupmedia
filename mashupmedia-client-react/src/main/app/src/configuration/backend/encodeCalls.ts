@@ -2,7 +2,7 @@ import { ServerResponsePayload } from "../../common/utils/formValidationUtils"
 import { HttpMethod, HttpResponse, callMashupMediaApi } from "../../common/utils/httpUtils"
 import { NameValuePayload } from "./metaCalls"
 
-const encodeUri = "/api/encode"
+const encodeUri = "/api/private/encode"
 
 export const getFfmpegInstallation = (userToken?: string): Promise<HttpResponse<NameValuePayload<string>>> => {
     return callMashupMediaApi<NameValuePayload<string>>(HttpMethod.GET, encodeUri + "/", userToken)

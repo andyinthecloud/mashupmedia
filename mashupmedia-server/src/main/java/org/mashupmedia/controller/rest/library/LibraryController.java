@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/library")
+@RequestMapping("/api/private/library")
 public class LibraryController {
 
     private static final String FIELD_NAME_VALUE = "value";

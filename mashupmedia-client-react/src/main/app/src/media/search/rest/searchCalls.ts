@@ -1,7 +1,7 @@
 import { HttpMethod, HttpResponse, callMashupMediaApi } from "../../../common/utils/httpUtils"
 import { NameValuePayload } from "../../../configuration/backend/metaCalls"
 
-const searchUri = "/api/search"
+const searchUri = "/api/private/search"
 const searchMediaUri = searchUri + "/media"
 
 export type GenrePayload = {

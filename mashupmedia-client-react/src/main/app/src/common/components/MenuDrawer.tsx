@@ -239,7 +239,7 @@ const MenuDrawer = () => {
             {!props.loggedIn &&
                 <List>
                     <ListItemRoute label="Log in" toRoute="/login" icon={<Login />} onClick={closeAfterNavigate} />
-                    <ListItemRoute label="New user" toRoute="/new-account" icon={<PersonAdd />} onClick={closeAfterNavigate} />
+                    <ListItemRoute label="New user" toRoute="/create-user" icon={<PersonAdd />} onClick={closeAfterNavigate} />
                 </List>
             }
         </div>

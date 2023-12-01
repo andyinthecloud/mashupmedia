@@ -10,9 +10,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
@@ -35,15 +37,27 @@ public class SecurityConfiguration {
 
     private final AdminManager adminManager;
 
+    // @Bean
+    // public AuthenticationManager authenticationManager(HttpSecurity http,
+    //         BCryptPasswordEncoder bCryptPasswordEncoder,
+    //         CustomUserDetailsService userDetailsService)
+    //         throws Exception {
+    //     return http.getSharedObject(AuthenticationManagerBuilder.class)
+    //             .userDetailsService(userDetailsService)
+    //             .passwordEncoder(bCryptPasswordEncoder)
+    //             .and()
+    //             .build();
+    // }
+
+    // @Bean
+    // public PasswordEncoder getPasswordEncoder() {
+    // return new BCryptPasswordEncoder();
+    // }
+
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder,
-            CustomUserDetailsService userDetailsService)
-            throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(bCryptPasswordEncoder)
-                .and()
-                .build();
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 
     @Bean
@@ -73,8 +87,9 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         authorise -> authorise
-                                .requestMatchers(mvcMatcherBuilder.pattern("/api/**")).authenticated()
+                                .requestMatchers(mvcMatcherBuilder.pattern("/api/private/**")).authenticated()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/**")).permitAll())
+
                 .addFilter(new JWTAuthenticationFilter(authenticationManager, this.objectMapper))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager, adminManager))
                 .sessionManagement(

@@ -9,7 +9,9 @@ public enum ErrorCode {
     NOT_LOGGED_IN("error.not-logged-in"),
     GENERAL_ERROR("error.general"),
     LIBRARIES_UNINITIALISED("error.libraries.uninitialised"),
-    PLAYLIST_NOT_FOUND("error.playlist.not-found");
+    PLAYLIST_NOT_FOUND("error.playlist.not-found"),
+    EMAIL_INVALID("error.email.invalid"),
+    TOKEN_INVALID("error.token.invalid");
 
     private String errorCode;
 
@@ -20,5 +22,5 @@ public enum ErrorCode {
     public String getErrorCode() {
         return errorCode;
     }
-    
+
 }

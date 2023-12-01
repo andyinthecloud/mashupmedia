@@ -103,7 +103,7 @@ export interface MusicQueueTrackPlaylistPayload extends MusicQueuePlaylistPayloa
     trackId: number
 }
 
-const playlistUrl = "/api/playlist"
+const playlistUrl = "/api/private/playlist"
 const musicPlaylistUrl = playlistUrl + "/music"
 
 export const playTrack = (trackId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<EncoderStatusType>>> => {

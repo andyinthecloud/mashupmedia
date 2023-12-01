@@ -42,7 +42,7 @@ export enum ImageType {
     ORIGINAL = "ORIGINAL", THUMBNAIL = "THUMBNAIL"
 }
 
-const musicUri = "/api/music"
+const musicUri = "/api/private/music"
 const artistUri = musicUri + "/artists"
 const albumUrl = musicUri + "/albums"
 

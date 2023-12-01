@@ -91,7 +91,6 @@ public class InitialisationManagerImpl implements InitialisationManager {
 
 	protected void initialiseFirstRoles() {
 		saveRole(AdminHelper.ROLE_ADMIN_IDNAME, "Administrator", User.ROLE_ADMINISTRATOR);
-		saveRole(AdminHelper.ROLE_USER_IDNAME, "User", "ROLE_USER");
 	}
 
 	protected Role saveRole(String idName, String name, String authority) {

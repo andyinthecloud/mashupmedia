@@ -3,7 +3,7 @@ import Introduction from "./common/components/Introduction";
 import LogIn from "./common/security/LogIn";
 import LogOut from "./common/security/LogOut";
 import { RequireAuthenication } from "./common/security/RequireAuthentication";
-import ChangeUserPassword from "./configuration/ChangeUserPassword";
+import ResetPassword from "./configuration/ResetPassword";
 import Encode from "./configuration/Encode";
 import Group from "./configuration/Group";
 import Groups from "./configuration/Groups";
@@ -19,7 +19,8 @@ import Playlists from "./media/playlist/Playlists";
 import MusicPlaylist from "./media/playlist/music/MusicPlaylist";
 import SelectMusicPlaylist from "./media/playlist/music/SelectMusicPlaylist";
 import MediaSearch from "./media/search/MediaSearch";
-import NewAccount from "./common/security/NewAccount";
+import CreateUser from "./configuration/CreateUser";
+import ActivateUser from "./configuration/ActivateUser";
 
 
 export const MashupRoutes = () => {
@@ -28,7 +29,9 @@ export const MashupRoutes = () => {
             <Route path="/" element={<Introduction />} />
             <Route path="/login" element={<LogIn />} />
             <Route path="/logout" element={<LogOut />} />
-            <Route path="/new-account" element={<NewAccount />} />
+            <Route path="/create-user" element={<CreateUser />} />
+            <Route path="/create-user/activate" element={<ActivateUser />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route path="/configuration">
                 <Route index element={
@@ -37,12 +40,6 @@ export const MashupRoutes = () => {
                     </RequireAuthenication>
                 } />
                 <Route path="my-account" element={
-                    <RequireAuthenication>
-                        <User />
-                    </RequireAuthenication>
-                } />
-
-                <Route path="new-account" element={
                     <RequireAuthenication>
                         <User />
                     </RequireAuthenication>
@@ -57,19 +54,6 @@ export const MashupRoutes = () => {
                     <Route path=":userId" element={
                         <RequireAuthenication>
                             <User />
-                        </RequireAuthenication>
-                    } />
-                </Route>
-
-                <Route path="change-user-password">
-                    <Route index element={
-                        <RequireAuthenication>
-                            <ChangeUserPassword />
-                        </RequireAuthenication>
-                    } />
-                    <Route path=":userId" element={
-                        <RequireAuthenication>
-                            <ChangeUserPassword />
                         </RequireAuthenication>
                     } />
                 </Route>

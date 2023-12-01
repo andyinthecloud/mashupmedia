@@ -6,7 +6,7 @@ export type NameValuePayload<T> = {
     value: T
 }
 
-const metaUri = '/api/meta/'
+const metaUri = '/api/private/meta/'
 
 export const getGroups = (userToken?: string): Promise<HttpResponse<NameValuePayload<number>[]>> => {
     return callMashupMediaApi<NameValuePayload<number>[]> (HttpMethod.GET, metaUri + 'groups', userToken)

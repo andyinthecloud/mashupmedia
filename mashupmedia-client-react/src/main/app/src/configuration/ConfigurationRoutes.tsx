@@ -1,7 +1,7 @@
 import { Group, Groups } from '@mui/icons-material'
 import { Route } from 'react-router-dom'
 import { RequireAuthenication } from '../common/security/RequireAuthentication'
-import ChangeUserPassword from './ChangeUserPassword'
+import ResetPassword from './ResetPassword'
 import Libraries from './Libraries'
 import Library from './Library'
 import User from './User'
@@ -43,12 +43,12 @@ export const ConfigurationRoutes = () => {
             <Route path="change-user-password">
                 <Route index element={
                     <RequireAuthenication>
-                        <ChangeUserPassword />
+                        <ResetPassword />
                     </RequireAuthenication>
                 } />
                 <Route path=":userId" element={
                     <RequireAuthenication>
-                        <ChangeUserPassword />
+                        <ResetPassword />
                     </RequireAuthenication>
                 } />
             </Route>

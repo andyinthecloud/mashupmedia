@@ -19,7 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/encode")
+@RequestMapping("/api/private/encode")
 @RequiredArgsConstructor
 public class EncodeController {
 

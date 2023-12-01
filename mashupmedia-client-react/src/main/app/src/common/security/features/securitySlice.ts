@@ -20,7 +20,7 @@ const initialState: PayloadState<UserTokenPayload> = {
 export const logIn = createAsyncThunk<UserTokenPayload, UserLogInPayload>(
     'login',
     async (userLoginPayload: UserLogInPayload) => {
-        const loginUrl: string = backEndUrl('/login/')
+        const loginUrl: string = backEndUrl('/api/public/login/')
         const response = await fetch(loginUrl, {
             method: HttpMethod.POST,
             mode: 'cors',
