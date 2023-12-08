@@ -12,13 +12,13 @@ import org.mashupmedia.model.media.music.Track;
 
 public interface MusicDao {
 
-	public List<Album> getAlbums(List<Long> groupIds, String searchLetter, int pageNumber, int maxResults);
+	public List<Album> getAlbums(Long userId, String searchLetter, int pageNumber, int maxResults);
 
-	public List<Artist> getArtists(List<Long> groupIds);
+	public List<Artist> getArtists(Long userId);
 
-	public Track getTrack(List<Long> groupIds, long libraryId, String trackPath, long fileLastModifiedOn);
+	public Track getTrack(Long userId, long libraryId, String trackPath, long fileLastModifiedOn);
 
-	public Album getAlbum(List<Long> groupIds, String artistName, String albumName);
+	public Album getAlbum(Long userId, String artistName, String albumName);
 
 	public void saveTrack(Track track);
 
@@ -28,34 +28,34 @@ public interface MusicDao {
 
 	public void saveArtist(Artist artist);
 
-	public Album getAlbum(List<Long> groupIds, long albumId);
+	public Album getAlbum(Long userId, long albumId);
 
-	public List<Album> getRandomAlbums(List<Long> groupIds, int maxResults);
+	public List<Album> getRandomAlbums(Long userId, int maxResults);
 
 	public Year getYear(int year);
 
-	public List<Track> getTracks(List<Long> groupIds, Long albumId);
+	public List<Track> getTracks(Long userId, Long albumId);
 
 
-	public List<Album> getAlbumsByArtist(List<Long> groupIds, long artistId);
+	public List<Album> getAlbumsByArtist(Long userId, long artistId);
 
 	public Genre getGenre(String name);
 
-	public List<String> getArtistIndexLetters(List<Long> groupIds);
+	public List<String> getArtistIndexLetters(Long userId);
 
-	public Artist getArtist(List<Long> groupIds, Long artistId);
+	public Artist getArtist(Long userId, Long artistId);
 
 	public void saveTrack(Track track, boolean isSessionFlush);
 
-	public List<String> getAlbumIndexLetters(List<Long> groupIds);
+	public List<String> getAlbumIndexLetters(Long userId);
 
 	public List<Genre> getGenres();
 	
-	public List<Track> findTracks(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria);
+	public List<Track> findTracks(Long userId, MediaItemSearchCriteria mediaItemSearchCriteria);
 
-	public long getTotalTracksFromLibrary(long libraryId);
+	public long getTotalTracksFromLibrary(Long libraryId);
 
-	public List<Album> getLatestAlbums(List<Long> userGroupIds, int pageNumber, int maxResults);
+	public List<Album> getLatestAlbums(Long userId, int pageNumber, int maxResults);
 
 	public Track getTrack(String path);
 	

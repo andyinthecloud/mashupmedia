@@ -15,26 +15,26 @@ public interface PhotoDao {
 
 	public List<Album> getAlbums(String albumName);
 
-	public List<Photo> getLatestPhotos(List<Long> groupIds, int firstResult, int totalItems);
+	public List<Photo> getLatestPhotos(Long userId, int firstResult, int totalItems);
 
-	public List<Album> getAlbums(List<Long> groupIds, MediaItemSequenceType mediaItemSequenceType);
+	public List<Album> getAlbums(Long userId, MediaItemSequenceType mediaItemSequenceType);
 
 	public List<Photo> getObsoletePhotos(long libraryId, Date date);
 
 	public int removeObsoletePhotos(long libraryId, Date date);
 
-	public Album getAlbum(List<Long> groupIds, long albumId);
+	public Album getAlbum(Long userId, long albumId);
 
-	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getPreviousPhotoInSequence(Long userId, Date takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType);
 
-	public Photo getNextPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getNextPhotoInSequence(Long userId, Date takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType);
 
-	public Photo getFirstPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getFirstPhotoInSequence(Long userId, Date takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType);
 
-	public Photo getLastPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getLastPhotoInSequence(Long userId, Date takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType);
 
 }

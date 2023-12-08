@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.mashupmedia.dao.VideoDao;
 import org.mashupmedia.model.media.video.Video;
+import org.mashupmedia.util.AdminHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +21,8 @@ public class VideoManagerImpl implements VideoManager {
 
 	@Override
 	public List<Video> getVideos() {
-		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		List<Video> videos = videoDao.getVideos(userGroupIds);
+		Long userId = AdminHelper.getLoggedInUser().getId();
+		List<Video> videos = videoDao.getVideos(userId);
 		return videos;
 	}
 

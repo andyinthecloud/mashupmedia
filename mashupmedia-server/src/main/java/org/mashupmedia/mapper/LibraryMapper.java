@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.mashupmedia.dto.library.LibraryPayload;
 import org.mashupmedia.dto.library.LibraryTypePayload;
 import org.mashupmedia.dto.share.NameValuePayload;
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
@@ -20,16 +19,8 @@ import org.springframework.util.Assert;
 @Component
 public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
 
-    @Autowired
-    private GroupMapper groupMapper;
-
     @Override
     public LibraryPayload toDto(Library domain) {
-
-        List<NameValuePayload<Long>> groupPayloads = domain.getGroups()
-                .stream()
-                .map(groupMapper::toDto)
-                .collect(Collectors.toList());
 
         LibraryPayload libraryPayload = null;
 
@@ -54,7 +45,6 @@ public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
                 .updatedBy(domain.getUpdatedBy().getName())
                 .enabled(domain.isEnabled())
                 .lastSuccessfulScanOn(DateHelper.toLocalDateTime(domain.getLastSuccessfulScanOn()))
-                .groups(groupPayloads)
                 .build();
 
     }
@@ -77,11 +67,6 @@ public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
 
         mapToLibrary(library, payload);
 
-        Set<Group> groups = payload.getGroups().stream()
-                .map(groupMapper::toDomain)
-                .collect(Collectors.toSet());
-        library.setGroups(groups);
-
         return library;
     }
 
@@ -92,11 +77,6 @@ public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
         location.setPath(payload.getPath());
         library.setLocation(location);
         library.setEnabled(payload.isEnabled());
-
-        Set<Group> groups = payload.getGroups().stream()
-                .map(groupMapper::toDomain)
-                .collect(Collectors.toSet());
-        library.setGroups(groups);
     }
 
 }

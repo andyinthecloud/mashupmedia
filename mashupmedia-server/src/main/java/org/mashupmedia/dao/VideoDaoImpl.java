@@ -30,10 +30,13 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 	}
 
 	@Override
-	public List<Video> getVideos(Collection<Long> groupIds) {
+	public List<Video> getVideos(Long userId) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select distinct v from Video v join v.library.groups g where v.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+				"select distinct v from Video v  ");
+		queryBuilder.append(" join v.library l");
+		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" where v.enabled = true");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		queryBuilder.append(" order by v.displayTitle");
 		Query query = entityManager.createQuery(queryBuilder.toString());
 		@SuppressWarnings("unchecked")

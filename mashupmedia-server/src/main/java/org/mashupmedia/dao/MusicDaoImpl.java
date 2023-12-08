@@ -16,6 +16,7 @@ import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.util.DaoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
 
 import jakarta.persistence.TypedQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 @Slf4j
 public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
-
-	@Autowired
-	private GroupDao groupDao;
 
 	@Autowired
 	private ArtistRepository artistRepository;
@@ -39,17 +37,25 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public List<Album> getAlbums(List<Long> groupIds, String searchLetter, int pageNumber, int maxResults) {
+	public List<Album> getAlbums(Long userId, String searchLetter, int pageNumber, int maxResults) {
 
 		int firstResult = getFirstResult(pageNumber, maxResults);
 		StringBuilder queryBuilder = new StringBuilder(
-				"select distinct a from org.mashupmedia.model.media.music.Album a join a.tracks s join s.library.groups g");
-		queryBuilder.append(" where s.library.enabled = true");
+				"select distinct a from org.mashupmedia.model.media.music.Album");
+		queryBuilder.append(" join a.tracks t");
+		queryBuilder.append(" join t.library l");
+		queryBuilder.append(" join l.users u");
+
+		queryBuilder.append(" where t.library.enabled = true");
+		queryBuilder.append(" and u.id library.users = true");
+
 		searchLetter = StringUtils.trimToEmpty(searchLetter);
+
 		if (StringUtils.isNotEmpty(searchLetter)) {
 			queryBuilder.append(" and a.indexLetter = '" + searchLetter.toLowerCase() + "'");
 		}
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 
 		queryBuilder.append(" order by a.indexText");
 
@@ -61,83 +67,102 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public List<String> getAlbumIndexLetters(List<Long> groupIds) {
+	public List<String> getAlbumIndexLetters(Long userId) {
 		throw new UnsupportedOperationException("Not implemented");
 
 		// StringBuilder queryBuilder = new StringBuilder(
-		// 		"select distinct a.indexLetter from org.mashupmedia.model.media.music.Album a join a.tracks s join s.library.groups g");
-		// queryBuilder.append(" where s.library.enabled = true");
+		// "select distinct a.indexLetter from org.mashupmedia.model.media.music.Album a
+		// join a.tracks s join s.library.groups g");
+		// queryBuilder.append(" where t.library.enabled = true");
 		// DaoHelper.appendGroupFilter(queryBuilder, groupIds);
 		// queryBuilder.append(" order by a.name");
-		// TypedQuery<String> query = entityManager.createQuery(queryBuilder.toString(), String.class);
+		// TypedQuery<String> query = entityManager.createQuery(queryBuilder.toString(),
+		// String.class);
 		// List<String> indexLetters = query.getResultList();
 		// return indexLetters;
 	}
 
 	@Override
-	public List<Artist> getArtists(List<Long> groupIds) {
+	public List<Artist> getArtists(Long userId) {
+
+		Assert.notNull(userId, "Expecting a userId");
+
 		StringBuilder queryBuilder = new StringBuilder(
-				"select distinct a from Artist a join a.albums album join album.tracks s join s.library.groups g");
-		queryBuilder.append(" where s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+				"select distinct a from Artist a");
+		queryBuilder.append(" join a.albums album");
+		queryBuilder.append(" join album.tracks t");
+		queryBuilder.append(" join t.library l");
+		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" where t.library.enabled = true");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
+
 		queryBuilder.append(" order by a.name");
 		TypedQuery<Artist> query = entityManager.createQuery(queryBuilder.toString(), Artist.class);
 		List<Artist> artists = query.getResultList();
 		return artists;
 	}
 
-
-
 	// @Override
 	// public void deleteObsoleteTrack(Track track) {
-	// 	Date updatedOn = track.getUpdatedOn();
-	// 	Date deleteDate = DateUtils.addDays(updatedOn, NUMBER_OF_DAYS_TO_KEEP_DISABLED_TRACKS);
+	// Date updatedOn = track.getUpdatedOn();
+	// Date deleteDate = DateUtils.addDays(updatedOn,
+	// NUMBER_OF_DAYS_TO_KEEP_DISABLED_TRACKS);
 
-	// 	if (deleteDate.after(new Date())) {
-	// 		track.setEnabled(false);
-	// 		entityManager.merge(track);
-	// 	} else {
-	// 		deleteTrack(track);
-	// 	}
+	// if (deleteDate.after(new Date())) {
+	// track.setEnabled(false);
+	// entityManager.merge(track);
+	// } else {
+	// deleteTrack(track);
+	// }
 	// }
 
 	// @Override
 	// public void deleteTrack(Track track) {
-	// 	Genre genre = track.getGenre();
-	// 	deleteGenre(genre);
+	// Genre genre = track.getGenre();
+	// deleteGenre(genre);
 
-	// 	String path = track.getPath();
+	// String path = track.getPath();
 
-	// 	StringBuilder queryBuilder = new StringBuilder("delete from Track  where path = :path");
+	// StringBuilder queryBuilder = new StringBuilder("delete from Track where path
+	// = :path");
 
-	// 	entityManager.createQuery(queryBuilder.toString()).setParameter("path", path)
-	// 			.executeUpdate();
-	// 	flushSession(true);
+	// entityManager.createQuery(queryBuilder.toString()).setParameter("path", path)
+	// .executeUpdate();
+	// flushSession(true);
 	// }
 
-	private void deleteGenre(Genre genre) {
-		if (genre == null) {
-			return;
-		}
+	// private void deleteGenre(Genre genre) {
+	// if (genre == null) {
+	// return;
+	// }
 
-		TypedQuery<Long> query  =  entityManager
-				.createQuery("select count(s.id) from Track s where s.genre.name = :name", Long.class);
-query.setParameter("name", genre.getName());
-		
-				Long numberOfTracks = getUniqueResult(query);
-				if (numberOfTracks > 0) {
-			return;
-		}
+	// TypedQuery<Long> query = entityManager
+	// .createQuery("select count(s.id) from Track s where s.genre.name = :name",
+	// Long.class);
+	// query.setParameter("name", genre.getName());
 
-		entityManager.remove(genre);
-	}
+	// Long numberOfTracks = getUniqueResult(query);
+	// if (numberOfTracks > 0) {
+	// return;
+	// }
+
+	// entityManager.remove(genre);
+	// }
 
 	@Override
-	public Album getAlbum(List<Long> groupIds, String artistName, String albumName) {
+	public Album getAlbum(Long userId, String artistName, String albumName) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select a from org.mashupmedia.model.media.music.Album a join a.tracks s join s.library.groups g where lower(a.artist.name) = :artistName and lower(a.name) = :albumName");
-		queryBuilder.append(" and s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+				"select a from org.mashupmedia.model.media.music.Album a");
+		queryBuilder.append(" join a.tracks t");
+		queryBuilder.append(" join s.library l");
+		queryBuilder.append(" join l.users u");
+
+		queryBuilder.append(" where lower(a.artist.name) = :artistName");
+		queryBuilder.append(" and lower(a.name) = :albumName");
+
+		queryBuilder.append(" and t.library.enabled = true");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
+
 		TypedQuery<Album> query = entityManager.createQuery(queryBuilder.toString(), Album.class);
 		query.setParameter("artistName", artistName.toLowerCase());
 		query.setParameter("albumName", albumName.toLowerCase());
@@ -146,7 +171,7 @@ query.setParameter("name", genre.getName());
 	}
 
 	@Override
-	public Album getAlbum(List<Long> groupIds, long albumId) {
+	public Album getAlbum(Long userId, long albumId) {
 
 		StringBuilder albumQueryBuilder = new StringBuilder(
 				"from org.mashupmedia.model.media.music.Album a where id = :id");
@@ -156,9 +181,14 @@ query.setParameter("name", genre.getName());
 		Album album = getUniqueResult(albumQuery);
 
 		StringBuilder tracksQueryBuilder = new StringBuilder(
-				"select distinct s from Track s join s.library.groups g where s.album.id = :id and s.enabled = true");
-		tracksQueryBuilder.append(" and s.library.enabled = true");
-		DaoHelper.appendGroupFilter(tracksQueryBuilder, groupIds);
+				"select distinct t from Track t join s.library.groups g");
+		tracksQueryBuilder.append(" join t.library l");
+		tracksQueryBuilder.append(" join l.users u");
+		tracksQueryBuilder.append(" where t.album.id = :id");
+		tracksQueryBuilder.append(" and t.enabled = true");
+		tracksQueryBuilder.append(" and t.library.enabled = true");
+
+		DaoHelper.appendUserIdFilter(tracksQueryBuilder, userId);
 		tracksQueryBuilder.append(" order by s.trackNumber");
 		TypedQuery<Track> tracksQuery = entityManager.createQuery(tracksQueryBuilder.toString(),
 				Track.class);
@@ -174,11 +204,17 @@ query.setParameter("name", genre.getName());
 	}
 
 	@Override
-	public Track getTrack(List<Long> groupIds, long libraryId, String trackPath, long fileLastModifiedOn) {
+	public Track getTrack(Long userId, long libraryId, String trackPath, long fileLastModifiedOn) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select distinct s from Track s inner join s.library.groups g where s.library.id = :libraryId and s.path = :path and s.fileLastModifiedOn = :fileLastModifiedOn");
-		queryBuilder.append(" and s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+				"select distinct s from Track s");
+		queryBuilder.append(" inner join s.library l");
+		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" where s.library.id = :libraryId");
+		queryBuilder.append(" and s.path = :path");
+		queryBuilder.append(" and s.fileLastModifiedOn = :fileLastModifiedOn");
+		queryBuilder.append(" and t.library.enabled = true");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
+
 		TypedQuery<Track> query = entityManager.createQuery(queryBuilder.toString(), Track.class);
 		query.setParameter("libraryId", libraryId);
 		query.setParameter("path", trackPath);
@@ -240,7 +276,7 @@ query.setParameter("name", genre.getName());
 			artistRepository.save(artist);
 		}
 
-//		saveOrMerge(artist);
+		// saveOrMerge(artist);
 
 		// Album album = track.getAlbum();
 		// saveOrMerge(album);
@@ -250,13 +286,14 @@ query.setParameter("name", genre.getName());
 		// saveOrMerge(track.getGenre());
 		saveOrUpdate(track);
 
-// 		Library library = track.getLibrary();
-// //		saveOrUpdate(library.getLocation());
-// 		libraryDao.saveLibrary(library);
+		// Library library = track.getLibrary();
+		// // saveOrUpdate(library.getLocation());
+		// libraryDao.saveLibrary(library);
 
 		flushSession(isSessionFlush);
 
-		log.debug("Saved track: " + track.getArtist().getName() + " - " + track.getAlbum().getName() + " - " + track.getTitle());
+		log.debug("Saved track: " + track.getArtist().getName() + " - " + track.getAlbum().getName() + " - "
+				+ track.getTitle());
 	}
 
 	@Override
@@ -270,12 +307,12 @@ query.setParameter("name", genre.getName());
 	}
 
 	@Override
-	public List<Album> getRandomAlbums(List<Long> groupIds, int numberOfAlbums) {
-		List<Long> randomAlbumIds = getRandomAlbumIds(numberOfAlbums, groupIds);
+	public List<Album> getRandomAlbums(Long userId, int numberOfAlbums) {
+		List<Long> randomAlbumIds = getRandomAlbumIds(numberOfAlbums, userId);
 
 		StringBuilder randomAlbumsQueryBuilder = new StringBuilder(
 				"select a from org.mashupmedia.model.media.music.Album a where a.id in :albumIds");
-				TypedQuery<Album> randomAlbumsQuery = entityManager
+		TypedQuery<Album> randomAlbumsQuery = entityManager
 				.createQuery(randomAlbumsQueryBuilder.toString(), Album.class);
 		randomAlbumsQuery.setParameter("albumIds", randomAlbumIds);
 		List<Album> randomAlbums = randomAlbumsQuery.getResultList();
@@ -283,37 +320,45 @@ query.setParameter("name", genre.getName());
 		return randomAlbums;
 	}
 
-	private List<Long> getRandomAlbumIds(int maxResults, List<Long> groupIds) {
-		List<Long> albumIds = getAlbumIds(groupIds);
+	private List<Long> getRandomAlbumIds(int maxResults, Long userId) {
+		List<Long> albumIds = getAlbumIds(userId);
 		Collections.shuffle(albumIds);
 
 		int totalAlbums = albumIds.size();
-		int toIndex = totalAlbums < maxResults ? totalAlbums : maxResults;  
+		int toIndex = totalAlbums < maxResults ? totalAlbums : maxResults;
 		return albumIds.subList(0, toIndex);
 	}
 
-	private List<Long> getAlbumIds(List<Long> groupIds) {
+	private List<Long> getAlbumIds(Long userId) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select a.id from org.mashupmedia.model.media.music.Album a join a.tracks s join s.library.groups g");
-		queryBuilder.append(" where s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+				"select distinct a.id from org.mashupmedia.model.media.music.Album a");
+		queryBuilder.append(" join a.tracks t");
+		queryBuilder.append(" join t.library l");
+		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" where t.library.enabled = true");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 
-		TypedQuery<Long> query = entityManager.createQuery(queryBuilder.toString(), Long.class);
+		TypedQuery<Long> query = entityManager.createQuery(queryBuilder.toString(),
+				Long.class);
 
 		return query.getResultList();
 	}
 
-	protected int getTotalGroups() {
-		int totalGroups = groupDao.getGroupIds().size();
-		return totalGroups;
-	}
+	// protected int getTotalGroups() {
+	// int totalGroups = groupDao.getGroupIds().size();
+	// return totalGroups;
+	// }
 
 	@Override
-	public List<Album> getLatestAlbums(List<Long> groupIds, int pageNumber, int maxResults) {
+	public List<Album> getLatestAlbums(Long userId, int pageNumber, int maxResults) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select distinct a from org.mashupmedia.model.media.music.Album a join a.tracks s join s.library.groups g");
-		queryBuilder.append(" where s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+				"select distinct a from org.mashupmedia.model.media.music.Album a");
+		queryBuilder.append(" join a.tracks t");
+		queryBuilder.append(" join t.library l");
+		queryBuilder.append(" where l.users u");
+
+		queryBuilder.append(" where t.library.enabled = true");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		queryBuilder.append(" order by a.updatedOn desc");
 
 		TypedQuery<Album> query = entityManager.createQuery(queryBuilder.toString(), Album.class);
@@ -343,11 +388,13 @@ query.setParameter("name", genre.getName());
 	}
 
 	@Override
-	public List<Track> getTracks(List<Long> groupIds, Long albumId) {
+	public List<Track> getTracks(Long userId, Long albumId) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select s from Track s inner join s.library.groups g where s.album.id = :albumId ");
-		queryBuilder.append(" and s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+				"select t from Track s inner join s.library.groups g where s.album.id = :albumId ");
+		queryBuilder.append(" inner join t.library l");
+		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" and t.library.enabled = true");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		queryBuilder.append(" order by trackNumber");
 		TypedQuery<Track> query = entityManager.createQuery(queryBuilder.toString(), Track.class);
 		query.setParameter("albumId", albumId);
@@ -357,11 +404,15 @@ query.setParameter("name", genre.getName());
 	}
 
 	@Override
-	public List<Album> getAlbumsByArtist(List<Long> groupIds, long artistId) {
+	public List<Album> getAlbumsByArtist(Long userId, long artistId) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select distinct a from org.mashupmedia.model.media.music.Album a join a.tracks s join s.library.groups g where a.artist.id = :artistId ");
-		queryBuilder.append(" and s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+				"select distinct a from org.mashupmedia.model.media.music.Album a");
+		queryBuilder.append(" join a.tracks t");
+		queryBuilder.append(" join s.library l");
+		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" where a.artist.id = :artistId");
+		queryBuilder.append(" and t.library.enabled = true");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		queryBuilder.append(" order by a.name");
 
 		TypedQuery<Album> query = entityManager.createQuery(queryBuilder.toString(), Album.class);
@@ -371,11 +422,15 @@ query.setParameter("name", genre.getName());
 	}
 
 	@Override
-	public List<String> getArtistIndexLetters(List<Long> groupIds) {
+	public List<String> getArtistIndexLetters(Long userId) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select distinct a.indexLetter from Artist a join a.albums album join album.tracks s join s.library.groups g");
-		queryBuilder.append(" where s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+				"select distinct a.indexLetter from Artist a");
+		queryBuilder.append(" join a.albums album");
+		queryBuilder.append(" join album.tracks t");
+		queryBuilder.append(" join s.library l");
+		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" where t.library.enabled = true");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		queryBuilder.append(" order by a.indexLetter");
 		TypedQuery<String> query = entityManager.createQuery(queryBuilder.toString(), String.class);
 		List<String> indexLetters = query.getResultList();
@@ -383,11 +438,16 @@ query.setParameter("name", genre.getName());
 	}
 
 	@Override
-	public Artist getArtist(List<Long> groupIds, Long artistId) {
+	public Artist getArtist(Long userId, Long artistId) {
 		StringBuilder queryBuilder = new StringBuilder(
-				"select a from Artist a join a.albums album join album.tracks s join s.library.groups g where a.id = :artistId");
-		queryBuilder.append(" and s.library.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+				"select a from Artist a");
+		queryBuilder.append(" join a.albums album");
+		queryBuilder.append(" join album.tracks t");
+		queryBuilder.append(" join s.library l");
+		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" where a.id = :artistId");
+		queryBuilder.append(" and t.library.enabled = true");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		TypedQuery<Artist> query = entityManager.createQuery(queryBuilder.toString(), Artist.class);
 		query.setParameter("artistId", artistId);
 		Artist artist = getUniqueResult(query);
@@ -402,13 +462,15 @@ query.setParameter("name", genre.getName());
 	}
 
 	@Override
-	public List<Track> findTracks(List<Long> groupIds, MediaItemSearchCriteria mediaItemSearchCriteria) {
+	public List<Track> findTracks(Long userId, MediaItemSearchCriteria mediaItemSearchCriteria) {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("select t from Track t ");
-		queryBuilder.append(" join t.library.groups g");
+		queryBuilder.append(" join t.library l");
+		queryBuilder.append(" join l.users u");
 		queryBuilder.append(" where t.enabled = true");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
-		// queryBuilder.append(" and lower(t.fileName) like '%" + mediaItemSearchCriteria.getSearchText() + "%'");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
+		// queryBuilder.append(" and lower(t.fileName) like '%" +
+		// mediaItemSearchCriteria.getSearchText() + "%'");
 		queryBuilder.append(" and upper(t.title) like %:searchText%");
 		queryBuilder.append(" order by t.title");
 
@@ -416,63 +478,68 @@ query.setParameter("name", genre.getName());
 		query.setParameter("searchText", mediaItemSearchCriteria.getSearchText());
 		return query.getResultList();
 
-
-
-
-
 		// throw new UnsupportedOperationException();
 
-		// FullTextEntityManager fullTextSession = Search.getFullTextEntityManager(entityManager);
+		// FullTextEntityManager fullTextSession =
+		// Search.getFullTextEntityManager(entityManager);
 
-		// QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(Track.class).get();
+		// QueryBuilder queryBuilder =
+		// fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(Track.class).get();
 		// @SuppressWarnings("rawtypes")
 		// BooleanJunction<BooleanJunction> booleanJunction = queryBuilder.bool();
 
 		// String searchWordsValue = mediaItemSearchCriteria.getSearchWords();
 		// if (StringUtils.isNotBlank(searchWordsValue)) {
-		// 	String[] searchWords = searchWordsValue.split("\\s");
-		// 	for (String searchWord : searchWords) {
-		// 		booleanJunction.must(
-		// 				queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord).createQuery());
-		// 	}
+		// String[] searchWords = searchWordsValue.split("\\s");
+		// for (String searchWord : searchWords) {
+		// booleanJunction.must(
+		// queryBuilder.keyword().wildcard().onField("searchText").matching(searchWord).createQuery());
+		// }
 		// }
 
-		// String mediaTypeValue = StringHelper.normaliseTextForDatabase(MashupMediaType.TRACK.toString());
+		// String mediaTypeValue =
+		// StringHelper.normaliseTextForDatabase(MashupMediaType.TRACK.toString());
 		// booleanJunction.must(queryBuilder.keyword().onField("mediaTypeValue").matching(mediaTypeValue).createQuery());
 		// booleanJunction.must(
-		// 		queryBuilder.keyword().onField("enabled").matching(mediaItemSearchCriteria.isEnabled()).createQuery());
+		// queryBuilder.keyword().onField("enabled").matching(mediaItemSearchCriteria.isEnabled()).createQuery());
 
 		// @SuppressWarnings("rawtypes")
 		// BooleanJunction<BooleanJunction> groupJunction = queryBuilder.bool();
 		// for (Long groupId : groupIds) {
-		// 	groupJunction.should(queryBuilder.keyword().onField("library.groups.id").matching(groupId).createQuery());
+		// groupJunction.should(queryBuilder.keyword().onField("library.groups.id").matching(groupId).createQuery());
 		// }
 		// booleanJunction.must(groupJunction.createQuery());
 
 		// // long libraryId = mediaItemSearchCriteria.getLibraryId();
 		// // if (libraryId > 0) {
-		// // booleanJunction.must(queryBuilder.keyword().onField("library.id").matching(libraryId).createQuery());
+		// //
+		// booleanJunction.must(queryBuilder.keyword().onField("library.id").matching(libraryId).createQuery());
 		// // }
 
 		// org.apache.lucene.search.Query luceneQuery = booleanJunction.createQuery();
-		// FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery, Track.class,
-		// 		MediaItem.class);
+		// FullTextQuery query = fullTextSession.createFullTextQuery(luceneQuery,
+		// Track.class,
+		// MediaItem.class);
 
 		// boolean isReverse = !mediaItemSearchCriteria.isAscending();
 
-		// Sort sort = new Sort(new SortField("displayTitle", SortField.Type.STRING, isReverse));
+		// Sort sort = new Sort(new SortField("displayTitle", SortField.Type.STRING,
+		// isReverse));
 		// // Sort sort = new Sort(new SortField("lastAccessed", SortField.LONG,
 		// // isReverse));
 		// MediaSortType mediaSortType = mediaItemSearchCriteria.getMediaSortType();
 
 		// if (mediaSortType == MediaSortType.FAVOURITES) {
-		// 	sort = new Sort(new SortField("vote", SortField.Type.INT, isReverse));
+		// sort = new Sort(new SortField("vote", SortField.Type.INT, isReverse));
 		// } else if (mediaSortType == MediaSortType.LAST_PLAYED) {
-		// 	sort = new Sort(new SortField("lastAccessed", SortField.Type.LONG, isReverse));
+		// sort = new Sort(new SortField("lastAccessed", SortField.Type.LONG,
+		// isReverse));
 		// } else if (mediaSortType == MediaSortType.ALBUM_NAME) {
-		// 	sort = new Sort(new SortField("album.indexText", SortField.Type.STRING, isReverse));
+		// sort = new Sort(new SortField("album.indexText", SortField.Type.STRING,
+		// isReverse));
 		// } else if (mediaSortType == MediaSortType.ARTIST_NAME) {
-		// 	sort = new Sort(new SortField("artist.indexText", SortField.Type.STRING, isReverse));
+		// sort = new Sort(new SortField("artist.indexText", SortField.Type.STRING,
+		// isReverse));
 		// }
 
 		// query.setSort(sort);
@@ -488,7 +555,7 @@ query.setParameter("name", genre.getName());
 	}
 
 	@Override
-	public long getTotalTracksFromLibrary(long libraryId) {
+	public long getTotalTracksFromLibrary(Long libraryId) {
 		StringBuilder queryBuilder = new StringBuilder(
 				"select count(s.id) from Track s where s.library.id = :libraryId ");
 		TypedQuery<Long> query = entityManager.createQuery(queryBuilder.toString(), Long.class);

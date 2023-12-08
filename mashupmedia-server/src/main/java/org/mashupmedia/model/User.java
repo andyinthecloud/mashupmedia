@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.playlist.UserPlaylistPosition;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,12 +51,12 @@ public class User implements UserDetails {
 	private boolean system;
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	private Set<Role> roles;
-	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	private Set<Group> groups;
 	private Date createdOn;
 	private Date updatedOn;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<UserPlaylistPosition> userPlaylistPositions;
+	@ManyToMany(mappedBy = "users")
+	private Set<Library> accessibleLibraries;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -134,8 +135,6 @@ public class User implements UserDetails {
 		builder.append(system);
 		builder.append(", roles=");
 		builder.append(roles);
-		builder.append(", groups=");
-		builder.append(groups);
 		builder.append(", createdOn=");
 		builder.append(createdOn);
 		builder.append(", updatedOn=");

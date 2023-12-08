@@ -30,7 +30,6 @@ public class UserPayload {
 	private boolean administrator;
 
 	private List<NameValuePayload<String>> rolePayloads;
-	private List<NameValuePayload<Long>> groupPayloads;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime createdOn;

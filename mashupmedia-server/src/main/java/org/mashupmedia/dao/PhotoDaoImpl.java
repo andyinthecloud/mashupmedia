@@ -25,9 +25,6 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	@Autowired
 	private LibraryDao libraryDao;
 
-	@Autowired
-	private GroupDao groupDao;
-
 	private enum PhotoSequenceType {
 		ALBUM_PREVIOUS, ALBUM_NEXT, PREVIOUS, NEXT, ALBUM_FIRST, ALBUM_LAST, FIRST, LAST;
 	}
@@ -91,34 +88,32 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 	}
 
-	protected int getTotalGroups() {
-		int totalGroups = groupDao.getGroupIds().size();
-		return totalGroups;
-	}
-
 	@Override
-	public List<Photo> getLatestPhotos(List<Long> groupIds, int pageNumber, int totalItems) {
-		
-		StringBuilder queryBuilder = new StringBuilder("select p from Photo p inner join p.library.groups g");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+	public List<Photo> getLatestPhotos(Long userId, int pageNumber, int totalItems) {
+
+		StringBuilder queryBuilder = new StringBuilder("select p from Photo p");
+		queryBuilder.append(" inner join p.library l");
+		queryBuilder.append(" join l.users u");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		queryBuilder.append(" order by p.takenOn desc");
 
 		TypedQuery<Photo> query = entityManager.createQuery(queryBuilder.toString(), Photo.class);
 
-		int totalGroups = getTotalGroups();
-		int firstResult = pageNumber * totalItems * totalGroups;
-		query.setMaxResults(totalItems * totalGroups);
+		int firstResult = pageNumber * totalItems;
+		query.setMaxResults(totalItems);
 		query.setFirstResult(firstResult);
 
 		return query.getResultList();
 	}
 
 	@Override
-	public List<Album> getAlbums(List<Long> groupIds, MediaItemSequenceType mediaItemSequenceType) {
-		
-		StringBuilder queryBuilder = new StringBuilder("select a from Photo p join p.album a");
-		queryBuilder.append(" join p.library.groups g");
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+	public List<Album> getAlbums(Long userId, MediaItemSequenceType mediaItemSequenceType) {
+
+		StringBuilder queryBuilder = new StringBuilder("select a from Photo p");
+		queryBuilder.append(" join p.album a");
+		queryBuilder.append(" join p.library l");
+		queryBuilder.append(" join l.users u");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
 			queryBuilder.append(" order by p.takenOn desc");
@@ -150,7 +145,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Album getAlbum(List<Long> groupIds, long albumId) {
+	public Album getAlbum(Long userId, long albumId) {
 
 		TypedQuery<Album> albumQuery = entityManager
 				.createQuery("from org.mashupmedia.model.media.photo.Album a where a.id = :albumId", Album.class);
@@ -167,9 +162,11 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		Album album = albums.get(0);
 
 		StringBuilder listPhotosQueryBuilder = new StringBuilder(
-				"select distinct p from Photo p join p.library.groups g");
+				"select distinct p from Photo p");
+		listPhotosQueryBuilder.append(" join p.library l");
+		listPhotosQueryBuilder.append(" join l.users u");
 		listPhotosQueryBuilder.append(" where p.album.id = :albumId");
-		DaoHelper.appendGroupFilter(listPhotosQueryBuilder, groupIds);
+		DaoHelper.appendUserIdFilter(listPhotosQueryBuilder, userId);
 		listPhotosQueryBuilder.append(" order by p.takenOn");
 		TypedQuery<Photo> listPhotosQuery = entityManager.createQuery(listPhotosQueryBuilder.toString(),
 				Photo.class);
@@ -182,74 +179,74 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 	}
 
 	@Override
-	public Photo getPreviousPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getPreviousPhotoInSequence(Long userId, Date takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType) {
 
 		Photo photo = null;
 
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
-			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.NEXT);
+			photo = getPhotoInSequence(userId, takenOn, albumId, PhotoSequenceType.NEXT);
 		} else if (mediaItemSequenceType == MediaItemSequenceType.PHOTO_ALBUM) {
-			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.ALBUM_PREVIOUS);
+			photo = getPhotoInSequence(userId, takenOn, albumId, PhotoSequenceType.ALBUM_PREVIOUS);
 		}
 
 		return photo;
 	}
 
 	@Override
-	public Photo getNextPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getNextPhotoInSequence(Long userId, Date takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType) {
 
 		Photo photo = null;
 
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
-			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.PREVIOUS);
+			photo = getPhotoInSequence(userId, takenOn, albumId, PhotoSequenceType.PREVIOUS);
 		} else if (mediaItemSequenceType == MediaItemSequenceType.PHOTO_ALBUM) {
-			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.ALBUM_NEXT);
+			photo = getPhotoInSequence(userId, takenOn, albumId, PhotoSequenceType.ALBUM_NEXT);
 		}
 
 		return photo;
 	}
 
 	@Override
-	public Photo getFirstPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getFirstPhotoInSequence(Long userId, Date takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType) {
 		Photo photo = null;
 
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
-			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.FIRST);
+			photo = getPhotoInSequence(userId, takenOn, albumId, PhotoSequenceType.FIRST);
 		} else if (mediaItemSequenceType == MediaItemSequenceType.PHOTO_ALBUM) {
-			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.ALBUM_FIRST);
+			photo = getPhotoInSequence(userId, takenOn, albumId, PhotoSequenceType.ALBUM_FIRST);
 		}
 
 		return photo;
 	}
 
 	@Override
-	public Photo getLastPhotoInSequence(List<Long> userGroupIds, Date takenOn, Long albumId,
+	public Photo getLastPhotoInSequence(Long userId, Date takenOn, Long albumId,
 			MediaItemSequenceType mediaItemSequenceType) {
 		Photo photo = null;
 
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
-			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.LAST);
+			photo = getPhotoInSequence(userId, takenOn, albumId, PhotoSequenceType.LAST);
 		} else if (mediaItemSequenceType == MediaItemSequenceType.PHOTO_ALBUM) {
-			photo = getPhotoInSequence(userGroupIds, takenOn, albumId, PhotoSequenceType.ALBUM_LAST);
+			photo = getPhotoInSequence(userId, takenOn, albumId, PhotoSequenceType.ALBUM_LAST);
 		}
 
 		return photo;
 	}
 
-	public Photo getPhotoInSequence(List<Long> groupIds, Date takenOn, Long albumId,
+	public Photo getPhotoInSequence(Long userId, Date takenOn, Long albumId,
 			PhotoSequenceType photoSequenceType) {
 
 		boolean hasAlbumParameter = false;
 		boolean hasCreatedOnParameter = false;
 
 		StringBuilder queryBuilder = new StringBuilder();
-		queryBuilder.append(" select p from Photo p join p.library.groups g");
-		queryBuilder.append(" where 1 = 1");
-
-		DaoHelper.appendGroupFilter(queryBuilder, groupIds);
+		queryBuilder.append(" select p from Photo p");
+		queryBuilder.append(" join p.library l");
+		queryBuilder.append(" join l.users u");
+		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 
 		if (photoSequenceType == PhotoSequenceType.ALBUM_PREVIOUS) {
 			queryBuilder.append(" and p.album.id = :albumId");
@@ -293,8 +290,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 		photoQuery.setFirstResult(0);
 
-		int maxResults = getTotalGroups();
-		photoQuery.setMaxResults(maxResults);
+		photoQuery.setMaxResults(1);
 		// photoQuery.setFetchSize(maxResults);
 
 		// @SuppressWarnings("unchecked")

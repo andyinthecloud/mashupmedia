@@ -9,12 +9,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.constants.MashupMediaType;
-import org.mashupmedia.dao.GroupDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.dao.RoleDao;
 import org.mashupmedia.dao.UserDao;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.playlist.Playlist;
@@ -36,7 +34,6 @@ public class AdminManagerImpl implements AdminManager {
 
 	private final UserDao userDao;
 	private final RoleDao roleDao;
-	private final GroupDao groupDao;
 	private final PlaylistDao playlistDao;
 	private final PlaylistRepository playlistRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -68,11 +65,6 @@ public class AdminManagerImpl implements AdminManager {
 		user.setId(userId);
 
 		processRoles(user);
-
-		Set<Group> groups = user.getGroups().stream()
-				.map(g -> getGroup(g.getId()))
-				.collect(Collectors.toSet());
-		user.setGroups(groups);
 
 		if (userId == 0) {
 			user.setCreatedOn(date);
@@ -147,26 +139,6 @@ public class AdminManagerImpl implements AdminManager {
 	}
 
 	@Override
-	public void saveGroup(Group group) {
-		if (group.getId() == 0) {
-			group.setCreatedOn(new Date());
-		}
-		groupDao.saveGroup(group);
-	}
-
-	@Override
-	public List<Group> getGroups() {
-		List<Group> groups = groupDao.getGroups();
-		return groups;
-	}
-
-	@Override
-	public Group getGroup(long groupId) {
-		Group group = groupDao.getGroup(groupId);
-		return group;
-	}
-
-	@Override
 	public List<User> getUsers() {
 		List<User> users = userDao.getUsers();
 		return users;
@@ -195,11 +167,6 @@ public class AdminManagerImpl implements AdminManager {
 		userDao.deleteUser(user);
 	}
 
-	@Override
-	public void deleteGroup(long groupId) {
-		Group group = getGroup(groupId);
-		groupDao.deleteGroup(group);
-	}
 
 	@Override
 	public void initialiseAdminUser() {
@@ -212,7 +179,6 @@ public class AdminManagerImpl implements AdminManager {
 				.enabled(true)
 				.editable(false)
 				.roles(new HashSet<Role>(getRoles()))
-				.groups(new HashSet<>(getGroups()))
 				.build();
 
 		saveUser(user);
@@ -238,7 +204,6 @@ public class AdminManagerImpl implements AdminManager {
 				.editable(false)
 				.system(true)
 				.roles(new HashSet<>(getRoles()))
-				.groups(new HashSet<>(getGroups()))
 				.build();
 
 		saveUser(user);
@@ -249,5 +214,7 @@ public class AdminManagerImpl implements AdminManager {
 		User systemUser = getUser(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME);
 		return systemUser;
 	}
+
+
 
 }

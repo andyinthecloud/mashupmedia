@@ -17,22 +17,11 @@
 
 package org.mashupmedia.service;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.mashupmedia.model.Group;
-import org.mashupmedia.model.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 
 public interface MashupMediaSecurityManager {
-	
-	public List<Long> getLoggedInUserGroupIds();
-	
-	public List<Long>  getUserGroupIds(User user);
-	
-	public boolean isLoggedInUserInGroup(Collection<Group> groups);
-	
+		
 	public boolean canAccessPlaylistMediaItem(PlaylistMediaItem playlistMediaItem);
 
 	public boolean canAccessMediaItem(MediaItem mediaItem);

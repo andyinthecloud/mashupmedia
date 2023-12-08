@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.util.Assert;
+
 public class DaoHelper {
 
 	public static String convertToHqlParameters(Collection<? extends Number> numbers) {
@@ -37,18 +39,38 @@ public class DaoHelper {
 		return hqlBuilder.toString();
 	}
 
+	// /**
+	//  * Assumes that the hql object Track has already been declared
+	//  * 
+	//  * @param queryBuilder
+	//  * @param groupIds
+	//  */
+	// public static void appendGroupFilter(StringBuilder queryBuilder, Collection<? extends Number> groupIds) {
+	// 	if (groupIds == null || groupIds.isEmpty()) {
+	// 		List<Integer> emptyGroupIds = new ArrayList<Integer>();
+	// 		emptyGroupIds.add(-1);
+	// 		groupIds = new ArrayList<Number>(emptyGroupIds);
+	// 	}
+
+	// 	int whereIndex = queryBuilder.toString().toLowerCase().indexOf(" where");
+	// 	String keyword = "and";
+	// 	if (whereIndex < 0) {
+	// 		keyword = "where";
+	// 	}
+
+	// 	String groupHqlText = convertToHqlParameters(groupIds);
+	// 	queryBuilder.append(" " + keyword + " g.id in (" + groupHqlText + ")");
+	// }
+
 	/**
 	 * Assumes that the hql object Track has already been declared
 	 * 
 	 * @param queryBuilder
-	 * @param groupIds
+	 * @param userId
 	 */
-	public static void appendGroupFilter(StringBuilder queryBuilder, Collection<? extends Number> groupIds) {
-		if (groupIds == null || groupIds.isEmpty()) {
-			List<Integer> emptyGroupIds = new ArrayList<Integer>();
-			emptyGroupIds.add(-1);
-			groupIds = new ArrayList<Number>(emptyGroupIds);
-		}
+	public static void appendUserIdFilter(StringBuilder queryBuilder, Long userId) {
+
+		Assert.notNull(userId, "Expecting a userId");
 
 		int whereIndex = queryBuilder.toString().toLowerCase().indexOf(" where");
 		String keyword = "and";
@@ -56,8 +78,14 @@ public class DaoHelper {
 			keyword = "where";
 		}
 
-		String groupHqlText = convertToHqlParameters(groupIds);
-		queryBuilder.append(" " + keyword + " g.id in (" + groupHqlText + ")");
+		// String groupHqlText = convertToHqlParameters(groupIds);
+
+		queryBuilder.append(" " + keyword + " ");
+		queryBuilder.append(" ( ");
+		queryBuilder.append(String.format(" l.createdBy.id = %d ", userId));
+		queryBuilder.append(" or");
+		queryBuilder.append(" u.id = %d");
+		queryBuilder.append(" ) ");
 	}
 
 	public static <T> List<T> removeDuplicateItems(List<T> items) {

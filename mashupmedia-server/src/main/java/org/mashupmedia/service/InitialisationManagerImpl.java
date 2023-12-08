@@ -3,7 +3,6 @@ package org.mashupmedia.service;
 import java.util.Date;
 
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.util.AdminHelper;
@@ -33,7 +32,6 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		}
 
 		initialiseUniqueInstallationName();
-		initialiseGroups();
 		initialiseFirstRoles();
 		adminManager.initialiseAdminUser();
 		adminManager.initialiseSystemUser();
@@ -56,38 +54,6 @@ public class InitialisationManagerImpl implements InitialisationManager {
 				+ String.valueOf(uniqueNameBuilder.toString().hashCode());
 		configurationManager.saveConfiguration(MashUpMediaConstants.UNIQUE_INSTALLATION_NAME, uniqueInstallationName);
 	}
-
-	protected void initialiseGroups() {
-		saveGroup("Friends");
-		saveGroup("Family");
-	}
-
-	protected void saveGroup(String name) {
-		Group group = new Group();
-		group.setName(name);
-		adminManager.saveGroup(group);
-
-	}
-
-	// protected void initialiseAdminUserAndRoles() {
-	// Set<Role> roles = initialiseFirstRoles();
-	//
-	// User administrator = adminManager.initialiseAdminUser();
-	//
-	// User user = new User();
-	// user.setName(DEFAULT_NAME);
-	// user.setUsername(DEFAULT_USERNAME);
-	// user.setPassword(DEFAULT_PASSWORD);
-	//
-	// user.setEnabled(true);
-	// user.setEditable(false);
-	// user.setRoles(roles);
-	//
-	// List<Group> groups = adminManager.getGroups();
-	// user.setGroups(new HashSet<Group>(groups));
-	// adminManager.saveUser(user);
-	// // adminManager.updatePassword(DEFAULT_USERNAME, DEFAULT_PASSWORD);
-	// }
 
 	protected void initialiseFirstRoles() {
 		saveRole(AdminHelper.ROLE_ADMIN_IDNAME, "Administrator", User.ROLE_ADMINISTRATOR);

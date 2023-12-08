@@ -5,19 +5,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.location.Location;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -45,26 +45,24 @@ public abstract class Library implements Serializable {
 	private long id;
 	private String name;
 	@ManyToOne
-	// @JoinColumn(name = "location_id")
 	private Location location;
 	private Date createdOn;
 	@ManyToOne
-	// @JoinColumn(name = "created_by_id")
 	private User createdBy;
 	private Date updatedOn;
 	@ManyToOne
-	// @JoinColumn(name = "updated_by_id")
 	private User updatedBy;
 	private boolean enabled;
 	private String scanMinutesInterval;
 	private Date lastSuccessfulScanOn;
-	@ManyToMany(fetch = FetchType.EAGER)
-	private Set<Group> groups;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "library")
 	@OrderBy("createdOn")
 	private List<RemoteShare> remoteShares;
 	private boolean remote;
 	private String status;
+	@ManyToMany
+	@JoinTable(name = "libraries_users_access", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "library_id"))
+	private Set<User> users;
 
 	public enum LibraryType {
 		ALL, MUSIC, VIDEO, PHOTO
@@ -126,6 +124,18 @@ public abstract class Library implements Serializable {
 		return true;
 	}
 
+	public boolean hasAccess(User user) {
+		if (user == null) {
+			return false;
+		}
+
+		if (getCreatedBy().equals(user)) {
+			return true;
+		}
+
+		return getUsers().stream().anyMatch(u -> u.equals(user));
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -149,8 +159,6 @@ public abstract class Library implements Serializable {
 		builder.append(scanMinutesInterval);
 		builder.append(", lastSuccessfulScanOn=");
 		builder.append(lastSuccessfulScanOn);
-		builder.append(", groups=");
-		builder.append(groups);
 		builder.append(", remoteShares=");
 		builder.append(remoteShares);
 		builder.append(", remote=");

@@ -6,13 +6,14 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.model.Group;
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Track;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.Assert;
 
 import jakarta.persistence.criteria.Join;
 
@@ -76,14 +77,22 @@ public class TrackSpecifications {
         };
     }
 
-    public static Specification<Track> hasGroup(List<Long> groupIds) {
+    // public static Specification<Track> hasGroup(List<Long> groupIds) {
+    // return (root, query, criteriaBuilder) -> {
+    // if (groupIds == null || groupIds.isEmpty()) {
+    // return criteriaBuilder.disjunction();
+    // } else {
+    // Join<Library, Group> librariesGroup = root.join("library").join("groups");
+    // return librariesGroup.get("id").in(groupIds);
+    // }
+    // };
+    // }
+
+    public static Specification<Track> hasUser(Long userId) {
+        Assert.notNull(userId, "Expecting a user id");
         return (root, query, criteriaBuilder) -> {
-            if (groupIds == null || groupIds.isEmpty()) {
-                return criteriaBuilder.disjunction();
-            } else {
-                Join<Library, Group> librariesGroup = root.join("library").join("groups");
-                return librariesGroup.get("id").in(groupIds);
-            }
+            Join<Library, User> librariesUser = root.join("library").join("users");
+            return criteriaBuilder.equal(librariesUser.get("id"), userId);
         };
     }
 

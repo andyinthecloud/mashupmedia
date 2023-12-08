@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.admin.UserPayload;
 import org.mashupmedia.dto.share.NameValuePayload;
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.util.AdminHelper;
@@ -17,9 +16,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper implements DomainMapper<User, UserPayload> {
-
-        @Autowired
-        private GroupMapper groupMapper;
 
         @Autowired
         private RoleMapper roleMapper;
@@ -42,17 +38,12 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                         return userPayload;
                 }
 
-                List<NameValuePayload<Long>> groupPayloads = domain.getGroups().stream()
-                                .map(groupMapper::toDto)
-                                .collect(Collectors.toList());
-
                 List<NameValuePayload<String>> rolePayloads = domain.getRoles().stream()
                                 .map(roleMapper::toDto)
                                 .collect(Collectors.toList());
 
                 return userPayload.toBuilder()
                                 .system(domain.isSystem())
-                                .groupPayloads(groupPayloads)
                                 .rolePayloads(rolePayloads)
                                 .build();
         }
@@ -77,13 +68,6 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                         return user;
                 }
 
-                Set<Group> groups = new HashSet<>();
-                if (payload.getGroupPayloads() != null) {
-                        groups = payload.getGroupPayloads().stream()
-                                        .map(groupMapper::toDomain)
-                                        .collect(Collectors.toSet());
-                }
-
                 Set<Role> roles = new HashSet<>();
                 if (payload.getRolePayloads() != null) {
                         roles = payload.getRolePayloads().stream()
@@ -92,7 +76,6 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                 }
 
                 return user.toBuilder()
-                                .groups(groups)
                                 .roles(roles)
                                 .build();
 

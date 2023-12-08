@@ -8,6 +8,7 @@ import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaItemSequenceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -31,22 +32,22 @@ public class PhotoManagerImpl implements PhotoManager {
 
 	@Override	
 	public List<Photo> getLatestPhotos(int pageNumber, int totalItems) {
-		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		List<Photo> photos = photoDao.getLatestPhotos(userGroupIds, pageNumber, totalItems);
+		Long userId = AdminHelper.getLoggedInUser().getId();
+		List<Photo> photos = photoDao.getLatestPhotos(userId, pageNumber, totalItems);
 		return photos;
 	}
 
 	@Override	
 	public List<Album> getAlbums(MediaItemSequenceType mediaItemSequenceType) {
-		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		List<Album> albums = photoDao.getAlbums(userGroupIds, mediaItemSequenceType);
+		Long userId = AdminHelper.getLoggedInUser().getId();
+		List<Album> albums = photoDao.getAlbums(userId, mediaItemSequenceType);
 		return albums;
 	}
 
 	@Override
 	public Album getAlbum(long albumId) {
-		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
-		Album album = photoDao.getAlbum(userGroupIds, albumId);
+		Long userId = AdminHelper.getLoggedInUser().getId();
+		Album album = photoDao.getAlbum(userId, albumId);
 		return album;
 	}
 
@@ -65,19 +66,19 @@ public class PhotoManagerImpl implements PhotoManager {
 	}
 
 	protected void preparePhotoSequence(Photo photo, MediaItemSequenceType mediaItemSequenceType) {
-		List<Long> userGroupIds = securityManager.getLoggedInUserGroupIds();
+		Long userId = AdminHelper.getLoggedInUser().getId();
 		Date takenOn = photo.getTakenOn();
 		Long albumId = photo.getAlbum().getId();
 
-		Photo previousPhoto = photoDao.getPreviousPhotoInSequence(userGroupIds, takenOn, albumId, mediaItemSequenceType);
+		Photo previousPhoto = photoDao.getPreviousPhotoInSequence(userId, takenOn, albumId, mediaItemSequenceType);
 		if (previousPhoto == null) {
-			previousPhoto = photoDao.getLastPhotoInSequence(userGroupIds, takenOn, albumId, mediaItemSequenceType);
+			previousPhoto = photoDao.getLastPhotoInSequence(userId, takenOn, albumId, mediaItemSequenceType);
 		}
 		photo.setPreviousPhoto(previousPhoto);
 		
-		Photo nextPhoto = photoDao.getNextPhotoInSequence(userGroupIds, takenOn, albumId, mediaItemSequenceType);
+		Photo nextPhoto = photoDao.getNextPhotoInSequence(userId, takenOn, albumId, mediaItemSequenceType);
 		if (nextPhoto == null) {
-			nextPhoto = photoDao.getFirstPhotoInSequence(userGroupIds, takenOn, albumId, mediaItemSequenceType);
+			nextPhoto = photoDao.getFirstPhotoInSequence(userId, takenOn, albumId, mediaItemSequenceType);
 		}		
 		photo.setNextPhoto(nextPhoto);
 		

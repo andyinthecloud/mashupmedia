@@ -1,6 +1,5 @@
 package org.mashupmedia.dao;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +11,7 @@ public interface VideoDao {
 
 	public void saveVideo(Video video);
 
-	public List<Video> getVideos(Collection<Long> groupIds);
+	public List<Video> getVideos(Long userId);
 
 	public int removeObsoleteVideos(long librayId, Date date);
 

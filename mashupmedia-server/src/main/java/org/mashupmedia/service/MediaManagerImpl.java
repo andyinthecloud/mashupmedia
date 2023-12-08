@@ -11,6 +11,7 @@ import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.TrackRepository;
 import org.mashupmedia.repository.media.music.TrackSpecifications;
+import org.mashupmedia.util.AdminHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -61,11 +62,10 @@ public class MediaManagerImpl implements MediaManager {
 	}
 
 	private Specification<Track> getFindSpecification(MediaItemSearchCriteria mediaItemSearchCriteria) {
-		List<Long> userGroupIds = mashupMediaSecurityManager.getLoggedInUserGroupIds();
-
+		Long loggedInUserId = AdminHelper.getLoggedInUser().getId();
 		String text = mediaItemSearchCriteria.getSearchText();
 
-		Specification<Track> specification = TrackSpecifications.hasGroup(userGroupIds)
+		Specification<Track> specification = TrackSpecifications.hasUser(loggedInUserId)
 				.and(TrackSpecifications.hasTitleLike(text)
 						.or(TrackSpecifications.hasAlbumNameLike(text))
 						.or(TrackSpecifications.hasArtistNameLike(text)))

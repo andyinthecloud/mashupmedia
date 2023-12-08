@@ -8,7 +8,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.mashupmedia.dao.LibraryDao;
-import org.mashupmedia.model.Group;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
@@ -24,35 +23,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Lazy
 @Service
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class LibraryManagerImpl implements LibraryManager {
 	@Autowired
 	private LibraryDao libraryDao;
 	
-	@Autowired
-	@Lazy
-	private ConfigurationManager configurationManager;
-	
-	@Autowired
-	@Lazy
-	private MusicLibraryUpdateManager musicLibraryUpdateManager;
-	
-	@Autowired
-	@Lazy
-	private PhotoLibraryUpdateManager photoLibraryUpdateManager;
-	
-	@Autowired
-	@Lazy
-	private AdminManager adminManager;
-	
-	@Autowired
-	@Lazy
-	private LibraryWatchManager libraryWatchManager;
+	private final ConfigurationManager configurationManager;
+	private final MusicLibraryUpdateManager musicLibraryUpdateManager;
+	private final PhotoLibraryUpdateManager photoLibraryUpdateManager;
+	private final AdminManager adminManager;
+	private final LibraryWatchManager libraryWatchManager;
 
 	@Override
 	public List<Library> getLocalLibraries(LibraryType libraryType) {
@@ -127,11 +114,6 @@ public class LibraryManagerImpl implements LibraryManager {
 		Date lastSuccessfulScan = library.getLastSuccessfulScanOn();
 		savedLibrary.setLastSuccessfulScanOn(lastSuccessfulScan == null ? savedLibrary.getLastSuccessfulScanOn() : lastSuccessfulScan);
 
-		Set<Group> groups = savedLibrary.getGroups(); 
-		groups.clear();
-		groups.addAll(library.getGroups());
-		savedLibrary.setGroups(groups);;
-
 		return savedLibrary;
 	}
 
@@ -151,7 +133,6 @@ public class LibraryManagerImpl implements LibraryManager {
 	public Library getLibrary(long id) {
 		Library library = libraryDao.getLibrary(id);
 		Hibernate.initialize(library.getRemoteShares());
-		Hibernate.initialize(library.getGroups());
 		return library;
 	}
 
