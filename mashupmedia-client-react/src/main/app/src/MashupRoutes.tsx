@@ -5,10 +5,8 @@ import LogOut from "./common/security/LogOut";
 import { RequireAuthenication } from "./common/security/RequireAuthentication";
 import ResetPassword from "./configuration/ResetPassword";
 import Encode from "./configuration/Encode";
-import Group from "./configuration/Group";
-import Groups from "./configuration/Groups";
-import Libraries from "./configuration/Libraries";
-import Library from "./configuration/Library";
+import Libraries from "./configuration/library/Libraries";
+import Library from "./configuration/library/Library";
 import User from "./configuration/User";
 import Users from "./configuration/Users";
 import Album from "./media/music/Album";
@@ -63,26 +61,6 @@ export const MashupRoutes = () => {
                         <Users />
                     </RequireAuthenication>
                 } />
-
-                <Route path="groups" element={
-                    <RequireAuthenication>
-                        <Groups />
-                    </RequireAuthenication>
-                } />
-
-                <Route path="group">
-                    <Route index element={
-                        <RequireAuthenication>
-                            <Group />
-                        </RequireAuthenication>
-                    } />
-                    <Route path=":groupId" element={
-                        <RequireAuthenication>
-                            <Group />
-                        </RequireAuthenication>
-                    } />
-                </Route>
-
 
                 <Route path="libraries" element={
                     <RequireAuthenication>

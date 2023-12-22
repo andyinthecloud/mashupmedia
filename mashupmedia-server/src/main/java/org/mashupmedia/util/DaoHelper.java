@@ -84,7 +84,7 @@ public class DaoHelper {
 		queryBuilder.append(" ( ");
 		queryBuilder.append(String.format(" l.createdBy.id = %d ", userId));
 		queryBuilder.append(" or");
-		queryBuilder.append(" u.id = %d");
+		queryBuilder.append(String.format(" u.id = %d", userId) );
 		queryBuilder.append(" ) ");
 	}
 

@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/music/albums")
+@RequestMapping("/api/private/music/albums")
 public class AlbumController {
     private final static int MAX_RANDOM_ALBUMS = 20;
 

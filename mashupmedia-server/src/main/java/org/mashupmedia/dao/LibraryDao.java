@@ -30,7 +30,9 @@ public interface LibraryDao {
 
 	boolean hasRemoteLibrary(String url);
 
-	public List<Library> getLibraries(LibraryType libraryType);
+	public List<Library> getLibraries();
+
+	public List<Library> getLibraries(String username);
 
 	public void reinitialiseLibrary(Library library);
 	

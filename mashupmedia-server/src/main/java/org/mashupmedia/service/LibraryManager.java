@@ -3,6 +3,7 @@ package org.mashupmedia.service;
 import java.io.File;
 import java.util.List;
 
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 
@@ -28,7 +29,7 @@ public interface LibraryManager {
 
 	public boolean hasRemoteLibrary(String url);
 
-	public List<Library> getLibraries(LibraryType libraryType);
+	public List<Library> getLibraries();
 
 	public void saveAndReinitialiseLibrary(Library library);
 
@@ -41,5 +42,7 @@ public interface LibraryManager {
 	public void saveMedia(long librayId, File file);
 
 	public void deleteMedia(long librayId, File file);
+
+    public List<User> addUserShare(String email, long libraryId);
 
 }

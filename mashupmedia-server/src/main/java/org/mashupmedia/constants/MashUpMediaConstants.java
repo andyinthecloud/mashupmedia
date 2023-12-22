@@ -14,7 +14,7 @@ public interface MashUpMediaConstants {
 
 	public static final String GENRE_UNKNOWN = "unknown";
 
-	public static final String COVER_ART_DEFAULT_NAME = "folder*,cover*,albumart*";
+	public static final String COVER_ART_DEFAULT_NAME = "folder*,cover*,albumart*,thumb*";
 
 	public static final String UNKNOWN_NAME = "unknown";
 

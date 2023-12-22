@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TrackRepository extends JpaRepository<Track, Long>, JpaSpecificationExecutor<Track> {
 
-    @Query("select s from Track s where s.library.enabled = true and s.library.id = :libraryId and s.path = :path and s.fileLastModifiedOn = :fileLastModifiedOn")
+    @Query("select t from Track t where t.library.enabled = true and t.library.id = :libraryId and t.path = :path and t.fileLastModifiedOn = :fileLastModifiedOn")
     Optional<Track> findByLibraryIdAndPathAndLastModifiedOn(@Param("libraryId") long libraryId, @Param("path") String path, @Param("fileLastModifiedOn") long fileLastModifiedOn);
 
     List<Track> findByTitleContainingIgnoreCaseOrderByTitle(String title);

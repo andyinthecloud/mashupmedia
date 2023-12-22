@@ -20,9 +20,12 @@ export type LibraryPayload = {
     updatedBy?: string
     enabled: boolean
     lastSuccessfulScanOn?: string
-    groups: NameValuePayload<number>[]
     libraryTypePayload: LibraryTypePayload
-    albumArtImagePattern?: string    
+}
+
+export type AddLibraryUserPayload = {
+    libraryId: number
+    email: string
 }
 
 const libraryUri = '/api/private/library/'
@@ -50,4 +53,8 @@ export const saveLibrary = (libraryPayload: LibraryPayload, userToken?: string):
 
 export const deleteLibrary = (libraryId: number, userToken?: string): Promise<HttpResponse<boolean>> => {
     return callMashupMediaApi<boolean> (HttpMethod.DELETE, libraryUri + libraryId, userToken)
+}
+
+export const addLibraryShare = (addLibraryUserPayload: AddLibraryUserPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<LibraryPayload>>> => {
+    return callMashupMediaApi<ServerResponsePayload<LibraryPayload>> (HttpMethod.PUT, libraryUri + 'add-share', userToken, JSON.stringify(addLibraryUserPayload))
 }

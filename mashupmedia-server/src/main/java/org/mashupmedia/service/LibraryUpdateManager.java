@@ -21,7 +21,7 @@ import java.util.Date;
 
 public interface LibraryUpdateManager {
 	
-	public void asynchronousUpdateLibrary(long libraryId);
+	public void asynchronousUpdateLibrary(long userId, long libraryId);
 
 	public void updateRemoteLibrary(long libraryId);
 	

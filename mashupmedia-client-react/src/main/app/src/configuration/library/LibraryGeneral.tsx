@@ -1,34 +1,29 @@
-import { Check } from "@mui/icons-material";
-import { Button, FormControl, FormControlLabel, FormLabel, IconButton, Radio, RadioGroup, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import Checkboxes from "../common/components/Checkboxes";
-import { addNotification, NotificationType } from '../common/notification/notificationSlice';
-import { RootState } from "../common/redux/store";
-import { toCheckboxPayloads, toNameValuePayloads, toSelectedValues } from "../common/utils/domainUtils";
-import { fieldErrorMessage, FormValidation, hasFieldError, ServerError, toFieldValidation } from "../common/utils/formValidationUtils";
-import { checkLibraryPathExists, deleteLibrary, getLibrary, LibraryPayload, LibraryTypePayload, saveLibrary } from "./backend/libraryCalls";
-import { getGroups, NameValuePayload } from "./backend/metaCalls";
-import './Library.css';
-import { displayDateTime } from "../common/utils/dateUtils"
-
-
+import { useEffect, useState } from "react"
+import { LibraryPayload, LibraryTypePayload, checkLibraryPathExists, deleteLibrary, saveLibrary } from "../backend/libraryCalls"
+import { useNavigate, useParams } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { RootState } from "../../common/redux/store"
+import { FormValidation, ServerError, fieldErrorMessage, hasFieldError, toFieldValidation } from "../../common/utils/formValidationUtils"
+import { NotificationType, addNotification } from "../../common/notification/notificationSlice"
+import { useDispatch } from "react-redux"
+import { Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from "@mui/material"
+import { displayDateTime } from "../../common/utils/dateUtils"
+import { LibraryPagePayload, TabPanelPayload } from "./Library"
 
 type LibrayValidationPayload = {
     libraryPayload: LibraryPayload
     formValidation: FormValidation
-    groupPayloads: NameValuePayload<number>[]
     isCorrectMediaPath?: boolean
+    tabPanelPayload: TabPanelPayload
 }
 
-const Library = () => {
+const LibraryGeneral = (libraryPagePayload: LibraryPagePayload) => {
+    const tabIndex = 0
 
     const enum FieldNames {
         TYPE = 'libraryTypePayload',
         NAME = 'name',
         PATH = 'path',
-        GROUPS = 'groups',
         CREATED_ON = 'createdOn',
         CREATED_BY = 'createdBy',
         UPDATED_ON = 'updatedOn',
@@ -40,7 +35,6 @@ const Library = () => {
         ART_IMAGE_PATTERN = 'albumArtImagePattern'
     }
 
-    const { libraryId } = useParams()
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
 
@@ -49,43 +43,26 @@ const Library = () => {
             name: '',
             path: '',
             enabled: true,
-            groups: [],
             libraryTypePayload: LibraryTypePayload.MUSIC
         },
         formValidation: {
             fieldValidations: []
         },
-        groupPayloads: []
+        tabPanelPayload: {
+            index: tabIndex
+        }
     })
 
     useEffect(() => {
-        if (libraryId) {
-            getLibrary(+libraryId, userToken)
-                .then(response => {
-                    const libraryPayload = response.parsedBody || null
-
-                    if (libraryPayload) {
-                        setProps(p => ({
-                            ...p,
-                            libraryPayload
-                        }))
-                    }
-                })
-        }
-
-        getGroups(userToken)
-            .then(response => {
-                const groupPayloads = response.parsedBody || null
-
-                if (groupPayloads) {
-                    setProps(p => ({
-                        ...p,
-                        groupPayloads
-                    }))
-                }
-            })
-
-    }, [libraryId, userToken])
+        setProps(p => ({
+            ...p,
+            libraryPayload: libraryPagePayload.libraryPayload,
+            tabPanelPayload: {
+                index: tabIndex,
+                value: libraryPagePayload.tabPanelPayload.value
+            }
+        }))
+    }, [libraryPagePayload])
 
     const setStateValue = (name: string, value: any): void => {
         setProps(p => ({
@@ -97,44 +74,7 @@ const Library = () => {
         }))
     }
 
-    const handleGroupsChange = (values: number[]) => {
-        setStateValue('groups', toNameValuePayloads(values))
-    }
-
     const navigate = useNavigate()
-
-    function handleCancel(): void {
-        navigate('/configuration/libraries')
-    }
-
-    function handleDeleteLibrary(): void {
-
-        const libraryId = props.libraryPayload.id;
-        if (!libraryId) {
-            return;
-        }
-
-        deleteLibrary(libraryId, userToken)
-            .then(() => {
-                dispatch(
-                    addNotification({
-                        message: 'Account deleted',
-                        notificationType: NotificationType.SUCCESS
-                    })
-                )
-
-            })
-            .catch(() => {
-                dispatch(
-                    addNotification({
-                        message: 'Unable to delete account.',
-                        notificationType: NotificationType.ERROR
-                    })
-                )
-            })
-
-        navigate('/configuration/libraries')
-    }
 
     const clearFieldValidationState = () => {
         const fieldValidations = props.formValidation.fieldValidations
@@ -147,8 +87,7 @@ const Library = () => {
         }))
     }
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
-        e.preventDefault()
+    function handleSave(): void {
 
         clearFieldValidationState()
 
@@ -217,10 +156,14 @@ const Library = () => {
         }))
     }
 
-    return (
-        <form onSubmit={handleSubmit}>
-            <h1>Library</h1>
+    const isShowSaveButton = (): boolean => {
+        return userPolicyPayload?.administrator || false
+    }
 
+    return (
+        <div
+            hidden={props.tabPanelPayload.value !== props.tabPanelPayload?.index}
+        >
 
             {!props.libraryPayload.id &&
                 <div className="new-line">
@@ -254,23 +197,27 @@ const Library = () => {
                 />
             </div>
 
-            <div className="new-line">
-                <TextField
-                    name={FieldNames.PATH}
-                    label="Media folder path"
-                    value={props.libraryPayload.path}
-                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
-                    fullWidth={true}
-                    error={hasFieldError(FieldNames.PATH, props.formValidation)}
-                    helperText={fieldErrorMessage(FieldNames.PATH, props.formValidation)}
-                />
-            </div>
+            {userPolicyPayload?.administrator &&
+                <div className="new-line">
+                    <TextField
+                        name={FieldNames.PATH}
+                        label="Media folder path"
+                        value={props.libraryPayload.path}
+                        onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
+                        fullWidth={true}
+                        error={hasFieldError(FieldNames.PATH, props.formValidation)}
+                        helperText={fieldErrorMessage(FieldNames.PATH, props.formValidation)}
+                    />
+                </div>
+            }
 
-            <div className="new-line right">
-                <Button variant="contained" color="secondary" type="button" onClick={handleCheckPath}>
-                    Check path
-                </Button>
-            </div>
+            {userPolicyPayload?.administrator &&
+                <div className="new-line right">
+                    <Button variant="contained" color="secondary" type="button" onClick={handleCheckPath}>
+                        Check path
+                    </Button>
+                </div>
+            }
 
             {props.libraryPayload.createdOn &&
                 <div className="new-line">
@@ -320,53 +267,23 @@ const Library = () => {
                 </div>
             }
 
-            {props.libraryPayload.libraryTypePayload === LibraryTypePayload.MUSIC &&
-                <div className="new-line">
-                    <TextField
-                        name={MusicFieldNames.ART_IMAGE_PATTERN}
-                        label="Art image file pattern"
-                        value={props.libraryPayload.albumArtImagePattern}
-                        onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
-                        fullWidth={true}
-                        helperText={'Default name pattern: folder*,cover*,albumart* '}
-                    />
-                </div>
-            }
-
-
-            <div className="new-line">
-                <h2>Groups</h2>
-                <Checkboxes<number>
-                    referenceItems={toCheckboxPayloads<number>(props.groupPayloads)}
-                    selectedValues={toSelectedValues<number>(props.libraryPayload.groups)}
-                    onChange={handleGroupsChange}
-                    error={hasFieldError(FieldNames.GROUPS, props.formValidation)}
-                    helperText={fieldErrorMessage(FieldNames.GROUPS, props.formValidation)}
-                />
-            </div>
-
-
             <div className="new-line right">
-                <Button variant="contained" color="secondary" type="button" onClick={handleCancel}>
-                    Cancel
-                </Button>
 
-                {userPolicyPayload?.administrator &&
-                    <Button variant="contained" color="secondary" type="button" onClick={handleDeleteLibrary}>
-                        Delete
-                    </Button>
-                }
-
-                {userPolicyPayload?.administrator &&
-                    <Button variant="contained" color="primary" type="submit">
+                {isShowSaveButton() &&
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        type="button"
+                        onClick={handleSave}
+                    >
                         Save
                     </Button>
                 }
 
             </div>
 
-        </form>
+        </div>
     )
 }
 
-export default Library
+export default LibraryGeneral

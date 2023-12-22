@@ -93,7 +93,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
 		StringBuilder queryBuilder = new StringBuilder("select p from Photo p");
 		queryBuilder.append(" inner join p.library l");
-		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" left join l.users u");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		queryBuilder.append(" order by p.takenOn desc");
 
@@ -112,7 +112,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		StringBuilder queryBuilder = new StringBuilder("select a from Photo p");
 		queryBuilder.append(" join p.album a");
 		queryBuilder.append(" join p.library l");
-		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" left join l.users u");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 
 		if (mediaItemSequenceType == MediaItemSequenceType.LATEST) {
@@ -164,7 +164,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		StringBuilder listPhotosQueryBuilder = new StringBuilder(
 				"select distinct p from Photo p");
 		listPhotosQueryBuilder.append(" join p.library l");
-		listPhotosQueryBuilder.append(" join l.users u");
+		listPhotosQueryBuilder.append(" left join l.users u");
 		listPhotosQueryBuilder.append(" where p.album.id = :albumId");
 		DaoHelper.appendUserIdFilter(listPhotosQueryBuilder, userId);
 		listPhotosQueryBuilder.append(" order by p.takenOn");
@@ -245,7 +245,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append(" select p from Photo p");
 		queryBuilder.append(" join p.library l");
-		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" left join l.users u");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 
 		if (photoSequenceType == PhotoSequenceType.ALBUM_PREVIOUS) {

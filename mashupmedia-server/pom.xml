@@ -12,11 +12,6 @@
     <artifactId>mashupmedia-server</artifactId>
     <packaging>jar</packaging>
 
-
-    <properties>
-		<maven.compiler.release>17</maven.compiler.release>
-	</properties>
-
     <dependencies>
 
         <dependency>

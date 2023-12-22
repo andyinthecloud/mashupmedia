@@ -17,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -31,18 +32,18 @@ import lombok.ToString;
 @Cacheable
 @Builder(toBuilder = true)
 @NoArgsConstructor
-@AllArgsConstructor 
+@AllArgsConstructor
 @Getter
 @Setter
 public class User implements UserDetails {
-	
+
 	public static String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
-	
+
 	private static final long serialVersionUID = 8897344406027907607L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	private String username;	
+	private String username;
 	private String password;
 	@ToString.Include
 	private String name;
@@ -53,10 +54,13 @@ public class User implements UserDetails {
 	private Set<Role> roles;
 	private Date createdOn;
 	private Date updatedOn;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<UserPlaylistPosition> userPlaylistPositions;
-	@ManyToMany(mappedBy = "users")
-	private Set<Library> accessibleLibraries;
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private Set<UserPlaylistPosition> userPlaylistPositions;
+	@ManyToMany(mappedBy = "shareUsers")
+	private Set<Library> sharedLibraries;
+	private boolean validated;
+	@ManyToOne
+	private User createdBy;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -77,19 +81,17 @@ public class User implements UserDetails {
 	public boolean isCredentialsNonExpired() {
 		return isEnabled();
 	}
-	
+
 	public boolean isAdministrator() {
-		Collection<Role> roles =  getRoles();
+		Collection<Role> roles = getRoles();
 		for (Role role : roles) {
 			if (role.getAuthority().equalsIgnoreCase(User.ROLE_ADMINISTRATOR)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-
-	
 
 	@Override
 	public int hashCode() {

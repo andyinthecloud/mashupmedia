@@ -8,10 +8,6 @@ export type NameValuePayload<T> = {
 
 const metaUri = '/api/private/meta/'
 
-export const getGroups = (userToken?: string): Promise<HttpResponse<NameValuePayload<number>[]>> => {
-    return callMashupMediaApi<NameValuePayload<number>[]> (HttpMethod.GET, metaUri + 'groups', userToken)
-}
-
 export const getRoles = async (userToken?: string): Promise<HttpResponse<NameValuePayload<string>[]>> => {
     return callMashupMediaApi<NameValuePayload<string>[]> (HttpMethod.GET, metaUri + 'roles', userToken)
 }

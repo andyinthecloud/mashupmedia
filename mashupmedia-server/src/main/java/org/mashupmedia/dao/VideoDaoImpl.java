@@ -34,7 +34,7 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 		StringBuilder queryBuilder = new StringBuilder(
 				"select distinct v from Video v  ");
 		queryBuilder.append(" join v.library l");
-		queryBuilder.append(" join l.users u");
+		queryBuilder.append(" left join l.users u");
 		queryBuilder.append(" where v.enabled = true");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		queryBuilder.append(" order by v.displayTitle");

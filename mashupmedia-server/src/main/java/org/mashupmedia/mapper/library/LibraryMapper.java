@@ -1,18 +1,13 @@
-package org.mashupmedia.mapper;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+package org.mashupmedia.mapper.library;
 
 import org.mashupmedia.dto.library.LibraryPayload;
 import org.mashupmedia.dto.library.LibraryTypePayload;
-import org.mashupmedia.dto.share.NameValuePayload;
+import org.mashupmedia.mapper.DomainMapper;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.location.Location;
 import org.mashupmedia.util.DateHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -27,10 +22,8 @@ public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
         LibraryType libraryType = domain.getLibraryType();
         Assert.notNull(libraryType, "Library type should not be null");
         if (libraryType == LibraryType.MUSIC) {
-            MusicLibrary musicLibrary = (MusicLibrary) domain;
             libraryPayload = LibraryPayload.builder()
                     .libraryTypePayload(LibraryTypePayload.MUSIC)
-                    .albumArtImagePattern(musicLibrary.getAlbumArtImagePattern())
                     .build();
         }
 
@@ -59,7 +52,6 @@ public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
 
         if (libraryTypePayload == LibraryTypePayload.MUSIC) {
             MusicLibrary musicLibrary = new MusicLibrary();
-            musicLibrary.setAlbumArtImagePattern(payload.getAlbumArtImagePattern());
             library = musicLibrary;
         }
 

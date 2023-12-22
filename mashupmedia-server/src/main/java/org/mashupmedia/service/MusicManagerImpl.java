@@ -14,8 +14,6 @@ import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.util.AdminHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,10 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 public class MusicManagerImpl implements MusicManager {
 
 	private final MusicDao musicDao;
-	private final MashupMediaSecurityManager securityManager;
 	private final AdminManager adminManager;
 	private final ArtistRepository artistRepository;
-	private final LibraryManager libraryManager;
 
 
 	protected enum ListAlbumsType {

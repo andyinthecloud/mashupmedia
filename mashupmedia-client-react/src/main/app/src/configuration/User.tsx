@@ -3,14 +3,14 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import Checkboxes from "../common/components/Checkboxes"
-import { addNotification, NotificationType } from "../common/notification/notificationSlice"
+import { NotificationType, addNotification } from "../common/notification/notificationSlice"
 import type { RootState } from "../common/redux/store"
 import { displayDateTime } from "../common/utils/dateUtils"
 import { toCheckboxPayloads, toNameValuePayloads, toSelectedValues } from "../common/utils/domainUtils"
-import { fieldErrorMessage, FormValidation, hasFieldError, ServerError, toFieldValidation } from "../common/utils/formValidationUtils"
+import { FormValidation, ServerError, fieldErrorMessage, hasFieldError, toFieldValidation } from "../common/utils/formValidationUtils"
 import { HttpStatus, redirectLogin } from "../common/utils/httpUtils"
-import { getGroups, getRoles, NameValuePayload } from "./backend/metaCalls"
-import { deleteUserAccount, getMyAccount, saveUserAccount, userAccount, UserPayload } from "./backend/userCalls"
+import { NameValuePayload, getRoles } from "./backend/metaCalls"
+import { UserPayload, deleteUserAccount, getMyAccount, saveUserAccount, userAccount } from "./backend/userCalls"
 
 type UserValidationPayload = {
     userPayload: UserPayload
@@ -102,16 +102,9 @@ const User = () => {
 
     }, [userToken, location, userId])
 
-    const [groupPayloads, setGroupPayloads] = useState<NameValuePayload<number>[]>([])
     const [rolePayloads, setRolePayloads] = useState<NameValuePayload<string>[]>([])
 
     useEffect(() => {
-
-        getGroups(userToken).then(response => {
-            if (response.parsedBody !== undefined) {
-                setGroupPayloads(response.parsedBody)
-            }
-        })
 
         getRoles(userToken).then(response => {
             if (response.parsedBody !== undefined) {
@@ -139,10 +132,6 @@ const User = () => {
 
     const handleRolesChange = (values: string[]) => {
         setStateValue('rolePayloads', toNameValuePayloads(values))
-    }
-
-    const handleGroupsChange = (values: number[]) => {
-        setStateValue('groupPayloads', toNameValuePayloads(values))
     }
 
     const dispatch = useDispatch()
@@ -351,16 +340,6 @@ const User = () => {
                     referenceItems={toCheckboxPayloads<string>(rolePayloads)}
                     selectedValues={toSelectedValues<string>(props.userPayload.rolePayloads)}
                     onChange={handleRolesChange}
-                />
-            </div>
-
-            <div className="new-line">
-                <h2>Groups</h2>
-                <Checkboxes<number>
-                    isDisabled={!props.userPayload.editable}
-                    referenceItems={toCheckboxPayloads<number>(groupPayloads)}
-                    selectedValues={toSelectedValues<number>(props.userPayload.groupPayloads)}
-                    onChange={handleGroupsChange}
                 />
             </div>
 

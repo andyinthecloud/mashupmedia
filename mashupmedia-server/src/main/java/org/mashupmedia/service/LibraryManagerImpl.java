@@ -1,12 +1,16 @@
 package org.mashupmedia.service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
+import org.hibernate.mapping.Collection;
+import org.mashupmedia.comparator.UserComparator;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
@@ -17,7 +21,6 @@ import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,14 +35,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class LibraryManagerImpl implements LibraryManager {
-	@Autowired
-	private LibraryDao libraryDao;
 	
+	private final LibraryDao libraryDao;	
 	private final ConfigurationManager configurationManager;
 	private final MusicLibraryUpdateManager musicLibraryUpdateManager;
 	private final PhotoLibraryUpdateManager photoLibraryUpdateManager;
 	private final AdminManager adminManager;
-	private final LibraryWatchManager libraryWatchManager;
+	// private final LibraryWatchManager libraryWatchManager;
 
 	@Override
 	public List<Library> getLocalLibraries(LibraryType libraryType) {
@@ -48,9 +50,13 @@ public class LibraryManagerImpl implements LibraryManager {
 	}
 
 	@Override
-	public List<Library> getLibraries(LibraryType libraryType) {
-		List<Library> musicLibraries = libraryDao.getLibraries(libraryType);
-		return musicLibraries;
+	public List<Library> getLibraries() {
+		if (AdminHelper.isAdministrator()) {
+			return libraryDao.getLibraries();
+		} 
+
+		String username = AdminHelper.getLoggedInUser().getUsername();
+		return libraryDao.getLibraries(username);
 	}
 
 	@Override
@@ -198,7 +204,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		FileHelper.deleteLibrary(libraryId);
 		Library library = libraryDao.getLibrary(libraryId);
 		libraryDao.deleteLibrary(library);
-		libraryWatchManager.removeWatchLibraryListener(libraryId);
+		// libraryWatchManager.removeWatchLibraryListener(libraryId);
 	}
 
 	@Override
@@ -252,5 +258,24 @@ public class LibraryManagerImpl implements LibraryManager {
 		}
 
 	}
+
+	@Override
+	public List<User> addUserShare(String email, long libraryId) {
+		Library library = getLibrary(libraryId);
+		Assert.notNull(library, "Expecting a library");
+
+		User userShare = adminManager.getUser(email);
+		if (userShare == null) {
+			userShare = adminManager.saveUser(email);
+		}
+
+		library.getShareUsers().add(userShare);
+		saveLibrary(library);
+
+		List<User> users = new ArrayList<>(library.getShareUsers());
+		Collections.sort(users, new UserComparator());
+		return users;
+	}
+
 
 }

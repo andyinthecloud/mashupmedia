@@ -23,15 +23,18 @@ import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.mashupmedia.exception.LibraryUpdateException;
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryStatusType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.location.Location;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,10 +50,15 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	private final PhotoLibraryUpdateManager photoLibraryUpdateManager;
 	private final LibraryManager libraryManager;
 	private final ConfigurationManager configurationManager;
+	private final AdminManager adminManager;
 
 	@Override
 	@Async
-	public void asynchronousUpdateLibrary(long libraryId) {
+	public void asynchronousUpdateLibrary(long userId, long libraryId) {
+		Assert.isTrue(userId > 0, "Expecting a user id");
+		User user = adminManager.getUser(userId);
+		AdminHelper.setLoggedInUser(user);
+
 		Library library = libraryManager.getLibrary(libraryId);
 
 		if (!library.isEnabled()) {

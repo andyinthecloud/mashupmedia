@@ -30,7 +30,6 @@ import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Year;
@@ -60,11 +59,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager {
 	private final int BATCH_INSERT_ITEMS = 20;
-	private final ConnectionManager connectionManager;
 	private final AlbumArtManager albumArtManager;
 	private final MusicDao musicDao;
 	private final PlaylistDao playlistDao;
-	private final LibraryManager libraryManager;
+	// private final LibraryManager libraryManager;
 	private final MediaDao mediaDao;
 	private final ArtistRepository artistRepository;
 	private final MusicAlbumRepository musicAlbumRepository;
@@ -320,7 +318,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				}
 				saveTracks(musicLibrary, tracks, date);
 				tracks.clear();
-				libraryManager.saveMediaItemLastUpdated(musicLibrary.getId());
+				// libraryDao.sa
+				// libraryManager.saveMediaItemLastUpdated(musicLibrary.getId());
 				folderArtistName = "";
 			} else {
 				if (StringUtils.isBlank(folderAlbumName)) {

@@ -13,7 +13,6 @@ export type UserPayload = {
     createdOn?: string | null
     updatedOn?: string | null
     rolePayloads?: NameValuePayload<string>[]
-    groupPayloads?: NameValuePayload<number>[]
     exists: boolean
 }
 

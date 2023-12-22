@@ -4,9 +4,12 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [    
+        
+        
+
         {
             "type": "java",
-            "name": "Mashup Media on local",
+            "name": "Mashup Media server on local",
             "request": "launch",
             "cwd": "${workspaceFolder}/mashupmedia-server",
             "console": "internalConsole",
@@ -18,6 +21,17 @@
             //     "mashupmediaHome": "C:\\stuff\\data\\mm-home"
             // }
         }
+
+        // {
+        //     "type": "node",
+        //     "name": "Mashup Media client on local",
+        //     "request": "launch",
+        //     "cwd": "${workspaceFolder}/mashupmedia-client-react",
+        //     "runtimeExecutable": "npm",
+        //     "runtimeArgs": [
+        //         "run-script", "start"
+        //     ]
+        // }
 
     ]
 

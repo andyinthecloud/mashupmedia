@@ -6,7 +6,7 @@ import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import { Fragment, useEffect, useState } from "react";
 
-import { AccountBox, ExpandLess, ExpandMore, LibraryMusic, Login, Logout, PersonAdd, Search } from "@mui/icons-material";
+import { AccountBox, ExpandLess, ExpandMore, LibraryMusic, Login, Logout, Luggage, PersonAdd, Search } from "@mui/icons-material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
@@ -188,6 +188,10 @@ const MenuDrawer = () => {
             }
 
             {props.loggedIn &&
+                <ListItemRoute label="Libraries" toRoute="/configuration/libraries" icon={<Luggage />} onClick={closeAfterNavigate} />
+            }
+
+            {props.loggedIn &&
                 <ListItemRoute label="Playlists" toRoute="/playlists/all" icon={<ListIcon />} onClick={() => closeAfterNavigate()} />
             }
 
@@ -211,8 +215,6 @@ const MenuDrawer = () => {
                             className="nested-list">
 
                             <ListItemRoute label="Users" toRoute="/configuration/users" onClick={closeAfterNavigate} />
-                            <ListItemRoute label="Groups" toRoute="/configuration/groups" onClick={closeAfterNavigate} />
-                            <ListItemRoute label="Libraries" toRoute="/configuration/libraries" onClick={closeAfterNavigate} />
                             <ListItemRoute label="Encode" toRoute="/configuration/encode" onClick={closeAfterNavigate} />
 
                         </List>

@@ -23,25 +23,22 @@ import org.mashupmedia.util.FileHelper.FileType;
 import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.StringHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Lazy(true)
 @Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class AlbumArtManagerImpl implements AlbumArtManager {
 
 	public static final String DEFAULT_MIME_TYPE = "jpg";
 
-	@Autowired
-	MusicManager musicManager;
-
-	@Autowired
-	private ConnectionManager connectionManager;
+	private final MusicManager musicManager;
+	private final ConnectionManager connectionManager;
 
 	@Override
 	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Track track) throws Exception {

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.mashupmedia.comparator.MediaEncodingComparator;
@@ -15,7 +14,6 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.StringHelper;
-import org.springframework.beans.factory.config.PlaceholderConfigurerSupport;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -48,7 +46,7 @@ import lombok.Setter;
 public class MediaItem {
 
 	public final static String TITLE_SEPERATOR = " - ";
-	
+
 	@Id
 	@GeneratedValue
 	@XmlTransient
@@ -120,7 +118,7 @@ public class MediaItem {
 		if (mediaEncoding.isOriginal()) {
 			return new File(getPath());
 		}
-		return FileHelper.getEncodedMediaFile(this, mediaEncoding.getMediaContentType());      
+		return FileHelper.getEncodedMediaFile(this, mediaEncoding.getMediaContentType());
 	}
 
 	@Override

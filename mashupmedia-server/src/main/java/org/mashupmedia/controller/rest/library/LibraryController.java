@@ -7,20 +7,27 @@ import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.EmailValidator;
+import org.mashupmedia.dto.library.AddLibraryUserPayload;
 import org.mashupmedia.dto.library.LibraryNameValuePayload;
 import org.mashupmedia.dto.library.LibraryPayload;
+import org.mashupmedia.dto.library.LibraryShareUserPayload;
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
-import org.mashupmedia.mapper.LibraryMapper;
 import org.mashupmedia.mapper.LibraryNameValueMapper;
+import org.mashupmedia.mapper.library.LibraryMapper;
+import org.mashupmedia.mapper.library.LibraryShareUserMapper;
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.ValidationUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,18 +48,19 @@ public class LibraryController {
 
     private static final String FIELD_NAME_VALUE = "value";
     private static final String FIELD_NAME_PATH = "path";
+    private static final String FIELD_NAME_EMAIL = "email";
 
     private final LibraryMapper libraryMapper;
     private final LibraryNameValueMapper libraryNameValueMapper;
+    private final LibraryShareUserMapper libraryShareUserMapper;
     private final LibraryManager libraryManager;
     // private final LibraryUpdateTaskManager libraryUpdateTaskManager;
     private final LibraryUpdateManager libraryUpdateManager;
 
-    @Secured("ROLE_ADMINISTRATOR")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<LibraryNameValuePayload>> getLibraries() {
 
-        List<LibraryNameValuePayload> libraryNameValuePayloads = libraryManager.getLibraries(LibraryType.ALL)
+        List<LibraryNameValuePayload> libraryNameValuePayloads = libraryManager.getLibraries()
                 .stream()
                 .map(libraryNameValueMapper::toDto)
                 .collect(Collectors.toList());
@@ -60,24 +68,44 @@ public class LibraryController {
         return ResponseEntity.ok().body(libraryNameValuePayloads);
     }
 
-    @Secured("ROLE_ADMINISTRATOR")
     @GetMapping(value = "/{libraryId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LibraryPayload> getLibrary(@PathVariable long libraryId) {
-        LibraryPayload libraryPayload = libraryMapper.toDto(libraryManager.getLibrary(libraryId));
+        Library library = libraryManager.getLibrary(libraryId);
+        checkLibraryPermission(library);
+        LibraryPayload libraryPayload = libraryMapper.toDto(library);
         return ResponseEntity.ok().body(libraryPayload);
     }
 
-    @Secured("ROLE_ADMINISTRATOR")
-    @DeleteMapping(value = "/{libraryId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> deleteLibrary(@PathVariable long libraryId) {
-        libraryManager.deleteLibrary(libraryId);
-        return ResponseEntity.ok().body(true);        
+    private void checkLibraryPermission(Library library) {
+        User loggedInUser = AdminHelper.getLoggedInUser();
+        if (loggedInUser.isAdministrator()) {
+            return;
+        }
+
+        if (library.getCreatedBy().equals(loggedInUser)) {
+            return;
+        }
+
+        throw new AccessDeniedException("Unauthorised to load library");
     }
 
-    @Secured("ROLE_ADMINISTRATOR")
+    @DeleteMapping(value = "/{libraryId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> deleteLibrary(@PathVariable long libraryId) {
+        Library library = libraryManager.getLibrary(libraryId);
+        checkLibraryPermission(library);
+
+        libraryManager.deleteLibrary(libraryId);
+        return ResponseEntity.ok().body(true);
+    }
+
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<String>> saveGroup(@Valid @RequestBody LibraryPayload libraryPayload,
+    public ResponseEntity<ServerResponsePayload<String>> saveLibrary(@Valid @RequestBody LibraryPayload libraryPayload,
             Errors errors) {
+
+        if (libraryPayload.getId() > 0) {
+            Library library = libraryManager.getLibrary(libraryPayload.getId());
+            checkLibraryPermission(library);
+        }
 
         if (isInvalidLibraryPath(libraryPayload.getPath())) {
             errors.rejectValue(
@@ -94,7 +122,8 @@ public class LibraryController {
         libraryManager.saveLibrary(library);
         // libraryManager.saveAndReinitialiseLibrary(library);
         // libraryUpdateTaskManager.updateLibrary(library.getId());
-        libraryUpdateManager.asynchronousUpdateLibrary(library.getId());
+        long userId = AdminHelper.getLoggedInUser().getId();
+        libraryUpdateManager.asynchronousUpdateLibrary(userId, library.getId());
 
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
@@ -127,7 +156,37 @@ public class LibraryController {
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
+    @PutMapping(value = "/add-share", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ServerResponsePayload<List<LibraryShareUserPayload>>> addShare(
+            @Valid @RequestBody AddLibraryUserPayload addLibraryUserPayload, Errors errors) {
+        if (!EmailValidator.getInstance().isValid(addLibraryUserPayload.getEmail())) {
+            errors.rejectValue(
+                    FIELD_NAME_EMAIL,
+                    ErrorCode.EMAIL_INVALID.getErrorCode(),
+                    "The email address is invalid");
+        }
 
-    
+        long libraryId = addLibraryUserPayload.getLibraryId();
+        if (!errors.hasErrors()) {
+            libraryManager.addUserShare(addLibraryUserPayload.getEmail(), libraryId);
+        }
 
+        List<User> shareUsers = libraryManager.getShareUsers(libraryId);
+        List<LibraryShareUserPayload> libraryShareUserPayloads = shareUsers.stream()
+                .map(libraryShareUserMapper::toDto)
+                .collect(Collectors.toList());
+
+        return ValidationUtil.createResponseEntityPayload(libraryShareUserPayloads, errors);
+    }
+
+    @PutMapping(value = "/get-shares", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<LibraryShareUserPayload>> getShareUsers(
+            @PathVariable long libraryId) {
+        List<User> shareUsers = libraryManager.getShareUsers(libraryId);
+        List<LibraryShareUserPayload> libraryShareUserPayloads = shareUsers.stream()
+                .map(libraryShareUserMapper::toDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(libraryShareUserPayloads);
+    }
 }

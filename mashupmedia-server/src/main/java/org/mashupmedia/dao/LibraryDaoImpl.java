@@ -43,19 +43,22 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	}
 
 	@Override
-	public List<Library> getLibraries(LibraryType libraryType) {
-		String libraryClassName = null;
-
-		if (libraryType == LibraryType.MUSIC) {
-			libraryClassName = MusicLibrary.class.getName();
-		} else {
-			libraryClassName = Library.class.getName();
-		}
-
-		TypedQuery<Library> query = entityManager.createQuery("from " + libraryClassName + " order by name",
+	public List<Library> getLibraries() {
+		TypedQuery<Library> query = entityManager.createQuery("from Library order by name",
 				Library.class);
 		List<Library> libraries = query.getResultList();
 		return libraries;
+	}
+
+	@Override
+	public List<Library> getLibraries(String username) {
+		StringBuilder hqlBuilder = new StringBuilder("select l from Library l");
+		hqlBuilder.append(" join l.createdBy u");
+		hqlBuilder.append(" where u.username = :username");
+		hqlBuilder.append(" order by l.name");
+		TypedQuery<Library> query = entityManager.createQuery(hqlBuilder.toString(), Library.class);
+		query.setParameter("username", username);
+		return query.getResultList();
 	}
 
 	@Override

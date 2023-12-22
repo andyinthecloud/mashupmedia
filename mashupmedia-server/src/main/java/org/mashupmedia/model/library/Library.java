@@ -11,6 +11,7 @@ import org.mashupmedia.model.location.Location;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -61,8 +62,8 @@ public abstract class Library implements Serializable {
 	private boolean remote;
 	private String status;
 	@ManyToMany
-	@JoinTable(name = "libraries_users_access", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "library_id"))
-	private Set<User> users;
+	@JoinTable(name = "libraries_share_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "library_id"))
+	private Set<User> shareUsers;
 
 	public enum LibraryType {
 		ALL, MUSIC, VIDEO, PHOTO
@@ -133,7 +134,7 @@ public abstract class Library implements Serializable {
 			return true;
 		}
 
-		return getUsers().stream().anyMatch(u -> u.equals(user));
+		return getShareUsers().stream().anyMatch(u -> u.equals(user));
 	}
 
 	@Override
