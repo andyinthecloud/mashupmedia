@@ -34,7 +34,6 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 	private final PlaylistDao playlistDao;
 	private final MediaDao mediaDao;
-	private final MashupMediaSecurityManager securityManager;
 	private final UserPlaylistPositionRepository userPlaylistPositionRepository;
 	private final PlaylistRepository playlistRepository;
 
@@ -57,15 +56,15 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 		Hibernate.initialize(playlist.getPlaylistMediaItems());
 
-		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getPlaylistMediaItems()
-				.stream()
-				.filter(pmi -> pmi.getMediaItem().isEnabled())
-				.filter(pmi -> securityManager.canAccessMediaItem(pmi.getMediaItem()))
-				.sorted((pmi1, pmi2) -> pmi1.getRanking().compareTo(pmi2.getRanking()))
-				.collect(Collectors.toList());
+		// List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getPlaylistMediaItems()
+		// 		.stream()
+		// 		.filter(pmi -> pmi.getMediaItem().isEnabled())
+		// 		.filter(pmi -> securityManager.canAccessMediaItem(pmi.getMediaItem()))
+		// 		.sorted((pmi1, pmi2) -> pmi1.getRanking().compareTo(pmi2.getRanking()))
+		// 		.collect(Collectors.toList());
+		// playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
 
-		playlist.setAccessiblePlaylistMediaItems(accessiblePlaylistMediaItems);
-
+		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getAccessiblePlaylistMediaItems(AdminHelper.getLoggedInUser());
 		if (accessiblePlaylistMediaItems.isEmpty()) {
 			return;
 		}
@@ -165,7 +164,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	}
 
 	private void saveUserPlaylistPosition(Playlist playlist) {
-		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+		List<PlaylistMediaItem> accessiblePlaylistMediaItems = playlist.getAccessiblePlaylistMediaItems(AdminHelper.getLoggedInUser());
 		if (accessiblePlaylistMediaItems == null || accessiblePlaylistMediaItems.isEmpty()) {
 			return;
 		}
@@ -227,7 +226,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	@Override
 	public PlaylistMediaItem playRelativePlaylistMediaItem(Playlist playlist, int relativeOffset) {
 
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems(AdminHelper.getLoggedInUser());
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
 			return null;
 		}
@@ -258,7 +257,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 			return null;
 		}
 
-		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+		List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems(AdminHelper.getLoggedInUser());
 		if (playlistMediaItems == null || playlistMediaItems.isEmpty()) {
 			return null;
 		}

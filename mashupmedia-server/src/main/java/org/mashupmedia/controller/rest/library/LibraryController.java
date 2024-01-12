@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.mashupmedia.dto.library.AddLibraryUserPayload;
+import org.mashupmedia.dto.library.LibrarySharePayload;
 import org.mashupmedia.dto.library.LibraryNameValuePayload;
 import org.mashupmedia.dto.library.LibraryPayload;
 import org.mashupmedia.dto.library.LibraryShareUserPayload;
@@ -48,13 +48,11 @@ public class LibraryController {
 
     private static final String FIELD_NAME_VALUE = "value";
     private static final String FIELD_NAME_PATH = "path";
-    private static final String FIELD_NAME_EMAIL = "email";
+
 
     private final LibraryMapper libraryMapper;
     private final LibraryNameValueMapper libraryNameValueMapper;
-    private final LibraryShareUserMapper libraryShareUserMapper;
     private final LibraryManager libraryManager;
-    // private final LibraryUpdateTaskManager libraryUpdateTaskManager;
     private final LibraryUpdateManager libraryUpdateManager;
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -156,37 +154,5 @@ public class LibraryController {
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
-    @PutMapping(value = "/add-share", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<List<LibraryShareUserPayload>>> addShare(
-            @Valid @RequestBody AddLibraryUserPayload addLibraryUserPayload, Errors errors) {
-        if (!EmailValidator.getInstance().isValid(addLibraryUserPayload.getEmail())) {
-            errors.rejectValue(
-                    FIELD_NAME_EMAIL,
-                    ErrorCode.EMAIL_INVALID.getErrorCode(),
-                    "The email address is invalid");
-        }
-
-        long libraryId = addLibraryUserPayload.getLibraryId();
-        if (!errors.hasErrors()) {
-            libraryManager.addUserShare(addLibraryUserPayload.getEmail(), libraryId);
-        }
-
-        List<User> shareUsers = libraryManager.getShareUsers(libraryId);
-        List<LibraryShareUserPayload> libraryShareUserPayloads = shareUsers.stream()
-                .map(libraryShareUserMapper::toDto)
-                .collect(Collectors.toList());
-
-        return ValidationUtil.createResponseEntityPayload(libraryShareUserPayloads, errors);
-    }
-
-    @PutMapping(value = "/get-shares", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LibraryShareUserPayload>> getShareUsers(
-            @PathVariable long libraryId) {
-        List<User> shareUsers = libraryManager.getShareUsers(libraryId);
-        List<LibraryShareUserPayload> libraryShareUserPayloads = shareUsers.stream()
-                .map(libraryShareUserMapper::toDto)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok().body(libraryShareUserPayloads);
-    }
+ 
 }

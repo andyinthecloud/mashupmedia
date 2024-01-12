@@ -17,6 +17,7 @@ import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.task.EncodeMediaItemManager;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.stereotype.Controller;
@@ -146,7 +147,7 @@ public class SecureStreamController {
 
 	private List<PlaylistMediaItem> getUnplayedPlaylistMediaItems(Playlist playlist) {
         PlaylistMediaItem currenPlaylistMediaItem = playlistManager.playRelativePlaylistMediaItem(playlist, 0);
-        List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems();
+        List<PlaylistMediaItem> playlistMediaItems = playlist.getAccessiblePlaylistMediaItems(AdminHelper.getLoggedInUser());
         int index = playlistMediaItems.indexOf(currenPlaylistMediaItem);
         return playlistMediaItems.subList(index, playlistMediaItems.size());
     }

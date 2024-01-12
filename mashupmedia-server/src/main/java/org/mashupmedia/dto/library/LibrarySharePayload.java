@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class AddLibraryUserPayload {
+public class LibrarySharePayload {
     @Positive(message = "Expecting a valid libraryId")
     private long libraryId;
     @NotBlank(message = "Expecting an email address")

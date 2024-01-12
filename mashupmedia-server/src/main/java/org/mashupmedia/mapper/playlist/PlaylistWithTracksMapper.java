@@ -6,6 +6,7 @@ import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dto.media.playlist.PlaylistWithMediaItemsPayload;
 import org.mashupmedia.mapper.DomainMapper;
 import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.util.AdminHelper;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class PlaylistWithTracksMapper implements DomainMapper<Playlist, Playlist
                     .builder()
                     .playlistPayload(playlistMapper.toDto(domain))
                     .playlistMediaItemPayloads(
-                            domain.getAccessiblePlaylistMediaItems()
+                            domain.getAccessiblePlaylistMediaItems(AdminHelper.getLoggedInUser())
                                     .stream()
                                     .map(playlistTrackPayloadMapper::toDto)
                                     .collect(Collectors.toList()))

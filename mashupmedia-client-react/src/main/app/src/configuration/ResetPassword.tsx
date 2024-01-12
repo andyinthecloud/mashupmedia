@@ -1,11 +1,17 @@
 import { Button, TextField } from "@mui/material"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { NotificationType, addNotification } from "../common/notification/notificationSlice"
 import { RootState } from "../common/redux/store"
 import { FieldValidation, FormValidationPayload, ServerError, emptyFieldValidation, fieldErrorMessage, hasFieldError, isEmpty, toFieldValidation } from "../common/utils/formValidationUtils"
 import { ResetPasswordPayload, resetPassword, stepActivatePassword, stepResetPassword } from "./backend/resetPasswordCalls"
+
+type ResetPasswordPagePayload = {
+    formValidationPayload: FormValidationPayload<ResetPasswordPayload>
+    hideUsername: boolean
+    showActivationField: boolean
+}
 
 const ResetPassword = () => {
 
@@ -21,32 +27,58 @@ const ResetPassword = () => {
         ACTIVATION_CODE = 'activationCode'
     }
 
-    const [props, setProps] = useState<FormValidationPayload<ResetPasswordPayload>>(
+    const [props, setProps] = useState<ResetPasswordPagePayload>(
         {
-            payload: {
-                username: '',
-                password: ''
+            formValidationPayload: {
+                payload: {
+                    username: '',
+                    password: ''
+                },
+                formValidation: {
+                    fieldValidations: []
+                }    
             },
-            formValidation: {
-                fieldValidations: []
-            }
+            hideUsername: false,
+            showActivationField: false
+
         }
     )
+    
+    const {state} = useLocation()
+    useEffect(() => {
+        if (!state) {
+            return
+        }
 
-    const [showActivationField, setShowActivationField] = useState<boolean>(false)
+        setProps(p => ({
+            ...p,
+            formValidationPayload: {
+                ...p.formValidationPayload,
+                payload: {
+                    ...p.formValidationPayload.payload,
+                    username: state.username
+                }
+            },
+            hideUsername: state.username ? true : false
+
+        }))
+    }, [state])
 
     const setFieldValueState = (name: string, value: string): void => {
         setProps(p => ({
             ...p,
-            payload: {
-                ...p.payload,
-                [name]: value
+            formValidationPayload: {
+                ...p.formValidationPayload,
+                payload: {
+                    ...p.formValidationPayload.payload,
+                    [name]: value
+                }
             }
         }))
     }
 
     const setServerFieldValidationState = (serverError: ServerError): void => {
-        const fieldValidations = props.formValidation.fieldValidations
+        const fieldValidations = props.formValidationPayload.formValidation.fieldValidations
         fieldValidations.push(toFieldValidation(serverError))
 
         setProps(p => ({
@@ -58,7 +90,7 @@ const ResetPassword = () => {
     }
 
     const setFieldValidationState = (fieldValidation: FieldValidation): void => {
-        const fieldValidations = props.formValidation.fieldValidations
+        const fieldValidations = props.formValidationPayload.formValidation.fieldValidations
         fieldValidations.push(fieldValidation)
 
         setProps(p => ({
@@ -70,7 +102,7 @@ const ResetPassword = () => {
     }
 
     const clearFieldValidationState = () => {
-        const fieldValidations = props.formValidation.fieldValidations
+        const fieldValidations = props.formValidationPayload.formValidation.fieldValidations
         fieldValidations.splice(0, fieldValidations.length)
         setProps(p => ({
             ...p,
@@ -81,7 +113,6 @@ const ResetPassword = () => {
     }
 
     const navigate = useNavigate()
-
     function handleCancel(): void {
         navigate('/configuration/users')
     }
@@ -91,11 +122,11 @@ const ResetPassword = () => {
 
         clearFieldValidationState()
 
-        if (isEmpty(props.payload.password)) {
+        if (isEmpty(props.formValidationPayload.payload.password)) {
             setFieldValidationState(emptyFieldValidation(FieldNames.USERNAME, 'Email'))
         }
 
-        if (isEmpty(props.payload.password)) {
+        if (isEmpty(props.formValidationPayload.payload.password)) {
             setFieldValidationState(emptyFieldValidation(FieldNames.PASSWORD, 'Password'))
         }
     }
@@ -105,13 +136,12 @@ const ResetPassword = () => {
 
         validateForm()
 
-        if (props.formValidation.fieldValidations.length) {
+        if (props.formValidationPayload.formValidation.fieldValidations.length) {
             return
         }
 
         if (userPolicyPayload?.administrator) {
-            console.log('admin')
-            resetPassword(props.payload, securityPayload?.token)
+            resetPassword(props.formValidationPayload.payload, securityPayload?.token)
                 .then(response => {
                     if (response.ok) {
                         dispatch(
@@ -138,15 +168,15 @@ const ResetPassword = () => {
                     }
                 })
         } else {
-            stepResetPassword(props.payload).then(
+            stepResetPassword(props.formValidationPayload.payload).then(
                 response => {
                     if (response.ok) {
                         const responsePayload = response.parsedBody?.payload
                         if (responsePayload) {
-                            setShowActivationField(true)
                             setProps(p => ({
                                 ...p,
-                                payload: responsePayload
+                                payload: responsePayload,
+                                showActivationField: true
                             }))
 
                         }
@@ -161,7 +191,7 @@ const ResetPassword = () => {
     }
 
     const handleActvate = (): void => {
-        stepActivatePassword(props.payload).then(
+        stepActivatePassword(props.formValidationPayload.payload).then(
             response => {
                 if (response.ok) {
                     dispatch(
@@ -189,65 +219,53 @@ const ResetPassword = () => {
         )
     }
 
-    const hasChangePasswordPermission = (): boolean => {
-        if (userPolicyPayload?.administrator) {
-            return userPolicyPayload.administrator
-        }
-
-        if (userPolicyPayload?.username == props.payload.username) {
-            return true
-        }
-
-        return false
-    }
-
     const containerClass = (): string => (
-        securityPayload?.token ? '' : 'zero-top-margin'
+        props.hideUsername  ? '' : 'zero-top-margin'
     )
 
     return (
         <form onSubmit={handleSubmit} className={containerClass()}>
             <h1>Reset password</h1>
 
-            {!showActivationField &&
+            {!props.showActivationField && !props.hideUsername &&
                 <div className="new-line">
                     <TextField
                         label="Email"
-                        value={props.payload.username}
+                        value={props.formValidationPayload.payload.username}
                         onChange={(e) => setFieldValueState(e.currentTarget.name, e.currentTarget.value)}
                         name={FieldNames.USERNAME}
                         fullWidth={true}
-                        error={hasFieldError(FieldNames.USERNAME, props.formValidation)}
-                        helperText={fieldErrorMessage(FieldNames.USERNAME, props.formValidation)}
+                        error={hasFieldError(FieldNames.USERNAME, props.formValidationPayload.formValidation)}
+                        helperText={fieldErrorMessage(FieldNames.USERNAME, props.formValidationPayload.formValidation)}
                     />
                 </div>
             }
 
-            {!showActivationField &&
+            {!props.showActivationField &&
                 <div className="new-line">
                     <TextField
                         name={FieldNames.PASSWORD}
                         label="Password"
                         type={"password"}
-                        value={props.payload.password}
+                        value={props.formValidationPayload.payload.password}
                         fullWidth={true}
                         onChange={e => setFieldValueState(e.currentTarget.name, e.currentTarget.value)}
-                        error={hasFieldError(FieldNames.PASSWORD, props.formValidation)}
-                        helperText={fieldErrorMessage(FieldNames.PASSWORD, props.formValidation)}
+                        error={hasFieldError(FieldNames.PASSWORD, props.formValidationPayload.formValidation)}
+                        helperText={fieldErrorMessage(FieldNames.PASSWORD, props.formValidationPayload.formValidation)}
                     />
                 </div>
             }
 
-            {showActivationField &&
+            {props.showActivationField &&
                 <div className="new-line">
                     <TextField
                         label="Activation code"
-                        value={props.payload.activationCode || ''}
+                        value={props.formValidationPayload.payload.activationCode || ''}
                         onChange={(e) => setFieldValueState(e.currentTarget.name, e.currentTarget.value)}
                         name={FieldNames.ACTIVATION_CODE}
                         fullWidth={true}
-                        error={hasFieldError(FieldNames.USERNAME, props.formValidation)}
-                        helperText={fieldErrorMessage(FieldNames.USERNAME, props.formValidation)}
+                        error={hasFieldError(FieldNames.USERNAME, props.formValidationPayload.formValidation)}
+                        helperText={fieldErrorMessage(FieldNames.USERNAME, props.formValidationPayload.formValidation)}
                     />
                     <div style={{ fontSize: 'smaller' }}>Please enter the activation code sent to the email address. Please note it is only valid for five minutes.</div>
                 </div>
@@ -258,17 +276,17 @@ const ResetPassword = () => {
                     Cancel
                 </Button>
 
-                {!showActivationField &&
+                {!props.showActivationField &&
                     <Button
                         variant="contained"
                         color="primary"
                         type="submit"
-                        disabled={!props.payload.username}>
+                        disabled={!props.formValidationPayload.payload.username}>
                         Reset
                     </Button>
                 }
 
-                {showActivationField &&
+                {props.showActivationField &&
                     <Button
                         variant="contained"
                         color="primary"

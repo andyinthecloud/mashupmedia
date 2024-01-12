@@ -25,7 +25,6 @@ public class UserPayload {
 	@Size(min = 3, max = 255, message = "Name should be between 3 and 255 characaters")
 	private String name;
 	private boolean enabled;
-	private boolean editable;
 	private boolean system;
 	private boolean administrator;
 
@@ -37,6 +36,6 @@ public class UserPayload {
 	private LocalDateTime updatedOn;
 
 	private String password;
-	private String repeatPassword;
 	private boolean exists;
+	private boolean validated; 
 }

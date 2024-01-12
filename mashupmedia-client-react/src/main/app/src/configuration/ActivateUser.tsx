@@ -1,10 +1,11 @@
 import { Button, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
+import { NotificationType, addNotification } from "../common/notification/notificationSlice"
+import { useAppDispatch } from "../common/redux/hooks"
+import { logIn } from "../common/security/features/securitySlice"
 import { FieldValidation, FormValidationPayload, emptyFieldValidation, fieldErrorMessage, hasFieldError, isEmpty, toFieldValidation } from "../common/utils/formValidationUtils"
 import { CreateUserPayload, stepActivateUser } from "./backend/createUserCalls"
-import { useDispatch } from "react-redux"
-import { NotificationType, addNotification } from "../common/notification/notificationSlice"
 
 
 
@@ -83,7 +84,7 @@ const ActivateUser = () => {
     }
 
     const navigate = useNavigate()
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault()
@@ -105,6 +106,11 @@ const ActivateUser = () => {
                             notificationType: NotificationType.SUCCESS
                         })
                     )
+                    
+                    dispatch(
+                        logIn({ username: props.payload.username, password: props.payload.password || '' })
+                    )
+
                     navigate('/')
                 } else {
                     parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
@@ -123,6 +129,7 @@ const ActivateUser = () => {
     const handleCancel = () => {
         navigate('/')
     }
+
 
     return (
         <form className="zero-top-margin" onSubmit={handleSubmit}>

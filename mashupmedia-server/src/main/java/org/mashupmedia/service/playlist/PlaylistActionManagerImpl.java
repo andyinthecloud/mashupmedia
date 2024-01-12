@@ -2,7 +2,6 @@ package org.mashupmedia.service.playlist;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -70,16 +69,16 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 		playlistRepository.save(playlist);
 
-		return sendForEncoding(playlistMediaItems);
+		return sendForEncoding(playlist.getAccessiblePlaylistMediaItems(AdminHelper.getLoggedInUser()));
 	}
 
-	private EncoderStatusType sendForEncoding(Set<PlaylistMediaItem> playlistMediaItems) {
+	private EncoderStatusType sendForEncoding(List<PlaylistMediaItem> playlistMediaItems) {
 
-		Set<MediaItem> mediaItemsForEncoding = playlistMediaItems
+		List<MediaItem> mediaItemsForEncoding = playlistMediaItems
 				.stream()
 				.map(pmi -> pmi.getMediaItem())
 				.filter(mi -> !mi.isEncodedForWeb())
-				.collect(Collectors.toCollection(LinkedHashSet::new));
+				.collect(Collectors.toList());
 
 		if (mediaItemsForEncoding == null || mediaItemsForEncoding.isEmpty()) {
 			return EncoderStatusType.OK;
@@ -129,7 +128,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		playlist.setPlaylistMediaItems(playlistMediaItems);
 		playlistRepository.save(playlist);
 
-		return sendForEncoding(playlistMediaItems);
+		return sendForEncoding(playlist.getAccessiblePlaylistMediaItems(AdminHelper.getLoggedInUser()));
 	}
 
 	@Override
@@ -157,10 +156,6 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 	@Override
 	public boolean canSavePlaylist(long playlistId) {
 		Playlist playlist = playlistRepository.getReferenceById(playlistId);
-		if (playlist == null) {
-			return false;
-		}
-
 		User createdBy = playlist.getCreatedBy();
 		if (createdBy == null) {
 			return true;

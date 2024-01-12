@@ -4,8 +4,14 @@ import { useNavigate } from "react-router-dom"
 import { FieldValidation, FormValidationPayload, emptyFieldValidation, fieldErrorMessage, hasFieldError, isEmpty, toFieldValidation } from "../common/utils/formValidationUtils"
 import logo from "../logo.png"
 import { CreateUserPayload, stepCreateUser } from "./backend/createUserCalls"
+import { useSelector } from "react-redux"
+import { RootState } from "../common/redux/store"
+import { createAccount } from "./backend/userCalls"
 
 const CreateUser = () => {
+
+    const userPolicy = useSelector((state: RootState) => state.userPolicy)
+
 
     const enum FieldNames {
         NAME = 'name',
@@ -88,31 +94,58 @@ const CreateUser = () => {
             return
         }
 
-        stepCreateUser(props.payload)
-            .then(response => {
 
-                const parsedBody = response.parsedBody
-                console.log('stepCreate', parsedBody)
-                if (response.ok && parsedBody) {
-                    navigate('/create-user/activate', {state: parsedBody.payload})
+        if (userPolicy?.payload?.administrator) {
+            createAccount(props.payload).then(response => {
+                if (response.ok) {
+                    navigate('/configuration/users')
                 } else {
-                    parsedBody?.errorPayload.fieldErrors.map(function (serverError) {                        
+                    const parsedBody = response.parsedBody
+                    parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
                         props.formValidation.fieldValidations.push(toFieldValidation(serverError))
                         setProps(p => ({
                             ...p,
                             formValidation: {
-                                fieldValidations: props.formValidation.fieldValidations 
+                                fieldValidations: props.formValidation.fieldValidations
                             }
                         }))
                     })
                 }
             })
+
+        } else {
+            stepCreateUser(props.payload).then(response => {
+
+                const parsedBody = response.parsedBody
+                console.log('stepCreate', parsedBody)
+                if (response.ok && parsedBody) {
+                    navigate('/create-user/activate', { state: parsedBody.payload })
+                } else {
+                    parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
+                        props.formValidation.fieldValidations.push(toFieldValidation(serverError))
+                        setProps(p => ({
+                            ...p,
+                            formValidation: {
+                                fieldValidations: props.formValidation.fieldValidations
+                            }
+                        }))
+                    })
+                }
+            })
+        }
+    }
+
+
+    const getClassName = (): string => {
+        return userPolicy.payload ? '' : 'zero-top-margin'
     }
 
     return (
-        <form className="zero-top-margin" onSubmit={handleSubmit}>
+        <form className={getClassName()} onSubmit={handleSubmit}>
 
-            <img src={logo} className="logo" alt="Mashup Media" />
+            {!userPolicy.payload &&
+                <img src={logo} className="logo" alt="Mashup Media" />
+            }
 
             <h1>Create account</h1>
 
@@ -156,9 +189,20 @@ const CreateUser = () => {
 
 
             <div className="new-line right">
-                <Button variant="contained" color="primary" type="submit">
-                    Sign up
-                </Button>
+
+                {!userPolicy.payload &&
+                    <Button variant="contained" color="primary" type="submit">
+                        Sign up
+                    </Button>
+                }
+
+
+                {userPolicy.payload?.administrator &&
+                    <Button variant="contained" color="primary" type="submit">
+                        OK
+                    </Button>
+                }
+
             </div>
         </form>
     )

@@ -6,4 +6,7 @@ public interface EmailService {
 
     void sendUserResetPasswordMail(String email, String activationCode);
 
+    void sendAddLibraryShareEmail(String ownerName, String email);
+
+    void sendUserCreatedEmail(String ownerName, String email);
 }

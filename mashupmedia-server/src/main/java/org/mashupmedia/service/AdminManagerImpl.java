@@ -16,6 +16,7 @@ import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.repository.admin.UserRepository;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
 import org.mashupmedia.util.MessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +38,7 @@ public class AdminManagerImpl implements AdminManager {
 	private final PlaylistDao playlistDao;
 	private final PlaylistRepository playlistRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final UserRepository userRepository;
 
 	@Override
 	public User getUser(String username) {
@@ -56,7 +58,6 @@ public class AdminManagerImpl implements AdminManager {
 	}
 
 	@Override
-	@RolesAllowed("ROLE_ADMINISTRATOR")
 	public void saveUser(User user) {
 		Date date = new Date();
 		String username = user.getUsername();
@@ -100,7 +101,19 @@ public class AdminManagerImpl implements AdminManager {
 			throw new MashupMediaRuntimeException("Can only update an existing user.");
 		}
 
+		assertHasAtLeastOneAdministrator(user);
 		userDao.saveUser(user);
+	}
+
+	private void assertHasAtLeastOneAdministrator(User user) {
+
+		if (user.isAdministrator()) {
+			return;
+		}
+
+		if (userRepository.getTotalUserAdministrators() < 1) {
+			throw new MashupMediaRuntimeException("At least one adminstrator is mandatory");
+		}
 	}
 
 	@Override
@@ -159,6 +172,8 @@ public class AdminManagerImpl implements AdminManager {
 	@Override
 	public void deleteUser(long userId) {
 		User user = getUser(userId);
+		assertHasAtLeastOneAdministrator(user);
+
 		List<Playlist> playlists = playlistDao.getPlaylistsForCurrentUser(userId, null);
 		for (Playlist playlist : playlists) {
 			playlistRepository.delete(playlist);
@@ -166,7 +181,6 @@ public class AdminManagerImpl implements AdminManager {
 
 		userDao.deleteUser(user);
 	}
-
 
 	@Override
 	public void initialiseAdminUser() {
@@ -177,14 +191,13 @@ public class AdminManagerImpl implements AdminManager {
 				.username(MashUpMediaConstants.ADMIN_USER_DEFAULT_USERNAME)
 				.password(MashUpMediaConstants.ADMIN_USER_DEFAULT_PASSWORD)
 				.enabled(true)
-				.editable(false)
 				.roles(new HashSet<Role>(getRoles()))
 				.build();
 
 		saveUser(user);
 
 		Playlist playlist = Playlist.builder()
-				.name(name + "'s " + MessageHelper.getMessage("music.playlist.default.name"))				
+				.name(name + "'s " + MessageHelper.getMessage("music.playlist.default.name"))
 				.userDefault(true)
 				.createdBy(user)
 				.mediaTypeValue(MashupMediaType.MUSIC.name())
@@ -201,7 +214,6 @@ public class AdminManagerImpl implements AdminManager {
 				.username(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME)
 				.password(MashUpMediaConstants.SYSTEM_USER_DEFAULT_PASSWORD)
 				.enabled(true)
-				.editable(false)
 				.system(true)
 				.roles(new HashSet<>(getRoles()))
 				.build();
@@ -214,7 +226,5 @@ public class AdminManagerImpl implements AdminManager {
 		User systemUser = getUser(MashUpMediaConstants.SYSTEM_USER_DEFAULT_USERNAME);
 		return systemUser;
 	}
-
-
 
 }

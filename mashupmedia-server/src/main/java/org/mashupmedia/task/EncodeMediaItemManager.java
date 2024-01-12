@@ -107,11 +107,18 @@ public class EncodeMediaItemManager {
 	@Async
 	public void processMediaItemForEncoding(MediaItem mediaItem, MediaContentType mediaContentType)
 			throws MediaItemEncodeException {
+
+		long mediaItemId = mediaItem.getId();
+		MediaItem mostRecentMediaItem = mediaManager.getMediaItem(mediaItemId);
+		if (mostRecentMediaItem.isEncodedForWeb()) {
+			return;
+		}
+
 		String encoderPath = configurationManager.getConfigurationValue(encodeCommands.getEncoderPathKey());
-		List<String> processCommands = encodeCommands.getEncodingProcessCommands(encoderPath, mediaItem,
+		List<String> processCommands = encodeCommands.getEncodingProcessCommands(encoderPath, mostRecentMediaItem,
 				mediaContentType);
 
-		ProcessQueueItem processQueueItem = generateProcessQueueItem(mediaItem.getId(), mediaContentType, processCommands);
+		ProcessQueueItem processQueueItem = generateProcessQueueItem(mediaItemId, mediaContentType, processCommands);
 		encode(processQueueItem);
 
 

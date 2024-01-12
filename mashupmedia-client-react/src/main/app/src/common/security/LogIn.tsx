@@ -76,6 +76,7 @@ const LogIn = () => {
         e.preventDefault()
         searchParams.delete(codeParamName)
         setSearchParams(searchParams)
+
         dispatch(
             logIn({ username: props.username, password: props.password })
         )
@@ -84,7 +85,6 @@ const LogIn = () => {
     )
 
     const handleResetPassword = () => {
-        console.log('handleResetPassword')
         navigate('/reset-password')
     }
 

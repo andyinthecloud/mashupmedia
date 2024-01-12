@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.model.User;
@@ -19,7 +20,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -46,8 +46,8 @@ public class Playlist {
 	@Builder.Default
 	private Set<PlaylistMediaItem> playlistMediaItems = new HashSet<>();
 
-	@Transient
-	private List<PlaylistMediaItem> accessiblePlaylistMediaItems;
+	// @Transient
+	// private List<PlaylistMediaItem> accessiblePlaylistMediaItems;
 
 	@ManyToOne
 	private User createdBy;
@@ -63,7 +63,7 @@ public class Playlist {
 
 	@OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, orphanRemoval = true)
 	@Builder.Default
-    Set<UserPlaylistPosition> userPlaylistPositions = new HashSet<>();
+	Set<UserPlaylistPosition> userPlaylistPositions = new HashSet<>();
 
 	private boolean userDefault;
 
@@ -71,13 +71,22 @@ public class Playlist {
 
 	private boolean privatePlaylist;
 	private boolean editOnlyByOwner;
-	
+
 	public void setMashupMediaType(MashupMediaType mashupMediaType) {
 		this.mediaTypeValue = mashupMediaType.name();
 	}
 
 	public MashupMediaType getMashupMediaType() {
 		return MashupMediaType.getMediaType(mediaTypeValue);
+	}
+
+	public List<PlaylistMediaItem> getAccessiblePlaylistMediaItems(User user) {
+		return getPlaylistMediaItems()
+				.stream()
+				.filter(pmi -> pmi.getMediaItem().isEnabled())
+				.filter(pmi -> pmi.getMediaItem().getLibrary().hasAccess(user))
+				.sorted((pmi1, pmi2) -> pmi1.getRanking().compareTo(pmi2.getRanking()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -129,8 +138,6 @@ public class Playlist {
 		builder.append(name);
 		builder.append(", playlistMediaItems=");
 		builder.append(playlistMediaItems);
-		builder.append(", accessiblePlaylistMediaItems=");
-		builder.append(accessiblePlaylistMediaItems);
 		builder.append(", createdBy=");
 		builder.append(createdBy);
 		builder.append(", createdOn=");

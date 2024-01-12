@@ -48,7 +48,6 @@ public class User implements UserDetails {
 	@ToString.Include
 	private String name;
 	private boolean enabled;
-	private boolean editable;
 	private boolean system;
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	private Set<Role> roles;
@@ -131,8 +130,6 @@ public class User implements UserDetails {
 		builder.append(name);
 		builder.append(", enabled=");
 		builder.append(enabled);
-		builder.append(", editable=");
-		builder.append(editable);
 		builder.append(", system=");
 		builder.append(system);
 		builder.append(", roles=");

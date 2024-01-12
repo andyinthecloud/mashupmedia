@@ -44,10 +44,10 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 				"select distinct a from org.mashupmedia.model.media.music.Album");
 		queryBuilder.append(" join a.tracks t");
 		queryBuilder.append(" join t.library l");
-		queryBuilder.append(" left join l.users u");
+		queryBuilder.append(" left join l.shareUsers u");
 
 		queryBuilder.append(" where t.library.enabled = true");
-		queryBuilder.append(" and u.id library.users = true");
+		queryBuilder.append(" and u.id = :userId");
 
 		searchLetter = StringUtils.trimToEmpty(searchLetter);
 
@@ -60,6 +60,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		queryBuilder.append(" order by a.indexText");
 
 		TypedQuery<Album> query = entityManager.createQuery(queryBuilder.toString(), Album.class);
+		query.setParameter("userId", userId);
 		query.setFirstResult(firstResult);
 		query.setMaxResults(maxResults);
 		List<Album> albums = query.getResultList();
@@ -92,7 +93,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		queryBuilder.append(" join a.albums album");
 		queryBuilder.append(" join album.tracks t");
 		queryBuilder.append(" join t.library l");
-		queryBuilder.append(" left join l.users u");
+		queryBuilder.append(" left join l.shareUsers u");
 		queryBuilder.append(" where t.library.enabled = true");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 
@@ -155,7 +156,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 				"select a from org.mashupmedia.model.media.music.Album a");
 		queryBuilder.append(" join a.tracks t");
 		queryBuilder.append(" join t.library l");
-		queryBuilder.append(" left join l.users u");
+		queryBuilder.append(" left join l.shareUsers u");
 
 		queryBuilder.append(" where lower(a.artist.name) = :artistName");
 		queryBuilder.append(" and lower(a.name) = :albumName");
@@ -183,7 +184,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		StringBuilder tracksQueryBuilder = new StringBuilder(
 				"select distinct t from Track t");
 		tracksQueryBuilder.append(" join t.library l");
-		tracksQueryBuilder.append(" left join l.users u");
+		tracksQueryBuilder.append(" left join l.shareUsers u");
 		tracksQueryBuilder.append(" where t.album.id = :id");
 		tracksQueryBuilder.append(" and t.enabled = true");
 		tracksQueryBuilder.append(" and t.library.enabled = true");
@@ -208,7 +209,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		StringBuilder queryBuilder = new StringBuilder(
 				"select distinct t from Track t");
 		queryBuilder.append(" join t.library l");
-		queryBuilder.append(" left join l.users u");
+		queryBuilder.append(" left join l.shareUsers u");
 		queryBuilder.append(" where t.library.id = :libraryId");
 		queryBuilder.append(" and t.path = :path");
 		queryBuilder.append(" and t.fileLastModifiedOn = :fileLastModifiedOn");
@@ -334,7 +335,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 				"select distinct a.id from org.mashupmedia.model.media.music.Album a");
 		queryBuilder.append(" join a.tracks t");
 		queryBuilder.append(" join t.library l");
-		queryBuilder.append(" left join l.users u");
+		queryBuilder.append(" left join l.shareUsers u");
 		queryBuilder.append(" where t.library.enabled = true");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 
@@ -355,7 +356,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 				"select distinct a from org.mashupmedia.model.media.music.Album a");
 		queryBuilder.append(" join a.tracks t");
 		queryBuilder.append(" join t.library l");
-		queryBuilder.append(" where l.users u");
+		queryBuilder.append(" where l.shareUsers u");
 
 		queryBuilder.append(" where t.library.enabled = true");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
@@ -392,7 +393,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		StringBuilder queryBuilder = new StringBuilder(
 				"select t from Track s inner join s.library.groups g where s.album.id = :albumId ");
 		queryBuilder.append(" inner join t.library l");
-		queryBuilder.append(" left join l.users u");
+		queryBuilder.append(" left join l.shareUsers u");
 		queryBuilder.append(" and t.library.enabled = true");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		queryBuilder.append(" order by trackNumber");
@@ -409,7 +410,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 				"select distinct a from org.mashupmedia.model.media.music.Album a");
 		queryBuilder.append(" join a.tracks t");
 		queryBuilder.append(" join t.library l");
-		queryBuilder.append(" left join l.users u");
+		queryBuilder.append(" left join l.shareUsers u");
 		queryBuilder.append(" where a.artist.id = :artistId");
 		queryBuilder.append(" and t.library.enabled = true");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
@@ -428,7 +429,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		queryBuilder.append(" join a.albums album");
 		queryBuilder.append(" join album.tracks t");
 		queryBuilder.append(" join s.library l");
-		queryBuilder.append(" left join l.users u");
+		queryBuilder.append(" left join l.shareUsers u");
 		queryBuilder.append(" where t.library.enabled = true");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		queryBuilder.append(" order by a.indexLetter");
@@ -444,7 +445,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		queryBuilder.append(" join a.albums album");
 		queryBuilder.append(" join album.tracks t");
 		queryBuilder.append(" join t.library l");
-		queryBuilder.append(" left join l.users u");
+		queryBuilder.append(" left join l.shareUsers u");
 		queryBuilder.append(" where a.id = :artistId");
 		queryBuilder.append(" and t.library.enabled = true");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
@@ -466,7 +467,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder.append("select t from Track t ");
 		queryBuilder.append(" join t.library l");
-		queryBuilder.append(" left join l.users u");
+		queryBuilder.append(" left join l.shareUsers u");
 		queryBuilder.append(" where t.enabled = true");
 		DaoHelper.appendUserIdFilter(queryBuilder, userId);
 		// queryBuilder.append(" and lower(t.fileName) like '%" +

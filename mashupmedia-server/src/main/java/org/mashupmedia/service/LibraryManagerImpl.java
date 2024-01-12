@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -35,8 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class LibraryManagerImpl implements LibraryManager {
-	
-	private final LibraryDao libraryDao;	
+
+	private final LibraryDao libraryDao;
 	private final ConfigurationManager configurationManager;
 	private final MusicLibraryUpdateManager musicLibraryUpdateManager;
 	private final PhotoLibraryUpdateManager photoLibraryUpdateManager;
@@ -53,7 +54,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	public List<Library> getLibraries() {
 		if (AdminHelper.isAdministrator()) {
 			return libraryDao.getLibraries();
-		} 
+		}
 
 		String username = AdminHelper.getLoggedInUser().getUsername();
 		return libraryDao.getLibraries(username);
@@ -113,16 +114,15 @@ public class LibraryManagerImpl implements LibraryManager {
 		savedLibrary.getLocation().setPath(library.getLocation().getPath());
 		savedLibrary.setEnabled(library.isEnabled());
 
-		
 		String status = library.getStatus();
 		savedLibrary.setStatus(StringUtils.isEmpty(status) ? savedLibrary.getStatus() : status);
 
 		Date lastSuccessfulScan = library.getLastSuccessfulScanOn();
-		savedLibrary.setLastSuccessfulScanOn(lastSuccessfulScan == null ? savedLibrary.getLastSuccessfulScanOn() : lastSuccessfulScan);
+		savedLibrary.setLastSuccessfulScanOn(
+				lastSuccessfulScan == null ? savedLibrary.getLastSuccessfulScanOn() : lastSuccessfulScan);
 
 		return savedLibrary;
 	}
-
 
 	@Override
 	public void saveAndReinitialiseLibrary(Library library) {
@@ -266,7 +266,11 @@ public class LibraryManagerImpl implements LibraryManager {
 
 		User userShare = adminManager.getUser(email);
 		if (userShare == null) {
-			userShare = adminManager.saveUser(email);
+			userShare = User.builder()
+					.username(email)
+					.build();
+
+			adminManager.saveUser(userShare);
 		}
 
 		library.getShareUsers().add(userShare);
@@ -277,5 +281,20 @@ public class LibraryManagerImpl implements LibraryManager {
 		return users;
 	}
 
+	@Override
+	public List<User> getShareUsers(long libraryId) {
+		Library library = getLibrary(libraryId);
+		List<User> shareUsers = new ArrayList<>(library.getShareUsers());
+		shareUsers.sort(new UserComparator());
+		return shareUsers;
+	}
+
+	@Override
+	public void deleteShareUser(long libraryId, String username) {
+		Library library = getLibrary(libraryId);
+		Set<User> userShares = library.getShareUsers();
+		userShares.removeIf(u -> u.getUsername().equals(username));
+		saveLibrary(library);		
+	}
 
 }

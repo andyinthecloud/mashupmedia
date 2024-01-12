@@ -33,4 +33,5 @@ public interface AdminManager {
 	public void initialiseSystemUser();
 
 	public User getSystemUser();
+
 }

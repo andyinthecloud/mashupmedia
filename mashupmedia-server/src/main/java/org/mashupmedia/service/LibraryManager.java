@@ -45,4 +45,8 @@ public interface LibraryManager {
 
     public List<User> addUserShare(String email, long libraryId);
 
+	public List<User> getShareUsers(long libraryId);
+
+    public void deleteShareUser(long libraryId, String username);
+
 }

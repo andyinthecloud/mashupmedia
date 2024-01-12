@@ -35,23 +35,4 @@ public class ValidationUtil {
 
     }
 
-
-    public static void validatePassword(String password, String repeatPassword, Errors errors) {
-
-        if (password.length() < MINIMUM_PASSWORD_LENGTH || repeatPassword.length() < MINIMUM_PASSWORD_LENGTH) {
-            errors.rejectValue(
-                FIELD_NAME_PASSWORD,
-                ErrorCode.INCORRECT_PASSWORD.getErrorCode(),
-                "The password and repeat password is too short");  
-            return;
-        }
-
-        if (!password.equals(repeatPassword)) {
-            errors.rejectValue(
-                FIELD_NAME_PASSWORD,
-                ErrorCode.NON_MATCHING_PASSWORDS.getErrorCode(),
-                "The password and repeat password should be the same");  
-        }
-    }
-
 }

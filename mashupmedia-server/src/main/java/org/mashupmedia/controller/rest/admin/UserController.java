@@ -4,43 +4,42 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.dto.admin.ChangeUserPasswordPayload;
+import org.mashupmedia.dto.admin.CreateUserPayload;
 import org.mashupmedia.dto.admin.UserPayload;
-import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.ServerResponsePayload;
+import org.mashupmedia.mapper.CreateUserMapper;
 import org.mashupmedia.mapper.UserMapper;
 import org.mashupmedia.model.User;
 import org.mashupmedia.service.AdminManager;
+import org.mashupmedia.service.EmailService;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/private/admin/user")
 public class UserController {
 
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private AdminManager adminManager;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+    private final CreateUserMapper createUserMapper;
+    private final AdminManager adminManager;
+    private final EmailService emailService;
 
     @Secured("ROLE_ADMINISTRATOR")
     @GetMapping(value = "/account/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,7 +62,6 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
-    @Secured("ROLE_ADMINISTRATOR")
     @PutMapping(value = "/account", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServerResponsePayload<String>> saveAccount(@Valid @RequestBody UserPayload userPayload,
             Errors errors) {
@@ -73,50 +71,12 @@ public class UserController {
             throw new SecurityException("Only an administrator can update another user account");
         }
 
-        if (!userPayload.isExists()) {
-            ValidationUtil.validatePassword(userPayload.getPassword(), userPayload.getRepeatPassword(), errors);
-        }
-
         if (errors.hasErrors()) {
             return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
         }
 
         User user = userMapper.toDomain(userPayload);
         adminManager.saveUser(user);
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
-    }
-
-    @PutMapping(value = "/reset-password", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<String>> changePassword(
-            @Valid @RequestBody ChangeUserPasswordPayload changeUserPasswordPayload, Errors errors) {
-
-        String username = changeUserPasswordPayload.getUsername();
-        if (StringUtils.isNotEmpty(username) && !AdminHelper.isAdministrator()) {
-            throw new SecurityException("Only an administrator can update a password in another account");
-        }
-
-        User savedUser = StringUtils.isBlank(username) ? AdminHelper.getLoggedInUser() : adminManager.getUser(username);
-
-        if (!passwordEncoder.matches(changeUserPasswordPayload.getCurrentPassword(), savedUser.getPassword())) {
-            errors.rejectValue(
-                    "currentPassword",
-                    ErrorCode.INCORRECT_PASSWORD.getErrorCode(),
-                    "The current password is incorrect");
-        }
-
-        if (!changeUserPasswordPayload.getNewPassword().equals(changeUserPasswordPayload.getConfirmPassword())) {
-            errors.rejectValue(
-                    "newPassword",
-                    ErrorCode.NON_MATCHING_PASSWORDS.getErrorCode(),
-                    "The new password and confirm password should be the same");
-        }
-
-        if (errors.hasErrors()) {
-            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
-        }
-
-        adminManager.updatePassword(savedUser.getUsername(), changeUserPasswordPayload.getNewPassword());
-
         return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
@@ -144,6 +104,24 @@ public class UserController {
 
         adminManager.deleteUser(user.getId());
         return ResponseEntity.ok(true);
+    }
+
+
+    @Secured("ROLE_ADMINISTRATOR")
+    @PostMapping(value = "/account", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ServerResponsePayload<String>> createAccount(@Valid @RequestBody CreateUserPayload userPayload,
+    Errors errors) {
+
+        if (errors.hasErrors()) {
+            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
+        }
+        
+        User user = createUserMapper.toDomain(userPayload);
+        adminManager.saveUser(user);
+
+        User loggedInUser = AdminHelper.getLoggedInUser();
+        emailService.sendUserCreatedEmail(loggedInUser.getUsername(), user.getUsername());
+        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
 }

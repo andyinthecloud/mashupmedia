@@ -22,23 +22,22 @@ const User = () => {
     const enum FieldNames {
         USERNAME = 'username',
         NAME = 'name',
-        PASSWORD = 'password',
-        REPEAT_PASSWORD = 'repeatPassword',
-
+        PASSWORD = 'password'
     }
 
     const { userId } = useParams();
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
+
     const [props, setProps] = useState<UserValidationPayload>({
         userPayload: {
             enabled: false,
-            editable: false,
             name: '',
             username: '',
             administrator: false,
-            exists: false
+            exists: false,
+            validated: false
         },
         formValidation: { fieldValidations: [] }
     })
@@ -71,12 +70,12 @@ const User = () => {
                 ...p,
                 userPayload: {
                     administrator: false,
-                    editable: true,
                     enabled: true,
                     name: '',
                     username: '',
                     password: '',
-                    exists: false
+                    exists: false,
+                    validated: false
                 }
             }))
         }
@@ -127,8 +126,6 @@ const User = () => {
             }
         }))
     }
-
-    const isEditable = (): boolean => (!props.userPayload.editable)
 
     const handleRolesChange = (values: string[]) => {
         setStateValue('rolePayloads', toNameValuePayloads(values))
@@ -183,8 +180,8 @@ const User = () => {
         navigate('/')
     }
 
-    function handleChangeUserPassword(): void {
-        navigate(`/configuration/change-user-password/${props.userPayload.username}`)
+    function handleResetPassword(): void {
+        navigate(`/reset-password`, {state: {username: props.userPayload.username}})
     }
 
     function handleDeleteUser(): void {
@@ -196,6 +193,7 @@ const User = () => {
                         notificationType: NotificationType.SUCCESS
                     })
                 )
+                navigate('/configuration/users')
             })
             .catch(() => {
                 dispatch(
@@ -205,7 +203,6 @@ const User = () => {
                     })
                 )
             })
-        navigate('/configuration/users')
     }
 
     const hasDeletePermission = (): boolean => {
@@ -244,7 +241,6 @@ const User = () => {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    disabled={isEditable()}
                                     name="enabled"
                                     checked={props.userPayload.enabled}
                                     onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.checked)}
@@ -258,7 +254,6 @@ const User = () => {
                 <TextField
                     name={FieldNames.USERNAME}
                     label="Username"
-                    disabled={isEditable()}
                     value={props.userPayload.username}
                     onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                     fullWidth={true}
@@ -273,7 +268,6 @@ const User = () => {
                     <TextField
                         name={FieldNames.PASSWORD}
                         label="Password"
-                        disabled={isEditable()}
                         value={props.userPayload.password}
                         onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                         fullWidth={true}
@@ -284,27 +278,10 @@ const User = () => {
                 </div>
             }
 
-            {!props.userPayload.exists &&
-                <div className="new-line">
-                    <TextField
-                        name={FieldNames.REPEAT_PASSWORD}
-                        label="Repeat password"
-                        disabled={isEditable()}
-                        value={props.userPayload.repeatPassword}
-                        onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
-                        fullWidth={true}
-                        error={hasFieldError(FieldNames.REPEAT_PASSWORD, props.formValidation)}
-                        helperText={fieldErrorMessage(FieldNames.REPEAT_PASSWORD, props.formValidation)}
-                        type="password"
-                    />
-                </div>
-            }
-
             <div className="new-line">
                 <TextField
                     name={FieldNames.NAME}
                     label="Name"
-                    disabled={isEditable()}
                     value={props.userPayload.name}
                     onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                     fullWidth={true}
@@ -333,15 +310,17 @@ const User = () => {
                 </div>
             }
 
-            <div className="new-line">
-                <h2>Roles</h2>
-                <Checkboxes<string>
-                    isDisabled={!props.userPayload.editable}
-                    referenceItems={toCheckboxPayloads<string>(rolePayloads)}
-                    selectedValues={toSelectedValues<string>(props.userPayload.rolePayloads)}
-                    onChange={handleRolesChange}
-                />
-            </div>
+
+            {userPolicyPayload?.administrator &&
+                <div className="new-line">
+                    <h2>Roles</h2>
+                    <Checkboxes<string>
+                        referenceItems={toCheckboxPayloads<string>(rolePayloads)}
+                        selectedValues={toSelectedValues<string>(props.userPayload.rolePayloads)}
+                        onChange={handleRolesChange}
+                    />
+                </div>
+            }
 
             <div className="new-line right">
                 <Button variant="contained" color="secondary" type="button" onClick={handleCancel}>
@@ -349,7 +328,7 @@ const User = () => {
                 </Button>
 
                 {hasChangePasswordPermission() && props.userPayload.exists &&
-                    <Button variant="contained" color="secondary" type="button" onClick={handleChangeUserPassword}>
+                    <Button variant="contained" color="secondary" type="button" onClick={handleResetPassword}>
                         Change password
                     </Button>
                 }
@@ -361,7 +340,7 @@ const User = () => {
                 }
 
                 {userPolicyPayload?.administrator &&
-                    <Button variant="contained" color="primary" type="submit" disabled={!props.userPayload.editable}>
+                    <Button variant="contained" color="primary" type="submit">
                         Save
                     </Button>
                 }

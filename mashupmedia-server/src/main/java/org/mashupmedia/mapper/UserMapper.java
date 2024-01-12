@@ -26,12 +26,12 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                 UserPayload userPayload = UserPayload.builder()
                                 .name(domain.getName())
                                 .username(domain.getUsername())
-                                .editable(domain.isEditable())
                                 .enabled(domain.isEnabled())
                                 .administrator(domain.isAdministrator())
                                 .createdOn(DateHelper.toLocalDateTime(domain.getCreatedOn()))
                                 .updatedOn(DateHelper.toLocalDateTime(domain.getUpdatedOn()))
                                 .exists(domain.getId() > 0 ? true : false)
+                                .validated(domain.isValidated())
                                 .build();
 
                 if (!AdminHelper.isAdministrator()) {
@@ -55,7 +55,6 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                                 .username(payload.getUsername())
                                 .name(payload.getName())
                                 .enabled(payload.isEnabled())
-                                .editable(payload.isEditable())
                                 .build();
 
                 if (!payload.isExists()) {

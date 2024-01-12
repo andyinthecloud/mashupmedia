@@ -5,6 +5,7 @@ import org.mashupmedia.dto.admin.CreateUserPayload;
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.CreateUserMapper;
+import org.mashupmedia.model.User;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.EmailService;
 import org.mashupmedia.util.ActivationTokenUtils;
@@ -26,9 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CreateUserController {
 
-
     private final static String FIELD_NAME_USERNAME = "username";
-
 
     private final AdminManager adminManager;
     private final EncryptService encryptService;
@@ -47,9 +46,7 @@ public class CreateUserController {
         }
 
         String username = createUserPayload.getUsername();
-        String activationCode = ActivationTokenUtils.generateActivationCode(); 
-
-
+        String activationCode = ActivationTokenUtils.generateActivationCode();
 
         emailService.sendUserActivationMail(username, activationCode);
         String rawToken = ActivationTokenUtils.generateRawToken(username, activationCode);
@@ -65,10 +62,13 @@ public class CreateUserController {
 
     private void validateUserEnteredPayload(CreateUserPayload createUserPayload, Errors errors) {
         String username = createUserPayload.getUsername();
-        if (adminManager.getUser(username) != null) {
+
+        User user = adminManager.getUser(username);
+        if (user != null && user.isValidated()) {
             errors.rejectValue(FIELD_NAME_USERNAME,
                     ErrorCode.NOT_UNIQUE.getErrorCode(),
                     "A user with this email already exists");
+            return;
         }
 
         if (!EmailValidator.getInstance().isValid(username)) {
@@ -86,7 +86,8 @@ public class CreateUserController {
 
         validateUserEnteredPayload(createUserPayload, errors);
         String decryptedToken = encryptService.decrypt(createUserPayload.getToken());
-        ActivationTokenUtils.validateToken(decryptedToken, createUserPayload.getUsername(), createUserPayload.getActivationCode(),  errors);
+        ActivationTokenUtils.validateToken(decryptedToken, createUserPayload.getUsername(),
+                createUserPayload.getActivationCode(), errors);
 
         if (errors.hasErrors()) {
             return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);

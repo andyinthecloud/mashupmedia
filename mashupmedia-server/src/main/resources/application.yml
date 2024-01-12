@@ -36,6 +36,7 @@ server:
   
   servlet:
     context-path: /mashupmedia
+    host: https://www.mashupmedia.org
     encoding:
       charset: utf-8
 

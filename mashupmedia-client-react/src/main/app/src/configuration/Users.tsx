@@ -1,8 +1,8 @@
-import { AdminPanelSettings, Person } from "@mui/icons-material"
-import { Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
+import { AdminPanelSettings, Person, VerifiedTwoTone, VerifiedUser } from "@mui/icons-material"
+import { Avatar, Button, Icon, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { RootState } from "../common/redux/store"
 import { HttpStatus, redirectLogin } from "../common/utils/httpUtils"
 import { UserPayload, getUsers } from "./backend/userCalls"
@@ -15,6 +15,17 @@ const Users = () => {
     const [props, setProps] = useState<UserPayload[]>([])
 
     useEffect(() => {
+        loadUsers()
+    }, [])
+
+    const {state} = useLocation()
+
+    useEffect(() => {
+        console.log('users useLocation')
+        loadUsers()
+    }, [state])
+
+    const loadUsers = (): void => {
         getUsers(userToken)
             .then((response) => {
                 if (response.parsedBody !== undefined) {
@@ -24,16 +35,7 @@ const Users = () => {
             .catch(() =>
                 redirectLogin(HttpStatus.FORBIDDEN)
             )
-
-    }, [])
-
-
-    const userIcon = (userPayload: UserPayload) => {
-        return userPayload.administrator
-            ? <AdminPanelSettings />
-            : <Person />
-    }
-
+    } 
 
     const navigate = useNavigate()
     function handleCancel(): void {
@@ -42,7 +44,7 @@ const Users = () => {
 
 
     function handleNewUser(): void {
-        navigate('/configuration/new-account')
+        navigate('/create-user')
     }
 
     function handleClickUser(username: string): void {
@@ -55,15 +57,36 @@ const Users = () => {
 
             <h1>Users</h1>
 
-            <List>                
+            <List>
                 {props.map(function (userPayload) {
                     return (
-                        <ListItem key={userPayload.username} onClick={() => handleClickUser(userPayload.username)}>
+                        <ListItem
+                            key={userPayload.username}
+                            onClick={() => handleClickUser(userPayload.username)}
+                            secondaryAction={
+                                userPayload.administrator && (
+                                    <AdminPanelSettings />
+                                )
+                            }
+
+                        >
                             <ListItemButton>
-                                <ListItemIcon>
-                                    {userIcon(userPayload)}
-                                </ListItemIcon>
-                                <ListItemText>{userPayload.name}</ListItemText>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        {userPayload.validated &&
+                                            <Tooltip title="Validated">
+                                                <VerifiedUser />
+                                            </Tooltip>
+                                        }
+                                        {!userPayload.validated &&
+                                            <Tooltip title="Not yet validated">
+                                                <Person />
+                                            </Tooltip>
+                                        }
+                                    </Avatar>
+                                </ListItemAvatar>
+
+                                <ListItemText>{userPayload.username}</ListItemText>
                             </ListItemButton>
                         </ListItem>
                     )
