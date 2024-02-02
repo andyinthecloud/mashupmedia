@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class CreateUserMapper implements DomainMapper<User, CreateUserPayload>{
 
     @Override
-    public CreateUserPayload toDto(User domain) {
+    public CreateUserPayload toPayload(User domain) {
         throw new UnsupportedOperationException("Unimplemented method 'toDto'");
     }
 

@@ -17,12 +17,12 @@ public class ArtistWithAlbumsMapper extends SecureMediaDomainMapper<Artist, Arti
     private final AlbumMapper albumMapper;
 
     @Override
-    public ArtistWithAlbumsPayload toDto(Artist domain) {
+    public ArtistWithAlbumsPayload toPayload(Artist domain) {
         return ArtistWithAlbumsPayload.builder()
-                .artistPayload(artistMapper.toDto(domain))
+                .artistPayload(artistMapper.toPayload(domain))
                 .albumPayloads(domain.getAlbums()
                         .stream()
-                        .map(albumMapper::toDto)
+                        .map(albumMapper::toPayload)
                         .collect(Collectors.toList()))
                 .build();
     }

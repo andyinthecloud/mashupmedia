@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest.security;
+package org.mashupmedia.controller.rest.authenticated.security;
 
 import jakarta.validation.Valid;
 

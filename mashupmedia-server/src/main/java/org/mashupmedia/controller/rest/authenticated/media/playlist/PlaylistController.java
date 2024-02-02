@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest.media.playlist;
+package org.mashupmedia.controller.rest.authenticated.media.playlist;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public class PlaylistController {
         return ResponseEntity.ok(
                 playlistManager.getPlaylists(MashupMediaType.MUSIC)
                         .stream()
-                        .map(playlistMapper::toDto)
+                        .map(playlistMapper::toPayload)
                         .collect(Collectors.toList()));
     }
 
@@ -61,7 +61,7 @@ public class PlaylistController {
     public ResponseEntity<PlaylistWithMediaItemsPayload> getPlaylist(@PathVariable long playlistId) {
         Playlist playlist = playlistManager.getPlaylist(playlistId);
         return ResponseEntity.ok(
-                playlistWithTracksMapper.toDto(playlist));
+                playlistWithTracksMapper.toPayload(playlist));
     }
 
     @PutMapping(value = "/load/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class LibraryShareUserMapper implements DomainMapper<User, LibraryShareUserPayload> {
 
     @Override
-    public LibraryShareUserPayload toDto(User domain) {
+    public LibraryShareUserPayload toPayload(User domain) {
         return LibraryShareUserPayload.builder()
                 .email(domain.getUsername())
                 .validated(domain.isValidated())

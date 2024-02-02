@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest.media.music;
+package org.mashupmedia.controller.rest.authenticated.media.music;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ public class ArtistController {
     public List<ArtistPayload> getArtists() {
         return musicManager.getArtists()
                 .stream()
-                .map(artistMapper::toDto)
+                .map(artistMapper::toPayload)
                 .collect(Collectors.toList());
 
     }

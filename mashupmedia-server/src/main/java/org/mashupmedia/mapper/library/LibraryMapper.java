@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
 public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
 
     @Override
-    public LibraryPayload toDto(Library domain) {
+    public LibraryPayload toPayload(Library domain) {
 
         LibraryPayload libraryPayload = null;
 

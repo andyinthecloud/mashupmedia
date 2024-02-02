@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest.library;
+package org.mashupmedia.controller.rest.authenticated.library;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,7 +59,7 @@ public class LIbraryShareController {
 
         List<User> shareUsers = libraryManager.getShareUsers(libraryId);
         List<LibraryShareUserPayload> libraryShareUserPayloads = shareUsers.stream()
-                .map(libraryShareUserMapper::toDto)
+                .map(libraryShareUserMapper::toPayload)
                 .collect(Collectors.toList());
 
         return ValidationUtil.createResponseEntityPayload(libraryShareUserPayloads, errors);
@@ -70,7 +70,7 @@ public class LIbraryShareController {
             @PathVariable long libraryId) {
         List<User> shareUsers = libraryManager.getShareUsers(libraryId);
         List<LibraryShareUserPayload> libraryShareUserPayloads = shareUsers.stream()
-                .map(libraryShareUserMapper::toDto)
+                .map(libraryShareUserMapper::toPayload)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok().body(libraryShareUserPayloads);
@@ -86,7 +86,7 @@ public class LIbraryShareController {
         List<User> shareUsers = libraryManager.getShareUsers(libraryId);
 
         List<LibraryShareUserPayload> libraryShareUserPayloads = shareUsers.stream()
-                .map(libraryShareUserMapper::toDto)
+                .map(libraryShareUserMapper::toPayload)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok().body(libraryShareUserPayloads);

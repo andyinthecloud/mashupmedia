@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest.media.search;
+package org.mashupmedia.controller.rest.authenticated.media.search;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class MediaSearchController {
         return ResponseEntity.ok(
                 musicManager.getGenres()
                         .stream()
-                        .map(genreMapper::toDto)
+                        .map(genreMapper::toPayload)
                         .collect(Collectors.toList()));
     }
 

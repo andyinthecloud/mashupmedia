@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class UserPolicyMapper implements DomainMapper<User, UserPolicyPayload> {
 
     @Override
-    public UserPolicyPayload toDto(User domain) {
+    public UserPolicyPayload toPayload(User domain) {
         return UserPolicyPayload.builder()
                 .name(domain.getName())
                 .username(domain.getUsername())

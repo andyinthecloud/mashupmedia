@@ -19,14 +19,14 @@ public class PlaylistTrackPayloadMapper implements DomainMapper<PlaylistMediaIte
     private final ArtistMapper artistMapper;
 
     @Override
-    public PlaylistTrackPayload toDto(PlaylistMediaItem domain) {
+    public PlaylistTrackPayload toPayload(PlaylistMediaItem domain) {
         MediaItem mediaItem = domain.getMediaItem();
         if (mediaItem instanceof Track track) {
             return PlaylistTrackPayload
             .builder()
             .playlistMediaItemId(domain.getId())
-            .artistPayload(artistMapper.toDto(track.getArtist()))
-            .trackPayload(trackMapper.toDto(track))
+            .artistPayload(artistMapper.toPayload(track.getArtist()))
+            .trackPayload(trackMapper.toPayload(track))
             .playing(domain.isPlaying())
             .build();
         }

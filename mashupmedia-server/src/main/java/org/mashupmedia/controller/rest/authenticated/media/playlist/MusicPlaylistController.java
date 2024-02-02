@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest.media.playlist;
+package org.mashupmedia.controller.rest.authenticated.media.playlist;
 
 import java.util.List;
 import java.util.stream.Collectors;

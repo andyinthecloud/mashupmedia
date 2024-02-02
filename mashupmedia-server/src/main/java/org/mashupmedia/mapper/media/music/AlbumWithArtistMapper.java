@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class AlbumWithArtistMapper extends SecureMediaDomainMapper<Album, AlbumWithArtistPayload> {
 
     @Override
-    public AlbumWithArtistPayload toDto(Album domain) {
+    public AlbumWithArtistPayload toPayload(Album domain) {
 
         Artist artist = domain.getArtist();
         ArtistPayload artistPayload = ArtistPayload

@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.unauthenticated;
+package org.mashupmedia.controller.rest.unauthenticated;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;

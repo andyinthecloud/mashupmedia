@@ -24,7 +24,7 @@ public class SecureMusicPlaylistTrackMapper extends SecureMediaDomainMapper<Play
     private final PlaylistMapper playlistMapper;
 
     @Override
-    public MusicPlaylistTrackPayload toDto(PlaylistMediaItem domain) {
+    public MusicPlaylistTrackPayload toPayload(PlaylistMediaItem domain) {
 
         MediaItem mediaItem = domain.getMediaItem();        
         Assert.isInstanceOf(Track.class, mediaItem, "Playlist media item should be a music track");
@@ -41,10 +41,10 @@ public class SecureMusicPlaylistTrackMapper extends SecureMediaDomainMapper<Play
 
         return MusicPlaylistTrackPayload.builder()
                 .id(domain.getId())
-                .artistPayload(artistMapper.toDto(artist))
-                .trackPayload(trackMapper.toDto(track))
-                .albumPayload(albumMapper.toDto(album))
-                .playlistPayload(playlistMapper.toDto(playlist))
+                .artistPayload(artistMapper.toPayload(artist))
+                .trackPayload(trackMapper.toPayload(track))
+                .albumPayload(albumMapper.toPayload(album))
+                .playlistPayload(playlistMapper.toPayload(playlist))
                 .first(domain.isFirst())
                 .last(domain.isLast())
                 .encoderStatusType(domain.getEncoderStatusType())

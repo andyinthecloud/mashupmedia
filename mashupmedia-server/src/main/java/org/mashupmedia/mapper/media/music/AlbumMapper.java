@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class AlbumMapper implements DomainMapper<Album, AlbumPayload> {
 
     @Override
-    public AlbumPayload toDto(Album domain) {
+    public AlbumPayload toPayload(Album domain) {
         return AlbumPayload.builder()
                 .id(domain.getId())
                 .name(domain.getName())

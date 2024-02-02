@@ -25,9 +25,9 @@ public class MusicSearchResultPagePayloadMapper extends PagePayloadMapper<Track,
     protected MusicSearchResultPayload mapToPayload(Track domain) {
         return MusicSearchResultPayload.builder()
                 .mashupMediaType(MashupMediaType.MUSIC)
-                .trackPayload(trackMapper.toDto(domain))
-                .albumPayload(albumMapper.toDto(domain.getAlbum()))
-                .artistPayload(artistMapper.toDto(domain.getArtist()))
+                .trackPayload(trackMapper.toPayload(domain))
+                .albumPayload(albumMapper.toPayload(domain.getAlbum()))
+                .artistPayload(artistMapper.toPayload(domain.getArtist()))
                 .build();
     }
 

@@ -21,8 +21,8 @@ public class AlbumMusicSearchResultPayload implements PayloadMapper<Album, Music
     public MusicSearchResultPayload toPayload(Album domain) {
         return MusicSearchResultPayload.builder()
                 .mashupMediaType(MashupMediaType.MUSIC)
-                .albumPayload(albumMapper.toDto(domain))
-                .artistPayload(artistMapper.toDto(domain.getArtist()))
+                .albumPayload(albumMapper.toPayload(domain))
+                .artistPayload(artistMapper.toPayload(domain.getArtist()))
                 .build();
     }
 

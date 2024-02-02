@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.constants.MashupMediaType;
@@ -69,6 +70,7 @@ public class AdminManagerImpl implements AdminManager {
 
 		if (userId == 0) {
 			user.setCreatedOn(date);
+			user.setLibraryFolderName(RandomStringUtils.randomAlphanumeric(15));
 		} else {
 			User savedUser = getUser(userId);
 			user.setCreatedOn(savedUser.getCreatedOn());

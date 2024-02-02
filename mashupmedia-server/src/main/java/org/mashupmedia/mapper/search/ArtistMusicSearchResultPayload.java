@@ -19,7 +19,7 @@ public class ArtistMusicSearchResultPayload implements PayloadMapper<Artist, Mus
     public MusicSearchResultPayload toPayload(Artist domain) {
         return MusicSearchResultPayload.builder()
                 .mashupMediaType(MashupMediaType.MUSIC)
-                .artistPayload(artistMapper.toDto(domain))
+                .artistPayload(artistMapper.toPayload(domain))
                 .build();
     }
 

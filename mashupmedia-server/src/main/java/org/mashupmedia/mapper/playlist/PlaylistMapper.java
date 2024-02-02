@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class PlaylistMapper implements DomainMapper<Playlist, PlaylistPayload> {
 
     @Override
-    public PlaylistPayload toDto(Playlist domain) {
+    public PlaylistPayload toPayload(Playlist domain) {
         return PlaylistPayload.builder()
                 .id(domain.getId())
                 .name(domain.getName())

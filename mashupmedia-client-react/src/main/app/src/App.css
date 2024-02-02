@@ -123,3 +123,7 @@ label {
   cursor: pointer;
   margin-left: 0.2em;
 } 
+
+.float-right {
+  float: right;
+}

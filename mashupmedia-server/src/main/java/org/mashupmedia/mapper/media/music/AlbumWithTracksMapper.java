@@ -21,7 +21,7 @@ public class AlbumWithTracksMapper extends SecureMediaDomainMapper<Album, AlbumW
     private final TrackMapper trackMapper;
 
     @Override
-    public AlbumWithTracksAndArtistPayload toDto(Album domain) {
+    public AlbumWithTracksAndArtistPayload toPayload(Album domain) {
 
         AlbumPayload albumPayload = AlbumPayload
                 .builder()
@@ -29,11 +29,11 @@ public class AlbumWithTracksMapper extends SecureMediaDomainMapper<Album, AlbumW
                 .name(domain.getName())
                 .build();
 
-        ArtistPayload artistPayload = artistMapper.toDto(domain.getArtist());
+        ArtistPayload artistPayload = artistMapper.toPayload(domain.getArtist());
 
         List<TrackPayload> trackPayloads = domain.getTracks()
                 .stream()
-                .map(track -> trackMapper.toDto(track))
+                .map(track -> trackMapper.toPayload(track))
                 .collect(Collectors.toList());
 
         return AlbumWithTracksAndArtistPayload

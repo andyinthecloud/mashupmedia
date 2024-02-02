@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest.admin;
+package org.mashupmedia.controller.rest.authenticated.admin;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,7 +59,7 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(userMapper.toDto(user));
+        return ResponseEntity.ok(userMapper.toPayload(user));
     }
 
     @PutMapping(value = "/account", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -84,7 +84,7 @@ public class UserController {
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<UserPayload>> getUsers() {
         List<UserPayload> userPayloads = adminManager.getUsers().stream()
-                .map(userMapper::toDto)
+                .map(userMapper::toPayload)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(userPayloads);

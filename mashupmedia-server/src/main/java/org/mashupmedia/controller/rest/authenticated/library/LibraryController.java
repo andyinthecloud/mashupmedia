@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest.library;
+package org.mashupmedia.controller.rest.authenticated.library;
 
 import java.io.File;
 import java.util.List;
@@ -60,7 +60,7 @@ public class LibraryController {
 
         List<LibraryNameValuePayload> libraryNameValuePayloads = libraryManager.getLibraries()
                 .stream()
-                .map(libraryNameValueMapper::toDto)
+                .map(libraryNameValueMapper::toPayload)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok().body(libraryNameValuePayloads);
@@ -70,7 +70,7 @@ public class LibraryController {
     public ResponseEntity<LibraryPayload> getLibrary(@PathVariable long libraryId) {
         Library library = libraryManager.getLibrary(libraryId);
         checkLibraryPermission(library);
-        LibraryPayload libraryPayload = libraryMapper.toDto(library);
+        LibraryPayload libraryPayload = libraryMapper.toPayload(library);
         return ResponseEntity.ok().body(libraryPayload);
     }
 

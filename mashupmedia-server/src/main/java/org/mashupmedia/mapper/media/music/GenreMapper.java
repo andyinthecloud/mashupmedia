@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class GenreMapper implements DomainMapper<Genre, GenrePayload>{
 
     @Override
-    public GenrePayload toDto(Genre domain) {
+    public GenrePayload toPayload(Genre domain) {
         return GenrePayload.builder()
         .idName(domain.getName())    
         .build();

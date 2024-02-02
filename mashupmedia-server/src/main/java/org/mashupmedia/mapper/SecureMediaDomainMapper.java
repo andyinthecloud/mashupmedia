@@ -8,7 +8,7 @@ public abstract class SecureMediaDomainMapper<D, P> implements DomainMapper<D, P
         return SecureMediaPayload
                 .<P>builder()
                 .mediaToken(mediaToken)
-                .payload(toDto(domain))
+                .payload(toPayload(domain))
                 .build();
     }
 

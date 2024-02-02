@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class TrackMapper implements DomainMapper<Track, TrackPayload> {
 
     @Override
-    public TrackPayload toDto(Track domain) {
+    public TrackPayload toPayload(Track domain) {
         Year year = domain.getYear();
 
         return TrackPayload.builder()

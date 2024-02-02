@@ -21,7 +21,7 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
         private RoleMapper roleMapper;
 
         @Override
-        public UserPayload toDto(User domain) {
+        public UserPayload toPayload(User domain) {
 
                 UserPayload userPayload = UserPayload.builder()
                                 .name(domain.getName())
@@ -39,7 +39,7 @@ public class UserMapper implements DomainMapper<User, UserPayload> {
                 }
 
                 List<NameValuePayload<String>> rolePayloads = domain.getRoles().stream()
-                                .map(roleMapper::toDto)
+                                .map(roleMapper::toPayload)
                                 .collect(Collectors.toList());
 
                 return userPayload.toBuilder()

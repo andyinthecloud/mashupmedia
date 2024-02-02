@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
-import { LibraryPayload, LibraryShareUserPayload, LibraryTypePayload, addLibraryShare, deleteLibraryShare, getLibraryShares } from "../backend/libraryCalls"
+import { LibraryPayload, LibraryTypePayload } from "../backend/libraryCalls"
+import { LibraryShareUserPayload, addLibraryShare, deleteLibraryShare, getLibraryShares } from "../backend/libraryShareCalls"
 import { LibraryPagePayload, TabPanelPayload } from "./Library"
 import { Avatar, Button, IconButton, List, ListItem, ListItemAvatar, ListItemText, TextField, Tooltip } from "@mui/material"
 import { FieldValidation, FormValidation, emptyFieldValidation, fieldErrorMessage, hasFieldError, isEmpty, toFieldValidation } from "../../common/utils/formValidationUtils"

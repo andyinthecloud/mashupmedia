@@ -375,4 +375,10 @@ public class FileHelper {
 		File file = new File(getPlaylistFolder(playlistId), userPrefix + "-" + System.currentTimeMillis());
 		return file;
 	}
+
+	public static File getUserLibraryFolder(String userFolderName) {
+		File userUploadFolder = new File(getApplicationFolder(), "users/" + userFolderName);
+		userUploadFolder.mkdirs();
+		return userUploadFolder;
+	}
 }

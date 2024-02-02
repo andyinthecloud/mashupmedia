@@ -7,7 +7,8 @@ import { RootState } from "../../common/redux/store";
 import { LibraryPayload, LibraryTypePayload, deleteLibrary, getLibrary } from "../backend/libraryCalls";
 import './Library.css';
 import LibraryGeneral from "./LibraryGeneral";
-import LibraryUsers from "./LIbraryUsers";
+import LibraryFiles from "./LibraryFiles";
+import LibraryUsers from "./LibraryUsers";
 
 
 export type TabPanelPayload = {
@@ -149,6 +150,7 @@ const Library = () => {
             </Box>
 
             <LibraryGeneral {...props} />
+            <LibraryFiles {...props} />
             <LibraryUsers {...props} />
 
 

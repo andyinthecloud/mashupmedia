@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest.encode;
+package org.mashupmedia.controller.rest.authenticated.encode;
 
 import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;

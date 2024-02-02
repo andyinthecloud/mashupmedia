@@ -19,16 +19,16 @@ public class PlaylistWithTracksMapper implements DomainMapper<Playlist, Playlist
     private final PlaylistTrackPayloadMapper playlistTrackPayloadMapper;
 
     @Override
-    public PlaylistWithMediaItemsPayload toDto(Playlist domain) {
+    public PlaylistWithMediaItemsPayload toPayload(Playlist domain) {
 
         if (domain.getMashupMediaType() == MashupMediaType.MUSIC) {
             return PlaylistWithMediaItemsPayload
                     .builder()
-                    .playlistPayload(playlistMapper.toDto(domain))
+                    .playlistPayload(playlistMapper.toPayload(domain))
                     .playlistMediaItemPayloads(
                             domain.getAccessiblePlaylistMediaItems(AdminHelper.getLoggedInUser())
                                     .stream()
-                                    .map(playlistTrackPayloadMapper::toDto)
+                                    .map(playlistTrackPayloadMapper::toPayload)
                                     .collect(Collectors.toList()))
                     .build();
         }

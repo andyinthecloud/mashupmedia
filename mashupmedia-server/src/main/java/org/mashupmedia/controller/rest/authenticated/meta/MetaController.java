@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest.meta;
+package org.mashupmedia.controller.rest.authenticated.meta;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +27,7 @@ public class MetaController {
     public List<NameValuePayload<String>> getRoles() {
         return adminManager.getRoles()
                 .stream()
-                .map(roleMapper::toDto)
+                .map(roleMapper::toPayload)
                 .collect(Collectors.toList());
     }
 

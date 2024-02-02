@@ -1,4 +1,4 @@
-package org.mashupmedia.controller.rest.media.music;
+package org.mashupmedia.controller.rest.authenticated.media.music;
 
 import java.util.ArrayList;
 import java.util.List;

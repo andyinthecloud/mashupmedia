@@ -60,6 +60,7 @@ public class User implements UserDetails {
 	private boolean validated;
 	@ManyToOne
 	private User createdBy;
+	private String libraryFolderName;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

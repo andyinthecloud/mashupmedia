@@ -1,6 +1,6 @@
 package org.mashupmedia.mapper;
 
 public interface DomainMapper<D, P> {
-     P toDto(D domain);
+     P toPayload(D domain);
      D toDomain(P payload);
 }

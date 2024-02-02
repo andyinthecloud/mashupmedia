@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
 public class LibraryNameValueMapper implements DomainMapper<Library, LibraryNameValuePayload> {
 
     @Override
-    public LibraryNameValuePayload toDto(Library domain) {
+    public LibraryNameValuePayload toPayload(Library domain) {
 
         Assert.notNull(domain, "Library should not be null");
 
