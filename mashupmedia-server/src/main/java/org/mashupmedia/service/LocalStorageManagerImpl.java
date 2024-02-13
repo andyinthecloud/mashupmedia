@@ -1,9 +1,11 @@
 package org.mashupmedia.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.User;
@@ -41,14 +43,14 @@ public class LocalStorageManagerImpl implements StorageManager {
             File file = new File(library.getLocation().getPath());
             File[] files = file.listFiles();
             Arrays.sort(files);
-            return Arrays.asList(files);        
+            return Arrays.asList(files);
         }
 
         File file = new File(folderPath);
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             Arrays.sort(files);
-            return Arrays.asList(files);        
+            return Arrays.asList(files);
         }
 
         throw new MashupMediaRuntimeException("Unable to get files for path: '" + folderPath);
@@ -71,7 +73,32 @@ public class LocalStorageManagerImpl implements StorageManager {
 
         throw new IllegalAccessError(
                 "User: " + user.getUsername() + " does not have rights to access library id: " + library.getId());
+    }
 
+    @Override
+    public boolean rename(long libraryId, String path, String name) {
+        Library library = libraryManager.getLibrary(libraryId);
+        checkFolderAccessRights(library, path);
+        File file = new File(path);
+        File renameFile = new File(file.getParent(), name);
+        return file.renameTo(renameFile);
+    }
+
+    @Override
+    public boolean delete(long libraryId, String path) {
+        Library library = libraryManager.getLibrary(libraryId);
+        checkFolderAccessRights(library, path);
+        File file = new File(path);
+        if (file.isDirectory()) {
+            try {
+                FileUtils.deleteDirectory(file);
+            } catch (IOException e) {
+                throw new MashupMediaRuntimeException("Unable to delete path: " + path, e);
+            }
+            return true;
+        } else {
+            return file.delete();
+        }
     }
 
 }

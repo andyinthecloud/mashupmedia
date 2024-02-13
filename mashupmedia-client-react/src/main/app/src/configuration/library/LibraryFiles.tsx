@@ -1,19 +1,21 @@
-import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react"
-import { LibraryPayload, LibraryTypePayload } from "../backend/libraryCalls"
-import { LibraryPagePayload, TabPanelPayload } from "./Library"
-import { Button, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
-import { Folder, MoreVert, UploadFile } from "@mui/icons-material"
-import { LibraryFilePayload, getLibraryFiles } from "../backend/libraryFileCalls"
+import { Article, Folder, Image, MoreVert, Movie, MusicNote } from "@mui/icons-material"
+import { Breadcrumbs, IconButton, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
+import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../../common/redux/store"
+import { LibraryPayload, LibraryTypePayload } from "../backend/libraryCalls"
+import { LibraryFilePayload, LibraryFilesPayload, getLibraryFiles } from "../backend/libraryFileCalls"
+import { LibraryPagePayload, TabPanelPayload } from "./Library"
 import LibraryFileMenu, { LibraryFileMenuPayload } from "./LibraryFileMenu"
+import './LibraryFiles.css'
+import { MashupMediaType } from "../../media/music/rest/playlistActionCalls"
 
 
-type LibraryFilesPayload = {
+type LibraryFilesPagePayload = {
     libraryPayload: LibraryPayload
     tabPanelPayload: TabPanelPayload
     uploadFileList?: FileList
-    libraryFilePayloads?: LibraryFilePayload[]
+    libraryFilesPayload?: LibraryFilesPayload
     uploadDisabled: boolean
     folderPath?: string
     libraryFolderMenuPayload: LibraryFileMenuPayload
@@ -26,18 +28,8 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
-    const uploadFolderRef = useRef<HTMLInputElement>(null);
-    const uploadFileRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        if (uploadFolderRef.current !== null) {
-            uploadFolderRef.current.setAttribute("directory", "");
-            uploadFolderRef.current.setAttribute("webkitdirectory", "");
-        }
-    }, [uploadFolderRef]);
-
-
-    const [props, setProps] = useState<LibraryFilesPayload>({
+    const [props, setProps] = useState<LibraryFilesPagePayload>({
         libraryPayload: {
             name: '',
             path: '',
@@ -49,10 +41,10 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
         },
         uploadDisabled: true,
         libraryFolderMenuPayload: {
-            anchorElement: null
+            anchorElement: null,
+            enableUpload: false
         }
     })
-
 
     useEffect(() => {
         const libraryId = libraryPagePayload.libraryPayload.id
@@ -64,11 +56,17 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
             if (response.ok) {
                 setProps(p => ({
                     ...p,
-                    libraryFilePayloads: response.parsedBody,
+                    libraryFilesPayload: response.parsedBody,
                     libraryPayload: libraryPagePayload.libraryPayload,
                     tabPanelPayload: {
                         index: tabIndex,
                         value: libraryPagePayload.tabPanelPayload.value
+                    },
+                    libraryFolderMenuPayload: {
+                        anchorElement: null,
+                        enableUpload: false,
+                        libraryId: libraryPagePayload.libraryPayload.id,
+                        path: libraryPagePayload.libraryPayload.path
                     }
                 }))
             }
@@ -88,69 +86,43 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
                 setProps(p => ({
                     ...p,
                     folderPath,
-                    libraryFilePayloads: response.parsedBody
+                    libraryFilesPayload: response.parsedBody,
+                    libraryFolderMenuPayload: {
+                        anchorElement: null,
+                        libraryId,
+                        enableUpload: false
+                    }
                 }))
             }
         })
     }
 
-    const handleChangeFolder = (e: ChangeEvent<HTMLInputElement>): void => {
-        console.log('handleChangeFolder')
-
-        setProps(p => ({
-            ...p,
-            fileList: e.target.files || undefined,
-            uploadDisabled: false
-        }))
-    }
-
-
-    const handleClickUploadFolder = (): void => {
-        if (props.uploadFileList == null) {
-            return
-        }
-        Array.from(props.uploadFileList).forEach(file => {
-            console.log('selected file:', file)
-        })
-    }
-
-    const handleIconFolderClick = (): void => {
-        if (uploadFolderRef) {
-            uploadFolderRef.current?.click()
-        }
-    }
-
-    const handleIconFileClick = (): void => {
-        if (uploadFileRef) {
-            uploadFileRef.current?.click()
-        }
-    }
-
-    const handleMoreFileClick = (event: React.MouseEvent<HTMLElement>): void => {
+    const handleMoreFileClick = (event: React.MouseEvent<HTMLElement>, path: string, enableUpload: boolean): void => {
         setProps(p => ({
             ...p,
             libraryFolderMenuPayload: {
-                anchorElement: event.currentTarget
+                ...p.libraryFolderMenuPayload,
+                anchorElement: event.currentTarget,
+                enableUpload,
+                path
             }
         }))
     }
-
-
 
     const renderFolder = (libraryFilePayload: LibraryFilePayload) => {
         return (
             <ListItem
                 key={libraryFilePayload.name}
                 secondaryAction={
-                    <IconButton 
-                    edge="end"
-                    onClick={handleMoreFileClick}>
+                    <IconButton
+                        edge="end"
+                        onClick={(e) => handleMoreFileClick(e, libraryFilePayload.path, false)}>
                         <MoreVert />
                     </IconButton>
                 }
             >
                 <ListItemButton
-                onClick={() => handleClickLibraryFile(libraryFilePayload.path)}>
+                    onClick={() => handleClickLibraryFile(libraryFilePayload.path)}>
                     <ListItemIcon>
                         <Folder />
                     </ListItemIcon>
@@ -160,89 +132,85 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
         )
     }
 
-
     const renderFile = (libraryFilePayload: LibraryFilePayload) => {
         return (
             <ListItem
                 key={libraryFilePayload.name}
                 secondaryAction={
-                    <IconButton edge="end">
+                    <IconButton
+                        edge="end"
+                        onClick={(e) => handleMoreFileClick(e, libraryFilePayload.path, false)}>
                         <MoreVert />
                     </IconButton>
                 }
             >
-                <ListItemIcon>
-                    <Folder />
+                <ListItemIcon style={{ paddingLeft: "1em" }}>
+                    {fileIcon(libraryFilePayload.mashupMediaType)}
                 </ListItemIcon>
                 <ListItemText primary={libraryFilePayload.name} />
             </ListItem>
         )
     }
 
+    const fileIcon = (mashupMediaType: MashupMediaType) => {
+        switch (mashupMediaType) {
+            case MashupMediaType.MUSIC:
+                return (
+                    <MusicNote />
+                )
+            case MashupMediaType.PHOTO:
+                return (
+                    <Image />
+                )
+            case MashupMediaType.VIDEO:
+                return (
+                    <Movie />
+                )
+            default:
+                return (
+                    <Article />
+                )
+        }
+    }
+
     return (
         <div
+            id="library-files"
             hidden={props.tabPanelPayload.value !== props.tabPanelPayload?.index}>
-            <div className="float-right">
 
-                <Button
-                    variant="contained"
-                    color="primary"
-                    type="button"
-                    onClick={handleClickUploadFolder}
-                    disabled={props.uploadDisabled}
-                >
-                    Upload
-                </Button>
-
-            </div>
-
-            <div className="new-line">
-                <input
-                    style={{ display: 'none' }}
-                    type="file"
-                    id="raised-button-folder"
-                    ref={uploadFolderRef}
-                    onChange={e => handleChangeFolder(e)}
-                />
+            <div className="breadcrumb-container">
+                <Breadcrumbs className="breadcrumbs">
+                    {props.libraryFilesPayload?.breadcrumbPayloads.map((breadcrumbPayload, index) => {
+                        return (
+                            <Link
+                                key={breadcrumbPayload.name}
+                                onClick={() => handleClickLibraryFile(breadcrumbPayload.path)}
+                                href="#void"
+                            >
+                                {!index ? 'Root' : breadcrumbPayload.name}
+                            </Link>
+                        )
+                    })}
+                </Breadcrumbs>
 
                 <IconButton
-                    title="Upload folder"
-                    onClick={handleIconFolderClick}>
-                    <Folder />
+                    title="Folder menu"
+                    onClick={e => handleMoreFileClick(e, props.folderPath || props.libraryPayload.path, true)}>
+                    <MoreVert />
                 </IconButton>
-
-                <input
-                    style={{ display: 'none' }}
-                    type="file"
-                    id="raised-button-file"
-                    multiple
-                    ref={uploadFileRef}
-                    onChange={e => handleChangeFolder(e)}
-                />
-
-                <IconButton
-                    title="Upload file"
-                    onClick={handleIconFileClick}>
-                    <UploadFile />
-                </IconButton>
-
             </div>
 
             <LibraryFileMenu {...props.libraryFolderMenuPayload} />
 
             <div className="new-line">
                 <List>
-                    {props.libraryFilePayloads?.map(libraryFilePayload => (
+                    {props.libraryFilesPayload?.libraryFilePayloads?.map(libraryFilePayload => (
                         libraryFilePayload.folder
                             ? renderFolder(libraryFilePayload)
                             : renderFile(libraryFilePayload)
                     ))}
                 </List>
-
             </div>
-
-
-
         </div>
     )
 }

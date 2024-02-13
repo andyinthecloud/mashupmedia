@@ -1,6 +1,6 @@
 package org.mashupmedia.dto.library;
 
-import org.mashupmedia.constants.MashupMediaType;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class LibraryFilePayload {
-    private String name;
-    private boolean isFolder;
-    private String path;
-    private MashupMediaType mashupMediaType;
+public class LibraryFilesPayload {
+    private List<BreadcrumbPayload> breadcrumbPayloads;
+    private List<LibraryFilePayload> libraryFilePayloads;
 }

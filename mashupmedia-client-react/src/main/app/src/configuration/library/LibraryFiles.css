@@ -1,0 +1,15 @@
+#library-files div.breadcrumb-container{
+    padding-bottom: 1em;
+    display: flex;
+    justify-content: space-between;
+}
+
+#library-files .breadcrumbs a{
+    font-size: larger;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#library-files .breadcrumbs li{
+    border-bottom: none;
+}

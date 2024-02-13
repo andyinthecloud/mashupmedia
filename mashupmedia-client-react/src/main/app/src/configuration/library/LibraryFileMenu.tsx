@@ -1,16 +1,38 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, TextField } from "@mui/material"
-import { Fragment, useEffect, useState } from "react"
+import { Delete, Edit, Folder, UploadFile } from "@mui/icons-material"
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Menu, MenuItem, TextField } from "@mui/material"
+import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react"
+import { useDispatch } from "react-redux"
+import { NotificationType, addNotification } from "../../common/notification/notificationSlice"
+import { renameFile } from "../backend/libraryFileCalls"
+import './LibraryFileMenu.css'
 
 export type LibraryFileMenuPayload = {
     anchorElement: HTMLElement | null
+    libraryId?: number
+    path?: string
     openRenameDialog?: boolean
     openDeleteDialog?: boolean
+    enableUpload: boolean,
+    renameValue?: string
 }
 
 const LibraryFileMenu = (libraryFolderMenuPayload: LibraryFileMenuPayload) => {
 
+
+    const uploadFolderRef = useRef<HTMLInputElement>(null);
+    const uploadFileRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (uploadFolderRef.current !== null) {
+            uploadFolderRef.current.setAttribute("directory", "");
+            uploadFolderRef.current.setAttribute("webkitdirectory", "");
+        }
+    }, [uploadFolderRef]);
+
+
     const [props, setProps] = useState<LibraryFileMenuPayload>({
-        anchorElement: null
+        anchorElement: null,
+        enableUpload: false
     })
 
     const isOpen = (): boolean => {
@@ -43,29 +65,84 @@ const LibraryFileMenu = (libraryFolderMenuPayload: LibraryFileMenuPayload) => {
     useEffect(() => {
         setProps(p => ({
             ...p,
-            anchorElement: libraryFolderMenuPayload.anchorElement
+            anchorElement: libraryFolderMenuPayload.anchorElement,
+            enableUpload: libraryFolderMenuPayload.enableUpload,
+            libraryId: libraryFolderMenuPayload.libraryId,
+            path: libraryFolderMenuPayload.path
         }))
     }, [libraryFolderMenuPayload])
 
-    const handleCloseRenameDialog = (): void => {
-        setProps(p => ({
-            ...p,
-            openRenameDialog: false
-        }))
-    }
+    const dispatch = useDispatch()
 
     const handleSaveRenameDialog = (): void => {
+
         setProps(p => ({
             ...p,
+            renameValue: '',
+            openRenameDialog: false
+        }))
+
+        renameFile({
+            libraryId: props.libraryId || 0,
+            name: props.renameValue || '',
+            path: props.path || ''
+        }).then(response => {
+            if (response.ok) {
+                dispatch(
+                    addNotification({
+                        message: 'File renamed.',
+                        notificationType: NotificationType.SUCCESS
+                    })
+                )
+            } else {
+                dispatch(
+                    addNotification({
+                        message: 'Unable to rename file.',
+                        notificationType: NotificationType.ERROR
+                    })
+                )
+            }
+        })
+
+
+    }
+
+    const handleCloseDialog = (): void => {
+        setProps(p => ({
+            ...p,
+            renameValue: '',
+            openDeleteDialog: false,
             openRenameDialog: false
         }))
     }
 
-    const handleCloseDeleteDialog = (): void => {
+
+    const handleUploadFolderClick = (): void => {
+        if (uploadFolderRef) {
+            uploadFolderRef.current?.click()
+        }
+    }
+
+    const handleUploadFilesClick = (): void => {
+        if (uploadFileRef) {
+            uploadFileRef.current?.click()
+        }
+    }
+
+    const handleChangeFolder = (e: ChangeEvent<HTMLInputElement>): void => {
         setProps(p => ({
             ...p,
-            openDeleteDialog: false
+            fileList: e.target.files || undefined,
+            uploadDisabled: false
         }))
+    }
+
+    const handleRenameFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
+        setProps(p => ({
+            ...p,
+            renameValue: e.target.value
+        })
+        )
     }
 
     return (
@@ -73,9 +150,10 @@ const LibraryFileMenu = (libraryFolderMenuPayload: LibraryFileMenuPayload) => {
 
             <Dialog
                 open={props.openRenameDialog || false}
-                onClose={handleCloseRenameDialog}
+                onClose={handleCloseDialog}
             >
                 <DialogContent>
+
                     <TextField
                         autoFocus
                         required
@@ -85,12 +163,14 @@ const LibraryFileMenu = (libraryFolderMenuPayload: LibraryFileMenuPayload) => {
                         type="email"
                         fullWidth
                         variant="standard"
+                        value={props.renameValue}
+                        onChange={handleRenameFileChange}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button
                         variant="contained"
-                        onClick={handleCloseRenameDialog}
+                        onClick={handleCloseDialog}
                         color="secondary">
                         Cancel
                     </Button>
@@ -105,7 +185,7 @@ const LibraryFileMenu = (libraryFolderMenuPayload: LibraryFileMenuPayload) => {
 
             <Dialog
                 open={props.openDeleteDialog || false}
-                onClose={handleCloseDeleteDialog}
+                onClose={handleCloseDialog}
             >
                 <DialogContent>
                     <DialogContentText>
@@ -117,7 +197,7 @@ const LibraryFileMenu = (libraryFolderMenuPayload: LibraryFileMenuPayload) => {
                     <Button
                         variant="contained"
                         color="secondary"
-                        onClick={handleCloseDeleteDialog}>
+                        onClick={handleCloseDialog}>
                         Cancel
                     </Button>
                     <Button
@@ -128,19 +208,54 @@ const LibraryFileMenu = (libraryFolderMenuPayload: LibraryFileMenuPayload) => {
                 </DialogActions>
             </Dialog>
 
+
+            <input
+                style={{ display: 'none' }}
+                type="file"
+                id="raised-button-file"
+                multiple
+                ref={uploadFileRef}
+                onChange={e => handleChangeFolder(e)}
+            />
+
+            <input
+                style={{ display: 'none' }}
+                type="file"
+                id="raised-button-folder"
+                ref={uploadFolderRef}
+                onChange={e => handleChangeFolder(e)}
+            />
+
             <Menu
                 open={isOpen()}
                 anchorEl={props.anchorElement}
                 onClose={handleCloseMenu}
+                id="library-file-menu"
             >
                 <MenuItem
                     onClick={handleRenameClick}>
+                    <Edit />
                     Rename
                 </MenuItem>
                 <MenuItem
                     onClick={handleDeleteClick}>
+                    <Delete />
                     Delete
                 </MenuItem>
+                {props.enableUpload &&
+                    <MenuItem
+                        onClick={handleUploadFilesClick}>
+                        <UploadFile />
+                        Upload files
+                    </MenuItem>
+                }
+                {props.enableUpload &&
+                    <MenuItem
+                        onClick={handleUploadFolderClick}>
+                        <Folder />
+                        Upload folder
+                    </MenuItem>
+                }
             </Menu>
         </Fragment>
     )
