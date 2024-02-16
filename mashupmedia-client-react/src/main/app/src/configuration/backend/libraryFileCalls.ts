@@ -36,6 +36,13 @@ export const getLibraryFiles = (libraryId: number, folderPath?: string, userToke
     return callMashupMediaApi<LibraryFilesPayload> (HttpMethod.GET, `${libraryFileUri}${libraryId}${uriParameters}`, userToken)
 }
 
+
+export const getLibraryParentFiles = (libraryId: number, folderPath?: string, userToken?: string): Promise<HttpResponse<LibraryFilesPayload>> => {
+    const uriParameters = folderPath ? `?folderPath=${encodeURI(folderPath)}` : ''
+    return callMashupMediaApi<LibraryFilesPayload> (HttpMethod.GET, `${libraryFileUri}parent/${libraryId}${uriParameters}`, userToken)
+}
+
+
 export const renameFile = (libraryRenameFilePayload: LibraryRenameFilePayload, userToken?: string): Promise<HttpResponse<boolean>> => {
     console.log("renameFile", libraryRenameFilePayload)
 

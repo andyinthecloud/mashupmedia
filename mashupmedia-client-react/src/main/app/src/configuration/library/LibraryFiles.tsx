@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../../common/redux/store"
 import { LibraryPayload, LibraryTypePayload } from "../backend/libraryCalls"
-import { LibraryFilePayload, LibraryFilesPayload, getLibraryFiles } from "../backend/libraryFileCalls"
+import { LibraryFilePayload, LibraryFilesPayload, getLibraryFiles, getLibraryParentFiles } from "../backend/libraryFileCalls"
 import { LibraryPagePayload, TabPanelPayload } from "./Library"
 import LibraryFileMenu, { LibraryFileMenuPayload } from "./LibraryFileMenu"
 import './LibraryFiles.css'
@@ -27,6 +27,8 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
     const tabIndex = 1;
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
+
+    const libraryFolder = useSelector((state: RootState) => state.libraryFolder)
 
 
     const [props, setProps] = useState<LibraryFilesPagePayload>({
@@ -73,6 +75,33 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
         })
 
     }, [libraryPagePayload])
+
+    useEffect(() => {
+        if (!libraryFolder.folderPath) {
+            return
+        }
+
+        if (libraryFolder.fromParent) {
+            getLibraryParentFiles(props.libraryPayload.id || 0, libraryFolder.folderPath, userToken).then(response => {
+                if (response.ok) {
+                    setProps(p => ({
+                        ...p,
+                        libraryFilesPayload: response.parsedBody
+                    }))
+                }
+            })    
+        } else {
+            getLibraryFiles(props.libraryPayload.id || 0, libraryFolder.folderPath, userToken).then(response => {
+                if (response.ok) {
+                    setProps(p => ({
+                        ...p,
+                        libraryFilesPayload: response.parsedBody
+                    }))
+                }
+            })    
+        }
+
+    }, [libraryFolder])
 
 
     const handleClickLibraryFile = (folderPath: string): void => {

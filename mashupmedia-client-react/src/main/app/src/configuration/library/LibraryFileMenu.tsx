@@ -5,6 +5,9 @@ import { useDispatch } from "react-redux"
 import { NotificationType, addNotification } from "../../common/notification/notificationSlice"
 import { renameFile } from "../backend/libraryFileCalls"
 import './LibraryFileMenu.css'
+import { useSelector } from "react-redux"
+import { RootState } from "../../common/redux/store"
+import { refreshLibraryFolder } from "./features/libraryFolderSlice"
 
 export type LibraryFileMenuPayload = {
     anchorElement: HTMLElement | null
@@ -18,6 +21,7 @@ export type LibraryFileMenuPayload = {
 
 const LibraryFileMenu = (libraryFolderMenuPayload: LibraryFileMenuPayload) => {
 
+    const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
     const uploadFolderRef = useRef<HTMLInputElement>(null);
     const uploadFileRef = useRef<HTMLInputElement>(null);
@@ -86,8 +90,14 @@ const LibraryFileMenu = (libraryFolderMenuPayload: LibraryFileMenuPayload) => {
             libraryId: props.libraryId || 0,
             name: props.renameValue || '',
             path: props.path || ''
-        }).then(response => {
+        }, userToken).then(response => {
             if (response.ok) {
+                dispatch(
+                    refreshLibraryFolder({
+                        folderPath: props.path || ''
+                    })
+                )
+
                 dispatch(
                     addNotification({
                         message: 'File renamed.',
@@ -103,8 +113,6 @@ const LibraryFileMenu = (libraryFolderMenuPayload: LibraryFileMenuPayload) => {
                 )
             }
         })
-
-
     }
 
     const handleCloseDialog = (): void => {

@@ -22,7 +22,6 @@ const initialState: NotificationPayloads = {
 }
 
 
-
 export const notificationSlice = createSlice({
     name: 'notification',
     // `createSlice` will infer the state type from the `initialState` argument

@@ -5,6 +5,7 @@ import securitySlice from "../security/features/securitySlice";
 import userPolicySlice from "../security/features/userPolicySlice";
 import menuSlice from "../components/features/menuSlice";
 import mediaSearchResultsSlice from "../../media/search/features/searchMediaSlice";
+import libraryFolderSlice from "../../configuration/library/features/libraryFolderSlice";
 
 const rootReducer = combineReducers({
     security: securitySlice.reducer,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
     notification: notificationSlice.reducer,
     playMusic: playMusicSlice.reducer,
     menuState: menuSlice.reducer,
-    searchMedia: mediaSearchResultsSlice.reducer
+    searchMedia: mediaSearchResultsSlice.reducer,
+    libraryFolder: libraryFolderSlice.reducer
 })
 
 export default rootReducer
