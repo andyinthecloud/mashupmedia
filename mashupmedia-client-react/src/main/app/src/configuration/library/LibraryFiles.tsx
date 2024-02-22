@@ -3,9 +3,9 @@ import { Breadcrumbs, IconButton, Link, List, ListItem, ListItemButton, ListItem
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../../common/redux/store"
-import { LibraryPayload, LibraryTypePayload } from "../backend/libraryCalls"
+import { LibraryPayload, LibraryTypePayload, LocationTypePayload } from "../backend/libraryCalls"
 import { LibraryFilePayload, LibraryFilesPayload, getLibraryFiles, getLibraryParentFiles } from "../backend/libraryFileCalls"
-import { LibraryPagePayload, TabPanelPayload } from "./Library"
+import { LibraryPagePayload } from "./Library"
 import LibraryFileMenu, { LibraryFileMenuPayload } from "./LibraryFileMenu"
 import './LibraryFiles.css'
 import { MashupMediaType } from "../../media/music/rest/playlistActionCalls"
@@ -13,7 +13,6 @@ import { MashupMediaType } from "../../media/music/rest/playlistActionCalls"
 
 type LibraryFilesPagePayload = {
     libraryPayload: LibraryPayload
-    tabPanelPayload: TabPanelPayload
     uploadFileList?: FileList
     libraryFilesPayload?: LibraryFilesPayload
     uploadDisabled: boolean
@@ -28,18 +27,15 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
-    const libraryFolder = useSelector((state: RootState) => state.libraryFolder)
+    // const libraryFolder = useSelector((state: RootState) => state.libraryRefresh)
 
 
     const [props, setProps] = useState<LibraryFilesPagePayload>({
         libraryPayload: {
             name: '',
-            path: '',
+            privateAccess: false,
             enabled: true,
             libraryTypePayload: LibraryTypePayload.MUSIC
-        },
-        tabPanelPayload: {
-            index: tabIndex
         },
         uploadDisabled: true,
         libraryFolderMenuPayload: {
@@ -60,10 +56,6 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
                     ...p,
                     libraryFilesPayload: response.parsedBody,
                     libraryPayload: libraryPagePayload.libraryPayload,
-                    tabPanelPayload: {
-                        index: tabIndex,
-                        value: libraryPagePayload.tabPanelPayload.value
-                    },
                     libraryFolderMenuPayload: {
                         anchorElement: null,
                         enableUpload: false,
@@ -76,32 +68,32 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
 
     }, [libraryPagePayload])
 
-    useEffect(() => {
-        if (!libraryFolder.folderPath) {
-            return
-        }
+    // useEffect(() => {
+    //     if (!libraryFolder.folderPath) {
+    //         return
+    //     }
 
-        if (libraryFolder.fromParent) {
-            getLibraryParentFiles(props.libraryPayload.id || 0, libraryFolder.folderPath, userToken).then(response => {
-                if (response.ok) {
-                    setProps(p => ({
-                        ...p,
-                        libraryFilesPayload: response.parsedBody
-                    }))
-                }
-            })    
-        } else {
-            getLibraryFiles(props.libraryPayload.id || 0, libraryFolder.folderPath, userToken).then(response => {
-                if (response.ok) {
-                    setProps(p => ({
-                        ...p,
-                        libraryFilesPayload: response.parsedBody
-                    }))
-                }
-            })    
-        }
+    //     if (libraryFolder.fromParent) {
+    //         getLibraryParentFiles(props.libraryPayload.id || 0, libraryFolder.folderPath, userToken).then(response => {
+    //             if (response.ok) {
+    //                 setProps(p => ({
+    //                     ...p,
+    //                     libraryFilesPayload: response.parsedBody
+    //                 }))
+    //             }
+    //         })    
+    //     } else {
+    //         getLibraryFiles(props.libraryPayload.id || 0, libraryFolder.folderPath, userToken).then(response => {
+    //             if (response.ok) {
+    //                 setProps(p => ({
+    //                     ...p,
+    //                     libraryFilesPayload: response.parsedBody
+    //                 }))
+    //             }
+    //         })    
+    //     }
 
-    }, [libraryFolder])
+    // }, [libraryFolder])
 
 
     const handleClickLibraryFile = (folderPath: string): void => {
@@ -126,7 +118,7 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
         })
     }
 
-    const handleMoreFileClick = (event: React.MouseEvent<HTMLElement>, path: string, enableUpload: boolean): void => {
+    const handleMoreFileClick = (event: React.MouseEvent<HTMLElement>, path: string | undefined, enableUpload: boolean): void => {
         setProps(p => ({
             ...p,
             libraryFolderMenuPayload: {
@@ -205,7 +197,7 @@ const LibraryFiles = (libraryPagePayload: LibraryPagePayload) => {
     return (
         <div
             id="library-files"
-            hidden={props.tabPanelPayload.value !== props.tabPanelPayload?.index}>
+            >
 
             <div className="breadcrumb-container">
                 <Breadcrumbs className="breadcrumbs">

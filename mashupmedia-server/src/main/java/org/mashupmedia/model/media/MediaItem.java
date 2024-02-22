@@ -49,12 +49,10 @@ public class MediaItem {
 
 	@Id
 	@GeneratedValue
-	@XmlTransient
 	private long id;
 	private String fileName;
 	private String path;
 	@ManyToOne
-	@XmlTransient
 	private Library library;
 	private long sizeInBytes;
 	@Temporal(TemporalType.TIMESTAMP)
@@ -66,7 +64,6 @@ public class MediaItem {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastAccessed;
 	@ManyToOne(cascade = { CascadeType.PERSIST })
-	@XmlTransient
 	private User lastAccessedBy;
 	private String mediaTypeValue;
 	@Column(length = 1000)
@@ -78,13 +75,10 @@ public class MediaItem {
 	private String uniqueName;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("createdOn")
-	@XmlTransient
 	private List<Comment> comments;
 	@ManyToMany(fetch = FetchType.EAGER)
-	@XmlTransient
 	private Set<Tag> tags;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	@XmlTransient
 	private Set<MediaEncoding> mediaEncodings;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "mediaItem")
 	private Set<PlaylistMediaItem> playlistMediaItems;

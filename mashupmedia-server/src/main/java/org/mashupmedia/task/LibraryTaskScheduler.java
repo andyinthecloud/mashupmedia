@@ -33,9 +33,9 @@ public class LibraryTaskScheduler {
 		List<Library> libraries = libraryManager.getLocalLibraries(LibraryType.ALL);
 		for (Library library : libraries) {
 			log.info("About to update library: " + library.getName());
-			if (library.isRemote()) {
-				continue;
-			}			
+			// if (library.isRemote()) {
+			// 	continue;
+			// }			
 			// libraryUpdateManager.asynchronousUpdateLibrary(library.getId());
 			// log.info("Library updated: " + library.getName());
 		}

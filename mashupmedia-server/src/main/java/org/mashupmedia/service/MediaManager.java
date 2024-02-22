@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
-import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.model.media.music.MusicArtImage;
 import org.mashupmedia.model.media.music.Track;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +15,7 @@ public interface MediaManager {
 
 	MediaItem getMediaItem(long mediaItemId);
 
-	void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages);
-
-	List<AlbumArtImage> getAlbumArtImages(long libraryId);
+	List<MusicArtImage> getAlbumArtImages(long libraryId);
 
 	void updateMediaItem(MediaItem mediaItem);
 

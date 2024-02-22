@@ -15,7 +15,7 @@ import org.mashupmedia.comparator.FileSizeComparator;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.model.media.music.MusicArtImage;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.util.FileHelper;
@@ -41,8 +41,8 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 	private final ConnectionManager connectionManager;
 
 	@Override
-	public AlbumArtImage getAlbumArtImage(MusicLibrary musicLibrary, Track track) throws Exception {
-		AlbumArtImage albumArtImage = getAlbumArtImage(track);
+	public MusicArtImage getAlbumArtImage(MusicLibrary musicLibrary, Track track) throws Exception {
+		MusicArtImage albumArtImage = getAlbumArtImage(track);
 		if (!isAlbumArtImageEmpty(albumArtImage)) {
 			return albumArtImage;
 		}
@@ -51,7 +51,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		return albumArtImage;
 	}
 
-	private AlbumArtImage getAlbumArtImage(Track track) {
+	private MusicArtImage getAlbumArtImage(Track track) {
 		Artist artist = track.getArtist();
 		if (artist == null) {
 			return null;
@@ -65,7 +65,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		String artistName = artist.getName();
 		String albumName = album.getName();
 
-		AlbumArtImage albumArtImage = null;
+		MusicArtImage albumArtImage = null;
 
 		Album savedAlbum = musicManager.getAlbum(artistName, albumName);
 		if (savedAlbum != null) {
@@ -79,7 +79,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		return albumArtImage;
 	}
 
-	private boolean isAlbumArtImageEmpty(AlbumArtImage albumArtImage) {
+	private boolean isAlbumArtImageEmpty(MusicArtImage albumArtImage) {
 		if (albumArtImage == null) {
 			return true;
 		}
@@ -100,11 +100,8 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		return true;
 	}
 
-	private AlbumArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Track track) throws Exception {
+	private MusicArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Track track) throws Exception {
 
-		if (musicLibrary.isRemote()) {
-			return null;
-		}
 
 		File musicFile = new File(track.getPath());
 		String imagePath = null;
@@ -142,7 +139,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 			contentType = FileHelper.getFileExtension(albumArtFileName);
 		}
 
-		AlbumArtImage albumArtImage = new AlbumArtImage();
+		MusicArtImage albumArtImage = new MusicArtImage();
 		albumArtImage.setName(albumArtFileName);
 		albumArtImage.setUrl(imagePath);
 		albumArtImage.setContentType(contentType);

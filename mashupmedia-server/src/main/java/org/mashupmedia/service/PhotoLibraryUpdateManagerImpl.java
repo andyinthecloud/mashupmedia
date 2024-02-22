@@ -146,7 +146,7 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 	@Override
 	public void saveFile(PhotoLibrary library, File file, Date date) {
 		
-		File libraryFolder = new File(library.getLocation().getPath());
+		File libraryFolder = new File(library.getPath());
 		List<File> relativeFolders = LibraryHelper.getRelativeFolders(libraryFolder, file);
 		if (relativeFolders == null || relativeFolders.isEmpty()) {
 			relativeFolders.add(libraryFolder);

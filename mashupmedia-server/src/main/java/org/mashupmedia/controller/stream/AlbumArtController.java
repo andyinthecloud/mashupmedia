@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.model.media.music.MusicArtImage;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.ImageHelper.ImageType;
@@ -47,7 +47,7 @@ public class AlbumArtController {
         }
 
         Album album = musicManager.getAlbum(albumId);
-        AlbumArtImage albumArtImage = album.getAlbumArtImage();
+        MusicArtImage albumArtImage = album.getAlbumArtImage();
 
         MediaContentType mediaContentType = albumArtImage == null
                 ? DEFAULT_MUSIC_ALBUM_ART_CONTENT_TYPE
@@ -71,7 +71,7 @@ public class AlbumArtController {
         return resource;
     }
 
-    private String getImagePath(ImageType imageType, AlbumArtImage albumArtImage) {
+    private String getImagePath(ImageType imageType, MusicArtImage albumArtImage) {
         if (albumArtImage == null) {
             return null;
         }

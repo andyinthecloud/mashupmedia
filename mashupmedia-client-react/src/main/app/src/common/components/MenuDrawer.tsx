@@ -168,7 +168,7 @@ const MenuDrawer = () => {
                         <ListItemIcon>
                             <LibraryMusic />
                         </ListItemIcon>
-                        <ListItemText primary="Music" />
+                        <ListItemText primary="My Music" />
                         {props.internalSubMenuPayload.musicMenuOpen ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
                     <Collapse in={props.internalSubMenuPayload.musicMenuOpen} timeout="auto" unmountOnExit>

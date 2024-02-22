@@ -7,7 +7,6 @@ import { renameFile } from "../backend/libraryFileCalls"
 import './LibraryFileMenu.css'
 import { useSelector } from "react-redux"
 import { RootState } from "../../common/redux/store"
-import { refreshLibraryFolder } from "./features/libraryFolderSlice"
 
 export type LibraryFileMenuPayload = {
     anchorElement: HTMLElement | null
@@ -92,11 +91,11 @@ const LibraryFileMenu = (libraryFolderMenuPayload: LibraryFileMenuPayload) => {
             path: props.path || ''
         }, userToken).then(response => {
             if (response.ok) {
-                dispatch(
-                    refreshLibraryFolder({
-                        folderPath: props.path || ''
-                    })
-                )
+                // dispatch(
+                //     refreshLibraryFolder({
+                //         folderPath: props.path || ''
+                //     })
+                // )
 
                 dispatch(
                     addNotification({

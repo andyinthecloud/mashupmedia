@@ -10,8 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.location.Location;
-import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.model.media.music.MusicArtImage;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.repository.media.music.MusicAlbumRepository;
@@ -56,9 +55,9 @@ public class MusicLibraryUpdateManagerImplTest {
         Mockito.when(trackRepository.findByLibraryIdAndPathAndLastModifiedOn(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong())).thenReturn(Optional.empty());
         Mockito.doNothing().when(musicDao).saveTrack(Mockito.isA(Track.class), Mockito.anyBoolean());
         Mockito.doNothing().when(libraryManager).saveMediaItemLastUpdated(Mockito.anyLong());
-        Mockito.when(albumArtManager.getAlbumArtImage(Mockito.isA(MusicLibrary.class), Mockito.isA(Track.class))).thenReturn(new AlbumArtImage());
+        Mockito.when(albumArtManager.getAlbumArtImage(Mockito.isA(MusicLibrary.class), Mockito.isA(Track.class))).thenReturn(new MusicArtImage());
 
-        Mockito.when(artistRepository.findArtistByNameIgnoreCase(Mockito.anyString())).thenReturn(Optional.empty());
+        Mockito.when(artistRepository.findArtistByNameIgnoreCase(Mockito.anyString(), Mockito.anyLong())).thenReturn(Optional.empty());
         Mockito.when(musicAlbumRepository.findByArtistNameAndAlbumNameIgnoreCase(Mockito.anyString(), Mockito.anyString())).thenReturn(Optional.empty());
 
 
@@ -73,11 +72,7 @@ public class MusicLibraryUpdateManagerImplTest {
     private MusicLibrary createMusicLibrary(String path) {
         MusicLibrary library = new MusicLibrary();
         library.setId(1);
-
-        Location location = new Location();
-        location.setPath(path);
-        library.setLocation(location);
-
+        library.setPath(path);
         return library;
     }
 

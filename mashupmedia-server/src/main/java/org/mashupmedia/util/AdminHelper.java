@@ -23,6 +23,7 @@ import java.util.Set;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
 import org.mashupmedia.security.MediaAuthentication;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -91,9 +92,21 @@ public class AdminHelper {
 	}
 
 	// public static boolean isAllowedGroup(List<Group> groups) {
-	// 	User user = getLoggedInUser();
-	// 	Set<Group> userGroups = user.getGroups();
-	// 	return userGroups.stream().anyMatch(groups::contains);
+	// User user = getLoggedInUser();
+	// Set<Group> userGroups = user.getGroups();
+	// return userGroups.stream().anyMatch(groups::contains);
 	// }
 
+	public static void checkUserPermission(User user) {
+		User loggedInUser = AdminHelper.getLoggedInUser();
+		if (loggedInUser.isAdministrator() || loggedInUser.isSystem()) {
+			return;
+		}
+
+		if (loggedInUser.equals(user)) {
+			return;
+		}
+
+		throw new AccessDeniedException("Unauthorised access to library");
+	}
 }

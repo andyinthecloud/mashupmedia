@@ -14,7 +14,6 @@ import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.EmailService;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.ValidationUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;

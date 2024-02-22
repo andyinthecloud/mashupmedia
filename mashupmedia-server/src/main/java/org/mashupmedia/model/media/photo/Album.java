@@ -12,24 +12,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlTransient;
 
 @Entity(name = "org.mashupmedia.model.media.photo.Album")
 @Table(name = "photo_albums")
 @Cacheable
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Album implements Serializable {
 
 	private static final long serialVersionUID = -4462090915198319340L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@XmlTransient
 	private long id;
 	private String name;
 	private Date createdOn;
 	private Date updatedOn;
-	@XmlTransient
 	private transient List<Photo> photos;
 
 

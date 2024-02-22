@@ -9,22 +9,21 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.dao.RoleDao;
 import org.mashupmedia.dao.UserDao;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.Role;
 import org.mashupmedia.model.User;
+import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.repository.admin.UserRepository;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
-import org.mashupmedia.util.MessageHelper;
+import org.mashupmedia.util.LibraryHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +39,8 @@ public class AdminManagerImpl implements AdminManager {
 	private final PlaylistRepository playlistRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final UserRepository userRepository;
+	// private LibraryManager libraryManager;
+	// private final LibraryDao libraryDao;
 
 	@Override
 	public User getUser(String username) {
@@ -62,29 +63,71 @@ public class AdminManagerImpl implements AdminManager {
 	public void saveUser(User user) {
 		Date date = new Date();
 		String username = user.getUsername();
-		String password = user.getPassword();
+		// String password = user.getPassword();
 		long userId = getUserId(username);
 		user.setId(userId);
 
 		processRoles(user);
 
 		if (userId == 0) {
-			user.setCreatedOn(date);
-			user.setLibraryFolderName(RandomStringUtils.randomAlphanumeric(15));
+			createUser(user, date);
+			// user.setCreatedOn(date);
+			// user.setLibraryFolderName(RandomStringUtils.randomAlphanumeric(15));
+
 		} else {
-			User savedUser = getUser(userId);
-			user.setCreatedOn(savedUser.getCreatedOn());
-			user.setPassword(savedUser.getPassword());
+			updateUser(user);
+			// User savedUser = getUser(userId);
+			// user.setCreatedOn(savedUser.getCreatedOn());
+			// user.setPassword(savedUser.getPassword());
 		}
 
-		user.setUpdatedOn(date);
+		// user.setUpdatedOn(date);
+		// userDao.saveUser(user);
 		userDao.saveUser(user);
 
-		if (userId == 0 && StringUtils.isNotBlank(password)) {
-			log.info("Assigning user password");
-			updatePassword(username, password);
-		}
+		// if (userId == 0 && StringUtils.isNotBlank(password)) {
+		// 	log.info("Assigning user password");
+		// 	updatePassword(username, password);
+		// 	userDao.saveUser(user);
+		// }
+
 	}
+
+	private void createUser(User user, Date date) {
+		user.setCreatedOn(date);
+		user.setLibraryFolderName(RandomStringUtils.randomAlphanumeric(15));
+
+		String password = user.getPassword();
+		if (StringUtils.isBlank(password)) {
+			password = RandomStringUtils.randomAlphanumeric(15);
+		}
+		user.setPassword(passwordEncoder.encode(password));
+
+		MusicLibrary privateLibrary = createLibrary("Private", user, true);
+		user.getLibraries().add(privateLibrary);
+		// libraryDao.saveLibrary(privateLibrary);
+
+		MusicLibrary publicLibrary = createLibrary("Public", user, false);
+		// libraryDao.saveLibrary(publicLibrary);
+		user.getLibraries().add(publicLibrary);
+
+		user.setUpdatedOn(date);
+		// userDao.saveUser(user);
+
+	}
+
+
+	@Override
+	public void updateUser(User user) {
+		assertHasAtLeastOneAdministrator(user);
+
+		User savedUser = getUser(user.getId());
+		user.setCreatedOn(savedUser.getCreatedOn());
+		user.setPassword(savedUser.getPassword());
+		user.setUpdatedOn(new Date());
+		// userDao.saveUser(user);
+	}
+
 
 	private void processRoles(User user) {
 		if (user.getRoles() == null || user.getRoles().isEmpty()) {
@@ -97,15 +140,15 @@ public class AdminManagerImpl implements AdminManager {
 		user.setRoles(roles);
 	}
 
-	@Override
-	public void updateUser(User user) {
-		if (user.getId() == 0) {
-			throw new MashupMediaRuntimeException("Can only update an existing user.");
-		}
+	// @Override
+	// public void updateUser(User user) {
+	// 	if (user.getId() == 0) {
+	// 		throw new MashupMediaRuntimeException("Can only update an existing user.");
+	// 	}
 
-		assertHasAtLeastOneAdministrator(user);
-		userDao.saveUser(user);
-	}
+	// 	assertHasAtLeastOneAdministrator(user);
+	// 	userDao.saveUser(user);
+	// }
 
 	private void assertHasAtLeastOneAdministrator(User user) {
 
@@ -150,7 +193,7 @@ public class AdminManagerImpl implements AdminManager {
 		// String encodedPassword = EncryptionHelper.encodePassword(password);
 		String encodedPassword = passwordEncoder.encode(password);
 		user.setPassword(encodedPassword);
-		userDao.saveUser(user);
+		// userDao.saveUser(user);
 	}
 
 	@Override
@@ -198,16 +241,36 @@ public class AdminManagerImpl implements AdminManager {
 
 		saveUser(user);
 
-		Playlist playlist = Playlist.builder()
-				.name(name + "'s " + MessageHelper.getMessage("music.playlist.default.name"))
-				.userDefault(true)
-				.createdBy(user)
-				.mediaTypeValue(MashupMediaType.MUSIC.name())
-				.playlistMediaItems(new HashSet<>())
+		// Playlist playlist = Playlist.builder()
+		// 		.name(name + "'s " + MessageHelper.getMessage("music.playlist.default.name"))
+		// 		.userDefault(true)
+		// 		.createdBy(user)
+		// 		.mediaTypeValue(MashupMediaType.MUSIC.name())
+		// 		.playlistMediaItems(new HashSet<>())
+		// 		.build();
+		// playlistDao.savePlaylist(playlist);
+
+		// MusicLibrary privateLibrary = createLibrary("Private", user, true);
+		// libraryDao.saveLibrary(privateLibrary);
+
+		// MusicLibrary publicLibrary = createLibrary("Private", user, true);
+		// libraryDao.saveLibrary(publicLibrary);
+	}
+
+	private MusicLibrary createLibrary(String name, User user, boolean isPrivateAccess) {
+		Date date = new Date();
+		return MusicLibrary.builder()
+				.user(user)
+				.createdOn(date)
+				.enabled(true)
+				.name(name)
+				.privateAccess(isPrivateAccess)
+				.path(LibraryHelper.getLibraryFolderName(user.getLibraryFolderName(), name))
 				.build();
-		playlistDao.savePlaylist(playlist);
 
 	}
+
+
 
 	@Override
 	public void initialiseSystemUser() {

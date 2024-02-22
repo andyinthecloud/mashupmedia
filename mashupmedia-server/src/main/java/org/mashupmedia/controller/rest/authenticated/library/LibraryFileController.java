@@ -13,7 +13,6 @@ import org.mashupmedia.dto.library.LibraryFilesPayload;
 import org.mashupmedia.dto.library.LibraryRenameFilePayload;
 import org.mashupmedia.mapper.library.LibraryFilePayloadMapper;
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.StorageManager;
 import org.springframework.http.MediaType;
@@ -72,8 +71,7 @@ public class LibraryFileController {
 
 	private List<BreadcrumbPayload> getBreadcrumbs(long libraryId, String folderPath) {
 		Library library = libraryManager.getLibrary(libraryId);
-		Location location = library.getLocation();
-		String libraryPath = location.getPath();
+		String libraryPath = library.getPath();
 		File libraryFolder = new File(libraryPath);
 
 		List<BreadcrumbPayload> breadcrumbPayloads = new ArrayList<>();

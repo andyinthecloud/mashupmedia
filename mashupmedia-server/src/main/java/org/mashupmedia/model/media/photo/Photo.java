@@ -10,7 +10,6 @@ import org.mashupmedia.model.media.MediaItem;
 @Entity
 @Table(name = "photos")
 @Cacheable
-@XmlRootElement
 public class Photo extends MediaItem {
 
 	private static final long serialVersionUID = -2278500438492214953L;

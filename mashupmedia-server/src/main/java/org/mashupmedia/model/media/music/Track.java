@@ -38,11 +38,13 @@ public class Track extends MediaItem implements Serializable {
 	private Genre genre;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Year year;
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	private Artist artist;
 	private long trackLength;
 	private long bitRate;
 	private boolean readableTag;
+
+	public Artist getArtist() {
+		return getAlbum().getArtist();
+	}
 
 	@Override
 	public MashupMediaType getMashupMediaType() {
@@ -107,7 +109,7 @@ public class Track extends MediaItem implements Serializable {
 		builder.append(", year=");
 		builder.append(year);
 		builder.append(", artist=");
-		builder.append(artist);
+		builder.append(getArtist());
 		builder.append(", trackLength=");
 		builder.append(trackLength);
 		builder.append(", bitRate=");

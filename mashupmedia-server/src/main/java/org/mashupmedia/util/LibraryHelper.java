@@ -26,6 +26,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
+import org.springframework.util.Assert;
 
 public class LibraryHelper {
 
@@ -103,6 +104,13 @@ public class LibraryHelper {
 		
 		Collections.reverse(folders);		
 		return folders;
+	}
+
+	public static String getLibraryFolderName(String userLibraryFolderName, String libraryName) {
+		Assert.hasText(libraryName, "Expecting text for name");
+		String processedLibraryName = libraryName.replaceAll("\\W", "").toLowerCase();
+		File libraryFolder = new File(FileHelper.getUserLibraryFolder(userLibraryFolderName), processedLibraryName);
+		return libraryFolder.getAbsolutePath();
 	}
 
 

@@ -1,24 +1,19 @@
-import { Box, Button, Tab, Tabs } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { NotificationType, addNotification } from '../../common/notification/notificationSlice';
 import { RootState } from "../../common/redux/store";
-import { LibraryPayload, LibraryTypePayload, deleteLibrary, getLibrary } from "../backend/libraryCalls";
+import { FormValidation, ServerError, fieldErrorMessage, hasFieldError, toFieldValidation } from "../../common/utils/formValidationUtils";
+import { LibraryPayload, LibraryTypePayload, LocationTypePayload, checkLibraryPathExists, deleteLibrary, getLibrary, saveLibrary } from "../backend/libraryCalls";
 import './Library.css';
-import LibraryGeneral from "./LibraryGeneral";
-import LibraryFiles from "./LibraryFiles";
 import LibraryUsers from "./LibraryUsers";
 
 
-export type TabPanelPayload = {
-    value?: number
-    index: number
-}
-
 export type LibraryPagePayload = {
     libraryPayload: LibraryPayload
-    tabPanelPayload: TabPanelPayload
+    formValidation: FormValidation
+    isCorrectMediaPath?: boolean
 }
 
 const Library = () => {
@@ -26,31 +21,37 @@ const Library = () => {
     const enum FieldNames {
         TYPE = 'libraryTypePayload',
         NAME = 'name',
+        ENABLED = 'enabled',
+        PRIVATE_ACCESS = 'privateAccess',
         PATH = 'path',
-        CREATED_ON = 'createdOn',
-        CREATED_BY = 'createdBy',
         UPDATED_ON = 'updatedOn',
-        UPDATED_BY = 'updatedBy'
     }
 
-    const enum MusicFieldNames {
-        ART_IMAGE_PATTERN = 'albumArtImagePattern'
-    }
 
     const { libraryId } = useParams()
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
-    const [props, setProps] = useState<LibraryPagePayload>({
+    // const [props, setProps] = useState<LibraryPagePayload>({
 
+    //     libraryPayload: {
+    //         name: '',
+    //         privateAccess: false,
+    //         path: '',
+    //         enabled: true,
+    //         libraryTypePayload: LibraryTypePayload.MUSIC
+    //     }
+    // })
+
+
+    const [props, setProps] = useState<LibraryPagePayload>({
         libraryPayload: {
             name: '',
-            path: '',
+            privateAccess: false,
             enabled: true,
             libraryTypePayload: LibraryTypePayload.MUSIC
         },
-        tabPanelPayload: {
-            value: 0,
-            index: 0
+        formValidation: {
+            fieldValidations: []
         }
     })
 
@@ -76,6 +77,8 @@ const Library = () => {
     function handleCancel(): void {
         navigate('/configuration/libraries')
     }
+
+    const dispatch = useDispatch()
 
     function handleDeleteLibrary(): void {
 
@@ -106,53 +109,190 @@ const Library = () => {
         navigate('/configuration/libraries')
     }
 
-    const dispatch = useDispatch()
-
-    const handleTabChange = (event: React.SyntheticEvent, tabValue: number) => {
-        setProps(p => ({
-            ...p,
-            tabPanelPayload: {
-                ...p.tabPanelPayload,
-                value: tabValue
-            }
-        }))
-    }
-
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
 
     const isShowDeleteButton = (): boolean => {
         return userPolicyPayload?.administrator || false
     }
 
-    const isTabDisabled = (): boolean => {
-        return !props.libraryPayload.id
+    const clearFieldValidationState = () => {
+        const fieldValidations = props.formValidation.fieldValidations
+        fieldValidations.splice(0, fieldValidations.length)
+        setProps(p => ({
+            ...p,
+            formValidation: {
+                fieldValidations
+            }
+        }))
+    }
+
+    const setServerFieldValidationState = (serverError: ServerError): void => {
+        const fieldValidations = props.formValidation.fieldValidations
+        fieldValidations.push(toFieldValidation(serverError))
+
+        setProps(p => ({
+            ...p,
+            formValidation: {
+                fieldValidations
+            }
+        }))
+    }
+
+    const handleSave = () => {
+        // dispatch(
+        //     triggerSaveLibrary({
+        //         triggerSave: new Date().getTime()
+        //     })
+        // )
+
+        clearFieldValidationState()
+
+        saveLibrary(props.libraryPayload, userToken)
+            .then(response => {
+                if (response.ok) {
+                    dispatch(
+                        addNotification({
+                            message: 'Library is saved.',
+                            notificationType: NotificationType.SUCCESS
+                        })
+                    )
+                    navigate('/configuration/libraries')
+                } else {
+                    response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
+                        setServerFieldValidationState(serverError)
+                    })
+                }
+            })
+    }
+
+
+
+    const setStateValue = (name: string, value: any): void => {
+        setProps(p => ({
+            ...p,
+            libraryPayload: {
+                ...p.libraryPayload,
+                [name]: value
+            }
+        }))
+    }
+
+    function handleCheckPath(): void {
+
+        const path = props.libraryPayload.path;
+        if (!path) {
+            return;
+        }
+
+        const fieldValidations = props.formValidation.fieldValidations
+        fieldValidations.splice(
+            fieldValidations.findIndex(fv => fv.name == FieldNames.PATH)
+            , 1
+        )
+
+        setProps(p => ({
+            ...p,
+            formValidation: {
+                fieldValidations
+            }
+        }))
+
+
+        checkLibraryPathExists(path, userToken)
+            .then(response => {
+
+                if (response.ok) {
+                    dispatch(
+                        addNotification({
+                            message: 'Library path is verified.',
+                            notificationType: NotificationType.SUCCESS
+                        })
+                    )
+                } else {
+                    response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
+                        setServerFieldValidationState({ name: 'path', defaultMessage: serverError.defaultMessage })
+                    })
+                }
+            })
     }
 
     return (
         <form>
             <h1>Library</h1>
 
-            <Box sx={{ 
-                borderBottom: 1, 
-                borderColor: 'divider',
-                marginBottom: 5 }}>
-                <Tabs
-                    value={props.tabPanelPayload.value}
-                    onChange={handleTabChange}
-                    textColor="secondary"
-                    indicatorColor="secondary"
-                    aria-label="library tabs"
-                >
-                    <Tab value={0} label="General" />
-                    <Tab value={1} label="Files" disabled={isTabDisabled()}/>
-                    <Tab value={2} label="Shares" disabled={isTabDisabled()}/>
-                </Tabs>
-            </Box>
 
-            <LibraryGeneral {...props} />
-            <LibraryFiles {...props} />
-            <LibraryUsers {...props} />
+            <div className="new-line">
+                <FormControlLabel
+                    control={<Checkbox
+                        value={props.libraryPayload.enabled}
+                        checked={props.libraryPayload.enabled}
+                        onChange={e => setStateValue(FieldNames.ENABLED, e.currentTarget.checked)}
+                    />}
+                    label="Enabled" />
+            </div>
 
+            <div className="new-line">
+                <TextField
+                    name={FieldNames.NAME}
+                    label="Name"
+                    value={props.libraryPayload.name}
+                    onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
+                    fullWidth={true}
+                    error={hasFieldError(FieldNames.NAME, props.formValidation)}
+                    helperText={fieldErrorMessage(FieldNames.NAME, props.formValidation)}
+                />
+            </div>
+
+            {userPolicyPayload?.administrator && props.libraryPayload.path &&
+                <div className="new-line">
+                    <TextField
+                        name={FieldNames.PATH}
+                        label="Media folder path"
+                        value={props.libraryPayload.path}
+                        onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
+                        fullWidth={true}
+                        error={hasFieldError(FieldNames.PATH, props.formValidation)}
+                        helperText={fieldErrorMessage(FieldNames.PATH, props.formValidation)}
+                    />
+                </div>
+            }
+
+            {userPolicyPayload?.administrator && props.libraryPayload.path &&
+                <div className="new-line right">
+                    <Button variant="contained" color="secondary" type="button" onClick={handleCheckPath}>
+                        Check path
+                    </Button>
+                </div>
+            }
+
+            {props.libraryPayload.updatedOn &&
+                <div className="new-line">
+                    <TextField
+                        name={FieldNames.UPDATED_ON}
+                        label="Updated on"
+                        value={props.libraryPayload.updatedOn}
+                        fullWidth={true}
+                        disabled={true}
+                    />
+                </div>
+            }
+
+
+            <div className="new-line">
+                <FormControlLabel
+                    control={<Checkbox
+                        value={props.libraryPayload.privateAccess}
+                        checked={props.libraryPayload.privateAccess || false}
+                        onChange={e => setStateValue(FieldNames.PRIVATE_ACCESS, e.currentTarget.checked)}
+                    />}
+                    label="Private access" />
+            </div>
+
+            {/* <LibraryFiles {...props} /> */}
+
+            {!props.libraryPayload.privateAccess &&
+                <LibraryUsers {...props} />
+            }
 
             <div className="new-line right">
                 <Button variant="contained" color="secondary" type="button" onClick={handleCancel}>
@@ -160,12 +300,18 @@ const Library = () => {
                 </Button>
 
                 {isShowDeleteButton() &&
-                    <Button variant="contained" color="secondary" type="button" onClick={handleDeleteLibrary}>
+                    <Button variant="contained" color="primary" type="button" onClick={handleDeleteLibrary}>
                         Delete
                     </Button>
                 }
-
-
+                <Button
+                    variant="contained"
+                    color="primary"
+                    type="button"
+                    onClick={handleSave}
+                >
+                    Save
+                </Button>
             </div>
 
         </form>

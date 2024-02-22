@@ -29,7 +29,6 @@ import org.mashupmedia.model.library.Library.LibraryStatusType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.library.VideoLibrary;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -86,8 +85,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 			libraryManager.saveLibrary(library, true);
 			// libraryManager.saveLibrary(library, true);
 
-			Location location = library.getLocation();
-			File folder = new File(location.getPath());
+			File folder = new File(library.getPath());
 			if (!folder.isDirectory()) {
 				throw new LibraryUpdateException("Media library points to a file not a directory, exiting...");
 			}
@@ -109,8 +107,7 @@ public class LibraryUpdateManagerImpl implements LibraryUpdateManager {
 	protected void processLibrary(Library library) throws Exception {
 		Date updatingOn = new Date();
 		// mapperManager.writeStartRemoteMusicLibraryXml(libraryId, libraryType);
-		Location location = library.getLocation();
-		File locationFolder = new File(location.getPath());
+		File locationFolder = new File(library.getPath());
 		File[] files = locationFolder.listFiles();
 		Arrays.sort(files);
 

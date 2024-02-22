@@ -3,15 +3,12 @@ package org.mashupmedia.dao;
 import java.util.List;
 
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.model.media.music.MusicArtImage;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.Query;
-import lombok.extern.slf4j.Slf4j;
 
 @Repository
-@Slf4j
 public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 
 	@Override
@@ -25,28 +22,12 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 	}
 
 	@Override
-	public void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages) {
-
-		for (AlbumArtImage albumArtImage : albumArtImages) {
-			Album album = albumArtImage.getAlbum();
-			if (album == null) {
-				log.debug(albumArtImage.getName() + " has no album.");
-				continue;
-			}
-
-			album.setAlbumArtImage(null);
-			// entityManager.saveOrUpdate(album);
-			entityManager.remove(albumArtImage);
-		}
-	}
-
-	@Override
-	public List<AlbumArtImage> getAlbumArtImages(long libraryId) {
+	public List<MusicArtImage> getAlbumArtImages(long libraryId) {
 		Query query = entityManager
 				.createQuery("from AlbumArtImage where library.id = :libraryId");
 		query.setParameter("libraryId", libraryId);
 		@SuppressWarnings("unchecked")
-		List<AlbumArtImage> albumArtImages = (List<AlbumArtImage>) query.getResultList();
+		List<MusicArtImage> albumArtImages = (List<MusicArtImage>) query.getResultList();
 		return albumArtImages;
 	}
 

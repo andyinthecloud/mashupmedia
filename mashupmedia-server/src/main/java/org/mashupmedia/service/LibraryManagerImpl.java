@@ -4,13 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Hibernate;
-import org.hibernate.mapping.Collection;
 import org.mashupmedia.comparator.UserComparator;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.User;
@@ -18,7 +15,6 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.library.PhotoLibrary;
-import org.mashupmedia.model.library.RemoteShare;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.LibraryHelper;
@@ -61,6 +57,12 @@ public class LibraryManagerImpl implements LibraryManager {
 	}
 
 	@Override
+	public List<Library> getMyLibraries() {
+		String username = AdminHelper.getLoggedInUser().getUsername();
+		return libraryDao.getLibraries(username);
+	}
+
+	@Override
 	public List<Library> getLibrariesForGroup(long groupId) {
 		List<Library> musicLibraries = libraryDao.getLibrariesForGroup(groupId);
 		return musicLibraries;
@@ -78,7 +80,7 @@ public class LibraryManagerImpl implements LibraryManager {
 		long libraryId = library.getId();
 
 		if (libraryId == 0) {
-			library.setCreatedBy(user);
+			library.setUser(user);
 			library.setCreatedOn(date);
 		} else {
 			library = copyToExistingLibrary(library);
@@ -87,20 +89,20 @@ public class LibraryManagerImpl implements LibraryManager {
 		library.setUpdatedBy(user);
 		library.setUpdatedOn(date);
 
-		List<RemoteShare> remoteShares = library.getRemoteShares();
-		if (remoteShares != null) {
-			for (RemoteShare remoteShare : remoteShares) {
-				if (remoteShare.getId() == 0) {
-					remoteShare.setCreatedBy(user);
-					remoteShare.setCreatedOn(new Date());
-				}
+		// List<RemoteShare> remoteShares = library.getRemoteShares();
+		// if (remoteShares != null) {
+		// 	for (RemoteShare remoteShare : remoteShares) {
+		// 		if (remoteShare.getId() == 0) {
+		// 			remoteShare.setCreatedBy(user);
+		// 			remoteShare.setCreatedOn(new Date());
+		// 		}
 
-				String uniqueName = remoteShare.getUniqueName();
-				if (StringUtils.isBlank(uniqueName)) {
-					remoteShare.setUniqueName(LibraryHelper.createUniqueName());
-				}
-			}
-		}
+		// 		String uniqueName = remoteShare.getUniqueName();
+		// 		if (StringUtils.isBlank(uniqueName)) {
+		// 			remoteShare.setUniqueName(LibraryHelper.createUniqueName());
+		// 		}
+		// 	}
+		// }
 
 		libraryDao.saveLibrary(library);
 	}
@@ -111,8 +113,17 @@ public class LibraryManagerImpl implements LibraryManager {
 		Library savedLibrary = libraryDao.getLibrary(library.getId());
 
 		savedLibrary.setName(library.getName());
-		savedLibrary.getLocation().setPath(library.getLocation().getPath());
+
+		if (StringUtils.isNotBlank(library.getPath())) {
+			savedLibrary.setPath(library.getPath());
+		}
+
+		if (library.getLocationType() != null) {
+			savedLibrary.setLocationType(library.getLocationType());
+		}
+
 		savedLibrary.setEnabled(library.isEnabled());
+		savedLibrary.setPrivateAccess(library.isPrivateAccess());
 
 		String status = library.getStatus();
 		savedLibrary.setStatus(StringUtils.isEmpty(status) ? savedLibrary.getStatus() : status);
@@ -135,34 +146,39 @@ public class LibraryManagerImpl implements LibraryManager {
 		saveLibrary(library, false);
 	}
 
+
+
 	@Override
 	public Library getLibrary(long id) {
 		Library library = libraryDao.getLibrary(id);
-		Hibernate.initialize(library.getRemoteShares());
+		AdminHelper.checkUserPermission(library.getUser());
 		return library;
 	}
 
 	@Override
 	public Library getRemoteLibrary(String uniqueName) {
-		Library remoteLibrary = libraryDao.getRemoteLibrary(uniqueName);
-		if (remoteLibrary == null) {
-			return null;
-		}
+		throw new UnsupportedOperationException();
+		// Library remoteLibrary = libraryDao.getRemoteLibrary(uniqueName);
+		// if (remoteLibrary == null) {
+		// 	return null;
+		// }
 
-		Hibernate.initialize(remoteLibrary.getRemoteShares());
-		return remoteLibrary;
+		// Hibernate.initialize(remoteLibrary.getRemoteShares());
+		// return remoteLibrary;
 	}
 
 	@Override
 	public boolean hasRemoteLibrary(String url) {
-		boolean hasRemoteLibrary = libraryDao.hasRemoteLibrary(url);
-		return hasRemoteLibrary;
+		throw new UnsupportedOperationException();
+		// boolean hasRemoteLibrary = libraryDao.hasRemoteLibrary(url);
+		// return hasRemoteLibrary;
 	}
 
 	@Override
 	public Library getRemoteLibrary(long libraryId) {
-		Library library = libraryDao.getRemoteLibrary(libraryId);
-		return library;
+		throw new UnsupportedOperationException();
+		// Library library = libraryDao.getRemoteLibrary(libraryId);
+		// return library;
 	}
 
 	@Override
@@ -174,29 +190,35 @@ public class LibraryManagerImpl implements LibraryManager {
 
 	@Override
 	public void saveRemoteShares(Long[] remoteShareIds, String remoteShareStatus) {
-		if (remoteShareIds == null) {
-			return;
-		}
-		for (Long remoteShareId : remoteShareIds) {
-			RemoteShare remoteShare = getRemoteShare(remoteShareId);
-			remoteShare.setStatusType(remoteShareStatus);
-			saveRemoteShare(remoteShare);
-		}
+		throw new UnsupportedOperationException();
+
+		// if (remoteShareIds == null) {
+		// 	return;
+		// }
+		// for (Long remoteShareId : remoteShareIds) {
+		// 	RemoteShare remoteShare = getRemoteShare(remoteShareId);
+		// 	remoteShare.setStatusType(remoteShareStatus);
+		// 	saveRemoteShare(remoteShare);
+		// }
 	}
 
-	private void saveRemoteShare(RemoteShare remoteShare) {
-		libraryDao.saveRemoteShare(remoteShare);
-	}
+	// private void saveRemoteShare(RemoteShare remoteShare) {
+	// 	throw new UnsupportedOperationException();
 
-	private RemoteShare getRemoteShare(Long remoteShareId) {
-		RemoteShare remoteShare = libraryDao.getRemoteShare(remoteShareId);
-		return remoteShare;
-	}
+	// 	// libraryDao.saveRemoteShare(remoteShare);
+	// }
+
+	// private RemoteShare getRemoteShare(Long remoteShareId) {
+	// 	throw new UnsupportedOperationException();
+	// 	// RemoteShare remoteShare = libraryDao.getRemoteShare(remoteShareId);
+	// 	// return remoteShare;
+	// }
 
 	@Override
 	public List<Library> getRemoteLibraries() {
-		List<Library> remoteLibraries = libraryDao.getRemoteLibraries();
-		return remoteLibraries;
+		throw new UnsupportedOperationException();
+		// List<Library> remoteLibraries = libraryDao.getRemoteLibraries();
+		// return remoteLibraries;
 	}
 
 	@Override

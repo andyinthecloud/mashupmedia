@@ -1,16 +1,14 @@
 package org.mashupmedia.model.media.video;
 
+import org.mashupmedia.model.media.MediaItem;
+
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.xml.bind.annotation.XmlRootElement;
-
-import org.mashupmedia.model.media.MediaItem;
 
 @Entity
 @Table(name = "videos")
 @Cacheable
-@XmlRootElement
 public class Video extends MediaItem {
 
 	private String remoteId;

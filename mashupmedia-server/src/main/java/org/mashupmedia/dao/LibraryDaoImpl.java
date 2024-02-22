@@ -53,7 +53,7 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	@Override
 	public List<Library> getLibraries(String username) {
 		StringBuilder hqlBuilder = new StringBuilder("select l from Library l");
-		hqlBuilder.append(" join l.createdBy u");
+		hqlBuilder.append(" join l.user u");
 		hqlBuilder.append(" where u.username = :username");
 		hqlBuilder.append(" order by l.name");
 		TypedQuery<Library> query = entityManager.createQuery(hqlBuilder.toString(), Library.class);
@@ -63,7 +63,6 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 
 	@Override
 	public void saveLibrary(Library library) {
-		saveOrMerge(library.getLocation());
 		saveOrMerge(library);
 	}
 

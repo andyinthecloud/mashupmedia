@@ -1,8 +1,10 @@
 package org.mashupmedia.service;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
+import org.mashupmedia.dto.library.LibraryNameValuePayload;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
@@ -31,6 +33,8 @@ public interface LibraryManager {
 
 	public List<Library> getLibraries();
 
+	public List<Library> getMyLibraries();
+
 	public void saveAndReinitialiseLibrary(Library library);
 
 	public void deactivateLibrary(long libraryId);
@@ -48,5 +52,6 @@ public interface LibraryManager {
 	public List<User> getShareUsers(long libraryId);
 
     public void deleteShareUser(long libraryId, String username);
+
 
 }

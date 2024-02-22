@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react"
-import { LibraryPayload, LibraryTypePayload } from "../backend/libraryCalls"
+import { ChangeEvent, useEffect, useState } from "react"
+import { LibraryPayload, LibraryTypePayload, LocationTypePayload } from "../backend/libraryCalls"
 import { LibraryShareUserPayload, addLibraryShare, deleteLibraryShare, getLibraryShares } from "../backend/libraryShareCalls"
-import { LibraryPagePayload, TabPanelPayload } from "./Library"
-import { Avatar, Button, IconButton, List, ListItem, ListItemAvatar, ListItemText, TextField, Tooltip } from "@mui/material"
+import { LibraryPagePayload } from "./Library"
+import { Avatar, Button, FormControl, FormControlLabel, IconButton, List, ListItem, ListItemAvatar, ListItemText, Radio, RadioGroup, TextField, Tooltip } from "@mui/material"
 import { FieldValidation, FormValidation, emptyFieldValidation, fieldErrorMessage, hasFieldError, isEmpty, toFieldValidation } from "../../common/utils/formValidationUtils"
 import { useSelector } from "react-redux"
 import { RootState } from "../../common/redux/store"
@@ -14,16 +14,15 @@ import { Delete, Person, VerifiedUser } from "@mui/icons-material"
 type LibrayUsersPayload = {
     libraryPayload: LibraryPayload
     formValidation: FormValidation
-    tabPanelPayload: TabPanelPayload
     shareUsername?: string
     libraryShareUserPayloads?: LibraryShareUserPayload[]
 }
 
+
+
 const LibraryUsers = (libraryPagePayload: LibraryPagePayload) => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
-
-    const tabIndex = 2;
 
     const enum FieldNames {
         EMAIL = 'email'
@@ -32,15 +31,12 @@ const LibraryUsers = (libraryPagePayload: LibraryPagePayload) => {
     const [props, setProps] = useState<LibrayUsersPayload>({
         libraryPayload: {
             name: '',
-            path: '',
+            privateAccess: false,
             enabled: true,
             libraryTypePayload: LibraryTypePayload.MUSIC
         },
         formValidation: {
             fieldValidations: []
-        },
-        tabPanelPayload: {
-            index: tabIndex
         }
     })
 
@@ -59,10 +55,6 @@ const LibraryUsers = (libraryPagePayload: LibraryPagePayload) => {
                 setProps(p => ({
                     ...p,
                     libraryPayload: libraryPagePayload.libraryPayload,
-                    tabPanelPayload: {
-                        index: tabIndex,
-                        value: libraryPagePayload.tabPanelPayload.value
-                    },
                     libraryShareUserPayloads: response.parsedBody
                 }))
             }
@@ -167,78 +159,86 @@ const LibraryUsers = (libraryPagePayload: LibraryPagePayload) => {
                         notificationType: NotificationType.SUCCESS
                     })
                 )
-            } 
+            }
         })
     }
 
     return (
-        <div
-            hidden={props.tabPanelPayload.value !== props.tabPanelPayload?.index}
-        >
-            <div className="new-line">
-                <TextField
-                    name={FieldNames.EMAIL}
-                    label="Share with..."
-                    placeholder="Type in the person's email address "
-                    value={props.shareUsername || ''}
-                    onChange={e => handleChangeNewShare(e.currentTarget.value)}
-                    fullWidth={true}
-                    error={hasFieldError(FieldNames.EMAIL, props.formValidation)}
-                    helperText={fieldErrorMessage(FieldNames.EMAIL, props.formValidation)}
-                />
-            </div>
+        <div>
 
-            <div className="new-line right">
+            <div>
 
-                <Button
-                    variant="contained"
-                    color="primary"
-                    type="button"
-                    onClick={handleAddShare}
-                >
-                    Add
-                </Button>
 
-            </div>
+                <div className="new-line" style={{display: 'flex'}}>
+                    <TextField
+                        name={FieldNames.EMAIL}
+                        label="Share with..."
+                        placeholder="Type in the person's email address "
+                        value={props.shareUsername || ''}
+                        onChange={e => handleChangeNewShare(e.currentTarget.value)}
+                        fullWidth={true}
+                        error={hasFieldError(FieldNames.EMAIL, props.formValidation)}
+                        helperText={fieldErrorMessage(FieldNames.EMAIL, props.formValidation)}
+                    />
 
-            <List>
 
-                {props.libraryShareUserPayloads && props.libraryShareUserPayloads.map(function (libraryShareUserPayload) {
-                    return (
-                        <ListItem
-                            key={libraryShareUserPayload.email}
-                            secondaryAction={
-                                <IconButton 
-                                edge="end" 
-                                aria-label="delete"
-                                onClick={() => handleDeleteShare(libraryShareUserPayload.email)}>
-                                    <Delete/>
-                                </IconButton>
-                            }
-                        >
-                            <ListItemAvatar>
-                                <Avatar>
-                                    {libraryShareUserPayload.validated &&
-                                        <Tooltip title="Validated">
-                                            <VerifiedUser />
-                                        </Tooltip>
-                                    }
-                                    {!libraryShareUserPayload.validated &&
-                                        <Tooltip title="Not yet validated">
-                                            <Person />
-                                        </Tooltip>
-                                    }
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={libraryShareUserPayload.email}
-                                secondary={libraryShareUserPayload.name}
-                            />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        type="button"
+                        onClick={handleAddShare}
+                    >
+                        Add
+                    </Button>
+
+                </div>
+
+                <List>
+
+                    {props.libraryShareUserPayloads && props.libraryShareUserPayloads.map(function (libraryShareUserPayload) {
+                        return (
+                            <ListItem
+                                key={libraryShareUserPayload.email}
+                                secondaryAction={
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="delete"
+                                        onClick={() => handleDeleteShare(libraryShareUserPayload.email)}>
+                                        <Delete />
+                                    </IconButton>
+                                }
+                            >
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        {libraryShareUserPayload.validated &&
+                                            <Tooltip title="Validated">
+                                                <VerifiedUser />
+                                            </Tooltip>
+                                        }
+                                        {!libraryShareUserPayload.validated &&
+                                            <Tooltip title="Not yet validated">
+                                                <Person />
+                                            </Tooltip>
+                                        }
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText
+                                    primary={libraryShareUserPayload.email}
+                                    secondary={libraryShareUserPayload.name}
+                                />
+                            </ListItem>
+                        )
+                    })}
+
+
+                    {!props.libraryShareUserPayloads?.length &&
+                        <ListItem>
+                            <ListItemText>Unrestricted access</ListItemText>
                         </ListItem>
-                    )
-                })}
+                    }
+                </List>
+            </div>
 
-            </List>
 
 
         </div>

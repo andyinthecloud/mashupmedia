@@ -6,63 +6,61 @@ import { RootState } from "../../common/redux/store"
 import { FormValidation, ServerError, fieldErrorMessage, hasFieldError, toFieldValidation } from "../../common/utils/formValidationUtils"
 import { NotificationType, addNotification } from "../../common/notification/notificationSlice"
 import { useDispatch } from "react-redux"
-import { Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from "@mui/material"
+import { Button, Checkbox, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from "@mui/material"
 import { displayDateTime } from "../../common/utils/dateUtils"
-import { LibraryPagePayload, TabPanelPayload } from "./Library"
+import { LibraryPagePayload } from "./Library"
+import { triggerSaveLibrary } from "./features/librarySlice"
 
 type LibrayValidationPayload = {
     libraryPayload: LibraryPayload
     formValidation: FormValidation
     isCorrectMediaPath?: boolean
-    tabPanelPayload: TabPanelPayload
 }
 
 const LibraryGeneral = (libraryPagePayload: LibraryPagePayload) => {
-    const tabIndex = 0
 
     const enum FieldNames {
         TYPE = 'libraryTypePayload',
         NAME = 'name',
+        ENABLED = 'enabled',
+        PRIVATE_ACCESS = 'privateAccess',
         PATH = 'path',
-        CREATED_ON = 'createdOn',
-        CREATED_BY = 'createdBy',
         UPDATED_ON = 'updatedOn',
-        UPDATED_BY = 'updatedBy'
     }
 
-
-    const enum MusicFieldNames {
-        ART_IMAGE_PATTERN = 'albumArtImagePattern'
-    }
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
+    const libraryRefreshPayload = useSelector((state: RootState) => state.libraryRefresh)
 
     const [props, setProps] = useState<LibrayValidationPayload>({
         libraryPayload: {
             name: '',
+            privateAccess: false,
             path: '',
             enabled: true,
             libraryTypePayload: LibraryTypePayload.MUSIC
         },
         formValidation: {
             fieldValidations: []
-        },
-        tabPanelPayload: {
-            index: tabIndex
         }
     })
 
     useEffect(() => {
         setProps(p => ({
             ...p,
-            libraryPayload: libraryPagePayload.libraryPayload,
-            tabPanelPayload: {
-                index: tabIndex,
-                value: libraryPagePayload.tabPanelPayload.value
-            }
+            libraryPayload: libraryPagePayload.libraryPayload
         }))
     }, [libraryPagePayload])
+
+    useEffect(() => {
+
+        console.log('libraryRefreshPayload.triggerSave', libraryRefreshPayload.triggerSave)
+
+        if (libraryRefreshPayload.triggerSave) {
+            handleSave()
+        }
+    }, [libraryRefreshPayload.triggerSave])
 
     const setStateValue = (name: string, value: any): void => {
         setProps(p => ({
@@ -88,6 +86,12 @@ const LibraryGeneral = (libraryPagePayload: LibraryPagePayload) => {
     }
 
     function handleSave(): void {
+
+        dispatch(
+            triggerSaveLibrary({
+                triggerSave: null
+            })
+        )
 
         clearFieldValidationState()
 
@@ -126,7 +130,7 @@ const LibraryGeneral = (libraryPagePayload: LibraryPagePayload) => {
         }))
 
 
-        checkLibraryPathExists(props.libraryPayload.path, userToken)
+        checkLibraryPathExists(props.libraryPayload.path || '', userToken)
             .then(response => {
 
                 if (response.ok) {
@@ -161,29 +165,17 @@ const LibraryGeneral = (libraryPagePayload: LibraryPagePayload) => {
     }
 
     return (
-        <div
-            hidden={props.tabPanelPayload.value !== props.tabPanelPayload?.index}
-        >
+        <div>
 
-            {!props.libraryPayload.id &&
-                <div className="new-line">
-                    <FormControl fullWidth={true}>
-                        <FormLabel className='align-left'>Choose library type</FormLabel>
-                        <RadioGroup
-                            row
-                            aria-labelledby="demo-radio-buttons-
-                        -label"
-                            defaultValue="music"
-                            name={FieldNames.TYPE}
-                            onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
-                        >
-                            <FormControlLabel value="music" control={<Radio />} label="Music" />
-                            <FormControlLabel value="photo" control={<Radio />} label="Photo" />
-                            <FormControlLabel value="video" control={<Radio />} label="Video" />
-                        </RadioGroup>
-                    </FormControl>
-                </div>
-            }
+            <div className="new-line">
+                <FormControlLabel
+                    control={<Checkbox
+                        value={props.libraryPayload.enabled}
+                        checked={props.libraryPayload.enabled}
+                        onChange={e => setStateValue(FieldNames.ENABLED, e.currentTarget.checked)}
+                    />}
+                    label="Enabled" />
+            </div>
 
             <div className="new-line">
                 <TextField
@@ -197,7 +189,7 @@ const LibraryGeneral = (libraryPagePayload: LibraryPagePayload) => {
                 />
             </div>
 
-            {userPolicyPayload?.administrator &&
+            {userPolicyPayload?.administrator && props.libraryPayload.path &&
                 <div className="new-line">
                     <TextField
                         name={FieldNames.PATH}
@@ -219,30 +211,6 @@ const LibraryGeneral = (libraryPagePayload: LibraryPagePayload) => {
                 </div>
             }
 
-            {props.libraryPayload.createdOn &&
-                <div className="new-line">
-                    <TextField
-                        name={FieldNames.CREATED_ON}
-                        label="Created on"
-                        value={displayDateTime(props.libraryPayload.createdOn)}
-                        fullWidth={true}
-                        disabled={true}
-                    />
-                </div>
-            }
-
-            {props.libraryPayload.createdBy &&
-                <div className="new-line">
-                    <TextField
-                        name={FieldNames.CREATED_BY}
-                        label="Created by"
-                        value={props.libraryPayload.createdBy}
-                        fullWidth={true}
-                        disabled={true}
-                    />
-                </div>
-            }
-
             {props.libraryPayload.updatedOn &&
                 <div className="new-line">
                     <TextField
@@ -255,19 +223,18 @@ const LibraryGeneral = (libraryPagePayload: LibraryPagePayload) => {
                 </div>
             }
 
-            {props.libraryPayload.updatedBy &&
-                <div className="new-line">
-                    <TextField
-                        name={FieldNames.UPDATED_BY}
-                        label="Updated by"
-                        value={props.libraryPayload.updatedBy}
-                        fullWidth={true}
-                        disabled={true}
-                    />
-                </div>
-            }
 
-            <div className="new-line right">
+            <div className="new-line">
+                <FormControlLabel
+                    control={<Checkbox
+                        value={props.libraryPayload.privateAccess}
+                        checked={props.libraryPayload.privateAccess || false}
+                        onChange={e => setStateValue(FieldNames.PRIVATE_ACCESS, e.currentTarget.checked)}
+                    />}
+                    label="Private access" />
+            </div>
+
+            {/* <div className="new-line right">
 
                 {isShowSaveButton() &&
                     <Button
@@ -280,7 +247,7 @@ const LibraryGeneral = (libraryPagePayload: LibraryPagePayload) => {
                     </Button>
                 }
 
-            </div>
+            </div> */}
 
         </div>
     )

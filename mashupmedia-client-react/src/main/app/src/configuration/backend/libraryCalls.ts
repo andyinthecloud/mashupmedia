@@ -1,12 +1,16 @@
-import { number } from "prop-types";
 import { ServerResponsePayload } from '../../common/utils/formValidationUtils';
 import { callMashupMediaApi, HttpMethod, HttpResponse } from "../../common/utils/httpUtils";
 import { NameValuePayload } from './metaCalls';
 
 export enum LibraryTypePayload {
-    MUSIC = 'MUSIC', 
-    VIDEO = 'VIDEO', 
+    MUSIC = 'MUSIC',
+    VIDEO = 'VIDEO',
     PHOTO = 'PHOTO'
+}
+
+export enum LocationTypePayload {
+    LOCAL_DEFAULT = 'LOCAL_DEFAULT',
+    LOCAL_CUSTOM = 'LOCAL_CUSTOM'
 }
 
 export type LibraryNameValuePayload = NameValuePayload<number> & LibraryTypePayload
@@ -14,24 +18,22 @@ export type LibraryNameValuePayload = NameValuePayload<number> & LibraryTypePayl
 export type LibraryPayload = {
     id?: number
     name: string
-    path: string
-    createdOn?: string
-    createdBy?: string
+    privateAccess: boolean
+    path?: string
+    locationTypePayload?: LocationTypePayload
     updatedOn?: string
-    updatedBy?: string
     enabled: boolean
-    lastSuccessfulScanOn?: string
     libraryTypePayload: LibraryTypePayload
 }
 
 const libraryUri = '/api/private/library/'
 
 export const getLibraries = (userToken?: string): Promise<HttpResponse<LibraryNameValuePayload[]>> => {
-    return callMashupMediaApi<LibraryNameValuePayload[]> (HttpMethod.GET, libraryUri + 'all', userToken)
+    return callMashupMediaApi<LibraryNameValuePayload[]>(HttpMethod.GET, libraryUri + 'all', userToken)
 }
 
 export const getLibrary = (libraryId: number, userToken?: string): Promise<HttpResponse<LibraryPayload>> => {
-    return callMashupMediaApi<LibraryPayload> (HttpMethod.GET, libraryUri + libraryId, userToken)
+    return callMashupMediaApi<LibraryPayload>(HttpMethod.GET, libraryUri + libraryId, userToken)
 }
 
 export const checkLibraryPathExists = (path: string, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
@@ -40,13 +42,13 @@ export const checkLibraryPathExists = (path: string, userToken?: string): Promis
         value: path
     }
 
-    return callMashupMediaApi<ServerResponsePayload<string>> (HttpMethod.POST, libraryUri + 'check-path', userToken, JSON.stringify(valuePayload))
+    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.POST, libraryUri + 'check-path', userToken, JSON.stringify(valuePayload))
 }
 
 export const saveLibrary = (libraryPayload: LibraryPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<string>>> => {
-    return callMashupMediaApi<ServerResponsePayload<string>> (HttpMethod.PUT, libraryUri, userToken, JSON.stringify(libraryPayload))
+    return callMashupMediaApi<ServerResponsePayload<string>>(HttpMethod.PUT, libraryUri, userToken, JSON.stringify(libraryPayload))
 }
 
 export const deleteLibrary = (libraryId: number, userToken?: string): Promise<HttpResponse<boolean>> => {
-    return callMashupMediaApi<boolean> (HttpMethod.DELETE, libraryUri + libraryId, userToken)
+    return callMashupMediaApi<boolean>(HttpMethod.DELETE, libraryUri + libraryId, userToken)
 }

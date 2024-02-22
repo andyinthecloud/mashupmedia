@@ -2,12 +2,11 @@ package org.mashupmedia.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
-import org.mashupmedia.model.media.music.AlbumArtImage;
+import org.mashupmedia.model.media.music.MusicArtImage;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.TrackRepository;
 import org.mashupmedia.repository.media.music.TrackSpecifications;
@@ -29,7 +28,6 @@ public class MediaManagerImpl implements MediaManager {
 
 	private final MediaDao mediaDao;
 	private final TrackRepository trackRepository;
-	private final MashupMediaSecurityManager mashupMediaSecurityManager;
 
 	@Override
 	public List<MediaItem> getMediaItemsForLibrary(long libraryId) {
@@ -44,14 +42,8 @@ public class MediaManagerImpl implements MediaManager {
 	}
 
 	@Override
-	public void deleteAlbumArtImages(List<AlbumArtImage> albumArtImages) {
-		mediaDao.deleteAlbumArtImages(albumArtImages);
-
-	}
-
-	@Override
-	public List<AlbumArtImage> getAlbumArtImages(long libraryId) {
-		List<AlbumArtImage> albumArtImages = mediaDao.getAlbumArtImages(libraryId);
+	public List<MusicArtImage> getAlbumArtImages(long libraryId) {
+		List<MusicArtImage> albumArtImages = mediaDao.getAlbumArtImages(libraryId);
 		return albumArtImages;
 	}
 

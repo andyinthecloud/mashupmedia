@@ -16,12 +16,10 @@ import jakarta.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "years")
 @Cacheable
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Year implements Serializable {
 	private static final long serialVersionUID = -6346257354674712995L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@XmlTransient
 	private long id;
 	@Column(name = "year_number")
 	private int year;

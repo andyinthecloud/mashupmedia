@@ -17,7 +17,7 @@ public class LibraryNameValueMapper implements DomainMapper<Library, LibraryName
 
         LibraryType libraryType = domain.getLibraryType();
         Assert.notNull(libraryType, "Library type should not be null");
-        
+
         LibraryTypePayload libraryTypePayload = null;
         if (libraryType == LibraryType.MUSIC) {
             libraryTypePayload = LibraryTypePayload.MUSIC;
@@ -27,12 +27,12 @@ public class LibraryNameValueMapper implements DomainMapper<Library, LibraryName
             libraryTypePayload = LibraryTypePayload.VIDEO;
         }
         Assert.notNull(libraryTypePayload, "Unknown libraryTypePayload");
-        
+
         return LibraryNameValuePayload.builder()
-        .name(domain.getName())
-        .value(domain.getId())
-        .libraryTypePayload(libraryTypePayload)
-        .build();
+                .name(domain.getName())
+                .value(domain.getId())
+                .libraryTypePayload(libraryTypePayload)
+                .build();
     }
 
     @Override
@@ -40,5 +40,5 @@ public class LibraryNameValueMapper implements DomainMapper<Library, LibraryName
         // Not required
         return null;
     }
-    
+
 }

@@ -2,6 +2,7 @@ package org.mashupmedia.model;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.mashupmedia.model.library.Library;
@@ -50,13 +51,18 @@ public class User implements UserDetails {
 	private boolean enabled;
 	private boolean system;
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	private Set<Role> roles;
+	@Builder.Default
+	private Set<Role> roles = new HashSet<>();
 	private Date createdOn;
 	private Date updatedOn;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private Set<UserPlaylistPosition> userPlaylistPositions;
-	@ManyToMany(mappedBy = "shareUsers")
-	private Set<Library> sharedLibraries;
+	@Builder.Default
+	private Set<UserPlaylistPosition> userPlaylistPositions = new HashSet<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	// @ManyToMany(mappedBy = "shareUsers")
+	@Builder.Default
+	private Set<Library> libraries = new HashSet<>();
 	private boolean validated;
 	@ManyToOne
 	private User createdBy;

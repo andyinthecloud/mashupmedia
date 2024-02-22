@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
-import org.mashupmedia.model.location.Location;
 import org.mashupmedia.watch.WatchLibraryListener;
 import org.springframework.stereotype.Service;
 
@@ -80,13 +78,12 @@ public class LibraryWatchManagerImpl implements LibraryWatchManager {
 
 	private void registerWatchLibraryListener(Library library) {
 
-		if (library.isRemote()) {
-			return;
-		}
+		// if (library.isRemote()) {
+		// 	return;
+		// }
 
 		long libraryId = library.getId();
-		Location location = library.getLocation();
-		String path = location.getPath();
+		String path = library.getPath();
 		registerWatchLibraryListener(libraryId, path);
 
 	}

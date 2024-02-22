@@ -30,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfiguration {
 
     private final ObjectMapper objectMapper;
-
     private final AdminManager adminManager;
 
     // @Bean

@@ -29,8 +29,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @ToString
-public class Album implements Serializable {
-	private static final long serialVersionUID = -6293786232429408277L;
+public class Album  {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
@@ -39,7 +38,7 @@ public class Album implements Serializable {
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Artist artist;
 	@ManyToOne(cascade = { CascadeType.ALL })
-	private AlbumArtImage albumArtImage;
+	private MusicArtImage albumArtImage;
 	@OneToMany(mappedBy = "album")
 	@OrderBy("trackNumber")
 	private List<Track> tracks;

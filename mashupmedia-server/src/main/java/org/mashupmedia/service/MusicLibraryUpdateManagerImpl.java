@@ -29,14 +29,15 @@ import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
+import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.AlbumArtImage;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
+import org.mashupmedia.model.media.music.MusicArtImage;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.MediaRepository;
 import org.mashupmedia.repository.media.music.ArtistRepository;
@@ -155,7 +156,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			mediaEncodings.add(mediaEncoding);
 
 			Artist artist = track.getArtist();
-			artist = prepareArtist(artist);
+			User user = musicLibrary.getUser();
+			artist = prepareArtist(artist, user.getId());
 
 			Album album = track.getAlbum();
 			if (StringUtils.isBlank(album.getName())) {
@@ -167,7 +169,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			album = prepareAlbum(album);
 			album.setUpdatedOn(date);
 
-			AlbumArtImage albumArtImage = album.getAlbumArtImage();
+			MusicArtImage albumArtImage = album.getAlbumArtImage();
 			if (albumArtImage == null) {
 				try {
 					albumArtImage = albumArtManager.getAlbumArtImage(musicLibrary, track);
@@ -180,7 +182,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			track.setAlbum(album);
 
 			track.setCreatedOn(date);
-			track.setArtist(artist);
 
 			Year year = track.getYear();
 			year = prepareYear(year);
@@ -255,7 +256,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			}
 		}
 
-		File libraryFolder = new File(library.getLocation().getPath());
+		File libraryFolder = new File(library.getPath());
 		List<File> relativeFolders = LibraryHelper.getRelativeFolders(libraryFolder, file);
 
 		String folderArtistName = getFolderArtist(relativeFolders, file);
@@ -453,10 +454,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			tagArtistName = folderArtistName;
 		}
 		artist.setName(tagArtistName);
-		artist.setFolderName(folderArtistName);
+		User user = musicLibrary.getUser();
+		artist.setUser(user);
 		artist.setAlbums(new ArrayList<Album>());
 		album.setArtist(artist);
-		track.setArtist(artist);
 
 		StringBuilder displayTitleBuilder = new StringBuilder();
 		displayTitleBuilder.append(track.getDisplayTrackNumber());
@@ -518,8 +519,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return title;
 	}
 
-	private Artist prepareArtist(Artist artist) {
-		return artistRepository.findArtistByNameIgnoreCase(artist.getName()).orElse(artist);
+	private Artist prepareArtist(Artist artist, long userId) {
+		return artistRepository
+		.findArtistByNameIgnoreCase(artist.getName(), userId)
+		.orElse(artist);
 	}
 
 	private Album prepareAlbum(Album album) {
@@ -535,7 +538,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		String url = null;
 		String thumbnailUrl = null;
-		AlbumArtImage albumArtImage = album.getAlbumArtImage();
+		MusicArtImage albumArtImage = album.getAlbumArtImage();
 		if (albumArtImage != null) {
 			url = albumArtImage.getUrl();
 			thumbnailUrl = albumArtImage.getThumbnailUrl();
@@ -548,7 +551,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		if (optionalAlbum.isPresent()) {
 			Album savedAlbum = optionalAlbum.get();
-			AlbumArtImage savedAlbumArtImage = savedAlbum.getAlbumArtImage();
+			MusicArtImage savedAlbumArtImage = savedAlbum.getAlbumArtImage();
 			if (savedAlbumArtImage == null) {
 				savedAlbum.setAlbumArtImage(albumArtImage);
 			} else {

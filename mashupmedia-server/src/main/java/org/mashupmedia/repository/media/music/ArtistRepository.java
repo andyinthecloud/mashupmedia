@@ -13,8 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ArtistRepository extends JpaRepository<Artist, Long> {
 
-    @Query("select a from Artist a where a.name = :name")
-    Optional<Artist> findArtistByNameIgnoreCase(@Param("name") String name);
+    @Query("select a from Artist a join a.user u where a.name = :name and u.id = :userId")
+    Optional<Artist> findArtistByNameIgnoreCase(@Param("name") String name, @Param("userId") long userId);
 
     @Query("select distinct l from Artist art join art.albums alb join alb.tracks t join t.library l where l.enabled = true and art.id = :artistId ")
     List<Library> findLibrariesById(@Param("artistId") long artistId);

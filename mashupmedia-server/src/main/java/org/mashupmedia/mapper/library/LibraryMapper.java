@@ -1,12 +1,15 @@
 package org.mashupmedia.mapper.library;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.dto.library.LibraryPayload;
 import org.mashupmedia.dto.library.LibraryTypePayload;
+import org.mashupmedia.dto.library.LocationTypePayload;
 import org.mashupmedia.mapper.DomainMapper;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.library.LocationType;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.location.Location;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.DateHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -31,15 +34,19 @@ public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
         return libraryPayload.toBuilder()
                 .id(domain.getId())
                 .name(domain.getName())
-                .path(domain.getLocation().getPath())
-                .createdOn(DateHelper.toLocalDateTime(domain.getCreatedOn()))
-                .createdBy(domain.getCreatedBy().getName())
+                .path(domain.getLocationType() == LocationType.LOCAL_CUSTOM ? domain.getPath() : null)
+                .locationTypePayload(getLocationTypePayload(domain.getLocationType()))
                 .updatedOn(DateHelper.toLocalDateTime(domain.getUpdatedOn()))
-                .updatedBy(domain.getUpdatedBy().getName())
                 .enabled(domain.isEnabled())
-                .lastSuccessfulScanOn(DateHelper.toLocalDateTime(domain.getLastSuccessfulScanOn()))
+                .privateAccess(domain.isPrivateAccess())
                 .build();
+    }
 
+    private LocationTypePayload getLocationTypePayload(LocationType locationType) {
+        if (locationType == LocationType.LOCAL_CUSTOM) {
+            return LocationTypePayload.LOCAL_CUSTOM;
+        }
+        return null;
     }
 
     @Override
@@ -65,10 +72,28 @@ public class LibraryMapper implements DomainMapper<Library, LibraryPayload> {
     private void mapToLibrary(Library library, LibraryPayload payload) {
         library.setId(payload.getId());
         library.setName(payload.getName());
-        Location location = new Location();
-        location.setPath(payload.getPath());
-        library.setLocation(location);
+
+        if (AdminHelper.isAdministrator() && StringUtils.isNotBlank(payload.getPath())) {
+            library.setPath(payload.getPath());
+        }
+
+        library.setLocationType(getLocationType(payload.getLocationTypePayload()));
         library.setEnabled(payload.isEnabled());
+        library.setPrivateAccess(payload.isPrivateAccess());
+    }
+
+    private LocationType getLocationType(LocationTypePayload locationTypePayload) {
+        if (!AdminHelper.isAdministrator() || locationTypePayload == null) {
+            return null;
+        }
+
+        switch (locationTypePayload) {
+            case LOCAL_CUSTOM:
+                return LocationType.LOCAL_CUSTOM;
+
+            default:
+                return LocationType.LOCAL_DEFAULT;
+        }
     }
 
 }

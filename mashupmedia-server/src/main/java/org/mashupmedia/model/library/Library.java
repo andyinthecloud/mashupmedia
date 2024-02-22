@@ -2,16 +2,14 @@ package org.mashupmedia.model.library;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import org.mashupmedia.model.User;
-import org.mashupmedia.model.location.Location;
 
 import jakarta.persistence.Cacheable;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,13 +19,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
-import jakarta.xml.bind.annotation.XmlTransient;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "libraries")
@@ -36,34 +34,40 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
+@SuperBuilder(toBuilder = true)
+@EqualsAndHashCode
 public abstract class Library implements Serializable {
 
 	private static final long serialVersionUID = 4337414530802373218L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@XmlTransient
 	private long id;
+	@EqualsAndHashCode.Include
 	private String name;
-	@ManyToOne
-	private Location location;
+	// @ManyToOne
+	// private Location location;
+
+	@EqualsAndHashCode.Include
+	private String path;
+	@EqualsAndHashCode.Include
+	@Enumerated(EnumType.STRING)
+	@Builder.Default
+	private LocationType locationType = LocationType.LOCAL_DEFAULT;
 	private Date createdOn;
 	@ManyToOne
-	private User createdBy;
+	private User user;
 	private Date updatedOn;
 	@ManyToOne
 	private User updatedBy;
 	private boolean enabled;
 	private String scanMinutesInterval;
 	private Date lastSuccessfulScanOn;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "library")
-	@OrderBy("createdOn")
-	private List<RemoteShare> remoteShares;
-	private boolean remote;
 	private String status;
 	@ManyToMany
 	@JoinTable(name = "libraries_share_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "library_id"))
 	private Set<User> shareUsers;
+	private boolean privateAccess;
 
 	public enum LibraryType {
 		ALL, MUSIC, VIDEO, PHOTO
@@ -94,43 +98,13 @@ public abstract class Library implements Serializable {
 		this.status = libraryStatusType.toString();
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((location == null) ? 0 : location.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Library other = (Library) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (location == null) {
-			if (other.location != null)
-				return false;
-		} else if (!location.equals(other.location))
-			return false;
-		return true;
-	}
 
 	public boolean hasAccess(User user) {
-		if (user == null) {
+		if (this.user == null || user == null) {
 			return false;
-		}
+		}		
 
-		if (getCreatedBy().equals(user)) {
+		if (this.user.equals(user)) {
 			return true;
 		}
 
@@ -144,12 +118,12 @@ public abstract class Library implements Serializable {
 		builder.append(id);
 		builder.append(", name=");
 		builder.append(name);
-		builder.append(", location=");
-		builder.append(location);
+		builder.append(", path=");
+		builder.append(path);
 		builder.append(", createdOn=");
 		builder.append(createdOn);
-		builder.append(", createdBy=");
-		builder.append(createdBy);
+		builder.append(", user=");
+		builder.append(user);
 		builder.append(", updatedOn=");
 		builder.append(updatedOn);
 		builder.append(", updatedBy=");
@@ -160,10 +134,6 @@ public abstract class Library implements Serializable {
 		builder.append(scanMinutesInterval);
 		builder.append(", lastSuccessfulScanOn=");
 		builder.append(lastSuccessfulScanOn);
-		builder.append(", remoteShares=");
-		builder.append(remoteShares);
-		builder.append(", remote=");
-		builder.append(remote);
 		builder.append(", status=");
 		builder.append(status);
 		builder.append("]");

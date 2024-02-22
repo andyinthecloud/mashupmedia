@@ -40,7 +40,7 @@ public class LocalStorageManagerImpl implements StorageManager {
         checkFolderAccessRights(library, folderPath);
 
         if (StringUtils.isEmpty(folderPath)) {
-            File file = new File(library.getLocation().getPath());
+            File file = new File(library.getPath());
             File[] files = file.listFiles();
             Arrays.sort(files);
             return Arrays.asList(files);
@@ -62,12 +62,12 @@ public class LocalStorageManagerImpl implements StorageManager {
             return;
         }
 
-        String libraryPath = library.getLocation().getPath();
+        String libraryPath = library.getPath();
         if (!folderPath.startsWith(libraryPath)) {
             throw new IllegalAccessError("Only library files are accessible");
         }
 
-        if (library.getCreatedBy().equals(user)) {
+        if (library.getUser().equals(user)) {
             return;
         }
 

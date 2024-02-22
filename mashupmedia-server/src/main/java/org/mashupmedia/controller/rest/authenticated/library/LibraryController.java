@@ -4,23 +4,16 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.validation.Valid;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.EmailValidator;
-import org.mashupmedia.dto.library.LibrarySharePayload;
 import org.mashupmedia.dto.library.LibraryNameValuePayload;
 import org.mashupmedia.dto.library.LibraryPayload;
-import org.mashupmedia.dto.library.LibraryShareUserPayload;
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.LibraryNameValueMapper;
 import org.mashupmedia.mapper.library.LibraryMapper;
-import org.mashupmedia.mapper.library.LibraryShareUserMapper;
 import org.mashupmedia.model.User;
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
 import org.mashupmedia.util.AdminHelper;
@@ -39,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -58,7 +52,7 @@ public class LibraryController {
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<LibraryNameValuePayload>> getLibraries() {
 
-        List<LibraryNameValuePayload> libraryNameValuePayloads = libraryManager.getLibraries()
+        List<LibraryNameValuePayload> libraryNameValuePayloads = libraryManager.getMyLibraries()
                 .stream()
                 .map(libraryNameValueMapper::toPayload)
                 .collect(Collectors.toList());
@@ -80,7 +74,7 @@ public class LibraryController {
             return;
         }
 
-        if (library.getCreatedBy().equals(loggedInUser)) {
+        if (library.getUser().equals(loggedInUser)) {
             return;
         }
 
@@ -128,7 +122,7 @@ public class LibraryController {
 
     private boolean isInvalidLibraryPath(String libraryPath) {
         if (StringUtils.isBlank(libraryPath)) {
-            return true;
+            return false;
         }
 
         File file = new File(libraryPath);
