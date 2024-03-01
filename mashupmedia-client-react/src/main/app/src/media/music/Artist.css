@@ -1,0 +1,33 @@
+#artist p.title, #artist p.profile {
+    display: flex;
+    align-items: center;
+}
+
+#artist p.title button{
+    margin-left: 1em;
+}
+
+#artist p.external-links {
+    margin-bottom: 10em;
+}
+
+#artist p.external-links button{
+    margin-left: 0;
+}
+
+#artist p.external-links div.item {
+    clear: both;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: solid 1px lightgrey;
+
+}
+
+#artist p.external-links div.item .icon{
+    margin-right: 0.2em;
+}
+
+#artist p.external-links div.item a span, #artist p.external-links div.item a .icon{
+    vertical-align: middle;
+}

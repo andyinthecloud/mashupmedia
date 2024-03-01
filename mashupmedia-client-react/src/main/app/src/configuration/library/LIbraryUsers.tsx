@@ -233,7 +233,7 @@ const LibraryUsers = (libraryPagePayload: LibraryPagePayload) => {
 
                     {!props.libraryShareUserPayloads?.length &&
                         <ListItem>
-                            <ListItemText>Unrestricted access</ListItemText>
+                            <ListItemText>Everyone</ListItemText>
                         </ListItem>
                     }
                 </List>

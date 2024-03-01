@@ -126,6 +126,11 @@ export const MashupRoutes = () => {
                 } />
 
                 <Route path="artist">
+                    <Route index element={
+                        <RequireAuthenication>
+                            <Artist />
+                        </RequireAuthenication>
+                    } />
                     <Route path=":artistId" element={
                         <RequireAuthenication>
                             <Artist />

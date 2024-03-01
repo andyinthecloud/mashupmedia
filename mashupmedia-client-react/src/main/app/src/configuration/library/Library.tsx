@@ -31,18 +31,6 @@ const Library = () => {
     const { libraryId } = useParams()
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
-    // const [props, setProps] = useState<LibraryPagePayload>({
-
-    //     libraryPayload: {
-    //         name: '',
-    //         privateAccess: false,
-    //         path: '',
-    //         enabled: true,
-    //         libraryTypePayload: LibraryTypePayload.MUSIC
-    //     }
-    // })
-
-
     const [props, setProps] = useState<LibraryPagePayload>({
         libraryPayload: {
             name: '',
@@ -147,7 +135,12 @@ const Library = () => {
 
         clearFieldValidationState()
 
-        saveLibrary(props.libraryPayload, userToken)
+        const libraryPayload = props.libraryPayload
+        libraryPayload.locationTypePayload = libraryPayload.path
+            ? LocationTypePayload.LOCAL_CUSTOM
+            : LocationTypePayload.LOCAL_DEFAULT
+
+        saveLibrary(libraryPayload, userToken)
             .then(response => {
                 if (response.ok) {
                     dispatch(
@@ -220,7 +213,6 @@ const Library = () => {
         <form>
             <h1>Library</h1>
 
-
             <div className="new-line">
                 <FormControlLabel
                     control={<Checkbox
@@ -243,12 +235,12 @@ const Library = () => {
                 />
             </div>
 
-            {userPolicyPayload?.administrator && props.libraryPayload.path &&
+            {userPolicyPayload?.administrator &&
                 <div className="new-line">
                     <TextField
                         name={FieldNames.PATH}
                         label="Media folder path"
-                        value={props.libraryPayload.path}
+                        value={props.libraryPayload.path || ''}
                         onChange={e => setStateValue(e.currentTarget.name, e.currentTarget.value)}
                         fullWidth={true}
                         error={hasFieldError(FieldNames.PATH, props.formValidation)}
@@ -257,7 +249,7 @@ const Library = () => {
                 </div>
             }
 
-            {userPolicyPayload?.administrator && props.libraryPayload.path &&
+            {userPolicyPayload?.administrator &&
                 <div className="new-line right">
                     <Button variant="contained" color="secondary" type="button" onClick={handleCheckPath}>
                         Check path

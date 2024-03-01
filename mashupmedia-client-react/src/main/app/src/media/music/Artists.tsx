@@ -1,10 +1,11 @@
-import { Clear } from "@mui/icons-material"
-import { IconButton, List, ListItem, ListItemButton, ListItemText, TextField } from '@mui/material'
+import { Add, Clear } from "@mui/icons-material"
+import { Button, IconButton, List, ListItem, ListItemButton, ListItemText, TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { RootState } from '../../common/redux/store'
 import { ArtistPayload, getArtists } from './rest/musicCalls'
+import './Artists.css'
 
 const Artists = () => {
 
@@ -39,7 +40,7 @@ const Artists = () => {
         }
 
         setFilteredProps(
-            props.filter(artistPayload => 
+            props.filter(artistPayload =>
                 artistPayload.name.toLowerCase().startsWith(artistSearch || "")
             )
         )
@@ -47,23 +48,43 @@ const Artists = () => {
     }, [artistSearch, props])
 
 
+    const showSearchArtists = (): boolean => (
+        props?.length > 20
+    )
+
+    const navigate = useNavigate()
+    const handleClickNewArtist = () => {
+        navigate('/music/artist')
+    }
 
     return (
-        <div>
-            <h1>Artists</h1>
+        <div id="artists">
+            <div className="title">
+                <h1>Artists</h1>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={
+                        <Add />
+                    }
+                    onClick={handleClickNewArtist}
+                >New</Button>
+            </div>
 
-            <TextField
-                label="Search artist"
-                variant="outlined"
-                sx={{ marginBottom: 1 }}
-                fullWidth
-                onChange={(e) => handleArtistSearchChange(e.currentTarget.value)}
-                InputProps={{
-                    endAdornment: 
-                    <IconButton onClick={() => handleArtistSearchChange("")}><Clear /></IconButton>
-                }}
 
-            />
+            {showSearchArtists() &&
+                <TextField
+                    label="Search artist"
+                    variant="outlined"
+                    fullWidth
+                    onChange={(e) => handleArtistSearchChange(e.currentTarget.value)}
+                    InputProps={{
+                        endAdornment:
+                            <IconButton onClick={() => handleArtistSearchChange("")}><Clear /></IconButton>
+                    }}
+
+                />
+            }
 
             <List>
                 {filteredProps.map(function (artist) {

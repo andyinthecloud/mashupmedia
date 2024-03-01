@@ -1,9 +1,14 @@
 import { backEndUrl, callMashupMediaApi, HttpMethod, HttpResponse, timestamp } from '../../../common/utils/httpUtils'
+import { UserPayload } from "../../../configuration/backend/userCalls"
+import { ExternalLinkPayload } from "../../rest/mediaCalls"
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
 
 export type ArtistPayload = {
     id: number
     name: string
+    profile?: string
+    userPayload?: UserPayload
+    externalLinkPayloads?: ExternalLinkPayload[]
 }
 
 export type AlbumPayload = {
@@ -33,7 +38,6 @@ export type AlbumWithTracksAndArtistPayload = {
 }
 
 export type ArtistWithAlbumsPayload = {
-    mediaToken: string
     artistPayload: ArtistPayload
     albumPayloads: AlbumPayload[]
 }

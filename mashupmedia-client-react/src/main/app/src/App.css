@@ -73,8 +73,8 @@ div.new-line {
   text-align: right;
 }
 
-form button {
-  margin-left: 1em !important;
+div.right button {
+  margin-left: 1em;
 }
 
 h1 {
@@ -126,4 +126,13 @@ label {
 
 .float-right {
   float: right;
+}
+
+a {
+  color: rgb(87, 163, 84);
+  text-decoration: none;
+}
+
+a:hover, a:hover span {
+  text-decoration: underline;
 }

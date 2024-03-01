@@ -1,5 +1,6 @@
 package org.mashupmedia.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.dto.share.ErrorPayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,14 @@ public class ValidationUtil {
 
         return new ResponseEntity<ServerResponsePayload<T>>(serverResponsePayload, httpStatus);
 
+    }
+
+    public static boolean containsHtml(String text) {
+        if (StringUtils.isBlank(text)) {
+            return false;
+        }
+
+        return text.matches("<(\"[^\"]*\"|'[^']*'|[^'\">])*>");
     }
 
 }

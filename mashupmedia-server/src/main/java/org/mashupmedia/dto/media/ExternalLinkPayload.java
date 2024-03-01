@@ -1,6 +1,4 @@
-package org.mashupmedia.dto.media.music;
-
-import java.util.List;
+package org.mashupmedia.dto.media;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class AlbumPayload {
+public class ExternalLinkPayload {
     private long id;
     private String name;
-    private String summary;
-    private List<String> links;
+    private String link;
+    private int rank;
 }

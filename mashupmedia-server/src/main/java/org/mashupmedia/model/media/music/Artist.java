@@ -2,8 +2,10 @@ package org.mashupmedia.model.media.music;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import org.mashupmedia.model.User;
+import org.mashupmedia.model.media.ExternalLink;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -12,10 +14,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,9 +34,10 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
-public class Artist implements Serializable {
-	private static final long serialVersionUID = -5361832134097788033L;
+@Builder
+public class Artist {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
@@ -42,8 +50,10 @@ public class Artist implements Serializable {
 	private List<Album> albums;
 	@ManyToOne
 	private User user;
-	private String summary;
-	private String link;
+	private String profile;
+	@ManyToMany
+	@JoinTable(name = "artists_external_links", joinColumns = @JoinColumn(name = "external_link_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
+	private Set<ExternalLink> externalLinks;
 
 	@Override
 	public int hashCode() {

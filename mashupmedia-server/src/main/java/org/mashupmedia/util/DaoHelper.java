@@ -17,7 +17,6 @@
 
 package org.mashupmedia.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +24,8 @@ import java.util.stream.Collectors;
 import org.springframework.util.Assert;
 
 public class DaoHelper {
+
+	public static int MAX_CHARACTER_LENGTH = 65535;
 
 	public static String convertToHqlParameters(Collection<? extends Number> numbers) {
 		StringBuilder hqlBuilder = new StringBuilder();
@@ -82,7 +83,7 @@ public class DaoHelper {
 
 		queryBuilder.append(" " + keyword + " ");
 		queryBuilder.append(" ( ");
-		queryBuilder.append(String.format(" l.createdBy.id = %d ", userId));
+		queryBuilder.append(String.format(" l.user.id = %d ", userId));
 		queryBuilder.append(" or");
 		queryBuilder.append(String.format(" u.id = %d", userId) );
 		queryBuilder.append(" ) ");

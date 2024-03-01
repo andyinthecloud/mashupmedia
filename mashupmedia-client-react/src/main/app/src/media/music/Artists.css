@@ -1,0 +1,10 @@
+#artists div.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#artists div.title button{
+    vertical-align: middle;
+}
+

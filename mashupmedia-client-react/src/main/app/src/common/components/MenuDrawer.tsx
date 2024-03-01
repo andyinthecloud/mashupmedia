@@ -176,8 +176,8 @@ const MenuDrawer = () => {
                             component="div"
                             disablePadding
                             className="nested-list">
-                            <ListItemRoute label="Albums" toRoute="/music/albums" onClick={() => closeAfterNavigate()} />
                             <ListItemRoute label="Artists" toRoute="/music/artists" onClick={() => closeAfterNavigate()} />
+                            <ListItemRoute label="Albums" toRoute="/music/albums" onClick={() => closeAfterNavigate()} />
                         </List>
 
                     </Collapse>
