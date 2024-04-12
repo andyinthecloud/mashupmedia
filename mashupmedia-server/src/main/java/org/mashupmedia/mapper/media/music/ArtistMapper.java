@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.media.music.ArtistPayload;
 import org.mashupmedia.mapper.DomainMapper;
+import org.mashupmedia.mapper.PayloadListMapper;
 import org.mashupmedia.mapper.UserMapper;
 import org.mashupmedia.mapper.media.ExternalLinkMapper;
 import org.mashupmedia.model.media.music.Artist;
@@ -14,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class ArtistMapper implements DomainMapper<Artist, ArtistPayload> {
+public class ArtistMapper implements DomainMapper<Artist, ArtistPayload>, PayloadListMapper<Artist, ArtistPayload> {
 
     private final UserMapper userMapper;
     private final ExternalLinkMapper externalLinkMapper;
@@ -30,6 +31,14 @@ public class ArtistMapper implements DomainMapper<Artist, ArtistPayload> {
                         .stream()
                         .map(externalLinkMapper::toPayload)
                         .toList())
+                .build();
+    }
+
+    @Override
+    public ArtistPayload toPayloadList(Artist domain) {
+        return ArtistPayload.builder()
+                .id(domain.getId())
+                .name(domain.getName())
                 .build();
     }
 

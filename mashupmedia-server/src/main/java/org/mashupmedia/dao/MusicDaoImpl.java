@@ -91,15 +91,25 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		StringBuilder queryBuilder = new StringBuilder(
 				"select distinct a from Artist a");
-		queryBuilder.append(" join a.albums album");
-		queryBuilder.append(" join album.tracks t");
-		queryBuilder.append(" join t.library l");
+		queryBuilder.append(" left join a.albums album");
+		queryBuilder.append(" left join album.tracks t");
+		queryBuilder.append(" left join t.library l");
 		queryBuilder.append(" left join l.shareUsers u");
-		queryBuilder.append(" where t.library.enabled = true");
-		DaoHelper.appendUserIdFilter(queryBuilder, userId);
+		// queryBuilder.append(" where t.library.enabled = true");
+		queryBuilder.append(" where ( ");
+		queryBuilder.append(" a.user.id = :userId");
+		queryBuilder.append(" or (");
+		queryBuilder.append(" t.library.enabled = true");
+		queryBuilder.append(" and u.id = :userId");
+		queryBuilder.append(")");
+		queryBuilder.append(" )");
 
-		queryBuilder.append(" order by a.name");
+		// DaoHelper.appendUserIdFilter(queryBuilder, userId);
+
+		queryBuilder.append(" order by lower(a.name)");
 		TypedQuery<Artist> query = entityManager.createQuery(queryBuilder.toString(), Artist.class);
+		query.setParameter("userId", userId);
+
 		List<Artist> artists = query.getResultList();
 		return artists;
 	}
@@ -305,8 +315,9 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
-	public void saveArtist(Artist artist) {
+	public Artist saveArtist(Artist artist) {
 		saveOrUpdate(artist);
+		return artist;
 	}
 
 	@Override

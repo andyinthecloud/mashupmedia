@@ -1,21 +1,21 @@
-#artist p.title, #artist p.profile {
+#artist div.title, #artist div.profile {
     display: flex;
     align-items: center;
 }
 
-#artist p.title button{
+#artist div.title button{
     margin-left: 1em;
 }
 
-#artist p.external-links {
+#artist div.external-links {
     margin-bottom: 10em;
 }
 
-#artist p.external-links button{
+#artist div.external-links button{
     margin-left: 0;
 }
 
-#artist p.external-links div.item {
+#artist div.external-links div.item {
     clear: both;
     display: flex;
     justify-content: space-between;
@@ -24,10 +24,10 @@
 
 }
 
-#artist p.external-links div.item .icon{
+#artist div.external-links div.item .icon{
     margin-right: 0.2em;
 }
 
-#artist p.external-links div.item a span, #artist p.external-links div.item a .icon{
+#artist div.external-links div.item a span, #artist div.external-links div.item a .icon{
     vertical-align: middle;
 }

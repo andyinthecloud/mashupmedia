@@ -3,50 +3,58 @@ import { useEffect, useState } from "react"
 import { DialogPageload } from "./DialogPageload"
 
 
-export type EditTextDialogPageload = DialogPageload & {
+export type EditTextDialogPayload = {
     textFieldLabel: string
-    text: string
+    dialogPayload: DialogPageload<string>
     multiline?: boolean
-    updateText: (text: string) => void
+
 }
 
-const EditTextDialog = (payload: EditTextDialogPageload) => {
+const EditTextDialog = (payload: EditTextDialogPayload) => {
 
-    const [props, setProps] = useState<EditTextDialogPageload>(payload)
+    const [props, setProps] = useState<EditTextDialogPayload>(payload)
 
 
     useEffect(() => {
         setProps(p => ({
             ...p,
-            open: payload.open
+            dialogPayload: {
+                ...p.dialogPayload,
+                open: payload.dialogPayload.open            
+            }
         }))
 
-    }, [payload.open])
+    }, [payload.dialogPayload.open])
 
 
     const handleTextChange = (text: string): void => {
         setProps(p => ({
             ...p,
-            text
+            dialogPayload: {
+                ...p.dialogPayload,
+                payload: text
+            }
         }))
     }
 
     const handleSave = () => {
-        props.updateText(props.text)
+        props.dialogPayload.open = false
+        props.dialogPayload.updatePayload(props.dialogPayload.payload)
     }
 
     const handleCancel = () => {
-        props.updateText('')
+        props.dialogPayload.open = false
+        props.dialogPayload.updatePayload('')
     }
 
     return (
         <Dialog
             maxWidth="xl"
             fullWidth
-            open={props.open}
+            open={props.dialogPayload.open}
             onClose={handleCancel}>
                 
-            <DialogTitle>{props.title}</DialogTitle>
+            <DialogTitle>{props.dialogPayload.title}</DialogTitle>
             <DialogContent>
                 <TextField
                     autoFocus
@@ -55,7 +63,7 @@ const EditTextDialog = (payload: EditTextDialogPageload) => {
                     multiline={props.multiline}
                     style={{ marginTop: '0.3em' }}
                     label={props.textFieldLabel}                    
-                    value={props.text || ''}
+                    value={props.dialogPayload.payload || ''}
                     onChange={e => handleTextChange(e.target.value)}
                 />
             </DialogContent>

@@ -38,10 +38,12 @@ public interface MusicManager {
 
 	public List<Track> findTracks(MediaItemSearchCriteria mediaItemSearchCriteria);
 
-	public void saveArtist(Artist artist);
+	public Artist saveArtist(Artist artist);
 
 	public long getTotalTracksFromLibrary(long libraryId);
 
 	public List<Album> getLatestAlbums(int pageNumber, int maxResults);
+
+	public void deleteArtist(long artistId);
 	
 }

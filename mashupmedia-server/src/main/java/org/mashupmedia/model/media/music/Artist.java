@@ -45,13 +45,13 @@ public class Artist {
 	private String name;
 	@ManyToOne(cascade = { CascadeType.ALL })
 	private MusicArtImage albumArtImage;
-	@OneToMany(mappedBy = "artist")
+	@OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("name")
 	private List<Album> albums;
 	@ManyToOne
 	private User user;
 	private String profile;
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "artists_external_links", joinColumns = @JoinColumn(name = "external_link_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
 	private Set<ExternalLink> externalLinks;
 

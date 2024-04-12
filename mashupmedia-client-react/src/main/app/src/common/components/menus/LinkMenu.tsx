@@ -9,6 +9,11 @@ export type LinkMenuPayload = {
     externalLinkPayload?: ExternalLinkPayload
     anchorElement: HTMLElement | null
     editLink: (externalLinkPayload: ExternalLinkPayload) => void
+    deleteLink: (externalLinkPayload: ExternalLinkPayload) => void
+    moveTop: (externalLinkPayload: ExternalLinkPayload) => void
+    moveUpOne: (externalLinkPayload: ExternalLinkPayload) => void
+    moveDownOne: (externalLinkPayload: ExternalLinkPayload) => void
+    moveBottom: (externalLinkPayload: ExternalLinkPayload) => void    
 }
 
 
@@ -24,12 +29,52 @@ const LinkMenu = (payload: LinkMenuPayload) => {
     }, [payload])
 
 
-    const handleEditExternalLLInk = (): void => {
+    const handleEditExternalLink = (): void => {
         if (!props.externalLinkPayload) {
             return
         }
 
         props.editLink(props.externalLinkPayload)
+    }
+
+    const handleDeleteExternalLink = (): void => {
+        if (!props.externalLinkPayload) {
+            return
+        }
+
+        props.deleteLink(props.externalLinkPayload)
+    }
+
+    const handleMoveTop = (): void => {
+        if (!props.externalLinkPayload) {
+            return
+        }
+
+        props.moveTop(props.externalLinkPayload)
+    }
+
+    const handleMoveUpOne = (): void => {
+        if (!props.externalLinkPayload) {
+            return
+        }
+
+        props.moveUpOne(props.externalLinkPayload)
+    }
+
+    const handleMoveDownOne = (): void => {
+        if (!props.externalLinkPayload) {
+            return
+        }
+
+        props.moveDownOne(props.externalLinkPayload)
+    }
+
+    const handleMoveBottom = (): void => {
+        if (!props.externalLinkPayload) {
+            return
+        }
+
+        props.moveBottom(props.externalLinkPayload)
     }
 
     const handleClose = (): void => {
@@ -48,27 +93,32 @@ const LinkMenu = (payload: LinkMenuPayload) => {
             anchorEl={props.anchorElement}
             onClose={handleClose}>
             <MenuItem
-                onClick={handleEditExternalLLInk}>
+                onClick={handleEditExternalLink}>
                 <Edit />
                 Edit
             </MenuItem>
-            <MenuItem>
+            <MenuItem
+                onClick={handleDeleteExternalLink}>
                 <Delete />
                 Delete
             </MenuItem>
-            <MenuItem>
+            <MenuItem
+                onClick={handleMoveTop}>
                 <KeyboardDoubleArrowUp />
                 Move top
             </MenuItem>
-            <MenuItem>
+            <MenuItem
+                onClick={handleMoveUpOne}>
                 <KeyboardArrowUp />
                 Move up one
             </MenuItem>
-            <MenuItem>
+            <MenuItem
+                onClick={handleMoveDownOne}>
                 <KeyboardArrowDown />
                 Move down one
             </MenuItem>
-            <MenuItem>
+            <MenuItem
+                onClick={handleMoveBottom}>
                 <KeyboardDoubleArrowDown />
                 Move bottom
             </MenuItem>

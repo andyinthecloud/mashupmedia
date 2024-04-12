@@ -17,6 +17,7 @@ import org.mashupmedia.util.AdminHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,10 +55,12 @@ public class MusicManagerImpl implements MusicManager {
 	public List<Artist> getArtists() {
 		Long loggedInUserId = AdminHelper.getLoggedInUser().getId();
 		List<Artist> artists = musicDao.getArtists(loggedInUserId);
-		for (Artist artist : artists) {
-			Hibernate.initialize(artist.getAlbums());
-		}
 		return artists;
+	}
+
+	@Override
+	public void deleteArtist(long artistId) {
+		artistRepository.deleteById(artistId);		
 	}
 
 	@Override
@@ -66,9 +69,18 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public void saveArtist(Artist artist) {
-		musicDao.saveArtist(artist);
+	public Artist saveArtist(Artist artist) {
+		Assert.notNull(artist, "Expecting an artist");
+		
+		List<Album> albums = new ArrayList<>();
+		long artistId = artist.getId(); 
+		if (artistId > 0) {
+			Artist savedArtist = getArtist(artistId);
+			albums = savedArtist.getAlbums();
+		}
 
+		artist.setAlbums(albums);
+		return musicDao.saveArtist(artist);
 	}
 
 	@Override
@@ -181,14 +193,14 @@ public class MusicManagerImpl implements MusicManager {
 		}
 
 
-		Artist artist;
-		List<Library> libraries = artistRepository.findLibrariesById(artistId);
+		Artist artist = artistRepository.getReferenceById(artistId);
+		// List<Library> libraries = artistRepository.findLibrariesById(artistId);
 
-		if (hasLibraryAccess(libraries, user)) {
-			artist = artistRepository.getReferenceById(artistId);
-		} else {
-			return null;
-		}
+		// if (hasLibraryAccess(libraries, user)) {
+		// 	artist = artistRepository.getReferenceById(artistId);
+		// } else {
+		// 	return null;
+		// }
 
 		// if (adminManager.hasAccessToLibrary())
 		// if (AdminHelper.isAllowedGroup(groups)) {
@@ -202,6 +214,8 @@ public class MusicManagerImpl implements MusicManager {
 		}
 
 		Hibernate.initialize(artist.getAlbums());
+		Hibernate.initialize(artist.getExternalLinks());
+
 		return artist;
 	}
 

@@ -26,7 +26,7 @@ public interface MusicDao {
 
 	public void saveAlbum(Album album);
 
-	public void saveArtist(Artist artist);
+	public Artist saveArtist(Artist artist);
 
 	public Album getAlbum(Long userId, long albumId);
 
@@ -58,6 +58,5 @@ public interface MusicDao {
 	public List<Album> getLatestAlbums(Long userId, int pageNumber, int maxResults);
 
 	public Track getTrack(String path);
-	
 	
 }

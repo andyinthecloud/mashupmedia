@@ -1,12 +1,10 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material"
 import { ChangeEvent, useEffect, useState } from "react"
 import { DialogPageload } from "./DialogPageload"
+import { ExternalLinkPayload } from "../../../media/rest/mediaCalls"
 
-export type EditLinkDialogPageload = DialogPageload & {
-    index: number
-    name: string
-    link: string
-    updateLink: (index: number, text: string, link: string) => void
+export type EditLinkDialogPageload = {
+    dialogPayload: DialogPageload<ExternalLinkPayload>
 }
 
 const EditLinkDialog = (payload: EditLinkDialogPageload) => {
@@ -14,15 +12,27 @@ const EditLinkDialog = (payload: EditLinkDialogPageload) => {
     const [props, setProps] = useState<EditLinkDialogPageload>(payload)
 
     useEffect(() => {
+        console.log('editlinkdialog', payload.dialogPayload.open)
+
         setProps(p => ({
             ...p,
-            open: payload.open
+            dialogPayload: payload.dialogPayload
+            // dialogPayload: {
+            //     ...p.dialogPayload,
+            //     open: payload.dialogPayload.open
+            // }
         }))
 
-    }, [payload.open])
+    }, [payload.dialogPayload])
 
     const handleCancel = () => {
-        props.updateLink(props.index, '', '')
+        props.dialogPayload.open = false
+        props.dialogPayload.updatePayload({
+            id: 0,
+            link: '',
+            name: '',
+            rank: 0
+        })
     }
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -32,22 +42,29 @@ const EditLinkDialog = (payload: EditLinkDialogPageload) => {
 
         setProps(p => ({
             ...p,
-            [name]: text
+            dialogPayload: {
+                ...p.dialogPayload,
+                payload: {
+                    ...p.dialogPayload.payload,
+                    [name]: text
+                }
+            },
+
         }))
     }
 
     const handleSave = () => {
-        props.updateLink(props.index, props.name, props.link)
+        props.dialogPayload.updatePayload(props.dialogPayload.payload)
     }
 
     return (
         <Dialog
             maxWidth="xl"
             fullWidth
-            open={props.open}
+            open={props.dialogPayload.open}
             onClose={handleCancel}>
 
-            <DialogTitle>{props.title}</DialogTitle>
+            <DialogTitle>{props.dialogPayload.title}</DialogTitle>
             <DialogContent>
                 <TextField
                     autoFocus
@@ -55,7 +72,7 @@ const EditLinkDialog = (payload: EditLinkDialogPageload) => {
                     fullWidth
                     style={{ marginTop: '0.3em' }}
                     label="Name"
-                    value={props.name || ''}
+                    value={props.dialogPayload.payload.name || ''}
                     name="name"
                     onChange={handleInputChange}
                 />
@@ -66,7 +83,7 @@ const EditLinkDialog = (payload: EditLinkDialogPageload) => {
                     fullWidth
                     style={{ marginTop: '0.3em' }}
                     label="Link"
-                    value={props.link || ''}
+                    value={props.dialogPayload.payload.link || ''}
                     name="link"
                     onChange={handleInputChange}
                 />
