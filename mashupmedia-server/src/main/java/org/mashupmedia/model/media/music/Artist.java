@@ -1,6 +1,7 @@
 package org.mashupmedia.model.media.music;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -43,6 +44,8 @@ public class Artist {
 	private long id;
 	@Column(unique = true)
 	private String name;
+	private Date createdOn;
+	private Date updatedOn;
 	@ManyToOne(cascade = { CascadeType.ALL })
 	private MusicArtImage albumArtImage;
 	@OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,13 +1,13 @@
 import { Edit, MoreVert, OpenInNew } from "@mui/icons-material";
 import { Button, Grid, IconButton, Menu, MenuItem } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AlbumSummary from '../../common/components/media/AlbumSummary';
 import { RootState } from '../../common/redux/store';
 import { SecureMediaPayload } from '../rest/secureMediaPayload';
 import './Artist.css';
-import { AlbumWithArtistPayload, ArtistWithAlbumsPayload, deleteArtist, getArtist } from './rest/musicCalls';
+import { AlbumWithArtistPayload, ArtistWithAlbumsPayload, deleteArtist, getArtist, saveArtist } from './rest/musicCalls';
 import EditLinkDialog, { EditLinkDialogPageload as EditLinkDialogPayload } from "../../common/components/dialogs/EditLinkDialog";
 import { ExternalLinkPayload } from "../rest/mediaCalls";
 import LinkMenu, { LinkMenuPayload } from "../../common/components/menus/LinkMenu";
@@ -28,210 +28,6 @@ const Artist = () => {
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
 
     const { artistId } = useParams()
-
-    const updateArtistName = (text: string): void => {
-        setProps(p => ({
-            ...p,
-            editArtistNameDialogPayload: {
-                ...p.editArtistNameDialogPayload,
-                dialogPayload: {
-                    ...p.editArtistNameDialogPayload.dialogPayload,
-                    open: false
-                }
-            },
-            secureMediaItemPayload: {
-                mediaToken: p.secureMediaItemPayload?.mediaToken || '',
-                payload: {
-                    albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || [],
-                    artistPayload: {
-                        ...p.secureMediaItemPayload?.payload.artistPayload,
-                        id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
-                        name: text
-                    }
-                }
-            }
-        }))
-    }
-
-    const updateArtistProfile = (text: string): void => {
-        setProps(p => ({
-            ...p,
-            editArtistProfileDialogPayload: {
-                ...p.editArtistProfileDialogPayload,
-                dialogPayload: {
-                    ...p.editArtistProfileDialogPayload.dialogPayload,
-                    open: false
-                }
-            },
-            secureMediaItemPayload: {
-                mediaToken: p.secureMediaItemPayload?.mediaToken || '',
-                payload: {
-                    albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || [],
-                    artistPayload: {
-                        ...p.secureMediaItemPayload?.payload.artistPayload,
-                        id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
-                        name: p.secureMediaItemPayload?.payload.artistPayload.name || '',
-                        profile: text
-                    }
-                }
-            }
-        }))
-    }
-
-    const updateExternalLink = (externalLinkPayload: ExternalLinkPayload): void => {
-        const externalLinkPayloads = addExternalLinkPayload(externalLinkPayload)
-        setExternalLinks(externalLinkPayloads)
-    }
-
-    const addExternalLinkPayload = (externalLinkPayload: ExternalLinkPayload): ExternalLinkPayload[] => {
-        const externalLinkPayloads = props.secureMediaItemPayload?.payload.artistPayload.externalLinkPayloads || []
-
-        if (!externalLinkPayload.name && !externalLinkPayload.link) {
-            return externalLinkPayloads
-        }
-
-        const index = externalLinkPayloads.findIndex(item => item.id == externalLinkPayload.id)
-        if (index < 0) {
-            externalLinkPayloads.push(externalLinkPayload)
-            return externalLinkPayloads
-        }
-
-        externalLinkPayloads[index] = externalLinkPayload
-        return externalLinkPayloads
-    }
-
-    const setExternalLinks = (externalLinkPayloads: ExternalLinkPayload[]): void => {
-        externalLinkPayloads.map((externalLinkPayload, index) => {
-            externalLinkPayload.rank = index
-        })
-
-        setProps(p => ({
-            ...p,
-            editExternalLinkDialogPayload: {
-                ...p.editExternalLinkDialogPayload,
-                dialogPayload: {
-                    ...p.editExternalLinkDialogPayload.dialogPayload,
-                    open: false
-                }
-            },
-            linkMenuPayload: {
-                ...p.linkMenuPayload,
-                open: false
-            },
-            secureMediaItemPayload: {
-                ...p.secureMediaItemPayload,
-                mediaToken: '',
-                payload: {
-                    ...p.secureMediaItemPayload?.payload,
-                    artistPayload: {
-                        ...p.secureMediaItemPayload?.payload.artistPayload,
-                        id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
-                        name: p.secureMediaItemPayload?.payload.artistPayload.name || '',
-                        externalLinkPayloads
-                    },
-                    albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || []
-
-                }
-            }
-        }))
-
-    }
-
-    const deleteExternalLink = (externalLinkPayload: ExternalLinkPayload): void => {
-        const externalLinkPayloads = props.secureMediaItemPayload?.payload.artistPayload.externalLinkPayloads
-        if (!externalLinkPayloads) {
-            return
-        }
-
-        const updatedExternalLinkPayloads = externalLinkPayloads.splice(externalLinkPayload.rank, 1)
-        setExternalLinks(updatedExternalLinkPayloads)
-    }
-
-    const moveExternalLinkTop = (externalLinkPayload: ExternalLinkPayload): void => {
-        const externalLinkPayloads = props.secureMediaItemPayload?.payload.artistPayload.externalLinkPayloads
-        if (!externalLinkPayloads) {
-            return
-        }
-
-        externalLinkPayloads.splice(externalLinkPayload.rank, 1)
-        externalLinkPayload.rank = 0
-        externalLinkPayloads.splice(0, 0, externalLinkPayload)
-        setExternalLinks(externalLinkPayloads)
-    }
-
-    const moveExternalLinkUpOne = (externalLinkPayload: ExternalLinkPayload): void => {
-        const externalLinkPayloads = props.secureMediaItemPayload?.payload.artistPayload.externalLinkPayloads
-        if (!externalLinkPayloads) {
-            return
-        }
-
-        externalLinkPayloads.splice(externalLinkPayload.rank, 1)
-        const rank = externalLinkPayload.rank - 1
-        externalLinkPayload.rank = rank
-        externalLinkPayloads.splice(rank, 0, externalLinkPayload)
-        setExternalLinks(externalLinkPayloads)
-    }
-
-    const moveExternalLinkDownOne = (externalLinkPayload: ExternalLinkPayload): void => {
-        const externalLinkPayloads = props.secureMediaItemPayload?.payload.artistPayload.externalLinkPayloads
-        if (!externalLinkPayloads) {
-            return
-        }
-
-        externalLinkPayloads.splice(externalLinkPayload.rank, 1)
-        const rank = externalLinkPayload.rank + 1
-        externalLinkPayload.rank = rank
-        externalLinkPayloads.splice(rank, 0, externalLinkPayload)
-        setExternalLinks(externalLinkPayloads)
-    }
-
-    const moveExternalLinkBottom = (externalLinkPayload: ExternalLinkPayload): void => {
-        const externalLinkPayloads = props.secureMediaItemPayload?.payload.artistPayload.externalLinkPayloads
-        if (!externalLinkPayloads) {
-            return
-        }
-
-        externalLinkPayloads.splice(externalLinkPayload.rank, 1)
-        const rank = externalLinkPayloads.length - 1
-        externalLinkPayload.rank = rank
-        externalLinkPayloads.splice(rank, 0, externalLinkPayload)
-        setExternalLinks(externalLinkPayloads)
-    }
-
-    const openEditExternalLinkDialog = (externalLinkPayload: ExternalLinkPayload) => {
-
-        const externalLinkPayloads = props.secureMediaItemPayload?.payload.artistPayload.externalLinkPayloads
-        if (!externalLinkPayloads) {
-            return
-        }
-
-        const index = externalLinkPayloads.findIndex(
-            item => item.rank === externalLinkPayload.rank
-        )
-
-        externalLinkPayloads[index] = externalLinkPayload
-
-        setProps(p => ({
-            ...p,
-            linkMenuPayload: {
-                ...p.linkMenuPayload,
-                open: false
-            },
-            editExternalLinkDialogPayload: {
-                ...p.editExternalLinkDialogPayload,
-                dialogPayload: {
-                    ...p.editExternalLinkDialogPayload.dialogPayload,
-                    open: true,
-                    payload: {
-                        id: externalLinkPayload.id,
-                        name: externalLinkPayload.name,
-                        rank: externalLinkPayload.rank,
-                        link: externalLinkPayload.link
-                    }
-                }
-            }
-        }))
-    }
 
     const [props, setProps] = useState<ArtistPagePayload>({
         secureMediaItemPayload: {
@@ -288,6 +84,216 @@ const Artist = () => {
         }
     })
 
+    const externalLinksRef = useRef<ExternalLinkPayload[]> ([])
+
+    function updateArtistName (text: string): void  {
+        setProps(p => ({
+            ...p,
+            editArtistNameDialogPayload: {
+                ...p.editArtistNameDialogPayload,
+                dialogPayload: {
+                    ...p.editArtistNameDialogPayload.dialogPayload,
+                    open: false
+                }
+            },
+            secureMediaItemPayload: {
+                mediaToken: p.secureMediaItemPayload?.mediaToken || '',
+                payload: {
+                    albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || [],
+                    artistPayload: {
+                        ...p.secureMediaItemPayload?.payload.artistPayload,
+                        id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                        name: text
+                    }
+                }
+            }
+        }))
+    }
+
+    function updateArtistProfile(text: string): void {
+        setProps(p => ({
+            ...p,
+            editArtistProfileDialogPayload: {
+                ...p.editArtistProfileDialogPayload,
+                dialogPayload: {
+                    ...p.editArtistProfileDialogPayload.dialogPayload,
+                    open: false
+                }
+            },
+            secureMediaItemPayload: {
+                mediaToken: p.secureMediaItemPayload?.mediaToken || '',
+                payload: {
+                    albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || [],
+                    artistPayload: {
+                        ...p.secureMediaItemPayload?.payload.artistPayload,
+                        id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                        name: p.secureMediaItemPayload?.payload.artistPayload.name || '',
+                        profile: text
+                    }
+                }
+            }
+        }))
+    }
+
+    function updateExternalLink (externalLinkPayload: ExternalLinkPayload): void {        
+        const externalLinkPayloads = addExternalLinkPayload(externalLinkPayload)
+        setExternalLinks(externalLinkPayloads)
+    }
+
+    function addExternalLinkPayload (externalLinkPayload: ExternalLinkPayload): ExternalLinkPayload[] {
+        const externalLinkPayloads = externalLinksRef.current
+        console.log('addExternalLinkPayload: beginning externalLinkPayloads = ', externalLinkPayloads)
+        if (!externalLinkPayload.name && !externalLinkPayload.link) {
+            return externalLinkPayloads
+        }
+
+        const index = externalLinkPayloads.findIndex(item => item.rank == externalLinkPayload.rank)
+        console.log('addExternalLinkPayload: index = ', index)
+        if (index < 0) {
+            externalLinkPayloads.push(externalLinkPayload)
+            console.log('addExternalLinkPayload: in if after push externalLinkPayloads = ', externalLinkPayloads)
+            return externalLinkPayloads
+        }
+
+        externalLinkPayloads[index] = externalLinkPayload
+        return externalLinkPayloads
+    }
+
+    function setExternalLinks (externalLinkPayloads: ExternalLinkPayload[]): void {
+        externalLinkPayloads.map((externalLinkPayload, index) => {
+            externalLinkPayload.rank = index
+        })
+
+        setProps(p => ({
+            ...p,
+            editExternalLinkDialogPayload: {
+                ...p.editExternalLinkDialogPayload,
+                dialogPayload: {
+                    ...p.editExternalLinkDialogPayload.dialogPayload,
+                    open: false
+                }
+            },
+            linkMenuPayload: {
+                ...p.linkMenuPayload,
+                open: false
+            },
+            secureMediaItemPayload: {
+                ...p.secureMediaItemPayload,
+                mediaToken: '',
+                payload: {
+                    ...p.secureMediaItemPayload?.payload,
+                    artistPayload: {
+                        ...p.secureMediaItemPayload?.payload.artistPayload,
+                        id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                        name: p.secureMediaItemPayload?.payload.artistPayload.name || '',
+                        externalLinkPayloads
+                    },
+                    albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || []
+
+                }
+            }
+        }))
+
+    }
+
+    function deleteExternalLink (externalLinkPayload: ExternalLinkPayload): void {
+        const externalLinkPayloads = externalLinksRef.current
+        if (!externalLinkPayloads) {
+            return
+        }
+
+        externalLinkPayloads.splice(externalLinkPayload.rank, 1)
+        setExternalLinks(externalLinkPayloads)
+    }
+
+    function moveExternalLinkTop (externalLinkPayload: ExternalLinkPayload): void {
+        const externalLinkPayloads = externalLinksRef.current
+        if (!externalLinkPayloads) {
+            return
+        }
+
+        externalLinkPayloads.splice(externalLinkPayload.rank, 1)
+        externalLinkPayload.rank = 0
+        externalLinkPayloads.splice(0, 0, externalLinkPayload)
+        setExternalLinks(externalLinkPayloads)
+    }
+
+    function moveExternalLinkUpOne (externalLinkPayload: ExternalLinkPayload): void {
+        const externalLinkPayloads = externalLinksRef.current
+        if (!externalLinkPayloads) {
+            return
+        }
+
+        externalLinkPayloads.splice(externalLinkPayload.rank, 1)
+        const rank = externalLinkPayload.rank - 1
+        externalLinkPayload.rank = rank
+        externalLinkPayloads.splice(rank, 0, externalLinkPayload)
+        setExternalLinks(externalLinkPayloads)
+    }
+
+    function moveExternalLinkDownOne (externalLinkPayload: ExternalLinkPayload): void {
+        const externalLinkPayloads = externalLinksRef.current
+        if (!externalLinkPayloads) {
+            return
+        }
+
+        externalLinkPayloads.splice(externalLinkPayload.rank, 1)
+        const rank = externalLinkPayload.rank + 1
+        externalLinkPayload.rank = rank
+        externalLinkPayloads.splice(rank, 0, externalLinkPayload)
+        setExternalLinks(externalLinkPayloads)
+    }
+
+    function moveExternalLinkBottom (externalLinkPayload: ExternalLinkPayload): void {
+        const externalLinkPayloads = externalLinksRef.current
+        if (!externalLinkPayloads) {
+            return
+        }
+
+        externalLinkPayloads.splice(externalLinkPayload.rank, 1)
+        const rank = externalLinkPayloads.length - 1
+        externalLinkPayload.rank = rank
+        externalLinkPayloads.splice(rank + 1, 0, externalLinkPayload)
+        setExternalLinks(externalLinkPayloads)
+    }
+
+    function openEditExternalLinkDialog (externalLinkPayload: ExternalLinkPayload) {
+
+        const externalLinkPayloads = props.secureMediaItemPayload?.payload.artistPayload.externalLinkPayloads
+        if (!externalLinkPayloads) {
+            return
+        }
+
+        const index = externalLinkPayloads.findIndex(
+            item => item.rank === externalLinkPayload.rank
+        )
+
+        externalLinkPayloads[index] = externalLinkPayload
+
+        setProps(p => ({
+            ...p,
+            linkMenuPayload: {
+                ...p.linkMenuPayload,
+                open: false
+            },
+            editExternalLinkDialogPayload: {
+                ...p.editExternalLinkDialogPayload,
+                dialogPayload: {
+                    ...p.editExternalLinkDialogPayload.dialogPayload,
+                    open: true,
+                    payload: {
+                        id: externalLinkPayload.id,
+                        name: externalLinkPayload.name,
+                        rank: externalLinkPayload.rank,
+                        link: externalLinkPayload.link
+                    }
+                }
+            }
+        }))
+    }
+
+ 
+
     useEffect(() => {
         if (artistId) {
             getArtist(+artistId, userToken).then(response => {
@@ -296,6 +302,8 @@ const Artist = () => {
                         ...p,
                         secureMediaItemPayload: response.parsedBody
                     }))
+
+                    externalLinksRef.current =  response.parsedBody.payload.artistPayload.externalLinkPayloads || []
                 }
             })
         }
@@ -328,9 +336,7 @@ const Artist = () => {
     }
 
     const openNewExternalLinkDialog = () => {
-
-        const index = props.secureMediaItemPayload?.payload.artistPayload.externalLinkPayloads?.length || 0
-
+        const rank = externalLinksRef.current.length || 0
         setProps(p => ({
             ...p,
             editExternalLinkDialogPayload: {
@@ -339,15 +345,15 @@ const Artist = () => {
                     ...p.editExternalLinkDialogPayload.dialogPayload,
                     open: true,
                     payload: {
-                        ...p.editExternalLinkDialogPayload.dialogPayload.payload,
-                        id: index,
+                        id: 0,
                         name: '',
                         link: '',
-                        rank: index
+                        rank: rank
                     }
                 }
             }
         }))
+
     }
 
     const handleClickLinkMenuIcon = (anchorElement: HTMLElement, externalLinkPayload: ExternalLinkPayload) => {
@@ -366,8 +372,6 @@ const Artist = () => {
     const navigate = useNavigate()
 
     const handleClickDeleteArtist = (): void => {
-        console.log("handleClickDeleteArtist");
-
         const artistId = props.secureMediaItemPayload?.payload.artistPayload.id
         if (!artistId) {
             return
@@ -391,13 +395,37 @@ const Artist = () => {
                 )
             }
         })
-
-
     }
 
 
     const handleClickCancel = (): void => {
         navigate('/music/artists')
+    }
+
+    const handleClickSave = (): void => {
+        const artistPayload = props.secureMediaItemPayload?.payload.artistPayload
+        if (!artistPayload) {
+            return
+        }
+
+        saveArtist(artistPayload).then(response => {
+            if (response.ok) {
+                dispatch(
+                    addNotification({
+                        message: 'Saved artist.',
+                        notificationType: NotificationType.SUCCESS
+                    })
+                )
+                navigate('/music/artists')
+            } else {
+                dispatch(
+                    addNotification({
+                        message: 'Error saving artist.',
+                        notificationType: NotificationType.ERROR
+                    })
+                )
+            }
+        })
     }
 
     const showManageButtons = (): boolean => {
@@ -406,7 +434,7 @@ const Artist = () => {
             return false
         }
 
-        return userPolicyPayload.administrator || userPayload.username === userPolicyPayload.username        
+        return userPolicyPayload.administrator || userPayload.username === userPolicyPayload.username
     }
 
     return (
@@ -439,9 +467,6 @@ const Artist = () => {
             </div>
 
             <div className="external-links">
-
-
-                <pre>{JSON.stringify(props.secureMediaItemPayload, null, 2)}</pre>
 
                 <Button
                     style={{ float: "right" }}
@@ -496,7 +521,7 @@ const Artist = () => {
                 })}
             </Grid>
 
-            <div className="new-line right" style={{marginTop: "1em"}}>
+            <div className="new-line right" style={{ marginTop: "1em" }}>
                 <Button
                     variant="contained"
                     color="secondary"
@@ -521,6 +546,7 @@ const Artist = () => {
                         variant="contained"
                         color="primary"
                         type="button"
+                        onClick={handleClickSave}
                     >
                         Save
                     </Button>

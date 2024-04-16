@@ -31,7 +31,7 @@ const EditLinkDialog = (payload: EditLinkDialogPageload) => {
             id: 0,
             link: '',
             name: '',
-            rank: 0
+            rank: -1
         })
     }
 

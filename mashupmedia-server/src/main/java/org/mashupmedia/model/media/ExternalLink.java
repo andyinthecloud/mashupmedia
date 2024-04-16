@@ -1,5 +1,9 @@
 package org.mashupmedia.model.media;
 
+import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,4 +35,28 @@ public class ExternalLink {
     private String name;
     private String link;
     private int rank;
+
+    public boolean included(Collection<ExternalLink> externalLinks) {
+        if (this.id < 1) {
+            return false;
+        }
+
+        return externalLinks.stream()
+                .anyMatch(externalLink -> externalLink.id == this.id);
+    }
+
+    public void update(Collection<ExternalLink> externalLinks) {
+        if (this.id < 1) {
+            return;
+        }
+
+        externalLinks.stream()
+                .filter(externalLink -> externalLink.id == this.id)
+                .forEach(externalLink -> {
+                    setLink(externalLink.getLink());
+                    setName(externalLink.getName());
+                    setRank(externalLink.getRank());
+                });
+    }
+
 }

@@ -70,6 +70,10 @@ export const createArtist = (createArtistPayload: CreateArtistPayload, userToken
     return callMashupMediaApi<ArtistPayload>(HttpMethod.POST, artistUri, userToken, JSON.stringify(createArtistPayload))
 }
 
+export const saveArtist = (artistPayload: ArtistPayload, userToken?: string): Promise<HttpResponse<ArtistPayload>> => {
+    return callMashupMediaApi<ArtistPayload>(HttpMethod.PUT, artistUri, userToken, JSON.stringify(artistPayload))
+}
+
 export const deleteArtist = (artistId: number, userToken?: string): Promise<HttpResponse<SecureMediaPayload<ArtistWithAlbumsPayload>>> => {
     return callMashupMediaApi<SecureMediaPayload<ArtistWithAlbumsPayload>>(HttpMethod.DELETE, artistUri + "/" + artistId, userToken)
 }

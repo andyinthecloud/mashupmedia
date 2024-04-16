@@ -3,6 +3,7 @@ package org.mashupmedia.mapper.media.music;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.mashupmedia.comparator.ExternalLinkComparator;
 import org.mashupmedia.dto.media.music.ArtistPayload;
 import org.mashupmedia.mapper.DomainMapper;
 import org.mashupmedia.mapper.PayloadListMapper;
@@ -22,6 +23,10 @@ public class ArtistMapper implements DomainMapper<Artist, ArtistPayload>, Payloa
 
     @Override
     public ArtistPayload toPayload(Artist domain) {
+
+
+
+
         return ArtistPayload.builder()
                 .id(domain.getId())
                 .name(domain.getName())
@@ -29,7 +34,9 @@ public class ArtistMapper implements DomainMapper<Artist, ArtistPayload>, Payloa
                 .userPayload(userMapper.toPayload(domain.getUser()))
                 .externalLinkPayloads(domain.getExternalLinks()
                         .stream()
+                        .sorted(new ExternalLinkComparator())
                         .map(externalLinkMapper::toPayload)
+                        
                         .toList())
                 .build();
     }

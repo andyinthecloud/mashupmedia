@@ -1,12 +1,20 @@
 package org.mashupmedia.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
+import org.mashupmedia.comparator.ExternalLinkComparator;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.model.User;
-import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.media.ExternalLink;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
@@ -31,7 +39,6 @@ public class MusicManagerImpl implements MusicManager {
 	private final MusicDao musicDao;
 	private final AdminManager adminManager;
 	private final ArtistRepository artistRepository;
-
 
 	protected enum ListAlbumsType {
 		RANDOM, LATEST, ALL
@@ -60,7 +67,7 @@ public class MusicManagerImpl implements MusicManager {
 
 	@Override
 	public void deleteArtist(long artistId) {
-		artistRepository.deleteById(artistId);		
+		artistRepository.deleteById(artistId);
 	}
 
 	@Override
@@ -71,16 +78,64 @@ public class MusicManagerImpl implements MusicManager {
 	@Override
 	public Artist saveArtist(Artist artist) {
 		Assert.notNull(artist, "Expecting an artist");
-		
-		List<Album> albums = new ArrayList<>();
-		long artistId = artist.getId(); 
+
+		long artistId = artist.getId();
+
+		Artist albumToSave = null;
 		if (artistId > 0) {
-			Artist savedArtist = getArtist(artistId);
-			albums = savedArtist.getAlbums();
+			albumToSave = prepareUpdateArtist(artist);
+		} else {
+			albumToSave = prepareCreateArtist(artist);
 		}
 
-		artist.setAlbums(albums);
-		return musicDao.saveArtist(artist);
+		List<ExternalLink> externalLinks = new ArrayList<>(albumToSave.getExternalLinks());
+		Collections.sort(externalLinks, new ExternalLinkComparator());
+		for (int i = 0; i < externalLinks.size(); i++) {
+			ExternalLink externalLink = externalLinks.get(i);
+			externalLink.setRank(i);
+		}
+
+		return musicDao.saveArtist(albumToSave);
+	}
+
+	private Artist prepareUpdateArtist(Artist artist) {
+		long artistId = artist.getId();
+		Artist savedArtist = getArtist(artistId);
+		Assert.notNull(savedArtist, "Expecting to find an artist with id: " + artistId);
+
+		Set<ExternalLink> savedExternalLinks = savedArtist.getExternalLinks();
+		Set<ExternalLink> externalLinks = artist.getExternalLinks();
+
+		for (ExternalLink externalLink : savedExternalLinks) {
+			externalLink.update(externalLinks);
+		}
+		Set<ExternalLink> externalLinksToRemove = savedExternalLinks.stream()
+				.filter(externalLink -> !externalLink.included(externalLinks))
+				.collect(Collectors.toSet());
+		savedExternalLinks.removeAll(externalLinksToRemove);
+
+		Set<ExternalLink> externalLinksToAdd = externalLinks.stream()
+		.filter(externalLink -> externalLink.getId() == 0)
+		.collect(Collectors.toSet());
+
+		savedExternalLinks.addAll(externalLinksToAdd);
+
+		savedArtist.setProfile(artist.getProfile());
+		savedArtist.setName(artist.getName());
+
+		Date date = new Date();
+		savedArtist.setUpdatedOn(date);
+
+		return savedArtist;
+	}
+
+	private Artist prepareCreateArtist(Artist artist) {
+		Date date = new Date();
+		artist.setCreatedOn(date);
+		artist.setUpdatedOn(date);
+		artist.setUser(AdminHelper.getLoggedInUser());
+		artist.setExternalLinks(new HashSet<>());
+		return artist;
 	}
 
 	@Override
@@ -101,7 +156,7 @@ public class MusicManagerImpl implements MusicManager {
 		List<Track> tracks = album.getTracks();
 		if (tracks == null || tracks.isEmpty()) {
 			return null;
-		}		
+		}
 
 		return album;
 	}
@@ -192,21 +247,20 @@ public class MusicManagerImpl implements MusicManager {
 			user = adminManager.getSystemUser();
 		}
 
-
 		Artist artist = artistRepository.getReferenceById(artistId);
 		// List<Library> libraries = artistRepository.findLibrariesById(artistId);
 
 		// if (hasLibraryAccess(libraries, user)) {
-		// 	artist = artistRepository.getReferenceById(artistId);
+		// artist = artistRepository.getReferenceById(artistId);
 		// } else {
-		// 	return null;
+		// return null;
 		// }
 
 		// if (adminManager.hasAccessToLibrary())
 		// if (AdminHelper.isAllowedGroup(groups)) {
-		// 	artist = artistRepository.getOne(artistId);
+		// artist = artistRepository.getOne(artistId);
 		// } else {
-		// 	return null;
+		// return null;
 		// }
 
 		if (!isFullyInitialise) {
@@ -217,19 +271,6 @@ public class MusicManagerImpl implements MusicManager {
 		Hibernate.initialize(artist.getExternalLinks());
 
 		return artist;
-	}
-
-
-
-	private boolean hasLibraryAccess(List<Library> libraries, final User user) {
-		for(Library library : libraries) {
-			if (library.hasAccess(user)) {
-				return true;
-			}
-		}
-
-		return false;
-
 	}
 
 	@Override
