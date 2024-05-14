@@ -3,7 +3,7 @@ package org.mashupmedia.dao;
 import java.util.List;
 
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.music.MusicArtImage;
+import org.mashupmedia.model.media.MetaImage;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.Query;
@@ -22,12 +22,12 @@ public class MediaDaoImpl extends BaseDaoImpl implements MediaDao {
 	}
 
 	@Override
-	public List<MusicArtImage> getAlbumArtImages(long libraryId) {
+	public List<MetaImage> getAlbumArtImages(long libraryId) {
 		Query query = entityManager
 				.createQuery("from AlbumArtImage where library.id = :libraryId");
 		query.setParameter("libraryId", libraryId);
 		@SuppressWarnings("unchecked")
-		List<MusicArtImage> albumArtImages = (List<MusicArtImage>) query.getResultList();
+		List<MetaImage> albumArtImages = (List<MetaImage>) query.getResultList();
 		return albumArtImages;
 	}
 

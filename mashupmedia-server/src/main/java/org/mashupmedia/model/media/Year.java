@@ -8,10 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "years")
@@ -19,7 +17,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 public class Year implements Serializable {
 	private static final long serialVersionUID = -6346257354674712995L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "years_generator")
+	@SequenceGenerator(name = "years_generator", sequenceName = "years_seq", allocationSize = 1)
 	private long id;
 	@Column(name = "year_number")
 	private int year;

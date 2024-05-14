@@ -1,4 +1,4 @@
-package org.mashupmedia.model;
+package org.mashupmedia.model.account;
 
 import java.util.Collection;
 import java.util.Date;
@@ -20,6 +20,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,7 +43,8 @@ public class User implements UserDetails {
 
 	private static final long serialVersionUID = 8897344406027907607L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_generator")
+	@SequenceGenerator(name = "users_generator", sequenceName = "users_seq", allocationSize = 1)
 	private long id;
 	private String username;
 	private String password;
@@ -66,7 +68,9 @@ public class User implements UserDetails {
 	private boolean validated;
 	@ManyToOne
 	private User createdBy;
-	private String libraryFolderName;
+	private String folderName;
+	@ManyToOne
+	private Premium premium;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

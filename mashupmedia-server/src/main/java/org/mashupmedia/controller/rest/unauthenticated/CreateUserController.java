@@ -5,7 +5,7 @@ import org.mashupmedia.dto.admin.CreateUserPayload;
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.CreateUserMapper;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.EmailService;
 import org.mashupmedia.util.ActivationTokenUtils;

@@ -1,7 +1,8 @@
-package org.mashupmedia.model;
+package org.mashupmedia.model.account;
 
 import java.util.Date;
 
+import org.mashupmedia.model.Translation;
 import org.springframework.security.core.GrantedAuthority;
 
 import jakarta.persistence.Cacheable;
@@ -9,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +26,8 @@ public class Role extends Translation implements GrantedAuthority {
 	private static final long serialVersionUID = -8680736152957783557L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "authorities_generator")
+@SequenceGenerator(name = "authorities_generator", sequenceName = "authorities_seq", allocationSize = 1)
 	private long id;
 	private String idName;
 	private String name;

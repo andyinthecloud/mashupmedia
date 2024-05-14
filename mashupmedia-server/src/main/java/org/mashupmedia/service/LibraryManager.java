@@ -1,11 +1,9 @@
 package org.mashupmedia.service;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 
-import org.mashupmedia.dto.library.LibraryNameValuePayload;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 
@@ -20,16 +18,6 @@ public interface LibraryManager {
 	public void saveLibrary(Library library, boolean isFlushSession);
 
 	public List<Library> getLibrariesForGroup(long groupId);
-
-	public void saveRemoteShares(Long[] remoteShareIds, String remoteShareStatus);
-
-	public List<Library> getRemoteLibraries();
-
-	public Library getRemoteLibrary(long libraryId);
-
-	public Library getRemoteLibrary(String uniqueName);
-
-	public boolean hasRemoteLibrary(String url);
 
 	public List<Library> getLibraries();
 

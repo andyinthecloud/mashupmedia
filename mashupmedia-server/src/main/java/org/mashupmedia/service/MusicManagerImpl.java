@@ -11,17 +11,20 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
-import org.mashupmedia.comparator.ExternalLinkComparator;
+import org.mashupmedia.comparator.MetaEntityComparator;
 import org.mashupmedia.dao.MusicDao;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.MetaEntity;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.ExternalLink;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
+import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.util.AdminHelper;
+import org.mashupmedia.util.MetaEntityHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,7 +92,7 @@ public class MusicManagerImpl implements MusicManager {
 		}
 
 		List<ExternalLink> externalLinks = new ArrayList<>(albumToSave.getExternalLinks());
-		Collections.sort(externalLinks, new ExternalLinkComparator());
+		Collections.sort(externalLinks, new MetaEntityComparator());
 		for (int i = 0; i < externalLinks.size(); i++) {
 			ExternalLink externalLink = externalLinks.get(i);
 			externalLink.setRank(i);
@@ -106,19 +109,18 @@ public class MusicManagerImpl implements MusicManager {
 		Set<ExternalLink> savedExternalLinks = savedArtist.getExternalLinks();
 		Set<ExternalLink> externalLinks = artist.getExternalLinks();
 
-		for (ExternalLink externalLink : savedExternalLinks) {
-			externalLink.update(externalLinks);
-		}
-		Set<ExternalLink> externalLinksToRemove = savedExternalLinks.stream()
-				.filter(externalLink -> !externalLink.included(externalLinks))
-				.collect(Collectors.toSet());
-		savedExternalLinks.removeAll(externalLinksToRemove);
+		Set<MetaEntity> entities = new HashSet<>();
+		entities.addAll(savedExternalLinks);
+		entities.addAll(externalLinks);
+		
+		MetaEntityHelper<ExternalLink> externalLinkHelper  = new MetaEntityHelper<>();
+		externalLinkHelper.mergeSet(savedExternalLinks, externalLinks);
 
-		Set<ExternalLink> externalLinksToAdd = externalLinks.stream()
-		.filter(externalLink -> externalLink.getId() == 0)
-		.collect(Collectors.toSet());
+		Set<MetaImage> savedMetaImages = savedArtist.getMetaImages();
+		Set<MetaImage> metaImages = artist.getMetaImages();
 
-		savedExternalLinks.addAll(externalLinksToAdd);
+		MetaEntityHelper<MetaImage> metaImageHelper  = new MetaEntityHelper<>();
+		metaImageHelper.mergeSet(savedMetaImages, metaImages);
 
 		savedArtist.setProfile(artist.getProfile());
 		savedArtist.setName(artist.getName());
@@ -157,6 +159,12 @@ public class MusicManagerImpl implements MusicManager {
 		if (tracks == null || tracks.isEmpty()) {
 			return null;
 		}
+
+		Hibernate.initialize(album.getMetaImages());
+
+		Artist artist = album.getArtist();
+		Hibernate.initialize(artist.getExternalLinks());
+		Hibernate.initialize(artist.getMetaImages());
 
 		return album;
 	}
@@ -269,6 +277,7 @@ public class MusicManagerImpl implements MusicManager {
 
 		Hibernate.initialize(artist.getAlbums());
 		Hibernate.initialize(artist.getExternalLinks());
+		Hibernate.initialize(artist.getMetaImages());
 
 		return artist;
 	}

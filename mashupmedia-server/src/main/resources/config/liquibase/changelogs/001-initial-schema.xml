@@ -1,0 +1,991 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet author="admin" id="1713433681355-1">
+        <createSequence sequenceName="ARTISTS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-2">
+        <createSequence sequenceName="AUTHORITIES_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-3">
+        <createSequence sequenceName="COMMENTS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-4">
+        <createSequence sequenceName="CONFIGURATIONS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-5">
+        <createSequence sequenceName="EXTERNAL_LINKS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-6">
+        <createSequence sequenceName="LIBRARIES_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-7">
+        <createSequence sequenceName="MEDIA_ENCODINGS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-8">
+        <createSequence sequenceName="MEDIA_ITEMS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-9">
+        <createSequence sequenceName="MUSIC_ALBUMS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-10">
+        <createSequence sequenceName="META_IMAGES_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-11">
+        <createSequence sequenceName="PHOTO_ALBUMS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-12">
+        <createSequence sequenceName="PLAYLISTS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-13">
+        <createSequence sequenceName="PLAYLIST_MEDIA_ITEMS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-14">
+        <createSequence sequenceName="PREMIUMS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-16">
+        <createSequence sequenceName="TAGS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-17">
+        <createSequence sequenceName="USERS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-18">
+        <createSequence sequenceName="VOTES_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-19">
+        <createSequence sequenceName="YEARS_SEQ" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-20">
+        <createTable tableName="ARTISTS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_F" />
+            </column>
+            <column name="CREATED_ON" type="TIMESTAMP" />
+            <column name="NAME" type="VARCHAR(255)" />
+            <column name="PROFILE" type="VARCHAR(1024)" />
+            <column name="UPDATED_ON" type="TIMESTAMP" />
+            <column name="ALBUM_ART_IMAGE_ID" type="BIGINT" />
+            <column name="USER_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-21">
+        <createTable tableName="ARTISTS_EXTERNAL_LINKS">
+            <column name="EXTERNAL_LINK_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_3" />
+            </column>
+            <column name="ARTIST_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_3" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-22">
+        <createTable tableName="AUTHORITIES">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_A" />
+            </column>
+            <column name="AUTHORITY" type="VARCHAR(255)" />
+            <column name="CREATED_ON" type="TIMESTAMP" />
+            <column name="ID_NAME" type="VARCHAR(255)" />
+            <column name="NAME" type="VARCHAR(255)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-23">
+        <createTable tableName="COMMENTS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_AB" />
+            </column>
+            <column name="CREATED_ON" type="TIMESTAMP" />
+            <column name="TEXT" type="VARCHAR(1024)" />
+            <column name="UPDATED_ON" type="TIMESTAMP" />
+            <column name="CREATED_BY_ID" type="BIGINT" />
+            <column name="REPLY_TO_COMMENT_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-24">
+        <createTable tableName="CONFIGURATIONS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_7" />
+            </column>
+            <column name="CREATED_ON" type="TIMESTAMP" />
+            <column name="CONFIGURATION_KEY" type="VARCHAR(255)" />
+            <column name="CONFIGURATION_VALUE" type="VARCHAR(255)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-25">
+        <createTable tableName="DISLIKE_VOTES">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_F7" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-26">
+        <createTable tableName="EXTERNAL_LINKS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_AD" />
+            </column>
+            <column name="LINK" type="VARCHAR(512)" />
+            <column name="NAME" type="VARCHAR(255)" />
+            <column name="RANK" type="INT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-27">
+        <createTable tableName="GENRES">
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_7D" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-28">
+        <createTable tableName="LIBRARIES">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_D6" />
+            </column>
+            <column name="CREATED_ON" type="TIMESTAMP" />
+            <column name="ENABLED" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="LAST_SUCCESSFUL_SCAN_ON" type="TIMESTAMP" />
+            <column name="LOCATION_TYPE" type="VARCHAR(255)" />
+            <column name="NAME" type="VARCHAR(255)" />
+            <column name="PATH" type="VARCHAR(255)" />
+            <column name="PRIVATE_ACCESS" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="SCAN_MINUTES_INTERVAL" type="VARCHAR(255)" />
+            <column name="STATUS" type="VARCHAR(255)" />
+            <column name="UPDATED_ON" type="TIMESTAMP" />
+            <column name="UPDATED_BY_ID" type="BIGINT" />
+            <column name="USER_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-29">
+        <createTable tableName="LIBRARIES_SHARE_USERS">
+            <column name="USER_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_2" />
+            </column>
+            <column name="LIBRARY_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_2" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-30">
+        <createTable tableName="LIKE_VOTES">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_25" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-31">
+        <createTable tableName="MEDIA_ENCODINGS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_E9" />
+            </column>
+            <column name="MEDIA_CONTENT_TYPE" type="VARCHAR(255)" />
+            <column name="ORIGINAL" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-32">
+        <createTable tableName="MEDIA_ITEMS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_B" />
+            </column>
+            <column name="CREATED_ON" type="TIMESTAMP" />
+            <column name="DISPLAY_TITLE" type="VARCHAR(255)" />
+            <column name="ENABLED" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="FILE_LAST_MODIFIED_ON" type="BIGINT" />
+            <column name="FILE_NAME" type="VARCHAR(255)" />
+            <column name="FORMAT" type="VARCHAR(255)" />
+            <column name="LAST_ACCESSED" type="TIMESTAMP" />
+            <column name="MEDIA_TYPE_VALUE" type="VARCHAR(255)" />
+            <column name="PATH" type="VARCHAR(255)" />
+            <column name="PUBLIC_ACCESS" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="SIZE_IN_BYTES" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="SUMMARY" type="VARCHAR(1000)" />
+            <column name="UNIQUE_NAME" type="VARCHAR(255)" />
+            <column name="UPDATED_ON" type="TIMESTAMP" />
+            <column name="VOTE" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="LAST_ACCESSED_BY_ID" type="BIGINT" />
+            <column name="LIBRARY_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-33">
+        <createTable tableName="MEDIA_ITEMS_COMMENTS">
+            <column name="MEDIA_ITEM_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="COMMENTS_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-34">
+        <createTable tableName="MEDIA_ITEMS_MEDIA_ENCODINGS">
+            <column name="MEDIA_ITEM_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_6" />
+            </column>
+            <column name="MEDIA_ENCODINGS_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_6" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-35">
+        <createTable tableName="MEDIA_ITEMS_TAGS">
+            <column name="MEDIA_ITEM_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_1" />
+            </column>
+            <column name="TAGS_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_1" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-36">
+        <createTable tableName="MUSIC_ALBUMS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_8" />
+            </column>
+            <column name="FOLDER_NAME" type="VARCHAR(255)" />
+            <column name="NAME" type="VARCHAR(255)" />
+            <column name="UPDATED_ON" type="TIMESTAMP" />
+            <column name="ALBUM_ART_IMAGE_ID" type="BIGINT" />
+            <column name="ARTIST_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-37">
+        <createTable tableName="META_IMAGES">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_EE" />
+            </column>
+            <column name="CONTENT_TYPE" type="VARCHAR(255)" />
+            <column name="NAME" type="VARCHAR(255)" />
+            <column name="THUMBNAIL_URL" type="VARCHAR(255)" />
+            <column name="URL" type="VARCHAR(255)" />
+            <column name="RANK" type="INT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-38">
+        <createTable tableName="MUSIC_LIBRARIES">
+            <column name="ALBUM_ART_IMAGE_PATTERN" type="VARCHAR(255)" />
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_16" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-39">
+        <createTable tableName="PHOTOS">
+            <column name="ORIENTATION" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="TAKEN_ON" type="TIMESTAMP" />
+            <column name="WEB_OPTIMISED_IMAGE_PATH" type="VARCHAR(255)" />
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_8C" />
+            </column>
+            <column name="ALBUM_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-40">
+        <createTable tableName="PHOTO_ALBUMS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_74" />
+            </column>
+            <column name="CREATED_ON" type="TIMESTAMP" />
+            <column name="NAME" type="VARCHAR(255)" />
+            <column name="UPDATED_ON" type="TIMESTAMP" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-41">
+        <createTable tableName="PHOTO_LIBRARIES">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_2C" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-42">
+        <createTable tableName="PLAYLISTS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_36" />
+            </column>
+            <column name="CREATED_ON" type="TIMESTAMP" />
+            <column name="EDIT_ONLY_BY_OWNER" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="MEDIA_TYPE_VALUE" type="VARCHAR(255)" />
+            <column name="NAME" type="VARCHAR(255)" />
+            <column name="PRIVATE_PLAYLIST" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="UPDATED_ON" type="TIMESTAMP" />
+            <column name="USER_DEFAULT" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="CREATED_BY_ID" type="BIGINT" />
+            <column name="UPDATED_BY_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-43">
+        <createTable tableName="PLAYLIST_MEDIA_ITEMS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_BA" />
+            </column>
+            <column name="RANKING" type="INT" />
+            <column name="MEDIA_ITEM_ID" type="BIGINT" />
+            <column name="PLAYLIST_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-44">
+        <createTable tableName="PREMIUMS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_E2" />
+            </column>
+            <column name="KILOBYTES" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="NAME" type="VARCHAR(255)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-46">
+        <createTable tableName="TAGS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_27" />
+            </column>
+            <column name="CREATED_ON" type="TIMESTAMP" />
+            <column name="TEXT" type="VARCHAR(255)" />
+            <column name="UPDATED_ON" type="TIMESTAMP" />
+            <column name="CREATED_BY_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-47">
+        <createTable tableName="TRACKS">
+            <column name="BIT_RATE" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="READABLE_TAG" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="TITLE" type="VARCHAR(1000)" />
+            <column name="TRACK_LENGTH" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="TRACK_NUMBER" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_9" />
+            </column>
+            <column name="ALBUM_ID" type="BIGINT" />
+            <column name="GENRE_NAME" type="VARCHAR(255)" />
+            <column name="YEAR_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-48">
+        <createTable tableName="USERS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_4" />
+            </column>
+            <column name="CREATED_ON" type="TIMESTAMP" />
+            <column name="ENABLED" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="KILOBYTES" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="LIBRARY_FOLDER_NAME" type="VARCHAR(255)" />
+            <column name="NAME" type="VARCHAR(255)" />
+            <column name="PASSWORD" type="VARCHAR(255)" />
+            <column name="SYSTEM" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="UPDATED_ON" type="TIMESTAMP" />
+            <column name="USERNAME" type="VARCHAR(255)" />
+            <column name="VALIDATED" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="CREATED_BY_ID" type="BIGINT" />
+            <column name="PREMIUM_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-49">
+        <createTable tableName="USERS_ROLES">
+            <column name="USER_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_ADB" />
+            </column>
+            <column name="ROLES_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_ADB" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-50">
+        <createTable tableName="USER_PLAYLIST_POSITIONS">
+            <column name="PLAYLIST_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_2A" />
+            </column>
+            <column name="USER_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_2A" />
+            </column>
+            <column name="PLAYLIST_MEDIA_ID" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-51">
+        <createTable tableName="VIDEOS">
+            <column name="IGNORE_REMOTE_CONTENT" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="RATING" type="REAL">
+                <constraints nullable="false" />
+            </column>
+            <column name="REMOTE_ID" type="VARCHAR(255)" />
+            <column name="RUNTIME" type="DOUBLE PRECISION">
+                <constraints nullable="false" />
+            </column>
+            <column name="TAGLINE" type="VARCHAR(255)" />
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_96" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-52">
+        <createTable tableName="VIDEO_LIBRARIES">
+            <column name="ENCODE_VIDEO_ON_DEMAND" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+            <column name="VIDEO_DERIVE_TITLE" type="VARCHAR(255)" />
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_76" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-53">
+        <createTable tableName="VOTES">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_4E" />
+            </column>
+            <column name="CREATED_ON" type="TIMESTAMP" />
+            <column name="MEDIA_ITEM_ID" type="BIGINT" />
+            <column name="USER_ID" type="BIGINT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-54">
+        <createTable tableName="YEARS">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="CONSTRAINT_5" />
+            </column>
+            <column name="YEAR_NUMBER" type="INT" />
+        </createTable>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-55">
+        <addUniqueConstraint columnNames="MEDIA_ENCODINGS_ID"
+            constraintName="UK_7NU2QVSOMEOISH33H3XW5GMCG" tableName="MEDIA_ITEMS_MEDIA_ENCODINGS" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-56">
+        <addUniqueConstraint columnNames="COMMENTS_ID" constraintName="UK_O8HPQ1BBVJL117YPLK9GMIH6Q"
+            tableName="MEDIA_ITEMS_COMMENTS" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-57">
+        <addUniqueConstraint columnNames="NAME" constraintName="UK_S2UNO1RFQBSN8CS67RHDW6PSN"
+            tableName="ARTISTS" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-58">
+        <createIndex associatedWith="" indexName="FK1O78I8XG6L1LCGW5TLNNNNLVE_INDEX_B"
+            tableName="PLAYLIST_MEDIA_ITEMS">
+            <column name="PLAYLIST_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-59">
+        <createIndex associatedWith="" indexName="FK2O0JVGH89LEMVVO17CBQVDXAA_INDEX_A"
+            tableName="USERS_ROLES">
+            <column name="USER_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-60">
+        <createIndex associatedWith="" indexName="FK2RYKAS8BO05D5XG5JLAJ6NI6N_INDEX_2"
+            tableName="USER_PLAYLIST_POSITIONS">
+            <column name="PLAYLIST_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-61">
+        <createIndex associatedWith="" indexName="FK4IYKJCF0VDAODKNRKWWQQR4KE_INDEX_9"
+            tableName="TRACKS">
+            <column name="YEAR_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-62">
+        <createIndex associatedWith="" indexName="FK598IJW8OKBHC4RKJC1M4I078A_INDEX_F"
+            tableName="ARTISTS">
+            <column name="ALBUM_ART_IMAGE_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-63">
+        <createIndex associatedWith="" indexName="FK6F9LUMU4ICIH5FFDPH8Q64EHI_INDEX_8"
+            tableName="MUSIC_ALBUMS">
+            <column name="ARTIST_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-64">
+        <createIndex associatedWith="" indexName="FK6NH88DSO8F1XJOFMRWY0BF7QF_INDEX_F"
+            tableName="ARTISTS">
+            <column name="USER_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-65">
+        <createIndex associatedWith="" indexName="FK8N2SMTV2YGH3GRCHWWRC34JMH_INDEX_A"
+            tableName="USERS_ROLES">
+            <column name="ROLES_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-66">
+        <createIndex associatedWith="" indexName="FK8NAKKFTYPPD62KE6TV7OO5A92_INDEX_4"
+            tableName="USERS">
+            <column name="CREATED_BY_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-67">
+        <createIndex associatedWith="" indexName="FK9CNYV7G9GT5QGSCI8UY6SC7D6_INDEX_A"
+            tableName="COMMENTS">
+            <column name="REPLY_TO_COMMENT_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-68">
+        <createIndex associatedWith="" indexName="FK9W5N84I617W60RVKI28VUG1HY_INDEX_2"
+            tableName="LIBRARIES_SHARE_USERS">
+            <column name="USER_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-69">
+        <createIndex associatedWith="" indexName="FKA4GIX3K4RMNWU75PTE2JK2M8M_INDEX_8"
+            tableName="MUSIC_ALBUMS">
+            <column name="ALBUM_ART_IMAGE_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-70">
+        <createIndex associatedWith="" indexName="FKA4IFYE600AM86O7BR7IOU94B5_INDEX_8"
+            tableName="PHOTOS">
+            <column name="ALBUM_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-72">
+        <createIndex associatedWith="" indexName="FKAKKM6QFYDU7VGNFNE1YO0XMED_INDEX_A"
+            tableName="COMMENTS">
+            <column name="CREATED_BY_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-73">
+        <createIndex associatedWith="" indexName="FKB2A3UVEQ1S0FXD137IYXBRIEC_INDEX_9"
+            tableName="TRACKS">
+            <column name="ALBUM_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-74">
+        <createIndex associatedWith="" indexName="FKDGMDPOSLVDX6T9UNUYD6IGJU7_INDEX_2"
+            tableName="LIBRARIES_SHARE_USERS">
+            <column name="LIBRARY_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-75">
+        <createIndex associatedWith="" indexName="FKE6RUX2ESQLQC37O4MJUROL105_INDEX_2"
+            tableName="USER_PLAYLIST_POSITIONS">
+            <column name="USER_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-76">
+        <createIndex associatedWith="" indexName="FKEPXKXYQKUMJSB9QQUSN5PMUHA_INDEX_D"
+            tableName="LIBRARIES">
+            <column name="UPDATED_BY_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-77">
+        <createIndex associatedWith="" indexName="FKF9CNE0WP8CVHISQYB1O3TNYBK_INDEX_B"
+            tableName="PLAYLIST_MEDIA_ITEMS">
+            <column name="MEDIA_ITEM_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-78">
+        <createIndex associatedWith="" indexName="FKH3LCKHROYLM12GTV17RY9LXRH_INDEX_1"
+            tableName="MEDIA_ITEMS_TAGS">
+            <column name="TAGS_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-79">
+        <createIndex associatedWith="" indexName="FKHL09IGW66QERO9F7GISUMEL0C_INDEX_4"
+            tableName="VOTES">
+            <column name="MEDIA_ITEM_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-80">
+        <createIndex associatedWith="" indexName="FKII9S3DPBREHAJSHDIRHOL0ASR_INDEX_D"
+            tableName="LIBRARIES">
+            <column name="USER_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-81">
+        <createIndex associatedWith="" indexName="FKJ2FDI61BF40MWP9XQKW1KU0FJ_INDEX_6"
+            tableName="MEDIA_ITEMS_MEDIA_ENCODINGS">
+            <column name="MEDIA_ITEM_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-82">
+        <createIndex associatedWith="" indexName="FKKW37PIXQVAP2UC094O95J8LU7_INDEX_3"
+            tableName="PLAYLISTS">
+            <column name="CREATED_BY_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-83">
+        <createIndex associatedWith="" indexName="FKLI4UJ3IC2VYPF5PIALCHJ925E_INDEX_4"
+            tableName="VOTES">
+            <column name="USER_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-84">
+        <createIndex associatedWith="" indexName="FKM8ARFEK3EDELOEU0BD9F5419V_INDEX_9"
+            tableName="TRACKS">
+            <column name="GENRE_NAME" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-85">
+        <createIndex associatedWith="" indexName="FKMR70AAH8QNMTKRT9GESBM3HKJ_INDEX_3"
+            tableName="ARTISTS_EXTERNAL_LINKS">
+            <column name="ARTIST_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-86">
+        <createIndex associatedWith="" indexName="FKOMR03A4C14FN6FJ48APBD40S_INDEX_3"
+            tableName="PLAYLISTS">
+            <column name="UPDATED_BY_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-87">
+        <createIndex associatedWith="" indexName="FKOOJX3MQA85E1V7SHNEJHPSR6R_INDEX_4"
+            tableName="USERS">
+            <column name="PREMIUM_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-88">
+        <createIndex associatedWith="" indexName="FKQ60J3DXXV6TWJDTYXEYD4LLO6_INDEX_B"
+            tableName="MEDIA_ITEMS">
+            <column name="LAST_ACCESSED_BY_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-90">
+        <createIndex associatedWith="" indexName="FKQCULXVCDAWGAWNBG1NUSPD846_INDEX_3"
+            tableName="ARTISTS_EXTERNAL_LINKS">
+            <column name="EXTERNAL_LINK_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-91">
+        <createIndex associatedWith="" indexName="FKQQH1P2DDJCA9KUOSK3CI91SIG_INDEX_B"
+            tableName="MEDIA_ITEMS">
+            <column name="LIBRARY_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-92">
+        <createIndex associatedWith="" indexName="FKQWBW7KREUFGW4D7E9BHWCPIO6_INDEX_B"
+            tableName="MEDIA_ITEMS_COMMENTS">
+            <column name="MEDIA_ITEM_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-93">
+        <createIndex associatedWith="" indexName="FKSURDH403TDU957UQWWJ8VS1L4_INDEX_2"
+            tableName="TAGS">
+            <column name="CREATED_BY_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-94">
+        <createIndex associatedWith="" indexName="FKTJSRCPBCL3JN55BWAVL3ADFRA_INDEX_1"
+            tableName="MEDIA_ITEMS_TAGS">
+            <column name="MEDIA_ITEM_ID" />
+        </createIndex>
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-95">
+        <addForeignKeyConstraint baseColumnNames="PLAYLIST_ID" baseTableName="PLAYLIST_MEDIA_ITEMS"
+            constraintName="FK1O78I8XG6L1LCGW5TLNNNNLVE" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="PLAYLISTS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-96">
+        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="USERS_ROLES"
+            constraintName="FK2O0JVGH89LEMVVO17CBQVDXAA" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-97">
+        <addForeignKeyConstraint baseColumnNames="PLAYLIST_ID"
+            baseTableName="USER_PLAYLIST_POSITIONS" constraintName="FK2RYKAS8BO05D5XG5JLAJ6NI6N"
+            deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="PLAYLISTS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-98">
+        <addForeignKeyConstraint baseColumnNames="YEAR_ID" baseTableName="TRACKS"
+            constraintName="FK4IYKJCF0VDAODKNRKWWQQR4KE" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="YEARS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-99">
+        <addForeignKeyConstraint baseColumnNames="ALBUM_ART_IMAGE_ID" baseTableName="ARTISTS"
+            constraintName="FK598IJW8OKBHC4RKJC1M4I078A" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="META_IMAGES" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-100">
+        <addForeignKeyConstraint baseColumnNames="ID" baseTableName="PHOTO_LIBRARIES"
+            constraintName="FK67JWJQ0HAYF8RUO57H0E6CNGA" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="LIBRARIES" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-101">
+        <addForeignKeyConstraint baseColumnNames="ARTIST_ID" baseTableName="MUSIC_ALBUMS"
+            constraintName="FK6F9LUMU4ICIH5FFDPH8Q64EHI" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="ARTISTS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-102">
+        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="ARTISTS"
+            constraintName="FK6NH88DSO8F1XJOFMRWY0BF7QF" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-103">
+        <addForeignKeyConstraint baseColumnNames="ID" baseTableName="VIDEO_LIBRARIES"
+            constraintName="FK79JHRI40E56K1IAT2AK3Q4GD8" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="LIBRARIES" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-104">
+        <addForeignKeyConstraint baseColumnNames="ID" baseTableName="TRACKS"
+            constraintName="FK7N5GP8RAG2G42YBAJOXM2KDHO" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="MEDIA_ITEMS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-105">
+        <addForeignKeyConstraint baseColumnNames="ROLES_ID" baseTableName="USERS_ROLES"
+            constraintName="FK8N2SMTV2YGH3GRCHWWRC34JMH" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="AUTHORITIES" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-106">
+        <addForeignKeyConstraint baseColumnNames="CREATED_BY_ID" baseTableName="USERS"
+            constraintName="FK8NAKKFTYPPD62KE6TV7OO5A92" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-107">
+        <addForeignKeyConstraint baseColumnNames="REPLY_TO_COMMENT_ID" baseTableName="COMMENTS"
+            constraintName="FK9CNYV7G9GT5QGSCI8UY6SC7D6" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="COMMENTS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-108">
+        <addForeignKeyConstraint baseColumnNames="ID" baseTableName="PHOTOS"
+            constraintName="FK9S6QS02N8E4OAQFD2OGRGBAMS" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="MEDIA_ITEMS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-109">
+        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="LIBRARIES_SHARE_USERS"
+            constraintName="FK9W5N84I617W60RVKI28VUG1HY" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="LIBRARIES" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-110">
+        <addForeignKeyConstraint baseColumnNames="ALBUM_ART_IMAGE_ID" baseTableName="MUSIC_ALBUMS"
+            constraintName="FKA4GIX3K4RMNWU75PTE2JK2M8M" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="META_IMAGES" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-111">
+        <addForeignKeyConstraint baseColumnNames="ALBUM_ID" baseTableName="PHOTOS"
+            constraintName="FKA4IFYE600AM86O7BR7IOU94B5" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="PHOTO_ALBUMS" validate="true" />
+    </changeSet>
+
+    <changeSet author="admin" id="1713433681355-113">
+        <addForeignKeyConstraint baseColumnNames="CREATED_BY_ID" baseTableName="COMMENTS"
+            constraintName="FKAKKM6QFYDU7VGNFNE1YO0XMED" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-114">
+        <addForeignKeyConstraint baseColumnNames="ALBUM_ID" baseTableName="TRACKS"
+            constraintName="FKB2A3UVEQ1S0FXD137IYXBRIEC" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="MUSIC_ALBUMS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-115">
+        <addForeignKeyConstraint baseColumnNames="LIBRARY_ID" baseTableName="LIBRARIES_SHARE_USERS"
+            constraintName="FKDGMDPOSLVDX6T9UNUYD6IGJU7" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-116">
+        <addForeignKeyConstraint baseColumnNames="ID" baseTableName="VIDEOS"
+            constraintName="FKDNHPOX0YYIVQ0BTNT7TW3GSBI" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="MEDIA_ITEMS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-117">
+        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="USER_PLAYLIST_POSITIONS"
+            constraintName="FKE6RUX2ESQLQC37O4MJUROL105" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-118">
+        <addForeignKeyConstraint baseColumnNames="UPDATED_BY_ID" baseTableName="LIBRARIES"
+            constraintName="FKEPXKXYQKUMJSB9QQUSN5PMUHA" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-119">
+        <addForeignKeyConstraint baseColumnNames="MEDIA_ITEM_ID"
+            baseTableName="PLAYLIST_MEDIA_ITEMS" constraintName="FKF9CNE0WP8CVHISQYB1O3TNYBK"
+            deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="MEDIA_ITEMS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-120">
+        <addForeignKeyConstraint baseColumnNames="COMMENTS_ID" baseTableName="MEDIA_ITEMS_COMMENTS"
+            constraintName="FKFUHIFDQTXAOAL0AOO6F59SI5R" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="COMMENTS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-121">
+        <addForeignKeyConstraint baseColumnNames="TAGS_ID" baseTableName="MEDIA_ITEMS_TAGS"
+            constraintName="FKH3LCKHROYLM12GTV17RY9LXRH" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="TAGS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-122">
+        <addForeignKeyConstraint baseColumnNames="MEDIA_ITEM_ID" baseTableName="VOTES"
+            constraintName="FKHL09IGW66QERO9F7GISUMEL0C" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="MEDIA_ITEMS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-123">
+        <addForeignKeyConstraint baseColumnNames="ID" baseTableName="LIKE_VOTES"
+            constraintName="FKHV1N1B1DI7CIHJLB8MBDNAKIB" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="VOTES" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-124">
+        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="LIBRARIES"
+            constraintName="FKII9S3DPBREHAJSHDIRHOL0ASR" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-125">
+        <addForeignKeyConstraint baseColumnNames="MEDIA_ITEM_ID"
+            baseTableName="MEDIA_ITEMS_MEDIA_ENCODINGS" constraintName="FKJ2FDI61BF40MWP9XQKW1KU0FJ"
+            deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="MEDIA_ITEMS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-126">
+        <addForeignKeyConstraint baseColumnNames="ID" baseTableName="MUSIC_LIBRARIES"
+            constraintName="FKJIFINDKF8TSWA37SU290E4AHU" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="LIBRARIES" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-127">
+        <addForeignKeyConstraint baseColumnNames="CREATED_BY_ID" baseTableName="PLAYLISTS"
+            constraintName="FKKW37PIXQVAP2UC094O95J8LU7" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-128">
+        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="VOTES"
+            constraintName="FKLI4UJ3IC2VYPF5PIALCHJ925E" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-129">
+        <addForeignKeyConstraint baseColumnNames="GENRE_NAME" baseTableName="TRACKS"
+            constraintName="FKM8ARFEK3EDELOEU0BD9F5419V" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="NAME" referencedTableName="GENRES" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-130">
+        <addForeignKeyConstraint baseColumnNames="ARTIST_ID" baseTableName="ARTISTS_EXTERNAL_LINKS"
+            constraintName="FKMR70AAH8QNMTKRT9GESBM3HKJ" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="EXTERNAL_LINKS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-131">
+        <addForeignKeyConstraint baseColumnNames="UPDATED_BY_ID" baseTableName="PLAYLISTS"
+            constraintName="FKOMR03A4C14FN6FJ48APBD40S" deferrable="false" initiallyDeferred="false"
+            onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID"
+            referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-132">
+        <addForeignKeyConstraint baseColumnNames="PREMIUM_ID" baseTableName="USERS"
+            constraintName="FKOOJX3MQA85E1V7SHNEJHPSR6R" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="PREMIUMS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-133">
+        <addForeignKeyConstraint baseColumnNames="LAST_ACCESSED_BY_ID" baseTableName="MEDIA_ITEMS"
+            constraintName="FKQ60J3DXXV6TWJDTYXEYD4LLO6" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-135">
+        <addForeignKeyConstraint baseColumnNames="EXTERNAL_LINK_ID"
+            baseTableName="ARTISTS_EXTERNAL_LINKS" constraintName="FKQCULXVCDAWGAWNBG1NUSPD846"
+            deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="ARTISTS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-136">
+        <addForeignKeyConstraint baseColumnNames="MEDIA_ENCODINGS_ID"
+            baseTableName="MEDIA_ITEMS_MEDIA_ENCODINGS" constraintName="FKQITEBLGQ5YI0JM3TTHD37BLJ3"
+            deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="MEDIA_ENCODINGS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-137">
+        <addForeignKeyConstraint baseColumnNames="LIBRARY_ID" baseTableName="MEDIA_ITEMS"
+            constraintName="FKQQH1P2DDJCA9KUOSK3CI91SIG" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="LIBRARIES" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-138">
+        <addForeignKeyConstraint baseColumnNames="MEDIA_ITEM_ID"
+            baseTableName="MEDIA_ITEMS_COMMENTS" constraintName="FKQWBW7KREUFGW4D7E9BHWCPIO6"
+            deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="MEDIA_ITEMS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-139">
+        <addForeignKeyConstraint baseColumnNames="ID" baseTableName="DISLIKE_VOTES"
+            constraintName="FKSSXBCAVKW8VENVBEYTEX3QQNC" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="VOTES" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-140">
+        <addForeignKeyConstraint baseColumnNames="CREATED_BY_ID" baseTableName="TAGS"
+            constraintName="FKSURDH403TDU957UQWWJ8VS1L4" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="USERS" validate="true" />
+    </changeSet>
+    <changeSet author="admin" id="1713433681355-141">
+        <addForeignKeyConstraint baseColumnNames="MEDIA_ITEM_ID" baseTableName="MEDIA_ITEMS_TAGS"
+            constraintName="FKTJSRCPBCL3JN55BWAVL3ADFRA" deferrable="false"
+            initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+            referencedColumnNames="ID" referencedTableName="MEDIA_ITEMS" validate="true" />
+    </changeSet>
+</databaseChangeLog>

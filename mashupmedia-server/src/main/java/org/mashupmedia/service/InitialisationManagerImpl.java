@@ -3,8 +3,8 @@ package org.mashupmedia.service;
 import java.util.Date;
 
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.model.Role;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.Role;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.util.AdminHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class InitialisationManagerImpl implements InitialisationManager {
 		}
 
 		initialiseUniqueInstallationName();
-		initialiseFirstRoles();
+		// initialiseFirstRoles();
 		adminManager.initialiseAdminUser();
 		adminManager.initialiseSystemUser();
 	}

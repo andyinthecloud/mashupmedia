@@ -2,9 +2,9 @@ package org.mashupmedia.encode.command;
 
 import java.util.List;
 
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 public interface EncodeCommands {
     String getEncoderPathKey();

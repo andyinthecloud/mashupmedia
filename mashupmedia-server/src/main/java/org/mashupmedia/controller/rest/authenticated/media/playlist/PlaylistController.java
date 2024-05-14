@@ -13,7 +13,7 @@ import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.playlist.PlaylistMapper;
 import org.mashupmedia.mapper.playlist.PlaylistWithTracksMapper;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;

@@ -7,7 +7,7 @@ import java.util.Date;
 
 import org.mashupmedia.dto.login.LoginPayload;
 import org.mashupmedia.dto.login.SecurityPayload;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.util.DateHelper;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;

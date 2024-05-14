@@ -5,7 +5,7 @@ import java.util.Date;
 
 import jakarta.persistence.*;
 
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
 
 @Entity
@@ -17,7 +17,8 @@ public abstract class Vote implements Serializable {
 	private static final long serialVersionUID = 2087777592160229126L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "votes_generator")
+	@SequenceGenerator(name = "votes_generator", sequenceName = "votes_seq", allocationSize = 1)
 	private long id;
 	@ManyToOne
 	private User user;

@@ -2,7 +2,7 @@ package org.mashupmedia.security;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.InitialisationManager;
 import org.springframework.beans.factory.annotation.Autowired;

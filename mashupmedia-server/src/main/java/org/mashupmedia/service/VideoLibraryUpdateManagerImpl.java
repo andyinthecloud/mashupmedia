@@ -10,14 +10,17 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.VideoDao;
+import org.mashupmedia.eums.MediaContentType;
+import org.mashupmedia.model.account.User;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.video.Video;
+import org.mashupmedia.repository.media.music.LIbraryRepository;
 import org.mashupmedia.task.EncodeMediaItemManager;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.MediaItemHelper;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.mashupmedia.util.MediaContentHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,9 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 
 	@Autowired
 	private VideoDao videoDao;
+
+	@Autowired
+	private LIbraryRepository libraryRepository;
 
 	@Autowired
 	private EncodeMediaItemManager encodeMediaItemManager;
@@ -61,10 +67,12 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 	public void deleteObsoleteVideos(long libraryId, Date date) {
 		List<Video> videos = videoDao.getObsoleteVideos(libraryId, date);
 		int totalDeletedVideos = videoDao.removeObsoleteVideos(libraryId, date);
+		Library library = libraryRepository.getReferenceById(libraryId);
+		User user = library.getUser();
 
 		for (Video video : videos) {
 			// processManager.killProcesses(video.getId());
-			FileHelper.deleteProcessedVideo(libraryId, video.getId());
+			FileHelper.deleteProcessedVideo(user.getFolderName(), libraryId, video.getId());
 		}
 
 		log.info(totalDeletedVideos + " obsolete videos deleted.");
@@ -120,7 +128,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 			video = new Video();
 			video.setCreatedOn(date);
 			String fileExtension = FileHelper.getFileExtension(fileName);
-			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
+			MediaContentType mediaContentType = MediaContentHelper.getMediaContentType(fileExtension);
 			Set<MediaEncoding> mediaEncodings = new HashSet<MediaEncoding>();
 			MediaEncoding mediaEncoding = new MediaEncoding();
 			mediaEncoding.setMediaContentType(mediaContentType);

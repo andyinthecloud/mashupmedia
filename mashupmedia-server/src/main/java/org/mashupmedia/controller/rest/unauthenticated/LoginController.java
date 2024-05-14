@@ -2,7 +2,7 @@ package org.mashupmedia.controller.rest.unauthenticated;
 
 import org.mashupmedia.dto.login.LoginPayload;
 import org.mashupmedia.dto.login.UserTokenPayload;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.util.AdminHelper;
 import org.springframework.http.MediaType;

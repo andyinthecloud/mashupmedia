@@ -6,7 +6,6 @@ import org.mashupmedia.dto.admin.UserPayload;
 import org.mashupmedia.dto.media.ExternalLinkPayload;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +22,5 @@ public class ArtistPayload {
     private String profile;
     private UserPayload userPayload;
     private List<ExternalLinkPayload> externalLinkPayloads; 
+    private List<Integer> metaImageRanks;
 }

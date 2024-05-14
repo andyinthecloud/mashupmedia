@@ -2,9 +2,10 @@ package org.mashupmedia.model.media;
 
 import java.io.Serializable;
 
+import org.mashupmedia.eums.MediaContentType;
+
 import jakarta.persistence.*;
 
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 @Entity
 @Table(name = "media_encodings")
@@ -13,8 +14,9 @@ public class MediaEncoding implements Serializable {
 	private static final long serialVersionUID = -3656367571677496182L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "media_encodings_generator")
+	@SequenceGenerator(name = "media_encodings_generator", sequenceName = "media_encodings_seq", allocationSize = 1)
+		private long id;
 	@Enumerated(EnumType.STRING)
 	private MediaContentType mediaContentType;
 	private boolean original;

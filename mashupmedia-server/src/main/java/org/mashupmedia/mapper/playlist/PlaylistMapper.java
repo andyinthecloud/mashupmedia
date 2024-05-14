@@ -2,7 +2,7 @@ package org.mashupmedia.mapper.playlist;
 
 import org.mashupmedia.dto.media.playlist.PlaylistPayload;
 import org.mashupmedia.mapper.DomainMapper;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.util.AdminHelper;
 import org.springframework.stereotype.Component;

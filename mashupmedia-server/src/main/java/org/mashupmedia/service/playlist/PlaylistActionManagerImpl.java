@@ -9,14 +9,14 @@ import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.media.playlist.EncoderStatusType;
 import org.mashupmedia.exception.MediaItemEncodeException;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
 import org.mashupmedia.task.EncodeMediaItemManager;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.MediaContentHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,7 +91,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		for (MediaItem mediaItem : mediaItemsForEncoding) {
 			try {
 				encodeMediaItemManager.processMediaItemForEncoding(mediaItem,
-						MediaItemHelper.getDefaultMediaContentType(mediaItem));
+						MediaContentHelper.getDefaultMediaContentType(mediaItem));
 			} catch (MediaItemEncodeException e) {
 				log.error("Error encoding media", e);
 			}

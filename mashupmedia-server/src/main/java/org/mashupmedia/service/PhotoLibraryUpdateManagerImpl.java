@@ -14,6 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.dao.PhotoDao;
+import org.mashupmedia.eums.MediaContentType;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.PhotoLibrary;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.photo.Album;
@@ -23,8 +25,7 @@ import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageRotationType;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.LibraryHelper;
-import org.mashupmedia.util.MediaItemHelper;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.mashupmedia.util.MediaContentHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -191,9 +192,9 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			}
 
 			String fileExtension = FileHelper.getFileExtension(fileName);
-			MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
+			MediaContentType mediaContentType = MediaContentHelper.getMediaContentType(fileExtension);
 
-			if (!MediaItemHelper.isCompatiblePhotoFormat(mediaContentType)) {
+			if (!MediaContentHelper.isCompatiblePhotoFormat(mediaContentType)) {
 				return null;
 			}
 
@@ -235,9 +236,10 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 			int orientation = photo.getOrientation();
 			ImageRotationType imageRotationType = ImageHelper.getImageRotationType(orientation);
+			User user = library.getUser();
 
 			try {
-				String webOptimisedImagePath = ImageHelper.generateAndSaveImage(library.getId(), path,
+				String webOptimisedImagePath = ImageHelper.generateAndSaveImage(user.getFolderName(), library.getId(), path,
 						ImageType.WEB_OPTIMISED, imageRotationType);
 				photo.setWebOptimisedImagePath(webOptimisedImagePath);
 

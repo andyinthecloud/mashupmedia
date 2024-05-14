@@ -2,7 +2,7 @@ package org.mashupmedia.repository.playlist;
 
 import java.util.List;
 
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.playlist.UserPlaylistPosition;
 import org.mashupmedia.model.playlist.UserPlaylistPositionId;
 import org.springframework.data.jpa.repository.JpaRepository;

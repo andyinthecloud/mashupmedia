@@ -23,7 +23,7 @@ import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.mashupmedia.exception.LibraryUpdateException;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryStatusType;
 import org.mashupmedia.model.library.MusicLibrary;

@@ -1,7 +1,7 @@
 package org.mashupmedia.mapper;
 
 import org.mashupmedia.dto.share.NameValuePayload;
-import org.mashupmedia.model.Role;
+import org.mashupmedia.model.account.Role;
 import org.springframework.stereotype.Component;
 
 @Component

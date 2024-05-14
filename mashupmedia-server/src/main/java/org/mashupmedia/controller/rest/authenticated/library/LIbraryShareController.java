@@ -9,7 +9,7 @@ import org.mashupmedia.dto.library.LibraryShareUserPayload;
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.library.LibraryShareUserMapper;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.service.EmailService;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.util.AdminHelper;

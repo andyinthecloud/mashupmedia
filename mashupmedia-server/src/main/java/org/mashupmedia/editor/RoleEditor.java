@@ -19,7 +19,7 @@ package org.mashupmedia.editor;
 
 import java.beans.PropertyEditorSupport;
 
-import org.mashupmedia.model.Role;
+import org.mashupmedia.model.account.Role;
 import org.mashupmedia.service.AdminManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

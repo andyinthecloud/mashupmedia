@@ -9,9 +9,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
 
 @Entity(name = "org.mashupmedia.model.media.photo.Album")
 @Table(name = "photo_albums")
@@ -21,13 +20,13 @@ public class Album implements Serializable {
 	private static final long serialVersionUID = -4462090915198319340L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "photo_albums_generator")
+	@SequenceGenerator(name = "photo_albums_generator", sequenceName = "photo_albums_seq", allocationSize = 1)
 	private long id;
 	private String name;
 	private Date createdOn;
 	private Date updatedOn;
 	private transient List<Photo> photos;
-
 
 	public long getId() {
 		return id;
@@ -60,8 +59,6 @@ public class Album implements Serializable {
 	public void setUpdatedOn(Date updatedOn) {
 		this.updatedOn = updatedOn;
 	}
-	
-	
 
 	public List<Photo> getPhotos() {
 		return photos;

@@ -12,62 +12,111 @@ import { albumArtImageUrl, AlbumWithTracksAndArtistPayload, getAlbum, ImageType 
 import { addAlbum, addTrack, playAlbum, playTrack } from "./rest/playlistActionCalls"
 import './Album.css';
 
+
+type AlbumPagePageload = {
+    albumWithTracksAndArtistPayload?: SecureMediaPayload<AlbumWithTracksAndArtistPayload>
+    imagePopover: ImagePopoverPayload
+}
+
 const Album = () => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
     const { albumId } = useParams()
 
-    const [props, setProps] = useState<SecureMediaPayload<AlbumWithTracksAndArtistPayload>>({
-        mediaToken: "",
-        payload: {
-            albumPayload: {
-                id: 0,
-                name: ""
-            },
-            artistPayload: {
-                id: 0,
-                name: ""
-            },
-            trackPayloads: []
+
+    const [props, setProps] = useState<AlbumPagePageload>({
+        albumWithTracksAndArtistPayload: ({
+            mediaToken: '',
+            payload: {
+                albumPayload: {
+                    id: 0,
+                    name: ""
+                },
+                artistPayload: {
+                    id: 0,
+                    name: ""
+                },
+
+                trackPayloads: []
+            }
+        }),
+        imagePopover: {
+            source: '',
+            trigger: 0
         }
     })
+
+
+
+
+
+    // const [props, setProps] = useState<SecureMediaPayload<AlbumWithTracksAndArtistPayload>>({
+    //     mediaToken: "",
+    //     payload: {
+    //         albumPayload: {
+    //             id: 0,
+    //             name: ""
+    //         },
+    //         artistPayload: {
+    //             id: 0,
+    //             name: ""
+    //         },
+    //         trackPayloads: []
+    //     }
+    // })
 
     useEffect(() => {
         if (albumId) {
             getAlbum(+albumId, userToken).then(response => {
                 if (response.parsedBody !== undefined) {
-                    setProps(response.parsedBody)
 
-                    setImagePopoverPayload({
-                        imageSource: albumArtImageUrl(
-                            response.parsedBody.payload.albumPayload.id,
-                            ImageType.ORIGINAL,
-                            response.parsedBody.mediaToken),
-                        timestamp: Date.now()
-                    })
+                    setProps(p => ({
+                        ...p,
+                        imagePopover: {
+                            ...p.imagePopover,
+                            source: ''
+                        },
+                        albumWithTracksAndArtistPayload: response.parsedBody
+
+                    }))
+
+
                 }
             })
         }
 
+
     }, [albumId, userToken])
 
-    const albumIdAsNumber = (): number => {
-        if (props) {
-            return props.payload.albumPayload.id;
-        } else {
-            return 0
-        }
-    }
+    const albumIdAsNumber = (): number => (
+        props.albumWithTracksAndArtistPayload?.payload.albumPayload.id || 0
+    )
 
-    const [imagePopoverPayload, setImagePopoverPayload] = useState<ImagePopoverPayload>()
+    // const [imagePopoverPayload, setImagePopoverPayload] = useState<ImagePopoverPayload>()
 
     const handleImagePopover = (event: React.MouseEvent<HTMLElement>) => {
-        setImagePopoverPayload(p => ({
+
+        const albumId = albumIdAsNumber()
+        if (!albumId) {
+            return
+        }
+
+        const source = albumArtImageUrl(
+            albumId,
+            ImageType.ORIGINAL,
+            props.albumWithTracksAndArtistPayload?.mediaToken || '')
+
+        console.log('handleImagePopover', props.imagePopover)
+
+        setProps(p => ({
             ...p,
-            anchorELement: event.currentTarget,
-            timestamp: Date.now()
+            imagePopover: {
+                source,
+                trigger: Date.now()
+            }
         }))
+
     }
 
 
@@ -120,7 +169,7 @@ const Album = () => {
 
                 <CardMedia
                     component="img"
-                    image={albumArtImageUrl(albumIdAsNumber(), ImageType.ORIGINAL, props?.mediaToken)}
+                    image={albumArtImageUrl(albumIdAsNumber(), ImageType.ORIGINAL, props.albumWithTracksAndArtistPayload?.mediaToken || '')}
                     height="300"
                     className="cursor-pointer"
                     onClick={handleImagePopover}
@@ -130,7 +179,7 @@ const Album = () => {
                     <Button
                         variant="contained"
                         startIcon={<PlayArrow />}
-                        onClick={() => handlePlayAlbum(props.payload.albumPayload.id)}
+                        onClick={() => handlePlayAlbum(albumIdAsNumber())}
                         sx={{
                             marginRight: "1em"
                         }}>
@@ -139,25 +188,25 @@ const Album = () => {
                     <Button
                         variant="contained"
                         startIcon={<Add />}
-                        onClick={() => handleAddAlbum(props.payload.albumPayload.id)}>
+                        onClick={() => handleAddAlbum(albumIdAsNumber())}>
                         Add
                     </Button>
                 </div>
             </div>
 
-            <ImagePopover {...imagePopoverPayload} />
+            <ImagePopover {...props.imagePopover} ></ImagePopover>
 
             <CardContent>
-                <div className="album-name">{props.payload.albumPayload.name}</div>
+                <div className="album-name">{props.albumWithTracksAndArtistPayload?.payload.albumPayload.name}</div>
                 <div className="artist-name">
                     <Link
                         className="link-no-underlne"
-                        to={"/music/artist/" + props.payload.artistPayload.id}>{props.payload.artistPayload.name}
+                        to={"/music/artist/" + props.albumWithTracksAndArtistPayload?.payload.artistPayload.id}>{props.albumWithTracksAndArtistPayload?.payload.artistPayload.name}
                     </Link>
                 </div>
 
                 <List>
-                    {props.payload.trackPayloads.map(function (trackPayload, index) {
+                    {props.albumWithTracksAndArtistPayload?.payload.trackPayloads.map(function (trackPayload, index) {
                         return (
                             <ListItem
                                 className={trackPayload.encodedForWeb ? "" : "track-not-encoded-for-web"}

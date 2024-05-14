@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import org.mashupmedia.dto.login.LoginPayload;
 import org.mashupmedia.dto.login.UserPolicyPayload;
 import org.mashupmedia.dto.login.UserTokenPayload;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.util.AdminHelper;

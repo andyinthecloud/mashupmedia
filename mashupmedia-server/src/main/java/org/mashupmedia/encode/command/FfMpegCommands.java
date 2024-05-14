@@ -21,11 +21,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.exception.MediaItemEncodeException.EncodeExceptionType;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

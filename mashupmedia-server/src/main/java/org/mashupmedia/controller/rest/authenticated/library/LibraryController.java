@@ -12,7 +12,7 @@ import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.LibraryNameValueMapper;
 import org.mashupmedia.mapper.library.LibraryMapper;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;

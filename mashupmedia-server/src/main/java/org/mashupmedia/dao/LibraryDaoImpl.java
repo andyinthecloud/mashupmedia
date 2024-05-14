@@ -2,11 +2,9 @@ package org.mashupmedia.dao;
 
 import java.util.List;
 
-import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.Library.LibraryType;
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.library.RemoteShare;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.Query;
@@ -16,14 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 @Slf4j
 public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
-
-	@Override
-	public List<Library> getRemoteLibraries() {
-		Query query = entityManager.createQuery("from Library where remote = true order by name");
-
-		List<Library> libraries = (List<Library>) query.getResultList();
-		return libraries;
-	}
 
 	@Override
 	public List<Library> getLocalLibraries(LibraryType libraryType) {
@@ -75,48 +65,6 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 	}
 
 	@Override
-	public Library getRemoteLibrary(String uniqueName) {
-		Query query = entityManager
-				.createQuery("select l from Library l inner join l.remoteShares rs where rs.uniqueName = :uniqueName");
-		query.setParameter("uniqueName", uniqueName);
-		@SuppressWarnings("unchecked")
-		List<Library> libraries = query.getResultList();
-		if (libraries == null || libraries.isEmpty()) {
-			return null;
-		}
-
-		if (libraries.size() > 1) {
-			log.error("More than one library found for uniqueName = " + uniqueName);
-		}
-
-		Library library = libraries.get(0);
-		return library;
-	}
-
-	@Override
-	public boolean hasRemoteLibrary(String path) {
-		Query query = entityManager
-				.createQuery("select l from Library l where l.location.path = :path");
-		query.setParameter("path", path);
-		@SuppressWarnings("unchecked")
-		List<Library> libraries = query.getResultList();
-		if (libraries == null || libraries.isEmpty()) {
-			return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	public Library getRemoteLibrary(long libraryId) {
-		TypedQuery<Library> query = entityManager.createQuery("from Library where id = :id and remote = true",
-				Library.class);
-		query.setParameter("id", libraryId);
-		Library library = getUniqueResult(query);
-		return library;
-	}
-
-	@Override
 	public void deleteLibrary(Library library) {
 
 		long libraryId = library.getId();
@@ -160,28 +108,6 @@ public class LibraryDaoImpl extends BaseDaoImpl implements LibraryDao {
 		query.setParameter("groupId", groupId);
 		List<Library> libraries = query.getResultList();
 		return libraries;
-	}
-
-	@Override
-	public RemoteShare getRemoteShare(Long remoteShareId) {
-		Query query = entityManager.createQuery("from RemoteShare where id = :remoteShareId");
-		query.setParameter("remoteShareId", remoteShareId);
-		@SuppressWarnings("unchecked")
-		List<RemoteShare> remoteShares = (List<RemoteShare>) query.getResultList();
-		if (remoteShares == null || remoteShares.isEmpty()) {
-			return null;
-		}
-
-		return remoteShares.get(0);
-	}
-
-	@Override
-	public void saveRemoteShare(RemoteShare remoteShare) {
-		if (remoteShare.getId() == 0) {
-			throw new MashupMediaRuntimeException("Only existing remote shares can be saved!");
-		}
-
-		entityManager.merge(remoteShare);
 	}
 
 	@Override

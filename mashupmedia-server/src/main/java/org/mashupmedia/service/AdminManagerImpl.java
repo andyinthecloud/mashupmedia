@@ -13,8 +13,8 @@ import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.dao.RoleDao;
 import org.mashupmedia.dao.UserDao;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
-import org.mashupmedia.model.Role;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.Role;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.repository.admin.UserRepository;
@@ -95,7 +95,7 @@ public class AdminManagerImpl implements AdminManager {
 
 	private void createUser(User user, Date date) {
 		user.setCreatedOn(date);
-		user.setLibraryFolderName(RandomStringUtils.randomAlphanumeric(15));
+		user.setFolderName(RandomStringUtils.randomAlphanumeric(15));
 
 		String password = user.getPassword();
 		if (StringUtils.isBlank(password)) {
@@ -265,7 +265,7 @@ public class AdminManagerImpl implements AdminManager {
 				.enabled(true)
 				.name(name)
 				.privateAccess(isPrivateAccess)
-				.path(LibraryHelper.getLibraryFolderName(user.getLibraryFolderName(), name))
+				.path(LibraryHelper.getLibraryFolderName(user.getFolderName(), name))
 				.build();
 
 	}

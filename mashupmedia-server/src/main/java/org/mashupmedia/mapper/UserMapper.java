@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.admin.UserPayload;
 import org.mashupmedia.dto.share.NameValuePayload;
-import org.mashupmedia.model.Role;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.Role;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;

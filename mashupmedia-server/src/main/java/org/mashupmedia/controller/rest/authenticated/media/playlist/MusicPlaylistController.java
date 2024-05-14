@@ -17,7 +17,7 @@ import org.mashupmedia.dto.media.playlist.NavigatePlaylistType;
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.mapper.media.music.SecureMusicPlaylistTrackMapper;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;

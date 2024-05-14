@@ -19,8 +19,11 @@ package org.mashupmedia.util;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.mashupmedia.model.MetaEntity;
+import org.mashupmedia.model.media.ExternalLink;
 import org.springframework.util.Assert;
 
 public class DaoHelper {
@@ -94,5 +97,8 @@ public class DaoHelper {
 				.distinct()
 				.collect(Collectors.toList());
 	}
+
+
+
 
 }

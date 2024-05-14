@@ -4,7 +4,7 @@ import java.util.List;
 
 import jakarta.persistence.TypedQuery;
 
-import org.mashupmedia.model.Role;
+import org.mashupmedia.model.account.Role;
 import org.springframework.stereotype.Repository;
 
 @Repository

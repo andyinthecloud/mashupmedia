@@ -6,8 +6,10 @@ import org.mashupmedia.model.media.MediaItem;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.Getter;
@@ -23,7 +25,8 @@ import lombok.Setter;
 public class PlaylistMediaItem {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "playlist_media_items_generator")
+	@SequenceGenerator(name = "playlist_media_items_generator", sequenceName = "playlist_media_items_seq", allocationSize = 1)
 	private long id;
 
 	private Integer ranking;

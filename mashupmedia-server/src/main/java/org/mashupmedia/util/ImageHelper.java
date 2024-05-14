@@ -1,31 +1,42 @@
 package org.mashupmedia.util;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Rotation;
 import org.mashupmedia.util.FileHelper.FileType;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 public class ImageHelper {
 
-	public final static int PHOTO_THUMBNAIL_WIDTH = 200;
-	public final static int PHOTO_THUMBNAIL_HEIGHT = 200;
+	public final static int THUMBNAIL_WIDTH = 500;
+	public final static int THUMBNAIL_HEIGHT = 500;
 
-	public final static int PHOTO_WEB_OPTIMISED_WIDTH = 800;
-	public final static int PHOTO_WEB_OPTIMISED_HEIGHT = 800;
 
-	public final static int MUSIC_ALBUM_ART_THUMBNAIL_WIDTH = 200;
-	public final static int MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT = 200;
+	public final static int PHOTO_THUMBNAIL_WIDTH = 500;
+	public final static int PHOTO_THUMBNAIL_HEIGHT = 500;
+
+	public final static int PHOTO_WEB_OPTIMISED_WIDTH = 1000;
+	public final static int PHOTO_WEB_OPTIMISED_HEIGHT = 1000;
+
+	public final static int MUSIC_ALBUM_ART_THUMBNAIL_WIDTH = 500;
+	public final static int MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT = 500;
+
+
+
 
 	public enum ImageFormatType {
 		PNG("png"), JPEG("JPEG");
@@ -85,12 +96,12 @@ public class ImageHelper {
 		return processedImage;
 	}
 
-	public static String generateAndSaveMusicAlbumArtThumbnail(long libraryId, String imageFilePath) throws IOException {
-		File thumbnailFile = FileHelper.createMediaItemFile(libraryId, FileType.ALBUM_ART_THUMBNAIL);
+	public static String generateAndSaveMusicAlbumArtThumbnail(String userFolderName, long libraryId, String imageFilePath) throws IOException {
+		File thumbnailFile = FileHelper.createMediaItemFile(userFolderName, libraryId, FileType.ALBUM_ART_THUMBNAIL);
 		return generateAndSaveImage(libraryId, imageFilePath, thumbnailFile, MUSIC_ALBUM_ART_THUMBNAIL_WIDTH, MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT, null);
 	}
 
-	public static String generateAndSaveImage(long libraryId, String imageFilePath, ImageType imageType, ImageRotationType imageRotationType)
+	public static String generateAndSaveImage(String userFolderName, long libraryId, String imageFilePath, ImageType imageType, ImageRotationType imageRotationType)
 			throws IOException {
 
 		if (StringUtils.isBlank(imageFilePath)) {
@@ -107,7 +118,7 @@ public class ImageHelper {
 			height = PHOTO_WEB_OPTIMISED_HEIGHT;
 		}
 
-		File file = FileHelper.createMediaItemFile(libraryId, fileType);
+		File file = FileHelper.createMediaItemFile(userFolderName, libraryId, fileType);
 		return generateAndSaveImage(libraryId, imageFilePath, file, width, height, imageRotationType);
 	}
 
@@ -136,6 +147,20 @@ public class ImageHelper {
 		return file.getAbsolutePath();
 	}
 
+	public static void generateThumbnail(InputStream inputStream, Path path) throws IOException{
+		BufferedImage image = ImageIO.read(inputStream);
+		IOUtils.closeQuietly(inputStream);
+
+		BufferedImage thumbnailImage = processImage(image, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, null);
+		if (thumbnailImage == null) {
+			throw new IOException("Unable to read image");
+		}
+
+		// ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		ImageIO.write(thumbnailImage, ImageFormatType.JPEG.getFormat(), path.toFile()); 
+		// return outputStream.toByteArray();
+	}
+
 	public static ImageType getImageType(String imageTypeValue) {
 		imageTypeValue = StringUtils.trimToEmpty(imageTypeValue).toLowerCase();
 		if (StringUtils.isEmpty(imageTypeValue)) {
@@ -151,4 +176,5 @@ public class ImageHelper {
 
 		return ImageType.ORIGINAL;
 	}
+	
 }

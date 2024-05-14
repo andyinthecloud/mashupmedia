@@ -5,13 +5,14 @@ import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashupMediaType;
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.util.DateHelper;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.MediaContentHelper;
 import org.mashupmedia.util.MediaItemHelper;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -162,7 +163,7 @@ public class Track extends MediaItem implements Serializable {
 			mediaContentType = mediaEncoding.getMediaContentType();
 		} else {
 			String format = getFormat();
-			mediaContentType = MediaItemHelper.getMediaContentType(format);
+			mediaContentType = MediaContentHelper.getMediaContentType(format);
 		}
 
 		metaBuilder.append(mediaContentType.name());

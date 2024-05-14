@@ -2,15 +2,15 @@ package org.mashupmedia.view;
 
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.mashupmedia.constants.MashupMediaType;
+import org.mashupmedia.eums.MediaContentType;
+import org.mashupmedia.util.FileHelper;
+import org.springframework.web.servlet.View;
+
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
-import org.mashupmedia.constants.MashupMediaType;
-import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
-import org.springframework.web.servlet.View;
 
 public class MediaItemImageView implements View {
 

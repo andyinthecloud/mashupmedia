@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
@@ -19,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -41,7 +42,8 @@ public abstract class Library implements Serializable {
 	private static final long serialVersionUID = 4337414530802373218L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "libraries_generator")
+	@SequenceGenerator(name = "libraries_generator", sequenceName = "libraries_seq", allocationSize = 1)
 	private long id;
 	@EqualsAndHashCode.Include
 	private String name;
@@ -98,11 +100,10 @@ public abstract class Library implements Serializable {
 		this.status = libraryStatusType.toString();
 	}
 
-
 	public boolean hasAccess(User user) {
 		if (this.user == null || user == null) {
 			return false;
-		}		
+		}
 
 		if (this.user.equals(user)) {
 			return true;

@@ -1,7 +1,7 @@
 package org.mashupmedia.mapper;
 
 import org.mashupmedia.dto.admin.CreateUserPayload;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.springframework.stereotype.Component;
 
 @Component

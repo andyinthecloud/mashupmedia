@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.dao.VoteDao;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.vote.DislikeVote;
 import org.mashupmedia.model.vote.LikeVote;

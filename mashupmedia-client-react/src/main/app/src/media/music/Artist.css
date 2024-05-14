@@ -1,14 +1,17 @@
 #artist div.title, #artist div.profile {
     display: flex;
+    justify-content: flex-start;
     align-items: center;
 }
 
-#artist div.title button{
-    margin-left: 1em;
+#artist div.title img {
+    width: 100px;
+    height: auto;
 }
 
 #artist div.external-links {
-    margin-bottom: 10em;
+    clear: both;
+    padding-top: 1em;
 }
 
 #artist div.external-links button{
@@ -31,3 +34,18 @@
 #artist div.external-links div.item a span, #artist div.external-links div.item a .icon{
     vertical-align: middle;
 }
+
+#artist div.images div.item{
+    display: flex;
+    align-items: center;
+    height: 100px;
+    width: auto;
+}
+
+#artist div.images div.item img{
+    max-height: 100%;
+    width: auto;
+}
+
+
+

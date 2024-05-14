@@ -2,7 +2,7 @@ package org.mashupmedia.comparator;
 
 import java.util.Comparator;
 
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 
 public class UserComparator implements Comparator<User>{
 

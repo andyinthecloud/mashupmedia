@@ -12,7 +12,9 @@ public class Configuration implements Serializable {
 
 	private static final long serialVersionUID = 713342154279495594L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "configurations_generator")
+	@SequenceGenerator(name = "configurations_generator", sequenceName = "configurations_seq", allocationSize = 1)
+
 	private long id;
 	@Column(name = "configuration_key")
 	private String key;

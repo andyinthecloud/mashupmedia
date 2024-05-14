@@ -17,13 +17,11 @@
 
 package org.mashupmedia.util;
 
-import java.util.List;
 import java.util.Set;
 
-import org.mashupmedia.model.Role;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.Role;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.security.MediaAuthentication;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -97,16 +95,37 @@ public class AdminHelper {
 	// return userGroups.stream().anyMatch(groups::contains);
 	// }
 
-	public static void checkUserPermission(User user) {
-		User loggedInUser = AdminHelper.getLoggedInUser();
-		if (loggedInUser.isAdministrator() || loggedInUser.isSystem()) {
-			return;
-		}
+	// public static void checkUserPermission(User user) {
+	// 	User loggedInUser = AdminHelper.getLoggedInUser();
+	// 	if (loggedInUser.isAdministrator() || loggedInUser.isSystem()) {
+	// 		return;
+	// 	}
 
-		if (loggedInUser.equals(user)) {
-			return;
-		}
+	// 	if (loggedInUser.equals(user)) {
+	// 		return;
+	// 	}
 
-		throw new AccessDeniedException("Unauthorised access to library");
-	}
+	// 	throw new AccessDeniedException("Unauthorised access to library");
+	// }
+
+	public static void checkAccess(User user) {
+        if (!user.isEnabled()) {
+            throw new SecurityException("User is disabled");
+        }
+
+        User loggedInUser = AdminHelper.getLoggedInUser();
+        if (!loggedInUser.isEnabled()) {
+            throw new SecurityException("User is disabled");
+        }
+
+        if (loggedInUser.isAdministrator() || loggedInUser.isSystem()) {
+            return;
+        }
+
+        if (loggedInUser.equals(user)) {
+            return;
+        }
+
+        throw new SecurityException("Access is denied");
+    }
 }

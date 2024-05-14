@@ -2,8 +2,8 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
-import org.mashupmedia.model.Role;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.Role;
+import org.mashupmedia.model.account.User;
 
 public interface AdminManager {
 

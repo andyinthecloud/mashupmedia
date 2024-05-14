@@ -1,19 +1,20 @@
-import { Edit, MoreVert, OpenInNew } from "@mui/icons-material";
+import { AddAPhoto, Edit, Mic, MoreVert, OpenInNew } from "@mui/icons-material";
 import { Button, Grid, IconButton, Menu, MenuItem } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AlbumSummary from '../../common/components/media/AlbumSummary';
 import { RootState } from '../../common/redux/store';
 import { SecureMediaPayload } from '../rest/secureMediaPayload';
 import './Artist.css';
-import { AlbumWithArtistPayload, ArtistWithAlbumsPayload, deleteArtist, getArtist, saveArtist } from './rest/musicCalls';
+import { AlbumWithArtistPayload, ArtistWithAlbumsPayload, ImageType, albumArtImageUrl, artistImageUrl, deleteArtist, getArtist, saveArtist } from './rest/musicCalls';
 import EditLinkDialog, { EditLinkDialogPageload as EditLinkDialogPayload } from "../../common/components/dialogs/EditLinkDialog";
 import { ExternalLinkPayload } from "../rest/mediaCalls";
 import LinkMenu, { LinkMenuPayload } from "../../common/components/menus/LinkMenu";
 import EditTextDialog, { EditTextDialogPayload } from "../../common/components/dialogs/EditTextDialog";
 import { useDispatch } from "react-redux";
 import { NotificationType, addNotification } from "../../common/notification/notificationSlice";
+import { uploadArtistImages } from "./rest/musicUploadCalls";
 
 type ArtistPagePayload = {
     secureMediaItemPayload?: SecureMediaPayload<ArtistWithAlbumsPayload>
@@ -28,6 +29,7 @@ const Artist = () => {
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
 
     const { artistId } = useParams()
+    const uploadFileRef = useRef<HTMLInputElement>(null);
 
     const [props, setProps] = useState<ArtistPagePayload>({
         secureMediaItemPayload: {
@@ -84,9 +86,9 @@ const Artist = () => {
         }
     })
 
-    const externalLinksRef = useRef<ExternalLinkPayload[]> ([])
+    const externalLinksRef = useRef<ExternalLinkPayload[]>([])
 
-    function updateArtistName (text: string): void  {
+    function updateArtistName(text: string): void {
         setProps(p => ({
             ...p,
             editArtistNameDialogPayload: {
@@ -103,7 +105,7 @@ const Artist = () => {
                     artistPayload: {
                         ...p.secureMediaItemPayload?.payload.artistPayload,
                         id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
-                        name: text
+                        name: p.secureMediaItemPayload?.payload.artistPayload.name || text
                     }
                 }
             }
@@ -128,19 +130,20 @@ const Artist = () => {
                         ...p.secureMediaItemPayload?.payload.artistPayload,
                         id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
                         name: p.secureMediaItemPayload?.payload.artistPayload.name || '',
-                        profile: text
+                        profile: text,
+
                     }
                 }
             }
         }))
     }
 
-    function updateExternalLink (externalLinkPayload: ExternalLinkPayload): void {        
+    function updateExternalLink(externalLinkPayload: ExternalLinkPayload): void {
         const externalLinkPayloads = addExternalLinkPayload(externalLinkPayload)
         setExternalLinks(externalLinkPayloads)
     }
 
-    function addExternalLinkPayload (externalLinkPayload: ExternalLinkPayload): ExternalLinkPayload[] {
+    function addExternalLinkPayload(externalLinkPayload: ExternalLinkPayload): ExternalLinkPayload[] {
         const externalLinkPayloads = externalLinksRef.current
         console.log('addExternalLinkPayload: beginning externalLinkPayloads = ', externalLinkPayloads)
         if (!externalLinkPayload.name && !externalLinkPayload.link) {
@@ -159,7 +162,7 @@ const Artist = () => {
         return externalLinkPayloads
     }
 
-    function setExternalLinks (externalLinkPayloads: ExternalLinkPayload[]): void {
+    function setExternalLinks(externalLinkPayloads: ExternalLinkPayload[]): void {
         externalLinkPayloads.map((externalLinkPayload, index) => {
             externalLinkPayload.rank = index
         })
@@ -179,14 +182,15 @@ const Artist = () => {
             },
             secureMediaItemPayload: {
                 ...p.secureMediaItemPayload,
-                mediaToken: '',
+                mediaToken: p.secureMediaItemPayload?.mediaToken || '',
                 payload: {
                     ...p.secureMediaItemPayload?.payload,
                     artistPayload: {
                         ...p.secureMediaItemPayload?.payload.artistPayload,
                         id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
                         name: p.secureMediaItemPayload?.payload.artistPayload.name || '',
-                        externalLinkPayloads
+                        externalLinkPayloads,
+                        metaImageRanks: p.secureMediaItemPayload?.payload.artistPayload.metaImageRanks
                     },
                     albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || []
 
@@ -196,7 +200,7 @@ const Artist = () => {
 
     }
 
-    function deleteExternalLink (externalLinkPayload: ExternalLinkPayload): void {
+    function deleteExternalLink(externalLinkPayload: ExternalLinkPayload): void {
         const externalLinkPayloads = externalLinksRef.current
         if (!externalLinkPayloads) {
             return
@@ -206,7 +210,7 @@ const Artist = () => {
         setExternalLinks(externalLinkPayloads)
     }
 
-    function moveExternalLinkTop (externalLinkPayload: ExternalLinkPayload): void {
+    function moveExternalLinkTop(externalLinkPayload: ExternalLinkPayload): void {
         const externalLinkPayloads = externalLinksRef.current
         if (!externalLinkPayloads) {
             return
@@ -218,7 +222,7 @@ const Artist = () => {
         setExternalLinks(externalLinkPayloads)
     }
 
-    function moveExternalLinkUpOne (externalLinkPayload: ExternalLinkPayload): void {
+    function moveExternalLinkUpOne(externalLinkPayload: ExternalLinkPayload): void {
         const externalLinkPayloads = externalLinksRef.current
         if (!externalLinkPayloads) {
             return
@@ -231,7 +235,7 @@ const Artist = () => {
         setExternalLinks(externalLinkPayloads)
     }
 
-    function moveExternalLinkDownOne (externalLinkPayload: ExternalLinkPayload): void {
+    function moveExternalLinkDownOne(externalLinkPayload: ExternalLinkPayload): void {
         const externalLinkPayloads = externalLinksRef.current
         if (!externalLinkPayloads) {
             return
@@ -244,7 +248,7 @@ const Artist = () => {
         setExternalLinks(externalLinkPayloads)
     }
 
-    function moveExternalLinkBottom (externalLinkPayload: ExternalLinkPayload): void {
+    function moveExternalLinkBottom(externalLinkPayload: ExternalLinkPayload): void {
         const externalLinkPayloads = externalLinksRef.current
         if (!externalLinkPayloads) {
             return
@@ -257,7 +261,7 @@ const Artist = () => {
         setExternalLinks(externalLinkPayloads)
     }
 
-    function openEditExternalLinkDialog (externalLinkPayload: ExternalLinkPayload) {
+    function openEditExternalLinkDialog(externalLinkPayload: ExternalLinkPayload) {
 
         const externalLinkPayloads = props.secureMediaItemPayload?.payload.artistPayload.externalLinkPayloads
         if (!externalLinkPayloads) {
@@ -292,7 +296,7 @@ const Artist = () => {
         }))
     }
 
- 
+
 
     useEffect(() => {
         if (artistId) {
@@ -303,7 +307,7 @@ const Artist = () => {
                         secureMediaItemPayload: response.parsedBody
                     }))
 
-                    externalLinksRef.current =  response.parsedBody.payload.artistPayload.externalLinkPayloads || []
+                    externalLinksRef.current = response.parsedBody.payload.artistPayload.externalLinkPayloads || []
                 }
             })
         }
@@ -437,6 +441,36 @@ const Artist = () => {
         return userPolicyPayload.administrator || userPayload.username === userPolicyPayload.username
     }
 
+    const handleUploadImagesClick = (): void => {
+        if (uploadFileRef) {
+            uploadFileRef.current?.click()
+        }
+    }
+
+    const handleChangeFolder = (e: ChangeEvent<HTMLInputElement>): void => {
+
+        const files = e.target.files
+        if (!files?.length) {
+            return
+        }
+
+        const artistId = props.secureMediaItemPayload?.payload.artistPayload.id
+        if (!artistId) {
+            return
+        }
+
+        uploadArtistImages(artistId, files, userToken).then(response => {
+            if (response.ok) {
+                console.log("ok")
+            } else {
+                console.log("nok")
+
+            }
+        })
+
+
+    }
+
     return (
         <form id='artist'>
 
@@ -446,6 +480,9 @@ const Artist = () => {
             <LinkMenu {...props.linkMenuPayload} />
 
             <div className="title">
+
+                <img src={artistImageUrl(props.secureMediaItemPayload?.payload.artistPayload.id || 0, ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '')} />
+
                 <h1>{props.secureMediaItemPayload?.payload.artistPayload.name || 'New artist'}</h1>
                 <IconButton
                     color="secondary"
@@ -466,13 +503,41 @@ const Artist = () => {
                 </IconButton>
             </div>
 
+            <div className="images">
+                <input
+                    style={{ display: 'none' }}
+                    type="file"
+                    multiple
+                    accept="image/png, image/jpeg"
+                    ref={uploadFileRef}
+                    onChange={e => handleChangeFolder(e)}
+                />
+
+                {props.secureMediaItemPayload?.payload.artistPayload.metaImageRanks?.map(index => {
+                    return (
+                        <div key={index} className="item">
+                            <img src={artistImageUrl(props.secureMediaItemPayload?.payload.artistPayload.id || 0, ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '')} />
+                            <IconButton
+                                className="more-icon"
+                                color="secondary" >
+                                <MoreVert />
+                            </IconButton>
+                        </div>
+                    )
+                })}
+
+                <IconButton
+                    color="secondary"
+                    onClick={handleUploadImagesClick}
+                >
+                    <AddAPhoto />
+                </IconButton>
+            </div>
+
+
             <div className="external-links">
 
-                <Button
-                    style={{ float: "right" }}
-                    onClick={openNewExternalLinkDialog}
-                    color="secondary"
-                    variant="outlined">Add link</Button>
+
 
                 {props.secureMediaItemPayload?.payload.artistPayload.externalLinkPayloads?.map(externalLinkPayload => {
                     return (
@@ -493,6 +558,12 @@ const Artist = () => {
                         </div>
                     )
                 })}
+
+                <Button
+                    style={{ float: "right" }}
+                    onClick={openNewExternalLinkDialog}
+                    color="secondary"
+                    variant="outlined">Add link</Button>
 
             </div>
 

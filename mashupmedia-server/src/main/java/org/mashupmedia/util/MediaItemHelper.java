@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashupMediaType;
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Track;
@@ -28,34 +29,34 @@ import org.mashupmedia.model.media.video.Video;
 
 public class MediaItemHelper {
 
-	public enum MediaContentType {
-		AUDIO_MP3("audio/mpeg", 1),
-		VIDEO_MP4("video/mp4", 1),
-		VIDEO_WEBM("video/webm", 2),
-		VIDEO_OGG("video/ogg", 3),
-		VIDEO_WMV("video/x-ms-wmv", 4),
-		IMAGE_JPG("image/jpeg", 1),
-		IMAGE_PNG("image/png", 2),
-		IMAGE_GIF("image/gif", 3),
-		IMAGE_TIFF("image/tiff", 4),
-		MEDIA_UNSUPPORTED("media/unsupported", 100);
+	// public enum MediaContentType {
+	// 	AUDIO_MP3("audio/mpeg", 1),
+	// 	VIDEO_MP4("video/mp4", 1),
+	// 	VIDEO_WEBM("video/webm", 2),
+	// 	VIDEO_OGG("video/ogg", 3),
+	// 	VIDEO_WMV("video/x-ms-wmv", 4),
+	// 	IMAGE_JPG("image/jpeg", 1),
+	// 	IMAGE_PNG("image/png", 2),
+	// 	IMAGE_GIF("image/gif", 3),
+	// 	IMAGE_TIFF("image/tiff", 4),
+	// 	MEDIA_UNSUPPORTED("media/unsupported", 100);
 
-		private final String contentType;
-		private final int ranking;
+	// 	private final String contentType;
+	// 	private final int ranking;
 
-		private MediaContentType(String mimeContentType, int ranking) {
-			this.contentType = mimeContentType;
-			this.ranking = ranking;
-		}
+	// 	private MediaContentType(String mimeContentType, int ranking) {
+	// 		this.contentType = mimeContentType;
+	// 		this.ranking = ranking;
+	// 	}
 
-		public String getContentType() {
-			return contentType;
-		}
+	// 	public String getContentType() {
+	// 		return contentType;
+	// 	}
 
-		public int getRanking() {
-			return ranking;
-		}
-	}
+	// 	public int getRanking() {
+	// 		return ranking;
+	// 	}
+	// }
 
 	public enum MediaItemSequenceType {
 		PHOTO_ALBUM, LATEST, ALPHABETICAL
@@ -77,80 +78,80 @@ public class MediaItemHelper {
 		String fileExtension = FileHelper.getFileExtension(fileName);
 		MediaEncoding mediaEncoding = new MediaEncoding();
 		mediaEncoding.setOriginal(true);
-		MediaContentType mediaContentType = MediaItemHelper.getMediaContentType(fileExtension);
+		MediaContentType mediaContentType = MediaContentHelper.getMediaContentType(fileExtension);
 		mediaEncoding.setMediaContentType(mediaContentType);
 		return mediaEncoding;
 	}
 
-	public static MediaContentType getMediaContentType(String format) {
+	// public static MediaContentType getMediaContentType(String format) {
 
-		format = StringUtils.trimToEmpty(format);
+	// 	format = StringUtils.trimToEmpty(format);
 
-		if (format.equalsIgnoreCase("MPEG-1 Layer 3") || format.equalsIgnoreCase("mp3")) {
-			return MediaContentType.AUDIO_MP3;
-		} else if (format.equalsIgnoreCase("webm")) {
-			return MediaContentType.VIDEO_WEBM;
-		} else if (format.equalsIgnoreCase("mp4") || format.equalsIgnoreCase("m4v")) {
-			return MediaContentType.VIDEO_MP4;
-		} else if (format.equalsIgnoreCase("ogv")) {
-			return MediaContentType.VIDEO_OGG;
-		} else if (format.equalsIgnoreCase("jpg") || format.equalsIgnoreCase("jpeg")) {
-			return MediaContentType.IMAGE_JPG;
-		} else if (format.equalsIgnoreCase("png")) {
-			return MediaContentType.IMAGE_PNG;
-		} else if (format.equalsIgnoreCase("gif")) {
-			return MediaContentType.IMAGE_GIF;
-		} else if (format.equalsIgnoreCase("tif") || format.equalsIgnoreCase("tiff")) {
-			return MediaContentType.IMAGE_TIFF;
-		}
+	// 	if (format.equalsIgnoreCase("MPEG-1 Layer 3") || format.equalsIgnoreCase("mp3")) {
+	// 		return MediaContentType.AUDIO_MP3;
+	// 	} else if (format.equalsIgnoreCase("webm")) {
+	// 		return MediaContentType.VIDEO_WEBM;
+	// 	} else if (format.equalsIgnoreCase("mp4") || format.equalsIgnoreCase("m4v")) {
+	// 		return MediaContentType.VIDEO_MP4;
+	// 	} else if (format.equalsIgnoreCase("ogv")) {
+	// 		return MediaContentType.VIDEO_OGG;
+	// 	} else if (format.equalsIgnoreCase("jpg") || format.equalsIgnoreCase("jpeg")) {
+	// 		return MediaContentType.IMAGE_JPG;
+	// 	} else if (format.equalsIgnoreCase("png")) {
+	// 		return MediaContentType.IMAGE_PNG;
+	// 	} else if (format.equalsIgnoreCase("gif")) {
+	// 		return MediaContentType.IMAGE_GIF;
+	// 	} else if (format.equalsIgnoreCase("tif") || format.equalsIgnoreCase("tiff")) {
+	// 		return MediaContentType.IMAGE_TIFF;
+	// 	}
 
-		return MediaContentType.MEDIA_UNSUPPORTED;
-	}
+	// 	return MediaContentType.MEDIA_UNSUPPORTED;
+	// }
 
-	public static MediaContentType getDefaultMediaContentType(MediaItem mediaItem) {
-		if (mediaItem instanceof Track) {
-			return MediaContentType.AUDIO_MP3;
-		}
+	// public static MediaContentType getDefaultMediaContentType(MediaItem mediaItem) {
+	// 	if (mediaItem instanceof Track) {
+	// 		return MediaContentType.AUDIO_MP3;
+	// 	}
 
-		return MediaContentType.MEDIA_UNSUPPORTED;
+	// 	return MediaContentType.MEDIA_UNSUPPORTED;
 
-	}
+	// }
 
-	public static boolean isCompatibleVideoFormat(MediaContentType mediaContentType) {
-		if (mediaContentType == MediaContentType.VIDEO_MP4) {
-			return true;
-		}
+	// public static boolean isCompatibleVideoFormat(MediaContentType mediaContentType) {
+	// 	if (mediaContentType == MediaContentType.VIDEO_MP4) {
+	// 		return true;
+	// 	}
 
-		if (mediaContentType == MediaContentType.VIDEO_WEBM) {
-			return true;
-		}
+	// 	if (mediaContentType == MediaContentType.VIDEO_WEBM) {
+	// 		return true;
+	// 	}
 
-		if (mediaContentType == MediaContentType.VIDEO_OGG) {
-			return true;
-		}
+	// 	if (mediaContentType == MediaContentType.VIDEO_OGG) {
+	// 		return true;
+	// 	}
 
-		return false;
-	}
+	// 	return false;
+	// }
 
-	public static boolean isCompatiblePhotoFormat(MediaContentType mediaContentType) {
-		if (mediaContentType == MediaContentType.IMAGE_JPG) {
-			return true;
-		}
+	// public static boolean isCompatiblePhotoFormat(MediaContentType mediaContentType) {
+	// 	if (mediaContentType == MediaContentType.IMAGE_JPG) {
+	// 		return true;
+	// 	}
 
-		if (mediaContentType == MediaContentType.IMAGE_GIF) {
-			return true;
-		}
+	// 	if (mediaContentType == MediaContentType.IMAGE_GIF) {
+	// 		return true;
+	// 	}
 
-		if (mediaContentType == MediaContentType.IMAGE_TIFF) {
-			return true;
-		}
+	// 	if (mediaContentType == MediaContentType.IMAGE_TIFF) {
+	// 		return true;
+	// 	}
 
-		if (mediaContentType == MediaContentType.IMAGE_PNG) {
-			return true;
-		}
+	// 	if (mediaContentType == MediaContentType.IMAGE_PNG) {
+	// 		return true;
+	// 	}
 
-		return false;
-	}
+	// 	return false;
+	// }
 
 	public static boolean hasMediaEncoding(MediaItem mediaItem, MediaContentType mediaContentType) {
 		Set<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();

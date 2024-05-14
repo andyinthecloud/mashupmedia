@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.mashupmedia.constants.MashupMediaType;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -17,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -37,7 +38,8 @@ import lombok.Setter;
 public class Playlist {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "playlists_generator")
+	@SequenceGenerator(name = "playlists_generator", sequenceName = "playlists_seq", allocationSize = 1)
 	private long id;
 
 	private String name;

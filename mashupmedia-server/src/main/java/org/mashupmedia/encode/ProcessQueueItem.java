@@ -3,7 +3,7 @@ package org.mashupmedia.encode;
 import java.util.Date;
 import java.util.List;
 
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+import org.mashupmedia.eums.MediaContentType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

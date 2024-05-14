@@ -83,6 +83,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         authorise -> authorise
                                 .requestMatchers(mvcMatcherBuilder.pattern("/api/private/**")).authenticated()
+                                .requestMatchers(mvcMatcherBuilder.pattern("/upload/**")).authenticated()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/**")).permitAll())
 
                 .addFilter(new JWTAuthenticationFilter(authenticationManager, this.objectMapper))

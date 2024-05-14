@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;

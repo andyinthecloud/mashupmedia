@@ -3,8 +3,7 @@ package org.mashupmedia.model.media;
 import java.io.Serializable;
 import java.util.Date;
 
-
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -13,7 +12,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "comments")
@@ -22,8 +23,10 @@ public class Comment implements Serializable {
 	private static final long serialVersionUID = 1552265448903497284L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comments_generator")
+	@SequenceGenerator(name = "comments_generator", sequenceName = "comments_seq", allocationSize = 1)
 	private long id;
+	@Size(max = 1024)
 	private String text;
 	@ManyToOne(cascade = { CascadeType.PERSIST })
 	private User createdBy;

@@ -9,7 +9,7 @@ import org.mashupmedia.dto.media.music.ArtistWithAlbumsPayload;
 import org.mashupmedia.dto.media.music.CreateArtistPayload;
 import org.mashupmedia.mapper.media.music.ArtistMapper;
 import org.mashupmedia.mapper.media.music.ArtistWithAlbumsMapper;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MusicManager;

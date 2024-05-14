@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.mashupmedia.controller.stream.resource.MediaResourceHttpRequestHandler;
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.music.Track;
@@ -19,7 +20,6 @@ import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.task.EncodeMediaItemManager;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MediaItemHelper;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

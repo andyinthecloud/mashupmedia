@@ -1,0 +1,26 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+
+    <changeSet id="002-1" author="admin">
+        <insert tableName="premiums">
+            <column name="id" valueSequenceNext="premiums_seq" />
+            <column name="name" value="free" />
+            <column name="kilobytes" value="100000"/>
+        </insert>
+        <insert tableName="premiums">
+            <column name="id" valueSequenceNext="premiums_seq" />
+            <column name="name" value="standard" />
+            <column name="kilobytes" value="1000000"/>
+        </insert>
+    </changeSet>
+
+
+</databaseChangeLog>                        

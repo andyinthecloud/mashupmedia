@@ -12,7 +12,7 @@ import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.exception.UnauthorisedException;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;

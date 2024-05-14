@@ -14,6 +14,21 @@ export const restHeaders = (userToken?: string | null): Headers => {
 }
 
 
+export const multiPartHeaders = (userToken?: string | null): Headers => {
+    const headers = new Headers()
+    if (userToken) {
+        headers.set('Authorization', 'Bearer ' + userToken)
+    }
+    // headers.set('Content-Type', 'multipart/form-data')
+    headers.set('Access-Control-Allow-Origin', '*')
+    headers.set('Access-Control-Allow-Methods', 'POST, PUT')
+
+    return headers
+}
+
+
+
+
 export enum HttpMethod {
     GET = 'GET',
     POST = 'POST',
@@ -86,6 +101,8 @@ export const callMashupMediaApiNoRedirect = async <T>(httpMethod: HttpMethod, ur
 
     return response
 }
+
+
 
 
 export const redirectInternal = (internalUri: string): void => {

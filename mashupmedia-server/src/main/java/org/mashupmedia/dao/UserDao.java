@@ -2,7 +2,7 @@ package org.mashupmedia.dao;
 
 import java.util.List;
 
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 
 public interface UserDao {
 

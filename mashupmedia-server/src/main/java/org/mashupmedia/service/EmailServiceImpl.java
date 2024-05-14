@@ -1,6 +1,6 @@
 package org.mashupmedia.service;
 
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

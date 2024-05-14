@@ -1,6 +1,6 @@
 package org.mashupmedia.model.playlist;
 
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;

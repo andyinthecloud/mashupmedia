@@ -31,13 +31,13 @@ import org.mashupmedia.encode.ProcessHelper;
 import org.mashupmedia.encode.ProcessQueueItem;
 import org.mashupmedia.encode.command.EncodeCommands;
 import org.mashupmedia.encode.command.FfMpegCommands;
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.service.ConfigurationManager;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 

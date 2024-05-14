@@ -3,9 +3,9 @@ package org.mashupmedia.model.media;
 import java.io.Serializable;
 import java.util.Date;
 
-import jakarta.persistence.*;
+import org.mashupmedia.model.account.User;
 
-import org.mashupmedia.model.User;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tags")
@@ -14,7 +14,8 @@ public class Tag implements Serializable {
 
 	private static final long serialVersionUID = -1056696816094274402L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tags_generator")
+	@SequenceGenerator(name = "tags_generator", sequenceName = "tags_seq", allocationSize = 1)
 	private long id;
 	private String text;
 	@ManyToOne(cascade = { CascadeType.PERSIST })

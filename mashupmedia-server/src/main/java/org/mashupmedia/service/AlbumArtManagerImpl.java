@@ -13,14 +13,17 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.datatype.Artwork;
 import org.mashupmedia.comparator.FileSizeComparator;
 import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.model.MetaEntity;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.MusicLibrary;
+import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.music.Album;
-import org.mashupmedia.model.media.music.MusicArtImage;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.FileHelper.FileType;
 import org.mashupmedia.util.ImageHelper;
+import org.mashupmedia.util.MetaEntityHelper;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Service;
@@ -41,17 +44,17 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 	private final ConnectionManager connectionManager;
 
 	@Override
-	public MusicArtImage getAlbumArtImage(MusicLibrary musicLibrary, Track track) throws Exception {
-		MusicArtImage albumArtImage = getAlbumArtImage(track);
+	public MetaImage getMetaImage(MusicLibrary musicLibrary, Track track) throws Exception {
+		MetaImage albumArtImage = getPreferredImage(track);
 		if (!isAlbumArtImageEmpty(albumArtImage)) {
 			return albumArtImage;
 		}
 
-		albumArtImage = getLocalAlbumArtImage(musicLibrary, track);
+		albumArtImage = getLocalAlbumArtImage(musicLibrary, track);		
 		return albumArtImage;
 	}
 
-	private MusicArtImage getAlbumArtImage(Track track) {
+	private MetaImage getPreferredImage(Track track) {
 		Artist artist = track.getArtist();
 		if (artist == null) {
 			return null;
@@ -65,21 +68,24 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		String artistName = artist.getName();
 		String albumName = album.getName();
 
-		MusicArtImage albumArtImage = null;
+		MetaImage metaImage = null;
 
 		Album savedAlbum = musicManager.getAlbum(artistName, albumName);
+		MetaEntityHelper<MetaImage> metaImageHelper = new MetaEntityHelper<>();
+
 		if (savedAlbum != null) {
-			albumArtImage = savedAlbum.getAlbumArtImage();
-			if (!isAlbumArtImageEmpty(albumArtImage)) {
-				return albumArtImage;
+			metaImage = metaImageHelper.getDefaultEntity(savedAlbum.getMetaImages());
+
+			if (!isAlbumArtImageEmpty(metaImage)) {
+				return metaImage;
 			}
 		}
 
-		albumArtImage = album.getAlbumArtImage();
-		return albumArtImage;
+		metaImage = metaImageHelper.getDefaultEntity(album.getMetaImages());
+		return metaImage;
 	}
 
-	private boolean isAlbumArtImageEmpty(MusicArtImage albumArtImage) {
+	private boolean isAlbumArtImageEmpty(MetaImage albumArtImage) {
 		if (albumArtImage == null) {
 			return true;
 		}
@@ -100,7 +106,7 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 		return true;
 	}
 
-	private MusicArtImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Track track) throws Exception {
+	private MetaImage getLocalAlbumArtImage(MusicLibrary musicLibrary, Track track) throws Exception {
 
 
 		File musicFile = new File(track.getPath());
@@ -123,7 +129,8 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 			}
 			// imagePath = FileHelper.writeAlbumArt(musicLibrary.getId(),
 			// bytes);
-			File albumArtFile = FileHelper.createMediaItemFile(musicLibrary.getId(), FileType.ALBUM_ART_THUMBNAIL);
+			User user = musicLibrary.getUser();
+			File albumArtFile = FileHelper.createMediaItemFile(user.getFolderName(), musicLibrary.getId(), FileType.ALBUM_ART_THUMBNAIL);
 			FileUtils.writeByteArrayToFile(albumArtFile, bytes);
 			imagePath = albumArtFile.getAbsolutePath();
 
@@ -139,14 +146,15 @@ public class AlbumArtManagerImpl implements AlbumArtManager {
 			contentType = FileHelper.getFileExtension(albumArtFileName);
 		}
 
-		MusicArtImage albumArtImage = new MusicArtImage();
+		MetaImage albumArtImage = new MetaImage();
 		albumArtImage.setName(albumArtFileName);
 		albumArtImage.setUrl(imagePath);
 		albumArtImage.setContentType(contentType);
 
 		String thumbnailUrl = imagePath;
+		User user = musicLibrary.getUser();
 		try {
-			thumbnailUrl = ImageHelper.generateAndSaveMusicAlbumArtThumbnail(musicLibrary.getId(), imagePath);
+			thumbnailUrl = ImageHelper.generateAndSaveMusicAlbumArtThumbnail(user.getFolderName(), musicLibrary.getId(), imagePath);
 		} catch (Exception e) {
 			log.error("Error converting album art image to thumbnail, using original image.", e);
 		}

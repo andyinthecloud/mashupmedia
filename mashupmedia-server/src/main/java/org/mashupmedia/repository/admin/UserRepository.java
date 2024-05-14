@@ -1,6 +1,6 @@
 package org.mashupmedia.repository.admin;
 
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

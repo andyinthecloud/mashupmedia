@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 
 import org.mashupmedia.dto.login.MediaTokenPayload;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;

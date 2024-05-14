@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.playlist.Playlist;
@@ -220,7 +220,8 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 		}
 
 		Library library = mediaItem.getLibrary();
-		File[] encodedMediaFiles = FileHelper.getEncodedFiles(library.getId(), mediaItemId,
+		User user = library.getUser();
+		File[] encodedMediaFiles = FileHelper.getEncodedFiles(user.getFolderName(), library.getId(), mediaItemId,
 				FileType.MEDIA_ITEM_STREAM_ENCODED);
 		for (File encodedMediaFile : encodedMediaFiles) {
 			FileHelper.deleteFile(encodedMediaFile);

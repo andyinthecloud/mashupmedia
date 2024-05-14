@@ -3,31 +3,37 @@ package org.mashupmedia.util;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.constants.MashUpMediaConstants;
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.util.MediaItemHelper.MediaContentType;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class FileHelper {
 
 	private static String MASHUP_MEDIA_HOME = "mashupMediaHome";
+	private static String TEMP = "temp";
 
 	public final static String ALBUM_ART_FOLDER = "cover-art";
 	private static File applicationHomeFolder = null;
 
 	public enum FileType {
 		ALBUM_ART("album-art"), ALBUM_ART_THUMBNAIL("album-art-thumbnail"), MEDIA_ITEM_STREAM_UNPROCESSED(
-				"media-item-stream"), MEDIA_ITEM_STREAM_ENCODED("media-item-encoded"), PHOTO_THUMBNAIL(
-						"photo-thumbnail"), PHOTO_WEB_OPTIMISED("photo-web-optimised");
+				"media-item-stream"),
+		MEDIA_ITEM_STREAM_ENCODED("media-item-encoded"), PHOTO_THUMBNAIL(
+				"photo-thumbnail"),
+		PHOTO_WEB_OPTIMISED("photo-web-optimised");
 
 		private String folderName;
 
@@ -41,8 +47,8 @@ public class FileHelper {
 
 	}
 
-	public static File[] getEncodedFiles(long libraryId, long mediaItemId, FileType fileType) {
-		File libraryFolder = getLibraryFolder(libraryId);
+	public static File[] getEncodedFiles(String userFolderName, long libraryId, long mediaItemId, FileType fileType) {
+		File libraryFolder = getLibraryFolder(userFolderName, libraryId);
 		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
 		mediaFolder.mkdirs();
 
@@ -73,9 +79,8 @@ public class FileHelper {
 	}
 
 	public static File getEncodedMediaFile(MediaItem mediaItem, MediaContentType mediaContentType) {
-
 		Library library = mediaItem.getLibrary();
-		File libraryFolder = getLibraryFolder(library.getId());
+		File libraryFolder = getLibraryFolder(library.getUser().getFolderName(), library.getId());
 		File mediaFolder = new File(libraryFolder, FileType.MEDIA_ITEM_STREAM_ENCODED.getFolderName());
 		mediaFolder.mkdirs();
 
@@ -86,8 +91,8 @@ public class FileHelper {
 		return file;
 	}
 
-	public static File createMediaItemFile(long libraryId, FileType fileType) {
-		File libraryFolder = getLibraryFolder(libraryId);
+	public static File createMediaItemFile(String userFolderName, long libraryId, FileType fileType) {
+		File libraryFolder = getLibraryFolder(userFolderName, libraryId);
 		File thumbnailFolder = new File(libraryFolder, fileType.getFolderName());
 		thumbnailFolder.mkdirs();
 		File thumbnailFile = new File(thumbnailFolder, String.valueOf(System.nanoTime()));
@@ -229,14 +234,26 @@ public class FileHelper {
 		return applicationHomeFolder;
 	}
 
-	private static File getLibraryFolder(long libraryId) {
-		File libraryFolder = new File(getApplicationFolder(), "libraries/" + libraryId);
+	public static Path getApplicationTempPath() {
+		return Path.of(getApplicationFolder().getAbsolutePath(), TEMP);
+	}
+
+	private static File getLibraryFolder(String userFolderName, long libraryId) {
+		File libraryFolder = new File(getUserUploadPath(userFolderName).toFile(), "libraries/" + libraryId);
 		libraryFolder.mkdirs();
 		return libraryFolder;
 	}
 
-	public static void deleteLibrary(long libraryId) {
-		File libraryFolder = getLibraryFolder(libraryId);
+	// public static File getUserArtistFolder(long artistId) {
+	// User user = AdminHelper.getLoggedInUser();
+	// File libraryFolder = new File(getUserLibraryFolder(user.getFolderName()),
+	// "artists/" + artistId);
+	// libraryFolder.mkdirs();
+	// return libraryFolder;
+	// }
+
+	public static void deleteLibrary(String userFolderName, long libraryId) {
+		File libraryFolder = getLibraryFolder(userFolderName, libraryId);
 		try {
 			FileUtils.deleteDirectory(libraryFolder);
 		} catch (IOException e) {
@@ -308,18 +325,18 @@ public class FileHelper {
 		return false;
 	}
 
-	public static File getLibraryXmlFile(long libraryId) {
-		File file = new File(getLibraryFolder(libraryId), String.valueOf(libraryId));
-		return file;
-	}
+	// public static File getLibraryXmlFile(long libraryId) {
+	// File file = new File(getLibraryFolder(libraryId), String.valueOf(libraryId));
+	// return file;
+	// }
 
-	private static File getVideoFolder(long libraryId, long videoId) {
-		File libraryFolder = FileHelper.getLibraryFolder(libraryId);
+	private static File getVideoFolder(String userFolderName, long libraryId, long videoId) {
+		File libraryFolder = FileHelper.getLibraryFolder(userFolderName, libraryId);
 		File videoFolder = new File(libraryFolder, String.valueOf(videoId));
 		return videoFolder;
 	}
 
-	public static void deleteProcessedVideo(long libraryId, long videoId) {
+	public static void deleteProcessedVideo(String userFolderName, long libraryId, long videoId) {
 
 		if (libraryId == 0 || videoId == 0) {
 			log.info(
@@ -327,7 +344,7 @@ public class FileHelper {
 			return;
 		}
 
-		File videoFolder = getVideoFolder(libraryId, videoId);
+		File videoFolder = getVideoFolder(userFolderName, libraryId, videoId);
 
 		if (!videoFolder.isDirectory()) {
 			log.debug("Unable to delete video folder: " + videoFolder.getAbsolutePath() + ". Does not exist.");
@@ -358,27 +375,34 @@ public class FileHelper {
 		return path;
 	}
 
-	private static File getPlaylistFolder(long playlistId) {		
+	private static File getPlaylistFolder(long playlistId) {
 		File playlistFolder = new File(getApplicationFolder(), "playlists/" + playlistId);
 		playlistFolder.mkdirs();
 		return playlistFolder;
 	}
-	
-	
+
 	public static File createTemporaryPlaylistFile(long playlistId) {
 		User user = AdminHelper.getLoggedInUser();
 		String userPrefix = "";
 		if (user != null) {
 			userPrefix = user.getUsername();
 		}
-		
+
 		File file = new File(getPlaylistFolder(playlistId), userPrefix + "-" + System.currentTimeMillis());
 		return file;
 	}
 
-	public static File getUserLibraryFolder(String userFolderName) {
-		File userUploadFolder = new File(getApplicationFolder(), "users/" + userFolderName);
-		userUploadFolder.mkdirs();
-		return userUploadFolder;
+	public static Path getUserUploadPath(String userFolderName) {
+		Path userUploadPath = Paths.get(getApplicationFolder().getAbsolutePath(), "users", userFolderName);
+		try {
+			return Files.createDirectories(userUploadPath);
+		} catch (IOException e) {
+			throw new MashupMediaRuntimeException("Unable to create user upload folder", e);
+		}
+		// File userUploadFolder = new File(getApplicationFolder(), "users/" +
+		// userFolderName);
+		// userUploadFolder.mkdirs();
+		// return userUploadFolder;
 	}
+
 }

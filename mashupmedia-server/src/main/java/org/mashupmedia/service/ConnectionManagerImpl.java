@@ -7,7 +7,7 @@ import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.model.media.music.MusicArtImage;
+import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
 	private final MediaManager mediaManager;
 
 	@Override
-	public byte[] getAlbumArtImageBytes(MusicArtImage image, ImageType imageType) throws IOException {
+	public byte[] getAlbumArtImageBytes(MetaImage image, ImageType imageType) throws IOException {
 		if (image == null) {
 			return null;
 		}

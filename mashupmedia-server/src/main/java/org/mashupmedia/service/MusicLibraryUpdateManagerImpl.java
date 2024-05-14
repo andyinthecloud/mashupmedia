@@ -29,15 +29,15 @@ import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
-import org.mashupmedia.model.media.music.MusicArtImage;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.MediaRepository;
 import org.mashupmedia.repository.media.music.ArtistRepository;
@@ -46,6 +46,7 @@ import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.GenreHelper;
 import org.mashupmedia.util.LibraryHelper;
 import org.mashupmedia.util.MediaItemHelper;
+import org.mashupmedia.util.MetaEntityHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -169,16 +170,18 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			album = prepareAlbum(album);
 			album.setUpdatedOn(date);
 
-			MusicArtImage albumArtImage = album.getAlbumArtImage();
-			if (albumArtImage == null) {
+			MetaEntityHelper<MetaImage> metaImageHelper = new MetaEntityHelper<>();
+			MetaImage metaImage = metaImageHelper.getDefaultEntity(album.getMetaImages());
+			if (metaImage == null) {
 				try {
-					albumArtImage = albumArtManager.getAlbumArtImage(musicLibrary, track);
+					metaImage = albumArtManager.getMetaImage(musicLibrary, track);
 				} catch (Exception e) {
 					log.info("Error processing album image", e);
 				}
 			}
-
-			album.setAlbumArtImage(albumArtImage);
+			
+			Set<MetaImage> metaImages = metaImageHelper.addMetaEntity(metaImage, album.getMetaImages());
+			album.setMetaImages(metaImages);;
 			track.setAlbum(album);
 
 			track.setCreatedOn(date);
@@ -538,10 +541,12 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		String url = null;
 		String thumbnailUrl = null;
-		MusicArtImage albumArtImage = album.getAlbumArtImage();
-		if (albumArtImage != null) {
-			url = albumArtImage.getUrl();
-			thumbnailUrl = albumArtImage.getThumbnailUrl();
+
+		MetaEntityHelper<MetaImage> metaImageHelper = new MetaEntityHelper<>();
+		MetaImage metaImage = metaImageHelper.getDefaultEntity(album.getMetaImages());
+		if (metaImage != null) {
+			url = metaImage.getUrl();
+			thumbnailUrl = metaImage.getThumbnailUrl();
 		}
 
 		// Album savedAlbum = musicDao.getAlbum(userGroupIds, artist.getName(),
@@ -551,9 +556,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		if (optionalAlbum.isPresent()) {
 			Album savedAlbum = optionalAlbum.get();
-			MusicArtImage savedAlbumArtImage = savedAlbum.getAlbumArtImage();
+			MetaImage savedAlbumArtImage = metaImageHelper.getDefaultEntity(savedAlbum.getMetaImages());
 			if (savedAlbumArtImage == null) {
-				savedAlbum.setAlbumArtImage(albumArtImage);
+				Set<MetaImage> metaImages = metaImageHelper.addMetaEntity(metaImage, savedAlbum.getMetaImages());
+				savedAlbum.setMetaImages(metaImages);
 			} else {
 				if (StringUtils.isBlank(savedAlbumArtImage.getUrl())) {
 					savedAlbumArtImage.setUrl(url);
@@ -564,7 +570,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			return savedAlbum;
 		}
 
-		album.setAlbumArtImage(albumArtImage);
+		Set<MetaImage> metaImages = metaImageHelper.addMetaEntity(metaImage, album.getMetaImages());
+		album.setMetaImages(metaImages);
 
 		return album;
 

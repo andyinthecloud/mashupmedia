@@ -20,6 +20,13 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>target/classes</name>
+			<type>2</type>
+			<location>//C:/Users/alester/VSProjects/mashupmedia/mashupmedia-client-react/target/classes/</location>
+		</link>
+	</linkedResources>
 	<filteredResources>
 		<filter>
 			<id>1673280589427</id>

@@ -77,6 +77,23 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
+        <!-- Cache -->
+        <dependency>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>3.10.8</version>
+            <classifier>jakarta</classifier>
+        </dependency>   
 
         <!--        Swagger dependencies -->
         <dependency>
@@ -144,6 +161,18 @@
             <version>1.9.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.27.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.24.9</version>
+        </dependency>
+
     </dependencies>
 
 
@@ -171,6 +200,23 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
+
+
+
+            <!-- <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>4.27.0</version>
+                <configuration>
+
+                   <driver>org.h2.Driver</driver>
+                   <url>jdbc:h2:file:C:\\stuff\\data\\mm-home\\db</url>
+                   <username>sa</username>
+                   <password />
+                   <outputChangeLogFile>src/main/resources/liquibase-outputChangeLog.xml</outputChangeLogFile>
+                </configuration>
+             </plugin> -->
+
 
         </plugins>
     </build>

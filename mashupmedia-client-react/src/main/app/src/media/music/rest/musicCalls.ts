@@ -9,6 +9,7 @@ export type ArtistPayload = {
     profile?: string
     userPayload?: UserPayload
     externalLinkPayloads?: ExternalLinkPayload[]
+    metaImageRanks?: number[]
 }
 
 export type CreateArtistPayload = {
@@ -56,6 +57,10 @@ const albumUrl = musicUri + "/albums"
 
 export const albumArtImageUrl = (albumId: number, imageType: ImageType, mediaToken: string): string => {
     return `${backEndUrl('/stream/secure/music/album-art')}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}`
+}
+
+export const artistImageUrl = (artistId: number, imageType: ImageType, mediaToken: string, index?: number): string => {
+    return `${backEndUrl('/stream/secure/music/artist-art')}/${artistId}?mediaToken=${mediaToken}&imageType=${imageType}&index=${index || ''}`
 }
 
 export const getArtists = (userToken?: string): Promise<HttpResponse<ArtistPayload[]>> => {

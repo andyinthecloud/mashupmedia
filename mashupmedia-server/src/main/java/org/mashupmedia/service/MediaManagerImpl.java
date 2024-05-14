@@ -6,7 +6,7 @@ import java.util.List;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
-import org.mashupmedia.model.media.music.MusicArtImage;
+import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.TrackRepository;
 import org.mashupmedia.repository.media.music.TrackSpecifications;
@@ -42,8 +42,8 @@ public class MediaManagerImpl implements MediaManager {
 	}
 
 	@Override
-	public List<MusicArtImage> getAlbumArtImages(long libraryId) {
-		List<MusicArtImage> albumArtImages = mediaDao.getAlbumArtImages(libraryId);
+	public List<MetaImage> getAlbumArtImages(long libraryId) {
+		List<MetaImage> albumArtImages = mediaDao.getAlbumArtImages(libraryId);
 		return albumArtImages;
 	}
 

@@ -2,7 +2,7 @@ package org.mashupmedia.mapper.library;
 
 import org.mashupmedia.dto.library.LibraryShareUserPayload;
 import org.mashupmedia.mapper.DomainMapper;
-import org.mashupmedia.model.User;
+import org.mashupmedia.model.account.User;
 import org.springframework.stereotype.Component;
 
 @Component
