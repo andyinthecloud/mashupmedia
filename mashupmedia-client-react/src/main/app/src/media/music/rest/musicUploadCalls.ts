@@ -1,21 +1,11 @@
+import { MetaPayload } from "../../../common/components/meta/metaUtils"
 import { securityToken } from "../../../common/security/securityUtils"
-import { HttpMethod, HttpResponse, backEndUrl, callMashupMediaApi, multiPartHeaders, restHeaders } from "../../../common/utils/httpUtils"
+import { HttpMethod, HttpResponse, backEndUrl, multiPartHeaders } from "../../../common/utils/httpUtils"
 
-
-export type MetaImagePayload = {
-    ranks: number[]
-    message: string
-}
+export type MetaImagePayload = & MetaPayload 
 
 
 const musicUri = "/upload/music"
-
-
-// export const albumArtImageUrl = (albumId: number, imageType: ImageType, mediaToken: string): string => {
-//     // return `${backEndUrl(musicUri)}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}`
-//      callMashupMediaApi<ArtistPayload>(HttpMethod.POST, musicUri, userToken, JSON.stringify(artistPayload))
-// }
-
 
 
 const postFiles =  async <MetaImagePayload>(uri: string, formData: FormData, userToken?: string): Promise<HttpResponse<MetaImagePayload>> => {

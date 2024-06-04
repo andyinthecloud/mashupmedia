@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mashupmedia.dto.admin.UserPayload;
 import org.mashupmedia.dto.media.ExternalLinkPayload;
+import org.mashupmedia.dto.media.MetaImagePayload;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -22,5 +23,5 @@ public class ArtistPayload {
     private String profile;
     private UserPayload userPayload;
     private List<ExternalLinkPayload> externalLinkPayloads; 
-    private List<Integer> metaImageRanks;
+    private List<MetaImagePayload> metaImagePayloads;
 }

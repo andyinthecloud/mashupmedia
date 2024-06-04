@@ -36,7 +36,7 @@ public class ArtistMetaImageController extends MetaImageController{
     public @ResponseBody Resource getAlbumArt(@PathVariable long artistId,
             @RequestParam String mediaToken,
             @RequestParam(value = "imageType", required = false) ImageType imageType,
-            @RequestParam(value = "index", required = false) Integer index,
+            @RequestParam(value = "id", required = false) Integer index,
             final HttpServletResponse httpServletResponse) throws IOException {
 
         if (!securityManager.isMediaTokenValid(mediaToken)) {

@@ -194,7 +194,7 @@ const Album = () => {
                 </div>
             </div>
 
-            <ImagePopover {...props.imagePopover} ></ImagePopover>
+            <ImagePopover {...props.imagePopover} />
 
             <CardContent>
                 <div className="album-name">{props.albumWithTracksAndArtistPayload?.payload.albumPayload.name}</div>

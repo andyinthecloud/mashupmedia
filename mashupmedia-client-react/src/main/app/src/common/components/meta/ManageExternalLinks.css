@@ -1,0 +1,21 @@
+div.manage-external-links button{
+    margin-left: 0;
+}
+
+div.manage-external-links div.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: solid 1px lightgrey;
+
+}
+
+div.manage-external-links div.item .icon{
+    margin-right: 0.2em;
+    vertical-align: middle;
+}
+
+div.manage-external-links div.item a span, #artist div.external-links div.item a .icon{
+    vertical-align: middle;
+}
+

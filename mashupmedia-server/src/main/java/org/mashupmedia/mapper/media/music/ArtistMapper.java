@@ -8,7 +8,7 @@ import org.mashupmedia.mapper.DomainMapper;
 import org.mashupmedia.mapper.PayloadListMapper;
 import org.mashupmedia.mapper.UserMapper;
 import org.mashupmedia.mapper.media.ExternalLinkMapper;
-import org.mashupmedia.model.media.MetaImage;
+import org.mashupmedia.mapper.media.MetaImageMapper;
 import org.mashupmedia.model.media.music.Artist;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +20,7 @@ public class ArtistMapper implements DomainMapper<Artist, ArtistPayload>, Payloa
 
         private final UserMapper userMapper;
         private final ExternalLinkMapper externalLinkMapper;
+        private final MetaImageMapper metaImageMapper;
 
         @Override
         public ArtistPayload toPayload(Artist domain) {
@@ -33,10 +34,10 @@ public class ArtistMapper implements DomainMapper<Artist, ArtistPayload>, Payloa
                                                 .sorted(new MetaEntityComparator())
                                                 .map(externalLinkMapper::toPayload)
                                                 .toList())
-                                .metaImageRanks(domain.getMetaImages()
+                                .metaImagePayloads(domain.getMetaImages()
                                                 .stream()
                                                 .sorted(new MetaEntityComparator())
-                                                .map(MetaImage::getRank)
+                                                .map(metaImageMapper::toPayload)
                                                 .toList())
                                 .build();
         }

@@ -34,19 +34,22 @@ public abstract class MetaImageController {
 
 
     protected MetaResource getHighlightedMetaImage(Set<MetaImage> metaImages, ImageType imageType,
-            @Nullable Integer index) {
+            @Nullable Integer id) {
         if (metaImages == null || metaImages.isEmpty()) {
             return getDefaultMetaImage();
         }
 
         List<MetaImage> sortedImages = getSortedMetaImages(metaImages);
-
-        int rank = index == null
-                ? 0
-                : index;
-
+        if (sortedImages == null || sortedImages.isEmpty()) {
+            return null;
+        }
+        
+        if (id == null) {
+            return getMetaResource(sortedImages.get(0), imageType);
+        }
+ 
         MetaImage metaImage = sortedImages.stream()
-                .filter(mi -> mi.getRank() == rank)
+                .filter(mi -> mi.getId() == id)
                 .findAny()
                 .orElse(sortedImages.get(0));
 
@@ -54,11 +57,13 @@ public abstract class MetaImageController {
             return getDefaultMetaImage();
         }
 
-        String path = getPath(metaImage, imageType);
+        return getMetaResource(metaImage, imageType);
+    }
 
+    private MetaResource getMetaResource(MetaImage metaImage, ImageType imageType) {
         return MetaResource.builder()
                 .mediaContentType(MediaContentHelper.getMediaContentType(metaImage.getContentType()))
-                .resource(new FileSystemResource(path))
+                .resource(new FileSystemResource(getPath(metaImage, imageType)))
                 .build();
     }
 

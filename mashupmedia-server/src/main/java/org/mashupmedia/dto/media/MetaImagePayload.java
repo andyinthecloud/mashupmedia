@@ -1,15 +1,12 @@
 package org.mashupmedia.dto.media;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder(toBuilder = true)
-public class MetaImagePayload {
-    private Integer[] ranks;
-    private String message;
+@SuperBuilder(toBuilder = true)
+@EqualsAndHashCode(callSuper = true)
+public class MetaImagePayload extends MetaEntityPayload{
+
 }

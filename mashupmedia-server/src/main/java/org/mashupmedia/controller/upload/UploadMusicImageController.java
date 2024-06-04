@@ -1,15 +1,10 @@
 package org.mashupmedia.controller.upload;
 
-import java.util.List;
-
-import org.mashupmedia.dto.media.MetaImagePayload;
 import org.mashupmedia.model.account.User;
-import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.MusicResourceManager;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.MetaEntityHelper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,7 +24,7 @@ public class UploadMusicImageController {
 	private final MusicManager musicManager;
 
 	@PostMapping(value = "/artist/images", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MetaImagePayload> handleFileUpload(
+	public ResponseEntity<Boolean> handleFileUpload(
 			@RequestParam("artistId") long artistId,
 			@RequestParam("files") MultipartFile[] files) {
 
@@ -42,20 +37,10 @@ public class UploadMusicImageController {
 		for (MultipartFile file : files) {
 			musicResourceManager.storeArtistImage(artistId, file);
 		}
-
-		MetaEntityHelper<MetaImage> metaImageHelper = new MetaEntityHelper<>();
-		List<MetaImage> metaImages = metaImageHelper.getSortedEntities(artist.getMetaImages());
-
-		MetaImagePayload metaImagePayload = MetaImagePayload
-				.builder()
-				.ranks(metaImages.stream()
-						.map(MetaImage::getRank)
-						.toArray(Integer[]::new))
-				.build();
-
+		
 		return ResponseEntity
 				.ok()
-				.body(metaImagePayload);
+				.body(true);
 	}
 
 }

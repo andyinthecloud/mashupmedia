@@ -2,6 +2,7 @@ import { backEndUrl, callMashupMediaApi, HttpMethod, HttpResponse, timestamp } f
 import { UserPayload } from "../../../configuration/backend/userCalls"
 import { ExternalLinkPayload } from "../../rest/mediaCalls"
 import { SecureMediaPayload } from "../../rest/secureMediaPayload"
+import { MetaImagePayload } from "./musicUploadCalls"
 
 export type ArtistPayload = {
     id: number
@@ -9,7 +10,7 @@ export type ArtistPayload = {
     profile?: string
     userPayload?: UserPayload
     externalLinkPayloads?: ExternalLinkPayload[]
-    metaImageRanks?: number[]
+    metaImagePayloads?: MetaImagePayload[]
 }
 
 export type CreateArtistPayload = {
@@ -59,8 +60,8 @@ export const albumArtImageUrl = (albumId: number, imageType: ImageType, mediaTok
     return `${backEndUrl('/stream/secure/music/album-art')}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}`
 }
 
-export const artistImageUrl = (artistId: number, imageType: ImageType, mediaToken: string, index?: number): string => {
-    return `${backEndUrl('/stream/secure/music/artist-art')}/${artistId}?mediaToken=${mediaToken}&imageType=${imageType}&index=${index || ''}`
+export const artistImageUrl = (artistId: number, imageType: ImageType, mediaToken: string, id?: number): string => {
+    return `${backEndUrl('/stream/secure/music/artist-art')}/${artistId}?mediaToken=${mediaToken}&imageType=${imageType}&id=${id || ''}`
 }
 
 export const getArtists = (userToken?: string): Promise<HttpResponse<ArtistPayload[]>> => {

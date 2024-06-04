@@ -10,8 +10,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
-@EqualsAndHashCode(callSuper = true)
-public class ExternalLinkPayload extends MetaEntityPayload{
-    private String name;
-    private String link;
+@EqualsAndHashCode
+public abstract class MetaEntityPayload {
+    private long id;
+    private int rank;
 }

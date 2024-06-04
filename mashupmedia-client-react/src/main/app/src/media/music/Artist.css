@@ -7,45 +7,13 @@
 #artist div.title img {
     width: 100px;
     height: auto;
+    margin-right: 1em;
 }
 
-#artist div.external-links {
-    clear: both;
-    padding-top: 1em;
-}
 
-#artist div.external-links button{
-    margin-left: 0;
-}
 
-#artist div.external-links div.item {
-    clear: both;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: solid 1px lightgrey;
 
-}
 
-#artist div.external-links div.item .icon{
-    margin-right: 0.2em;
-}
-
-#artist div.external-links div.item a span, #artist div.external-links div.item a .icon{
-    vertical-align: middle;
-}
-
-#artist div.images div.item{
-    display: flex;
-    align-items: center;
-    height: 100px;
-    width: auto;
-}
-
-#artist div.images div.item img{
-    max-height: 100%;
-    width: auto;
-}
 
 
 

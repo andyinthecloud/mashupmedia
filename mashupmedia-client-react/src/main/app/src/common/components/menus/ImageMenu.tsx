@@ -1,20 +1,19 @@
-import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp } from "@mui/icons-material"
+import { Delete, Edit, KeyboardArrowDown, KeyboardArrowUp, KeyboardDoubleArrowDown, KeyboardDoubleArrowUp, Preview } from "@mui/icons-material"
 import { Menu, MenuItem } from "@mui/material"
 import { useEffect, useState } from "react"
-import { ExternalLinkPayload, MenuMetaPayload } from "../../../media/rest/mediaCalls"
-import './LinkMenu.css'
+import { MenuMetaPayload } from "../../../media/rest/mediaCalls"
+import { MetaImagePayload } from "../../../media/music/rest/musicUploadCalls"
 
-const LinkMenu = (menuMetaPayload: MenuMetaPayload<ExternalLinkPayload>) => {
+const ImageMenu = (menuMetaPayload: MenuMetaPayload<MetaImagePayload>) => {
 
-    const [props, setProps] = useState<MenuMetaPayload<ExternalLinkPayload>>(menuMetaPayload)
+    const [props, setProps] = useState<MenuMetaPayload<MetaImagePayload>>(menuMetaPayload)
 
     useEffect(() => {
         setProps(menuMetaPayload)
 
     }, [menuMetaPayload])
 
-
-    const handleEdit = (): void => {
+    const handlePreview = (): void => {
         if (!props.payload) {
             return
         }
@@ -26,11 +25,11 @@ const LinkMenu = (menuMetaPayload: MenuMetaPayload<ExternalLinkPayload>) => {
         if (!props.payload) {
             return
         }
-        
+
         props.delete(props.payload)
     }
 
-    const handleMoveTop = (): void => {
+    const handleMakeDefault = (): void => {
         if (!props.payload) {
             return
         }
@@ -62,14 +61,15 @@ const LinkMenu = (menuMetaPayload: MenuMetaPayload<ExternalLinkPayload>) => {
         props.moveBottom(props.payload)
     }
 
+
     const handleClose = (): void => {
         setProps(p => ({
             ...p,
             anchorElement: null,
-            open: false,
-            externalLinkPayload: undefined
+            open: false
         }))
     }
+
 
     return (
         <Menu
@@ -78,9 +78,9 @@ const LinkMenu = (menuMetaPayload: MenuMetaPayload<ExternalLinkPayload>) => {
             anchorEl={props.anchorElement}
             onClose={handleClose}>
             <MenuItem
-                onClick={handleEdit}>
-                <Edit />
-                Edit
+                onClick={handlePreview}>
+                <Preview />
+                Preview
             </MenuItem>
             <MenuItem
                 onClick={handleDelete}>
@@ -88,9 +88,9 @@ const LinkMenu = (menuMetaPayload: MenuMetaPayload<ExternalLinkPayload>) => {
                 Delete
             </MenuItem>
             <MenuItem
-                onClick={handleMoveTop}>
+                onClick={handleMakeDefault}>
                 <KeyboardDoubleArrowUp />
-                Move top
+                Make default
             </MenuItem>
             <MenuItem
                 onClick={handleMoveUpOne}>
@@ -105,11 +105,10 @@ const LinkMenu = (menuMetaPayload: MenuMetaPayload<ExternalLinkPayload>) => {
             <MenuItem
                 onClick={handleMoveBottom}>
                 <KeyboardDoubleArrowDown />
-                Move bottom
+                Move end
             </MenuItem>
         </Menu>
     )
-
 }
 
-export default LinkMenu
+export default ImageMenu
