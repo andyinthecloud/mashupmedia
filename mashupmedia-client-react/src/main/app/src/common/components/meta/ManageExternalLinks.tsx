@@ -173,6 +173,10 @@ const ManageExternalLinks = (payload: ManageExternalLinksPayload) => {
             }
         }))
 
+        externalLinkPayloadsRef.current.forEach((externalLink, index) => {
+            externalLink.rank = index
+        })
+
         props.manageExternalLinksPayload.updateExternalLinks(externalLinkPayloadsRef.current)
     }
 

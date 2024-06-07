@@ -72,6 +72,11 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
             }
         }))
 
+
+        metaImagePayloadsRef.current.forEach((metaImage, index) => {
+            metaImage.rank = index
+        })
+
         props.manageMetaImagesPayload?.updateMetaImages(metaImagePayloadsRef.current)
 
     }

@@ -1,5 +1,6 @@
 package org.mashupmedia.model.media;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.MetaEntity;
 
 import jakarta.persistence.Cacheable;
@@ -31,7 +32,6 @@ public class MetaImage extends MetaEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "meta_images_generator")
 	@SequenceGenerator(name = "meta_images_generator", sequenceName = "meta_images_seq", allocationSize = 1)
-	@EqualsAndHashCode.Exclude
 	private long id;
 	private String name;
 	private String url;
@@ -45,12 +45,24 @@ public class MetaImage extends MetaEntity {
 	@Override
 	public void updateValues(MetaEntity updatedEntity) {
         if (updatedEntity instanceof MetaImage metaImage) {
-            setName(metaImage.getName());
-			setUrl(metaImage.getUrl());
-			setThumbnailUrl(metaImage.getThumbnailUrl());
-			setContentType(metaImage.getContentType());
+			if (StringUtils.isNotBlank(metaImage.getName())) {
+				setName(metaImage.getName());
+			}
+
+			if (StringUtils.isNotBlank(metaImage.getUrl())) {
+				setUrl(metaImage.getUrl());
+			}
+
+			if (StringUtils.isNotBlank(metaImage.getThumbnailUrl())) {
+				setThumbnailUrl(metaImage.getThumbnailUrl());
+			}
+
+			if (StringUtils.isNotBlank(metaImage.getContentType())) {
+				setContentType(metaImage.getContentType());
+			}
+
 			setRank(metaImage.getRank());
-        }		
+        }
 	}
 
 }

@@ -93,8 +93,6 @@ const Album = () => {
         props.albumWithTracksAndArtistPayload?.payload.albumPayload.id || 0
     )
 
-    // const [imagePopoverPayload, setImagePopoverPayload] = useState<ImagePopoverPayload>()
-
     const handleImagePopover = (event: React.MouseEvent<HTMLElement>) => {
 
         const albumId = albumIdAsNumber()
@@ -106,8 +104,6 @@ const Album = () => {
             albumId,
             ImageType.ORIGINAL,
             props.albumWithTracksAndArtistPayload?.mediaToken || '')
-
-        console.log('handleImagePopover', props.imagePopover)
 
         setProps(p => ({
             ...p,

@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 @EqualsAndHashCode
-public abstract class MetaEntityPayload {
+public class MetaEntityPayload {
     private long id;
     private int rank;
 }

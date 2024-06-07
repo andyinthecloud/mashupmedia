@@ -2,12 +2,10 @@ package org.mashupmedia.controller.stream;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.mashupmedia.comparator.MetaEntityComparator;
-import org.mashupmedia.model.MetaEntity;
 import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.service.MashupMediaSecurityManager;

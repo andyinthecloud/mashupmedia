@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
 import org.mashupmedia.comparator.MetaEntityComparator;
@@ -108,10 +105,6 @@ public class MusicManagerImpl implements MusicManager {
 
 		Set<ExternalLink> savedExternalLinks = savedArtist.getExternalLinks();
 		Set<ExternalLink> externalLinks = artist.getExternalLinks();
-
-		Set<MetaEntity> entities = new HashSet<>();
-		entities.addAll(savedExternalLinks);
-		entities.addAll(externalLinks);
 		
 		MetaEntityHelper<ExternalLink> externalLinkHelper  = new MetaEntityHelper<>();
 		externalLinkHelper.mergeSet(savedExternalLinks, externalLinks);

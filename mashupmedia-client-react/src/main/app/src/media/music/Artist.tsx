@@ -13,7 +13,8 @@ import { ExternalLinkPayload } from "../rest/mediaCalls";
 import { SecureMediaPayload } from '../rest/secureMediaPayload';
 import './Artist.css';
 import { AlbumWithArtistPayload, ArtistWithAlbumsPayload, ImageType, artistImageUrl, deleteArtist, getArtist, saveArtist } from './rest/musicCalls';
-import { MetaImagePayload } from "./rest/musicUploadCalls";
+import { MetaImagePayload, uploadArtistImages } from "./rest/musicUploadCalls";
+import ImagePopover, { ImagePopoverPayload } from "../../common/components/ImagePopover";
 
 type ArtistPagePayload = {
     secureMediaItemPayload?: SecureMediaPayload<ArtistWithAlbumsPayload>
@@ -21,13 +22,15 @@ type ArtistPagePayload = {
     editArtistProfileDialogPayload: EditTextDialogPayload
     manageMetaImagesPayload: ManageMetaImagesPayload
     manageExternalLinksPayload: ManageExternalLinksPayload
+    artistImagePopover: ImagePopoverPayload
 }
 
 const Artist = () => {
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
-
     const { artistId } = useParams()
+    
+    const artistPayloadRef = useRef<SecureMediaPayload<ArtistWithAlbumsPayload>>()
 
     const [props, setProps] = useState<ArtistPagePayload>({
         secureMediaItemPayload: {
@@ -70,7 +73,10 @@ const Artist = () => {
             externalLinkPayloads: [],
             updateExternalLinks: updateExternalLinks,
             isManager: showManageButtons
-
+        },
+        artistImagePopover: {
+            source: '',
+            trigger: 0
         }
     })
 
@@ -84,20 +90,46 @@ const Artist = () => {
     }
 
     function uploadMetaImages(files: FileList): void {
-        console.log('uploadMetaImages', files)
+        uploadArtistImages(artistPayloadRef.current?.payload.artistPayload.id || 0, files, userToken)
     }
 
     function updateMetaImages(metaImagePayloads: MetaImagePayload[]): void {
-        console.log('updateMetaImages', metaImagePayloads)
+        setProps(p => ({
+            ...p,
+            secureMediaItemPayload: {
+                mediaToken: p.secureMediaItemPayload?.mediaToken || '',
+                payload: {
+                    albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || [],
+                    artistPayload: {
+                        ...p.secureMediaItemPayload?.payload.artistPayload,
+                        id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                        name: p.secureMediaItemPayload?.payload.artistPayload.name || '',
+                        metaImagePayloads
+                    }
+                }
+            }            
+        }))
     }
 
     function updateExternalLinks(externalLinkPayloads: ExternalLinkPayload[]): void {
-        console.log('updateExternalLinks', externalLinkPayloads)
+        setProps(p => ({
+            ...p,
+            secureMediaItemPayload: {
+                mediaToken: p.secureMediaItemPayload?.mediaToken || '',
+                payload: {
+                    albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || [],
+                    artistPayload: {
+                        ...p.secureMediaItemPayload?.payload.artistPayload,
+                        id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                        name: p.secureMediaItemPayload?.payload.artistPayload.name || '',
+                        externalLinkPayloads
+                    }
+                }
+            }            
+        }))
     }
 
-    const artistPayloadRef = useRef<SecureMediaPayload<ArtistWithAlbumsPayload>>()
 
-    const externalLinksRef = useRef<ExternalLinkPayload[]>([])
 
     function updateArtistName(text: string): void {
         setProps(p => ({
@@ -161,11 +193,14 @@ const Artist = () => {
                         manageMetaImagesPayload: {
                             ...p.manageMetaImagesPayload,
                             metaImagePayloads: artistWithAlbumsPayload.payload.artistPayload.metaImagePayloads || []
+                        },
+                        manageExternalLinksPayload: {
+                            ...p.manageExternalLinksPayload,
+                            externalLinkPayloads: artistWithAlbumsPayload.payload.artistPayload.externalLinkPayloads || []
                         }
                     }))
 
                     artistPayloadRef.current = response.parsedBody
-                    externalLinksRef.current = response.parsedBody.payload.artistPayload.externalLinkPayloads || []
                 }
             })
         }
@@ -266,15 +301,32 @@ const Artist = () => {
         return userPolicyPayload.administrator || userPayload.username === userPolicyPayload.username
     }
 
+
+    function handleArtistImagePopover () {
+        const source = artistImageUrl(props.secureMediaItemPayload?.payload.artistPayload.id || 0, ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '')
+
+        setProps(p => ({
+            ...p,            
+            artistImagePopover: {
+                source,
+                trigger: Date.now()
+            }
+        }))
+    }
+
     return (
         <form id='artist'>
 
             <EditTextDialog {...props.editArtistNameDialogPayload} />
             <EditTextDialog {...props.editArtistProfileDialogPayload} />
+            <ImagePopover {...props.artistImagePopover} />
 
             <div className="title">
 
-                <img src={artistImageUrl(props.secureMediaItemPayload?.payload.artistPayload.id || 0, ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '')} />
+                <img 
+                src={artistImageUrl(props.secureMediaItemPayload?.payload.artistPayload.id || 0, ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '')} 
+                onClick={handleArtistImagePopover}
+                />
 
                 <h1>{props.secureMediaItemPayload?.payload.artistPayload.name || 'New artist'}</h1>
                 <IconButton
