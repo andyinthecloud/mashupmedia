@@ -1,16 +1,18 @@
 package org.mashupmedia.service;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.hibernate.Hibernate;
 import org.mashupmedia.comparator.MetaEntityComparator;
 import org.mashupmedia.dao.MusicDao;
-import org.mashupmedia.model.MetaEntity;
+import org.mashupmedia.exception.NotEmptyException;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.ExternalLink;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
@@ -20,6 +22,7 @@ import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.music.ArtistRepository;
+import org.mashupmedia.service.storage.StorageManager;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MetaEntityHelper;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,7 @@ public class MusicManagerImpl implements MusicManager {
 	private final MusicDao musicDao;
 	private final AdminManager adminManager;
 	private final ArtistRepository artistRepository;
+	private final StorageManager storageManager;
 
 	protected enum ListAlbumsType {
 		RANDOM, LATEST, ALL
@@ -66,7 +70,17 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public void deleteArtist(long artistId) {
+	public void deleteArtist(long artistId) throws NotEmptyException{
+		Artist artist = getArtist(artistId);
+		boolean hasTracks = artist.getAlbums()
+				.stream()
+				.anyMatch(album -> album.getTracks() != null && !album.getTracks().isEmpty());
+		if (hasTracks) {
+			throw new NotEmptyException("Artist contains tracks.");
+		}
+
+		deleteMetaImageFiles(artist.getMetaImages());
+
 		artistRepository.deleteById(artistId);
 	}
 
@@ -105,15 +119,16 @@ public class MusicManagerImpl implements MusicManager {
 
 		Set<ExternalLink> savedExternalLinks = savedArtist.getExternalLinks();
 		Set<ExternalLink> externalLinks = artist.getExternalLinks();
-		
-		MetaEntityHelper<ExternalLink> externalLinkHelper  = new MetaEntityHelper<>();
+
+		MetaEntityHelper<ExternalLink> externalLinkHelper = new MetaEntityHelper<>();
 		externalLinkHelper.mergeSet(savedExternalLinks, externalLinks);
 
 		Set<MetaImage> savedMetaImages = savedArtist.getMetaImages();
 		Set<MetaImage> metaImages = artist.getMetaImages();
 
-		MetaEntityHelper<MetaImage> metaImageHelper  = new MetaEntityHelper<>();
-		metaImageHelper.mergeSet(savedMetaImages, metaImages);
+		MetaEntityHelper<MetaImage> metaImageHelper = new MetaEntityHelper<>();
+		Set<MetaImage> deletedMetaImages = metaImageHelper.mergeSet(savedMetaImages, metaImages);
+		deleteMetaImageFiles(deletedMetaImages);
 
 		savedArtist.setProfile(artist.getProfile());
 		savedArtist.setName(artist.getName());
@@ -122,6 +137,17 @@ public class MusicManagerImpl implements MusicManager {
 		savedArtist.setUpdatedOn(date);
 
 		return savedArtist;
+	}
+
+	private void deleteMetaImageFiles(Set<MetaImage> metaImages) {
+		if (metaImages == null || metaImages.isEmpty()) {
+			return;
+		}
+
+		for (MetaImage metaImage : metaImages) {
+			storageManager.delete(Path.of(metaImage.getUrl()));
+			storageManager.delete(Path.of(metaImage.getThumbnailUrl()));
+		}
 	}
 
 	private Artist prepareCreateArtist(Artist artist) {
@@ -279,6 +305,12 @@ public class MusicManagerImpl implements MusicManager {
 	public Artist getArtist(Long artistId) {
 		Artist artist = getArtist(artistId, true);
 		return artist;
+	}
+
+	@Override
+	public Artist getArtist(String name) {
+		User user = AdminHelper.getLoggedInUser();
+		return artistRepository.findArtistByNameIgnoreCase(name, user.getId()).orElse(null);
 	}
 
 	@Override

@@ -27,7 +27,7 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
     private final StorageManager storageManager;
 
     @Override
-    public void storeArtistImage(long artistId, MultipartFile multipartFile) {
+    public MetaImage storeArtistImage(long artistId, MultipartFile multipartFile) {
 
         String fileExtension = FileHelper.getFileExtension(multipartFile.getOriginalFilename());
         MediaContentType mediaContentType = MediaContentHelper.getMediaContentType(fileExtension);
@@ -56,7 +56,8 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
         artist.setMetaImages(metaImages);
 
         musicManager.saveArtist(artist);
-
+        
+        return metaImage;
     }
 
 }

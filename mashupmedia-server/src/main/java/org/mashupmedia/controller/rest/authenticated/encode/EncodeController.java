@@ -3,7 +3,7 @@ package org.mashupmedia.controller.rest.authenticated.encode;
 import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.task.EncodeMediaItemManager;
-import org.mashupmedia.util.ValidationUtil;
+import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -45,7 +45,7 @@ public class EncodeController {
             @Valid @RequestBody NameValuePayload<String> ffMpegPayload,
             Errors errors) {
         encodeMediaItemManager.saveEncoderPath(ffMpegPayload.getValue());
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
     @Secured("ROLE_ADMINISTRATOR")

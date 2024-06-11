@@ -31,7 +31,7 @@ import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.service.playlist.PlaylistActionManager;
 import org.mashupmedia.task.EncodeMediaItemManager;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.ValidationUtil;
+import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -68,7 +68,7 @@ public class MusicPlaylistController {
         EncoderStatusType encoderStatusType = playlistActionManager.replacePlaylist(playlist.getId(),
                 album.getTracks());
 
-        return ValidationUtil.createResponseEntityPayload(encoderStatusType, errors);
+        return ValidationUtils.createResponseEntityPayload(encoderStatusType, errors);
     }
 
     @PutMapping(value = "/add-album", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -78,14 +78,14 @@ public class MusicPlaylistController {
 
         Playlist playlist = getPlaylist(musicQueueAlbumPlaylistPayload, errors);
         if (playlist == null) {
-            return ValidationUtil.createResponseEntityPayload(null, errors);
+            return ValidationUtils.createResponseEntityPayload(null, errors);
         }
 
         Album album = musicManager.getAlbum(musicQueueAlbumPlaylistPayload.getAlbumId());
         EncoderStatusType encoderStatusType = playlistActionManager.appendPlaylist(playlist.getId(),
                 album.getTracks());
 
-        return ValidationUtil.createResponseEntityPayload(encoderStatusType, errors);
+        return ValidationUtils.createResponseEntityPayload(encoderStatusType, errors);
     }
 
     @PutMapping(value = "/play-artist", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -103,7 +103,7 @@ public class MusicPlaylistController {
                 playlist.getId(),
                 tracks);
 
-        return ValidationUtil.createResponseEntityPayload(encoderStatusType, errors);
+        return ValidationUtils.createResponseEntityPayload(encoderStatusType, errors);
     }
 
     @PutMapping(value = "/add-artist", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -113,7 +113,7 @@ public class MusicPlaylistController {
 
         Playlist playlist = getPlaylist(musicQueueArtistPlaylistPayload, errors);
         if (playlist == null) {
-            return ValidationUtil.createResponseEntityPayload(null, errors);
+            return ValidationUtils.createResponseEntityPayload(null, errors);
         }
 
         Artist artist = musicManager.getArtist(musicQueueArtistPlaylistPayload.getArtistId());
@@ -126,7 +126,7 @@ public class MusicPlaylistController {
                 playlist.getId(),
                 tracks);
 
-        return ValidationUtil.createResponseEntityPayload(encoderStatusType, errors);
+        return ValidationUtils.createResponseEntityPayload(encoderStatusType, errors);
     }
 
     @PutMapping(value = "/play-track", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -137,9 +137,9 @@ public class MusicPlaylistController {
         if (mediaItem instanceof Track track) {
             EncoderStatusType encoderStatusType = playlistActionManager.replacePlaylist(playlist.getId(),
                     track);
-            return ValidationUtil.createResponseEntityPayload(encoderStatusType, errors);
+            return ValidationUtils.createResponseEntityPayload(encoderStatusType, errors);
         } else {
-            return ValidationUtil.createResponseEntityPayload(EncoderStatusType.ERROR, errors);
+            return ValidationUtils.createResponseEntityPayload(EncoderStatusType.ERROR, errors);
         }
     }
 
@@ -148,16 +148,16 @@ public class MusicPlaylistController {
             @RequestBody MusicQueueTrackPlaylistPayload musicQueueTrackPlaylistPayload, Errors errors) {
         Playlist playlist = getPlaylist(musicQueueTrackPlaylistPayload, errors);
         if (playlist == null) {
-            return ValidationUtil.createResponseEntityPayload(null, errors);
+            return ValidationUtils.createResponseEntityPayload(null, errors);
         }
 
         MediaItem mediaItem = mediaManager.getMediaItem(musicQueueTrackPlaylistPayload.getTrackId());
         if (mediaItem instanceof Track track) {
             EncoderStatusType encoderStatusType = playlistActionManager.appendPlaylist(playlist.getId(),
                     track);
-            return ValidationUtil.createResponseEntityPayload(encoderStatusType, errors);
+            return ValidationUtils.createResponseEntityPayload(encoderStatusType, errors);
         } else {
-            return ValidationUtil.createResponseEntityPayload(EncoderStatusType.ERROR, errors);
+            return ValidationUtils.createResponseEntityPayload(EncoderStatusType.ERROR, errors);
         }
     }
 

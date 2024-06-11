@@ -11,7 +11,8 @@ public enum ErrorCode {
     LIBRARIES_UNINITIALISED("error.libraries.uninitialised"),
     PLAYLIST_NOT_FOUND("error.playlist.not-found"),
     EMAIL_INVALID("error.email.invalid"),
-    TOKEN_INVALID("error.token.invalid");
+    TOKEN_INVALID("error.token.invalid"), 
+    CONTAINS_MEDIA("error.contains.media");
 
     private String errorCode;
 

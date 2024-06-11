@@ -17,7 +17,7 @@ import org.mashupmedia.model.library.Library;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.service.LibraryUpdateManager;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.ValidationUtil;
+import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -107,7 +107,7 @@ public class LibraryController {
         }
 
         if (errors.hasErrors()) {
-            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
+            return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
         }
 
         Library library = libraryMapper.toDomain(libraryPayload);
@@ -117,7 +117,7 @@ public class LibraryController {
         long userId = AdminHelper.getLoggedInUser().getId();
         libraryUpdateManager.asynchronousUpdateLibrary(userId, library.getId());
 
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
     private boolean isInvalidLibraryPath(String libraryPath) {
@@ -142,10 +142,10 @@ public class LibraryController {
         }
 
         if (errors.hasErrors()) {
-            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
+            return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
         }
 
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
  

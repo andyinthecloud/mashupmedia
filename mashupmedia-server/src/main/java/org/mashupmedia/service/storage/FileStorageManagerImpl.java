@@ -1,12 +1,9 @@
 package org.mashupmedia.service.storage;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-import org.apache.commons.io.FileUtils;
 import org.ehcache.shadow.org.terracotta.utilities.io.Files;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.account.User;
@@ -20,15 +17,17 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @ConditionalOnProperty(value = "mashupmedia.storage", havingValue = "file")
-public class FileStorageManagerImpl implements StorageManager {@Override
+public class FileStorageManagerImpl implements StorageManager {
 
+    @Override
     public String store(Path path) {
         User user = AdminHelper.getLoggedInUser();
-        Path storePath = FileHelper.getUserUploadPath(user.getFolderName()).resolve(String.valueOf(System.currentTimeMillis()));        
+        Path storePath = FileHelper.getUserUploadPath(user.getFolderName())
+                .resolve(String.valueOf(System.currentTimeMillis()));
 
         try {
             Files.createFile(storePath);
-            Files.copy(path, storePath, StandardCopyOption.REPLACE_EXISTING);                
+            Files.copy(path, storePath, StandardCopyOption.REPLACE_EXISTING);
             Files.delete(path);
         } catch (IOException e) {
             throw new MashupMediaRuntimeException("Unable to delete temp file", e);
@@ -37,8 +36,13 @@ public class FileStorageManagerImpl implements StorageManager {@Override
         return storePath.normalize().toString();
     }
 
-
-  
-
+    @Override
+    public void delete(Path path) {
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            throw new MashupMediaRuntimeException("Unable to delete file", e);
+        }
+    }
 
 }

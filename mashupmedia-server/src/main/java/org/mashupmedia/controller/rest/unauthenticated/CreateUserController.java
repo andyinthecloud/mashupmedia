@@ -10,7 +10,7 @@ import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.EmailService;
 import org.mashupmedia.util.ActivationTokenUtils;
 import org.mashupmedia.util.EncryptService;
-import org.mashupmedia.util.ValidationUtil;
+import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -42,7 +42,7 @@ public class CreateUserController {
         validateUserEnteredPayload(createUserPayload, errors);
 
         if (errors.hasErrors()) {
-            return ValidationUtil.createResponseEntityPayload(createUserPayload, errors);
+            return ValidationUtils.createResponseEntityPayload(createUserPayload, errors);
         }
 
         String username = createUserPayload.getUsername();
@@ -57,7 +57,7 @@ public class CreateUserController {
                 .token(encryptService.encrypt(rawToken))
                 .build();
 
-        return ValidationUtil.createResponseEntityPayload(createUserPayloadWithToken, errors);
+        return ValidationUtils.createResponseEntityPayload(createUserPayloadWithToken, errors);
     }
 
     private void validateUserEnteredPayload(CreateUserPayload createUserPayload, Errors errors) {
@@ -90,12 +90,12 @@ public class CreateUserController {
                 createUserPayload.getActivationCode(), errors);
 
         if (errors.hasErrors()) {
-            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
+            return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
         }
 
         adminManager.saveUser(createUserMapper.toDomain(createUserPayload));
 
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
 }

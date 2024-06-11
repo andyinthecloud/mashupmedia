@@ -29,7 +29,7 @@ const Artist = () => {
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
     const { artistId } = useParams()
-    
+
     const artistPayloadRef = useRef<SecureMediaPayload<ArtistWithAlbumsPayload>>()
 
     const [props, setProps] = useState<ArtistPagePayload>({
@@ -90,7 +90,40 @@ const Artist = () => {
     }
 
     function uploadMetaImages(files: FileList): void {
-        uploadArtistImages(artistPayloadRef.current?.payload.artistPayload.id || 0, files, userToken)
+        uploadArtistImages(artistPayloadRef.current?.payload.artistPayload.id || 0, files, userToken).then(response => {
+            if (response.ok) {
+                const metaImagePayloads = artistPayloadRef.current?.payload.artistPayload.metaImagePayloads || []
+                metaImagePayloads.push(...response.parsedBody || [])
+
+                setProps(p => ({
+                    ...p,
+                    secureMediaItemPayload: {
+                        mediaToken: p.secureMediaItemPayload?.mediaToken || '',
+                        payload: {
+                            albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || [],
+                            artistPayload: {
+                                ...p.secureMediaItemPayload?.payload.artistPayload,
+                                id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                                name: p.secureMediaItemPayload?.payload.artistPayload.name || '',
+                                metaImagePayloads
+                            }
+                        }
+                    },
+                    manageMetaImagesPayload: {
+                        ...p.manageMetaImagesPayload,
+                        metaImagePayloads
+                    }
+                }))
+            } else {
+                dispatch(
+                    addNotification({
+                        message: 'Unable to upload image',
+                        notificationType: NotificationType.ERROR
+                    })
+                )
+            }
+        })
+
     }
 
     function updateMetaImages(metaImagePayloads: MetaImagePayload[]): void {
@@ -107,7 +140,7 @@ const Artist = () => {
                         metaImagePayloads
                     }
                 }
-            }            
+            }
         }))
     }
 
@@ -125,10 +158,9 @@ const Artist = () => {
                         externalLinkPayloads
                     }
                 }
-            }            
+            }
         }))
     }
-
 
 
     function updateArtistName(text: string): void {
@@ -235,13 +267,15 @@ const Artist = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    const handleClickDeleteArtist = (): void => {
+    const handleClickDelete = (): void => {
         const artistId = props.secureMediaItemPayload?.payload.artistPayload.id
         if (!artistId) {
             return
         }
 
         deleteArtist(artistId).then(response => {
+            console.log('deleteArtist', response)
+
             if (response.ok) {
                 dispatch(
                     addNotification({
@@ -251,9 +285,10 @@ const Artist = () => {
                 )
                 navigate('/music/artists')
             } else {
+
                 dispatch(
                     addNotification({
-                        message: 'Error deleting artist.',
+                        message: response.parsedBody?.value || '',
                         notificationType: NotificationType.ERROR
                     })
                 )
@@ -274,13 +309,22 @@ const Artist = () => {
 
         saveArtist(artistPayload).then(response => {
             if (response.ok) {
-                dispatch(
-                    addNotification({
-                        message: 'Saved artist.',
-                        notificationType: NotificationType.SUCCESS
-                    })
-                )
-                navigate('/music/artists')
+                if (artistPayload) {
+                    dispatch(
+                        addNotification({
+                            message: 'Saved artist.',
+                            notificationType: NotificationType.SUCCESS
+                        })
+                    )
+                    navigate('/music/artists')
+                } else {
+                    dispatch(
+                        addNotification({
+                            message: 'Please choose a unique name.',
+                            notificationType: NotificationType.ERROR
+                        })
+                    )
+                }
             } else {
                 dispatch(
                     addNotification({
@@ -302,11 +346,15 @@ const Artist = () => {
     }
 
 
-    function handleArtistImagePopover () {
-        const source = artistImageUrl(props.secureMediaItemPayload?.payload.artistPayload.id || 0, ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '')
+    function handleArtistImagePopover() {
+        const source = artistImageUrl(
+            props.secureMediaItemPayload?.payload.artistPayload.id || 0, 
+            ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '',
+            props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads?.length ? props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads[0].id : 0
+        )
 
         setProps(p => ({
-            ...p,            
+            ...p,
             artistImagePopover: {
                 source,
                 trigger: Date.now()
@@ -323,9 +371,13 @@ const Artist = () => {
 
             <div className="title">
 
-                <img 
-                src={artistImageUrl(props.secureMediaItemPayload?.payload.artistPayload.id || 0, ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '')} 
-                onClick={handleArtistImagePopover}
+                <img
+                    src={artistImageUrl(
+                        props.secureMediaItemPayload?.payload.artistPayload.id || 0, 
+                        ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '', 
+                        props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads?.length ? props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads[0].id : 0 
+                    )}
+                    onClick={handleArtistImagePopover}
                 />
 
                 <h1>{props.secureMediaItemPayload?.payload.artistPayload.name || 'New artist'}</h1>
@@ -390,7 +442,7 @@ const Artist = () => {
                         variant="contained"
                         color="primary"
                         type="button"
-                        onClick={handleClickDeleteArtist}
+                        onClick={handleClickDelete}
                     >
                         Delete
                     </Button>

@@ -9,7 +9,7 @@ import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.EmailService;
 import org.mashupmedia.util.ActivationTokenUtils;
 import org.mashupmedia.util.EncryptService;
-import org.mashupmedia.util.ValidationUtil;
+import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -40,7 +40,7 @@ public class ResetPasswordController {
         validateUserEnteredPayload(resetPasswordPayload, errors);
 
         if (errors.hasErrors()) {
-            return ValidationUtil.createResponseEntityPayload(resetPasswordPayload, errors);
+            return ValidationUtils.createResponseEntityPayload(resetPasswordPayload, errors);
         }
 
         String username = resetPasswordPayload.getUsername();
@@ -55,7 +55,7 @@ public class ResetPasswordController {
                 .token(encryptService.encrypt(rawToken))
                 .build();
 
-        return ValidationUtil.createResponseEntityPayload(createUserPayloadWithToken, errors);
+        return ValidationUtils.createResponseEntityPayload(createUserPayloadWithToken, errors);
     }
 
     private void validateUserEnteredPayload(ResetPasswordPayload resetPasswordPayload, Errors errors) {
@@ -90,11 +90,11 @@ public class ResetPasswordController {
         ActivationTokenUtils.validateToken(decryptedToken, resetPasswordPayload.getUsername(), resetPasswordPayload.getActivationCode(),  errors);
 
         if (errors.hasErrors()) {
-            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
+            return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
         }
 
         adminManager.updatePassword(resetPasswordPayload.getUsername(), resetPasswordPayload.getPassword());
 
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 }

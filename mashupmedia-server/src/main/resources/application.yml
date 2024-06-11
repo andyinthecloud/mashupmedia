@@ -27,7 +27,8 @@ spring:
           substitutions: "true '1', false '0'"
   servlet:
     multipart:
-      max-file-size: 50000KB
+      max-file-size: 10MB
+      max-request-size: 10MB
   data:
     rest:
       default-media-type: application/json

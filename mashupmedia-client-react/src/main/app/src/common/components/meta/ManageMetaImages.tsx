@@ -135,6 +135,7 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
         }
 
         props.manageMetaImagesPayload.uploadFiles(files)
+        
     }
 
     const handleClickImage = (anchorElement: HTMLElement, payload: MetaImagePayload): void => {

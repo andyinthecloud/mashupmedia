@@ -13,7 +13,7 @@ import org.mashupmedia.model.account.User;
 import org.mashupmedia.service.AdminManager;
 import org.mashupmedia.service.EmailService;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.ValidationUtil;
+import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -71,12 +71,12 @@ public class UserController {
         }
 
         if (errors.hasErrors()) {
-            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
+            return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
         }
 
         User user = userMapper.toDomain(userPayload);
         adminManager.saveUser(user);
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
     @Secured("ROLE_ADMINISTRATOR")
@@ -112,7 +112,7 @@ public class UserController {
     Errors errors) {
 
         if (errors.hasErrors()) {
-            return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
+            return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_ERROR_RESPONSE_MESSAGE, errors);
         }
         
         User user = createUserMapper.toDomain(userPayload);
@@ -120,7 +120,7 @@ public class UserController {
 
         User loggedInUser = AdminHelper.getLoggedInUser();
         emailService.sendUserCreatedEmail(loggedInUser.getUsername(), user.getUsername());
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
 }

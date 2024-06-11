@@ -2,6 +2,7 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
+import org.mashupmedia.exception.NotEmptyException;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
@@ -44,6 +45,8 @@ public interface MusicManager {
 
 	public List<Album> getLatestAlbums(int pageNumber, int maxResults);
 
-	public void deleteArtist(long artistId);
+	public void deleteArtist(long artistId) throws NotEmptyException;
+
+    public Artist getArtist(String name);
 	
 }

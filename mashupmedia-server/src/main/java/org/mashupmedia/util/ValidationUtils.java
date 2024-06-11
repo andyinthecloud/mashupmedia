@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 
-public class ValidationUtil {
+public class ValidationUtils {
 
     public static String DEFAULT_OK_RESPONSE_MESSAGE = "I am completely operational, and all my circuits are functioning perfectly.";
     public static String DEFAULT_ERROR_RESPONSE_MESSAGE = "I think you ought to know I'm feeling very depressed.";

@@ -13,7 +13,7 @@ import org.mashupmedia.model.account.User;
 import org.mashupmedia.service.EmailService;
 import org.mashupmedia.service.LibraryManager;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.ValidationUtil;
+import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -62,7 +62,7 @@ public class LIbraryShareController {
                 .map(libraryShareUserMapper::toPayload)
                 .collect(Collectors.toList());
 
-        return ValidationUtil.createResponseEntityPayload(libraryShareUserPayloads, errors);
+        return ValidationUtils.createResponseEntityPayload(libraryShareUserPayloads, errors);
     }
 
     @GetMapping(value = "/{libraryId}", produces = MediaType.APPLICATION_JSON_VALUE)

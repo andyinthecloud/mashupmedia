@@ -7,6 +7,10 @@ import org.mashupmedia.dto.media.SecureMediaPayload;
 import org.mashupmedia.dto.media.music.ArtistPayload;
 import org.mashupmedia.dto.media.music.ArtistWithAlbumsPayload;
 import org.mashupmedia.dto.media.music.CreateArtistPayload;
+import org.mashupmedia.dto.share.ErrorCode;
+import org.mashupmedia.dto.share.JsonNameType;
+import org.mashupmedia.dto.share.NameValuePayload;
+import org.mashupmedia.exception.NotEmptyException;
 import org.mashupmedia.mapper.media.music.ArtistMapper;
 import org.mashupmedia.mapper.media.music.ArtistWithAlbumsMapper;
 import org.mashupmedia.model.account.User;
@@ -14,6 +18,7 @@ import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.AdminHelper;
+import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,20 +61,51 @@ public class ArtistController {
     }
 
     @DeleteMapping(value = "/{artistId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> deleteArtist(@PathVariable long artistId) {
-        musicManager.deleteArtist(artistId);
-        return ResponseEntity.ok().body(true);
+    public ResponseEntity<NameValuePayload<String>> deleteArtist(@PathVariable long artistId) {
+        try {
+            musicManager.deleteArtist(artistId);
+        } catch (NotEmptyException e) {
+            return ResponseEntity.badRequest().body(
+                    NameValuePayload.<String>builder()
+                            .name(JsonNameType.ERROR.name())
+                            .value(ErrorCode.CONTAINS_MEDIA.getErrorCode())
+                            .build());
+        }
+
+        return ResponseEntity.ok().body(
+                NameValuePayload.<String>builder()
+                        .name(JsonNameType.OUTPUT.name())
+                        .value(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE)
+                        .build());
     }
 
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> saveArtist(@Valid @RequestBody ArtistPayload artistPayload) {
+    public ResponseEntity<String> saveArtist(@Valid @RequestBody ArtistPayload artistPayload) {
+
+        if (!isArtistNameUnique(artistPayload.getId(), artistPayload.getName())) {
+            return ResponseEntity.badRequest().body(ErrorCode.NOT_UNIQUE.getErrorCode());
+        }
+
         Artist artist = artistMapper.toDomain(artistPayload);
         musicManager.saveArtist(artist);
-        return ResponseEntity.ok().body(true);
+        return ResponseEntity.ok().body(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE);
+    }
+
+    private boolean isArtistNameUnique(long id, String name) {
+        Artist artist = musicManager.getArtist(name);
+        if (artist == null) {
+            return true;
+        }
+
+        return artist.getId() == id ? true : false;
     }
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ArtistPayload createArtist(@Valid @RequestBody CreateArtistPayload artistPayload) {
+    public ResponseEntity<ArtistPayload> createArtist(@Valid @RequestBody CreateArtistPayload artistPayload) {
+        if (musicManager.getArtist(artistPayload.getName()) != null) {
+            return ResponseEntity.ok().body(null);
+        }
+
         User user = AdminHelper.getLoggedInUser();
         Artist artist = Artist.builder()
                 .name(artistPayload.getName())
@@ -77,7 +113,7 @@ public class ArtistController {
                 .build();
 
         Artist savedArtist = musicManager.saveArtist(artist);
-        return artistMapper.toPayloadList(savedArtist);
+        return ResponseEntity.ok().body(artistMapper.toPayloadList(savedArtist));
     }
 
 }

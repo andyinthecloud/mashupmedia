@@ -5,7 +5,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.dto.share.ErrorCode;
-import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.springframework.validation.Errors;
 
 public class ActivationTokenUtils {

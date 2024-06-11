@@ -14,7 +14,13 @@ import org.mashupmedia.model.MetaEntity;
 
 public class MetaEntityHelper<T extends MetaEntity> {
 
-    public void mergeSet(Set<T> entities, Set<T> updatedEntities) {
+    /**
+     * Merge and return removed entities
+     * @param entities
+     * @param updatedEntities
+     * @return entities removed
+     */
+    public Set<T> mergeSet(Set<T> entities, Set<T> updatedEntities) {
 
         for (T entity : entities) {
             Optional<? extends MetaEntity> foundEntity = updatedEntities.stream()
@@ -38,6 +44,8 @@ public class MetaEntityHelper<T extends MetaEntity> {
         entities.addAll(entitiesToAdd);
 
         setEntityRanks(entities);
+
+        return entitiesToRemove;
 
     }
 

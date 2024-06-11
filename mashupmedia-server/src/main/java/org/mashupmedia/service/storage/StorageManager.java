@@ -6,4 +6,6 @@ public interface StorageManager {
 
     String store(Path path);
 
+    void delete(Path path);
+    
 }

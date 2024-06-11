@@ -7,7 +7,7 @@ public class JsonHelper {
     public static NameValuePayload<String> createDefaultNameValueSuccessMessage() {
         return NameValuePayload.<String>builder()
                 .name("message")
-                .value(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE)
+                .value(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE)
                 .build();
     }
 

@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 public class NameValuePayload<T> {
+
     @NotBlank
     private String name;
     private T value;

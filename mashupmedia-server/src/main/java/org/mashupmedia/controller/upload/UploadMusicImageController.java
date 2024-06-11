@@ -1,6 +1,14 @@
 package org.mashupmedia.controller.upload;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import org.mashupmedia.dto.media.MetaEntityPayload;
+import org.mashupmedia.mapper.media.MetaImageMapper;
 import org.mashupmedia.model.account.User;
+import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.MusicResourceManager;
@@ -22,9 +30,10 @@ public class UploadMusicImageController {
 
 	private final MusicResourceManager musicResourceManager;
 	private final MusicManager musicManager;
+	private final MetaImageMapper metaImageMapper;
 
 	@PostMapping(value = "/artist/images", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> handleFileUpload(
+	public ResponseEntity<List<MetaEntityPayload>> handleFileUpload(
 			@RequestParam("artistId") long artistId,
 			@RequestParam("files") MultipartFile[] files) {
 
@@ -34,13 +43,17 @@ public class UploadMusicImageController {
 			throw new SecurityException("User cannot modify this artist");
 		}
 
+		List<MetaImage> metaImages = new ArrayList<>();
 		for (MultipartFile file : files) {
-			musicResourceManager.storeArtistImage(artistId, file);
+			metaImages.add(musicResourceManager.storeArtistImage(artistId, file));
 		}
-		
+
 		return ResponseEntity
 				.ok()
-				.body(true);
+				.body(metaImages
+						.stream()
+						.map(metaImageMapper::toPayload)
+						.collect(Collectors.toList()));
 	}
 
 }

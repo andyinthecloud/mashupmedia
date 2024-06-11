@@ -21,7 +21,7 @@ import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.service.playlist.PlaylistActionManager;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.JsonHelper;
-import org.mashupmedia.util.ValidationUtil;
+import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -122,7 +122,7 @@ public class PlaylistController {
 
         playlistActionManager.replacePlaylist(playlist.getId(), mediaItems);
 
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
     @DeleteMapping(value = "/{playlistId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -150,7 +150,7 @@ public class PlaylistController {
         playlist.setCreatedBy(user);
         playlistManager.savePlaylist(playlist);
 
-        return ValidationUtil.createResponseEntityPayload(ValidationUtil.DEFAULT_OK_RESPONSE_MESSAGE, errors);
+        return ValidationUtils.createResponseEntityPayload(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE, errors);
     }
 
 }
