@@ -20,12 +20,17 @@ export type ServerError = {
     code?: string
 }
 
+
+export type ErrorPayload = {
+    errorCode?: string
+    objectErrors: ServerError[]
+    fieldErrors: ServerError[]
+
+}
+
 export type ServerResponsePayload<T> = {
     payload: T
-    errorPayload: {
-        objectErrors: ServerError[]
-        fieldErrors: ServerError[]
-    }
+    errorPayload: ErrorPayload    
 }
 
 export const isEmpty = (value?: string): boolean => !value?.trim().length

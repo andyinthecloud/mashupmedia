@@ -5,22 +5,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.media.SecureMediaPayload;
+import org.mashupmedia.dto.media.music.AlbumPayload;
 import org.mashupmedia.dto.media.music.AlbumWithArtistPayload;
 import org.mashupmedia.dto.media.music.AlbumWithTracksAndArtistPayload;
+import org.mashupmedia.dto.media.music.CreateAlbumPayload;
+import org.mashupmedia.dto.share.ErrorCode;
+import org.mashupmedia.dto.share.ErrorPayload;
+import org.mashupmedia.dto.share.ServerResponsePayload;
+import org.mashupmedia.exception.ContainsMediaItemsException;
+import org.mashupmedia.exception.NameNotUniqueException;
+import org.mashupmedia.mapper.media.music.AlbumMapper;
 import org.mashupmedia.mapper.media.music.AlbumWithArtistMapper;
 import org.mashupmedia.mapper.media.music.AlbumWithTracksMapper;
+import org.mashupmedia.mapper.media.music.CreateAlbumMapper;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.AdminHelper;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -30,18 +44,17 @@ public class AlbumController {
     private final static int MAX_RANDOM_ALBUMS = 20;
 
     private final MusicManager musicManager;
-
     private final MashupMediaSecurityManager mashupMediaSecurityManager;
-
     private final AlbumWithArtistMapper albumWithArtistMapper;
-
     private final AlbumWithTracksMapper albumWithTracksMapper;
+    private final AlbumMapper albumMapper;
+    private final CreateAlbumMapper createAlbumMapper;
 
     private enum SortAlbum {
         RANDOM
     }
 
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<SecureMediaPayload<AlbumWithArtistPayload>> geAlbums(
             @RequestParam(name = "sort", required = false) SortAlbum sortAlbum) {
         User user = AdminHelper.getLoggedInUser();
@@ -64,6 +77,54 @@ public class AlbumController {
         String streamingToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
         Album album = musicManager.getAlbum(albumId);
         return albumWithTracksMapper.toDto(album, streamingToken);
+    }
+
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ServerResponsePayload<AlbumPayload>> createAlbum(
+            @RequestBody @Valid CreateAlbumPayload createAlbumPayload) {
+        Album album = createAlbumMapper.toDomain(createAlbumPayload);
+        ServerResponsePayload<AlbumPayload> serverResponsePayload = ServerResponsePayload.<AlbumPayload>builder()
+                .build();
+
+        try {
+            musicManager.saveAlbum(album);
+
+        } catch (NameNotUniqueException e) {
+            return ResponseEntity.badRequest().body(
+                    serverResponsePayload.toBuilder()
+                            .errorPayload(ErrorPayload.builder()
+                                    .errorCode(ErrorCode.NOT_UNIQUE.getErrorCode())
+                                    .build())
+                            .build());
+
+        }
+
+        return ResponseEntity.ok().body(
+                serverResponsePayload.toBuilder()
+                        .payload(albumMapper.toPayload(album))
+                        .build());
+    }
+
+    @DeleteMapping(value = "/{albumId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ServerResponsePayload<Boolean>> deleteAlbum(@PathVariable long albumId) {
+        try {
+            musicManager.deleteAlbum(albumId);
+        } catch (ContainsMediaItemsException e) {
+            return ResponseEntity.badRequest().body(
+                    ServerResponsePayload.<Boolean>builder()
+                            .errorPayload(ErrorPayload.builder()
+                                    .errorCode(ErrorCode.CONTAINS_MEDIA.getErrorCode())
+                                    .build())
+                            .payload(false)
+                            .build());
+
+        }
+
+        return ResponseEntity.badRequest().body(
+                ServerResponsePayload.<Boolean>builder()
+                        .payload(true)
+                        .build());
+
     }
 
 }

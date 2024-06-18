@@ -23,6 +23,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,7 +36,9 @@ import lombok.ToString;
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
+@Builder
 public class Album {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "music_albums_generator")
@@ -50,6 +54,7 @@ public class Album {
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "albums_meta_images", joinColumns = @JoinColumn(name = "meta_image_id"), inverseJoinColumns = @JoinColumn(name = "album_id"))
+	@Builder.Default
 	private Set<MetaImage> metaImages = new HashSet<>();
 
 	@OneToMany(mappedBy = "album")

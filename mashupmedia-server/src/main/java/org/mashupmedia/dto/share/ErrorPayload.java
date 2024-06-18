@@ -13,8 +13,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class ErrorPayload {
+    private String errorCode;
     private List<ObjectError> objectErrors;
     private List<FieldError> fieldErrors;
 }

@@ -160,7 +160,7 @@ const Library = () => {
 
 
 
-    const setStateValue = (name: string, value: any): void => {
+    const setStateValue = (name: string, value: string | boolean): void => {
         setProps(p => ({
             ...p,
             libraryPayload: {

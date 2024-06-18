@@ -206,10 +206,6 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 				Track.class);
 		tracksQuery.setParameter("id", albumId);
 		List<Track> tracks = (List<Track>) tracksQuery.getResultList();
-		if (tracks == null || tracks.isEmpty()) {
-			return null;
-		}
-
 		album.setTracks(tracks);
 
 		return album;

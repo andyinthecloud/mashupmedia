@@ -1,16 +1,16 @@
 import { Add, PlayArrow } from "@mui/icons-material"
 import { Button, Card, CardContent, CardMedia, IconButton, List, ListItem, ListItemText } from "@mui/material"
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import ImagePopover, { ImagePopoverPayload } from "../../common/components/ImagePopover"
-import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
+import { NotificationType, addNotification } from "../../common/notification/notificationSlice"
 import { RootState } from "../../common/redux/store"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
+import './Album.css'
 import { loadTrack } from "./features/playMusicSlice"
-import { albumArtImageUrl, AlbumWithTracksAndArtistPayload, getAlbum, ImageType } from "./rest/musicCalls"
-import { addAlbum, addTrack, playAlbum, playTrack } from "./rest/playlistActionCalls"
-import './Album.css';
+import { AlbumWithTracksAndArtistPayload, ImageType, albumArtImageUrl, getAlbum } from "./rest/musicCalls"
+import { playAlbum, playTrack } from "./rest/playlistActionCalls"
 
 
 type AlbumPagePageload = {
@@ -23,6 +23,7 @@ const Album = () => {
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
 
     const { albumId } = useParams()
+
 
 
     const [props, setProps] = useState<AlbumPagePageload>({
@@ -93,7 +94,7 @@ const Album = () => {
         props.albumWithTracksAndArtistPayload?.payload.albumPayload.id || 0
     )
 
-    const handleImagePopover = (event: React.MouseEvent<HTMLElement>) => {
+    const handleImagePopover = () => {
 
         const albumId = albumIdAsNumber()
         if (!albumId) {

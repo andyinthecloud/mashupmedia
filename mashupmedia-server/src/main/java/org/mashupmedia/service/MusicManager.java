@@ -2,7 +2,8 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
-import org.mashupmedia.exception.NotEmptyException;
+import org.mashupmedia.exception.ContainsMediaItemsException;
+import org.mashupmedia.exception.NameNotUniqueException;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
@@ -25,7 +26,7 @@ public interface MusicManager {
 
 	public List<Track> getTracks(Long albumId);
 
-	public void saveAlbum(Album album);
+	public void saveAlbum(Album album) throws NameNotUniqueException;
 
 	public Artist getArtist(Long artistId);
 
@@ -45,8 +46,10 @@ public interface MusicManager {
 
 	public List<Album> getLatestAlbums(int pageNumber, int maxResults);
 
-	public void deleteArtist(long artistId) throws NotEmptyException;
+	public void deleteArtist(long artistId) throws ContainsMediaItemsException;
 
     public Artist getArtist(String name);
+
+    public void deleteAlbum(long albumId) throws ContainsMediaItemsException;
 	
 }

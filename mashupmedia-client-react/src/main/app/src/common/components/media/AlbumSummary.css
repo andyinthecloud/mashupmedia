@@ -5,7 +5,9 @@
 }
 
 
-.album-summary .sticker {
+div.album-summary div.sticker {
+    flex-direction: column;
+    justify-content: flex-start;
     border-radius: 5px;
     text-shadow: white 0px 0px 10px;
     padding: 0.2em;
@@ -24,7 +26,6 @@
 .album-summary .artist {
     opacity: 0.7;
 }
-
 
 .album-summary .controls {
     position: absolute;

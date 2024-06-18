@@ -44,8 +44,6 @@ const AlertBox = (payload: NotificationPayload) => {
         ...payload
     })
 
-    const [fade, setFade] = useState<boolean>(false)
-
     useEffect(() => {
         setProps(payload)
         setTimeout(() => {

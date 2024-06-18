@@ -12,7 +12,8 @@ import java.util.function.Predicate;
 import org.hibernate.Hibernate;
 import org.mashupmedia.comparator.MetaEntityComparator;
 import org.mashupmedia.dao.MusicDao;
-import org.mashupmedia.exception.NotEmptyException;
+import org.mashupmedia.exception.ContainsMediaItemsException;
+import org.mashupmedia.exception.NameNotUniqueException;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.ExternalLink;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
@@ -21,6 +22,7 @@ import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Track;
+import org.mashupmedia.repository.media.music.AlbumRepository;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.service.storage.StorageManager;
 import org.mashupmedia.util.AdminHelper;
@@ -43,6 +45,7 @@ public class MusicManagerImpl implements MusicManager {
 	private final AdminManager adminManager;
 	private final ArtistRepository artistRepository;
 	private final StorageManager storageManager;
+	private final AlbumRepository albumRepository;
 
 	protected enum ListAlbumsType {
 		RANDOM, LATEST, ALL
@@ -70,13 +73,19 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public void deleteArtist(long artistId) throws NotEmptyException{
+	public void deleteArtist(long artistId) throws ContainsMediaItemsException {
 		Artist artist = getArtist(artistId);
+		AdminHelper.checkAccess(artist.getUser());
+
 		boolean hasTracks = artist.getAlbums()
 				.stream()
 				.anyMatch(album -> album.getTracks() != null && !album.getTracks().isEmpty());
 		if (hasTracks) {
-			throw new NotEmptyException("Artist contains tracks.");
+			throw new ContainsMediaItemsException("Unable to delete. Artist contains tracks.");
+		}
+
+		for (Album album : artist.getAlbums()) {
+			deleteAlbum(album.getId());
 		}
 
 		deleteMetaImageFiles(artist.getMetaImages());
@@ -85,7 +94,42 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public void saveAlbum(Album album) {
+	public void deleteAlbum(long albumId) throws ContainsMediaItemsException {
+		Album album = getAlbum(albumId);
+		AdminHelper.checkAccess(album.getArtist().getUser());
+		if (album.getMetaImages().isEmpty()) {
+			deleteMetaImageFiles(album.getMetaImages());
+			albumRepository.deleteById(albumId);
+			return;
+		}
+
+
+		throw new ContainsMediaItemsException("Unable to delete. Album contains tracks.");
+	}
+
+	@Override
+	public void saveAlbum(Album album) throws NameNotUniqueException {
+		Assert.hasText(album.getName(), "Expecting an album name");
+		Artist artist = album.getArtist();
+		Assert.notNull(artist, "artist should not be empty");
+		long artistId = artist.getId();
+		Assert.notNull(artistId, "artistId should not be empty");
+
+		Artist savedArtist = getArtist(artistId, false);
+		Assert.notNull(savedArtist, "artist should already exist");
+
+		AdminHelper.checkAccess(savedArtist.getUser());
+
+		long albumId = album.getId();
+		boolean isNameNotUnique = savedArtist.getAlbums()
+				.stream()
+				.filter(a -> a.getId() != albumId)
+				.anyMatch(a -> a.getName().equalsIgnoreCase(album.getName()));
+		if (isNameNotUnique) {
+			throw new NameNotUniqueException("Album name should be unique");
+		}
+
+		album.setArtist(savedArtist);
 		musicDao.saveAlbum(album);
 	}
 
@@ -172,12 +216,7 @@ public class MusicManagerImpl implements MusicManager {
 		Album album = musicDao.getAlbum(loggedInUserId, albumId);
 		if (album == null) {
 			return null;
-		}
-
-		List<Track> tracks = album.getTracks();
-		if (tracks == null || tracks.isEmpty()) {
-			return null;
-		}
+		}		
 
 		Hibernate.initialize(album.getMetaImages());
 

@@ -1,10 +1,10 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material"
 import { ChangeEvent, useEffect, useState } from "react"
-import { DialogPageload } from "./DialogPageload"
 import { ExternalLinkPayload } from "../../../media/rest/mediaCalls"
+import { DialogWithUpdateCallPageload } from "./DialogPageload"
 
 export type EditLinkDialogPageload = {
-    dialogPayload: DialogPageload<ExternalLinkPayload>
+    dialogPayload: DialogWithUpdateCallPageload<ExternalLinkPayload>
 }
 
 const EditLinkDialog = (payload: EditLinkDialogPageload) => {

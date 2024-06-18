@@ -6,7 +6,7 @@ import { redirectLogin } from "../utils/httpUtils"
 import { userPolicy } from "./features/userPolicySlice"
 import { securityToken } from "./securityUtils"
 
-export function RequireAuthenication({ children }: { children: JSX.Element }): any {
+export function RequireAuthenication({ children }: { children: JSX.Element }) {
 
     const tokenPayload = useSelector((state: RootState) => state.security.payload?.token)
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy)

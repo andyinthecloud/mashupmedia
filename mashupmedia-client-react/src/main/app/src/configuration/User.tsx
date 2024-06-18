@@ -117,7 +117,7 @@ const User = () => {
 
 
 
-    const setStateValue = (name: string, value: any): void => {
+    const setStateValue = (name: string, value: string | boolean | object[]): void => {
         setProps(p => ({
             ...p,
             userPayload: {

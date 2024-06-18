@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight, ExpandLess, ExpandMore, Pause, PlayArrow, Qu
 import { IconButton, Slider } from "@mui/material"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { loadedTrack } from "../../../media/music/features/playMusicSlice"
 import { ImageType, albumArtImageUrl, mediaStreamUrl, playlistStreamUrl } from "../../../media/music/rest/musicCalls"
 import { EncoderStatusType, MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, currentTrack, navigateTrack } from "../../../media/music/rest/playlistActionCalls"
@@ -341,13 +341,6 @@ const AudioPlayer = () => {
 
     const handleExpand = (): void => {
         setExpanded(!expanded)
-    }
-
-    const navigate = useNavigate()
-
-    const handleAlbumClick = (albumId: number) => {
-        setExpanded(false)
-        navigate("/music/album/" + albumId)
     }
 
     const handleAudioError = (): void => {

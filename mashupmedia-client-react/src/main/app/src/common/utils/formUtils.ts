@@ -5,19 +5,6 @@ export interface NameValue {
     value: string | number
 }
 
-
-export const getNameValueFromEvent = (event: any): NameValue => {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value
-    const name = target.name
-
-    return {
-        name,
-        value
-    }
-}
-
-
 export const mashupTheme = createTheme({
 
     palette: {

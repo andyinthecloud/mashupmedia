@@ -1,4 +1,3 @@
-import { env } from "process"
 import { securityToken } from "../security/securityUtils"
 
 export const restHeaders = (userToken?: string | null): Headers => {
@@ -135,28 +134,40 @@ export const getQueryNumberValue = (name: string, queryParameters: URLSearchPara
 }
 
 
-export const objectToQueryParameters = (object: any): string => {
+export const objectToQueryParameters = (object: object): string => {
     let urlParameters = ""
 
-    Object.keys(object).map(key => {
-        const value = primitiveValueToQueryValue(object[key])
+    Object.entries(object).map(([key, value]) => {
+        const queryValue = primitiveValueToQueryValue(value)
         if (value) {
-            urlParameters += `${urlParameters ? "&" : "?"}${key}=${value}`
+            urlParameters += `${urlParameters ? "&" : "?"}${key}=${queryValue}`
         }
     })
+
+    // Object.keys(object).map(key => {
+    //     // object['w']
+
+    //     // Object.value()
+
+
+    //     const value = primitiveValueToQueryValue(object['key'])
+    //     if (value) {
+    //         urlParameters += `${urlParameters ? "&" : "?"}${key}=${value}`
+    //     }
+    // })
 
     return urlParameters
 }
 
 
-const primitiveValueToQueryValue = (value: any): string => {
+const primitiveValueToQueryValue = (value: object): string => {
     
     let urlValue = ''
     
     if (Array.isArray(value)) {
         urlValue = value.join(",")    
     } else {
-        urlValue = value
+        urlValue = String(value)
     }
 
     return urlValue ? encodeURI(urlValue) : ''

@@ -3,6 +3,8 @@ import { Button, Grid, IconButton } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import ImagePopover, { ImagePopoverPayload } from "../../common/components/ImagePopover";
+import CreateAlbumNameDialog, { CreateAlbumNameDialogPageload } from "../../common/components/dialogs/CreateAlbumNameDialog";
 import EditTextDialog, { EditTextDialogPayload } from "../../common/components/dialogs/EditTextDialog";
 import AlbumSummary from '../../common/components/media/AlbumSummary';
 import ManageExternalLinks, { ManageExternalLinksPayload } from "../../common/components/meta/ManageExternalLinks";
@@ -14,7 +16,6 @@ import { SecureMediaPayload } from '../rest/secureMediaPayload';
 import './Artist.css';
 import { AlbumWithArtistPayload, ArtistWithAlbumsPayload, ImageType, artistImageUrl, deleteArtist, getArtist, saveArtist } from './rest/musicCalls';
 import { MetaImagePayload, uploadArtistImages } from "./rest/musicUploadCalls";
-import ImagePopover, { ImagePopoverPayload } from "../../common/components/ImagePopover";
 
 type ArtistPagePayload = {
     secureMediaItemPayload?: SecureMediaPayload<ArtistWithAlbumsPayload>
@@ -23,6 +24,7 @@ type ArtistPagePayload = {
     manageMetaImagesPayload: ManageMetaImagesPayload
     manageExternalLinksPayload: ManageExternalLinksPayload
     artistImagePopover: ImagePopoverPayload
+    createAlbumDialogPayload: CreateAlbumNameDialogPageload
 }
 
 const Artist = () => {
@@ -77,6 +79,9 @@ const Artist = () => {
         artistImagePopover: {
             source: '',
             trigger: 0
+        },
+        createAlbumDialogPayload: {
+            artistId: 0
         }
     })
 
@@ -229,6 +234,10 @@ const Artist = () => {
                         manageExternalLinksPayload: {
                             ...p.manageExternalLinksPayload,
                             externalLinkPayloads: artistWithAlbumsPayload.payload.artistPayload.externalLinkPayloads || []
+                        },
+                        createAlbumDialogPayload: {
+                            ...p.createAlbumDialogPayload,
+                            artistId: artistWithAlbumsPayload.payload.artistPayload.id
                         }
                     }))
 
@@ -427,6 +436,8 @@ const Artist = () => {
                     }
                 })}
             </Grid>
+
+            <CreateAlbumNameDialog {...props.createAlbumDialogPayload}  />
 
             <div className="new-line right" style={{ marginTop: "1em" }}>
                 <Button

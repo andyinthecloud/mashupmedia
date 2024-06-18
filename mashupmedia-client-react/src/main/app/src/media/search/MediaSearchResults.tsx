@@ -58,7 +58,7 @@ const MediaSearchResults = () => {
                         onChange={(_e, page) => handleChangePagination(page)}                        
                     />
                     <List>
-                        {props?.pagePayload?.content?.map(function (mediaSearchResultPayload, index) {
+                        {props?.pagePayload?.content?.map(function (mediaSearchResultPayload) {
 
                             if (mediaSearchResultPayload.mashupMediaType === MashupMediaType.MUSIC) {
                                 const musicSearchResultPayload = mediaSearchResultPayload as MusicSearchResultPayload

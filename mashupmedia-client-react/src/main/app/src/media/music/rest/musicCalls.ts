@@ -1,3 +1,4 @@
+import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
 import { backEndUrl, callMashupMediaApi, HttpMethod, HttpResponse, timestamp } from '../../../common/utils/httpUtils'
 import { NameValuePayload } from "../../../configuration/backend/metaCalls"
 import { UserPayload } from "../../../configuration/backend/userCalls"
@@ -12,6 +13,11 @@ export type ArtistPayload = {
     userPayload?: UserPayload
     externalLinkPayloads?: ExternalLinkPayload[]
     metaImagePayloads?: MetaImagePayload[]
+}
+
+export type CreateAlbumPayload = {
+    name: string
+    artistId: number
 }
 
 export type CreateArtistPayload = {
@@ -91,6 +97,10 @@ export const getAlbums = (userToken?: string): Promise<HttpResponse<SecureMediaP
 
 export const getAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<SecureMediaPayload<AlbumWithTracksAndArtistPayload>>> => {
     return callMashupMediaApi<SecureMediaPayload<AlbumWithTracksAndArtistPayload>>(HttpMethod.GET, albumUrl + "/" + albumId, userToken)
+}
+
+export const createAlbum = (createAlbumPayload: CreateAlbumPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<AlbumPayload>>> => {
+    return callMashupMediaApi<ServerResponsePayload<AlbumPayload>>(HttpMethod.POST, albumUrl, userToken, JSON.stringify(createAlbumPayload))
 }
 
 export const mediaStreamUrl = (mediaItemId: number, mediaToken: string, seconds?: number): string => {

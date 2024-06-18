@@ -1,11 +1,11 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
-import { DialogPageload } from "./DialogPageload"
+import { DialogWithUpdateCallPageload } from "./DialogPageload"
 
 
 export type EditTextDialogPayload = {
     textFieldLabel: string
-    dialogPayload: DialogPageload<string>
+    dialogPayload: DialogWithUpdateCallPageload<string>
     multiline?: boolean
 
 }

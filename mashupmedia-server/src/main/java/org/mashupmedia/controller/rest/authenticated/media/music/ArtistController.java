@@ -10,7 +10,7 @@ import org.mashupmedia.dto.media.music.CreateArtistPayload;
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.JsonNameType;
 import org.mashupmedia.dto.share.NameValuePayload;
-import org.mashupmedia.exception.NotEmptyException;
+import org.mashupmedia.exception.ContainsMediaItemsException;
 import org.mashupmedia.mapper.media.music.ArtistMapper;
 import org.mashupmedia.mapper.media.music.ArtistWithAlbumsMapper;
 import org.mashupmedia.model.account.User;
@@ -64,7 +64,7 @@ public class ArtistController {
     public ResponseEntity<NameValuePayload<String>> deleteArtist(@PathVariable long artistId) {
         try {
             musicManager.deleteArtist(artistId);
-        } catch (NotEmptyException e) {
+        } catch (ContainsMediaItemsException e) {
             return ResponseEntity.badRequest().body(
                     NameValuePayload.<String>builder()
                             .name(JsonNameType.ERROR.name())
