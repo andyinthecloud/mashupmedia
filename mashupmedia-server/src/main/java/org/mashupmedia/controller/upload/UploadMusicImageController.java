@@ -2,13 +2,17 @@ package org.mashupmedia.controller.upload;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.media.MetaEntityPayload;
+import org.mashupmedia.dto.share.ErrorCode;
+import org.mashupmedia.dto.share.ErrorPayload;
+import org.mashupmedia.dto.share.ServerResponsePayload;
+import org.mashupmedia.exception.UserStorageException;
 import org.mashupmedia.mapper.media.MetaImageMapper;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MetaImage;
+import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.MusicResourceManager;
@@ -33,7 +37,7 @@ public class UploadMusicImageController {
 	private final MetaImageMapper metaImageMapper;
 
 	@PostMapping(value = "/artist/images", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MetaEntityPayload>> handleFileUpload(
+	public ResponseEntity<ServerResponsePayload<List<MetaEntityPayload>>> postArtistImages(
 			@RequestParam("artistId") long artistId,
 			@RequestParam("files") MultipartFile[] files) {
 
@@ -45,15 +49,64 @@ public class UploadMusicImageController {
 
 		List<MetaImage> metaImages = new ArrayList<>();
 		for (MultipartFile file : files) {
-			metaImages.add(musicResourceManager.storeArtistImage(artistId, file));
+			try {
+				metaImages.add(musicResourceManager.storeArtistImage(artistId, file));
+			} catch (UserStorageException e) {
+				return getOutOfSpaceErrorPayload();
+			}
 		}
 
+		return getMetaImagesPayload(metaImages);
+	}
+
+	private ResponseEntity<ServerResponsePayload<List<MetaEntityPayload>>> getOutOfSpaceErrorPayload() {
+		return ResponseEntity
+				.badRequest()
+				.body(
+						ServerResponsePayload.<List<MetaEntityPayload>>builder()
+								.errorPayload(ErrorPayload.builder()
+										.errorCode(ErrorCode.OUT_OF_STORAGE.getErrorCode())
+										.build())
+								.build());
+	}
+
+	private ResponseEntity<ServerResponsePayload<List<MetaEntityPayload>>> getMetaImagesPayload(
+			List<MetaImage> metaImages) {
 		return ResponseEntity
 				.ok()
-				.body(metaImages
-						.stream()
-						.map(metaImageMapper::toPayload)
-						.collect(Collectors.toList()));
+				.body(
+						ServerResponsePayload.<List<MetaEntityPayload>>builder()
+								.payload(
+										metaImages
+												.stream()
+												.map(metaImageMapper::toPayload)
+												.collect(Collectors.toList()))
+								.build());
+
+	}
+
+	@PostMapping(value = "/album/images", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ServerResponsePayload<List<MetaEntityPayload>>> postAlbumImages(
+			@RequestParam("artistId") long albumId,
+			@RequestParam("files") MultipartFile[] files) {
+
+		User user = AdminHelper.getLoggedInUser();
+		Album album = musicManager.getAlbum(albumId);
+		Artist artist = album.getArtist();
+		if (!user.equals(artist.getUser())) {
+			throw new SecurityException("User cannot modify this album");
+		}
+
+		List<MetaImage> metaImages = new ArrayList<>();
+		for (MultipartFile file : files) {
+			try {
+				metaImages.add(musicResourceManager.storeAlbumImage(albumId, file));
+			} catch (UserStorageException e) {
+				return getOutOfSpaceErrorPayload();
+			}
+		}
+
+		return getMetaImagesPayload(metaImages);
 	}
 
 }

@@ -6,5 +6,5 @@ export type DialogPageload<P> = {
 }
 
 export type DialogWithUpdateCallPageload<P> = DialogPageload<P> & {
-    updatePayload(payload: P): void
+    updatePayload(payload?: P): void
 }

@@ -1,6 +1,6 @@
-import { Add, PlayArrow } from "@mui/icons-material"
+import { Add, Edit, PlayArrow } from "@mui/icons-material"
 import { Button, Card, CardContent, CardMedia, IconButton, List, ListItem, ListItemText } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import ImagePopover, { ImagePopoverPayload } from "../../common/components/ImagePopover"
@@ -11,23 +11,29 @@ import './Album.css'
 import { loadTrack } from "./features/playMusicSlice"
 import { AlbumWithTracksAndArtistPayload, ImageType, albumArtImageUrl, getAlbum } from "./rest/musicCalls"
 import { playAlbum, playTrack } from "./rest/playlistActionCalls"
+import EditTextDialog, { EditTextDialogPayload } from "../../common/components/dialogs/EditTextDialog"
+import ManageMetaImages, { ManageMetaImagesPayload } from "../../common/components/meta/ManageMetaImages"
+import { MetaImagePayload } from "./rest/musicUploadCalls"
 
 
 type AlbumPagePageload = {
-    albumWithTracksAndArtistPayload?: SecureMediaPayload<AlbumWithTracksAndArtistPayload>
+    secureMediaItemPayload?: SecureMediaPayload<AlbumWithTracksAndArtistPayload>
     imagePopover: ImagePopoverPayload
+    editAlbumNameDialogPayload: EditTextDialogPayload
+    manageMetaImagesPayload: ManageMetaImagesPayload
+
 }
 
 const Album = () => {
 
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
-
     const { albumId } = useParams()
-
+    const albumWithTracksAndArtistPayloadRef = useRef<SecureMediaPayload<AlbumWithTracksAndArtistPayload>>()
+    const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
 
 
     const [props, setProps] = useState<AlbumPagePageload>({
-        albumWithTracksAndArtistPayload: ({
+        secureMediaItemPayload: ({
             mediaToken: '',
             payload: {
                 albumPayload: {
@@ -38,39 +44,121 @@ const Album = () => {
                     id: 0,
                     name: ""
                 },
-
                 trackPayloads: []
             }
         }),
         imagePopover: {
             source: '',
             trigger: 0
-        }
+        },
+        editAlbumNameDialogPayload: {
+            textFieldLabel: "Name",
+            dialogPayload: {
+                open: false,
+                payload: '',
+                title: "Edit album name",
+                updatePayload: updateArtistName
+            }
+        },
+        manageMetaImagesPayload: {
+            metaImagePayloads: [],
+            updateMetaImages: updateMetaImages,
+            uploadFiles: uploadMetaImages,
+            getImageUrl: getMetaImageUrl,
+            isManager: isManager
+        },
     })
 
+    function isManager(): boolean {
+        const userPayload = albumWithTracksAndArtistPayloadRef.current?.payload.artistPayload.userPayload
+        if (!userPayload || !userPolicyPayload) {
+            return false
+        }
 
+        return userPolicyPayload.administrator || userPayload.username === userPolicyPayload.username
+    }
 
+    function getMetaImageUrl(id: number): string {
+        return albumArtImageUrl(
+            albumWithTracksAndArtistPayloadRef.current?.payload.albumPayload.id || 0,
+            ImageType.ORIGINAL,
+            albumWithTracksAndArtistPayloadRef.current?.mediaToken || '',
+            id)
+    }
 
+    function updateMetaImages(metaImagePayloads: MetaImagePayload[]): void {
+        setProps(p => ({
+            ...p,
+            secureMediaItemPayload: {
+                ...p.secureMediaItemPayload,
+                mediaToken: p.secureMediaItemPayload?.mediaToken || '',
+                payload: {
+                    ...p.secureMediaItemPayload?.payload,
+                    albumPayload: {
+                        ...p.secureMediaItemPayload?.payload.albumPayload,
+                        id: p.secureMediaItemPayload?.payload.albumPayload.id || 0,
+                        name: p.secureMediaItemPayload?.payload.albumPayload.name || '',
+                        metaImagePayloads
 
-    // const [props, setProps] = useState<SecureMediaPayload<AlbumWithTracksAndArtistPayload>>({
-    //     mediaToken: "",
-    //     payload: {
-    //         albumPayload: {
-    //             id: 0,
-    //             name: ""
-    //         },
-    //         artistPayload: {
-    //             id: 0,
-    //             name: ""
-    //         },
-    //         trackPayloads: []
-    //     }
-    // })
+                    },
+                    artistPayload: {
+                        ...p.secureMediaItemPayload?.payload.artistPayload,
+                        id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                        name: p.secureMediaItemPayload?.payload.artistPayload.name || ''
+                    },
+                    trackPayloads: p.secureMediaItemPayload?.payload.trackPayloads || []
+                 }
+            }
+        }))
+    }
+
+    function uploadMetaImages(files: FileList): void {
+        console.log('uploadMetaImages', files)
+    }
+
+    function updateArtistName(albumName: string): void {
+        let name = albumWithTracksAndArtistPayloadRef.current?.payload.albumPayload.name || ''
+        if (albumName) {
+            name = albumName
+        }
+
+        setProps(p => ({
+            ...p,
+            editAlbumNameDialogPayload: {
+                ...p.editAlbumNameDialogPayload,
+                dialogPayload: {
+                    ...p.editAlbumNameDialogPayload.dialogPayload,
+                    open: false
+                }
+            },
+            secureMediaItemPayload: {
+                ...p.secureMediaItemPayload,
+                mediaToken: p.secureMediaItemPayload?.mediaToken || '',
+                payload: {
+                    ...p.secureMediaItemPayload?.payload,
+                    albumPayload: {
+                        ...p.secureMediaItemPayload?.payload.albumPayload,
+                        id: p.secureMediaItemPayload?.payload.albumPayload.id || 0,
+                        name 
+                    },
+                    artistPayload: {
+                        ...p.secureMediaItemPayload?.payload.artistPayload,
+                        id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                        name: p.secureMediaItemPayload?.payload.artistPayload.name || ''
+                    },
+                    trackPayloads: p.secureMediaItemPayload?.payload.trackPayloads || []
+                }
+            }
+        }))
+    }
+
 
     useEffect(() => {
         if (albumId) {
             getAlbum(+albumId, userToken).then(response => {
-                if (response.parsedBody !== undefined) {
+                if (response.ok && response.parsedBody) {
+
+                    const secureMediaItemPayload = response.parsedBody
 
                     setProps(p => ({
                         ...p,
@@ -78,11 +166,13 @@ const Album = () => {
                             ...p.imagePopover,
                             source: ''
                         },
-                        albumWithTracksAndArtistPayload: response.parsedBody
-
+                        secureMediaItemPayload,
+                        manageMetaImagesPayload: {
+                            ...p.manageMetaImagesPayload,
+                            metaImagePayloads: secureMediaItemPayload.payload.albumPayload.metaImagePayloads || []
+                        }
                     }))
-
-
+                    albumWithTracksAndArtistPayloadRef.current = secureMediaItemPayload
                 }
             })
         }
@@ -91,7 +181,7 @@ const Album = () => {
     }, [albumId, userToken])
 
     const albumIdAsNumber = (): number => (
-        props.albumWithTracksAndArtistPayload?.payload.albumPayload.id || 0
+        props.secureMediaItemPayload?.payload.albumPayload.id || 0
     )
 
     const handleImagePopover = () => {
@@ -104,7 +194,7 @@ const Album = () => {
         const source = albumArtImageUrl(
             albumId,
             ImageType.ORIGINAL,
-            props.albumWithTracksAndArtistPayload?.mediaToken || '')
+            props.secureMediaItemPayload?.mediaToken || '')
 
         setProps(p => ({
             ...p,
@@ -157,16 +247,30 @@ const Album = () => {
         navigate("/playlists/music/select?trackId=" + trackId)
     }
 
+    function openEditNameDialog(): void {
+        setProps(p => ({
+            ...p,
+            editAlbumNameDialogPayload: {
+                ...p.editAlbumNameDialogPayload,
+                dialogPayload: {
+                    ...p.editAlbumNameDialogPayload.dialogPayload,
+                    open: true
+                }
+            }
+        }))
+    }
 
     return (
 
         <Card id="album">
 
+            <EditTextDialog {...props.editAlbumNameDialogPayload} />
+
             <div className="media-container">
 
                 <CardMedia
                     component="img"
-                    image={albumArtImageUrl(albumIdAsNumber(), ImageType.ORIGINAL, props.albumWithTracksAndArtistPayload?.mediaToken || '')}
+                    image={albumArtImageUrl(albumIdAsNumber(), ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '')}
                     height="300"
                     className="cursor-pointer"
                     onClick={handleImagePopover}
@@ -194,16 +298,26 @@ const Album = () => {
             <ImagePopover {...props.imagePopover} />
 
             <CardContent>
-                <div className="album-name">{props.albumWithTracksAndArtistPayload?.payload.albumPayload.name}</div>
+                <div className="album-name">
+                    {props.secureMediaItemPayload?.payload.albumPayload.name}
+                    <IconButton
+                        color="secondary"
+                        onClick={openEditNameDialog}
+                    >
+                        <Edit />
+                    </IconButton>
+                </div>
                 <div className="artist-name">
                     <Link
                         className="link-no-underlne"
-                        to={"/music/artist/" + props.albumWithTracksAndArtistPayload?.payload.artistPayload.id}>{props.albumWithTracksAndArtistPayload?.payload.artistPayload.name}
+                        to={"/music/artist/" + props.secureMediaItemPayload?.payload.artistPayload.id}>{props.secureMediaItemPayload?.payload.artistPayload.name}
                     </Link>
                 </div>
 
+                <ManageMetaImages {...props.manageMetaImagesPayload} />
+
                 <List>
-                    {props.albumWithTracksAndArtistPayload?.payload.trackPayloads.map(function (trackPayload, index) {
+                    {props.secureMediaItemPayload?.payload.trackPayloads.map(function (trackPayload, index) {
                         return (
                             <ListItem
                                 className={trackPayload.encodedForWeb ? "" : "track-not-encoded-for-web"}

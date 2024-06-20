@@ -27,6 +27,8 @@ export type CreateArtistPayload = {
 export type AlbumPayload = {
     id: number
     name: string
+    externalLinkPayloads?: ExternalLinkPayload[]
+    metaImagePayloads?: MetaImagePayload[]
 }
 
 export type AlbumWithArtistPayload = {
@@ -63,8 +65,8 @@ const musicUri = "/api/private/music"
 const artistUri = musicUri + "/artists"
 const albumUrl = musicUri + "/albums"
 
-export const albumArtImageUrl = (albumId: number, imageType: ImageType, mediaToken: string): string => {
-    return `${backEndUrl('/stream/secure/music/album-art')}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}`
+export const albumArtImageUrl = (albumId: number, imageType: ImageType, mediaToken: string, id?: number): string => {
+    return `${backEndUrl('/stream/secure/music/album-art')}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}&id=${id || ''}`
 }
 
 export const artistImageUrl = (artistId: number, imageType: ImageType, mediaToken: string, id?: number): string => {
@@ -92,7 +94,7 @@ export const deleteArtist = (artistId: number, userToken?: string): Promise<Http
 }
 
 export const getAlbums = (userToken?: string): Promise<HttpResponse<SecureMediaPayload<AlbumWithArtistPayload>[]>> => {
-    return callMashupMediaApi<SecureMediaPayload<AlbumWithArtistPayload>[]>(HttpMethod.GET, albumUrl + "/", userToken)
+    return callMashupMediaApi<SecureMediaPayload<AlbumWithArtistPayload>[]>(HttpMethod.GET, albumUrl, userToken)
 }
 
 export const getAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<SecureMediaPayload<AlbumWithTracksAndArtistPayload>>> => {

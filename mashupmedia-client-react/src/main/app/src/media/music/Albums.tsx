@@ -85,7 +85,7 @@ const Albums = () => {
     )
 
     return (
-        <div>            
+        <div>
             <Grid 
                 container 
                 spacing={5} 

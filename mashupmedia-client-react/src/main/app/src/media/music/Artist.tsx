@@ -31,7 +31,6 @@ const Artist = () => {
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
     const userPolicyPayload = useSelector((state: RootState) => state.userPolicy.payload)
     const { artistId } = useParams()
-
     const artistPayloadRef = useRef<SecureMediaPayload<ArtistWithAlbumsPayload>>()
 
     const [props, setProps] = useState<ArtistPagePayload>({
