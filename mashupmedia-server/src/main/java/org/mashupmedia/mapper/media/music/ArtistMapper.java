@@ -1,7 +1,5 @@
 package org.mashupmedia.mapper.media.music;
 
-import java.util.Collection;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.mashupmedia.comparator.MetaEntityComparator;
@@ -11,8 +9,6 @@ import org.mashupmedia.mapper.PayloadListMapper;
 import org.mashupmedia.mapper.UserMapper;
 import org.mashupmedia.mapper.media.ExternalLinkMapper;
 import org.mashupmedia.mapper.media.MetaImageMapper;
-import org.mashupmedia.model.MetaEntity;
-import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.music.Artist;
 import org.springframework.stereotype.Component;
 

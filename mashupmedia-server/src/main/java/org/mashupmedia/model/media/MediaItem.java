@@ -11,6 +11,7 @@ import org.mashupmedia.comparator.MediaEncodingComparator;
 import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.Library;
+import org.mashupmedia.model.media.social.SocialConfiguration;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.StringHelper;
@@ -28,11 +29,11 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,6 +45,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MediaItem {
 
 	public final static String TITLE_SEPERATOR = " - ";
@@ -53,6 +55,7 @@ public class MediaItem {
 	@SequenceGenerator(name = "media_items_generator", sequenceName = "media_items_seq", allocationSize = 1)
 	private long id;
 	private String fileName;
+	@EqualsAndHashCode.Include
 	private String path;
 	@ManyToOne
 	private Library library;
@@ -62,7 +65,6 @@ public class MediaItem {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedOn;
 	private String format;
-	private int vote;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastAccessed;
 	@ManyToOne(cascade = { CascadeType.PERSIST })
@@ -75,15 +77,14 @@ public class MediaItem {
 	private Long fileLastModifiedOn;
 	private boolean publicAccess;
 	private String uniqueName;
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("createdOn")
-	private List<Comment> comments;
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Tag> tags;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Set<MediaEncoding> mediaEncodings;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "mediaItem")
 	private Set<PlaylistMediaItem> playlistMediaItems;
+	@ManyToOne(cascade = { CascadeType.ALL })
+	private SocialConfiguration socialConfiguration;
 
 	public boolean isEncodedForWeb() {
 		return false;
@@ -118,31 +119,6 @@ public class MediaItem {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((path == null) ? 0 : path.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MediaItem other = (MediaItem) obj;
-		if (path == null) {
-			if (other.path != null)
-				return false;
-		} else if (!path.equals(other.path))
-			return false;
-		return true;
-	}
-
-	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("MediaItem [id=");
@@ -161,8 +137,6 @@ public class MediaItem {
 		builder.append(updatedOn);
 		builder.append(", format=");
 		builder.append(format);
-		builder.append(", vote=");
-		builder.append(vote);
 		builder.append(", lastAccessed=");
 		builder.append(lastAccessed);
 		builder.append(", lastAccessedBy=");
@@ -181,8 +155,6 @@ public class MediaItem {
 		builder.append(publicAccess);
 		builder.append(", uniqueName=");
 		builder.append(uniqueName);
-		builder.append(", comments=");
-		builder.append(comments);
 		builder.append(", tags=");
 		builder.append(tags);
 		builder.append("]");

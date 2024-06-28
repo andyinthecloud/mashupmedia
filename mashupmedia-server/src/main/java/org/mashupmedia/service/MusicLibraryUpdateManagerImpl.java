@@ -449,7 +449,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		}
 
 		album.setName(tagAlbumName);
-		album.setFolderName(folderAlbumName);
 		track.setAlbum(album);
 
 		Artist artist = new Artist();
@@ -529,10 +528,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	}
 
 	private Album prepareAlbum(Album album) {
-
-		log.debug("prepareAlbum name: " + album.getName());
-		log.debug("prepareAlbum folderName: " + album.getFolderName());
-
 		Artist artist = album.getArtist();
 		String albumName = album.getName();
 		if (StringUtils.isBlank(albumName)) {

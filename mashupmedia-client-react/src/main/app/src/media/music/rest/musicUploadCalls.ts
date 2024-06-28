@@ -1,5 +1,6 @@
 import { MetaPayload } from "../../../common/components/meta/metaUtils"
 import { securityToken } from "../../../common/security/securityUtils"
+import { ServerResponsePayload } from "../../../common/utils/formValidationUtils"
 import { HttpMethod, HttpResponse, backEndUrl, multiPartHeaders } from "../../../common/utils/httpUtils"
 
 export type MetaImagePayload = & MetaPayload 
@@ -8,11 +9,11 @@ export type MetaImagePayload = & MetaPayload
 const musicUri = "/upload/music"
 
 
-const postFiles =  async <MetaImagePayload>(uri: string, formData: FormData, userToken?: string): Promise<HttpResponse<MetaImagePayload[]>> => {
+const postFiles =  async <MetaImagePayload>(uri: string, formData: FormData, userToken?: string): Promise<HttpResponse<ServerResponsePayload<MetaImagePayload[]>>> => {
 
     const url = backEndUrl(uri)    
 
-    const response: HttpResponse<MetaImagePayload[]> = await fetch(url, {
+    const response: HttpResponse<ServerResponsePayload<MetaImagePayload[]>> = await fetch(url, {
         method: HttpMethod.POST,
         mode: 'cors',
         credentials: 'omit',
@@ -37,9 +38,18 @@ const addFiles = (formData: FormData, fileList: FileList): void => {
 
 const artistUri = musicUri + "/artist"
 
-export const uploadArtistImages = (artistId: number,  fileList: FileList, userToken?: string): Promise<HttpResponse<MetaImagePayload[]>> => {
+export const uploadArtistImages = (artistId: number,  fileList: FileList, userToken?: string): Promise<HttpResponse<ServerResponsePayload<MetaImagePayload[]>>> => {
     const formData = new FormData()
     formData.append("artistId", "" + artistId)
     addFiles(formData, fileList)
     return postFiles(artistUri + "/images", formData, userToken)
+}
+
+const albumUri = musicUri + "/album"
+
+export const uploadAlbumImages = (albumId: number,  fileList: FileList, userToken?: string): Promise<HttpResponse<ServerResponsePayload<MetaImagePayload[]>>> => {
+    const formData = new FormData()
+    formData.append("albumId", "" + albumId)
+    addFiles(formData, fileList)
+    return postFiles(albumUri + "/images", formData, userToken)
 }

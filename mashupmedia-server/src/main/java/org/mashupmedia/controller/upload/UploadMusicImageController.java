@@ -87,7 +87,7 @@ public class UploadMusicImageController {
 
 	@PostMapping(value = "/album/images", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServerResponsePayload<List<MetaEntityPayload>>> postAlbumImages(
-			@RequestParam("artistId") long albumId,
+			@RequestParam("albumId") long albumId,
 			@RequestParam("files") MultipartFile[] files) {
 
 		User user = AdminHelper.getLoggedInUser();

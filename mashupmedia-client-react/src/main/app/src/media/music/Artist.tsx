@@ -1,5 +1,6 @@
 import { Edit } from "@mui/icons-material";
-import { Button, Grid, IconButton } from '@mui/material';
+import { Button, Grid } from '@mui/material';
+import { t } from "i18next";
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -11,6 +12,7 @@ import ManageExternalLinks, { ManageExternalLinksPayload } from "../../common/co
 import ManageMetaImages, { ManageMetaImagesPayload } from "../../common/components/meta/ManageMetaImages";
 import { NotificationType, addNotification } from "../../common/notification/notificationSlice";
 import { RootState } from '../../common/redux/store';
+import { isContentEditor } from "../../common/utils/adminUtils";
 import { ExternalLinkPayload } from "../rest/mediaCalls";
 import { SecureMediaPayload } from '../rest/secureMediaPayload';
 import './Artist.css';
@@ -94,39 +96,40 @@ const Artist = () => {
     }
 
     function uploadMetaImages(files: FileList): void {
-        uploadArtistImages(artistPayloadRef.current?.payload.artistPayload.id || 0, files, userToken).then(response => {
-            if (response.ok) {
-                const metaImagePayloads = artistPayloadRef.current?.payload.artistPayload.metaImagePayloads || []
-                metaImagePayloads.push(...response.parsedBody || [])
+        uploadArtistImages(artistPayloadRef.current?.payload.artistPayload.id || 0, files, userToken)
+            .then(response => {
+                if (response.ok) {
+                    const metaImagePayloads = artistPayloadRef.current?.payload.artistPayload.metaImagePayloads || []
+                    metaImagePayloads.push(...response.parsedBody?.payload || [])
 
-                setProps(p => ({
-                    ...p,
-                    secureMediaItemPayload: {
-                        mediaToken: p.secureMediaItemPayload?.mediaToken || '',
-                        payload: {
-                            albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || [],
-                            artistPayload: {
-                                ...p.secureMediaItemPayload?.payload.artistPayload,
-                                id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
-                                name: p.secureMediaItemPayload?.payload.artistPayload.name || '',
-                                metaImagePayloads
+                    setProps(p => ({
+                        ...p,
+                        secureMediaItemPayload: {
+                            mediaToken: p.secureMediaItemPayload?.mediaToken || '',
+                            payload: {
+                                albumPayloads: p.secureMediaItemPayload?.payload.albumPayloads || [],
+                                artistPayload: {
+                                    ...p.secureMediaItemPayload?.payload.artistPayload,
+                                    id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                                    name: p.secureMediaItemPayload?.payload.artistPayload.name || '',
+                                    metaImagePayloads
+                                }
                             }
+                        },
+                        manageMetaImagesPayload: {
+                            ...p.manageMetaImagesPayload,
+                            metaImagePayloads
                         }
-                    },
-                    manageMetaImagesPayload: {
-                        ...p.manageMetaImagesPayload,
-                        metaImagePayloads
-                    }
-                }))
-            } else {
-                dispatch(
-                    addNotification({
-                        message: 'Unable to upload image',
-                        notificationType: NotificationType.ERROR
-                    })
-                )
-            }
-        })
+                    }))
+                } else {
+                    dispatch(
+                        addNotification({
+                            message: 'Unable to upload image',
+                            notificationType: NotificationType.ERROR
+                        })
+                    )
+                }
+            })
 
     }
 
@@ -324,7 +327,7 @@ const Artist = () => {
                             notificationType: NotificationType.SUCCESS
                         })
                     )
-                    navigate('/music/artists')
+                    navigate('/music/artist/' + artistPayloadRef.current?.payload.artistPayload.id)
                 } else {
                     dispatch(
                         addNotification({
@@ -345,18 +348,13 @@ const Artist = () => {
     }
 
     function showManageButtons(): boolean {
-        const userPayload = artistPayloadRef.current?.payload.artistPayload.userPayload
-        if (!userPayload || !userPolicyPayload) {
-            return false
-        }
-
-        return userPolicyPayload.administrator || userPayload.username === userPolicyPayload.username
+        return isContentEditor(artistPayloadRef.current?.payload.artistPayload.userPayload, userPolicyPayload)
     }
 
 
     function handleArtistImagePopover() {
         const source = artistImageUrl(
-            props.secureMediaItemPayload?.payload.artistPayload.id || 0, 
+            props.secureMediaItemPayload?.payload.artistPayload.id || 0,
             ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '',
             props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads?.length ? props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads[0].id : 0
         )
@@ -381,31 +379,45 @@ const Artist = () => {
 
                 <img
                     src={artistImageUrl(
-                        props.secureMediaItemPayload?.payload.artistPayload.id || 0, 
-                        ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '', 
-                        props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads?.length ? props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads[0].id : 0 
+                        props.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                        ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '',
+                        props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads?.length ? props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads[0].id : 0
                     )}
                     onClick={handleArtistImagePopover}
                 />
 
-                <h1>{props.secureMediaItemPayload?.payload.artistPayload.name || 'New artist'}</h1>
-                <IconButton
-                    color="secondary"
-                    onClick={openEditNameDialog}
-                >
-                    <Edit />
-                </IconButton>
+                <h1>{props.secureMediaItemPayload?.payload.artistPayload.name}</h1>
+
+                {showManageButtons() &&
+                    <Button
+                        variant="outlined"
+                        endIcon={<Edit />}
+                        color="secondary"
+                        size="small"
+                        onClick={openEditNameDialog}
+                    >
+                        {t('label.name')}
+                    </Button>
+                }
             </div>
 
-
             <div className="profile">
-                <div>{props.secureMediaItemPayload?.payload.artistPayload.profile || 'Add profile'}</div>
-                <IconButton
-                    color="secondary"
-                    onClick={openEditProfileDialog}
-                >
-                    <Edit />
-                </IconButton>
+
+                {props.secureMediaItemPayload?.payload.artistPayload.profile &&
+                <div>{props.secureMediaItemPayload?.payload.artistPayload.profile}</div>
+}
+                {showManageButtons() &&
+                    <Button
+                        variant="outlined"
+                        endIcon={<Edit />}
+                        color="secondary"
+                        size="small"
+                        onClick={openEditProfileDialog}
+                    >
+                        {t('label.profile')}
+                    </Button>
+                }
+
             </div>
 
             <ManageMetaImages {...props.manageMetaImagesPayload} />
@@ -436,7 +448,7 @@ const Artist = () => {
                 })}
             </Grid>
 
-            <CreateAlbumNameDialog {...props.createAlbumDialogPayload}  />
+            <CreateAlbumNameDialog {...props.createAlbumDialogPayload} />
 
             <div className="new-line right" style={{ marginTop: "1em" }}>
                 <Button

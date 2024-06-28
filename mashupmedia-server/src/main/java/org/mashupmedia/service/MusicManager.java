@@ -3,7 +3,6 @@ package org.mashupmedia.service;
 import java.util.List;
 
 import org.mashupmedia.exception.ContainsMediaItemsException;
-import org.mashupmedia.exception.NameNotUniqueException;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
@@ -26,7 +25,7 @@ public interface MusicManager {
 
 	public List<Track> getTracks(Long albumId);
 
-	public void saveAlbum(Album album) throws NameNotUniqueException;
+	public void saveAlbum(Album album);
 
 	public Artist getArtist(Long artistId);
 

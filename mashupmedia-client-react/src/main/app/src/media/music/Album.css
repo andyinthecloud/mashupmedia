@@ -12,6 +12,14 @@
     opacity: 0.5;
 }
 
+#album span {
+    padding-right: 1em;
+}
+
+#album div {
+    margin-bottom: 0.5em;
+}
+
 #album div.album-name {
     font-size: 1.5em;
     opacity: 0.8;
@@ -21,3 +29,9 @@
 #album div.artist-name {
     font-size: 1em;
 }
+
+#album div.profile {
+    font-size: 1em;
+    font-weight: lighter;
+}
+

@@ -7,11 +7,13 @@ import java.util.Set;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.ExternalLink;
 import org.mashupmedia.model.media.MetaImage;
+import org.mashupmedia.model.media.social.SocialConfiguration;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -50,7 +52,7 @@ public class Artist{
 	private String name;
 	private Date createdOn;
 	private Date updatedOn;
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "artists_meta_images", joinColumns = @JoinColumn(name = "meta_image_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
 	private Set<MetaImage> metaImages;
 	@OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -60,9 +62,11 @@ public class Artist{
 	private User user;
 	@Size(max = 1024)
 	private String profile;
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "artists_external_links", joinColumns = @JoinColumn(name = "external_link_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
 	private Set<ExternalLink> externalLinks;
+	@ManyToOne(cascade = { CascadeType.ALL })
+	private SocialConfiguration socialConfiguration;
 
 	@Override
 	public int hashCode() {

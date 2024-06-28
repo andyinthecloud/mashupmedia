@@ -1,5 +1,13 @@
 {
     "error": {
-        "not-unique": "Please choose a unique value"
+        "general": "I am not feeling very well",
+        "notUnique": "Please choose a unique value"
+    },
+    "label": {
+        "name": "Name",
+        "profile": "Profile",
+        "albumSaved": "Album saved",
+        "albumDeleted": "Album deleted"
+
     }
 }

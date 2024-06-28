@@ -5,8 +5,10 @@ import java.util.Set;
 
 import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
+import org.mashupmedia.exception.UserStorageException;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MetaImage;
+import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.service.storage.StorageManager;
 import org.mashupmedia.service.transcode.TranscodeImageManager;
@@ -28,34 +30,9 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
     private final StorageManager storageManager;
 
     @Override
-    public MetaImage storeArtistImage(long artistId, MultipartFile multipartFile) {
-
+    public MetaImage storeArtistImage(long artistId, MultipartFile multipartFile) throws UserStorageException{
         Artist artist = musicManager.getArtist(artistId);
         MetaImage metaImage = processImage(artist.getUser(), multipartFile, artist.getName());
-
-        // AdminHelper.checkAccess(artist.getUser());
-
-        // String fileExtension = FileHelper.getFileExtension(multipartFile.getOriginalFilename());
-        // MediaContentType mediaContentType = MediaContentHelper.getMediaContentType(fileExtension);
-
-        // if (!MediaContentHelper.isCompatiblePhotoFormat(mediaContentType)) {
-        //     throw new MashupMediaRuntimeException("Image content type is incompatible");
-        // }
-
-        // // Artist artist = musicManager.getArtist(artistId);
-        // // AdminHelper.checkAccess(artist.getUser());
-
-        // MetaImage metaImage = new MetaImage();
-        // metaImage.setName(artist.getName());
-        // metaImage.setContentType(mediaContentType.getContentType());
-
-        // Path tempArtistImagePath = transcodeManager.processImage(multipartFile);
-        // String artistImagePath = storageManager.store(tempArtistImagePath);
-        // metaImage.setUrl(artistImagePath);
-
-        // Path tempArtistThumbnailPath = transcodeManager.processThumbnail(multipartFile);
-        // String artistThumbnailPath = storageManager.store(tempArtistThumbnailPath);
-        // metaImage.setThumbnailUrl(artistThumbnailPath);
 
         MetaEntityHelper<MetaImage> metaImageHelper = new MetaEntityHelper<>();
         Set<MetaImage> metaImages = metaImageHelper.addMetaEntity(metaImage, artist.getMetaImages());
@@ -67,12 +44,20 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
     }
 
     @Override
-    public MetaImage storeAlbumImage(long albumId, MultipartFile file) {
-        // TODO Auto-generated method stub
-        return null;
+    public MetaImage storeAlbumImage(long albumId, MultipartFile multipartFile) throws UserStorageException {
+        Album album = musicManager.getAlbum(albumId);
+        Artist artist = album.getArtist();
+        MetaImage metaImage = processImage(artist.getUser(), multipartFile, album.getName());
+        MetaEntityHelper<MetaImage> metaImageHelper = new MetaEntityHelper<>();
+        Set<MetaImage> metaImages = metaImageHelper.addMetaEntity(metaImage, album.getMetaImages());
+        album.setMetaImages(metaImages);
+        
+        musicManager.saveAlbum(album);
+        
+        return metaImage;
     }
 
-    private MetaImage processImage(User user, MultipartFile multipartFile, String name) {
+    private MetaImage processImage(User user, MultipartFile multipartFile, String name) throws UserStorageException{
         
         AdminHelper.checkAccess(user);
         storageManager.checkUserStorage(multipartFile.getSize());
@@ -84,20 +69,17 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
             throw new MashupMediaRuntimeException("Image content type is incompatible");
         }
 
-        // Artist artist = musicManager.getArtist(artistId);
-        // AdminHelper.checkAccess(artist.getUser());
-
         MetaImage metaImage = new MetaImage();
         metaImage.setName(name);
         metaImage.setContentType(mediaContentType.getContentType());
 
-        Path tempArtistImagePath = transcodeManager.processImage(multipartFile);
-        String artistImagePath = storageManager.store(tempArtistImagePath);
-        metaImage.setUrl(artistImagePath);
+        Path tempImagePath = transcodeManager.processImage(multipartFile);
+        String imagePath = storageManager.store(tempImagePath);
+        metaImage.setUrl(imagePath);
 
-        Path tempArtistThumbnailPath = transcodeManager.processThumbnail(multipartFile);
-        String artistThumbnailPath = storageManager.store(tempArtistThumbnailPath);
-        metaImage.setThumbnailUrl(artistThumbnailPath);
+        Path tempThumbnailPath = transcodeManager.processThumbnail(multipartFile);
+        String thumbnailPath = storageManager.store(tempThumbnailPath);
+        metaImage.setThumbnailUrl(thumbnailPath);
     
         return metaImage;
     }

@@ -12,7 +12,9 @@ spring:
       request-timeout: 360000
   jpa:
     hibernate:
-      ddl-auto: validate #update validate
+      ddl-auto: validate 
+      # ddl-auto: update
+
     open-in-view: false
     properties:
       hibernate:

@@ -39,15 +39,6 @@ public class ExternalLink extends MetaEntity{
     private String link;
     private int rank;
 
-    // public boolean included(Collection<ExternalLink> externalLinks) {
-    //     if (this.id < 1) {
-    //         return false;
-    //     }
-
-    //     return externalLinks.stream()
-    //             .anyMatch(externalLink -> externalLink.id == this.id);
-    // }
-    
     @Override
     public void updateValues(MetaEntity updatedEntity) {
         if (updatedEntity instanceof ExternalLink externalLink) {
@@ -56,11 +47,5 @@ public class ExternalLink extends MetaEntity{
             setRank(externalLink.getRank());    
         }
     }
-
-
-
-
-
-    
 
 }

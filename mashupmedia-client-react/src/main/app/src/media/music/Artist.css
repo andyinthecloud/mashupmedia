@@ -2,6 +2,11 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    margin-bottom: 0.5em;
+}
+
+#artist div.profile {
+    font-weight: lighter;
 }
 
 #artist div.title img {
@@ -11,7 +16,9 @@
     cursor: pointer;
 }
 
-
+#artist h1, #artist div.profile div {
+    margin-right: 1em;
+} 
 
 
 

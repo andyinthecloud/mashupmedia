@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.mashupmedia.comparator.MetaEntityComparator;
 import org.mashupmedia.dao.MusicDao;
@@ -108,7 +109,7 @@ public class MusicManagerImpl implements MusicManager {
 	}
 
 	@Override
-	public void saveAlbum(Album album) throws NameNotUniqueException {
+	public void saveAlbum(Album album) {
 		Assert.hasText(album.getName(), "Expecting an album name");
 		Artist artist = album.getArtist();
 		Assert.notNull(artist, "artist should not be empty");
@@ -129,8 +130,44 @@ public class MusicManagerImpl implements MusicManager {
 			throw new NameNotUniqueException("Album name should be unique");
 		}
 
+		Album albumToSave = null;
+		if (album.getId() > 0) {
+			albumToSave = prepareUpdateAlbum(album, savedArtist);
+		} else {
+			albumToSave = prepareCreateAlbum(album, savedArtist);
+		}
+
+		musicDao.saveAlbum(albumToSave);
+	}
+
+	private Album prepareCreateAlbum(Album album, Artist savedArtist) {
+		Date date = new Date();
+		album.setCreatedOn(date);
 		album.setArtist(savedArtist);
-		musicDao.saveAlbum(album);
+		album.setUpdatedOn(date);
+		return album;
+	}
+
+	private Album prepareUpdateAlbum(Album album, Artist savedArtist) {
+		Album savedAlbum = getAlbum(album.getId());
+		savedAlbum.setArtist(savedArtist);
+		savedAlbum.setName(album.getName());
+		savedAlbum.setUpdatedOn(new Date());
+
+		Set<ExternalLink> savedExternalLinks = savedAlbum.getExternalLinks();
+		Set<ExternalLink> externalLinks = album.getExternalLinks();
+
+		MetaEntityHelper<ExternalLink> externalLinkHelper = new MetaEntityHelper<>();
+		externalLinkHelper.mergeSet(savedExternalLinks, externalLinks);
+
+		Set<MetaImage> savedMetaImages = savedAlbum.getMetaImages();
+		Set<MetaImage> metaImages = album.getMetaImages();
+
+		MetaEntityHelper<MetaImage> metaImageHelper = new MetaEntityHelper<>();
+		Set<MetaImage> deletedMetaImages = metaImageHelper.mergeSet(savedMetaImages, metaImages);
+		deleteMetaImageFiles(deletedMetaImages);
+
+		return savedAlbum;
 	}
 
 	@Override
@@ -177,8 +214,7 @@ public class MusicManagerImpl implements MusicManager {
 		savedArtist.setProfile(artist.getProfile());
 		savedArtist.setName(artist.getName());
 
-		Date date = new Date();
-		savedArtist.setUpdatedOn(date);
+		savedArtist.setUpdatedOn(new Date());
 
 		return savedArtist;
 	}
@@ -189,8 +225,15 @@ public class MusicManagerImpl implements MusicManager {
 		}
 
 		for (MetaImage metaImage : metaImages) {
-			storageManager.delete(Path.of(metaImage.getUrl()));
-			storageManager.delete(Path.of(metaImage.getThumbnailUrl()));
+			String url = metaImage.getUrl();
+			if (StringUtils.isNotBlank(url)) {
+				storageManager.delete(Path.of(url));
+			}
+
+			String thumbnailUrl = metaImage.getThumbnailUrl();
+			if (StringUtils.isNotBlank(thumbnailUrl)) {
+				storageManager.delete(Path.of(thumbnailUrl));
+			}
 		}
 	}
 
@@ -217,13 +260,7 @@ public class MusicManagerImpl implements MusicManager {
 		if (album == null) {
 			return null;
 		}		
-
-		Hibernate.initialize(album.getMetaImages());
-
-		Artist artist = album.getArtist();
-		Hibernate.initialize(artist.getExternalLinks());
-		Hibernate.initialize(artist.getMetaImages());
-
+		
 		return album;
 	}
 

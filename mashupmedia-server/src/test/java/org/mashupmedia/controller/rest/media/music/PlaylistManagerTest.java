@@ -74,7 +74,6 @@ public class PlaylistManagerTest {
 
         Album album = new Album();
         album.setArtist(artist);
-        album.setFolderName("folderName");
         album.setName("name");
         // album.setTracks(tracks);
         musicDao.saveAlbum(album);

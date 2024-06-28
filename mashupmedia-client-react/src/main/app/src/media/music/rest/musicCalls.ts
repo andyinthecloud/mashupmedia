@@ -27,6 +27,7 @@ export type CreateArtistPayload = {
 export type AlbumPayload = {
     id: number
     name: string
+    profile?: string
     externalLinkPayloads?: ExternalLinkPayload[]
     metaImagePayloads?: MetaImagePayload[]
 }
@@ -42,7 +43,7 @@ export type TrackPayload = {
     totalSeconds: number
     minutes?: number
     seconds?: number
-    encodedForWeb?: boolean 
+    encodedForWeb?: boolean
     year: number
 }
 
@@ -113,4 +114,12 @@ export const mediaStreamUrl = (mediaItemId: number, mediaToken: string, seconds?
 export const playlistStreamUrl = (playlistId: number, mediaToken: string, seconds?: number): string => {
     const timeFragment = seconds ? `#t=${seconds}` : ''
     return `${backEndUrl('/stream/secure/playlist')}/${playlistId}?timestamp=${timestamp()}&mediaToken=${mediaToken}${timeFragment}`
+}
+
+export const deleteAlbum = (albumId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {
+    return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.DELETE, albumUrl + "/" + albumId, userToken)
+}
+
+export const saveAlbum = (albumPayload: AlbumPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {
+    return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.DELETE, albumUrl, userToken, JSON.stringify(albumPayload))
 }
