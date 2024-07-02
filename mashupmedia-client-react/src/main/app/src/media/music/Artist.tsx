@@ -328,18 +328,11 @@ const Artist = () => {
                         })
                     )
                     navigate('/music/artist/' + artistPayloadRef.current?.payload.artistPayload.id)
-                } else {
-                    dispatch(
-                        addNotification({
-                            message: 'Please choose a unique name.',
-                            notificationType: NotificationType.ERROR
-                        })
-                    )
-                }
+                } 
             } else {
                 dispatch(
                     addNotification({
-                        message: 'Error saving artist.',
+                        message: t(response.parsedBody?.errorPayload.errorCode || ''),
                         notificationType: NotificationType.ERROR
                     })
                 )

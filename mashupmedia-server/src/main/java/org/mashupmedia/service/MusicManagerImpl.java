@@ -104,6 +104,10 @@ public class MusicManagerImpl implements MusicManager {
 			return;
 		}
 
+		if (album.getTracks().isEmpty()) {
+			albumRepository.delete(album);
+			return;
+		}
 
 		throw new ContainsMediaItemsException("Unable to delete. Album contains tracks.");
 	}
@@ -152,6 +156,7 @@ public class MusicManagerImpl implements MusicManager {
 		Album savedAlbum = getAlbum(album.getId());
 		savedAlbum.setArtist(savedArtist);
 		savedAlbum.setName(album.getName());
+		savedAlbum.setSummary(album.getSummary());
 		savedAlbum.setUpdatedOn(new Date());
 
 		Set<ExternalLink> savedExternalLinks = savedAlbum.getExternalLinks();

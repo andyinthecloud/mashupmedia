@@ -9,6 +9,7 @@ import org.mashupmedia.dto.media.music.AlbumPayload;
 import org.mashupmedia.dto.media.music.AlbumWithArtistPayload;
 import org.mashupmedia.dto.media.music.AlbumWithTracksAndArtistPayload;
 import org.mashupmedia.dto.media.music.CreateAlbumPayload;
+import org.mashupmedia.dto.media.music.SaveAlbumPayload;
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.ErrorPayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
@@ -18,6 +19,7 @@ import org.mashupmedia.mapper.media.music.AlbumMapper;
 import org.mashupmedia.mapper.media.music.AlbumWithArtistMapper;
 import org.mashupmedia.mapper.media.music.AlbumWithTracksMapper;
 import org.mashupmedia.mapper.media.music.CreateAlbumMapper;
+import org.mashupmedia.mapper.media.music.SaveAlbumMapper;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.service.MashupMediaSecurityManager;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,6 +52,7 @@ public class AlbumController {
     private final AlbumWithTracksMapper albumWithTracksMapper;
     private final AlbumMapper albumMapper;
     private final CreateAlbumMapper createAlbumMapper;
+    private final SaveAlbumMapper saveAlbumMapper;
 
     private enum SortAlbum {
         RANDOM
@@ -83,9 +87,9 @@ public class AlbumController {
     public ResponseEntity<ServerResponsePayload<AlbumPayload>> createAlbum(
             @RequestBody @Valid CreateAlbumPayload createAlbumPayload) {
         Album album = createAlbumMapper.toDomain(createAlbumPayload);
+
         ServerResponsePayload<AlbumPayload> serverResponsePayload = ServerResponsePayload.<AlbumPayload>builder()
                 .build();
-
         try {
             musicManager.saveAlbum(album);
 
@@ -105,6 +109,14 @@ public class AlbumController {
                         .build());
     }
 
+    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> updateAlbum(
+            @RequestBody @Valid SaveAlbumPayload albumPayload) {
+        Album album = saveAlbumMapper.toDomain(albumPayload);
+        musicManager.saveAlbum(album);
+        return ResponseEntity.ok().body(true);
+    }
+
     @DeleteMapping(value = "/{albumId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServerResponsePayload<Boolean>> deleteAlbum(@PathVariable long albumId) {
         try {
@@ -120,8 +132,9 @@ public class AlbumController {
 
         }
 
-        return ResponseEntity.badRequest().body(
-                ServerResponsePayload.<Boolean>builder()
+        return ResponseEntity
+                .ok()
+                .body(ServerResponsePayload.<Boolean>builder()
                         .payload(true)
                         .build());
 

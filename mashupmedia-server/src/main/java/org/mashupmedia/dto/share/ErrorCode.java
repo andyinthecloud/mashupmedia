@@ -12,7 +12,7 @@ public enum ErrorCode {
     PLAYLIST_NOT_FOUND("error.playlist.notFound"),
     EMAIL_INVALID("error.email.invalid"),
     TOKEN_INVALID("error.token.invalid"), 
-    CONTAINS_MEDIA("error.contains.media"),
+    CONTAINS_MEDIA("error.containsMedia"),
     OUT_OF_STORAGE("error.outOfStorage");
 
 

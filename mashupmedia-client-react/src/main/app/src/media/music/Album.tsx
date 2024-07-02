@@ -24,7 +24,7 @@ type AlbumPagePageload = {
     secureMediaItemPayload?: SecureMediaPayload<AlbumWithTracksAndArtistPayload>
     imagePopover: ImagePopoverPayload
     editAlbumNameDialogPayload: EditTextDialogPayload
-    editAlbumProfileDialogPayload: EditTextDialogPayload
+    editAlbumSummaryDialogPayload: EditTextDialogPayload
     manageMetaImagesPayload: ManageMetaImagesPayload
     manageExternalLinksPayload: ManageExternalLinksPayload
 
@@ -67,13 +67,13 @@ const Album = () => {
                 updatePayload: updateAlbumName
             }
         },
-        editAlbumProfileDialogPayload: {
-            textFieldLabel: "Profile",
+        editAlbumSummaryDialogPayload: {
+            textFieldLabel: "Summary",
             dialogPayload: {
                 open: false,
                 payload: '',
-                title: "Edit artist profile",
-                updatePayload: updateAlbumProfile
+                title: "Edit album summary",
+                updatePayload: updateAlbumSummary
             }
         },
         manageMetaImagesPayload: {
@@ -115,14 +115,14 @@ const Album = () => {
     }
 
 
-    function updateAlbumProfile(profile: string): void {
+    function updateAlbumSummary(summary: string): void {
 
         setProps(p => ({
             ...p,
-            editAlbumProfileDialogPayload: {
+            editAlbumSummaryDialogPayload: {
                 ...p.editAlbumNameDialogPayload,
                 dialogPayload: {
-                    ...p.editAlbumProfileDialogPayload.dialogPayload,
+                    ...p.editAlbumSummaryDialogPayload.dialogPayload,
                     open: false
                 }
             },
@@ -137,7 +137,7 @@ const Album = () => {
                         ...p.secureMediaItemPayload?.payload.albumPayload,
                         id: p.secureMediaItemPayload?.payload.albumPayload.id || 0,
                         name: p.secureMediaItemPayload?.payload.albumPayload.name || '',
-                        profile
+                        summary
                     },
                     artistPayload: {
                         ...p.secureMediaItemPayload?.payload.artistPayload,
@@ -346,10 +346,10 @@ const Album = () => {
         }))
     }
 
-    function openEditProfileDialog(): void {
+    function openEditSummaryDialog(): void {
         setProps(p => ({
             ...p,
-            editAlbumProfileDialogPayload: {
+            editAlbumSummaryDialogPayload: {
                 ...p.editAlbumNameDialogPayload,
                 dialogPayload: {
                     ...p.editAlbumNameDialogPayload.dialogPayload,
@@ -369,29 +369,35 @@ const Album = () => {
 
     const handleClickSave = (): void => {
         const albumPayload = props.secureMediaItemPayload?.payload.albumPayload
-        if (!albumPayload) {
+        const artistId = props.secureMediaItemPayload?.payload.artistPayload.id
+        if (!albumPayload || !artistId) {
             return
         }
 
-        saveAlbum(albumPayload, userToken).then(response => {
-            if (response.ok) {
-                navigate('/music/albums')
-                dispatch(
-                    addNotification({
-                        message: t('label.albumSaving'),
-                        notificationType: NotificationType.SUCCESS
-                    })
-                )
-            } else {
-                dispatch(
-                    addNotification({
-                        message: t(response.parsedBody?.errorPayload.errorCode || 'error.general'),
-                        notificationType: NotificationType.ERROR
-                    })
-                )
+        saveAlbum(
+            {
+                ...albumPayload,
+                artistId
+            },
+            userToken).then(response => {
+                if (response.ok) {
+                    navigate('/music/artist/' + artistId)
+                    dispatch(
+                        addNotification({
+                            message: t('label.albumSaved'),
+                            notificationType: NotificationType.SUCCESS
+                        })
+                    )
+                } else {
+                    dispatch(
+                        addNotification({
+                            message: t('error.general'),
+                            notificationType: NotificationType.ERROR
+                        })
+                    )
 
-            }
-        })
+                }
+            })
     }
 
     const handleClickDelete = (): void => {
@@ -402,6 +408,7 @@ const Album = () => {
 
         deleteAlbum(albumId, userToken).then(response => {
             if (response.ok) {
+                navigate('/music/artist/' + props.secureMediaItemPayload?.payload.artistPayload.id)
                 dispatch(
                     addNotification({
                         message: t('label.albumDeleted'),
@@ -425,7 +432,7 @@ const Album = () => {
         <Card id="album">
 
             <EditTextDialog {...props.editAlbumNameDialogPayload} />
-            <EditTextDialog {...props.editAlbumProfileDialogPayload} />
+            <EditTextDialog {...props.editAlbumSummaryDialogPayload} />
 
             <div className="media-container">
 
@@ -477,10 +484,10 @@ const Album = () => {
                     }
 
                 </div>
-                <div className="profile">
-                    {props.secureMediaItemPayload?.payload.albumPayload.profile &&
+                <div className="summary">
+                    {props.secureMediaItemPayload?.payload.albumPayload.summary &&
                         <span>
-                            {props.secureMediaItemPayload?.payload.albumPayload.profile}
+                            {props.secureMediaItemPayload?.payload.albumPayload.summary}
                         </span>
                     }
 
@@ -490,9 +497,9 @@ const Album = () => {
                             endIcon={<Edit />}
                             color="secondary"
                             size="small"
-                            onClick={openEditProfileDialog}
+                            onClick={openEditSummaryDialog}
                         >
-                            {t('label.profile')}
+                            {t('label.summary')}
                         </Button>
                     }
                 </div>

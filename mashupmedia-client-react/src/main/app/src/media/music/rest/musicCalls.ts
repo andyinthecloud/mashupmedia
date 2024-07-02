@@ -27,9 +27,13 @@ export type CreateArtistPayload = {
 export type AlbumPayload = {
     id: number
     name: string
-    profile?: string
+    summary?: string
     externalLinkPayloads?: ExternalLinkPayload[]
     metaImagePayloads?: MetaImagePayload[]
+}
+
+export type SaveAlbumPayload = AlbumPayload & {
+    artistId: number
 }
 
 export type AlbumWithArtistPayload = {
@@ -86,8 +90,8 @@ export const createArtist = (createArtistPayload: CreateArtistPayload, userToken
     return callMashupMediaApi<ArtistPayload>(HttpMethod.POST, artistUri, userToken, JSON.stringify(createArtistPayload))
 }
 
-export const saveArtist = (artistPayload: ArtistPayload, userToken?: string): Promise<HttpResponse<string>> => {
-    return callMashupMediaApi<string>(HttpMethod.PUT, artistUri, userToken, JSON.stringify(artistPayload))
+export const saveArtist = (artistPayload: ArtistPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {
+    return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.PUT, artistUri, userToken, JSON.stringify(artistPayload))
 }
 
 export const deleteArtist = (artistId: number, userToken?: string): Promise<HttpResponse<NameValuePayload<string>>> => {
@@ -120,6 +124,6 @@ export const deleteAlbum = (albumId: number, userToken?: string): Promise<HttpRe
     return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.DELETE, albumUrl + "/" + albumId, userToken)
 }
 
-export const saveAlbum = (albumPayload: AlbumPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {
-    return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.DELETE, albumUrl, userToken, JSON.stringify(albumPayload))
+export const saveAlbum = (saveAlbumPayload: SaveAlbumPayload, userToken?: string): Promise<HttpResponse<boolean>> => {
+    return callMashupMediaApi<boolean>(HttpMethod.PUT, albumUrl, userToken, JSON.stringify(saveAlbumPayload))
 }

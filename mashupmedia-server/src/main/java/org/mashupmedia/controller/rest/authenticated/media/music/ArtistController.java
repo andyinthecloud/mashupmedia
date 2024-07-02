@@ -8,8 +8,10 @@ import org.mashupmedia.dto.media.music.ArtistPayload;
 import org.mashupmedia.dto.media.music.ArtistWithAlbumsPayload;
 import org.mashupmedia.dto.media.music.CreateArtistPayload;
 import org.mashupmedia.dto.share.ErrorCode;
+import org.mashupmedia.dto.share.ErrorPayload;
 import org.mashupmedia.dto.share.JsonNameType;
 import org.mashupmedia.dto.share.NameValuePayload;
+import org.mashupmedia.dto.share.ServerResponsePayload;
 import org.mashupmedia.exception.ContainsMediaItemsException;
 import org.mashupmedia.mapper.media.music.ArtistMapper;
 import org.mashupmedia.mapper.media.music.ArtistWithAlbumsMapper;
@@ -80,15 +82,22 @@ public class ArtistController {
     }
 
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> saveArtist(@Valid @RequestBody ArtistPayload artistPayload) {
-
+    public ResponseEntity<ServerResponsePayload<Boolean>> saveArtist(@Valid @RequestBody ArtistPayload artistPayload) {
         if (!isArtistNameUnique(artistPayload.getId(), artistPayload.getName())) {
-            return ResponseEntity.badRequest().body(ErrorCode.NOT_UNIQUE.getErrorCode());
+            return ResponseEntity.badRequest().body(ServerResponsePayload.<Boolean>builder()
+                    .errorPayload(ErrorPayload.builder().errorCode(ErrorCode.NOT_UNIQUE.getErrorCode()).build())
+                    .build());
         }
 
         Artist artist = artistMapper.toDomain(artistPayload);
         musicManager.saveArtist(artist);
-        return ResponseEntity.ok().body(ValidationUtils.DEFAULT_OK_RESPONSE_MESSAGE);
+
+        return ResponseEntity.ok().body(
+                ServerResponsePayload.<Boolean>builder()
+                        .payload(true)
+                        .build()
+
+        );
     }
 
     private boolean isArtistNameUnique(long id, String name) {
