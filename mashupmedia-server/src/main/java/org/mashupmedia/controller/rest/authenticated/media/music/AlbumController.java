@@ -103,9 +103,10 @@ public class AlbumController {
 
         }
 
+        Album savedAlbum = musicManager.getAlbum(album.getId());
         return ResponseEntity.ok().body(
                 serverResponsePayload.toBuilder()
-                        .payload(albumMapper.toPayload(album))
+                        .payload(albumMapper.toPayload(savedAlbum))
                         .build());
     }
 

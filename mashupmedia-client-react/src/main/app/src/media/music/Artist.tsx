@@ -171,6 +171,7 @@ const Artist = () => {
 
 
     function updateArtistName(text: string): void {
+
         setProps(p => ({
             ...p,
             editArtistNameDialogPayload: {
@@ -187,7 +188,7 @@ const Artist = () => {
                     artistPayload: {
                         ...p.secureMediaItemPayload?.payload.artistPayload,
                         id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
-                        name: p.secureMediaItemPayload?.payload.artistPayload.name || text
+                        name: text || p.secureMediaItemPayload?.payload.artistPayload.name || ''
                     }
                 }
             }
@@ -328,7 +329,7 @@ const Artist = () => {
                         })
                     )
                     navigate('/music/artist/' + artistPayloadRef.current?.payload.artistPayload.id)
-                } 
+                }
             } else {
                 dispatch(
                     addNotification({
@@ -369,7 +370,6 @@ const Artist = () => {
             <ImagePopover {...props.artistImagePopover} />
 
             <div className="title">
-
                 <img
                     src={artistImageUrl(
                         props.secureMediaItemPayload?.payload.artistPayload.id || 0,
@@ -380,41 +380,46 @@ const Artist = () => {
                 />
 
                 <h1>{props.secureMediaItemPayload?.payload.artistPayload.name}</h1>
-
-                {showManageButtons() &&
-                    <Button
-                        variant="outlined"
-                        endIcon={<Edit />}
-                        color="secondary"
-                        size="small"
-                        onClick={openEditNameDialog}
-                    >
-                        {t('label.name')}
-                    </Button>
-                }
             </div>
+
+            {showManageButtons() &&
+                <Button
+                    className="edit-content"
+                    variant="outlined"
+                    endIcon={<Edit />}
+                    color="secondary"
+                    onClick={openEditNameDialog}
+                >
+                    {t('label.name')}
+                </Button>
+            }
 
             <div className="profile">
 
                 {props.secureMediaItemPayload?.payload.artistPayload.profile &&
-                <div>{props.secureMediaItemPayload?.payload.artistPayload.profile}</div>
-}
-                {showManageButtons() &&
-                    <Button
-                        variant="outlined"
-                        endIcon={<Edit />}
-                        color="secondary"
-                        size="small"
-                        onClick={openEditProfileDialog}
-                    >
-                        {t('label.profile')}
-                    </Button>
+                    <div>{props.secureMediaItemPayload?.payload.artistPayload.profile}</div>
                 }
 
             </div>
+            {showManageButtons() &&
+                <Button
+                    className="edit-content"
+                    variant="outlined"
+                    endIcon={<Edit />}
+                    color="secondary"
+                    onClick={openEditProfileDialog}
+                >
+                    {t('label.profile')}
+                </Button>
+            }
 
-            <ManageMetaImages {...props.manageMetaImagesPayload} />
-            <ManageExternalLinks {...props.manageExternalLinksPayload} />
+            {showManageButtons() &&
+                <ManageMetaImages {...props.manageMetaImagesPayload} />
+            }
+
+            {showManageButtons() &&
+                <ManageExternalLinks {...props.manageExternalLinksPayload} />
+            }
 
             <Grid container spacing={5} columns={{ xs: 4, sm: 8, md: 12 }} display="flex">
 

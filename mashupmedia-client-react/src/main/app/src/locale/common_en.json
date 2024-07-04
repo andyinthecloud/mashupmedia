@@ -8,6 +8,7 @@
         "name": "Name",
         "profile": "Profile",
         "summary": "Summary",
+        "image": "Image",
         "albumSaved": "Album saved",
         "albumDeleted": "Album deleted"
 

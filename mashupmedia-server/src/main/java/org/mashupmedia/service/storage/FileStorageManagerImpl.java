@@ -1,12 +1,14 @@
 package org.mashupmedia.service.storage;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-import org.ehcache.shadow.org.terracotta.utilities.io.Files;
+import org.apache.commons.io.FileUtils;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.exception.UserStorageException;
+import org.mashupmedia.model.account.Premium;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
@@ -49,8 +51,16 @@ public class FileStorageManagerImpl implements StorageManager {
     }
 
     @Override
-    public void checkUserStorage(long size) throws UserStorageException {
-        // TODO Auto-generated method stub
+    public void checkUserStorage(long additionalSizeInBytes) throws UserStorageException {
+        User user = AdminHelper.getLoggedInUser();
+        Premium premium = user.getPremium();
+
+        Path userFolderPath = FileHelper.getUserUploadPath(user.getFolderName());
+        long userFolderSizeInBytes = FileUtils.sizeOfDirectory(userFolderPath.toFile());
+
+        if ((additionalSizeInBytes + userFolderSizeInBytes) > premium.getSizeInBytes()) {
+            throw new UserStorageException();
+        }
         
     }
 

@@ -1,5 +1,6 @@
 import { AddAPhoto } from "@mui/icons-material"
-import { IconButton } from "@mui/material"
+import { Button } from "@mui/material"
+import { t } from "i18next"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
 import { MetaImagePayload } from "../../../media/music/rest/musicUploadCalls"
 import { MenuMetaPayload } from "../../../media/rest/mediaCalls"
@@ -135,7 +136,7 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
         }
 
         props.manageMetaImagesPayload.uploadFiles(files)
-        
+
     }
 
     const handleClickImage = (anchorElement: HTMLElement, payload: MetaImagePayload): void => {
@@ -171,22 +172,24 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
                 })}
             </div>
 
-            <div className="new-line">
-                <input
-                    style={{ display: 'none' }}
-                    type="file"
-                    multiple
-                    accept="image/png, image/jpeg"
-                    ref={uploadFileRef}
-                    onChange={e => handleChangeFolder(e)}
-                />
-                <IconButton
-                    color="secondary"
-                    onClick={handleUploadImagesClick}
-                >
-                    <AddAPhoto />
-                </IconButton>
-            </div>
+            <input
+                style={{ display: 'none' }}
+                type="file"
+                multiple
+                accept="image/png, image/jpeg"
+                ref={uploadFileRef}
+                onChange={e => handleChangeFolder(e)}
+            />
+
+            <Button
+                className="edit-content"
+                variant="outlined"
+                endIcon={<AddAPhoto />}
+                color="secondary"
+                onClick={handleUploadImagesClick}
+            >
+                {t('label.image')}
+            </Button>
 
         </div>
     )

@@ -136,3 +136,8 @@ a {
 a:hover, a:hover span {
   text-decoration: underline;
 }
+
+button.edit-content {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
