@@ -13,14 +13,13 @@
         <insert tableName="premiums">
             <column name="id" valueSequenceNext="premiums_seq" />
             <column name="name" value="free" />
-            <column name="kilobytes" value="100000"/>
+            <column name="size_in_bytes" value="104857600"/>
         </insert>
         <insert tableName="premiums">
             <column name="id" valueSequenceNext="premiums_seq" />
             <column name="name" value="standard" />
-            <column name="kilobytes" value="1000000"/>
+            <column name="size_in_bytes" value="1073741824"/>
         </insert>
     </changeSet>
-
 
 </databaseChangeLog>                        

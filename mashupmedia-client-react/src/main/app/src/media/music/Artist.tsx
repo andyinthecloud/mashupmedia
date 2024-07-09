@@ -1,4 +1,3 @@
-import { Edit } from "@mui/icons-material";
 import { Button, Grid } from '@mui/material';
 import { t } from "i18next";
 import { useEffect, useRef, useState } from 'react';
@@ -8,6 +7,7 @@ import ImagePopover, { ImagePopoverPayload } from "../../common/components/Image
 import CreateAlbumNameDialog, { CreateAlbumNameDialogPageload } from "../../common/components/dialogs/CreateAlbumNameDialog";
 import EditTextDialog, { EditTextDialogPayload } from "../../common/components/dialogs/EditTextDialog";
 import AlbumSummary from '../../common/components/media/AlbumSummary';
+import MusicMetaMenu, { MusicMetaMenuPagePayload } from "../../common/components/menus/MusicMetaMenu";
 import ManageExternalLinks, { ManageExternalLinksPayload } from "../../common/components/meta/ManageExternalLinks";
 import ManageMetaImages, { ManageMetaImagesPayload } from "../../common/components/meta/ManageMetaImages";
 import { NotificationType, addNotification } from "../../common/notification/notificationSlice";
@@ -27,6 +27,7 @@ type ArtistPagePayload = {
     manageExternalLinksPayload: ManageExternalLinksPayload
     artistImagePopover: ImagePopoverPayload
     createAlbumDialogPayload: CreateAlbumNameDialogPageload
+    musicMetaMenuPagePayload: MusicMetaMenuPagePayload
 }
 
 const Artist = () => {
@@ -70,12 +71,12 @@ const Artist = () => {
             updateMetaImages: updateMetaImages,
             uploadFiles: uploadMetaImages,
             getImageUrl: getMetaImageUrl,
-            isManager: showManageButtons
+            editor: false            
         },
         manageExternalLinksPayload: {
             externalLinkPayloads: [],
             updateExternalLinks: updateExternalLinks,
-            isManager: showManageButtons
+            editor: false,
         },
         artistImagePopover: {
             source: '',
@@ -83,8 +84,47 @@ const Artist = () => {
         },
         createAlbumDialogPayload: {
             artistId: 0
+        },
+        musicMetaMenuPagePayload: {
+            editor: false,
+            editName: openEditNameDialog,
+            editSummary: openEditProfileDialog,
+            addImage: handleAddImage,
+            addExternalLink: handleAddExternalLink,
+            addAlbum: handleAddAlbum
         }
     })
+
+    function handleAddAlbum(): void {
+        setProps(p => ({
+            ...p,
+            createAlbumDialogPayload: {
+                ...p.createAlbumDialogPayload,
+                triggerAddAlbum: Date.now()
+            }
+        }))
+    }
+
+    function handleAddImage(): void {
+        setProps(p => ({
+            ...p,
+            manageMetaImagesPayload: {
+                ...p.manageMetaImagesPayload,
+                triggerUploadImage: Date.now()
+            }
+        }))
+    }
+
+
+    function handleAddExternalLink(): void {
+        setProps(p => ({
+            ...p,
+            manageExternalLinksPayload: {
+                ...p.manageExternalLinksPayload,
+                triggerAddExternalLink: Date.now()
+            }
+        }))
+    }
 
     function getMetaImageUrl(id: number): string {
         return artistImageUrl(
@@ -226,6 +266,10 @@ const Artist = () => {
             getArtist(+artistId, userToken).then(response => {
                 if (response.parsedBody !== undefined) {
                     const artistWithAlbumsPayload = response.parsedBody
+                    artistPayloadRef.current = response.parsedBody
+
+                    const editor = isEditor()
+                    console.log('useEffect: isEditor', editor)
 
                     setProps(p => ({
                         ...p,
@@ -236,21 +280,25 @@ const Artist = () => {
                         },
                         manageExternalLinksPayload: {
                             ...p.manageExternalLinksPayload,
-                            externalLinkPayloads: artistWithAlbumsPayload.payload.artistPayload.externalLinkPayloads || []
+                            externalLinkPayloads: artistWithAlbumsPayload.payload.artistPayload.externalLinkPayloads || [],
+                            editor
                         },
                         createAlbumDialogPayload: {
                             ...p.createAlbumDialogPayload,
-                            artistId: artistWithAlbumsPayload.payload.artistPayload.id
+                            artistId: artistWithAlbumsPayload.payload.artistPayload.id                            
+                        },
+                        musicMetaMenuPagePayload: {
+                            ...p.musicMetaMenuPagePayload,
+                            editor
                         }
                     }))
 
-                    artistPayloadRef.current = response.parsedBody
                 }
             })
         }
     }, [artistId])
 
-    const openEditNameDialog = () => {
+    function openEditNameDialog(): void {
         setProps(p => ({
             ...p,
             editArtistNameDialogPayload: {
@@ -263,7 +311,7 @@ const Artist = () => {
         }))
     }
 
-    const openEditProfileDialog = () => {
+    function openEditProfileDialog(): void {
         setProps(p => ({
             ...p,
             editArtistProfileDialogPayload: {
@@ -341,7 +389,7 @@ const Artist = () => {
         })
     }
 
-    function showManageButtons(): boolean {
+    function isEditor(): boolean {
         return isContentEditor(artistPayloadRef.current?.payload.artistPayload.userPayload, userPolicyPayload)
     }
 
@@ -370,54 +418,37 @@ const Artist = () => {
             <ImagePopover {...props.artistImagePopover} />
 
             <div className="title">
-                <img
-                    src={artistImageUrl(
-                        props.secureMediaItemPayload?.payload.artistPayload.id || 0,
-                        ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '',
-                        props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads?.length ? props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads[0].id : 0
-                    )}
-                    onClick={handleArtistImagePopover}
-                />
 
-                <h1>{props.secureMediaItemPayload?.payload.artistPayload.name}</h1>
+                <div>
+                    <img
+                        src={artistImageUrl(
+                            props.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                            ImageType.ORIGINAL, props.secureMediaItemPayload?.mediaToken || '',
+                            props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads?.length ? props.secureMediaItemPayload?.payload.artistPayload.metaImagePayloads[0].id : 0
+                        )}
+                        onClick={handleArtistImagePopover}
+                    />
+
+                    <h1>{props.secureMediaItemPayload?.payload.artistPayload.name}</h1>
+                </div>
+
+                <MusicMetaMenu {...props.musicMetaMenuPagePayload}/>
+
+
             </div>
-
-            {showManageButtons() &&
-                <Button
-                    className="edit-content"
-                    variant="outlined"
-                    endIcon={<Edit />}
-                    color="secondary"
-                    onClick={openEditNameDialog}
-                >
-                    {t('label.name')}
-                </Button>
-            }
 
             <div className="profile">
 
                 {props.secureMediaItemPayload?.payload.artistPayload.profile &&
                     <div>{props.secureMediaItemPayload?.payload.artistPayload.profile}</div>
                 }
-
             </div>
-            {showManageButtons() &&
-                <Button
-                    className="edit-content"
-                    variant="outlined"
-                    endIcon={<Edit />}
-                    color="secondary"
-                    onClick={openEditProfileDialog}
-                >
-                    {t('label.profile')}
-                </Button>
-            }
 
-            {showManageButtons() &&
+            {isEditor() &&
                 <ManageMetaImages {...props.manageMetaImagesPayload} />
             }
 
-            {showManageButtons() &&
+            {isEditor() &&
                 <ManageExternalLinks {...props.manageExternalLinksPayload} />
             }
 
@@ -446,9 +477,10 @@ const Artist = () => {
                 })}
             </Grid>
 
+
             <CreateAlbumNameDialog {...props.createAlbumDialogPayload} />
 
-            <div className="new-line right" style={{ marginTop: "1em" }}>
+            <div className="new-line right" style={{ marginTop: "4em" }}>
                 <Button
                     variant="contained"
                     color="secondary"
@@ -457,7 +489,7 @@ const Artist = () => {
                     Cancel
                 </Button>
 
-                {showManageButtons() &&
+                {isEditor() &&
                     <Button
                         variant="contained"
                         color="primary"
@@ -468,7 +500,7 @@ const Artist = () => {
                     </Button>
                 }
 
-                {showManageButtons() &&
+                {isEditor() &&
                     <Button
                         variant="contained"
                         color="primary"

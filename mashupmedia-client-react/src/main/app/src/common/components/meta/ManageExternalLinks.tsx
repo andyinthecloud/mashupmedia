@@ -1,15 +1,16 @@
+import { MoreVert, OpenInNew } from "@mui/icons-material"
+import { IconButton } from "@mui/material"
 import { useEffect, useRef, useState } from "react"
 import { ExternalLinkPayload, MenuMetaPayload } from "../../../media/rest/mediaCalls"
 import EditLinkDialog, { EditLinkDialogPageload } from "../dialogs/EditLinkDialog"
-import { Button, IconButton } from "@mui/material"
-import { MoreVert, OpenInNew } from "@mui/icons-material"
 import LinkMenu from "../menus/LinkMenu"
 import './ManageExternalLinks.css'
 
 export type ManageExternalLinksPayload = {
     externalLinkPayloads: ExternalLinkPayload[]
     updateExternalLinks(externalLinkPayloads: ExternalLinkPayload[]): void
-    isManager(): boolean
+    editor: boolean
+    triggerAddExternalLink?: number
 }
 
 
@@ -63,6 +64,14 @@ const ManageExternalLinks = (payload: ManageExternalLinksPayload) => {
             }
         }))
     }, [payload.externalLinkPayloads])
+
+
+    useEffect(() => {
+        if (payload.triggerAddExternalLink) {
+            openNewExternalLinkDialog()
+        }
+
+    }, [payload.triggerAddExternalLink])
 
     function updateExternalLink(externalLinkPayload: ExternalLinkPayload): void {
         addExternalLinkPayload(externalLinkPayload)
@@ -240,13 +249,6 @@ const ManageExternalLinks = (payload: ManageExternalLinksPayload) => {
                         </div>
                     )
                 })}
-            </div>
-
-            <div className="new-line" style={{ marginTop: "1em" }}>
-                <Button
-                    onClick={openNewExternalLinkDialog}
-                    color="secondary"
-                    variant="outlined">Add link</Button>
             </div>
 
         </div>

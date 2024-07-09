@@ -27,5 +27,5 @@ public class Premium {
     @SequenceGenerator(name = "premiums_generator", sequenceName = "premiums_seq", allocationSize = 1)
     private long id;
     private String name;
-    private int kilobytes;
+    private long sizeInBytes;
 }

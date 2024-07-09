@@ -5,6 +5,18 @@
     margin-bottom: 0.5em;
 }
 
+
+
+#artist div.title {
+    display: flex;
+    justify-content: space-between;
+}
+
+#artist div.title div {
+    display: flex;
+    align-items: center;
+}
+
 #artist div.profile {
     font-weight: lighter;
 }

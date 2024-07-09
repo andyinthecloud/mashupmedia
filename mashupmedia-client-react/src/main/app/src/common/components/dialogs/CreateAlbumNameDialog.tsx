@@ -6,7 +6,8 @@ import { CreateAlbumPayload, createAlbum } from "../../../media/music/rest/music
 import { DialogPageload } from "./DialogPageload"
 
 export type CreateAlbumNameDialogPageload = {
-    artistId: number
+    artistId: number,
+    triggerAddAlbum?: number
 }
 
 
@@ -44,6 +45,27 @@ const CreateAlbumNameDialog = (payload: CreateAlbumNameDialogPageload) => {
         }))
 
     }, [payload.artistId])
+
+
+    useEffect(() => {
+
+        if (payload.triggerAddAlbum) {
+            handleClickAddAlbum()
+        }
+
+        setProps(p => ({
+            ...p,
+            dialogPayload: {
+                ...p.dialogPayload,
+                payload: {
+                    ...p.dialogPayload.payload,
+                    artistId: payload.artistId
+                }
+            }
+        }))
+
+    }, [payload.triggerAddAlbum])
+
 
     const handleCancel = () => {
         setProps(p => ({
@@ -142,14 +164,6 @@ const CreateAlbumNameDialog = (payload: CreateAlbumNameDialogPageload) => {
                 </DialogActions>
             </Dialog>
 
-            {props.dialogPayload.payload?.artistId > 0 &&
-                <div className="new-line" style={{ marginTop: "1em" }}>
-                    <Button
-                        onClick={handleClickAddAlbum}
-                        color="secondary"
-                        variant="outlined">Add album</Button>
-                </div>
-            }
         </div>
     )
 

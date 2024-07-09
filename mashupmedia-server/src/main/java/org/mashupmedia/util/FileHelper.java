@@ -399,10 +399,6 @@ public class FileHelper {
 		} catch (IOException e) {
 			throw new MashupMediaRuntimeException("Unable to create user upload folder", e);
 		}
-		// File userUploadFolder = new File(getApplicationFolder(), "users/" +
-		// userFolderName);
-		// userUploadFolder.mkdirs();
-		// return userUploadFolder;
 	}
 
 }

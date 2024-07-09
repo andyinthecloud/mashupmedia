@@ -1,23 +1,25 @@
-import { Add, Edit, PlayArrow } from "@mui/icons-material"
+import { Add, PlayArrow } from "@mui/icons-material"
 import { Button, Card, CardContent, CardMedia, IconButton, List, ListItem, ListItemText } from "@mui/material"
+import { t } from "i18next"
 import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link, useNavigate, useParams } from "react-router-dom"
+import EditTextDialog, { EditTextDialogPayload } from "../../common/components/dialogs/EditTextDialog"
 import ImagePopover, { ImagePopoverPayload } from "../../common/components/ImagePopover"
+import MusicMetaMenu, { MusicMetaMenuPagePayload } from "../../common/components/menus/MusicMetaMenu"
+import ManageExternalLinks, { ManageExternalLinksPayload } from "../../common/components/meta/ManageExternalLinks"
+import ManageMetaImages, { ManageMetaImagesPayload } from "../../common/components/meta/ManageMetaImages"
 import { NotificationType, addNotification } from "../../common/notification/notificationSlice"
 import { RootState } from "../../common/redux/store"
+import { isContentEditor } from "../../common/utils/adminUtils"
+import { ExternalLinkPayload } from "../rest/mediaCalls"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
 import './Album.css'
 import { loadTrack } from "./features/playMusicSlice"
 import { AlbumWithTracksAndArtistPayload, ImageType, albumArtImageUrl, deleteAlbum, getAlbum, saveAlbum } from "./rest/musicCalls"
-import { playAlbum, playTrack } from "./rest/playlistActionCalls"
-import EditTextDialog, { EditTextDialogPayload } from "../../common/components/dialogs/EditTextDialog"
-import ManageMetaImages, { ManageMetaImagesPayload } from "../../common/components/meta/ManageMetaImages"
 import { MetaImagePayload, uploadAlbumImages } from "./rest/musicUploadCalls"
-import { isContentEditor } from "../../common/utils/adminUtils"
-import { t } from "i18next"
-import ManageExternalLinks, { ManageExternalLinksPayload } from "../../common/components/meta/ManageExternalLinks"
-import { ExternalLinkPayload } from "../rest/mediaCalls"
+import { playAlbum, playTrack } from "./rest/playlistActionCalls"
+import CreateAlbumNameDialog, { CreateAlbumNameDialogPageload } from "../../common/components/dialogs/CreateAlbumNameDialog"
 
 
 type AlbumPagePageload = {
@@ -27,7 +29,8 @@ type AlbumPagePageload = {
     editAlbumSummaryDialogPayload: EditTextDialogPayload
     manageMetaImagesPayload: ManageMetaImagesPayload
     manageExternalLinksPayload: ManageExternalLinksPayload
-
+    createAlbumDialogPayload: CreateAlbumNameDialogPageload
+    musicMetaMenuPagePayload: MusicMetaMenuPagePayload
 }
 
 const Album = () => {
@@ -81,14 +84,56 @@ const Album = () => {
             updateMetaImages: updateMetaImages,
             uploadFiles: uploadMetaImages,
             getImageUrl: getMetaImageUrl,
-            isManager: isManager
+            editor: false
         },
         manageExternalLinksPayload: {
             externalLinkPayloads: [],
             updateExternalLinks: updateExternalLinks,
-            isManager: isEditor
+            editor: false
         },
+        createAlbumDialogPayload: {
+            artistId: 0
+        },
+        musicMetaMenuPagePayload: {
+            editor: false,
+            editName: openEditNameDialog,
+            editSummary: openEditSummaryDialog,
+            addImage: handleAddImage,
+            addExternalLink: handleAddExternalLink,
+            addAlbum: handleAddAlbum
+        }
     })
+
+    function handleAddAlbum(): void {
+        setProps(p => ({
+            ...p,
+            createAlbumDialogPayload: {
+                ...p.createAlbumDialogPayload,
+                triggerAddAlbum: Date.now()
+            }
+        }))
+    }
+
+    function handleAddImage(): void {
+        setProps(p => ({
+            ...p,
+            manageMetaImagesPayload: {
+                ...p.manageMetaImagesPayload,
+                triggerUploadImage: Date.now()
+            }
+        }))
+    }
+
+
+    function handleAddExternalLink(): void {
+        setProps(p => ({
+            ...p,
+            manageExternalLinksPayload: {
+                ...p.manageExternalLinksPayload,
+                triggerAddExternalLink: Date.now()
+            }
+        }))
+    }
 
     function updateExternalLinks(externalLinkPayloads: ExternalLinkPayload[]): void {
         setProps(p => ({
@@ -148,15 +193,6 @@ const Album = () => {
                 }
             }
         }))
-    }
-
-    function isManager(): boolean {
-        const userPayload = albumWithTracksAndArtistPayloadRef.current?.payload.artistPayload.userPayload
-        if (!userPayload || !userPolicyPayload) {
-            return false
-        }
-
-        return userPolicyPayload.administrator || userPayload.username === userPolicyPayload.username
     }
 
     function getMetaImageUrl(id: number): string {
@@ -249,20 +285,33 @@ const Album = () => {
                 if (response.ok && response.parsedBody) {
 
                     const secureMediaItemPayload = response.parsedBody
+                    albumWithTracksAndArtistPayloadRef.current = secureMediaItemPayload
+
+                    const editor = isEditor()
+
 
                     setProps(p => ({
                         ...p,
+                        secureMediaItemPayload,
                         imagePopover: {
                             ...p.imagePopover,
                             source: ''
                         },
-                        secureMediaItemPayload,
                         manageMetaImagesPayload: {
                             ...p.manageMetaImagesPayload,
-                            metaImagePayloads: secureMediaItemPayload.payload.albumPayload.metaImagePayloads || []
+                            metaImagePayloads: secureMediaItemPayload.payload.albumPayload.metaImagePayloads || [],
+                            editor
+                        },
+                        createAlbumDialogPayload: {
+                            ...p.createAlbumDialogPayload,
+                            artistId: secureMediaItemPayload.payload.artistPayload.id                        
+                        },
+                        musicMetaMenuPagePayload: {
+                            ...p.musicMetaMenuPagePayload,
+                            editor
                         }
                     }))
-                    albumWithTracksAndArtistPayloadRef.current = secureMediaItemPayload
+
                 }
             })
         }
@@ -311,7 +360,7 @@ const Album = () => {
     }
 
 
-    const handleAddAlbum = (albumId: number): void => {
+    const handleAddAlbumToPLaylist = (albumId: number): void => {
         navigate("/playlists/music/select?albumId=" + albumId)
     }
 
@@ -360,7 +409,7 @@ const Album = () => {
     }
 
     function isEditor(): boolean {
-        return isContentEditor(props.secureMediaItemPayload?.payload.artistPayload.userPayload, userPolicyPayload)
+         return isContentEditor(albumWithTracksAndArtistPayloadRef.current?.payload.artistPayload.userPayload, userPolicyPayload)
     }
 
     const handleClickCancel = (): void => {
@@ -457,7 +506,7 @@ const Album = () => {
                     <Button
                         variant="contained"
                         startIcon={<Add />}
-                        onClick={() => handleAddAlbum(albumIdAsNumber())}>
+                        onClick={() => handleAddAlbumToPLaylist(albumIdAsNumber())}>
                         Add
                     </Button>
                 </div>
@@ -467,42 +516,18 @@ const Album = () => {
 
             <CardContent>
                 <div className="album-name">
-                    <span>
+                    <div>
                         {props.secureMediaItemPayload?.payload.albumPayload.name}
-                    </span>
-
-                    {isEditor() &&
-                        <Button
-                            variant="outlined"
-                            endIcon={<Edit />}
-                            color="secondary"
-                            size="small"
-                            onClick={openEditNameDialog}
-                        >
-                            {t('label.name')}
-                        </Button>
-                    }
-
+                    </div>
+                    <MusicMetaMenu {...props.musicMetaMenuPagePayload} />
                 </div>
-                <div className="summary">
-                    {props.secureMediaItemPayload?.payload.albumPayload.summary &&
-                        <span>
-                            {props.secureMediaItemPayload?.payload.albumPayload.summary}
-                        </span>
-                    }
 
-                    {isEditor() &&
-                        <Button
-                            variant="outlined"
-                            endIcon={<Edit />}
-                            color="secondary"
-                            size="small"
-                            onClick={openEditSummaryDialog}
-                        >
-                            {t('label.summary')}
-                        </Button>
-                    }
-                </div>
+                {props.secureMediaItemPayload?.payload.albumPayload.summary &&
+                    <div className="summary">
+                        {props.secureMediaItemPayload?.payload.albumPayload.summary}
+                    </div>
+                }
+
                 <div className="artist-name">
                     <Link
                         className="link-no-underlne"
@@ -510,9 +535,13 @@ const Album = () => {
                     </Link>
                 </div>
 
-                <ManageMetaImages {...props.manageMetaImagesPayload} />
-                <ManageExternalLinks {...props.manageExternalLinksPayload} />
+                {isEditor() &&
+                    <ManageMetaImages {...props.manageMetaImagesPayload} />
+                }
 
+                {isEditor() &&
+                    <ManageExternalLinks {...props.manageExternalLinksPayload} />
+                }
                 <List>
                     {props.secureMediaItemPayload?.payload.trackPayloads.map(function (trackPayload, index) {
                         return (
@@ -546,6 +575,7 @@ const Album = () => {
                     })}
                 </List>
 
+                <CreateAlbumNameDialog {...props.createAlbumDialogPayload} />
 
                 <div className="new-line right" style={{ marginTop: "1em" }}>
                     <Button

@@ -1,6 +1,3 @@
-import { AddAPhoto } from "@mui/icons-material"
-import { Button } from "@mui/material"
-import { t } from "i18next"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
 import { MetaImagePayload } from "../../../media/music/rest/musicUploadCalls"
 import { MenuMetaPayload } from "../../../media/rest/mediaCalls"
@@ -14,7 +11,8 @@ export type ManageMetaImagesPayload = {
     updateMetaImages(metaImagePayloads: MetaImagePayload[]): void
     uploadFiles(files: FileList): void
     getImageUrl(id: number): string
-    isManager(): boolean
+    editor: boolean
+    triggerUploadImage?: number
 }
 
 type InternalManageMetaImagesPayload = {
@@ -121,7 +119,17 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
         }))
     }, [payload.metaImagePayloads])
 
-    const handleUploadImagesClick = (): void => {
+
+
+    useEffect(() => {
+        if (payload.triggerUploadImage) {
+            addImage()
+        }
+
+    }, [payload.triggerUploadImage])
+
+    function addImage(): void {
+        
         if (uploadFileRef) {
             uploadFileRef.current?.click()
         }
@@ -140,7 +148,7 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
     }
 
     const handleClickImage = (anchorElement: HTMLElement, payload: MetaImagePayload): void => {
-        if (props.manageMetaImagesPayload.isManager()) {
+        if (props.manageMetaImagesPayload.editor) {
             setProps(p => ({
                 ...p,
                 metaImageMenuPayload: {
@@ -181,7 +189,7 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
                 onChange={e => handleChangeFolder(e)}
             />
 
-            <Button
+            {/* <Button
                 className="edit-content"
                 variant="outlined"
                 endIcon={<AddAPhoto />}
@@ -189,7 +197,7 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
                 onClick={handleUploadImagesClick}
             >
                 {t('label.image')}
-            </Button>
+            </Button> */}
 
         </div>
     )
