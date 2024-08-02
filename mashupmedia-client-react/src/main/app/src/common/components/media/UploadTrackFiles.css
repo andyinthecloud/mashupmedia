@@ -1,0 +1,15 @@
+#upload-track-files {
+    border-width: 2px;
+    border-style: dashed;
+    width: 100%;
+    border-radius: 1em;
+    border-color: #e579e9;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 2em;
+    padding-bottom: 2em;
+    margin-bottom: 1em;
+}
+

@@ -6,6 +6,11 @@ export type NameValuePayload<T> = {
     value: T
 }
 
+export type GenrePayload = {
+    idName: string
+    name: string
+}
+
 const metaUri = '/api/private/meta/'
 
 export const getRoles = async (userToken?: string): Promise<HttpResponse<NameValuePayload<string>[]>> => {
@@ -22,4 +27,8 @@ export const saveGroup = (groupPayload: NameValuePayload<number>, userToken?: st
 
 export const deleteGroup = (groupId: number, userToken?: string): Promise<HttpResponse<boolean>> => {
     return callMashupMediaApi<boolean> (HttpMethod.DELETE, metaUri + 'group', userToken, ''+groupId)
+}
+
+export const getGenres = (userToken?: string): Promise<HttpResponse<GenrePayload[]>> => {
+    return callMashupMediaApi<GenrePayload[]>(HttpMethod.GET, `${metaUri}genres`, userToken)
 }

@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.mashupmedia.constants.MashupMediaType;
-import org.mashupmedia.dto.media.music.GenrePayload;
 import org.mashupmedia.dto.media.search.MediaSearchResultPayload;
 import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.PagePayload;
@@ -43,14 +41,7 @@ public class MediaSearchController {
     private final GenreMapper genreMapper;
     private final MusicSearchResultPagePayloadMapper musicSearchResultPagePayloadMapper;
 
-    @GetMapping(value = "/genres", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GenrePayload>> getGenres() {
-        return ResponseEntity.ok(
-                musicManager.getGenres()
-                        .stream()
-                        .map(genreMapper::toPayload)
-                        .collect(Collectors.toList()));
-    }
+
 
     @GetMapping(value = "/orderByNames", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<NameValuePayload<String>>> getOrderByValues() {

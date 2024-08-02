@@ -19,7 +19,7 @@
 	<version>4.0.1-RELEASE</version>
 	<packaging>pom</packaging>
 	<properties>
-		<maven.compiler.release>17</maven.compiler.release>
+		<maven.compiler.release>21</maven.compiler.release>
 	</properties>
 
 </project>

@@ -8,6 +8,7 @@ import java.util.Set;
 import org.mashupmedia.comparator.MetaEntityComparator;
 import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.model.media.MetaImage;
+import org.mashupmedia.util.ImageHelper.ImageFormatType;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.mashupmedia.util.MediaContentHelper;
 import org.springframework.core.io.ClassPathResource;
@@ -32,7 +33,6 @@ public abstract class MetaImageController {
         return sortedImages;
     }
 
-
     protected MetaResource getHighlightedMetaImage(Set<MetaImage> metaImages, ImageType imageType,
             @Nullable Integer id) {
         if (metaImages == null || metaImages.isEmpty()) {
@@ -43,11 +43,11 @@ public abstract class MetaImageController {
         if (sortedImages == null || sortedImages.isEmpty()) {
             return null;
         }
-        
+
         if (id == null) {
             return getMetaResource(sortedImages.get(0), imageType);
         }
- 
+
         MetaImage metaImage = sortedImages.stream()
                 .filter(mi -> mi.getId() == id)
                 .findAny()
@@ -62,7 +62,10 @@ public abstract class MetaImageController {
 
     private MetaResource getMetaResource(MetaImage metaImage, ImageType imageType) {
         return MetaResource.builder()
-                .mediaContentType(MediaContentHelper.getMediaContentType(metaImage.getContentType()))
+                .mediaContentType(
+                        imageType == ImageType.THUMBNAIL
+                                ? MediaContentType.IMAGE_PNG
+                                : MediaContentHelper.getMediaContentType(metaImage.getContentType()))
                 .resource(new FileSystemResource(getPath(metaImage, imageType)))
                 .build();
     }
@@ -73,8 +76,8 @@ public abstract class MetaImageController {
         }
 
         return imageType == ImageType.THUMBNAIL
-                ? metaImage.getUrl()
-                : metaImage.getThumbnailUrl();
+                ? metaImage.getThumbnailUrl()
+                : metaImage.getUrl();
     }
 
     private MetaResource getDefaultMetaImage() {

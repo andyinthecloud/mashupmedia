@@ -12,11 +12,14 @@ import org.mashupmedia.constants.MashUpMediaConstants;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.dao.RoleDao;
 import org.mashupmedia.dao.UserDao;
+import org.mashupmedia.eums.PremiumType;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
+import org.mashupmedia.model.account.Premium;
 import org.mashupmedia.model.account.Role;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.playlist.Playlist;
+import org.mashupmedia.repository.admin.PremiumRepository;
 import org.mashupmedia.repository.admin.UserRepository;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
 import org.mashupmedia.util.LibraryHelper;
@@ -39,6 +42,7 @@ public class AdminManagerImpl implements AdminManager {
 	private final PlaylistRepository playlistRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final UserRepository userRepository;
+	private final PremiumRepository premiumRepository;
 	// private LibraryManager libraryManager;
 	// private final LibraryDao libraryDao;
 
@@ -83,6 +87,9 @@ public class AdminManagerImpl implements AdminManager {
 
 		// user.setUpdatedOn(date);
 		// userDao.saveUser(user);
+
+		
+
 		userDao.saveUser(user);
 
 		// if (userId == 0 && StringUtils.isNotBlank(password)) {
@@ -112,6 +119,10 @@ public class AdminManagerImpl implements AdminManager {
 		user.getLibraries().add(publicLibrary);
 
 		user.setUpdatedOn(date);
+
+		Premium premium = premiumRepository.findByNameIgnoreCase(PremiumType.FREE.name());
+		user.setPremium(premium);	
+
 		// userDao.saveUser(user);
 
 	}

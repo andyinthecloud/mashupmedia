@@ -1,7 +1,6 @@
 package org.mashupmedia.util;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -156,9 +155,7 @@ public class ImageHelper {
 			throw new IOException("Unable to read image");
 		}
 
-		// ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		ImageIO.write(thumbnailImage, ImageFormatType.JPEG.getFormat(), path.toFile()); 
-		// return outputStream.toByteArray();
+		ImageIO.write(thumbnailImage, ImageFormatType.PNG.getFormat(), path.toFile()); 
 	}
 
 	public static ImageType getImageType(String imageTypeValue) {

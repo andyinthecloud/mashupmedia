@@ -5,13 +5,14 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../common/redux/hooks";
 import { RootState } from "../../common/redux/store";
-import { genreNames, prepareGenrePayloads } from "../../common/utils/genreUtils";
-import { NameValuePayload } from "../../configuration/backend/metaCalls";
-import { MashupMediaType } from "../music/rest/playlistActionCalls";
-import { MediaItemSearchCriteriaPayload, SortType, searchMedia } from "./features/searchMediaSlice";
-import { GenrePayload, getGenres, getOrderByNames } from "./rest/searchCalls";
-import { objectToQueryParameters } from "../../common/utils/httpUtils";
+import { getDecades } from "../../common/utils/decadeUtils";
 import { isInArray } from "../../common/utils/formUtils";
+import { genreNames } from "../../common/utils/genreUtils";
+import { objectToQueryParameters } from "../../common/utils/httpUtils";
+import { GenrePayload, getGenres, NameValuePayload } from "../../configuration/backend/metaCalls";
+import { MashupMediaType } from "../music/rest/playlistActionCalls";
+import { MediaItemSearchCriteriaPayload, searchMedia, SortType } from "./features/searchMediaSlice";
+import { getOrderByNames } from "./rest/searchCalls";
 
 type SearchFormPayload = {
     mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayload
@@ -47,23 +48,18 @@ const SearchForm = (mediaItemSearchCriteriaPayload?: MediaItemSearchCriteriaPayl
     }, [mediaItemSearchCriteriaPayload])
 
     useEffect(() => {
-        const decades: number[] = []
-        for (let decade = 1920; decade < new Date().getFullYear(); decade += 10) {
-            decades.push(decade)
-        }
 
         setProps(p => ({
             ...p,
-            decades
+            decades: getDecades()
         }
         ))
 
         getGenres(userToken)
             .then(response => {
-                const genrePayloads = prepareGenrePayloads(response.parsedBody || [])
                 setProps(p => ({
                     ...p,
-                    genrePayloads
+                    genrePayloads: response.parsedBody || []
                 }))
             })
 

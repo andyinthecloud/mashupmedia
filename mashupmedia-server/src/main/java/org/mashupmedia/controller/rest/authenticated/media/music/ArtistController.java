@@ -62,6 +62,20 @@ public class ArtistController {
         return t;
     }
 
+    @GetMapping(value = "/list-item/{artistId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public SecureMediaPayload<NameValuePayload<Long>> getArtistListItem(@PathVariable long artistId) {
+        User user = AdminHelper.getLoggedInUser();
+        String streamingToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
+        Artist artist = musicManager.getArtist(artistId);
+        return SecureMediaPayload.<NameValuePayload<Long>>builder()
+                .mediaToken(streamingToken)
+                .payload(NameValuePayload.<Long>builder()
+                        .name(artist.getName())
+                        .value(artist.getId())
+                        .build())
+                .build();
+    }
+
     @DeleteMapping(value = "/{artistId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NameValuePayload<String>> deleteArtist(@PathVariable long artistId) {
         try {

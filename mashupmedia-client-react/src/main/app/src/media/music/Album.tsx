@@ -84,25 +84,38 @@ const Album = () => {
             updateMetaImages: updateMetaImages,
             uploadFiles: uploadMetaImages,
             getImageUrl: getMetaImageUrl,
-            editor: false
+            // editor: false
         },
         manageExternalLinksPayload: {
             externalLinkPayloads: [],
             updateExternalLinks: updateExternalLinks,
-            editor: false
         },
         createAlbumDialogPayload: {
             artistId: 0
         },
         musicMetaMenuPagePayload: {
             editor: false,
-            editName: openEditNameDialog,
-            editSummary: openEditSummaryDialog,
-            addImage: handleAddImage,
-            addExternalLink: handleAddExternalLink,
+            edit: handleEdit,
+            editLabel: t("editAlbum.menuLink"),
+            uploadTracks: handleUploadTracks,
+
+            // artistId: 0,
+            // editName: openEditNameDialog,
+            // editSummary: openEditSummaryDialog,
+            // addImage: handleAddImage,
+            // addExternalLink: handleAddExternalLink,
             addAlbum: handleAddAlbum
         }
     })
+
+    function handleUploadTracks(): void {
+        console.log("handleUploadTracks")
+        
+    }
+
+    function handleEdit(): void {
+        navigate("/music/artist/edit/" + props.secureMediaItemPayload?.payload.artistPayload.id )
+    }
 
     function handleAddAlbum(): void {
         setProps(p => ({
@@ -114,26 +127,26 @@ const Album = () => {
         }))
     }
 
-    function handleAddImage(): void {
-        setProps(p => ({
-            ...p,
-            manageMetaImagesPayload: {
-                ...p.manageMetaImagesPayload,
-                triggerUploadImage: Date.now()
-            }
-        }))
-    }
+    // function handleAddImage(): void {
+    //     setProps(p => ({
+    //         ...p,
+    //         manageMetaImagesPayload: {
+    //             ...p.manageMetaImagesPayload,
+    //             triggerUploadImage: Date.now()
+    //         }
+    //     }))
+    // }
 
 
-    function handleAddExternalLink(): void {
-        setProps(p => ({
-            ...p,
-            manageExternalLinksPayload: {
-                ...p.manageExternalLinksPayload,
-                triggerAddExternalLink: Date.now()
-            }
-        }))
-    }
+    // function handleAddExternalLink(): void {
+    //     setProps(p => ({
+    //         ...p,
+    //         manageExternalLinksPayload: {
+    //             ...p.manageExternalLinksPayload,
+    //             triggerAddExternalLink: Date.now()
+    //         }
+    //     }))
+    // }
 
     function updateExternalLinks(externalLinkPayloads: ExternalLinkPayload[]): void {
         setProps(p => ({
@@ -288,7 +301,7 @@ const Album = () => {
                     albumWithTracksAndArtistPayloadRef.current = secureMediaItemPayload
 
                     const editor = isEditor()
-
+                    const artistId = secureMediaItemPayload.payload.artistPayload.id
 
                     setProps(p => ({
                         ...p,
@@ -304,10 +317,11 @@ const Album = () => {
                         },
                         createAlbumDialogPayload: {
                             ...p.createAlbumDialogPayload,
-                            artistId: secureMediaItemPayload.payload.artistPayload.id                        
+                            artistId                        
                         },
                         musicMetaMenuPagePayload: {
                             ...p.musicMetaMenuPagePayload,
+                            artistId, 
                             editor
                         }
                     }))
@@ -382,38 +396,38 @@ const Album = () => {
         navigate("/playlists/music/select?trackId=" + trackId)
     }
 
-    function openEditNameDialog(): void {
-        setProps(p => ({
-            ...p,
-            editAlbumNameDialogPayload: {
-                ...p.editAlbumNameDialogPayload,
-                dialogPayload: {
-                    ...p.editAlbumNameDialogPayload.dialogPayload,
-                    open: true
-                }
-            }
-        }))
-    }
+    // function openEditNameDialog(): void {
+    //     setProps(p => ({
+    //         ...p,
+    //         editAlbumNameDialogPayload: {
+    //             ...p.editAlbumNameDialogPayload,
+    //             dialogPayload: {
+    //                 ...p.editAlbumNameDialogPayload.dialogPayload,
+    //                 open: true
+    //             }
+    //         }
+    //     }))
+    // }
 
-    function openEditSummaryDialog(): void {
-        setProps(p => ({
-            ...p,
-            editAlbumSummaryDialogPayload: {
-                ...p.editAlbumNameDialogPayload,
-                dialogPayload: {
-                    ...p.editAlbumNameDialogPayload.dialogPayload,
-                    open: true
-                }
-            }
-        }))
-    }
+    // function openEditSummaryDialog(): void {
+    //     setProps(p => ({
+    //         ...p,
+    //         editAlbumSummaryDialogPayload: {
+    //             ...p.editAlbumNameDialogPayload,
+    //             dialogPayload: {
+    //                 ...p.editAlbumNameDialogPayload.dialogPayload,
+    //                 open: true
+    //             }
+    //         }
+    //     }))
+    // }
 
     function isEditor(): boolean {
          return isContentEditor(albumWithTracksAndArtistPayloadRef.current?.payload.artistPayload.userPayload, userPolicyPayload)
     }
 
     const handleClickCancel = (): void => {
-        navigate('/music/albums')
+        navigate('/music/artist/' + albumWithTracksAndArtistPayloadRef.current?.payload.artistPayload.id)
     }
 
     const handleClickSave = (): void => {

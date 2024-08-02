@@ -1,0 +1,79 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+
+    <changeSet id="004-1" author="admin">
+        <insert tableName="genres">
+            <column name="id_name" value="WORLD_AND_TRADITIONAL_FOLK" />
+            <column name="name" value="World and traditional folk" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="LATIN" />
+            <column name="name" value="Latin" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="HIP_HOP_AND_RAP" />
+            <column name="name" value="Hip hop and rap" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="R_AND_B" />
+            <column name="name" value="Rhythm and blues" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="METAL" />
+            <column name="name" value="Metal" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="COUNTRY" />
+            <column name="name" value="Country" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="FOLK_AND_ACOUSTIC" />
+            <column name="name" value="Folk and acoustic" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="CLASSICAL" />
+            <column name="name" value="Classical" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="JAZZ" />
+            <column name="name" value="Jazz" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="BLUES" />
+            <column name="name" value="Blues" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="EASY_LISTENING" />
+            <column name="name" value="Easy listening" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="NEW_AGE" />
+            <column name="name" value="New age" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="ROCK" />
+            <column name="name" value="Rock" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="POP" />
+            <column name="name" value="Pop" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="DANCE" />
+            <column name="name" value="Dance" />
+        </insert>
+        <insert tableName="genres">
+            <column name="id_name" value="OTHER" />
+            <column name="name" value="Other" />
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>    

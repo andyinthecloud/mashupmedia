@@ -8,23 +8,23 @@ import org.mashupmedia.model.media.music.Track;
 public class MediaContentHelper {
     public static MediaContentType getMediaContentType(String format) {
 
-        format = StringUtils.trimToEmpty(format);
+        format = StringUtils.trimToEmpty(format).toLowerCase();
 
-        if (format.equalsIgnoreCase("MPEG-1 Layer 3") || format.equalsIgnoreCase("mp3")) {
+        if (format.endsWith("mpeg-1 layer 3") || format.endsWith("mp3")) {
             return MediaContentType.AUDIO_MP3;
-        } else if (format.equalsIgnoreCase("webm")) {
+        } else if (format.endsWith("webm")) {
             return MediaContentType.VIDEO_WEBM;
-        } else if (format.equalsIgnoreCase("mp4") || format.equalsIgnoreCase("m4v")) {
+        } else if (format.endsWith("mp4") || format.endsWith("m4v")) {
             return MediaContentType.VIDEO_MP4;
-        } else if (format.equalsIgnoreCase("ogv")) {
+        } else if (format.endsWith("ogv")) {
             return MediaContentType.VIDEO_OGG;
-        } else if (format.equalsIgnoreCase("jpg") || format.equalsIgnoreCase("jpeg")) {
+        } else if (format.endsWith("jpg") || format.endsWith("jpeg")) {
             return MediaContentType.IMAGE_JPG;
-        } else if (format.equalsIgnoreCase("png")) {
+        } else if (format.endsWith("png")) {
             return MediaContentType.IMAGE_PNG;
-        } else if (format.equalsIgnoreCase("gif")) {
+        } else if (format.endsWith("gif")) {
             return MediaContentType.IMAGE_GIF;
-        } else if (format.equalsIgnoreCase("tif") || format.equalsIgnoreCase("tiff")) {
+        } else if (format.endsWith("tif") || format.endsWith("tiff")) {
             return MediaContentType.IMAGE_TIFF;
         }
 

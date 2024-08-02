@@ -11,7 +11,6 @@ export type ManageMetaImagesPayload = {
     updateMetaImages(metaImagePayloads: MetaImagePayload[]): void
     uploadFiles(files: FileList): void
     getImageUrl(id: number): string
-    editor: boolean
     triggerUploadImage?: number
 }
 
@@ -128,8 +127,7 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
 
     }, [payload.triggerUploadImage])
 
-    function addImage(): void {
-        
+    function addImage(): void {        
         if (uploadFileRef) {
             uploadFileRef.current?.click()
         }
@@ -148,7 +146,7 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
     }
 
     const handleClickImage = (anchorElement: HTMLElement, payload: MetaImagePayload): void => {
-        if (props.manageMetaImagesPayload.editor) {
+        // if (props.manageMetaImagesPayload.editor) {
             setProps(p => ({
                 ...p,
                 metaImageMenuPayload: {
@@ -158,9 +156,9 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
                     payload
                 }
             }))
-        } else {
-            handleEdit(payload)
-        }
+        // } else {
+        //     handleEdit(payload)
+        // }
     }
 
     return (

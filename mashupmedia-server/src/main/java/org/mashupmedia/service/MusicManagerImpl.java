@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
+import org.mashupmedia.comparator.GenreComparator;
 import org.mashupmedia.comparator.MetaEntityComparator;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.exception.ContainsMediaItemsException;
@@ -397,6 +398,7 @@ public class MusicManagerImpl implements MusicManager {
 	@Override
 	public List<Genre> getGenres() {
 		List<Genre> genres = musicDao.getGenres();
+		Collections.sort(genres, new GenreComparator());
 		return genres;
 	}
 

@@ -10,7 +10,9 @@
         "summary": "Summary",
         "image": "Image",
         "albumSaved": "Album saved",
-        "albumDeleted": "Album deleted"
+        "albumDeleted": "Album deleted",
+        "cancel": "Cancel",
+        "ok": "OK"
     },
     "menu": {
         "musicMeta": {
@@ -18,7 +20,33 @@
             "editSummary": "Edit summary",
             "addImage": "Add image",
             "addLink": "Add link",
-            "addAlbum": "Add album"
+            "addAlbum": "Add album",
+            "uploadArtistTracks": "Upload artist tracks"
         }
+    },
+    "uploadArtistTracks": {
+        "title": "Upload tracks",
+        "metaTag": "Read file meta tag",
+        "library": "Library",
+        "album": "Album",
+        "albumHelp": "You can add an album by clicking on the artist name above",
+        "genre": "Genre",
+        "decade": "Decade",
+        "selectTracks": "Select tracks"
+    },
+    "uploadTrackFiles": {
+        "drag": "Drag and drop to upload files",
+        "or": "or",
+        "browse": "Browse tracks"
+    },
+    "editArtist": {
+        "menuLink": "Edit artist",
+        "title": "Edit artist",
+        "name": "Name",
+        "summary": "Summary"
+
+    },
+    "editAlbum": {
+        "menuLink": "Edit album"
     }
 }

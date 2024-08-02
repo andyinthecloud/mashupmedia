@@ -1,4 +1,4 @@
-import { AddAPhoto, AddLink, Album, Edit, MoreVert } from "@mui/icons-material"
+import { Album, Audiotrack, Edit, MoreVert } from "@mui/icons-material"
 import { IconButton, Menu, MenuItem } from "@mui/material"
 import { t } from "i18next"
 import { useEffect, useState } from "react"
@@ -6,11 +6,16 @@ import './MusicMetaMenu.css'
 
 export type MusicMetaMenuPagePayload = {
     editor: boolean
-    editName(): void
-    editSummary(): void
-    addImage(): void
-    addExternalLink(): void
+    editLabel: string,
+    edit(): void
+    uploadTracks(): void
     addAlbum(): void
+
+    // artistId: number
+    // editName(): void
+    // editSummary(): void
+    // addImage(): void
+    // addExternalLink(): void
 }
 
 type InternalMusicMetaMenuPagePayload = {
@@ -35,6 +40,17 @@ const MusicMetaMenu = (payload: MusicMetaMenuPagePayload) => {
 
     }, [payload.editor])
 
+    // useEffect(() => {
+    //     setProps(p => ({
+    //         ...p,
+    //         musicMetaMenuPagePayload: {
+    //             ...p.musicMetaMenuPagePayload,
+    //             artistId: payload.artistId
+    //         }
+    //     }))
+
+    // }, [payload.artistId])
+
     function handleClose(): void {
         closeMenu()
     }
@@ -53,29 +69,40 @@ const MusicMetaMenu = (payload: MusicMetaMenuPagePayload) => {
         }))
     }
 
-    function handleClickEditName(): void {
-        props.musicMetaMenuPagePayload.editName()
-        closeMenu()
-    }
+    // function handleClickEditName(): void {
+    //     props.musicMetaMenuPagePayload.editName()
+    //     closeMenu()
+    // }
 
 
-    function handleClickEditSummary(): void {
-        props.musicMetaMenuPagePayload.editSummary()
-        closeMenu()
-    }
+    // function handleClickEditSummary(): void {
+    //     props.musicMetaMenuPagePayload.editSummary()
+    //     closeMenu()
+    // }
 
-    function handleClickAddImage(): void {
-        props.musicMetaMenuPagePayload.addImage()
-        closeMenu()
-    }
+    // function handleClickAddImage(): void {
+    //     props.musicMetaMenuPagePayload.addImage()
+    //     closeMenu()
+    // }
 
-    function handleClickAddLink(): void {
-        props.musicMetaMenuPagePayload.addExternalLink()
+    // function handleClickAddLink(): void {
+    //     props.musicMetaMenuPagePayload.addExternalLink()
+    //     closeMenu()
+    // }
+
+    function handleClickEdit(): void {
+        props.musicMetaMenuPagePayload.edit()
         closeMenu()
     }
 
     function handleClickAddAlbum(): void {
         props.musicMetaMenuPagePayload.addAlbum()
+        closeMenu()
+    }
+
+
+    function handleClickUploadTracks(): void {
+        // navigate('/music/upload-artist-tracks/' + props.musicMetaMenuPagePayload.artistId)
         closeMenu()
     }
 
@@ -100,7 +127,7 @@ const MusicMetaMenu = (payload: MusicMetaMenuPagePayload) => {
                     onClose={handleClose}
                     anchorEl={props.anchorElement}
                 >
-                    <MenuItem
+                    {/* <MenuItem
                         onClick={handleClickEditName}>
                         <Edit />
                         {t('menu.musicMeta.editName')}
@@ -119,11 +146,23 @@ const MusicMetaMenu = (payload: MusicMetaMenuPagePayload) => {
                         onClick={handleClickAddLink}>
                         <AddLink />
                         {t('menu.musicMeta.addLink')}
+                    </MenuItem> */}
+
+<MenuItem
+                        onClick={handleClickEdit}>
+                        <Edit />
+                        {props.musicMetaMenuPagePayload.editLabel}
                     </MenuItem>
+
                     <MenuItem
                         onClick={handleClickAddAlbum}>
                         <Album />
                         {t('menu.musicMeta.addAlbum')}
+                    </MenuItem>
+                    <MenuItem
+                        onClick={handleClickUploadTracks}>
+                        <Audiotrack />
+                        {t('menu.musicMeta.uploadArtistTracks')}
                     </MenuItem>
                 </Menu>
             }

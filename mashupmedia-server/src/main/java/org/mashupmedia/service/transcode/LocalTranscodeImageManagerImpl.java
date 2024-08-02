@@ -43,7 +43,7 @@ public class LocalTranscodeImageManagerImpl implements TranscodeImageManager {
 
     private void checkContentType(MultipartFile multipartFile) {
         MediaContentType mediaContentType = MediaContentHelper.getMediaContentType(multipartFile.getContentType());
-        if (!MediaContentHelper.isCompatiblePhotoFormat(mediaContentType)) {
+        if (MediaContentHelper.isCompatiblePhotoFormat(mediaContentType)) {
             return;
         }
         throw new MashupMediaRuntimeException(

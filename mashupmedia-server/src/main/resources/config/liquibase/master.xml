@@ -16,6 +16,7 @@
 
     <include file="changelogs/002-initial-data.xml" relativeToChangelogFile="true" />
     <include file="changelogs/003-insert-premiums.xml" relativeToChangelogFile="true" />
+    <include file="changelogs/004-insert-genres.xml" relativeToChangelogFile="true" />
 
 
 </databaseChangeLog>

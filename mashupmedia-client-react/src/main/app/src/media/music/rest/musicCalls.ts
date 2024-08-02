@@ -86,6 +86,10 @@ export const getArtist = (artistId: number, userToken?: string): Promise<HttpRes
     return callMashupMediaApi<SecureMediaPayload<ArtistWithAlbumsPayload>>(HttpMethod.GET, artistUri + "/" + artistId, userToken)
 }
 
+export const getArtistListItem = (artistId: number, userToken?: string): Promise<HttpResponse<SecureMediaPayload<NameValuePayload<number>>>> => {
+    return callMashupMediaApi<SecureMediaPayload<NameValuePayload<number>>>(HttpMethod.GET, artistUri + "/" + artistId, userToken)
+}
+
 export const createArtist = (createArtistPayload: CreateArtistPayload, userToken?: string): Promise<HttpResponse<ArtistPayload>> => {
     return callMashupMediaApi<ArtistPayload>(HttpMethod.POST, artistUri, userToken, JSON.stringify(createArtistPayload))
 }

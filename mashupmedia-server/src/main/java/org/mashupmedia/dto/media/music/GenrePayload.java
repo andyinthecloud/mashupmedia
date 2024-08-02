@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class GenrePayload {
-    private long id;
     private String idName;
+    private String name;
 }

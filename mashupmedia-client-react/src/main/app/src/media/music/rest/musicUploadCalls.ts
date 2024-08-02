@@ -5,6 +5,16 @@ import { HttpMethod, HttpResponse, backEndUrl, multiPartHeaders } from "../../..
 
 export type MetaImagePayload = & MetaPayload 
 
+export type UploadArtistTracksPayload = {
+    artistId: number
+    albumId: number
+    libraryId: number,
+    genreIdName?: string
+    decade?: number
+    fileList?: FileList
+
+}
+
 
 const musicUri = "/upload/music"
 
@@ -43,6 +53,18 @@ export const uploadArtistImages = (artistId: number,  fileList: FileList, userTo
     formData.append("artistId", "" + artistId)
     addFiles(formData, fileList)
     return postFiles(artistUri + "/images", formData, userToken)
+}
+
+export const uploadArtistTracks = (uploadArtistTracksPayload: UploadArtistTracksPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<MetaImagePayload[]>>> => {    
+    const fileList = uploadArtistTracksPayload.fileList
+    if (!fileList) {
+        return Promise.reject()
+    }
+    
+    const formData = new FormData()
+    formData.append("artistId", "" + uploadArtistTracksPayload.artistId)
+    addFiles(formData, fileList)
+    return postFiles(artistUri + "/tracks", formData, userToken)
 }
 
 const albumUri = musicUri + "/album"

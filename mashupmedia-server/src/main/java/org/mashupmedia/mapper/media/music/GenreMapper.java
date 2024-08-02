@@ -11,7 +11,8 @@ public class GenreMapper implements DomainMapper<Genre, GenrePayload>{
     @Override
     public GenrePayload toPayload(Genre domain) {
         return GenrePayload.builder()
-        .idName(domain.getName())    
+        .idName(domain.getIdName())    
+        .name(domain.getName())
         .build();
     }
 

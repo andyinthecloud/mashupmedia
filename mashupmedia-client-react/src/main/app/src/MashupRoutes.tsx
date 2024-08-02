@@ -19,6 +19,8 @@ import SelectMusicPlaylist from "./media/playlist/music/SelectMusicPlaylist";
 import MediaSearch from "./media/search/MediaSearch";
 import CreateUser from "./configuration/CreateUser";
 import ActivateUser from "./configuration/ActivateUser";
+import UploadArtistTracks from "./media/music/UploadArtistTracks";
+import EditArtist from "./media/music/EditArtist";
 
 
 export const MashupRoutes = () => {
@@ -136,6 +138,15 @@ export const MashupRoutes = () => {
                             <Artist />
                         </RequireAuthenication>
                     } />
+
+                    <Route path="edit">
+                        <Route path=":artistId" element={
+                            <RequireAuthenication>
+                                <EditArtist />
+                            </RequireAuthenication>
+                        } />
+                    </Route>
+
                 </Route>
 
                 <Route path="albums" element={
@@ -151,6 +162,16 @@ export const MashupRoutes = () => {
                         </RequireAuthenication>
                     } />
                 </Route>
+
+                <Route path="upload-artist-tracks">
+                    <Route path=":artistId" element={
+                        <RequireAuthenication>
+                            <UploadArtistTracks />
+                        </RequireAuthenication>
+                    } />
+                </Route>
+
+
             </Route>
 
             <Route path="/search">

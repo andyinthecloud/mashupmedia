@@ -9,7 +9,6 @@ import './ManageExternalLinks.css'
 export type ManageExternalLinksPayload = {
     externalLinkPayloads: ExternalLinkPayload[]
     updateExternalLinks(externalLinkPayloads: ExternalLinkPayload[]): void
-    editor: boolean
     triggerAddExternalLink?: number
 }
 
