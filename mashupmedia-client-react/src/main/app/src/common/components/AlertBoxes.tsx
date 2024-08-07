@@ -46,21 +46,18 @@ const AlertBox = (payload: NotificationPayload) => {
 
     useEffect(() => {
         setProps(payload)
-        setTimeout(() => {
-            dispatch(
-                clearNotification(payload.id || 0)
-            )
-        }, 5000)
+        // setTimeout(() => {
+        //     dispatch(
+        //         clearNotification(payload.id || 0)
+        //     )
+        // }, 5000)
+
     }, [payload])
 
 
     const severity = (notificationType: NotificationType | null): AlertColor => {
         const defaultAlertColour: AlertColor = 'info'
-        if (!notificationType) {
-            return defaultAlertColour
-        }
-
-        const alertColor: AlertColor = NotificationType[notificationType].toLowerCase() as AlertColor
+        const alertColor: AlertColor = NotificationType[notificationType || 0].toLowerCase() as AlertColor
         return (alertColor) ? alertColor : defaultAlertColour
     }
 

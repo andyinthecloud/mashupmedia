@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { NotificationType, addNotification } from "../common/notification/notificationSlice"
 import { useAppDispatch } from "../common/redux/hooks"
 import { logIn } from "../common/security/features/securitySlice"
-import { FieldValidation, FormValidationPayload, emptyFieldValidation, fieldErrorMessage, hasFieldError, isEmpty, toFieldValidation } from "../common/utils/formValidationUtils"
+import { FieldValidation, FormValidationPayload, emptyFieldValidation, fieldErrorMessage, hasFieldError, isEmpty, toFieldValidations } from "../common/utils/formValidationUtils"
 import { CreateUserPayload, stepActivateUser } from "./backend/createUserCalls"
 
 
@@ -15,19 +15,19 @@ const ActivateUser = () => {
         ACTIVATION_CODE = 'activationCode'
     }
 
-    const {state} = useLocation()
+    const { state } = useLocation()
 
     const [props, setProps] = useState<FormValidationPayload<CreateUserPayload>>({
         payload: {
             name: '',
-            username: ''            
+            username: ''
         },
         formValidation: {
             fieldValidations: []
         }
     })
 
-    
+
     useEffect(() => {
         setProps(p => ({
             ...p,
@@ -97,8 +97,6 @@ const ActivateUser = () => {
         stepActivateUser(props.payload)
             .then(response => {
 
-                const parsedBody = response.parsedBody;
-
                 if (response.ok) {
                     dispatch(
                         addNotification({
@@ -106,22 +104,23 @@ const ActivateUser = () => {
                             notificationType: NotificationType.SUCCESS
                         })
                     )
-                    
+
                     dispatch(
                         logIn({ username: props.payload.username, password: props.payload.password || '' })
                     )
 
                     navigate('/')
                 } else {
-                    parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
-                        props.formValidation.fieldValidations.push(toFieldValidation(serverError))
-                        setProps(p => ({
-                            ...p,
-                            formValidation: {
-                                fieldValidations: props.formValidation.fieldValidations
-                            }
-                        }))
-                    })
+                    const errorPayload = response.parsedBody?.errorPayload
+                    setProps(p => ({
+                        ...p,
+                        formValidation: {
+                            fieldValidations: p.formValidation.fieldValidations.concat(
+                                toFieldValidations(errorPayload)
+                            )
+                        }
+                    }))
+
                 }
             })
     }

@@ -21,6 +21,7 @@ import CreateUser from "./configuration/CreateUser";
 import ActivateUser from "./configuration/ActivateUser";
 import UploadArtistTracks from "./media/music/UploadArtistTracks";
 import EditArtist from "./media/music/EditArtist";
+import EditAlbum from "./media/music/EditAlbum";
 
 
 export const MashupRoutes = () => {
@@ -161,6 +162,15 @@ export const MashupRoutes = () => {
                             <Album />
                         </RequireAuthenication>
                     } />
+
+                    <Route path="edit">
+                        <Route path=":albumId" element={
+                            <RequireAuthenication>
+                                <EditAlbum />
+                            </RequireAuthenication>
+                        } />
+                    </Route>
+
                 </Route>
 
                 <Route path="upload-artist-tracks">

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useNavigate } from "react-router-dom"
 import { NotificationType, addNotification } from "../common/notification/notificationSlice"
 import { RootState } from "../common/redux/store"
-import { FieldValidation, FormValidationPayload, ServerError, emptyFieldValidation, fieldErrorMessage, hasFieldError, isEmpty, toFieldValidation } from "../common/utils/formValidationUtils"
+import { FieldValidation, FormValidationPayload, ServerError, emptyFieldValidation, fieldErrorMessage, hasFieldError, isEmpty, toFieldValidation, toFieldValidations } from "../common/utils/formValidationUtils"
 import { ResetPasswordPayload, resetPassword, stepActivatePassword, stepResetPassword } from "./backend/resetPasswordCalls"
 
 type ResetPasswordPagePayload = {
@@ -36,15 +36,15 @@ const ResetPassword = () => {
                 },
                 formValidation: {
                     fieldValidations: []
-                }    
+                }
             },
             hideUsername: false,
             showActivationField: false
 
         }
     )
-    
-    const {state} = useLocation()
+
+    const { state } = useLocation()
     useEffect(() => {
         if (!state) {
             return
@@ -153,9 +153,19 @@ const ResetPassword = () => {
                         navigate('/')
 
                     } else {
-                        response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
-                            setServerFieldValidationState(serverError)
-                        })
+
+                        const errorPayload = response.parsedBody?.errorPayload
+                        setProps(p => ({
+                            ...p,
+                            formValidationPayload: {
+                                ...p.formValidationPayload,
+                                formValidation: {
+                                    fieldValidations: p.formValidationPayload.formValidation.fieldValidations.concat(
+                                        toFieldValidations(errorPayload)
+                                    )
+                                }
+                            }
+                        }))
 
                         response.parsedBody?.errorPayload.objectErrors.map(function (serverError) {
                             dispatch(
@@ -206,6 +216,20 @@ const ResetPassword = () => {
                         setServerFieldValidationState(serverError)
                     })
 
+                    const errorPayload = response.parsedBody?.errorPayload
+                    setProps(p => ({
+                        ...p,
+                        formValidationPayload: {
+                            ...p.formValidationPayload,
+                            formValidation: {
+                                fieldValidations: p.formValidationPayload.formValidation.fieldValidations.concat(
+                                    toFieldValidations(errorPayload)
+                                )
+                            }
+                        }
+                    }))
+
+
                     response.parsedBody?.errorPayload.objectErrors.map(function (serverError) {
                         dispatch(
                             addNotification({
@@ -220,7 +244,7 @@ const ResetPassword = () => {
     }
 
     const containerClass = (): string => (
-        props.hideUsername  ? '' : 'zero-top-margin'
+        props.hideUsername ? '' : 'zero-top-margin'
     )
 
     return (

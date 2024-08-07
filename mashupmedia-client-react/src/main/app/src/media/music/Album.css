@@ -37,3 +37,23 @@
     font-weight: lighter;
 }
 
+#album div.images {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+
+#album div.images img {
+    cursor: pointer;
+    width: 100px;
+    height: auto;
+    margin: 1em;
+
+}
+
+#album div.external-links div {
+    border-bottom-color: rgb(87, 163, 84);
+    border-bottom-width: 1px;
+    border-bottom-style: dashed;
+}

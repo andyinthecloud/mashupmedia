@@ -127,7 +127,7 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
 
     }, [payload.triggerUploadImage])
 
-    function addImage(): void {        
+    function addImage(): void {
         if (uploadFileRef) {
             uploadFileRef.current?.click()
         }
@@ -146,19 +146,15 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
     }
 
     const handleClickImage = (anchorElement: HTMLElement, payload: MetaImagePayload): void => {
-        // if (props.manageMetaImagesPayload.editor) {
-            setProps(p => ({
-                ...p,
-                metaImageMenuPayload: {
-                    ...p.metaImageMenuPayload,
-                    anchorElement,
-                    open: true,
-                    payload
-                }
-            }))
-        // } else {
-        //     handleEdit(payload)
-        // }
+        setProps(p => ({
+            ...p,
+            metaImageMenuPayload: {
+                ...p.metaImageMenuPayload,
+                anchorElement,
+                open: true,
+                payload
+            }
+        }))
     }
 
     return (
@@ -186,16 +182,6 @@ const ManageMetaImages = (payload: ManageMetaImagesPayload) => {
                 ref={uploadFileRef}
                 onChange={e => handleChangeFolder(e)}
             />
-
-            {/* <Button
-                className="edit-content"
-                variant="outlined"
-                endIcon={<AddAPhoto />}
-                color="secondary"
-                onClick={handleUploadImagesClick}
-            >
-                {t('label.image')}
-            </Button> */}
 
         </div>
     )

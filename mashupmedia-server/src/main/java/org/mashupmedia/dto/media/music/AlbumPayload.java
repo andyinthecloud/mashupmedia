@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 public class AlbumPayload {
     private long id;
-    @NotBlank(message = "The album name should not be empty.")
+    @NotBlank(message = "error.album.name.empty")
     private String name;
     private String summary;
     private List<ExternalLinkPayload> externalLinkPayloads;

@@ -2,6 +2,7 @@ import './FieldError.css';
 import { Warning } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { fieldValidation, FieldValidation, FormValidation } from "../utils/formValidationUtils";
+import { t } from "i18next";
 
 
 export type FieldErrorPayload = {
@@ -20,10 +21,10 @@ const FieldError = (payload: FieldErrorPayload) => {
 
     return (
         <div className='FieldError'>
-            {fieldValidationState?.message.length &&
+            {fieldValidationState?.messageCode.length &&
                 <span>
                     <Warning fontSize='small'></Warning>
-                    {fieldValidationState?.message}
+                    {t(fieldValidationState?.messageCode)}
                 </span>
             }
         </div>

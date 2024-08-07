@@ -41,7 +41,7 @@ public class AlbumMetaImageController extends MetaImageController {
     public @ResponseBody Resource getAlbumArt(@PathVariable long albumId,
             @RequestParam String mediaToken,
             @RequestParam(value = "imageType", required = false) ImageType imageType,
-            @RequestParam(value = "index", required = false) Integer index,
+            @RequestParam(value = "id", required = false) Integer imageId,
             final HttpServletResponse httpServletResponse) throws IOException {
 
         if (!securityManager.isMediaTokenValid(mediaToken)) {
@@ -56,7 +56,7 @@ public class AlbumMetaImageController extends MetaImageController {
 
 
 
-        MetaResource metaResource = getHighlightedMetaImage(album.getMetaImages(), imageType, index);
+        MetaResource metaResource = getHighlightedMetaImage(album.getMetaImages(), imageType, imageId);
         httpServletResponse.setContentType(metaResource.getMediaContentType().getContentType());
         return metaResource.getResource();
     }

@@ -36,7 +36,7 @@ public class ArtistMetaImageController extends MetaImageController{
     public @ResponseBody Resource getAlbumArt(@PathVariable long artistId,
             @RequestParam String mediaToken,
             @RequestParam(value = "imageType", required = false) ImageType imageType,
-            @RequestParam(value = "id", required = false) Integer index,
+            @RequestParam(value = "id", required = false) Integer imageId,
             final HttpServletResponse httpServletResponse) throws IOException {
 
         if (!securityManager.isMediaTokenValid(mediaToken)) {
@@ -46,7 +46,7 @@ public class ArtistMetaImageController extends MetaImageController{
         Artist artist = musicManager.getArtist(artistId);
         Assert.notNull(artist, "Expecting an artist");
 
-        MetaResource metaResource = getHighlightedMetaImage(artist.getMetaImages(), imageType, index);
+        MetaResource metaResource = getHighlightedMetaImage(artist.getMetaImages(), imageType, imageId);
         httpServletResponse.setContentType(metaResource.getMediaContentType().getContentType());
         return metaResource.getResource();
     }

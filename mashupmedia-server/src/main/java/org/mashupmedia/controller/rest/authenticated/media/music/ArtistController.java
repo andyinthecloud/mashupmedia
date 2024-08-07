@@ -23,6 +23,7 @@ import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +40,8 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/private/music/artists")
 public class ArtistController {
+
+    private final static String FIELD_NAME = "name";
 
     private final MusicManager musicManager;
     private final ArtistMapper artistMapper;
@@ -96,11 +99,20 @@ public class ArtistController {
     }
 
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ServerResponsePayload<Boolean>> saveArtist(@Valid @RequestBody ArtistPayload artistPayload) {
+    public ResponseEntity<ServerResponsePayload<Boolean>> saveArtist(
+            @Valid @RequestBody ArtistPayload artistPayload,
+            Errors errors) {
+
+        if (errors.hasErrors()) {
+            return ValidationUtils.createResponseEntityPayload(false, errors);
+        }
+
         if (!isArtistNameUnique(artistPayload.getId(), artistPayload.getName())) {
-            return ResponseEntity.badRequest().body(ServerResponsePayload.<Boolean>builder()
-                    .errorPayload(ErrorPayload.builder().errorCode(ErrorCode.NOT_UNIQUE.getErrorCode()).build())
-                    .build());
+            errors.rejectValue(FIELD_NAME, ErrorCode.NOT_UNIQUE.getErrorCode());
+        }
+
+        if (errors.hasErrors()) {
+            return ValidationUtils.createResponseEntityPayload(false, errors);
         }
 
         Artist artist = artistMapper.toDomain(artistPayload);
@@ -109,9 +121,7 @@ public class ArtistController {
         return ResponseEntity.ok().body(
                 ServerResponsePayload.<Boolean>builder()
                         .payload(true)
-                        .build()
-
-        );
+                        .build());
     }
 
     private boolean isArtistNameUnique(long id, String name) {

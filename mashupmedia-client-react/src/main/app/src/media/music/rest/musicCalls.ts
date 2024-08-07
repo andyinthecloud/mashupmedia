@@ -128,6 +128,6 @@ export const deleteAlbum = (albumId: number, userToken?: string): Promise<HttpRe
     return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.DELETE, albumUrl + "/" + albumId, userToken)
 }
 
-export const saveAlbum = (saveAlbumPayload: SaveAlbumPayload, userToken?: string): Promise<HttpResponse<boolean>> => {
-    return callMashupMediaApi<boolean>(HttpMethod.PUT, albumUrl, userToken, JSON.stringify(saveAlbumPayload))
+export const saveAlbum = (saveAlbumPayload: SaveAlbumPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {
+    return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.PUT, albumUrl, userToken, JSON.stringify(saveAlbumPayload))
 }

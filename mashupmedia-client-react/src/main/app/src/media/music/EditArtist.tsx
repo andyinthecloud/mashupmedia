@@ -1,25 +1,26 @@
-import { t } from "i18next"
-import { SecureMediaPayload } from "../rest/secureMediaPayload"
-import { artistImageUrl, ArtistWithAlbumsPayload, deleteArtist, getArtist, ImageType, saveArtist } from "./rest/musicCalls"
-import { useNavigate, useParams } from "react-router-dom"
-import { ChangeEvent, useEffect, useRef, useState } from "react"
-import { useSelector } from "react-redux"
-import { RootState } from "../../common/redux/store"
 import { Button, FormControl, TextField } from "@mui/material"
-import ManageMetaImages, { ManageMetaImagesPayload } from "../../common/components/meta/ManageMetaImages"
-import { MetaImagePayload, uploadArtistImages } from "./rest/musicUploadCalls"
-import { useDispatch } from "react-redux"
-import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
+import { t } from "i18next"
+import { ChangeEvent, useEffect, useRef, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate, useParams } from "react-router-dom"
 import MusicEditMenu, { MusicEditMenuPayload } from "../../common/components/menus/MusicEditMenu"
-import "./EditArtist.css"
 import ManageExternalLinks, { ManageExternalLinksPayload } from "../../common/components/meta/ManageExternalLinks"
+import ManageMetaImages, { ManageMetaImagesPayload } from "../../common/components/meta/ManageMetaImages"
+import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
+import { RootState } from "../../common/redux/store"
+import { FormValidation, hasFieldError, toFieldValidations, translateFieldErrorMessage } from "../../common/utils/formValidationUtils"
 import { ExternalLinkPayload } from "../rest/mediaCalls"
+import { SecureMediaPayload } from "../rest/secureMediaPayload"
+import "./EditArtist.css"
+import { artistImageUrl, ArtistWithAlbumsPayload, deleteArtist, getArtist, ImageType, saveArtist } from "./rest/musicCalls"
+import { MetaImagePayload, uploadArtistImages } from "./rest/musicUploadCalls"
 
-type EditArtisPayload = {
+type EditArtistPayload = {
     secureMediaItemPayload?: SecureMediaPayload<ArtistWithAlbumsPayload>
     manageMetaImagesPayload: ManageMetaImagesPayload
     musicEditMenuPayload: MusicEditMenuPayload
     manageExternalLinksPayload: ManageExternalLinksPayload
+    formValidation: FormValidation
 }
 
 
@@ -29,8 +30,9 @@ const EditArtist = () => {
     const artistPayloadRef = useRef<SecureMediaPayload<ArtistWithAlbumsPayload>>()
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const FIELD_NAME = "name"
 
-    const [props, setProps] = useState<EditArtisPayload>({
+    const [props, setProps] = useState<EditArtistPayload>({
         manageMetaImagesPayload: {
             metaImagePayloads: [],
             updateMetaImages: updateMetaImages,
@@ -45,6 +47,9 @@ const EditArtist = () => {
             externalLinkPayloads: [],
             updateExternalLinks: updateExternalLinks,
         },
+        formValidation: {
+            fieldValidations: []
+        }
     })
 
 
@@ -223,9 +228,20 @@ const EditArtist = () => {
                     navigate('/music/artist/' + artistId)
                 }
             } else {
+                const errorPayload = response.parsedBody?.errorPayload
+                setProps(p => ({
+                    ...p,
+                    formValidation: {
+                        fieldValidations: p.formValidation.fieldValidations.concat(
+                            toFieldValidations(errorPayload)
+                        )
+                    }
+                }))
+
+
                 dispatch(
                     addNotification({
-                        message: t(response.parsedBody?.errorPayload.errorCode || ''),
+                        message: t("error.validation"),
                         notificationType: NotificationType.ERROR
                     })
                 )
@@ -234,6 +250,17 @@ const EditArtist = () => {
     }
 
     function handleChangeTextField(e: ChangeEvent<HTMLInputElement>): void {
+
+        if (props.formValidation.fieldValidations) {
+            setProps(p => ({
+                ...p,
+                formValidation: {
+                    ...p.formValidation,
+                    fieldValidations: []
+                }
+            }))
+        }
+
         const name = e.target.name
         const value = e.target.value
 
@@ -273,8 +300,10 @@ const EditArtist = () => {
                         required
                         label={t("editArtist.name")}
                         value={props.secureMediaItemPayload?.payload.artistPayload.name || ""}
-                        name="name"
+                        name={FIELD_NAME}
                         onChange={handleChangeTextField}
+                        error={hasFieldError(FIELD_NAME, props.formValidation)}
+                        helperText={translateFieldErrorMessage(FIELD_NAME, props.formValidation)}
                     />
                 </FormControl>
             </div>
@@ -284,7 +313,7 @@ const EditArtist = () => {
                     fullWidth
                 >
                     <TextField
-                        label={t("editArtist.summary")}
+                        label={t("editArtist.profile")}
                         multiline
                         name="profile"
                         value={props.secureMediaItemPayload?.payload.artistPayload.profile || ""}

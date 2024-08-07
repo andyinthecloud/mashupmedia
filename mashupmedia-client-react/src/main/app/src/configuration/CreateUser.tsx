@@ -1,11 +1,11 @@
 import { Button, TextField } from "@mui/material"
 import { useState } from "react"
+import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { FieldValidation, FormValidationPayload, emptyFieldValidation, fieldErrorMessage, hasFieldError, isEmpty, toFieldValidation } from "../common/utils/formValidationUtils"
+import { RootState } from "../common/redux/store"
+import { FieldValidation, FormValidationPayload, emptyFieldValidation, fieldErrorMessage, hasFieldError, isEmpty, toFieldValidations } from "../common/utils/formValidationUtils"
 import logo from "../logo.png"
 import { CreateUserPayload, stepCreateUser } from "./backend/createUserCalls"
-import { useSelector } from "react-redux"
-import { RootState } from "../common/redux/store"
 import { createAccount } from "./backend/userCalls"
 
 const CreateUser = () => {
@@ -100,16 +100,17 @@ const CreateUser = () => {
                 if (response.ok) {
                     navigate('/configuration/users')
                 } else {
-                    const parsedBody = response.parsedBody
-                    parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
-                        props.formValidation.fieldValidations.push(toFieldValidation(serverError))
-                        setProps(p => ({
-                            ...p,
-                            formValidation: {
-                                fieldValidations: props.formValidation.fieldValidations
-                            }
-                        }))
-                    })
+
+                    const errorPayload = response.parsedBody?.errorPayload
+                    setProps(p => ({
+                        ...p,
+                        formValidation: {
+                            fieldValidations: p.formValidation.fieldValidations.concat(
+                                toFieldValidations(errorPayload)
+                            )
+                        }
+                    }))
+
                 }
             })
 
@@ -121,15 +122,15 @@ const CreateUser = () => {
                 if (response.ok && parsedBody) {
                     navigate('/create-user/activate', { state: parsedBody.payload })
                 } else {
-                    parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
-                        props.formValidation.fieldValidations.push(toFieldValidation(serverError))
-                        setProps(p => ({
-                            ...p,
-                            formValidation: {
-                                fieldValidations: props.formValidation.fieldValidations
-                            }
-                        }))
-                    })
+                    const errorPayload = response.parsedBody?.errorPayload
+                    setProps(p => ({
+                        ...p,
+                        formValidation: {
+                            fieldValidations: p.formValidation.fieldValidations.concat(
+                                toFieldValidations(errorPayload)
+                            )
+                        }
+                    }))
                 }
             })
         }

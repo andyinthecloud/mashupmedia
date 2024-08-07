@@ -25,8 +25,10 @@ import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.service.MashupMediaSecurityManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.util.AdminHelper;
+import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +47,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/private/music/albums")
 public class AlbumController {
     private final static int MAX_RANDOM_ALBUMS = 20;
+    private final static String FIELD_NAME = "name";
 
     private final MusicManager musicManager;
     private final MashupMediaSecurityManager mashupMediaSecurityManager;
@@ -111,11 +114,29 @@ public class AlbumController {
     }
 
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> updateAlbum(
-            @RequestBody @Valid SaveAlbumPayload albumPayload) {
+    public ResponseEntity<ServerResponsePayload<Boolean>> updateAlbum(
+            @RequestBody @Valid SaveAlbumPayload albumPayload,
+            Errors errors) {
+
+        if (errors.hasErrors()) {
+            return ValidationUtils.createResponseEntityPayload(false, errors);
+        }
+
         Album album = saveAlbumMapper.toDomain(albumPayload);
-        musicManager.saveAlbum(album);
-        return ResponseEntity.ok().body(true);
+        try {
+            musicManager.saveAlbum(album);
+        } catch (NameNotUniqueException e) {
+            errors.rejectValue(FIELD_NAME, ErrorCode.NOT_UNIQUE.getErrorCode());
+        }
+
+        if (errors.hasErrors()) {
+            return ValidationUtils.createResponseEntityPayload(false, errors);
+        }
+
+        return ResponseEntity.ok().body(
+                ServerResponsePayload.<Boolean>builder()
+                        .payload(true)
+                        .build());
     }
 
     @DeleteMapping(value = "/{albumId}", produces = MediaType.APPLICATION_JSON_VALUE)

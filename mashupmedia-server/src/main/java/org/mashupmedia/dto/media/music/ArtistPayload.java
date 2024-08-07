@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class ArtistPayload {
     private long id;
-    @NotBlank(message = "The artist name should not be empty.")
+    @NotBlank(message = "error.artist.name.empty")
     private String name;
     private String profile;
     private UserPayload userPayload;

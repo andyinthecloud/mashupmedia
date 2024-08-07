@@ -125,7 +125,7 @@ const Artist = () => {
     }
 
     return (
-        <form id='artist'>
+        <div id='artist'>
 
             <ImagePopover {...props.artistImagePopover} />
 
@@ -216,7 +216,7 @@ const Artist = () => {
 
             <CreateAlbumNameDialog {...props.createAlbumDialogPayload} />
 
-        </form>
+        </div>
     )
 }
 

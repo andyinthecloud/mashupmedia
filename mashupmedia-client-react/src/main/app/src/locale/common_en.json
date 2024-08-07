@@ -2,7 +2,18 @@
     "error": {
         "general": "I am not feeling very well",
         "notUnique": "Please choose a unique value",
-        "containsMedia": "Please remove media before deleting"
+        "containsMedia": "Please remove media before deleting",
+        "validation": "There was an problem processing your request. Please check for specific errors.",
+        "artist": {
+            "name": {
+                "empty": "Please enter an artist name"
+            }
+        },
+        "album": {
+            "name": {
+                "empty": "Please enter an album name"
+            }
+        }
     },
     "label": {
         "name": "Name",
@@ -43,10 +54,13 @@
         "menuLink": "Edit artist",
         "title": "Edit artist",
         "name": "Name",
-        "summary": "Summary"
+        "profile": "Profile"
 
     },
     "editAlbum": {
-        "menuLink": "Edit album"
+        "menuLink": "Edit album",
+        "title": "Edit album",
+        "name": "Name",
+        "summary": "Summary"
     }
 }

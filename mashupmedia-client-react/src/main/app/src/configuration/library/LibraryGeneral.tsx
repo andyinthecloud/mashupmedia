@@ -3,7 +3,7 @@ import { LibraryPayload, LibraryTypePayload, checkLibraryPathExists, deleteLibra
 import { useNavigate, useParams } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { RootState } from "../../common/redux/store"
-import { FormValidation, ServerError, fieldErrorMessage, hasFieldError, toFieldValidation } from "../../common/utils/formValidationUtils"
+import { FormValidation, ServerError, fieldErrorMessage, hasFieldError, toFieldValidation, toFieldValidations } from "../../common/utils/formValidationUtils"
 import { NotificationType, addNotification } from "../../common/notification/notificationSlice"
 import { useDispatch } from "react-redux"
 import { Button, Checkbox, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from "@mui/material"
@@ -106,9 +106,13 @@ const LibraryGeneral = (libraryPagePayload: LibraryPagePayload) => {
                     )
                     navigate('/configuration/libraries')
                 } else {
-                    response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
-                        setServerFieldValidationState(serverError)
-                    })
+                    // response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
+                    //     setServerFieldValidationState(serverError)
+                    // })
+
+                    props.formValidation.fieldValidations.push(
+                        ...toFieldValidations(response.parsedBody?.errorPayload)
+                    )
                 }
             })
     }
@@ -141,24 +145,29 @@ const LibraryGeneral = (libraryPagePayload: LibraryPagePayload) => {
                         })
                     )
                 } else {
-                    response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
-                        setServerFieldValidationState({ name: 'path', defaultMessage: serverError.defaultMessage })
-                    })
+
+                    props.formValidation.fieldValidations.push(
+                        ...toFieldValidations(response.parsedBody?.errorPayload)
+                    )
+
+                    // response.parsedBody?.errorPayload.fieldErrors.map(function (serverError) {
+                    //     setServerFieldValidationState({ name: 'path', defaultMessage: serverError.defaultMessage })
+                    // })
                 }
             })
     }
 
-    const setServerFieldValidationState = (serverError: ServerError): void => {
-        const fieldValidations = props.formValidation.fieldValidations
-        fieldValidations.push(toFieldValidation(serverError))
+    // const setServerFieldValidationState = (serverError: ServerError): void => {
+    //     const fieldValidations = props.formValidation.fieldValidations
+    //     fieldValidations.push(toFieldValidation(serverError))
 
-        setProps(p => ({
-            ...p,
-            formValidation: {
-                fieldValidations
-            }
-        }))
-    }
+    //     setProps(p => ({
+    //         ...p,
+    //         formValidation: {
+    //             fieldValidations
+    //         }
+    //     }))
+    // }
 
     const isShowSaveButton = (): boolean => {
         return userPolicyPayload?.administrator || false

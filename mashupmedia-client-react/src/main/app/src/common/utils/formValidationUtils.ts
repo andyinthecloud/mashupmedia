@@ -1,7 +1,8 @@
+import { t } from "i18next"
 
 export type FieldValidation = {
     name: string
-    message: string
+    messageCode: string
 }
 
 export type FormValidationPayload<T> = {
@@ -14,10 +15,10 @@ export type FormValidation = {
 }
 
 export type ServerError = {
-    name: string
+    objectName: string
     field?: string
     defaultMessage: string
-    code?: string
+    code?: string[]
 }
 
 
@@ -37,7 +38,7 @@ export const isEmpty = (value?: string): boolean => !value?.trim().length
 
 export const emptyFieldValidation = (name: string, fieldLabel: string): FieldValidation => ({
     name,
-    message: `${fieldLabel} is mandatory, please enter a value.`
+    messageCode: `${fieldLabel} is mandatory, please enter a value.`
 })
 
 
@@ -46,11 +47,18 @@ export const hasFieldError = (name: string, formValidation: FormValidation): boo
         .some(fieldValidation => fieldValidation.name === name)
 }
 
+export const translateFieldErrorMessage = (name: string, formValidation: FormValidation): string | undefined => {
+    const message = fieldErrorMessage(name, formValidation)
+    return message ? t(message) : message
+}
+
 
 export const fieldErrorMessage = (name: string, formValidation: FormValidation): string | undefined => {
     return formValidation?.fieldValidations
-        .find(fieldValidation => fieldValidation.name === name)?.message
+        .find(fieldValidation => fieldValidation.name === name)?.messageCode
 }
+
+
 
 
 export const fieldValidation = (name: string, formValidation: FormValidation): FieldValidation | undefined => {
@@ -59,7 +67,25 @@ export const fieldValidation = (name: string, formValidation: FormValidation): F
 }
 
 export const toFieldValidation = (serverError: ServerError): FieldValidation => ({
-    name: serverError.field || serverError.name,
-    message: serverError.defaultMessage
+    name: serverError.field || serverError.objectName,
+    messageCode: serverError.defaultMessage
 })
+
+export const toFieldValidations = (errorPayload?: ErrorPayload): FieldValidation[] => {
+    const fieldValidations: FieldValidation[] = []
+
+    if (!errorPayload) {
+        return fieldValidations
+    }
+
+    errorPayload.fieldErrors.map(fieldError => {
+        fieldValidations.push({
+            name: fieldError.field || fieldError.objectName,
+            messageCode: fieldError.defaultMessage,
+        })
+    })
+
+    return fieldValidations
+
+}
 
