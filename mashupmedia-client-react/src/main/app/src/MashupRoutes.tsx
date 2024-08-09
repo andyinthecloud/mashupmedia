@@ -173,14 +173,11 @@ export const MashupRoutes = () => {
 
                 </Route>
 
-                <Route path="upload-artist-tracks">
-                    <Route path=":artistId" element={
-                        <RequireAuthenication>
-                            <UploadArtistTracks />
-                        </RequireAuthenication>
-                    } />
-                </Route>
-
+                <Route path="upload-artist-tracks" element={
+                    <RequireAuthenication>
+                        <UploadArtistTracks />
+                    </RequireAuthenication>
+                } />
 
             </Route>
 

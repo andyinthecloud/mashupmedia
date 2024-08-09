@@ -58,6 +58,7 @@ const Album = () => {
         musicMetaMenuPagePayload: {
             editor: false,
             edit: handleEdit,
+            artistId: 0,
             editLabel: t("editAlbum.menuLink"),
             uploadTracks: handleUploadTracks,
             addAlbum: handleAddAlbum
@@ -108,10 +109,10 @@ const Album = () => {
                         musicMetaMenuPagePayload: {
                             ...p.musicMetaMenuPagePayload,
                             artistId,
+                            albumId: secureMediaItemPayload.payload.albumPayload.id,
                             editor
                         }
                     }))
-
                 }
             })
         }

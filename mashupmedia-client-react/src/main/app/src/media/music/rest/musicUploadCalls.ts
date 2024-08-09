@@ -7,11 +7,11 @@ export type MetaImagePayload = & MetaPayload
 
 export type UploadArtistTracksPayload = {
     artistId: number
-    albumId: number
+    albumId?: number
     libraryId: number,
     genreIdName?: string
     decade?: number
-    fileList?: FileList
+    files?: File[]
 
 }
 
@@ -40,9 +40,9 @@ const postFiles =  async <MetaImagePayload>(uri: string, formData: FormData, use
     return response
 }  
 
-const addFiles = (formData: FormData, fileList: FileList): void => {
-    for (let i = 0; i < fileList.length; i++) {
-        formData.append("files", fileList[i])
+const addFiles = (formData: FormData, files: File[]): void => {
+    for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i])
     }
 }
 
@@ -51,19 +51,19 @@ const artistUri = musicUri + "/artist"
 export const uploadArtistImages = (artistId: number,  fileList: FileList, userToken?: string): Promise<HttpResponse<ServerResponsePayload<MetaImagePayload[]>>> => {
     const formData = new FormData()
     formData.append("artistId", "" + artistId)
-    addFiles(formData, fileList)
+    addFiles(formData, Array.from(fileList))
     return postFiles(artistUri + "/images", formData, userToken)
 }
 
 export const uploadArtistTracks = (uploadArtistTracksPayload: UploadArtistTracksPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<MetaImagePayload[]>>> => {    
-    const fileList = uploadArtistTracksPayload.fileList
-    if (!fileList) {
+    const files = uploadArtistTracksPayload.files
+    if (!files) {
         return Promise.reject()
     }
     
     const formData = new FormData()
     formData.append("artistId", "" + uploadArtistTracksPayload.artistId)
-    addFiles(formData, fileList)
+    addFiles(formData, files)
     return postFiles(artistUri + "/tracks", formData, userToken)
 }
 
@@ -72,6 +72,6 @@ const albumUri = musicUri + "/album"
 export const uploadAlbumImages = (albumId: number,  fileList: FileList, userToken?: string): Promise<HttpResponse<ServerResponsePayload<MetaImagePayload[]>>> => {
     const formData = new FormData()
     formData.append("albumId", "" + albumId)
-    addFiles(formData, fileList)
+    addFiles(formData, Array.from(fileList))
     return postFiles(albumUri + "/images", formData, userToken)
 }

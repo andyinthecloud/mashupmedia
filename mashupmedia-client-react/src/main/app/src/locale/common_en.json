@@ -46,7 +46,7 @@
         "selectTracks": "Select tracks"
     },
     "uploadTrackFiles": {
-        "drag": "Drag and drop to upload files",
+        "drag": "Drag and drop to upload {{fileType}} files",
         "or": "or",
         "browse": "Browse tracks"
     },

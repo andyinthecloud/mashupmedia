@@ -3,13 +3,39 @@
     border-style: dashed;
     width: 100%;
     border-radius: 1em;
-    border-color: #e579e9;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding-top: 2em;
-    padding-bottom: 2em;
+    padding-bottom: 1em;
     margin-bottom: 1em;
 }
+
+#upload-track-files.highlight {
+    color: #e579e9;
+    border-color: #e579e9;
+}
+
+#upload-track-files div.files{
+    width: 90%;
+    text-align: left;
+    margin-bottom: 1em;
+}
+
+#upload-track-files div.files{
+    opacity: 0.8;
+    font-size: small;
+}
+
+#upload-track-files div.file{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: solid;
+    border-bottom-width: 1px;    
+    border-bottom-color: gray;
+
+}
+
 

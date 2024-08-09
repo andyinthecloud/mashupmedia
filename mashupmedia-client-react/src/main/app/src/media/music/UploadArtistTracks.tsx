@@ -3,17 +3,17 @@ import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Select } fro
 import { t } from "i18next"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
-import { NavLink, useNavigate, useParams } from "react-router-dom"
+import { NavLink, useLocation, useNavigate } from "react-router-dom"
+import UploadTrackFiles, { FileType, UploadTrackFilesPayload } from "../../common/components/media/UploadTrackFiles"
 import { RootState } from "../../common/redux/store"
 import { getDecades } from "../../common/utils/decadeUtils"
 import { GENRE_AUTOMATIC, prepareUploadGenrePayloads } from "../../common/utils/genreUtils"
+import { getLibraries, LibraryNameValuePayload } from "../../configuration/backend/libraryCalls"
 import { GenrePayload, getGenres } from "../../configuration/backend/metaCalls"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
 import { artistImageUrl, ArtistWithAlbumsPayload, getArtist, ImageType } from "./rest/musicCalls"
 import { UploadArtistTracksPayload } from "./rest/musicUploadCalls"
 import "./UploadArtistTracks.css"
-import { getLibraries, LibraryNameValuePayload } from "../../configuration/backend/libraryCalls"
-import UploadTrackFiles, { UploadTrackFilesPayload } from "../../common/components/media/UploadTrackFiles"
 
 
 type UploadArtistTracksPagePayload = {
@@ -27,11 +27,10 @@ type UploadArtistTracksPagePayload = {
 }
 
 const UploadArtistTracks = () => {
-
+    const { state } = useLocation()
     const navigate = useNavigate()
     const uploadFileRef = useRef<HTMLInputElement>(null);
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
-    const { artistId } = useParams()
 
     const [props, setProps] = useState<UploadArtistTracksPagePayload>({
         uploadArtistTracksPayload: {
@@ -42,39 +41,44 @@ const UploadArtistTracks = () => {
             decade: 0
         },
         uploadTrackFilesPayload: {
-            selectFiles
+            selectFiles,
+            fileType: FileType.AUDIO
         }
     })
 
-    function selectFiles(fileList: FileList): void {
+    function selectFiles(files: File[]): void {
         setProps(p => ({
             ...p,
             uploadArtistTracksPayload: {
                 ...p.uploadArtistTracksPayload,
                 artistId: p.uploadArtistTracksPayload?.artistId || 0,
-                albumId: p.uploadArtistTracksPayload?.albumId || 0,
                 libraryId: p.uploadArtistTracksPayload?.libraryId || 0,
-                fileList
+                files
             }
         }))
     }
 
     useEffect(() => {
-        if (artistId) {
-            getArtist(+artistId, userToken).then(response => {
-                setProps(p => ({
-                    ...p,
-                    artistWithAlbumsPayload: response.parsedBody,
-                    uploadArtistTracksPayload: {
-                        ...p.uploadArtistTracksPayload,
-                        albumId: p.uploadArtistTracksPayload?.albumId || 0,
-                        libraryId: p.uploadArtistTracksPayload?.libraryId || 0,
-                        artistId: +artistId
-                    }
-                }))
-            })
+        if (!state) {
+            return
         }
-    }, [artistId])
+
+        const artistId: number = state.artistId
+        const albumId: number = state.albumId
+
+        getArtist(+artistId, userToken).then(response => {
+            setProps(p => ({
+                ...p,
+                artistWithAlbumsPayload: response.parsedBody,
+                uploadArtistTracksPayload: {
+                    ...p.uploadArtistTracksPayload,
+                    artistId,
+                    albumId,
+                    libraryId: p.uploadArtistTracksPayload?.libraryId || 0,
+                }
+            }))
+        })
+    }, [state])
 
     useEffect(() => {
         getGenres(userToken)
@@ -134,13 +138,13 @@ const UploadArtistTracks = () => {
     }
 
     function selectedFiles() {
-        const fileList = props.uploadArtistTracksPayload?.fileList
+        const files = props.uploadArtistTracksPayload?.files
 
-        if (!fileList) {
+        if (!files) {
             return
         }
 
-        return Array.from(fileList).map(file => (
+        return files.map(file => (
             <div key={file.name}>{file.name}</div>
         ))
 
@@ -306,7 +310,7 @@ const UploadArtistTracks = () => {
 
             </div>
 
-            <UploadTrackFiles {...props.uploadTrackFilesPayload}/>
+            <UploadTrackFiles {...props.uploadTrackFilesPayload} />
 
 
             <div className="new-line right">

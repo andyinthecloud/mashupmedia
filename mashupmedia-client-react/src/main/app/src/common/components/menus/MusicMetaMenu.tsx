@@ -3,19 +3,16 @@ import { IconButton, Menu, MenuItem } from "@mui/material"
 import { t } from "i18next"
 import { useEffect, useState } from "react"
 import './MusicMetaMenu.css'
+import { useNavigate } from "react-router-dom"
 
 export type MusicMetaMenuPagePayload = {
     editor: boolean
     editLabel: string,
+    artistId: number,
+    albumId?: number,
     edit(): void
     uploadTracks(): void
     addAlbum(): void
-
-    // artistId: number
-    // editName(): void
-    // editSummary(): void
-    // addImage(): void
-    // addExternalLink(): void
 }
 
 type InternalMusicMetaMenuPagePayload = {
@@ -24,6 +21,7 @@ type InternalMusicMetaMenuPagePayload = {
 }
 
 const MusicMetaMenu = (payload: MusicMetaMenuPagePayload) => {
+    const navigate = useNavigate()
 
     const [props, setProps] = useState<InternalMusicMetaMenuPagePayload>({
         musicMetaMenuPagePayload: payload
@@ -40,16 +38,30 @@ const MusicMetaMenu = (payload: MusicMetaMenuPagePayload) => {
 
     }, [payload.editor])
 
-    // useEffect(() => {
-    //     setProps(p => ({
-    //         ...p,
-    //         musicMetaMenuPagePayload: {
-    //             ...p.musicMetaMenuPagePayload,
-    //             artistId: payload.artistId
-    //         }
-    //     }))
+    useEffect(() => {
+        setProps(p => ({
+            ...p,
+            musicMetaMenuPagePayload: {
+                ...p.musicMetaMenuPagePayload,
+                editor: payload.editor,
+                artistId: payload.artistId 
+            }
+        }))
 
-    // }, [payload.artistId])
+    }, [payload.artistId])
+
+    useEffect(() => {
+        setProps(p => ({
+            ...p,
+            musicMetaMenuPagePayload: {
+                ...p.musicMetaMenuPagePayload,
+                editor: payload.editor,
+                albumId: payload.albumId 
+            }
+        }))
+
+    }, [payload.albumId])
+
 
     function handleClose(): void {
         closeMenu()
@@ -69,27 +81,6 @@ const MusicMetaMenu = (payload: MusicMetaMenuPagePayload) => {
         }))
     }
 
-    // function handleClickEditName(): void {
-    //     props.musicMetaMenuPagePayload.editName()
-    //     closeMenu()
-    // }
-
-
-    // function handleClickEditSummary(): void {
-    //     props.musicMetaMenuPagePayload.editSummary()
-    //     closeMenu()
-    // }
-
-    // function handleClickAddImage(): void {
-    //     props.musicMetaMenuPagePayload.addImage()
-    //     closeMenu()
-    // }
-
-    // function handleClickAddLink(): void {
-    //     props.musicMetaMenuPagePayload.addExternalLink()
-    //     closeMenu()
-    // }
-
     function handleClickEdit(): void {
         props.musicMetaMenuPagePayload.edit()
         closeMenu()
@@ -102,7 +93,17 @@ const MusicMetaMenu = (payload: MusicMetaMenuPagePayload) => {
 
 
     function handleClickUploadTracks(): void {
-        // navigate('/music/upload-artist-tracks/' + props.musicMetaMenuPagePayload.artistId)
+
+        const artistId = props.musicMetaMenuPagePayload.artistId
+        const albumId = props.musicMetaMenuPagePayload.albumId || undefined
+
+        navigate('/music/upload-artist-tracks', {
+            state: {
+                artistId,
+                albumId
+            }
+        })
+
         closeMenu()
     }
 
@@ -127,28 +128,7 @@ const MusicMetaMenu = (payload: MusicMetaMenuPagePayload) => {
                     onClose={handleClose}
                     anchorEl={props.anchorElement}
                 >
-                    {/* <MenuItem
-                        onClick={handleClickEditName}>
-                        <Edit />
-                        {t('menu.musicMeta.editName')}
-                    </MenuItem>
                     <MenuItem
-                        onClick={handleClickEditSummary}>
-                        <Edit />
-                        {t('menu.musicMeta.editSummary')}
-                    </MenuItem>
-                    <MenuItem
-                        onClick={handleClickAddImage}>
-                        <AddAPhoto />
-                        {t('menu.musicMeta.addImage')}
-                    </MenuItem>
-                    <MenuItem
-                        onClick={handleClickAddLink}>
-                        <AddLink />
-                        {t('menu.musicMeta.addLink')}
-                    </MenuItem> */}
-
-<MenuItem
                         onClick={handleClickEdit}>
                         <Edit />
                         {props.musicMetaMenuPagePayload.editLabel}

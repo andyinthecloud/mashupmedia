@@ -49,6 +49,7 @@ const Artist = () => {
         musicMetaMenuPagePayload: {
             editor: false,
             edit: handleEdit,
+            artistId: 0,
             editLabel: t("editArtist.menuLink"),
             uploadTracks: handleUploadTracks,
             addAlbum: handleAddAlbum
@@ -91,7 +92,7 @@ const Artist = () => {
                         musicMetaMenuPagePayload: {
                             ...p.musicMetaMenuPagePayload,
                             artistId: +artistId,
-                            editor
+                            editor                            
                         }
                     }))
 

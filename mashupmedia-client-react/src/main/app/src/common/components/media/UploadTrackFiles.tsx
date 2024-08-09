@@ -1,55 +1,50 @@
-import { ChangeEvent, useRef, useState, DragEvent } from "react";
-import "./UploadTrackFiles.css"
-import { Button } from "@mui/material";
-import { Audiotrack, CloudUpload } from "@mui/icons-material";
+import { Audiotrack, CloudUpload, RemoveCircleOutline } from "@mui/icons-material";
+import { Button, IconButton } from "@mui/material";
 import { t } from "i18next";
+import { ChangeEvent, DragEvent, useRef, useState } from "react";
+import "./UploadTrackFiles.css";
 
 
-
-
+export enum FileType {
+    AUDIO
+}
 
 export type UploadTrackFilesPayload = {
-    selectFiles(fileList: FileList): void
+    selectFiles(files: File[]): void
+    fileType: FileType
+}
+
+type InternalUploadTrackFilesPayload = {
+    uploadTrackFilesPayload: UploadTrackFilesPayload
+    files: File[]
+    dragging: boolean
 }
 
 const UploadTrackFiles = (payload: UploadTrackFilesPayload) => {
     const uploadFileRef = useRef<HTMLInputElement>(null);
+    const filesRef = useRef<File[]>([])
 
-
-    // window.addEventListener("dragenter",  function(e: DragEvent) {
-    //     if (e.currentTarget.id != dropzoneId) {
-    //       e.preventDefault();
-    //       e.dataTransfer.effectAllowed = "none";
-    //       e.dataTransfer.dropEffect = "none";
-    //     }
-    //   }, false);
-      
-    //   window.addEventListener("dragover", function(e:DragEvent) {
-    //     if (e.currentTarget.id != dropzoneId) {
-    //       e.preventDefault();
-    //       e.dataTransfer.effectAllowed = "none";
-    //       e.dataTransfer.dropEffect = "none";
-    //     }
-    //   });
-      
-    //   window.addEventListener("drop", function(e: DragEvent) {
-    //     if (e.currentTarget.id != dropzoneId) {
-    //       e.preventDefault();
-    //       e.dataTransfer.effectAllowed = "none";
-    //       e.dataTransfer.dropEffect = "none";
-    //     }
-    //   });
-
-    const [props] = useState<UploadTrackFilesPayload>(
-        payload
-    )
+    const [props, setProps] = useState<InternalUploadTrackFilesPayload>({
+        files: [],
+        uploadTrackFilesPayload: payload,
+        dragging: false
+    })
 
     const handleChangeFolder = (e: ChangeEvent<HTMLInputElement>): void => {
-        const fileList = e.target.files
-        if (!fileList?.length) {
+        const selectedFiles = e.target.files
+        if (!selectedFiles?.length) {
             return
         }
-        props.selectFiles(fileList)
+
+        const files = props.files.concat(Array.from(selectedFiles))
+
+        setProps(p => ({
+            ...p,
+            files
+        }))
+        filesRef.current = files
+
+        props.uploadTrackFilesPayload.selectFiles(filesRef.current)
     }
 
     function handleClickSelectTracks(): void {
@@ -59,15 +54,59 @@ const UploadTrackFiles = (payload: UploadTrackFilesPayload) => {
     }
 
     function handleDropFiles(e: DragEvent<HTMLDivElement>): void {
-        // e.preventDefault()
-        // document.addEventListener('drop', function(e) { e.preventDefault(); }, false);
-        console.log(e.dataTransfer.files)
+        e.preventDefault()
+
+        const fileTypeValue = getFileTypeInLowerCase()
+        const selectedFiles = Array.from(e.dataTransfer.files)
+            .filter(file => file.type.toLowerCase().startsWith(fileTypeValue))
+        const files = props.files.concat(selectedFiles)
+        setProps(p => ({
+            ...p,
+            files,
+            dragging: false
+        }))
+        filesRef.current = files
+
+        props.uploadTrackFilesPayload.selectFiles(filesRef.current)
+
     }
 
+    function getFileTypeInLowerCase(): string {
+        return FileType[props.uploadTrackFilesPayload.fileType].toLowerCase()
+    }
+
+
+    function handleDragOver(e: DragEvent<HTMLDivElement>): void {
+        e.preventDefault()
+        handleDragHighlight(true)
+    }
+
+    function handleDragHighlight(dragging: boolean): void {
+        setProps(p => ({
+            ...p,
+            dragging
+        }))
+    }
+
+    function handleClickRemoveFile(index: number): void {
+        filesRef.current.splice(index, 1)
+        setProps(p => ({
+            ...p,
+            files: filesRef.current
+        }))
+
+        props.uploadTrackFilesPayload.selectFiles(filesRef.current)
+    }
+
+
     return (
-        <div 
-        onDrop={handleDropFiles}
-        id="upload-track-files">
+        <div
+            onDrop={handleDropFiles}
+            onDragOver={handleDragOver}
+            onDragExit={() => handleDragHighlight(false)}
+            id="upload-track-files"
+            className={props.dragging ? "highlight" : ""}
+        >
 
 
             <div className="cloud-icon">
@@ -77,7 +116,7 @@ const UploadTrackFiles = (payload: UploadTrackFilesPayload) => {
                 />
             </div>
 
-            <div>{t("uploadTrackFiles.drag")}</div>
+            <div>{t("uploadTrackFiles.drag", { fileType: getFileTypeInLowerCase() })}</div>
 
             <div>{t("uploadTrackFiles.or")} </div>
 
@@ -101,6 +140,24 @@ const UploadTrackFiles = (payload: UploadTrackFilesPayload) => {
                 {t('uploadTrackFiles.browse')}
             </Button>
 
+
+            <div className="files">
+                {props.files.map((file, index) => (
+                    <div key={index} className="file">
+                        <div>{file.name}</div>
+                        <div>
+                            <IconButton 
+                            color="secondary"
+                            onClick={() => handleClickRemoveFile(index)}>
+                                <RemoveCircleOutline />
+                            </IconButton>
+                        </div>
+                    </div>
+
+
+
+                ))}
+            </div>
 
         </div>
     )
