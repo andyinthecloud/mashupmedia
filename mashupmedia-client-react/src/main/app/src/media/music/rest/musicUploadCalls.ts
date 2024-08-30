@@ -40,6 +40,30 @@ const postFiles =  async <MetaImagePayload>(uri: string, formData: FormData, use
     return response
 }  
 
+
+
+const postFilesAsynchronous =  async (uri: string, formData: FormData, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {
+
+    const url = backEndUrl(uri)    
+
+    const response: HttpResponse<ServerResponsePayload<boolean>> = await fetch(url, {
+        method: HttpMethod.POST,
+        mode: 'cors',
+        credentials: 'omit',
+        headers: multiPartHeaders(securityToken(userToken)),
+        body: formData
+    })
+
+    try {
+        response.parsedBody = await response.json()
+    } catch (exception) {
+        console.log('Error parsing json', response)
+    }
+
+    return response
+}  
+
+
 const addFiles = (formData: FormData, files: File[]): void => {
     for (let i = 0; i < files.length; i++) {
         formData.append("files", files[i])
@@ -55,7 +79,7 @@ export const uploadArtistImages = (artistId: number,  fileList: FileList, userTo
     return postFiles(artistUri + "/images", formData, userToken)
 }
 
-export const uploadArtistTracks = (uploadArtistTracksPayload: UploadArtistTracksPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<MetaImagePayload[]>>> => {    
+export const uploadArtistTracks = (uploadArtistTracksPayload: UploadArtistTracksPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {    
     const files = uploadArtistTracksPayload.files
     if (!files) {
         return Promise.reject()
@@ -64,7 +88,7 @@ export const uploadArtistTracks = (uploadArtistTracksPayload: UploadArtistTracks
     const formData = new FormData()
     formData.append("artistId", "" + uploadArtistTracksPayload.artistId)
     addFiles(formData, files)
-    return postFiles(artistUri + "/tracks", formData, userToken)
+    return postFilesAsynchronous(artistUri + "/tracks", formData, userToken)
 }
 
 const albumUri = musicUri + "/album"

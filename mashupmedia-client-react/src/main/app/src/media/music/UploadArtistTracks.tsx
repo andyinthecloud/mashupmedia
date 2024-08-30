@@ -1,8 +1,7 @@
-import { Audiotrack } from "@mui/icons-material"
 import { Button, FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material"
 import { t } from "i18next"
-import { ChangeEvent, useEffect, useRef, useState } from "react"
-import { useSelector } from "react-redux"
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import UploadTrackFiles, { FileType, UploadTrackFilesPayload } from "../../common/components/media/UploadTrackFiles"
 import { RootState } from "../../common/redux/store"
@@ -12,8 +11,9 @@ import { getLibraries, LibraryNameValuePayload } from "../../configuration/backe
 import { GenrePayload, getGenres } from "../../configuration/backend/metaCalls"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
 import { artistImageUrl, ArtistWithAlbumsPayload, getArtist, ImageType } from "./rest/musicCalls"
-import { UploadArtistTracksPayload } from "./rest/musicUploadCalls"
+import { uploadArtistTracks, UploadArtistTracksPayload } from "./rest/musicUploadCalls"
 import "./UploadArtistTracks.css"
+import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
 
 
 type UploadArtistTracksPagePayload = {
@@ -29,8 +29,8 @@ type UploadArtistTracksPagePayload = {
 const UploadArtistTracks = () => {
     const { state } = useLocation()
     const navigate = useNavigate()
-    const uploadFileRef = useRef<HTMLInputElement>(null);
     const userToken = useSelector((state: RootState) => state.security.payload?.token)
+    const dispatch = useDispatch()
 
     const [props, setProps] = useState<UploadArtistTracksPagePayload>({
         uploadArtistTracksPayload: {
@@ -84,70 +84,40 @@ const UploadArtistTracks = () => {
         getGenres(userToken)
             .then(response => {
                 const genrePayloads = prepareUploadGenrePayloads(response.parsedBody || [])
+                const decades = getDecades()
                 setProps(p => ({
                     ...p,
                     genrePayloads,
-                    decades: getDecades()
+                    decades,
+                    uploadArtistTracksPayload: {
+                        ...p.uploadArtistTracksPayload,
+                        artistId: p.uploadArtistTracksPayload?.artistId || 0,
+                        libraryId: p.uploadArtistTracksPayload?.libraryId || 0,
+                        genreIdName: genrePayloads.length ? genrePayloads[0].idName : ""
+                    }
                 }))
             })
 
 
         getLibraries(userToken)
             .then(response => {
+                const libraryNameValuePayloads = response.parsedBody
                 setProps(p => ({
                     ...p,
-                    libraryNameValuePayloads: response.parsedBody
+                    libraryNameValuePayloads,
+                    uploadArtistTracksPayload: {
+                        ...p.uploadArtistTracksPayload,
+                        artistId: p.uploadArtistTracksPayload?.artistId || 0,
+                        libraryId: libraryNameValuePayloads?.length ? libraryNameValuePayloads[0].value : 0,
+                    }
                 }))
             })
 
     }, [userToken])
 
-    const handleChangeFolder = (e: ChangeEvent<HTMLInputElement>): void => {
-
-        const files = e.target.files
-        if (!files?.length) {
-            return
-        }
-
-        setProps(p => ({
-            ...p,
-            uploadArtistTracksPayload: {
-                ...p.uploadArtistTracksPayload,
-                artistId: p.uploadArtistTracksPayload?.artistId || 0,
-                albumId: p.uploadArtistTracksPayload?.albumId || 0,
-                libraryId: p.uploadArtistTracksPayload?.libraryId || 0,
-                fileList: files
-            }
-        }))
-
-    }
-
-    function handleClickSelectTracks(): void {
-        if (uploadFileRef) {
-            uploadFileRef.current?.click()
-        }
-    }
-
     function handleCancel(): void {
         const artistId = props.uploadArtistTracksPayload?.artistId
-        if (artistId) {
-            navigate('/music/artist/' + artistId)
-        } else {
-            navigate('/music/artists' + artistId)
-        }
-    }
-
-    function selectedFiles() {
-        const files = props.uploadArtistTracksPayload?.files
-
-        if (!files) {
-            return
-        }
-
-        return files.map(file => (
-            <div key={file.name}>{file.name}</div>
-        ))
-
+        navigate('/music/artist/' + artistId)
     }
 
     function handleChangeForm(name: string, value: string | number): void {
@@ -163,11 +133,36 @@ const UploadArtistTracks = () => {
         }))
     }
 
+    function handleUpload(): void {
+        if (!props.uploadArtistTracksPayload) {
+            return
+        }
+
+        uploadArtistTracks(props.uploadArtistTracksPayload, userToken)
+            .then(response => {
+                if (response.ok) {
+                    dispatch(
+                        addNotification({
+                            message: t("uploadArtistTracks.uploaded"),
+                            notificationType: NotificationType.SUCCESS
+                        })
+                    )
+                    navigate('/music/artist/' + props.artistWithAlbumsPayload?.payload.artistPayload.id)
+                } else {                    
+                    dispatch(
+                        addNotification({
+                            message: t(response.parsedBody?.errorPayload.errorCode || "error.general"),
+                            notificationType: NotificationType.ERROR
+                        })
+                    )
+                }
+
+            })
+    }
+
     return (
         <form id="upload-artist-tracks">
             <h1>{t("uploadArtistTracks.title")}</h1>
-
-
 
             <div className="artist">
 
@@ -189,6 +184,7 @@ const UploadArtistTracks = () => {
                     sx={{
                         marginTop: "1em",
                     }}
+                    required
                 >
                     <InputLabel id="select-album-label">{t("uploadArtistTracks.library")}</InputLabel>
                     <Select
@@ -196,7 +192,8 @@ const UploadArtistTracks = () => {
                         name="libraryId"
                         onChange={e => handleChangeForm(e.target.name, e.target.value)}
                         label={t("uploadArtistTracks.library")}
-                        value={props?.uploadArtistTracksPayload?.libraryId}>
+                        value={props?.uploadArtistTracksPayload?.libraryId || ""}
+                    >
                         {props?.libraryNameValuePayloads?.map((libraryPayload) => (
                             <MenuItem
                                 value={libraryPayload.value}
@@ -223,7 +220,8 @@ const UploadArtistTracks = () => {
                         name="albumId"
                         onChange={e => handleChangeForm(e.target.name, e.target.value)}
                         label={t("uploadArtistTracks.album")}
-                        value={props?.uploadArtistTracksPayload?.albumId}>
+                        value={props.uploadArtistTracksPayload?.albumId || ""}
+                    >
                         {props?.artistWithAlbumsPayload?.payload.albumPayloads?.map((albumPayload) => (
                             <MenuItem
                                 value={albumPayload.id}
@@ -249,7 +247,8 @@ const UploadArtistTracks = () => {
                         label={t("uploadArtistTracks.genre")}
                         name="genreIdName"
                         onChange={e => handleChangeForm(e.target.name, e.target.value)}
-                        value={props?.uploadArtistTracksPayload?.genreIdName}>
+                        value={props?.uploadArtistTracksPayload?.genreIdName || ""}
+                    >
                         {props?.genrePayloads?.map((genrePayload) => (
                             <MenuItem
                                 value={genrePayload.idName}
@@ -271,7 +270,7 @@ const UploadArtistTracks = () => {
                         labelId="select-decade-label"
                         name="decade"
                         onChange={e => handleChangeForm(e.target.name, e.target.value)}
-                        value={props?.uploadArtistTracksPayload?.decade}
+                        value="0"
                         label={t("uploadArtistTracks.decade")}>
                         <MenuItem value="0"  >{t("uploadArtistTracks.metaTag")}</MenuItem>
                         {props?.decades?.map(decade => (
@@ -285,40 +284,14 @@ const UploadArtistTracks = () => {
                 </FormControl>
             </div>
 
-            <div className="new-line">
-
-                <input
-                    style={{ display: 'none' }}
-                    type="file"
-                    multiple
-                    accept="audio/*"
-                    ref={uploadFileRef}
-                    onChange={e => handleChangeFolder(e)}
-                />
-
-                <Button
-                    className="edit-content"
-                    variant="outlined"
-                    endIcon={<Audiotrack />}
-                    color="primary"
-                    onClick={handleClickSelectTracks}
-                >
-                    {t('uploadArtistTracks.selectTracks')}
-                </Button>
-
-                {selectedFiles()}
-
-            </div>
-
             <UploadTrackFiles {...props.uploadTrackFilesPayload} />
-
 
             <div className="new-line right">
                 <Button variant="contained" color="secondary" type="button" onClick={handleCancel}>
                     {t('label.cancel')}
                 </Button>
 
-                <Button variant="contained" color="primary" type="submit">
+                <Button variant="contained" color="primary" type="button" onClick={handleUpload}>
                     {t('label.ok')}
                 </Button>
             </div>
