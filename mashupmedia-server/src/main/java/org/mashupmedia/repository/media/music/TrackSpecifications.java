@@ -2,13 +2,13 @@ package org.mashupmedia.repository.media.music;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.time.Year;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Track;

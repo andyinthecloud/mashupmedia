@@ -1,6 +1,7 @@
 package org.mashupmedia.util;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,6 +10,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -95,67 +97,74 @@ public class ImageHelper {
 		return processedImage;
 	}
 
-	public static String generateAndSaveMusicAlbumArtThumbnail(String userFolderName, long libraryId, String imageFilePath) throws IOException {
-		File thumbnailFile = FileHelper.createMediaItemFile(userFolderName, libraryId, FileType.ALBUM_ART_THUMBNAIL);
-		return generateAndSaveImage(libraryId, imageFilePath, thumbnailFile, MUSIC_ALBUM_ART_THUMBNAIL_WIDTH, MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT, null);
-	}
+	// public static String generateAndSaveMusicAlbumArtThumbnail(String userFolderName, long libraryId, String imageFilePath) throws IOException {
+	// 	File thumbnailFile = FileHelper.createMediaItemFile(userFolderName, libraryId, FileType.ALBUM_ART_THUMBNAIL);
+	// 	return generateAndSaveImage(libraryId, imageFilePath, thumbnailFile, MUSIC_ALBUM_ART_THUMBNAIL_WIDTH, MUSIC_ALBUM_ART_THUMBNAIL_HEIGHT, null);
+	// }
 
-	public static String generateAndSaveImage(String userFolderName, long libraryId, String imageFilePath, ImageType imageType, ImageRotationType imageRotationType)
-			throws IOException {
+	// public static String generateAndSaveImage(String userFolderName, long libraryId, String imageFilePath, ImageType imageType, ImageRotationType imageRotationType)
+	// 		throws IOException {
 
-		if (StringUtils.isBlank(imageFilePath)) {
-			throw new IOException("Unable to read image file path is empty");
-		}
+	// 	if (StringUtils.isBlank(imageFilePath)) {
+	// 		throw new IOException("Unable to read image file path is empty");
+	// 	}
 
-		FileType fileType = FileType.PHOTO_THUMBNAIL;
-		int width = PHOTO_THUMBNAIL_WIDTH;
-		int height = PHOTO_THUMBNAIL_HEIGHT;
+	// 	FileType fileType = FileType.PHOTO_THUMBNAIL;
+	// 	int width = PHOTO_THUMBNAIL_WIDTH;
+	// 	int height = PHOTO_THUMBNAIL_HEIGHT;
 
-		if (imageType == ImageType.WEB_OPTIMISED) {
-			fileType = FileType.PHOTO_WEB_OPTIMISED;
-			width = PHOTO_WEB_OPTIMISED_WIDTH;
-			height = PHOTO_WEB_OPTIMISED_HEIGHT;
-		}
+	// 	if (imageType == ImageType.WEB_OPTIMISED) {
+	// 		fileType = FileType.PHOTO_WEB_OPTIMISED;
+	// 		width = PHOTO_WEB_OPTIMISED_WIDTH;
+	// 		height = PHOTO_WEB_OPTIMISED_HEIGHT;
+	// 	}
 
-		File file = FileHelper.createMediaItemFile(userFolderName, libraryId, fileType);
-		return generateAndSaveImage(libraryId, imageFilePath, file, width, height, imageRotationType);
-	}
+	// 	File file = FileHelper.createMediaItemFile(userFolderName, libraryId, fileType);
+	// 	return generateAndSaveImage(libraryId, imageFilePath, file, width, height, imageRotationType);
+	// }
 
-	protected static String generateAndSaveImage(long libraryId, String imageFilePath, File file, int width, int height,
-			ImageRotationType imageRotationType) throws IOException {
-		File imageFile = new File(imageFilePath);
-		if (!imageFile.exists()) {
-			throw new IOException("Unable to read image file path is empty");
-		}
+	// protected static String generateAndSaveImage(long libraryId, String imageFilePath, File file, int width, int height,
+	// 		ImageRotationType imageRotationType) throws IOException {
+	// 	File imageFile = new File(imageFilePath);
+	// 	if (!imageFile.exists()) {
+	// 		throw new IOException("Unable to read image file path is empty");
+	// 	}
 
-		FileInputStream imageFileInputStream = new FileInputStream(imageFile);
-		BufferedImage image = ImageIO.read(imageFileInputStream);
-		imageFileInputStream.close();
-		IOUtils.closeQuietly(imageFileInputStream);
+	// 	FileInputStream imageFileInputStream = new FileInputStream(imageFile);
+	// 	BufferedImage image = ImageIO.read(imageFileInputStream);
+	// 	imageFileInputStream.close();
+	// 	IOUtils.closeQuietly(imageFileInputStream);
 
-		BufferedImage bufferedImage = processImage(image, width, height, imageRotationType);
-		if (bufferedImage == null) {
-			throw new IOException("Unable to read image");
-		}
+	// 	BufferedImage bufferedImage = processImage(image, width, height, imageRotationType);
+	// 	if (bufferedImage == null) {
+	// 		throw new IOException("Unable to read image");
+	// 	}
 		
-		FileOutputStream outputStream = new FileOutputStream(file);
-		ImageIO.write(bufferedImage, ImageFormatType.JPEG.getFormat(), outputStream);
-		outputStream.close();
-		IOUtils.closeQuietly(outputStream);
+	// 	FileOutputStream outputStream = new FileOutputStream(file);
+	// 	ImageIO.write(bufferedImage, ImageFormatType.JPEG.getFormat(), outputStream);
+	// 	outputStream.close();
+	// 	IOUtils.closeQuietly(outputStream);
 
-		return file.getAbsolutePath();
-	}
+	// 	return file.getAbsolutePath();
+	// }
 
-	public static void generateThumbnail(InputStream inputStream, Path path) throws IOException{
-		BufferedImage image = ImageIO.read(inputStream);
-		IOUtils.closeQuietly(inputStream);
+	public static void generateThumbnail(Path sourcePath, Path targetPath) throws IOException{
+		// ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(IOUtils.byteArray())
+		
+		// ImageInputStream imageInputStream = new 
+
+		// FileInputStream fileInputStream = new FileInputStream("C:\\stuff\\data\\mm\\m\\2Pac\\All Eyez On Me\\CD1\\folder.jpg");
+
+
+		BufferedImage image = ImageIO.read(sourcePath.toFile());
+		// BufferedImage image = ImageIO.read(fileInputStream);
 
 		BufferedImage thumbnailImage = processImage(image, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, null);
 		if (thumbnailImage == null) {
 			throw new IOException("Unable to read image");
 		}
 
-		ImageIO.write(thumbnailImage, ImageFormatType.PNG.getFormat(), path.toFile()); 
+		ImageIO.write(thumbnailImage, ImageFormatType.PNG.getFormat(), targetPath.toFile()); 
 	}
 
 	public static ImageType getImageType(String imageTypeValue) {

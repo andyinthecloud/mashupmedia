@@ -6,4 +6,7 @@ public class UserStorageException extends Exception{
         super("User storage has no more space");
     }
 
+    public UserStorageException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

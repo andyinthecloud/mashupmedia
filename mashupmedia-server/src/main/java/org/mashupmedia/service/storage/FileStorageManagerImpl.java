@@ -1,6 +1,8 @@
 package org.mashupmedia.service.storage;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -11,7 +13,6 @@ import org.mashupmedia.exception.UserStorageException;
 import org.mashupmedia.model.account.Premium;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.FileHelper;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -27,22 +28,21 @@ public class FileStorageManagerImpl implements StorageManager {
     @Override
     public String store(Path path) {
         User user = AdminHelper.getLoggedInUser();
-        Path storePath = FileHelper.getUserUploadPath(user.getFolderName())
-                .resolve(String.valueOf(System.currentTimeMillis()));
+        Path storePath = user.createUploadResourcePath();
 
         try {
             Files.createFile(storePath);
             Files.copy(path, storePath, StandardCopyOption.REPLACE_EXISTING);
-            Files.delete(path);
         } catch (IOException e) {
-            throw new MashupMediaRuntimeException("Unable to delete temp file", e);
+            throw new MashupMediaRuntimeException("Error copying file", e);
         }
 
         return storePath.normalize().toString();
     }
 
     @Override
-    public void delete(Path path) {
+    public void delete(String resourceId) {
+        Path path = Path.of(resourceId);
         try {
             Files.delete(path);
         } catch (IOException e) {
@@ -54,14 +54,18 @@ public class FileStorageManagerImpl implements StorageManager {
     public void checkUserStorage(long additionalSizeInBytes) throws UserStorageException {
         User user = AdminHelper.getLoggedInUser();
         Premium premium = user.getPremium();
-
-        Path userFolderPath = FileHelper.getUserUploadPath(user.getFolderName());
-        long userFolderSizeInBytes = FileUtils.sizeOfDirectory(userFolderPath.toFile());
+        long userFolderSizeInBytes = FileUtils.sizeOfDirectory(user.getUserUploadPath().toFile());
 
         if ((additionalSizeInBytes + userFolderSizeInBytes) > premium.getSizeInBytes()) {
             throw new UserStorageException();
         }
         
+    }
+
+    @Override
+    public InputStream getInputStream(String resourceId) throws IOException {
+        Path path = Path.of(resourceId);        
+        return new BufferedInputStream(Files.newInputStream(path));
     }
 
 }

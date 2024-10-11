@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dto.media.playlist.PlaylistActionTypePayload;
 import org.mashupmedia.dto.media.playlist.PlaylistPayload;
 import org.mashupmedia.dto.media.playlist.PlaylistWithMediaItemsPayload;
 import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.mapper.playlist.PlaylistMapper;
 import org.mashupmedia.mapper.playlist.PlaylistWithTracksMapper;
 import org.mashupmedia.model.account.User;

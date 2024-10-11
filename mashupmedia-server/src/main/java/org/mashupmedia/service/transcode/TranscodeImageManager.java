@@ -2,11 +2,11 @@ package org.mashupmedia.service.transcode;
 
 import java.nio.file.Path;
 
-import org.springframework.web.multipart.MultipartFile;
+import org.mashupmedia.eums.MediaContentType;
 
 public interface TranscodeImageManager {
 
-    Path processImage(MultipartFile multipartFile);
-    Path processThumbnail(MultipartFile multipartFile);
+    Path processImage(Path imagePath, MediaContentType mediaContentType);
+    Path processThumbnail(Path imagePath, MediaContentType mediaContentType);
 
 }

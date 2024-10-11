@@ -50,5 +50,7 @@ public interface MusicManager {
     public Artist getArtist(String name);
 
     public void deleteAlbum(long albumId) throws ContainsMediaItemsException;
+
+    public void saveTrack(Track track);
 	
 }

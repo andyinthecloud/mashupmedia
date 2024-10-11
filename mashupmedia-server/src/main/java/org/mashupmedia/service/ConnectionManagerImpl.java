@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaResource;
 import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.util.ImageHelper.ImageType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,18 +59,17 @@ public class ConnectionManagerImpl implements ConnectionManager {
 		return bytes;
 	}
 
-	@Override
-	public long getMediaItemFileSize(long mediaItemId) {
-		MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
-		if (mediaItem == null) {
-			log.error("Unable to start media stream, no media type found");
-			return 0;
-		}
+	// @Override
+	// public long getMediaItemFileSize(long mediaItemId) {
+	// 	MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
+	// 	if (mediaItem == null) {
+	// 		log.error("Unable to start media stream, no media type found");
+	// 		return 0;
+	// 	}
 
-		String path = mediaItem.getPath();
-		File file = new File(path);
-		long size = file.length();
-		return size;
-	}
+	// 	MediaResource mediaResource = mediaItem.getMediaResourceForWeb();
+	// 	long size = mediaResource.getSizeInBytes();
+	// 	return size;
+	// }
 
 }

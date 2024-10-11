@@ -17,15 +17,15 @@
 
 package org.mashupmedia.encode.command;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.mashupmedia.eums.MediaContentType;
-import org.mashupmedia.exception.MediaItemEncodeException;
-import org.mashupmedia.exception.MediaItemEncodeException.EncodeExceptionType;
-import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.exception.MediaItemTranscodeException;
+import org.mashupmedia.exception.MediaItemTranscodeException.EncodeExceptionType;
+import org.mashupmedia.model.account.User;
+import org.mashupmedia.util.AdminHelper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,46 +47,87 @@ public class FfMpegCommands implements EncodeCommands {
 	}
 
 	@Override
-	public List<String> getEncodingProcessCommands(String encoderPath, MediaItem mediaItem,
-			MediaContentType mediaContentType)
-			throws MediaItemEncodeException {
+	public List<String> getEncodingProcessCommands(String encoderPath, MediaContentType mediaContentType,
+			Path inputPath, Path outputPath)
+			throws MediaItemTranscodeException {
 
-		File inputFile = new File(mediaItem.getPath());
-		File outputFile = FileHelper.getEncodedMediaFile(mediaItem, mediaContentType);
-		boolean isDeleted = FileHelper.deleteFile(outputFile);
+		// File inputFile = inputPath.toFile();
+		// Path inpuPath = inputPath.toFile();
+		// File outputFile = FileHelper.getEncodedMediaFile(mediaItem,
+		// mediaContentType);
+		User user = AdminHelper.getLoggedInUser();
+		// user.getUserTempPath()
+		// Path outputPath =
+		// user.getUserTempPath().resolve(String.valueOf(System.currentTimeMillis()));
 
-		if (!isDeleted) {
-			String errorText = "Unable to delete encoded media file will try when webserver stops: "
-					+ outputFile.getAbsolutePath();
-			log.error(errorText);
-		}
+		// boolean isDeleted = FileHelper.deleteFile(outputFile);
+
+		// if (!isDeleted) {
+		// String errorText = "Unable to delete encoded media file will try when
+		// webserver stops: "
+		// + outputFile.getAbsolutePath();
+		// log.error(errorText);
+		// }
+
+		// File
+
+		String inputAbsolutePath = inputPath.toAbsolutePath().toString();
+		String outputAbsolutePath = outputPath.toAbsolutePath().toString();
 
 		List<String> commands = new ArrayList<String>();
 
-		if (mediaContentType == MediaContentType.AUDIO_MP3) {
-			commands = mp3EncodeCommands(encoderPath, inputFile, outputFile);
-		} else if (mediaContentType == MediaContentType.VIDEO_MP4) {
-			commands = mp4EncodeCommands(encoderPath, inputFile, outputFile);
-		} else if (mediaContentType == MediaContentType.VIDEO_WEBM) {
-			commands = webMEncodeCommands(encoderPath, inputFile, outputFile);
-		} else if (mediaContentType == MediaContentType.VIDEO_OGG) {
-			commands = ogvEncodeCommands(encoderPath, inputFile, outputFile);
-		} else {
-			throw new MediaItemEncodeException(EncodeExceptionType.UNSUPPORTED_ENCODING_FORMAT,
-					mediaContentType.name() + " not supported");
+		switch (mediaContentType) {
+			case MediaContentType.AUDIO_AAC:
+				commands = aacEncodeCommands(encoderPath, inputAbsolutePath, outputAbsolutePath);
+				break;
+			case MediaContentType.AUDIO_MP3:
+				commands = mp3EncodeCommands(encoderPath, inputAbsolutePath, outputAbsolutePath);
+				break;
+			case MediaContentType.VIDEO_MP4:
+				commands = mp4EncodeCommands(encoderPath, inputAbsolutePath, outputAbsolutePath);
+				break;
+			case MediaContentType.VIDEO_WEBM:
+				commands = webMEncodeCommands(encoderPath, inputAbsolutePath, outputAbsolutePath);
+				break;
+			case MediaContentType.VIDEO_OGG:
+				commands = ogvEncodeCommands(encoderPath, inputAbsolutePath, outputAbsolutePath);
+				break;
+			default:
+				throw new MediaItemTranscodeException(EncodeExceptionType.UNSUPPORTED_ENCODING_FORMAT,
+						mediaContentType.name() + " not supported");
 		}
 
 		return commands;
 
 	}
 
-	private List<String> mp3EncodeCommands(String encoderPath, File inputFile, File outputFile) {
+	private List<String> aacEncodeCommands(String encoderPath, String inputPath, String outputPath) {
 
 		List<String> commands = new ArrayList<String>();
 		commands.add(encoderPath);
 		commands.add("-y");
 		commands.add("-i");
-		commands.add(inputFile.getAbsolutePath());
+		commands.add(inputPath);
+		commands.add("-codec:a");
+		commands.add("libfdk_aac");
+		commands.add("-b:a");
+		commands.add("128k");
+		commands.add("-f");
+		commands.add("aac");
+		commands.add(outputPath);
+
+		// ffmpeg -i input.wav -c:a libfdk_aac -b:a 128k output.m4a
+
+		return commands;
+	}
+
+	private List<String> mp3EncodeCommands(String encoderPath, String inputPath, String outputPath) {
+
+		List<String> commands = new ArrayList<String>();
+		commands.add(encoderPath);
+		commands.add("-y");
+		commands.add("-i");
+		commands.add(inputPath);
 		commands.add("-codec:a");
 		commands.add("libmp3lame");
 		// commands.add("-b:a");
@@ -95,7 +136,7 @@ public class FfMpegCommands implements EncodeCommands {
 		commands.add("2");
 		commands.add("-f");
 		commands.add("mp3");
-		commands.add(outputFile.getAbsolutePath());
+		commands.add(outputPath);
 
 		// ffmpeg -i input.wav -codec:a libmp3lame -q:a 2 output.mp3
 
@@ -119,7 +160,7 @@ public class FfMpegCommands implements EncodeCommands {
 	// return commands;
 	// }
 
-	private List<String> mp4EncodeCommands(String encoderPath, File inputFile, File outputFile) {
+	private List<String> mp4EncodeCommands(String encoderPath, String inputPath, String outputPath) {
 
 		// ffmpeg -y -i test.avi -c:v libx264 -preset:v veryfast -strict
 		// experimental -c:a aac -b:a 240k -f mp4 output.encoded
@@ -128,7 +169,7 @@ public class FfMpegCommands implements EncodeCommands {
 		commands.add(encoderPath);
 		commands.add("-y");
 		commands.add("-i");
-		commands.add(inputFile.getAbsolutePath());
+		commands.add(inputPath);
 		commands.add("-sn");
 		commands.add("-c:v");
 		commands.add("libx264");
@@ -142,12 +183,12 @@ public class FfMpegCommands implements EncodeCommands {
 		commands.add("240k");
 		commands.add("-f");
 		commands.add("mp4");
-		commands.add(outputFile.getAbsolutePath());
+		commands.add(outputPath);
 
 		return commands;
 	}
 
-	private List<String> webMEncodeCommands(String encoderPath, File inputFile, File outputFile) {
+	private List<String> webMEncodeCommands(String encoderPath, String inputPath, String outputPath) {
 
 		// ffmpeg -i input.mp4 -c:v libvpx -b:v 1M -c:a libvorbis -qscale:a 5
 		// output.webm
@@ -156,7 +197,7 @@ public class FfMpegCommands implements EncodeCommands {
 		commands.add(encoderPath);
 		commands.add("-y");
 		commands.add("-i");
-		commands.add(inputFile.getAbsolutePath());
+		commands.add(inputPath);
 		commands.add("-sn");
 		commands.add("-c:v");
 		commands.add("libvpx");
@@ -168,12 +209,12 @@ public class FfMpegCommands implements EncodeCommands {
 		commands.add("5");
 		commands.add("-f");
 		commands.add("webm");
-		commands.add(outputFile.getAbsolutePath());
+		commands.add(outputPath);
 
 		return commands;
 	}
 
-	private List<String> ogvEncodeCommands(String encoderPath, File inputFile, File outputFile) {
+	private List<String> ogvEncodeCommands(String encoderPath, String inputPath, String outputPath) {
 
 		// ffmpeg -y -i input.mp4 -sn -codec:v libtheora -qscale:v 7 -codec:a
 		// libvorbis -qscale:a 5 output.ogv
@@ -182,7 +223,7 @@ public class FfMpegCommands implements EncodeCommands {
 		commands.add(encoderPath);
 		commands.add("-y");
 		commands.add("-i");
-		commands.add(inputFile.getAbsolutePath());
+		commands.add(inputPath);
 		commands.add("-sn");
 		commands.add("-codec:v");
 		commands.add("libtheora");
@@ -192,7 +233,7 @@ public class FfMpegCommands implements EncodeCommands {
 		commands.add("libvorbis");
 		commands.add("-qscale:a");
 		commands.add("5");
-		commands.add(outputFile.getAbsolutePath());
+		commands.add(outputPath);
 		commands.add("-f");
 		commands.add("ogv");
 

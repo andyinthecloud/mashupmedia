@@ -293,7 +293,6 @@ const Album = () => {
                     {props.secureMediaItemPayload?.payload.trackPayloads.map(function (trackPayload, index) {
                         return (
                             <ListItem
-                                className={trackPayload.encodedForWeb ? "" : "track-not-encoded-for-web"}
                                 secondaryAction={
                                     <div>
                                         <IconButton

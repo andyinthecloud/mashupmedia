@@ -64,13 +64,12 @@ const AudioPlayer = () => {
         if (!playMusic.triggerPlay) {
             return
         }
-
+        
         handleNavigate({
             navigatePlaylistType: playMusic.loadPlaylistMediaItemId ? undefined : NavigatePlaylistType.CURRENT,
             playlistMediaItemId: playMusic.loadPlaylistMediaItemId,
             playlistId: playMusic.loadPlaylistId,
             loadStream: true
-
         })
 
     }, [playMusic.triggerPlay])
@@ -250,6 +249,8 @@ const AudioPlayer = () => {
                 audioUrl = mediaStreamUrl(trackId, props.mediaToken)
             }
         }
+
+        console.log("audioUrl", audioUrl)
 
         if (!audioUrl) {
             return

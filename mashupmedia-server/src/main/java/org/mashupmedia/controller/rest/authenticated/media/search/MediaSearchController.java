@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dto.media.search.MediaSearchResultPayload;
 import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.PagePayload;
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.mapper.media.music.GenreMapper;
 import org.mashupmedia.mapper.search.MusicSearchResultPagePayloadMapper;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;

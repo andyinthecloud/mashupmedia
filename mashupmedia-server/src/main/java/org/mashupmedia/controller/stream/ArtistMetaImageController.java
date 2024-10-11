@@ -47,7 +47,7 @@ public class ArtistMetaImageController extends MetaImageController{
         Assert.notNull(artist, "Expecting an artist");
 
         MetaResource metaResource = getHighlightedMetaImage(artist.getMetaImages(), imageType, imageId);
-        httpServletResponse.setContentType(metaResource.getMediaContentType().getContentType());
+        httpServletResponse.setContentType(metaResource.getMediaContentType().getMimeType());
         return metaResource.getResource();
     }
 

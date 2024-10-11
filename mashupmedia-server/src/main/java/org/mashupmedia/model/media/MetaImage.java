@@ -38,7 +38,7 @@ public class MetaImage extends MetaEntity {
 	@EqualsAndHashCode.Exclude
 	private String thumbnailUrl;
 	@EqualsAndHashCode.Exclude
-	private String contentType;
+	private String mimeType;
 	@EqualsAndHashCode.Exclude
 	private int rank;
 
@@ -57,8 +57,8 @@ public class MetaImage extends MetaEntity {
 				setThumbnailUrl(metaImage.getThumbnailUrl());
 			}
 
-			if (StringUtils.isNotBlank(metaImage.getContentType())) {
-				setContentType(metaImage.getContentType());
+			if (StringUtils.isNotBlank(metaImage.getMimeType())) {
+				setMimeType(metaImage.getMimeType());
 			}
 
 			setRank(metaImage.getRank());

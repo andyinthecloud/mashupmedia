@@ -57,7 +57,7 @@ public class AlbumMetaImageController extends MetaImageController {
 
 
         MetaResource metaResource = getHighlightedMetaImage(album.getMetaImages(), imageType, imageId);
-        httpServletResponse.setContentType(metaResource.getMediaContentType().getContentType());
+        httpServletResponse.setContentType(metaResource.getMediaContentType().getMimeType());
         return metaResource.getResource();
     }
 

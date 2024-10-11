@@ -164,7 +164,7 @@ public class LibraryManagerImpl implements LibraryManager {
 	public void deleteLibrary(long libraryId) {
 		Library library = libraryDao.getLibrary(libraryId);
 		User user = library.getUser();
-		FileHelper.deleteLibrary(user.getFolderName(), libraryId);
+		// FileHelper.deleteLibrary(user.getFolderName(), libraryId);
 		libraryDao.deleteLibrary(library);
 		// libraryWatchManager.removeWatchLibraryListener(libraryId);
 	}

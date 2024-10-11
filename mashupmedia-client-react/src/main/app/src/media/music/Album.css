@@ -8,10 +8,6 @@
     left: 20px;
 }
 
-#album .track-not-encoded-for-web {
-    opacity: 0.5;
-}
-
 #album span {
     padding-right: 1em;
 }

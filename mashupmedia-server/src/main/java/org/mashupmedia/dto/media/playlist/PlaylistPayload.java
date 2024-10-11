@@ -1,7 +1,7 @@
 package org.mashupmedia.dto.media.playlist;
 
 
-import org.mashupmedia.constants.MashupMediaType;
+import org.mashupmedia.eums.MashupMediaType;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;

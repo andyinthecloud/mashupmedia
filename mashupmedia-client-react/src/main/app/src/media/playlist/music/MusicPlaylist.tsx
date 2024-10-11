@@ -350,11 +350,6 @@ const MusicPlaylist = () => {
                                     <span className="block small">
                                         {track.trackPayload.minutes} min {track.trackPayload.seconds} sec
                                     </span>
-                                    {!track.trackPayload.encodedForWeb &&
-                                        <span className="block not-encoded">
-                                            <span>Incompatible format</span>
-                                        </span>
-                                    }
                                 </span>
                                 }
                                 sx={{

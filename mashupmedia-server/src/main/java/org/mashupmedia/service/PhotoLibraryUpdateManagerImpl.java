@@ -1,7 +1,11 @@
 package org.mashupmedia.service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,16 +14,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.dao.PhotoDao;
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.PhotoLibrary;
-import org.mashupmedia.model.media.MediaEncoding;
+import org.mashupmedia.model.media.MediaResource;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
+import org.mashupmedia.service.storage.StorageManager;
+import org.mashupmedia.service.transcode.TranscodeImageManager;
+import org.mashupmedia.service.transcode.TranscodeVideoManager;
+import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
 import org.mashupmedia.util.ImageHelper;
 import org.mashupmedia.util.ImageHelper.ImageRotationType;
@@ -39,23 +48,21 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
 @Slf4j
+@AllArgsConstructor
 public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager {
 
-
-	@Autowired
-	private PhotoDao photoDao;
-
-	@Autowired
-	private LibraryDao libraryDao;
-
-	@Autowired
-	@Lazy
-	private LibraryManager libraryManager;
+	private final PhotoDao photoDao;
+	private final LibraryDao libraryDao;
+	// private final LibraryManager libraryManager;
+	private final TranscodeImageManager transcodeImageManager;
+	private final StorageManager storageManager;
+	private final ConfigurationManager configurationManager;
 
 	private final int BATCH_INSERT_ITEMS = 20;
 
@@ -70,25 +77,22 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 		log.info(totalDeletedPhotos + " obsolete photos deleted.");
 	}
-	
-	
+
 	private void deletePhoto(Photo photo) {
 		// processManager.killProcesses(photo.getId());
-		FileHelper.deleteFile(photo.getWebOptimisedImagePath());		
+		FileHelper.deleteFile(photo.getWebOptimisedImagePath());
 	}
-	
-	
+
 	@Override
-	public void deleteFile(PhotoLibrary library, File file) {		
+	public void deleteFile(PhotoLibrary library, File file) {
 		String path = file.getAbsolutePath();
 		Photo photo = photoDao.getPhotoByAbsolutePath(path);
 		if (photo == null) {
 			return;
 		}
-		
+
 		deletePhoto(photo);
 	}
-	
 
 	@Override
 	public void updateLibrary(PhotoLibrary library, File folder, Date date) {
@@ -129,10 +133,11 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 			photos.clear();
 
-			libraryManager.saveMediaItemLastUpdated(library.getId());
+
+			saveMediaItemLastUpdated(library.getId());
 
 		}
-		
+
 		if (StringUtils.isEmpty(albumName)) {
 			saveFile(library, file, date);
 			return;
@@ -140,42 +145,46 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 
 		Photo photo = preparePhoto(file, library, albumName, date);
 		if (photo != null) {
-			photos.add(photo);	
+			photos.add(photo);
 		}
+	}
+
+	public void saveMediaItemLastUpdated(long libraryId) {
+		String key = LibraryHelper.getConfigurationLastUpdatedKey(libraryId);
+		String value = String.valueOf(System.currentTimeMillis());
+		configurationManager.saveConfiguration(key, value);
 	}
 
 	@Override
 	public void saveFile(PhotoLibrary library, File file, Date date) {
-		
+
 		File libraryFolder = new File(library.getPath());
 		List<File> relativeFolders = LibraryHelper.getRelativeFolders(libraryFolder, file);
 		if (relativeFolders == null || relativeFolders.isEmpty()) {
 			relativeFolders.add(libraryFolder);
 		}
-		
+
 		StringBuilder albumNameBuilder = new StringBuilder();
 		for (File relativeFolder : relativeFolders) {
 			if (albumNameBuilder.length() > 0) {
 				albumNameBuilder.append(" / ");
 			}
 			albumNameBuilder.append(relativeFolder.getName());
-			
+
 		}
-				
+
 		Photo photo = preparePhoto(file, library, albumNameBuilder.toString(), date);
 		List<Photo> photos = new ArrayList<>();
 		if (photo != null) {
-			photos.add(photo);	
+			photos.add(photo);
 		}
-		
+
 		savePhotos(photos);
 	}
-	
-	
+
 	public Photo preparePhoto(File file, PhotoLibrary library, String albumName, Date date) {
-		
+
 		String fileName = file.getName();
-		
 
 		String path = file.getAbsolutePath();
 		Photo photo = getPhotoByAbsolutePath(path);
@@ -192,27 +201,30 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			}
 
 			String fileExtension = FileHelper.getFileExtension(fileName);
-			MediaContentType mediaContentType = MediaContentHelper.getMediaContentType(fileExtension);
-
+			MediaContentType mediaContentType = MediaContentType.getMediaContentType(fileExtension);
 			if (!MediaContentHelper.isCompatiblePhotoFormat(mediaContentType)) {
 				return null;
 			}
 
-			Set<MediaEncoding> mediaEncodings = photo.getMediaEncodings();
+			Set<MediaResource> mediaEncodings = photo.getMediaResources();
 			if (mediaEncodings == null) {
-				mediaEncodings = new HashSet<MediaEncoding>();
+				mediaEncodings = new HashSet<MediaResource>();
 			}
 			mediaEncodings.clear();
-			MediaEncoding mediaEncoding = new MediaEncoding();
-			mediaEncoding.setMediaContentType(mediaContentType);
-			mediaEncoding.setOriginal(true);
-			mediaEncodings.add(mediaEncoding);
-			photo.setMediaEncodings(mediaEncodings);
-
-			photo.setFormat(mediaContentType.name());
+			MediaResource mediaResource = new MediaResource();
+			mediaResource.setMediaContentType(mediaContentType);
+			mediaResource.setOriginal(true);
+			mediaResource.setPath(path);
+			mediaResource.setSizeInBytes(file.length());
+			mediaResource.setFileLastModifiedOn(file.lastModified());;
+			mediaEncodings.add(mediaResource);
+			photo.setMediaResources(mediaEncodings);
+			// photo.setFormat(mediaContentType.name());
 			photo.setEnabled(true);
 			long lastModified = file.lastModified();
-			photo.setFileLastModifiedOn(lastModified);
+			// photo.setFileLastModifiedOn(lastModified);
+
+
 
 			// Default taken on to last modified, override later to get the
 			// actual taken on
@@ -220,9 +232,9 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			photo.setTakenOn(new Date(lastModified));
 
 			photo.setFileName(fileName);
-			photo.setMashupMediaType(MashupMediaType.PHOTO);
-			photo.setPath(path);
-			photo.setSizeInBytes(file.length());
+			// photo.setMashupMediaType(MashupMediaType.PHOTO);
+			// photo.setPath(path);
+			// photo.setSizeInBytes(file.length());
 
 			try {
 				processPhotoMetadata(file, photo);
@@ -234,31 +246,47 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 				log.info("Unable to read image meta data for photo: " + file.getAbsolutePath(), e);
 			}
 
-			int orientation = photo.getOrientation();
-			ImageRotationType imageRotationType = ImageHelper.getImageRotationType(orientation);
-			User user = library.getUser();
+			// int orientation = photo.getOrientation();
+			// ImageRotationType imageRotationType =
+			// ImageHelper.getImageRotationType(orientation);
+			// User user = library.getUser();
 
-			try {
-				String webOptimisedImagePath = ImageHelper.generateAndSaveImage(user.getFolderName(), library.getId(), path,
-						ImageType.WEB_OPTIMISED, imageRotationType);
+			// try {
+				// InputStream inputStream = new FileInputStream(file);
+				// User user = AdminHelper.getLoggedInUser();
+				// Path tempImagePath = user.createTempResourcePath();
+				// Files.write(tempImagePath, file.null, null)
+
+				Path tempProcessedImagePath = transcodeImageManager.processImage(file.toPath(), mediaContentType);
+				String webOptimisedImagePath = storageManager.store(tempProcessedImagePath);
 				photo.setWebOptimisedImagePath(webOptimisedImagePath);
+				// IOUtils.closeQuietly(inputStream);
+			// } catch (IOException e) {
+			// 	log.error("Will not save photo, unable to create thumbnail: " + file.getAbsolutePath(), e);
+			// 	return null;
+			// }
+			// try {
 
-			} catch (Exception e) {
-				log.error("Will not save photo, unable to create thumbnail: " + file.getAbsolutePath(), e);
-				return null;
-			}
+			// String webOptimisedImagePath =
+			// ImageHelper.generateAndSaveImage(user.getFolderName(), library.getId(), path,
+			// ImageType.WEB_OPTIMISED, imageRotationType);
+			// photo.setWebOptimisedImagePath(webOptimisedImagePath);
+
+			// } catch (Exception e) {
+			// log.error("Will not save photo, unable to create thumbnail: " +
+			// file.getAbsolutePath(), e);
+			// return null;
+			// }
 
 			photo.setLibrary(library);
-			String title = StringUtils.trimToEmpty(fileName);
-			photo.setDisplayTitle(title);
+			// String title = StringUtils.trimToEmpty(fileName);
 
 		}
 
 		photo.setUpdatedOn(date);
-		
-		return photo;		
+
+		return photo;
 	}
-	
 
 	private void savePhotos(List<Photo> photos) {
 
@@ -294,13 +322,14 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 			return true;
 		}
 
-		if (file.lastModified() != photo.getFileLastModifiedOn()) {
+		MediaResource mediaResource = photo.getOriginalMediaResource();
+		if (file.lastModified() != mediaResource.getFileLastModifiedOn()) {
 			return true;
 		}
 
-		if (file.length() != photo.getSizeInBytes()) {
-			return true;
-		}
+		// if (file.length() != photo.getSizeInBytes()) {
+		// return true;
+		// }
 
 		return false;
 	}
@@ -319,15 +348,14 @@ public class PhotoLibraryUpdateManagerImpl implements PhotoLibraryUpdateManager 
 		photo.setOrientation(orientation);
 	}
 
-
 	protected int getOrientatonFromMeta(Metadata metadata) throws MetadataException {
 		Collection<ExifIFD0Directory> directories = metadata.getDirectoriesOfType(ExifIFD0Directory.class);
 		for (ExifIFD0Directory directory : directories) {
 			if (directory == null || !directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
 				continue;
 			}
-			return directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);			
-		} 
+			return directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+		}
 
 		return 0;
 	}

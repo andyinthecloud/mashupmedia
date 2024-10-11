@@ -2,17 +2,24 @@ package org.mashupmedia.model.media.photo;
 
 import java.util.Date;
 
-import jakarta.persistence.*;
-import jakarta.xml.bind.annotation.XmlRootElement;
-
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.model.media.MediaItem;
+import org.springframework.beans.factory.annotation.Value;
+
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "photos")
 @Cacheable
 public class Photo extends MediaItem {
 
-	private static final long serialVersionUID = -2278500438492214953L;
 
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Album album;
@@ -73,6 +80,11 @@ public class Photo extends MediaItem {
 
 	public void setWebOptimisedImagePath(String webOptimisedImagePath) {
 		this.webOptimisedImagePath = webOptimisedImagePath;
+	}
+
+	@Override
+	public MashupMediaType getMashupMediaType() {
+		return MashupMediaType.PHOTO;
 	}
 
 }

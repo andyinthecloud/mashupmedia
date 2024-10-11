@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
-import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
@@ -32,10 +31,7 @@ public interface MusicDao {
 
 	public List<Album> getRandomAlbums(Long userId, int maxResults);
 
-	public Year getYear(int year);
-
 	public List<Track> getTracks(Long userId, Long albumId);
-
 
 	public List<Album> getAlbumsByArtist(Long userId, long artistId);
 
@@ -50,7 +46,7 @@ public interface MusicDao {
 	public List<String> getAlbumIndexLetters(Long userId);
 
 	public List<Genre> getGenres();
-	
+
 	public List<Track> findTracks(Long userId, MediaItemSearchCriteria mediaItemSearchCriteria);
 
 	public long getTotalTracksFromLibrary(Long libraryId);
@@ -58,5 +54,7 @@ public interface MusicDao {
 	public List<Album> getLatestAlbums(Long userId, int pageNumber, int maxResults);
 
 	public Track getTrack(String path);
-	
+
+    public Track getTrack(long id);
+
 }

@@ -41,11 +41,8 @@ public class UploadMusicImageController {
 			@RequestParam("artistId") long artistId,
 			@RequestParam("files") MultipartFile[] files) {
 
-		User user = AdminHelper.getLoggedInUser();
 		Artist artist = musicManager.getArtist(artistId);
-		if (!user.equals(artist.getUser())) {
-			throw new SecurityException("User cannot modify this artist");
-		}
+		AdminHelper.checkAccess(artist.getUser());
 
 		List<MetaImage> metaImages = new ArrayList<>();
 		for (MultipartFile file : files) {
@@ -59,11 +56,40 @@ public class UploadMusicImageController {
 		return getMetaImagesPayload(metaImages);
 	}
 
-	private ResponseEntity<ServerResponsePayload<List<MetaEntityPayload>>> getOutOfSpaceErrorPayload() {
+	@PostMapping(value = "/artist/tracks", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ServerResponsePayload<Boolean>> postArtistTracks(
+			@RequestParam("libraryId") long libraryId,
+			@RequestParam("albumId") long albumId,
+			@RequestParam("decade") Integer decade,
+			@RequestParam("genreIdName") String genreIdName,
+			@RequestParam("files") MultipartFile[] files) {
+
+		Album album = musicManager.getAlbum(albumId);
+		Artist artist = album.getArtist();
+		AdminHelper.checkAccess(artist.getUser());
+
+		for (MultipartFile file: files) {
+			try {
+				musicResourceManager.storeTrack(libraryId, albumId, decade, genreIdName, file);
+			} catch (UserStorageException e) {
+				return getOutOfSpaceErrorPayload();
+			}
+		}
+
+		return ResponseEntity
+				.ok()
+				.body(
+						ServerResponsePayload.<Boolean>builder()
+								.payload(Boolean.TRUE)
+								.build());
+	}
+
+
+	private <T> ResponseEntity<ServerResponsePayload<T>> getOutOfSpaceErrorPayload() {
 		return ResponseEntity
 				.badRequest()
 				.body(
-						ServerResponsePayload.<List<MetaEntityPayload>>builder()
+						ServerResponsePayload.<T>builder()
 								.errorPayload(ErrorPayload.builder()
 										.errorCode(ErrorCode.OUT_OF_STORAGE.getErrorCode())
 										.build())

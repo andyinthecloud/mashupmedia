@@ -12,7 +12,7 @@ spring:
       request-timeout: 360000
   jpa:
     hibernate:
-      ddl-auto: validate 
+      ddl-auto: validate
       # ddl-auto: update
 
     open-in-view: false
@@ -62,3 +62,13 @@ springdoc:
 
 mashupmedia:
   storage: file
+  transcode:     
+    audio: 
+      total-threads: 3
+      ffmpeg-path: wewe
+      format: AUDIO_MP3
+    image:
+      format: IMAGE_JPG
+
+
+

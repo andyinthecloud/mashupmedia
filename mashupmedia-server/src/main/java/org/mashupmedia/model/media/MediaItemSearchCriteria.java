@@ -2,7 +2,7 @@ package org.mashupmedia.model.media;
 
 import java.util.List;
 
-import org.mashupmedia.constants.MashupMediaType;
+import org.mashupmedia.eums.MashupMediaType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

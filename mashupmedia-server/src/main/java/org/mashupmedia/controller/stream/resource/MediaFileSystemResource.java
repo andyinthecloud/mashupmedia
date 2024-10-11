@@ -5,39 +5,38 @@ import java.nio.file.FileSystem;
 import java.nio.file.Path;
 
 import org.mashupmedia.eums.MediaContentType;
-import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.util.MediaContentHelper;
+import org.mashupmedia.model.media.MediaResource;
 import org.springframework.core.io.FileSystemResource;
 
 import lombok.Getter;
 
 @Getter
-public class MediaResource extends FileSystemResource{
+public class MediaFileSystemResource extends FileSystemResource{
 
     private final MediaContentType mediaContentType;
 
-    public MediaResource(MediaItem mediaItem) {
-        super(mediaItem.getPath());
-        mediaContentType = MediaContentHelper.getMediaContentType(mediaItem.getFormat());
+    public MediaFileSystemResource(MediaResource mediaResource) {        
+        super(mediaResource.getPath());
+        this.mediaContentType = mediaResource.getMediaContentType();
     }
 
-    private MediaResource(Path path) {
+    private MediaFileSystemResource(Path path) {
         super(path);
         mediaContentType = null;
     }
 
-    private MediaResource(String filePath) {
+    private MediaFileSystemResource(String filePath) {
         super(filePath);
         mediaContentType = null;
     }
 
-    private MediaResource(File file) {
+    private MediaFileSystemResource(File file) {
         super(file);
         mediaContentType = null;
     }
 
 
-    private MediaResource(FileSystem fileSystem, String path) {
+    private MediaFileSystemResource(FileSystem fileSystem, String path) {
         super(fileSystem, path);
         mediaContentType = null;
     }

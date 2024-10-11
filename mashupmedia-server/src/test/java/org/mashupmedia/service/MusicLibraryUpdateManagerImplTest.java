@@ -52,7 +52,7 @@ public class MusicLibraryUpdateManagerImplTest {
     @Test
     void givenAMusicFolder_whenSaveTracks_thenGetFolderName() throws Exception {
 
-        Mockito.when(trackRepository.findByLibraryIdAndPathAndLastModifiedOn(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong())).thenReturn(Optional.empty());
+        // Mockito.when(trackRepository.findByLibraryIdAndPathAndLastModifiedOn(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong())).thenReturn(Optional.empty());
         Mockito.doNothing().when(musicDao).saveTrack(Mockito.isA(Track.class), Mockito.anyBoolean());
         Mockito.doNothing().when(libraryManager).saveMediaItemLastUpdated(Mockito.anyLong());
         Mockito.when(albumArtManager.getMetaImage(Mockito.isA(MusicLibrary.class), Mockito.isA(Track.class))).thenReturn(new MetaImage());

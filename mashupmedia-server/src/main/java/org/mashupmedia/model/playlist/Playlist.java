@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.mashupmedia.constants.MashupMediaType;
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.model.account.User;
 
 import jakarta.persistence.Cacheable;

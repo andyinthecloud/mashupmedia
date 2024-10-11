@@ -276,7 +276,7 @@ public class AdminManagerImpl implements AdminManager {
 				.enabled(true)
 				.name(name)
 				.privateAccess(isPrivateAccess)
-				.path(LibraryHelper.getLibraryFolderName(user.getFolderName(), name))
+				// .path(LibraryHelper.getLibraryFolderName(user.getFolderName(), name))
 				.build();
 
 	}

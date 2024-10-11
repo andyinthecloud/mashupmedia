@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaResource;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -21,18 +24,21 @@ public class MediaItemSequenceInputStream {
 	private List<MediaItem> mediaItems;
 	private long length;
 
-	public MediaItemSequenceInputStream(List<MediaItem> mediaItems) {
+	public MediaItemSequenceInputStream(List<MediaItem> mediaItems, MediaContentType mediaContentType) {
 
 		this.mediaItems = mediaItems;
 
 		List<BufferedInputStream> bufferedInputStreams = new ArrayList<BufferedInputStream>();
 		for (MediaItem mediaItem : mediaItems) {
 			try {
-				File file = new File(mediaItem.getPath());
-				Path path = file.toPath();
-				length += Files.size(path);
+				MediaResource mediaResource = mediaItem.getMediaResource(mediaContentType);
+				
+				// Path path = mediaResource.getPath()  file.toPath();
+				// length += Files.size(path);
+				length += mediaResource.getSizeInBytes();
 
-				BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(path));
+				// BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(path));
+				BufferedInputStream bufferedInputStream = new BufferedInputStream(Files.newInputStream(null));
 				bufferedInputStreams.add(bufferedInputStream);
 			} catch (IOException e) {
 				log.error("File not found error", e);
@@ -42,7 +48,7 @@ public class MediaItemSequenceInputStream {
 		this.sequenceInputStream = new SequenceInputStream(Collections.enumeration(bufferedInputStreams));
 	}
 
-	public MediaItem getMediaItem(long startBytesPosition) {
+	public MediaItem getMediaItem_delete(long startBytesPosition) {
 
 		if (mediaItems == null || mediaItems.isEmpty()) {
 			return null;
@@ -50,7 +56,9 @@ public class MediaItemSequenceInputStream {
 
 		long totalBytes = 0;
 		for (MediaItem mediaItem : mediaItems) {
-			File file = new File(mediaItem.getPath());
+			// File file = new File(mediaItem.getPath());
+
+			File file = new File("");
 			Path path = file.toPath();
 
 			try {

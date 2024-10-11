@@ -2,7 +2,7 @@ package org.mashupmedia.service;
 
 import java.util.List;
 
-import org.mashupmedia.constants.MashupMediaType;
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 

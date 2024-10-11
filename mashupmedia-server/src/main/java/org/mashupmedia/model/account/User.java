@@ -1,12 +1,18 @@
 package org.mashupmedia.model.account;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.playlist.UserPlaylistPosition;
+import org.mashupmedia.util.FileHelper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -153,4 +159,36 @@ public class User implements UserDetails {
 		return builder.toString();
 	}
 
+	private Path getPath(String folderName) {
+		return Paths.get(FileHelper.getApplicationFolder().getAbsolutePath(), "users", getFolderName(), folderName);
+
+	}
+
+	public Path getUserUploadPath() {
+		Path userUploadPath = getPath("upload");
+		try {
+			return Files.createDirectories(userUploadPath);
+		} catch (IOException e) {
+			throw new MashupMediaRuntimeException("Unable to create user upload folder", e);
+		}
+	}
+
+	public Path createUploadResourcePath() {
+		Path path = getUserUploadPath().resolve(String.valueOf(System.currentTimeMillis()));
+		return path;
+	}
+
+	public Path getUserTempPath() {
+		Path userUploadPath = getPath("temp");
+		try {
+			return Files.createDirectories(userUploadPath);
+		} catch (IOException e) {
+			throw new MashupMediaRuntimeException("Unable to create user temp folder", e);
+		}
+	}
+
+	public Path createTempResourcePath() {
+		Path path = getUserTempPath().resolve(String.valueOf(System.currentTimeMillis()));
+		return path;
+	}
 }

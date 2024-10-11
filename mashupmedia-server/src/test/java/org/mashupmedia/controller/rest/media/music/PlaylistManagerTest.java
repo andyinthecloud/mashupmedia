@@ -6,13 +6,13 @@ import java.util.HashSet;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.LibraryDao;
 import org.mashupmedia.dao.LibraryDaoImpl;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.MusicDaoImpl;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.dao.PlaylistDaoImpl;
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.library.MusicLibrary;
 import org.mashupmedia.model.media.music.Album;
@@ -86,9 +86,7 @@ public class PlaylistManagerTest {
         track.setLibrary(library);
         track.setAlbum(album);
         track.setEnabled(true);
-        track.setDisplayTitle("displayTitle " + title);
         track.setFileName("fileName");
-        track.setPath("path" + title);
         track.setTitle(title);
         musicDao.saveTrack(track);
         return track;

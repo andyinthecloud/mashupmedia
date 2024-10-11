@@ -1,6 +1,10 @@
 package org.mashupmedia.model.media.video;
 
+import java.net.URI;
+
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.model.media.MediaItem;
+import org.springframework.beans.factory.annotation.Value;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
@@ -56,5 +60,15 @@ public class Video extends MediaItem {
 	public void setRemoteId(String remoteId) {
 		this.remoteId = remoteId;
 	}
+
+	@Override
+	public MashupMediaType getMashupMediaType() {
+		return MashupMediaType.PHOTO;
+	}
+
+
+    public URI getPath() {
+        throw new UnsupportedOperationException("Unimplemented method 'getPath'");
+    }
 
 }

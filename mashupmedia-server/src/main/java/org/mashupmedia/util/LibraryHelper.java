@@ -106,12 +106,12 @@ public class LibraryHelper {
 		return folders;
 	}
 
-	public static String getLibraryFolderName(String userLibraryFolderName, String libraryName) {
-		Assert.hasText(libraryName, "Expecting text for name");
-		String processedLibraryName = libraryName.replaceAll("\\W", "").toLowerCase();
-		File libraryFolder = new File(FileHelper.getUserUploadPath(userLibraryFolderName).toFile(), processedLibraryName);
-		return libraryFolder.getAbsolutePath();
-	}
+	// public static String getLibraryFolderName(String userLibraryFolderName, String libraryName) {
+	// 	Assert.hasText(libraryName, "Expecting text for name");
+	// 	String processedLibraryName = libraryName.replaceAll("\\W", "").toLowerCase();
+	// 	File libraryFolder = new File(FileHelper.getUserUploadPath(userLibraryFolderName).toFile(), processedLibraryName);
+	// 	return libraryFolder.getAbsolutePath();
+	// }
 
 
 }

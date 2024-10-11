@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -15,37 +14,33 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
-import org.jaudiotagger.tag.FieldKey;
-import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
-import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.MusicDao;
 import org.mashupmedia.dao.PlaylistDao;
+import org.mashupmedia.eums.MashupMediaType;
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.MusicLibrary;
-import org.mashupmedia.model.media.MediaEncoding;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaResource;
 import org.mashupmedia.model.media.MetaImage;
-import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
+import org.mashupmedia.model.media.music.MetaTrack;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.repository.media.MediaRepository;
+import org.mashupmedia.repository.media.MediaResourceRepository;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.repository.media.music.MusicAlbumRepository;
+import org.mashupmedia.service.media.audio.AudioMetaManager;
 import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.GenreHelper;
 import org.mashupmedia.util.LibraryHelper;
-import org.mashupmedia.util.MediaItemHelper;
 import org.mashupmedia.util.MetaEntityHelper;
 import org.mashupmedia.util.StringHelper;
 import org.springframework.stereotype.Service;
@@ -69,6 +64,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	private final ArtistRepository artistRepository;
 	private final MusicAlbumRepository musicAlbumRepository;
 	private final MediaRepository mediaRepository;
+	private final MediaResourceRepository mediaResourceRepository;
+	private final AudioMetaManager audioMetaManager;
 
 	@PostConstruct
 	private void postConstruct() {
@@ -77,7 +74,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		for (Logger logger : loggers) {
 			logger.setLevel(Level.OFF);
 		}
-
 	}
 
 	@Override
@@ -128,7 +124,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		throw new UnsupportedOperationException("Not implemented, updateRemoteLibrary");
 		// Location location = musicLibrary.getLocation();
 		// String remoteLibraryUrl = location.getPath();
-		// String libraryXml = connectionManager.proceessRemoteLibraryConnection(remoteLibraryUrl);
+		// String libraryXml =
+		// connectionManager.proceessRemoteLibraryConnection(remoteLibraryUrl);
 		// mapperManager.saveXmltoTracks(musicLibrary, libraryXml);
 	}
 
@@ -145,16 +142,7 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		for (int i = 0; i < tracks.size(); i++) {
 			Track track = tracks.get(i);
-
 			track.setLibrary(musicLibrary);
-
-			MediaEncoding mediaEncoding = MediaItemHelper.createMediaEncoding(track.getFileName());
-			Set<MediaEncoding> mediaEncodings = track.getMediaEncodings();
-			if (mediaEncodings == null) {
-				mediaEncodings = new HashSet<MediaEncoding>();
-				track.setMediaEncodings(mediaEncodings);
-			}
-			mediaEncodings.add(mediaEncoding);
 
 			Artist artist = track.getArtist();
 			User user = musicLibrary.getUser();
@@ -179,17 +167,12 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 					log.info("Error processing album image", e);
 				}
 			}
-			
+
 			Set<MetaImage> metaImages = metaImageHelper.addMetaEntity(metaImage, album.getMetaImages());
-			album.setMetaImages(metaImages);;
+			album.setMetaImages(metaImages);
 			track.setAlbum(album);
 
 			track.setCreatedOn(date);
-
-			Year year = track.getYear();
-			year = prepareYear(year);
-			track.setYear(year);
-
 			Genre genre = track.getGenre();
 			genre = prepareGenre(genre);
 			track.setGenre(genre);
@@ -222,19 +205,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return genre;
 	}
 
-	private Year prepareYear(Year year) {
-		if (year == null || year.getYear() == 0) {
-			return null;
-		}
-
-		Year savedYear = musicDao.getYear(year.getYear());
-		if (savedYear == null) {
-			return year;
-		}
-
-		return savedYear;
-	}
-
 	private void prepareMusicLibrary(MusicLibrary musicLibrary, File folder, Date date) throws Exception {
 		List<Track> tracks = new ArrayList<Track>();
 		prepareTracks(date, tracks, folder, musicLibrary, null, null);
@@ -243,10 +213,8 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 	@Override
 	public void saveFile(MusicLibrary library, File file, Date date) {
 
-		String fileName = file.getName();
-
-		if (!FileHelper.isSupportedTrack(fileName)) {
-			log.info("File is not a supported format: " + fileName);
+		if (!FileHelper.isSupportedTrack(file.toPath())) {
+			log.info("File is not a supported format: " + file.getAbsolutePath());
 			return;
 		}
 
@@ -322,8 +290,6 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 				}
 				saveTracks(musicLibrary, tracks, date);
 				tracks.clear();
-				// libraryDao.sa
-				// libraryManager.saveMediaItemLastUpdated(musicLibrary.getId());
 				folderArtistName = "";
 			} else {
 				if (StringUtils.isBlank(folderAlbumName)) {
@@ -341,134 +307,89 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 
 		}
 
-		if (!FileHelper.isSupportedTrack(fileName)) {
+		if (!FileHelper.isSupportedTrack(file.toPath())) {
 			return;
 		}
-
-		Optional<Date> optionalFileLastModifiedOn = mediaRepository.findFileLastModifiedOnByPath(file.getPath());
-		if (optionalFileLastModifiedOn.isPresent()) {
-			Optional<MediaItem> optionalMediaItem = mediaRepository.findByPath(file.getPath());
-			if (optionalMediaItem.isPresent()) {
-				MediaItem savedMediaItem = optionalMediaItem.get();
-				if (file.lastModified() == savedMediaItem.getFileLastModifiedOn()) {
-					savedMediaItem.setUpdatedOn(date);
-					mediaRepository.save(savedMediaItem);
-					return;
-				}
-			}
+		
+		Optional<MediaItem> optionalMediaItem = getSavedMediaItem(file);
+		if (optionalMediaItem.isPresent()) {
+			MediaItem mediaItem = optionalMediaItem.get();
+			mediaItem.setUpdatedOn(new Date());
+			mediaRepository.save(mediaItem);
+			return;
 		}
 
 		musicFileCount++;
 		Track track = prepareTrack(file, date, musicFileCount, musicLibrary, folderArtistName, folderAlbumName);
-		tracks.add(track);
+		if (track != null) {
+			tracks.add(track);
+		}
 
+	}
+
+	private Optional<MediaItem> getSavedMediaItem(File file) {
+		Optional<MediaResource> optionalMediaResource = mediaResourceRepository.findByPath(file.getAbsolutePath());
+		if (optionalMediaResource.isEmpty()) {
+			return Optional.empty();
+		}
+
+		MediaResource mediaResource = optionalMediaResource.get();
+		return file.lastModified() == mediaResource.getFileLastModifiedOn()
+				? Optional.of(mediaResource.getMediaItem())
+				: Optional.empty();
 	}
 
 	private Track prepareTrack(File file, Date date, int musicFileCount, MusicLibrary musicLibrary,
 			String folderArtistName, String folderAlbumName) {
 
 		String fileName = file.getName();
-
-		Tag tag = null;
 		long bitRate = 0;
 		String format = FileHelper.getFileExtension(fileName);
-		long trackLength = 0;
-		String tagTrackTitle = null;
-		int trackNumber = 0;
-		String tagArtistName = null;
-		String tagAlbumName = null;
-		String genreValue = null;
-		int yearValue = 0;
 
-		try {
-			AudioFile audioFile = AudioFileIO.read(file);
-			AudioHeader audioHeader = audioFile.getAudioHeader();
-			bitRate = audioHeader.getBitRateAsNumber();
-			format = audioHeader.getFormat();
-			trackLength = audioHeader.getTrackLength();
-			tag = audioFile.getTag();
-
-		} catch (Exception e) {
-			log.info("Error reading audio file", e);
-		}
-
-		if (tag != null) {
-			tagTrackTitle = StringUtils.trimToEmpty(tag.getFirst(FieldKey.TITLE));
-			trackNumber = NumberUtils.toInt(tag.getFirst(FieldKey.TRACK));
-			tagArtistName = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM_ARTIST));
-			tagAlbumName = processAlbumName(tag);
-			genreValue = StringUtils.trimToEmpty(tag.getFirst(FieldKey.GENRE));
-			yearValue = NumberUtils.toInt(tag.getFirst(FieldKey.YEAR));
-		} else {
-			log.info("Unable to read tag info for music file: " + file.getAbsolutePath());
-		}
+		MetaTrack metaTrack = audioMetaManager.getMetaTrack(file.toPath());
 
 		Track track = new Track();
 		track.setUpdatedOn(date);
 
+		int trackNumber = metaTrack.getNumber();
 		if (trackNumber == 0) {
 			trackNumber = processTrackNumber(fileName, musicFileCount);
-			// trackNumber = musicFileCount;
 		}
 		track.setTrackNumber(trackNumber);
-
-		if (StringUtils.isEmpty(tagTrackTitle)) {
-			tagTrackTitle = file.getName();
-		} else {
-			log.debug("Found track title for music file: " + file.getAbsolutePath());
-			track.setReadableTag(true);
-		}
-
-		track.setTitle(tagTrackTitle);
-		track.setFormat(format);
-		track.setTrackLength(trackLength);
+		track.setTitle(metaTrack.getTitle());
+		track.setTrackLength(metaTrack.getLength());
 		track.setBitRate(bitRate);
 		track.setFileName(file.getName());
-		track.setPath(file.getAbsolutePath());
 		track.setLibrary(musicLibrary);
-		track.setSizeInBytes(file.length());
-		track.setFileLastModifiedOn(file.lastModified());
 		track.setEnabled(true);
+		track.setTrackYear(metaTrack.getYear());
+		track.setGenre(metaTrack.getGenre());
 
-		if (yearValue > 0) {
-			Year year = new Year();
-			year.setYear(yearValue);
-			track.setYear(year);
-		}
-
-		Genre genre = GenreHelper.getGenre(genreValue);
-		track.setGenre(genre);
+		MediaResource mediaResource = MediaResource.builder()
+				.mediaItem(track)
+				.original(true)
+				.mediaContentType(MediaContentType.getMediaContentType(format))
+				.path(file.getAbsolutePath())
+				.sizeInBytes(file.length())
+				.fileLastModifiedOn(file.lastModified())
+				.build();
+		track.getMediaResources().add(mediaResource);
 
 		Album album = new Album();
-		if (StringUtils.isEmpty(tagAlbumName)) {
-			tagAlbumName = folderAlbumName;
-		}
-		if (StringUtils.isBlank(folderAlbumName)) {
-			log.info("Unable to add track to the library. No album found for artist = " + folderArtistName
-					+ ", track title = " + tagTrackTitle);
+		album.setName(metaTrack.getAlbum());
+		if (StringUtils.isBlank(album.getName())) {
+			log.info("Unable to add track to the library: " + metaTrack.toString());
+			// return;
 		}
 
-		album.setName(tagAlbumName);
 		track.setAlbum(album);
 
 		Artist artist = new Artist();
-		if (StringUtils.isEmpty(tagArtistName)) {
-			tagArtistName = folderArtistName;
-		}
-		artist.setName(tagArtistName);
+		artist.setName(metaTrack.getArtist());
 		User user = musicLibrary.getUser();
 		artist.setUser(user);
 		artist.setAlbums(new ArrayList<Album>());
 		album.setArtist(artist);
-
-		StringBuilder displayTitleBuilder = new StringBuilder();
-		displayTitleBuilder.append(track.getDisplayTrackNumber());
-		displayTitleBuilder.append(Track.TITLE_SEPERATOR);
-		displayTitleBuilder.append(track.getTitle());
-
-		String displayTitle = prepareDisplayTitle(track);
-		track.setDisplayTitle(displayTitle);
-
 		return track;
 	}
 
@@ -486,45 +407,10 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 		return trackNumber;
 	}
 
-	private String processAlbumName(Tag tag) {
-		String albumName = StringUtils.trimToEmpty(tag.getFirst(FieldKey.ALBUM));
-		if (StringUtils.isEmpty(albumName)) {
-			return null;
-		}
-
-		int discNumber = NumberUtils.toInt(tag.getFirst(FieldKey.DISC_NO));
-		// Only use the disc number if greater than 1
-		if (discNumber < 2) {
-			return albumName;
-		}
-
-		albumName += " CD" + discNumber;
-		return albumName;
-	}
-
-	private String prepareDisplayTitle(Track track) {
-		StringBuilder titleBuilder = new StringBuilder();
-		if (track.isReadableTag()) {
-			titleBuilder.append(track.getDisplayTrackNumber());
-			titleBuilder.append(Track.TITLE_SEPERATOR);
-			titleBuilder.append(track.getTitle());
-			return titleBuilder.toString();
-		}
-
-		String title = StringUtils.trimToEmpty(track.getTitle());
-		int dotIndex = title.lastIndexOf(".");
-		if (dotIndex < 0) {
-			return title;
-		}
-
-		title = title.substring(0, dotIndex);
-		return title;
-	}
-
 	private Artist prepareArtist(Artist artist, long userId) {
 		return artistRepository
-		.findArtistByNameIgnoreCase(artist.getName(), userId)
-		.orElse(artist);
+				.findArtistByNameIgnoreCase(artist.getName(), userId)
+				.orElse(artist);
 	}
 
 	private Album prepareAlbum(Album album) {
@@ -534,32 +420,25 @@ public class MusicLibraryUpdateManagerImpl implements MusicLibraryUpdateManager 
 			return null;
 		}
 
-		String url = null;
-		String thumbnailUrl = null;
-
 		MetaEntityHelper<MetaImage> metaImageHelper = new MetaEntityHelper<>();
 		MetaImage metaImage = metaImageHelper.getDefaultEntity(album.getMetaImages());
-		if (metaImage != null) {
-			url = metaImage.getUrl();
-			thumbnailUrl = metaImage.getThumbnailUrl();
-		}
 
-		// Album savedAlbum = musicDao.getAlbum(userGroupIds, artist.getName(),
-		// albumName);
 		Optional<Album> optionalAlbum = musicAlbumRepository.findByArtistNameAndAlbumNameIgnoreCase(artist.getName(),
 				albumName);
 
+		if (metaImage == null) {
+			return optionalAlbum.orElse(album);
+		}
+
 		if (optionalAlbum.isPresent()) {
 			Album savedAlbum = optionalAlbum.get();
-			MetaImage savedAlbumArtImage = metaImageHelper.getDefaultEntity(savedAlbum.getMetaImages());
-			if (savedAlbumArtImage == null) {
+			MetaImage savedMetaImage = metaImageHelper.getDefaultEntity(savedAlbum.getMetaImages());
+			if (savedMetaImage == null) {
 				Set<MetaImage> metaImages = metaImageHelper.addMetaEntity(metaImage, savedAlbum.getMetaImages());
 				savedAlbum.setMetaImages(metaImages);
 			} else {
-				if (StringUtils.isBlank(savedAlbumArtImage.getUrl())) {
-					savedAlbumArtImage.setUrl(url);
-					savedAlbumArtImage.setThumbnailUrl(thumbnailUrl);
-				}
+				savedMetaImage.setUrl(metaImage.getUrl());
+				savedMetaImage.setThumbnailUrl(metaImage.getThumbnailUrl());
 			}
 
 			return savedAlbum;

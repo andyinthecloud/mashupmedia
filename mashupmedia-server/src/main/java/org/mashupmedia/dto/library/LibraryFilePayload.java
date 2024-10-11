@@ -1,6 +1,6 @@
 package org.mashupmedia.dto.library;
 
-import org.mashupmedia.constants.MashupMediaType;
+import org.mashupmedia.eums.MashupMediaType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

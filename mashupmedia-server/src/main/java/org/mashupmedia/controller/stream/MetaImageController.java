@@ -8,9 +8,7 @@ import java.util.Set;
 import org.mashupmedia.comparator.MetaEntityComparator;
 import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.model.media.MetaImage;
-import org.mashupmedia.util.ImageHelper.ImageFormatType;
 import org.mashupmedia.util.ImageHelper.ImageType;
-import org.mashupmedia.util.MediaContentHelper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -65,7 +63,7 @@ public abstract class MetaImageController {
                 .mediaContentType(
                         imageType == ImageType.THUMBNAIL
                                 ? MediaContentType.IMAGE_PNG
-                                : MediaContentHelper.getMediaContentType(metaImage.getContentType()))
+                                : MediaContentType.getMediaContentType(metaImage.getMimeType()))
                 .resource(new FileSystemResource(getPath(metaImage, imageType)))
                 .build();
     }

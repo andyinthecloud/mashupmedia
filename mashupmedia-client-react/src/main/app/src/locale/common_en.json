@@ -43,7 +43,8 @@
         "albumHelp": "You can add an album by clicking on the artist name above",
         "genre": "Genre",
         "decade": "Decade",
-        "selectTracks": "Select tracks"
+        "selectTracks": "Select tracks",
+        "uploaded": "Files have been uploaded for processing"
     },
     "uploadTrackFiles": {
         "drag": "Drag and drop to upload {{fileType}} files",

@@ -14,7 +14,7 @@ import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.Library;
-import org.mashupmedia.model.media.MediaEncoding;
+import org.mashupmedia.model.media.MediaResource;
 import org.mashupmedia.model.media.MediaItem;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,60 +47,60 @@ public class FileHelper {
 
 	}
 
-	public static File[] getEncodedFiles(String userFolderName, long libraryId, long mediaItemId, FileType fileType) {
-		File libraryFolder = getLibraryFolder(userFolderName, libraryId);
-		File mediaFolder = new File(libraryFolder, fileType.getFolderName());
-		mediaFolder.mkdirs();
+	// public static File[] getEncodedFiles(String userFolderName, long libraryId, long mediaItemId, FileType fileType) {
+	// 	File libraryFolder = getLibraryFolder(userFolderName, libraryId);
+	// 	File mediaFolder = new File(libraryFolder, fileType.getFolderName());
+	// 	mediaFolder.mkdirs();
 
-		final String filePrefix = mediaItemId + ".";
+	// 	final String filePrefix = mediaItemId + ".";
 
-		File[] files = mediaFolder.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				if (name.startsWith(filePrefix)) {
-					return true;
-				}
-				return false;
-			}
-		});
+	// 	File[] files = mediaFolder.listFiles(new FilenameFilter() {
+	// 		@Override
+	// 		public boolean accept(File dir, String name) {
+	// 			if (name.startsWith(filePrefix)) {
+	// 				return true;
+	// 			}
+	// 			return false;
+	// 		}
+	// 	});
 
-		return files;
-	}
+	// 	return files;
+	// }
 
-	public static File getMediaFile(MediaItem mediaItem, MediaEncoding mediaEncoding) {
-		if (mediaEncoding.isOriginal()) {
-			File mediaFile = new File(mediaItem.getPath());
-			return mediaFile;
-		}
+	// public static File getMediaFile(MediaItem mediaItem, MediaEncoding mediaEncoding) {
+	// 	if (mediaEncoding.isOriginal()) {
+	// 		File mediaFile = new File(mediaItem.getPath());
+	// 		return mediaFile;
+	// 	}
 
-		MediaContentType mediaContentType = mediaEncoding.getMediaContentType();
-		File encodedFile = getEncodedMediaFile(mediaItem, mediaContentType);
-		return encodedFile;
-	}
+	// 	MediaContentType mediaContentType = mediaEncoding.getMediaContentType();
+	// 	File encodedFile = getEncodedMediaFile(mediaItem, mediaContentType);
+	// 	return encodedFile;
+	// }
 
-	public static File getEncodedMediaFile(MediaItem mediaItem, MediaContentType mediaContentType) {
-		Library library = mediaItem.getLibrary();
-		File libraryFolder = getLibraryFolder(library.getUser().getFolderName(), library.getId());
-		File mediaFolder = new File(libraryFolder, FileType.MEDIA_ITEM_STREAM_ENCODED.getFolderName());
-		mediaFolder.mkdirs();
+	// public static File getEncodedMediaFile(MediaItem mediaItem, MediaContentType mediaContentType) {
+	// 	Library library = mediaItem.getLibrary();
+	// 	File libraryFolder = getLibraryFolder(library.getUser().getFolderName(), library.getId());
+	// 	File mediaFolder = new File(libraryFolder, FileType.MEDIA_ITEM_STREAM_ENCODED.getFolderName());
+	// 	mediaFolder.mkdirs();
 
-		String fileName = String.valueOf(mediaItem.getId());
-		fileName += "." + mediaContentType.name().toLowerCase();
+	// 	String fileName = String.valueOf(mediaItem.getId());
+	// 	fileName += "." + mediaContentType.name().toLowerCase();
 
-		File file = new File(mediaFolder, fileName);
-		return file;
-	}
+	// 	File file = new File(mediaFolder, fileName);
+	// 	return file;
+	// }
 
-	public static File createMediaItemFile(String userFolderName, long libraryId, FileType fileType) {
-		File libraryFolder = getLibraryFolder(userFolderName, libraryId);
-		File thumbnailFolder = new File(libraryFolder, fileType.getFolderName());
-		thumbnailFolder.mkdirs();
-		File thumbnailFile = new File(thumbnailFolder, String.valueOf(System.nanoTime()));
-		return thumbnailFile;
-	}
+	// public static File createMediaItemFile(String userFolderName, long libraryId, FileType fileType) {
+	// 	File libraryFolder = getLibraryFolder(userFolderName, libraryId);
+	// 	File thumbnailFolder = new File(libraryFolder, fileType.getFolderName());
+	// 	thumbnailFolder.mkdirs();
+	// 	File thumbnailFile = new File(thumbnailFolder, String.valueOf(System.nanoTime()));
+	// 	return thumbnailFile;
+	// }
 
-	public static boolean isSupportedTrack(String fileName) {
-		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
+	public static boolean isSupportedTrack(Path path) {
+		String fileName = path.getFileName().toString().toLowerCase();
 		if (StringUtils.isEmpty(fileName)) {
 			return false;
 		}
@@ -123,8 +123,8 @@ public class FileHelper {
 
 	}
 
-	public static boolean isSupportedImage(String fileName) {
-		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
+	public static boolean isSupportedImage(Path path) {
+		String fileName = path.getFileName().toString().toLowerCase();
 		if (StringUtils.isEmpty(fileName)) {
 			return false;
 		}
@@ -147,8 +147,8 @@ public class FileHelper {
 
 	}
 
-	public static boolean isSupportedVideo(String fileName) {
-		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
+	public static boolean isSupportedVideo(Path path) {
+		String fileName = path.getFileName().toString().toLowerCase();
 		if (StringUtils.isEmpty(fileName)) {
 			return false;
 		}
@@ -234,15 +234,15 @@ public class FileHelper {
 		return applicationHomeFolder;
 	}
 
-	public static Path getApplicationTempPath() {
-		return Path.of(getApplicationFolder().getAbsolutePath(), TEMP);
-	}
+	// public static Path getApplicationTempPath() {
+	// 	return Path.of(getApplicationFolder().getAbsolutePath(), TEMP);
+	// }
 
-	private static File getLibraryFolder(String userFolderName, long libraryId) {
-		File libraryFolder = new File(getUserUploadPath(userFolderName).toFile(), "libraries/" + libraryId);
-		libraryFolder.mkdirs();
-		return libraryFolder;
-	}
+	// private static File getLibraryFolder(String userFolderName, long libraryId) {
+	// 	File libraryFolder = new File(getUserUploadPath(userFolderName).toFile(), "libraries/" + libraryId);
+	// 	libraryFolder.mkdirs();
+	// 	return libraryFolder;
+	// }
 
 	// public static File getUserArtistFolder(long artistId) {
 	// User user = AdminHelper.getLoggedInUser();
@@ -252,15 +252,15 @@ public class FileHelper {
 	// return libraryFolder;
 	// }
 
-	public static void deleteLibrary(String userFolderName, long libraryId) {
-		File libraryFolder = getLibraryFolder(userFolderName, libraryId);
-		try {
-			FileUtils.deleteDirectory(libraryFolder);
-		} catch (IOException e) {
-			log.error("Unable to delete library folder", e);
-		}
+	// public static void deleteLibrary(String userFolderName, long libraryId) {
+	// 	File libraryFolder = getLibraryFolder(userFolderName, libraryId);
+	// 	try {
+	// 		FileUtils.deleteDirectory(libraryFolder);
+	// 	} catch (IOException e) {
+	// 		log.error("Unable to delete library folder", e);
+	// 	}
 
-	}
+	// }
 
 	public static boolean isMatchingFileNamePattern(String fileName, String fileNamePattern) {
 		fileName = StringUtils.trimToEmpty(fileName).toLowerCase();
@@ -285,6 +285,16 @@ public class FileHelper {
 			}
 		}
 		return false;
+	}
+
+	public static long getPathSize(Path path) {
+		long size = 0;
+		try {	
+			size = Files.size(path);
+		} catch (IOException e) {
+			log.info("Unable to get path size", e);
+		}
+		return size;
 	}
 
 	public static String getDisplayBytes(long bytes, boolean si) {
@@ -330,33 +340,33 @@ public class FileHelper {
 	// return file;
 	// }
 
-	private static File getVideoFolder(String userFolderName, long libraryId, long videoId) {
-		File libraryFolder = FileHelper.getLibraryFolder(userFolderName, libraryId);
-		File videoFolder = new File(libraryFolder, String.valueOf(videoId));
-		return videoFolder;
-	}
+	// private static File getVideoFolder(String userFolderName, long libraryId, long videoId) {
+	// 	File libraryFolder = FileHelper.getLibraryFolder(userFolderName, libraryId);
+	// 	File videoFolder = new File(libraryFolder, String.valueOf(videoId));
+	// 	return videoFolder;
+	// }
 
-	public static void deleteProcessedVideo(String userFolderName, long libraryId, long videoId) {
+	// public static void deleteProcessedVideo(String userFolderName, long libraryId, long videoId) {
 
-		if (libraryId == 0 || videoId == 0) {
-			log.info(
-					"Unable to delete video files from libray, libraryId = " + libraryId + ", videoId = " + videoId);
-			return;
-		}
+	// 	if (libraryId == 0 || videoId == 0) {
+	// 		log.info(
+	// 				"Unable to delete video files from libray, libraryId = " + libraryId + ", videoId = " + videoId);
+	// 		return;
+	// 	}
 
-		File videoFolder = getVideoFolder(userFolderName, libraryId, videoId);
+	// 	File videoFolder = getVideoFolder(userFolderName, libraryId, videoId);
 
-		if (!videoFolder.isDirectory()) {
-			log.debug("Unable to delete video folder: " + videoFolder.getAbsolutePath() + ". Does not exist.");
-			return;
-		}
+	// 	if (!videoFolder.isDirectory()) {
+	// 		log.debug("Unable to delete video folder: " + videoFolder.getAbsolutePath() + ". Does not exist.");
+	// 		return;
+	// 	}
 
-		try {
-			FileUtils.deleteDirectory(videoFolder);
-		} catch (IOException e) {
-			log.error("Error deleting folder: " + videoFolder.getAbsolutePath(), e);
-		}
-	}
+	// 	try {
+	// 		FileUtils.deleteDirectory(videoFolder);
+	// 	} catch (IOException e) {
+	// 		log.error("Error deleting folder: " + videoFolder.getAbsolutePath(), e);
+	// 	}
+	// }
 
 	public static boolean isEmptyBytes(byte[] bytes) {
 		if (bytes == null || bytes.length == 0) {
@@ -365,15 +375,15 @@ public class FileHelper {
 		return false;
 	}
 
-	public static Path getPath(MediaItem mediaItem) {
-		if (mediaItem == null) {
-			return null;
-		}
+	// public static Path getPath(MediaItem mediaItem) {
+	// 	if (mediaItem == null) {
+	// 		return null;
+	// 	}
 
-		File file = new File(mediaItem.getPath());
-		Path path = file.toPath();
-		return path;
-	}
+	// 	File file = new File(mediaItem.getPath());
+	// 	Path path = file.toPath();
+	// 	return path;
+	// }
 
 	private static File getPlaylistFolder(long playlistId) {
 		File playlistFolder = new File(getApplicationFolder(), "playlists/" + playlistId);
@@ -392,13 +402,14 @@ public class FileHelper {
 		return file;
 	}
 
-	public static Path getUserUploadPath(String userFolderName) {
-		Path userUploadPath = Paths.get(getApplicationFolder().getAbsolutePath(), "users", userFolderName);
-		try {
-			return Files.createDirectories(userUploadPath);
-		} catch (IOException e) {
-			throw new MashupMediaRuntimeException("Unable to create user upload folder", e);
-		}
-	}
+	// public static Path getUserUploadPath(String userFolderName) {
+	// 	Path userUploadPath = Paths.get(getApplicationFolder().getAbsolutePath(), "users", userFolderName);
+	// 	try {
+	// 		return Files.createDirectories(userUploadPath);
+	// 	} catch (IOException e) {
+	// 		throw new MashupMediaRuntimeException("Unable to create user upload folder", e);
+	// 	}
+	// }
+
 
 }

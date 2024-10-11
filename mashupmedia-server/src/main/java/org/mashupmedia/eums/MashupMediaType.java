@@ -1,9 +1,20 @@
-package org.mashupmedia.constants;
+package org.mashupmedia.eums;
 
 import java.util.Arrays;
 
+import lombok.Getter;
+
+@Getter
 public enum MashupMediaType {
-    MUSIC, VIDEO, PHOTO;
+    MUSIC("audio"), 
+    VIDEO("video"), 
+    PHOTO("image");
+
+    private final String mimeGroup;
+    
+    private MashupMediaType(String mimeGroup) {
+        this.mimeGroup = mimeGroup;
+    }
 
     public static MashupMediaType getMediaType(String value) {
         return Arrays.stream(values())

@@ -7,16 +7,16 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.mashupmedia.component.TranscodeConfigurationComponent;
 import org.mashupmedia.dto.media.playlist.EncoderStatusType;
-import org.mashupmedia.exception.MediaItemEncodeException;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
-import org.mashupmedia.task.EncodeMediaItemManager;
+import org.mashupmedia.service.transcode.TranscodeAudioManager;
 import org.mashupmedia.util.AdminHelper;
-import org.mashupmedia.util.MediaContentHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PlaylistActionManagerImpl implements PlaylistActionManager {
 
-	private final EncodeMediaItemManager encodeMediaItemManager;
+	private final TranscodeAudioManager transcodeAudioManager;
 	private final PlaylistRepository playlistRepository;
+	private final TranscodeConfigurationComponent transcodeConfigurationComponent;
 
 	@Override
 	public EncoderStatusType replacePlaylist(long playlistId, List<? extends MediaItem> mediaItems) {
@@ -77,27 +78,34 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		List<MediaItem> mediaItemsForEncoding = playlistMediaItems
 				.stream()
 				.map(pmi -> pmi.getMediaItem())
-				.filter(mi -> !mi.isEncodedForWeb())
+				.filter(mi -> !mi.isTranscoded(
+						transcodeConfigurationComponent.getTranscodeAudioMediaContentType()))
 				.collect(Collectors.toList());
 
 		if (mediaItemsForEncoding == null || mediaItemsForEncoding.isEmpty()) {
 			return EncoderStatusType.OK;
 		}
 
-		if (!encodeMediaItemManager.isEncoderInstalled()) {
-			return EncoderStatusType.ENODER_NOT_INSTALLED;
-		}
+		// if (!transcodeAudioManager.isTranscoderInstalled()) {
+		// return EncoderStatusType.TRANSCODER_NOT_INSTALLED;
+		// }
 
 		for (MediaItem mediaItem : mediaItemsForEncoding) {
-			try {
-				encodeMediaItemManager.processMediaItemForEncoding(mediaItem,
-						MediaContentHelper.getDefaultMediaContentType(mediaItem));
-			} catch (MediaItemEncodeException e) {
-				log.error("Error encoding media", e);
+			// try {
+
+			if (mediaItem instanceof Track track) {
+
+				transcodeAudioManager.processTrack(track, track.getOriginalMediaResource().getPath());
 			}
+
+			// encodeMediaItemManager.processMediaItemForEncoding(mediaItem,
+			// MediaContentHelper.getDefaultMediaContentType(mediaItem));
+			// } catch (MediaItemTranscodeException e) {
+			// log.error("Error encoding media", e);
+			// }
 		}
 
-		return EncoderStatusType.SENT_FOR_ENCODING;
+		return EncoderStatusType.SENT_FOR_TRANSCODING;
 
 	}
 

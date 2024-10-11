@@ -9,6 +9,6 @@ public interface ConnectionManager {
 
 	public byte[] getAlbumArtImageBytes(MetaImage albumArtImage, ImageType imageType) throws IOException;
 
-	public long getMediaItemFileSize(long mediaItemId);
+	// public long getMediaItemFileSize(long mediaItemId);
 
 }

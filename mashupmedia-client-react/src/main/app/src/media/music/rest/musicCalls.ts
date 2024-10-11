@@ -47,7 +47,6 @@ export type TrackPayload = {
     totalSeconds: number
     minutes?: number
     seconds?: number
-    encodedForWeb?: boolean
     year: number
 }
 

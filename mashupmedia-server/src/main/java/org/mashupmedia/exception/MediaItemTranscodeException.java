@@ -4,18 +4,27 @@ import org.mashupmedia.util.MessageHelper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class MediaItemEncodeException extends Exception {
+public class MediaItemTranscodeException extends Exception {
 
 	private static final long serialVersionUID = -7174329107038461455L;
 	
 	private EncodeExceptionType encodeExceptionType;
 
 	public enum EncodeExceptionType {
-		ENCODER_NOT_CONFIGURED, UNABLE_TO_DELETE_PREVIOUS_ENCODED_FILE, UNSUPPORTED_ENCODING_FORMAT
+		ENCODER_NOT_CONFIGURED, UNABLE_TO_DELETE_TEMPORARY_FILE, UNSUPPORTED_ENCODING_FORMAT
 	}
 
-	public MediaItemEncodeException(EncodeExceptionType encodeExceptionType, String messageKey) {
+	public MediaItemTranscodeException(EncodeExceptionType encodeExceptionType, String messageKey) {
 		super(messageKey);		
+		initialise(encodeExceptionType);
+	}
+
+	public MediaItemTranscodeException(EncodeExceptionType encodeExceptionType, String messageKey, Throwable cause) {
+		super(messageKey, cause);		
+		initialise(encodeExceptionType);
+	}
+
+	private void initialise(EncodeExceptionType encodeExceptionType) {
 		log.error(getDisplayMessage());
 		this.encodeExceptionType = encodeExceptionType;
 	}

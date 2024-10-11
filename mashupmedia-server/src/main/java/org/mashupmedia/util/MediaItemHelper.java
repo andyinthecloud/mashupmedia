@@ -20,9 +20,9 @@ package org.mashupmedia.util;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.constants.MashupMediaType;
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.eums.MediaContentType;
-import org.mashupmedia.model.media.MediaEncoding;
+import org.mashupmedia.model.media.MediaResource;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.media.video.Video;
@@ -74,14 +74,14 @@ public class MediaItemHelper {
 		return false;
 	}
 
-	public static MediaEncoding createMediaEncoding(String fileName) {
-		String fileExtension = FileHelper.getFileExtension(fileName);
-		MediaEncoding mediaEncoding = new MediaEncoding();
-		mediaEncoding.setOriginal(true);
-		MediaContentType mediaContentType = MediaContentHelper.getMediaContentType(fileExtension);
-		mediaEncoding.setMediaContentType(mediaContentType);
-		return mediaEncoding;
-	}
+	// public static MediaResource createMediaEncoding(String fileName, boolean isOriginal, MediaContentType mediaContentType) {
+	// 	// String fileExtension = FileHelper.getFileExtension(fileName);
+	// 	MediaResource mediaResource = new MediaResource();
+	// 	mediaResource.setOriginal(isOriginal);
+	// 	// MediaContentType mediaContentType = MediaContentType.getMediaContentType(fileExtension);
+	// 	mediaResource.setMediaContentType(mediaContentType); 
+	// 	return mediaResource;
+	// }
 
 	// public static MediaContentType getMediaContentType(String format) {
 
@@ -153,19 +153,19 @@ public class MediaItemHelper {
 	// 	return false;
 	// }
 
-	public static boolean hasMediaEncoding(MediaItem mediaItem, MediaContentType mediaContentType) {
-		Set<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
-		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
-			return false;
-		}
+	// public static boolean hasMediaEncoding(MediaItem mediaItem, MediaContentType mediaContentType) {
+	// 	Set<MediaEncoding> mediaEncodings = mediaItem.getMediaEncodings();
+	// 	if (mediaEncodings == null || mediaEncodings.isEmpty()) {
+	// 		return false;
+	// 	}
 
-		for (MediaEncoding mediaEncoding : mediaEncodings) {
-			if (mediaContentType == mediaEncoding.getMediaContentType()) {
-				return true;
-			}
-		}
-		return false;
-	}
+	// 	for (MediaEncoding mediaEncoding : mediaEncodings) {
+	// 		if (mediaContentType == mediaEncoding.getMediaContentType()) {
+	// 			return true;
+	// 		}
+	// 	}
+	// 	return false;
+	// }
 
 	public static String prepareUrlStream(String contextPath, long mediaItemId, String format) {
 		StringBuilder urlBuilder = new StringBuilder(contextPath);

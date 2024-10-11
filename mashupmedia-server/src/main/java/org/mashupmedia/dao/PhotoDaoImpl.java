@@ -5,25 +5,26 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import jakarta.persistence.TypedQuery;
-
+import org.mashupmedia.component.TranscodeConfigurationComponent;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.photo.Album;
 import org.mashupmedia.model.media.photo.Photo;
 import org.mashupmedia.util.DaoHelper;
 import org.mashupmedia.util.MediaItemHelper.MediaItemSequenceType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import jakarta.persistence.TypedQuery;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
+@RequiredArgsConstructor
 @Slf4j
 public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 
-	@Autowired
-	private LibraryDao libraryDao;
+	private final LibraryDao libraryDao;
+	private final TranscodeConfigurationComponent transcodeConfigurationComponent;
 
 	private enum PhotoSequenceType {
 		ALBUM_PREVIOUS, ALBUM_NEXT, PREVIOUS, NEXT, ALBUM_FIRST, ALBUM_LAST, FIRST, LAST;
@@ -47,7 +48,9 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		Library library = photo.getLibrary();
 		libraryDao.saveLibrary(library);
 		flushSession(isSessionFlush);
-		log.debug("Saved photo. id: " + photo.getId() + ", path: " + photo.getPath());
+		log.debug("Saved photo. id: " + photo.getId() + ", path: "
+				+ photo.getMediaResource(
+					transcodeConfigurationComponent.getTranscodeImageMediaContentType()).getPath());
 	}
 
 	@Override
@@ -82,7 +85,7 @@ public class PhotoDaoImpl extends BaseDaoImpl implements PhotoDao {
 		}
 
 		for (Photo photo : photos) {
-			log.info("Deleting photo: " + photo.getPath());
+			log.info("Deleting photo: " + photo.getFileName());
 			entityManager.remove(photo);
 		}
 

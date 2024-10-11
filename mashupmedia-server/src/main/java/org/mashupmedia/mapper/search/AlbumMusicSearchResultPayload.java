@@ -1,7 +1,7 @@
 package org.mashupmedia.mapper.search;
 
-import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dto.media.music.MusicSearchResultPayload;
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.mapper.PayloadMapper;
 import org.mashupmedia.mapper.media.music.AlbumMapper;
 import org.mashupmedia.mapper.media.music.ArtistMapper;

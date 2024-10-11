@@ -2,7 +2,7 @@ package org.mashupmedia.controller.rest.authenticated.encode;
 
 import org.mashupmedia.dto.share.NameValuePayload;
 import org.mashupmedia.dto.share.ServerResponsePayload;
-import org.mashupmedia.task.EncodeMediaItemManager;
+import org.mashupmedia.service.transcode.local.LocalTranscodeAudioManagerImpl;
 import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EncodeController {
 
-    private final EncodeMediaItemManager encodeMediaItemManager;
+    private final LocalTranscodeAudioManagerImpl encodeMediaItemManager;
 
     @Secured("ROLE_ADMINISTRATOR")
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)

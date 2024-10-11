@@ -19,8 +19,8 @@ package org.mashupmedia.comparator;
 
 import java.util.Comparator;
 
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.model.media.MediaItem;
-import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.model.media.music.Track;
 
 public class MediaItemComparator implements Comparator<MediaItem> {
@@ -40,10 +40,8 @@ public class MediaItemComparator implements Comparator<MediaItem> {
 	}
 
 	public int compare(Track o1, Track o2) {
-		String o1DisplayTitle = o1.getDisplayTitle();
-		String o2DisplayTitle = o2.getDisplayTitle();
-		int compare = o1DisplayTitle.compareToIgnoreCase(o2DisplayTitle);
-		return compare;
+		return Integer.valueOf(o1.getTrackNumber())
+				.compareTo(Integer.valueOf(o2.getTrackNumber()));
 	}
 
 }

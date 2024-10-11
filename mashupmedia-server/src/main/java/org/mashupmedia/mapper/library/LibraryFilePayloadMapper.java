@@ -1,43 +1,42 @@
 package org.mashupmedia.mapper.library;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dto.library.LibraryFilePayload;
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.mapper.PayloadMapper;
 import org.mashupmedia.util.FileHelper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LibraryFilePayloadMapper implements PayloadMapper<File, LibraryFilePayload> {
+public class LibraryFilePayloadMapper implements PayloadMapper<Path, LibraryFilePayload> {
 
     @Override
-    public LibraryFilePayload toPayload(File file) {
+    public LibraryFilePayload toPayload(Path path) {
         return LibraryFilePayload.builder()
-                .name(file.getName())
-                .path(file.getPath())
-                .mashupMediaType(getMashupMediaType(file))
-                .isFolder(file.isDirectory())
+                .name(path.getFileName().toString())
+                .path(path.toString())
+                .mashupMediaType(getMashupMediaType(path))
+                .isFolder(Files.isDirectory(path))
                 .build();
     }
 
-    private MashupMediaType getMashupMediaType(File file) {
+    private MashupMediaType getMashupMediaType(Path path) {
 
-        if (file.isDirectory()) {
+        if (Files.isDirectory(path)) {
             return null;
         }
 
-        String fileName = file.getName();
-
-        if (FileHelper.isSupportedImage(fileName)) {
+        if (FileHelper.isSupportedImage(path)) {
             return MashupMediaType.PHOTO;
         }
 
-        if (FileHelper.isSupportedTrack(fileName)) {
+        if (FileHelper.isSupportedTrack(path)) {
             return MashupMediaType.MUSIC;
         }
 
-        if (FileHelper.isSupportedVideo(fileName)) {
+        if (FileHelper.isSupportedVideo(path)) {
             return MashupMediaType.VIDEO;
         }
 

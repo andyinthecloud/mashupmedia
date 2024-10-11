@@ -10,14 +10,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.constants.MashupMediaType;
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaResource;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.repository.playlist.PlaylistMediaItemRepository;
 import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
+import org.mashupmedia.service.storage.StorageManager;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.UserPlaylistPosition;
 import org.mashupmedia.util.DaoHelper;
@@ -35,8 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 
 	private final UserPlaylistPositionRepository userPlaylistPositionRepository;
-
 	private final PlaylistMediaItemRepository playlistMediaItemRepository;
+	private final StorageManager storageManager;
 
 	@Override
 	public List<Playlist> getPlaylists(long userId, boolean isAdministrator, MashupMediaType mashupMediaType) {
@@ -108,7 +110,7 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 				"from Playlist where createdBy.id = :userId and userDefault = true and mediaTypeValue = :mediaTypeValue",
 				Playlist.class);
 		query.setParameter("userId", userId);
-		query.setParameter("mediaTypeValue", mashupMediaType.name());
+		query.setParameter("mediaTypeValue", mashupMediaType.name());		
 		List<Playlist> playlists = query.getResultList();
 		if (playlists == null || playlists.isEmpty()) {
 			return null;
@@ -219,13 +221,10 @@ public class PlaylistDaoImpl extends BaseDaoImpl implements PlaylistDao {
 			}
 		}
 
-		Library library = mediaItem.getLibrary();
-		User user = library.getUser();
-		File[] encodedMediaFiles = FileHelper.getEncodedFiles(user.getFolderName(), library.getId(), mediaItemId,
-				FileType.MEDIA_ITEM_STREAM_ENCODED);
-		for (File encodedMediaFile : encodedMediaFiles) {
-			FileHelper.deleteFile(encodedMediaFile);
+		for (MediaResource mediaResource : mediaItem.getMediaResources()) {
+			storageManager.delete( mediaResource.getPath());
 		}
+
 
 	}
 

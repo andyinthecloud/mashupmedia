@@ -116,7 +116,7 @@ public class VideoDaoImpl extends BaseDaoImpl implements VideoDao {
 			return;
 		}
 		for (Video video : videos) {
-			log.info("Deleting video: " + video.getPath());
+			log.info("Deleting video: " + video.getFileName());
 			entityManager.remove(video);
 		}
 

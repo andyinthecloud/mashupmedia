@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
-import org.mashupmedia.model.media.Year;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
@@ -30,7 +28,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	private ArtistRepository artistRepository;
 
 	// Used for remote library synchronisation
-	private final static int NUMBER_OF_DAYS_TO_KEEP_DISABLED_TRACKS = 1;
+	// private final static int NUMBER_OF_DAYS_TO_KEEP_DISABLED_TRACKS = 1;
 
 	protected int getFirstResult(int pageNumber, int maxResults) {
 		int firstResult = pageNumber * maxResults;
@@ -259,6 +257,24 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 	}
 
 	@Override
+	public Track getTrack(long id) {
+		StringBuilder queryBuilder = new StringBuilder("from Track t where t.id = :id");
+		TypedQuery<Track> query = entityManager.createQuery(queryBuilder.toString(), Track.class);
+		query.setParameter("id", id);
+
+		List<Track> tracks = query.getResultList();
+		if (tracks.size() > 1) {
+			log.error("Returning duplicate tracks, using first in list...");
+		}
+
+		if (tracks.isEmpty()) {
+			return null;
+		}
+
+		return tracks.get(0);
+	}
+
+	@Override
 	public List<Track> getTracksToDelete(long libraryId, Date date) {
 		TypedQuery<Track> query = entityManager
 				.createQuery("from Track where library.id = :libraryId and updatedOn < :updatedOn", Track.class);
@@ -285,24 +301,11 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 			artistRepository.save(artist);
 		}
 
-		// saveOrMerge(artist);
-
-		// Album album = track.getAlbum();
-		// saveOrMerge(album);
-		// track.setAlbum(album);
-
-		// saveOrMerge(track.getYear());
-		// saveOrMerge(track.getGenre());
 		saveOrUpdate(track);
-
-		// Library library = track.getLibrary();
-		// // saveOrUpdate(library.getLocation());
-		// libraryDao.saveLibrary(library);
-
 		flushSession(isSessionFlush);
 
 		log.debug("Saved track: " + track.getArtist().getName() + " - " + track.getAlbum().getName() + " - "
-				+ track.getTitle());
+				+ track.getOriginalMediaResource().getPath());
 	}
 
 	@Override
@@ -378,14 +381,6 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 
 		List<Album> albums = query.getResultList();
 		return albums;
-	}
-
-	@Override
-	public Year getYear(int year) {
-		TypedQuery<Year> query = entityManager.createQuery("from Year where year = :year", Year.class);
-		query.setParameter("year", year);
-		Year album = getUniqueResult(query);
-		return album;
 	}
 
 	@Override

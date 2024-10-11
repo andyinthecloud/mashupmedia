@@ -1,20 +1,16 @@
 package org.mashupmedia.model.media;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
-import org.mashupmedia.comparator.MediaEncodingComparator;
-import org.mashupmedia.constants.MashupMediaType;
+import org.mashupmedia.eums.MashupMediaType;
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.social.SocialConfiguration;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
-import org.mashupmedia.util.FileHelper;
-import org.mashupmedia.util.StringHelper;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -26,17 +22,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "media_items")
@@ -46,7 +44,20 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class MediaItem {
+@SuperBuilder(toBuilder = true)
+@ToString
+public abstract class MediaItem {
+
+	// @Value("${mashupmedia.encode.audio}")
+	// private String encodeAudio;
+
+	public abstract MashupMediaType getMashupMediaType();
+
+	// protected abstract String getTranscodeValue();
+
+	// public MediaContentType getTranscodeMediaContentType() {
+	// 	return MediaContentType.getMediaContentType(getTranscodeValue());
+	// }
 
 	public final static String TITLE_SEPERATOR = " - ";
 
@@ -55,16 +66,17 @@ public class MediaItem {
 	@SequenceGenerator(name = "media_items_generator", sequenceName = "media_items_seq", allocationSize = 1)
 	private long id;
 	private String fileName;
-	@EqualsAndHashCode.Include
-	private String path;
+	// @EqualsAndHashCode.Include
+	// private String path;
 	@ManyToOne
 	private Library library;
-	private long sizeInBytes;
+	// private long sizeInBytes;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdOn;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedOn;
-	private String format;
+	
+	// private String format;
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastAccessed;
 	@ManyToOne(cascade = { CascadeType.PERSIST })
@@ -72,93 +84,147 @@ public class MediaItem {
 	private String mediaTypeValue;
 	@Column(length = 1000)
 	private String summary;
-	private String displayTitle;
+	@Builder.Default
 	private boolean enabled = true;
-	private Long fileLastModifiedOn;
-	private boolean publicAccess;
-	private String uniqueName;
-	@ManyToMany(fetch = FetchType.EAGER)
-	private Set<Tag> tags;
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	private Set<MediaEncoding> mediaEncodings;
+	// private boolean original;
+	// private boolean publicAccess;
+	// private String uniqueName;
+	// @ManyToMany(fetch = FetchType.EAGER)
+	// private Set<Tag> tags;
+
+	@OneToMany(mappedBy = "mediaItem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private Set<MediaResource> mediaResources = new HashSet<>();
+
+	@ToString.Exclude
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "mediaItem")
 	private Set<PlaylistMediaItem> playlistMediaItems;
 	@ManyToOne(cascade = { CascadeType.ALL })
 	private SocialConfiguration socialConfiguration;
 
-	public boolean isEncodedForWeb() {
-		return false;
+	// public String getPath() {
+
+	// 	Optional<MediaResource> mediaResource = getMediaResources().stream()
+	// 			.filter(mr -> mr.getMediaContentType() == getEncodeMediaContentType())
+	// 			.findAny();
+
+	// 	if (mediaResource.isPresent()) {
+	// 		return mediaResource.get().getPath();
+	// 	}
+
+	// 	return getMediaResources().stream()
+	// 			.filter(mr -> mr.isOriginal())
+	// 			.map(mr -> mr.getPath())
+	// 			.findAny().orElse(null);
+	// }
+
+
+	public MediaResource getMediaResource(MediaContentType mediaContentType) {
+
+		return getMediaResources().stream()
+				.filter(mr -> mr.getMediaContentType() == mediaContentType)
+				.findAny().orElse(null);
+
+		// if (mediaResource.isPresent()) {
+		// 	return mediaResource.get();
+		// }
+
+		// return getMediaResources().stream()
+		// 		.filter(mr -> mr.isOriginal())
+		// 		.findAny().orElse(null);
 	}
 
-	public MashupMediaType getMashupMediaType() {
-		return MashupMediaType.getMediaType(mediaTypeValue);
+
+	// public boolean hasEncodedMediaContentType(MediaContentType mediaContentType) {
+	// 	return getMediaResources().stream()
+	// 			.anyMatch(mediaResource -> mediaResource.getMediaContentType() == mediaContentType);
+
+	// }
+
+	public boolean isTranscoded(MediaContentType mediaContentType) {
+		return getMediaResources().stream()
+				.anyMatch(mediaResource -> mediaResource.getMediaContentType() == mediaContentType);
+
+	}	
+
+	public MediaResource getOriginalMediaResource() {
+		return getMediaResources().stream()
+				.filter(mediaResource -> mediaResource.isOriginal() == true)
+				.findAny().orElse(null);
+
 	}
 
-	public void setMashupMediaType(MashupMediaType mediaType) {
-		mediaTypeValue = StringHelper.normaliseTextForDatabase(mediaType
-				.toString());
-	}
+	// public boolean isEncodedForWeb() {
+	// return false;
+	// }
 
-	public MediaEncoding getBestMediaEncoding() {
-		if (mediaEncodings == null || mediaEncodings.isEmpty()) {
-			return null;
-		}
+	// public MashupMediaType getMashupMediaType() {
+	// return MashupMediaType.getMediaType(mediaTypeValue);
+	// }
 
-		List<MediaEncoding> mediaEncodingsList = new ArrayList<MediaEncoding>(
-				mediaEncodings);
-		Collections.sort(mediaEncodingsList, new MediaEncodingComparator());
-		return mediaEncodingsList.get(0);
-	}
+	// public void setMashupMediaType(MashupMediaType mediaType) {
+	// mediaTypeValue = StringHelper.normaliseTextForDatabase(mediaType
+	// .toString());
+	// }
 
-	public File getStreamingFile() {
-		MediaEncoding mediaEncoding = getBestMediaEncoding();
-		if (mediaEncoding.isOriginal()) {
-			return new File(getPath());
-		}
-		return FileHelper.getEncodedMediaFile(this, mediaEncoding.getMediaContentType());
-	}
+	// public MediaEncoding getBestMediaEncoding() {
+	// if (mediaEncodings == null || mediaEncodings.isEmpty()) {
+	// return null;
+	// }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("MediaItem [id=");
-		builder.append(id);
-		builder.append(", fileName=");
-		builder.append(fileName);
-		builder.append(", path=");
-		builder.append(path);
-		builder.append(", library=");
-		builder.append(library);
-		builder.append(", sizeInBytes=");
-		builder.append(sizeInBytes);
-		builder.append(", createdOn=");
-		builder.append(createdOn);
-		builder.append(", updatedOn=");
-		builder.append(updatedOn);
-		builder.append(", format=");
-		builder.append(format);
-		builder.append(", lastAccessed=");
-		builder.append(lastAccessed);
-		builder.append(", lastAccessedBy=");
-		builder.append(lastAccessedBy);
-		builder.append(", mediaTypeValue=");
-		builder.append(mediaTypeValue);
-		builder.append(", summary=");
-		builder.append(summary);
-		builder.append(", displayTitle=");
-		builder.append(displayTitle);
-		builder.append(", enabled=");
-		builder.append(enabled);
-		builder.append(", fileLastModifiedOn=");
-		builder.append(fileLastModifiedOn);
-		builder.append(", publicAccess=");
-		builder.append(publicAccess);
-		builder.append(", uniqueName=");
-		builder.append(uniqueName);
-		builder.append(", tags=");
-		builder.append(tags);
-		builder.append("]");
-		return builder.toString();
-	}
+	// List<MediaEncoding> mediaEncodingsList = new ArrayList<MediaEncoding>(
+	// mediaEncodings);
+	// Collections.sort(mediaEncodingsList, new MediaEncodingComparator());
+	// return mediaEncodingsList.get(0);
+	// }
+
+	// public File getStreamingFile() {
+	// MediaEncoding mediaEncoding = getBestMediaEncoding();
+	// if (mediaEncoding.isOriginal()) {
+	// return new File(getPath());
+	// }
+	// return FileHelper.getEncodedMediaFile(this,
+	// mediaEncoding.getMediaContentType());
+	// }
+
+	// @Override
+	// public String toString() {
+	// StringBuilder builder = new StringBuilder();
+	// builder.append("MediaItem [id=");
+	// builder.append(id);
+	// builder.append(", fileName=");
+	// builder.append(fileName);
+	// builder.append(", path=");
+	// builder.append(path);
+	// builder.append(", library=");
+	// builder.append(library);
+	// builder.append(", sizeInBytes=");
+	// builder.append(sizeInBytes);
+	// builder.append(", createdOn=");
+	// builder.append(createdOn);
+	// builder.append(", updatedOn=");
+	// builder.append(updatedOn);
+	// builder.append(", format=");
+	// builder.append(format);
+	// builder.append(", lastAccessed=");
+	// builder.append(lastAccessed);
+	// builder.append(", lastAccessedBy=");
+	// builder.append(lastAccessedBy);
+	// builder.append(", mediaTypeValue=");
+	// builder.append(mediaTypeValue);
+	// builder.append(", summary=");
+	// builder.append(summary);
+	// builder.append(", enabled=");
+	// builder.append(enabled);
+	// builder.append(", fileLastModifiedOn=");
+	// builder.append(fileLastModifiedOn);
+	// builder.append(", publicAccess=");
+	// builder.append(publicAccess);
+	// builder.append(", uniqueName=");
+	// builder.append(uniqueName);
+	// builder.append(", tags=");
+	// builder.append(tags);
+	// builder.append("]");
+	// return builder.toString();
+	// }
 
 }

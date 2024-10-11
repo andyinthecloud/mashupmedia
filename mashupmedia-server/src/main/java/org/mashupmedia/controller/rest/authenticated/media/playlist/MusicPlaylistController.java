@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dto.media.SecureMediaPayload;
 import org.mashupmedia.dto.media.music.MusicPlaylistTrackPayload;
 import org.mashupmedia.dto.media.music.MusicQueueAlbumPlaylistPayload;
@@ -16,6 +15,8 @@ import org.mashupmedia.dto.media.playlist.NavigatePlaylistPayload;
 import org.mashupmedia.dto.media.playlist.NavigatePlaylistType;
 import org.mashupmedia.dto.share.ErrorCode;
 import org.mashupmedia.dto.share.ServerResponsePayload;
+import org.mashupmedia.eums.MashupMediaType;
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.mapper.media.music.SecureMusicPlaylistTrackMapper;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
@@ -29,7 +30,6 @@ import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.MusicManager;
 import org.mashupmedia.service.PlaylistManager;
 import org.mashupmedia.service.playlist.PlaylistActionManager;
-import org.mashupmedia.task.EncodeMediaItemManager;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.ValidationUtils;
 import org.springframework.http.MediaType;
@@ -55,7 +55,8 @@ public class MusicPlaylistController {
     private final MashupMediaSecurityManager mashupMediaSecurityManager;
     private final MediaManager mediaManager;
     private final PlaylistActionManager playlistActionManager;
-    private final EncodeMediaItemManager encodeMediaItemManager;
+
+    private MediaContentType audioTranscodeContentType;
 
     @PutMapping(value = "/play-album", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ServerResponsePayload<EncoderStatusType>> playAlbum(@RequestBody long albumId,
@@ -212,7 +213,7 @@ public class MusicPlaylistController {
         }
 
         if (playlistMediaItem == null) {
-            return ResponseEntity.noContent().build();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+            return ResponseEntity.noContent().build();
         }
 
         playlistManager.savePlaylist(playlist);
@@ -220,7 +221,7 @@ public class MusicPlaylistController {
         String mediaToken = mashupMediaSecurityManager.generateMediaToken(user.getUsername());
 
         EncoderStatusType encoderStatusType = getEncoderStatusType(
-                playlistMediaItem.getMediaItem().isEncodedForWeb());
+                playlistMediaItem.getMediaItem().isTranscoded(audioTranscodeContentType));
         playlistMediaItem.setEncoderStatusType(encoderStatusType);
 
         return ResponseEntity.ok(musicPlaylistTrackMapper.toDto(playlistMediaItem, mediaToken));
@@ -232,11 +233,11 @@ public class MusicPlaylistController {
             return EncoderStatusType.OK;
         }
 
-        if (!encodeMediaItemManager.isEncoderInstalled()) {
-            return EncoderStatusType.ENODER_NOT_INSTALLED;
-        }
+        // if (!transcodeAudioManager.isTranscoderInstalled()) {
+        // return EncoderStatusType.TRANSCODER_NOT_INSTALLED;
+        // }
 
-        return EncoderStatusType.SENT_FOR_ENCODING;
+        return EncoderStatusType.SENT_FOR_TRANSCODING;
     }
 
     private int getRelativeOffset(NavigatePlaylistType navigatePlaylistType) {

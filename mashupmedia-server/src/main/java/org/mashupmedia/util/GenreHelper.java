@@ -10,6 +10,7 @@ public class GenreHelper {
 
 	public enum GenreType {
 		WORLD_AND_TRADITIONAL_FOLK(new String[] {
+				"world and traditional_folk",
 				"folkmusik",
 				"world",
 				"afropop",
@@ -71,6 +72,7 @@ public class GenreHelper {
 				"zouk"
 		}),
 		HIP_HOP_AND_RAP(new String[] {
+				"hip hop and rap",
 				"hip hop",
 				"rap",
 				"bounce",
@@ -268,7 +270,8 @@ public class GenreHelper {
 				return false;
 			}
 
-			String preparedValue = StringUtils.trimToEmpty(value).toLowerCase();
+			String preparedValue = StringUtils.trimToEmpty(value).toLowerCase()
+					.replaceAll("_", " ");
 			if (StringUtils.isEmpty(preparedValue)) {
 				return false;
 			}
@@ -287,7 +290,7 @@ public class GenreHelper {
 				.orElse(GenreType.OTHER);
 
 		return Genre.builder()
-				.name(genreType.name())
+				.idName(genreType.name())
 				.build();
 
 	}

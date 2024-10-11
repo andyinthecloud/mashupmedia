@@ -6,6 +6,7 @@
     "configurations": [    
         
         
+        
 
         {
             "type": "java",
@@ -19,7 +20,8 @@
             "args": "--spring.profiles.active=local",
             "env": {
                 "mashupmediaHome": "C:\\stuff\\data\\mm-home"
-            }
+            },
+            "internalConsoleOptions": "neverOpen"
         }
 
         // {

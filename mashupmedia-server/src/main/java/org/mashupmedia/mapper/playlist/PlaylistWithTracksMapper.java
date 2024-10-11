@@ -2,8 +2,8 @@ package org.mashupmedia.mapper.playlist;
 
 import java.util.stream.Collectors;
 
-import org.mashupmedia.constants.MashupMediaType;
 import org.mashupmedia.dto.media.playlist.PlaylistWithMediaItemsPayload;
+import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.mapper.DomainMapper;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.util.AdminHelper;

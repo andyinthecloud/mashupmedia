@@ -233,12 +233,12 @@ public class MusicManagerImpl implements MusicManager {
 		for (MetaImage metaImage : metaImages) {
 			String url = metaImage.getUrl();
 			if (StringUtils.isNotBlank(url)) {
-				storageManager.delete(Path.of(url));
+				storageManager.delete(url);
 			}
 
 			String thumbnailUrl = metaImage.getThumbnailUrl();
 			if (StringUtils.isNotBlank(thumbnailUrl)) {
-				storageManager.delete(Path.of(thumbnailUrl));
+				storageManager.delete(thumbnailUrl);
 			}
 		}
 	}
@@ -414,5 +414,32 @@ public class MusicManagerImpl implements MusicManager {
 		long totalTracksFromLibrary = musicDao.getTotalTracksFromLibrary(libraryId);
 		return totalTracksFromLibrary;
 	}
+
+	@Override
+	public void saveTrack(Track track) {
+		Assert.notNull(track.getAlbum(), "Track should have an album");
+
+		if (track.getId() > 0) {
+			prepareUpdateTrack(track);
+		} else {
+			track.setCreatedOn(new Date());
+		}
+
+		track.setUpdatedOn(new Date());
+		musicDao.saveTrack(track);
+	}
+
+
+	private void prepareUpdateTrack(Track track) {
+		Track savedTrack = musicDao.getTrack(track.getId());
+		savedTrack.setAlbum(track.getAlbum());
+		savedTrack.setTrackYear(track.getTrackYear());
+		savedTrack.setEnabled(track.isEnabled());
+		savedTrack.setGenre(track.getGenre());
+		savedTrack.setTrackNumber(track.getTrackNumber());
+		savedTrack.setSummary(track.getSummary());
+		savedTrack.setTitle(track.getTitle());
+	}
+
 
 }
