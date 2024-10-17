@@ -65,8 +65,8 @@ mashupmedia:
   transcode:     
     audio: 
       total-threads: 3
-      ffmpeg-path: wewe
-      format: AUDIO_MP3
+      ffmpeg-path: ffmpeg
+      format: AUDIO_AAC
     image:
       format: IMAGE_JPG
 

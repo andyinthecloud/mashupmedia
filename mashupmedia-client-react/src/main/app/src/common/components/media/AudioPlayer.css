@@ -1,7 +1,58 @@
-#audio-player-container {
-    margin-top: 4em;
-    border: 1px solid #3a2944;
+#audio-player {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: white;
+    border-top: 2px solid #e579e9;
 }
+
+#audio-player div.playing {
+    display: flex;
+    justify-content: space-between;
+    color: #3a2944;
+    margin: 0.5em 1em 0 1em;
+}
+
+#audio-player div.playing div.track {
+    font-size: large;
+}
+
+#audio-player div.playing div.artist {
+    font-size: small;
+}
+
+#audio-player div.audio-buttons {
+    display: flex;
+    justify-content: center;
+    margin: 0 1em;
+}
+
+#audio-player div.track-progress {
+    margin: 0.5em 1em 0 1em
+}
+
+#audio-player div.track-progress div.track-time {
+    display: flex;
+    justify-content: space-between;
+    color: #3a2944;
+    font-size: small;
+    margin-top: -10px;
+}
+
+#audio-player div.audio-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+#audio-player div.audio-buttons div.button-container .play-button {
+    margin: 0 1em;
+}
+
+
+/* 
 
 #audio-player-container .sticky {
     position: fixed;
@@ -107,4 +158,4 @@
         font-size: small;
     }
 
-}
+} */

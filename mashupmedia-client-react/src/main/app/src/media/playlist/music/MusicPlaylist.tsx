@@ -301,6 +301,7 @@ const MusicPlaylist = () => {
                 </ListItem>
 
                 {props?.playlistMediaItemPayloads.map(function (track, index) {
+                    const isTranscoded = track.trackPayload.transcodedForWeb 
                     return (
                         <ListItem
                             key={track.playlistMediaItemId}

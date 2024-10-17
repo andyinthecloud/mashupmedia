@@ -3,25 +3,25 @@ import Introduction from "./common/components/Introduction";
 import LogIn from "./common/security/LogIn";
 import LogOut from "./common/security/LogOut";
 import { RequireAuthenication } from "./common/security/RequireAuthentication";
-import ResetPassword from "./configuration/ResetPassword";
-import Encode from "./configuration/Encode";
+import ActivateUser from "./configuration/ActivateUser";
+import CreateUser from "./configuration/CreateUser";
 import Libraries from "./configuration/library/Libraries";
 import Library from "./configuration/library/Library";
+import ResetPassword from "./configuration/ResetPassword";
 import User from "./configuration/User";
 import Users from "./configuration/Users";
 import Album from "./media/music/Album";
 import Albums from './media/music/Albums';
 import Artist from './media/music/Artist';
 import Artists from './media/music/Artists';
-import Playlists from "./media/playlist/Playlists";
+import EditAlbum from "./media/music/EditAlbum";
+import EditArtist from "./media/music/EditArtist";
+import UploadArtistTracks from "./media/music/UploadArtistTracks";
 import MusicPlaylist from "./media/playlist/music/MusicPlaylist";
 import SelectMusicPlaylist from "./media/playlist/music/SelectMusicPlaylist";
+import Playlists from "./media/playlist/Playlists";
 import MediaSearch from "./media/search/MediaSearch";
-import CreateUser from "./configuration/CreateUser";
-import ActivateUser from "./configuration/ActivateUser";
-import UploadArtistTracks from "./media/music/UploadArtistTracks";
-import EditArtist from "./media/music/EditArtist";
-import EditAlbum from "./media/music/EditAlbum";
+import TrackPlaying from "./media/music/TrackPlaying";
 
 
 export const MashupRoutes = () => {
@@ -85,11 +85,6 @@ export const MashupRoutes = () => {
                     } />
                 </Route>
 
-                <Route path="encode" element={
-                    <RequireAuthenication>
-                        <Encode />
-                    </RequireAuthenication>
-                } />
 
             </Route>
 
@@ -102,12 +97,9 @@ export const MashupRoutes = () => {
                     </RequireAuthenication>
                 } />
 
+
+
                 <Route path="music">
-                    <Route path=":playlistId" element={
-                        <RequireAuthenication>
-                            <MusicPlaylist />
-                        </RequireAuthenication>
-                    } />
 
                     <Route path="select" element={
                         <RequireAuthenication>
@@ -115,6 +107,19 @@ export const MashupRoutes = () => {
                         </RequireAuthenication>
                     } />
 
+
+                    <Route path="playing" element={
+                        <RequireAuthenication>
+                            <TrackPlaying />
+                        </RequireAuthenication>
+                    } />
+
+
+                    <Route path=":playlistId" element={
+                        <RequireAuthenication>
+                            <MusicPlaylist />
+                        </RequireAuthenication>
+                    } />
                 </Route>
 
             </Route>
@@ -122,6 +127,7 @@ export const MashupRoutes = () => {
 
 
             <Route path="/music">
+
                 <Route path="artists" element={
                     <RequireAuthenication>
                         <Artists />

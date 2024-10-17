@@ -110,7 +110,7 @@ const LogIn = () => {
 
     return (
 
-        <form onSubmit={handleSubmit} className="zero-top-margin">
+        <form onSubmit={handleSubmit}>
 
             <img src={logo} className="logo" alt="Mashup Media" />
 

@@ -1,6 +1,6 @@
 package org.mashupmedia.dto.media.music;
 
-import org.mashupmedia.dto.media.playlist.EncoderStatusType;
+import org.mashupmedia.dto.media.playlist.TranscodeStatusType;
 import org.mashupmedia.dto.media.playlist.PlaylistPayload;
 
 import lombok.AllArgsConstructor;
@@ -20,5 +20,5 @@ public class MusicPlaylistTrackPayload {
     private PlaylistPayload playlistPayload; 
     private boolean first;
     private boolean last;
-    private EncoderStatusType encoderStatusType;
+    private TranscodeStatusType encoderStatusType;
 }

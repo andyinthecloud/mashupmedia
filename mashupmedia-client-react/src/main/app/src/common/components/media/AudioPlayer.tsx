@@ -1,11 +1,11 @@
-import { ChevronLeft, ChevronRight, ExpandLess, ExpandMore, Pause, PlayArrow, QueueMusic } from "@mui/icons-material"
-import { IconButton, Slider } from "@mui/material"
+import { ChevronLeft, ChevronRight, FavoriteBorder, MusicNote, Pause, PlayArrow, QueueMusic } from "@mui/icons-material"
+import { IconButton, Slider, Tooltip } from "@mui/material"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import { loadedTrack } from "../../../media/music/features/playMusicSlice"
-import { ImageType, albumArtImageUrl, mediaStreamUrl, playlistStreamUrl } from "../../../media/music/rest/musicCalls"
-import { EncoderStatusType, MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, currentTrack, navigateTrack } from "../../../media/music/rest/playlistActionCalls"
+import { mediaStreamUrl, playlistStreamUrl } from "../../../media/music/rest/musicCalls"
+import { MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, currentTrack, navigateTrack } from "../../../media/music/rest/playlistActionCalls"
 import { SecureMediaPayload } from "../../../media/rest/secureMediaPayload"
 import { NotificationType, addNotification } from "../../notification/notificationSlice"
 import { RootState } from "../../redux/store"
@@ -42,7 +42,7 @@ const AudioPlayer = () => {
 
     const [progress, setProgress] = useState<number>(0)
     const [mobileDisplay, setMobileDisplay] = useState<boolean>(isMobileDisplay())
-    const [expanded, setExpanded] = useState<boolean>(false)
+    // const [expanded, setExpanded] = useState<boolean>(false)
     const [playing, setPlaying] = useState<boolean>(false)
     const [playlistOffset, setPlaylistOffset] = useState<number>(0)
 
@@ -64,7 +64,7 @@ const AudioPlayer = () => {
         if (!playMusic.triggerPlay) {
             return
         }
-        
+
         handleNavigate({
             navigatePlaylistType: playMusic.loadPlaylistMediaItemId ? undefined : NavigatePlaylistType.CURRENT,
             playlistMediaItemId: playMusic.loadPlaylistMediaItemId,
@@ -87,55 +87,55 @@ const AudioPlayer = () => {
 
     }, []);
 
-    const renderPlayingInformation = () => {
-        if (!isEmptyPlaylist()) {
-            return (
-                <div>
-                    <div style={{ float: "right" }}>
-                        <Link
-                            to={"/playlists/music/" + props.payload.trackWithArtistPayload?.playlistPayload.id}
-                            onClick={() => setExpanded(false)}
-                            className="link-no-underlne"
-                        >
-                            <QueueMusic
-                                color="primary"
-                                fontSize="large"
-                            />
-                        </Link>
-                    </div>
-                    <div className="title">{props.payload.trackWithArtistPayload?.trackPayload.name}</div>
-                    <div className="album">
-                        <Link
-                            to={"/music/album/" + props.payload.trackWithArtistPayload?.albumPayload.id}
-                            onClick={() => setExpanded(false)}
-                            className="link-no-underlne"
-                        >
-                            {props.payload.trackWithArtistPayload?.albumPayload.name}
-                        </Link>
-                    </div>
+    // const renderPlayingInformation = () => {
+    //     if (!isEmptyPlaylist()) {
+    //         return (
+    //             <div>
+    //                 <div style={{ float: "right" }}>
+    //                     <Link
+    //                         to={"/playlists/music/" + props.payload.trackWithArtistPayload?.playlistPayload.id}
+    //                         onClick={() => setExpanded(false)}
+    //                         className="link-no-underlne"
+    //                     >
+    //                         <QueueMusic
+    //                             color="primary"
+    //                             fontSize="large"
+    //                         />
+    //                     </Link>
+    //                 </div>
+    //                 <div className="title">{props.payload.trackWithArtistPayload?.trackPayload.name}</div>
+    //                 <div className="album">
+    //                     <Link
+    //                         to={"/music/album/" + props.payload.trackWithArtistPayload?.albumPayload.id}
+    //                         onClick={() => setExpanded(false)}
+    //                         className="link-no-underlne"
+    //                     >
+    //                         {props.payload.trackWithArtistPayload?.albumPayload.name}
+    //                     </Link>
+    //                 </div>
 
-                    <div className="artist">
-                        <Link
-                            to={"/music/artist/" + props.payload.trackWithArtistPayload?.artistPayload.id}
-                            onClick={() => setExpanded(false)}
-                            className="link-no-underlne"
-                        >
-                            {props.payload.trackWithArtistPayload?.artistPayload.name}
-                        </Link>
-                    </div>
+    //                 <div className="artist">
+    //                     <Link
+    //                         to={"/music/artist/" + props.payload.trackWithArtistPayload?.artistPayload.id}
+    //                         onClick={() => setExpanded(false)}
+    //                         className="link-no-underlne"
+    //                     >
+    //                         {props.payload.trackWithArtistPayload?.artistPayload.name}
+    //                     </Link>
+    //                 </div>
 
-                </div>
-            )
-        } else {
-            return (
-                <div>
-                    <h1 className="title">Empty playlist</h1>
-                    <p><Link to={"/music/albums"} onClick={() => setExpanded(false)}>Play</Link> some music to brighten up your day.</p>
-                    <p>If you have just installed Mashup Media congratulation!. Please add your music <Link to={"/configuration/libraries"} onClick={() => setExpanded(false)}>libraries</Link> to listen to your music.</p>
-                </div>
-            )
-        }
-    }
+    //             </div>
+    //         )
+    //     } else {
+    //         return (
+    //             <div>
+    //                 <h1 className="title">Empty playlist</h1>
+    //                 <p><Link to={"/music/albums"} onClick={() => setExpanded(false)}>Play</Link> some music to brighten up your day.</p>
+    //                 <p>If you have just installed Mashup Media congratulation!. Please add your music <Link to={"/configuration/libraries"} onClick={() => setExpanded(false)}>libraries</Link> to listen to your music.</p>
+    //             </div>
+    //         )
+    //     }
+    // }
 
     const isEmptyPlaylist = (): boolean => {
         return props.payload.trackWithArtistPayload?.trackPayload.name ? false : true
@@ -340,9 +340,9 @@ const AudioPlayer = () => {
         )
     }
 
-    const handleExpand = (): void => {
-        setExpanded(!expanded)
-    }
+    // const handleExpand = (): void => {
+    //     setExpanded(!expanded)
+    // }
 
     const handleAudioError = (): void => {
         dispatch(
@@ -354,25 +354,25 @@ const AudioPlayer = () => {
 
     }
 
-    const encodeMessage = (encoderStatusType?: EncoderStatusType) => {
-        if (!encoderStatusType || encoderStatusType == EncoderStatusType.OK) {
-            return ""
-        }
+    // const encodeMessage = (encoderStatusType?: EncoderStatusType) => {
+    //     if (!encoderStatusType || encoderStatusType == EncoderStatusType.OK) {
+    //         return ""
+    //     }
 
-        let message = ""
-        if (encoderStatusType == EncoderStatusType.ENODER_NOT_INSTALLED) {
-            message = "Encoder is not yet configured and this track has an incompatible format for the web. Either configure the encoder through the menu under Settings -> Encode or replace this track with an mp3 file."
-        } else if (encoderStatusType == EncoderStatusType.SENT_FOR_ENCODING) {
-            message = "The track has been sent for encoding, it should be available soon."
-        }
+    //     let message = ""
+    //     if (encoderStatusType == EncoderStatusType.ENODER_NOT_INSTALLED) {
+    //         message = "Encoder is not yet configured and this track has an incompatible format for the web. Either configure the encoder through the menu under Settings -> Encode or replace this track with an mp3 file."
+    //     } else if (encoderStatusType == EncoderStatusType.SENT_FOR_ENCODING) {
+    //         message = "The track has been sent for encoding, it should be available soon."
+    //     }
 
-        return (
-            <small>{message}</small>
-        )
-    }
+    //     return (
+    //         <small>{message}</small>
+    //     )
+    // }
 
     return (
-        <div id="audio-player-container" >
+        <div id="audio-player">
             <audio
                 ref={audioPlayer}
                 className="hide"
@@ -381,48 +381,120 @@ const AudioPlayer = () => {
                 onError={handleAudioError}
             >
             </audio>
-            <div className="audio-buttons">
 
 
-                <div className="button-container">
-                    <IconButton
-                        onClick={() => handleNavigate({
-                            navigatePlaylistType: NavigatePlaylistType.PREVIOUS,
-                            playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id,
-                            loadStream: true
-                        })}
-                        disabled={disablePrevious()}
-                    >
-                        <ChevronLeft
-                            color="primary"
-                            fontSize="medium" />
-                    </IconButton>
+            {!isEmptyPlaylist() && !mobileDisplay &&
+                <div className="track-progress">
 
-                    <IconButton
-                        onClick={() => handlePlay()}
+                    <Slider
+                        aria-label="Volume"
+                        min={0}
+                        max={props.payload.trackWithArtistPayload?.trackPayload.totalSeconds}
+                        value={progress}
                         disabled={isEmptyPlaylist()}
-                        className="play-button"
-                    >
-                        {playing
-                            ? <Pause sx={{ fontSize: 48 }} color="primary" />
-                            : <PlayArrow sx={{ fontSize: 48 }} color="primary" />
-                        }
-                    </IconButton>
+                        onChangeCommitted={(event, value) => handleSlide(value)}
+                        color="secondary"
+                        sx={{
+                            '& .MuiSlider-thumb': {
+                                height: "15px",
+                                width: "15px"
+                            },
+                          }}
+                    />
 
-                    <IconButton
-                        onClick={() => handleNavigate({
-                            navigatePlaylistType: NavigatePlaylistType.NEXT,
-                            playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id,
-                            loadStream: true
-                        })}
-                        disabled={disableNext()}>
-                        <ChevronRight
-                            color="primary"
-                            fontSize="medium" />
-                    </IconButton>
+                    <div className="track-time">
+                        <div className="beginning duration-time">{displayDuration(progress)}</div>
+                        <div className="end duration-time">{trackLength(props.payload.trackWithArtistPayload?.trackPayload.minutes, props.payload.trackWithArtistPayload?.trackPayload.seconds)} </div>
+                    </div>
+
                 </div>
+            }
 
-                <div className="expand-more">
+
+            {!isEmptyPlaylist() &&
+                <div className="playing">
+                    <div className="meta">
+                        <div className="track">{props.payload.trackWithArtistPayload?.trackPayload.name}</div>
+                        <div className="artist">{props.payload.trackWithArtistPayload?.artistPayload.name}</div>
+                    </div>
+
+                    <div className="like">
+                        <IconButton>
+                            <FavoriteBorder
+                                color="secondary"
+                                sx={{
+                                    color: "#ff0066"
+                                }}
+                            />
+                        </IconButton>
+                    </div>
+
+                </div>
+            }
+
+            {!isEmptyPlaylist() &&
+                <div className="audio-buttons">
+                    <Link
+                        to={"/playlists/music/playing"}
+                    >
+                        <Tooltip title="bum">
+                            <MusicNote
+                                color="secondary"
+                            />
+                        </Tooltip>
+                    </Link>
+
+                    <div className="button-container">
+                        <IconButton
+                            onClick={() => handleNavigate({
+                                navigatePlaylistType: NavigatePlaylistType.PREVIOUS,
+                                playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id,
+                                loadStream: true
+                            })}
+                            disabled={disablePrevious()}
+                        >
+                            <ChevronLeft
+                                color="primary"
+                                fontSize="medium" />
+                        </IconButton>
+
+                        <IconButton
+                            onClick={() => handlePlay()}
+                            disabled={isEmptyPlaylist()}
+                            className="play-button"
+                        >
+                            {playing
+                                ? <Pause sx={{ fontSize: 48 }} color="primary" />
+                                : <PlayArrow sx={{ fontSize: 48 }} color="primary" />
+                            }
+                        </IconButton>
+
+                        <IconButton
+                            onClick={() => handleNavigate({
+                                navigatePlaylistType: NavigatePlaylistType.NEXT,
+                                playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id,
+                                loadStream: true
+                            })}
+                            disabled={disableNext()}>
+                            <ChevronRight
+                                color="primary"
+                                fontSize="medium" />
+                        </IconButton>
+                    </div>
+
+
+
+                    <Link
+                        to={"/playlists/music/" + props.payload.trackWithArtistPayload?.playlistPayload.id}
+                    >
+                        <QueueMusic
+                            color="secondary"
+                            fontSize="large"
+                        />
+                    </Link>
+
+
+                    {/* <div className="expand-more">
                     <IconButton
                         onClick={handleExpand}>
                         {!expanded &&
@@ -437,10 +509,11 @@ const AudioPlayer = () => {
                         }
                     </IconButton>
 
+                </div> */}
                 </div>
-            </div>
+            }
 
-            {expanded &&
+            {/* {expanded &&
 
                 <div className="expand">
 
@@ -480,7 +553,7 @@ const AudioPlayer = () => {
                     </div>
 
                 </div>
-            }
+            } */}
 
 
 

@@ -131,7 +131,7 @@ const ActivateUser = () => {
 
 
     return (
-        <form className="zero-top-margin" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
 
             <h1>Activate account</h1>
 

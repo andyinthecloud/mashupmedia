@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.mashupmedia.component.TranscodeConfigurationComponent;
-import org.mashupmedia.dto.media.playlist.EncoderStatusType;
+import org.mashupmedia.dto.media.playlist.TranscodeStatusType;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.music.Track;
@@ -34,11 +34,11 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 	private final TranscodeConfigurationComponent transcodeConfigurationComponent;
 
 	@Override
-	public EncoderStatusType replacePlaylist(long playlistId, List<? extends MediaItem> mediaItems) {
+	public TranscodeStatusType replacePlaylist(long playlistId, List<? extends MediaItem> mediaItems) {
 		Optional<Playlist> optionalPlaylist = playlistRepository.findById(playlistId);
 		if (optionalPlaylist.isEmpty()) {
 			log.error("Unable to find playlist with id = " + playlistId);
-			return EncoderStatusType.ERROR;
+			return TranscodeStatusType.ERROR;
 		}
 
 		Playlist playlist = optionalPlaylist.get();
@@ -51,7 +51,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		}
 
 		if (mediaItems == null || mediaItems.isEmpty()) {
-			return EncoderStatusType.OK;
+			return TranscodeStatusType.TRANSCODED;
 		}
 
 		for (int i = 0; i < mediaItems.size(); i++) {
@@ -64,7 +64,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		}
 
 		if (playlistMediaItems.isEmpty()) {
-			return EncoderStatusType.OK;
+			return TranscodeStatusType.TRANSCODED;
 		}
 
 		playlist.setPlaylistMediaItems(playlistMediaItems);
@@ -73,7 +73,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		return sendForEncoding(playlist.getAccessiblePlaylistMediaItems(AdminHelper.getLoggedInUser()));
 	}
 
-	private EncoderStatusType sendForEncoding(List<PlaylistMediaItem> playlistMediaItems) {
+	private TranscodeStatusType sendForEncoding(List<PlaylistMediaItem> playlistMediaItems) {
 
 		List<MediaItem> mediaItemsForEncoding = playlistMediaItems
 				.stream()
@@ -83,7 +83,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 				.collect(Collectors.toList());
 
 		if (mediaItemsForEncoding == null || mediaItemsForEncoding.isEmpty()) {
-			return EncoderStatusType.OK;
+			return TranscodeStatusType.TRANSCODED;
 		}
 
 		// if (!transcodeAudioManager.isTranscoderInstalled()) {
@@ -105,12 +105,12 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 			// }
 		}
 
-		return EncoderStatusType.SENT_FOR_TRANSCODING;
+		return TranscodeStatusType.TRANSCODING;
 
 	}
 
 	@Override
-	public EncoderStatusType appendPlaylist(long playlistId, List<? extends MediaItem> mediaItems) {
+	public TranscodeStatusType appendPlaylist(long playlistId, List<? extends MediaItem> mediaItems) {
 		Playlist playlist = playlistRepository.getReferenceById(playlistId);
 
 		Set<PlaylistMediaItem> playlistMediaItems = playlist.getPlaylistMediaItems();
@@ -120,7 +120,7 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 		}
 
 		if (mediaItems == null || mediaItems.isEmpty()) {
-			return EncoderStatusType.OK;
+			return TranscodeStatusType.TRANSCODED;
 		}
 
 		int totalPlaylistItems = playlistMediaItems.size();
@@ -140,9 +140,9 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 	}
 
 	@Override
-	public EncoderStatusType replacePlaylist(long playlistId, MediaItem mediaItem) {
+	public TranscodeStatusType replacePlaylist(long playlistId, MediaItem mediaItem) {
 		if (mediaItem == null) {
-			return EncoderStatusType.OK;
+			return TranscodeStatusType.TRANSCODED;
 		}
 
 		List<MediaItem> mediaItems = new ArrayList<>();
@@ -151,9 +151,9 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 	}
 
 	@Override
-	public EncoderStatusType appendPlaylist(long playlistId, MediaItem mediaItem) {
+	public TranscodeStatusType appendPlaylist(long playlistId, MediaItem mediaItem) {
 		if (mediaItem == null) {
-			return EncoderStatusType.OK;
+			return TranscodeStatusType.TRANSCODED;
 		}
 
 		List<MediaItem> mediaItems = new ArrayList<MediaItem>();

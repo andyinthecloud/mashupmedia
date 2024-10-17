@@ -243,12 +243,8 @@ const ResetPassword = () => {
         )
     }
 
-    const containerClass = (): string => (
-        props.hideUsername ? '' : 'zero-top-margin'
-    )
-
     return (
-        <form onSubmit={handleSubmit} className={containerClass()}>
+        <form onSubmit={handleSubmit}>
             <h1>Reset password</h1>
 
             {!props.showActivationField && !props.hideUsername &&

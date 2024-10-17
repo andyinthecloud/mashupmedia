@@ -6,7 +6,7 @@ import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import { Fragment, useEffect, useState } from "react";
 
-import { AccountBox, ExpandLess, ExpandMore, LibraryMusic, Login, Logout, Luggage, PersonAdd, Search } from "@mui/icons-material";
+import { AccountBox, ExpandLess, ExpandMore, LibraryMusic, Login, Logout, Luggage, MusicNote, PersonAdd, Search } from "@mui/icons-material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { makeStyles } from '@mui/styles';
 import clsx from 'clsx';
@@ -156,6 +156,14 @@ const MenuDrawer = () => {
 
             {props.loggedIn &&
                 <ListItemRoute label="My account" toRoute="/configuration/my-account" icon={<AccountBox />} />
+            }
+
+            {props.loggedIn &&
+                <Divider />
+            }
+
+            {props.loggedIn &&
+                <ListItemRoute label="Playing" toRoute="/playlists/music/playing" icon={<MusicNote />} />
             }
 
             {props.loggedIn &&

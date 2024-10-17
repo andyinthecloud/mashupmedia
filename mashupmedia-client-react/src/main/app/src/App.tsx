@@ -6,6 +6,7 @@ import AlertBoxes from "./common/components/AlertBoxes";
 import Footer from "./common/components/Footer";
 import Header from "./common/components/Header";
 import { mashupTheme } from "./common/utils/formUtils";
+import AudioPlayer from "./common/components/media/AudioPlayer";
 
 
 function App() {
@@ -18,13 +19,15 @@ function App() {
                     className="main-container"
                     maxWidth="md"
                     sx={{
-                        mt: 15
+                        mt: "4em"
                     }}
                 >
                     <AlertBoxes />
                     <MashupRoutes />
                 </Container>
                 <Footer />
+
+                <AudioPlayer />
             </div>
         </ThemeProvider>
     );

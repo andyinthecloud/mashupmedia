@@ -1,0 +1,31 @@
+#track-playing img.album-art{
+    width: 100%;
+    height: auto;
+}
+
+#track-playing div.title{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1em;
+}
+
+#track-playing div.track-name{
+    font-size: large;
+}
+
+#track-playing div.track-information {
+    margin-top: 0.5em;
+}
+
+#track-playing div.track-information .artist{
+    font-size: large;
+}
+
+#track-playing div.track-information .album{
+    font-size: medium;
+}
+
+#track-playing div.track-information .separator {
+    margin: 0 0.2em;
+}
+

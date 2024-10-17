@@ -63,5 +63,7 @@
         "title": "Edit album",
         "name": "Name",
         "summary": "Summary"
+    },
+    "audioPlayer": {
     }
 }

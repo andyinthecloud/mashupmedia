@@ -1,8 +1,8 @@
 package org.mashupmedia.dto.media.playlist;
 
-public enum EncoderStatusType {
-    OK,
+public enum TranscodeStatusType {
+    TRANSCODED,
     TRANSCODER_NOT_INSTALLED,
-    SENT_FOR_TRANSCODING,
+    TRANSCODING,
     ERROR
 }

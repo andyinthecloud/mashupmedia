@@ -136,13 +136,8 @@ const CreateUser = () => {
         }
     }
 
-
-    const getClassName = (): string => {
-        return userPolicy.payload ? '' : 'zero-top-margin'
-    }
-
     return (
-        <form className={getClassName()} onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
 
             {!userPolicy.payload &&
                 <img src={logo} className="logo" alt="Mashup Media" />

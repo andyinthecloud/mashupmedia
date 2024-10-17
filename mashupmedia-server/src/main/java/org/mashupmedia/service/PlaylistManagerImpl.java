@@ -7,18 +7,23 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.Hibernate;
+import org.mashupmedia.component.TranscodeConfigurationComponent;
 import org.mashupmedia.dao.MediaDao;
 import org.mashupmedia.dao.PlaylistDao;
 import org.mashupmedia.eums.MashupMediaType;
+import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.exception.UnauthorisedException;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaResource;
+import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
 import org.mashupmedia.model.playlist.UserPlaylistPosition;
 import org.mashupmedia.model.playlist.UserPlaylistPositionId;
 import org.mashupmedia.repository.playlist.PlaylistRepository;
 import org.mashupmedia.repository.playlist.UserPlaylistPositionRepository;
+import org.mashupmedia.service.transcode.TranscodeAudioManager;
 import org.mashupmedia.util.AdminHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +42,8 @@ public class PlaylistManagerImpl implements PlaylistManager {
 	private final MediaDao mediaDao;
 	private final UserPlaylistPositionRepository userPlaylistPositionRepository;
 	private final PlaylistRepository playlistRepository;
+	private final TranscodeConfigurationComponent transcodeConfigurationComponent;
+	private final TranscodeAudioManager transcodeAudioManager;
 
 	@Override
 	public List<Playlist> getPlaylists(MashupMediaType mashupMediaType) {
@@ -87,10 +94,24 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 		long userPlaylistMediaId = userPlaylistPosition.get().getPlaylistMediaId();
 
-		accessiblePlaylistMediaItems.forEach(pmi -> {
+		for (PlaylistMediaItem pmi : accessiblePlaylistMediaItems) {
 			pmi.setPlaying(pmi.getId() == userPlaylistMediaId ? true : false);
-		});
+			transcodeMediaItem(pmi.getMediaItem());
+		}
 
+	}
+
+	private void transcodeMediaItem(MediaItem mediaItem) {
+		MediaContentType mediaContentType;
+		if (mediaItem instanceof Track track) {
+			mediaContentType = transcodeConfigurationComponent.getTranscodeAudioMediaContentType();
+			if (track.isTranscoded(mediaContentType)) {
+				return;
+			}
+
+			MediaResource mediaResource = track.getOriginalMediaResource();
+			// transcodeAudioManager.processTrack(track, mediaResource.getPath());
+		}
 	}
 
 	@Override

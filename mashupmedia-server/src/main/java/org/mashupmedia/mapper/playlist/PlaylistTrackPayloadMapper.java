@@ -1,5 +1,6 @@
 package org.mashupmedia.mapper.playlist;
 
+import org.mashupmedia.component.TranscodeConfigurationComponent;
 import org.mashupmedia.dto.media.music.PlaylistTrackPayload;
 import org.mashupmedia.mapper.DomainMapper;
 import org.mashupmedia.mapper.media.music.ArtistMapper;
@@ -17,7 +18,7 @@ public class PlaylistTrackPayloadMapper implements DomainMapper<PlaylistMediaIte
 
     private final TrackMapper trackMapper;
     private final ArtistMapper artistMapper;
-
+    
     @Override
     public PlaylistTrackPayload toPayload(PlaylistMediaItem domain) {
         MediaItem mediaItem = domain.getMediaItem();
@@ -26,7 +27,7 @@ public class PlaylistTrackPayloadMapper implements DomainMapper<PlaylistMediaIte
             .builder()
             .playlistMediaItemId(domain.getId())
             .artistPayload(artistMapper.toPayload(track.getArtist()))
-            .trackPayload(trackMapper.toPayload(track))
+            .trackPayload(trackMapper.toPayload(track))            
             .playing(domain.isPlaying())
             .build();
         }

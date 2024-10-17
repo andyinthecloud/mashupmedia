@@ -10,7 +10,6 @@ import lombok.Getter;
 @Component
 public class TranscodeConfigurationComponent {
 
-    @Getter()
     @Value("${mashupmedia.transcode.audio.format}")
     private String transcodeAudioFormat;
     @Getter
