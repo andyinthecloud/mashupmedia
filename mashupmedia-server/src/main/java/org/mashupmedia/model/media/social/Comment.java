@@ -46,7 +46,8 @@ public class Comment implements Serializable {
 	private User user;
 	@ManyToOne
 	@EqualsAndHashCode.Include
-	private SocialConfiguration socialConfiguration;
+	@Builder.Default
+	private SocialConfiguration socialConfiguration = new SocialConfiguration();
 	@EqualsAndHashCode.Include
 	private Date createdOn;
 	private Date updatedOn;

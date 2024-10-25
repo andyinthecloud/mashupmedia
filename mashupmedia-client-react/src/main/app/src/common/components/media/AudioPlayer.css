@@ -22,6 +22,10 @@
     font-size: small;
 }
 
+#audio-player div.playing div.like.disabled{
+    opacity: 0.3;
+}
+
 #audio-player div.audio-buttons {
     display: flex;
     justify-content: center;

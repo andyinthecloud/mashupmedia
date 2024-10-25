@@ -1,5 +1,6 @@
-import { ChevronLeft, ChevronRight, FavoriteBorder, MusicNote, Pause, PlayArrow, QueueMusic } from "@mui/icons-material"
-import { IconButton, Slider, Tooltip } from "@mui/material"
+import { ChevronLeft, ChevronRight, Favorite, FavoriteBorder, MusicNote, Pause, PlayArrow, QueueMusic } from "@mui/icons-material"
+import { IconButton, Slider } from "@mui/material"
+import { t } from "i18next"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
@@ -7,6 +8,7 @@ import { loadedTrack } from "../../../media/music/features/playMusicSlice"
 import { mediaStreamUrl, playlistStreamUrl } from "../../../media/music/rest/musicCalls"
 import { MusicPlaylistTrackPayload, NavigatePlaylistPayload, NavigatePlaylistType, currentTrack, navigateTrack } from "../../../media/music/rest/playlistActionCalls"
 import { SecureMediaPayload } from "../../../media/rest/secureMediaPayload"
+import { voteMediaItem } from "../../../media/rest/socialCalls"
 import { NotificationType, addNotification } from "../../notification/notificationSlice"
 import { RootState } from "../../redux/store"
 import { displayDuration } from "../../utils/dateUtils"
@@ -15,10 +17,10 @@ import "./AudioPlayer.css"
 
 
 type AudioPlayerPlayload = {
-    trackWithArtistPayload?: MusicPlaylistTrackPayload
+    musicPlaylistTrackPayload?: MusicPlaylistTrackPayload
     isReadyToPlay: boolean
     loadStreamTrigger?: number
-    loggedIn?: boolean
+    votedUp: boolean
 }
 
 const AudioPlayer = () => {
@@ -37,6 +39,7 @@ const AudioPlayer = () => {
         mediaToken: "",
         payload: {
             isReadyToPlay: false,
+            votedUp: false
         }
     })
 
@@ -87,62 +90,13 @@ const AudioPlayer = () => {
 
     }, []);
 
-    // const renderPlayingInformation = () => {
-    //     if (!isEmptyPlaylist()) {
-    //         return (
-    //             <div>
-    //                 <div style={{ float: "right" }}>
-    //                     <Link
-    //                         to={"/playlists/music/" + props.payload.trackWithArtistPayload?.playlistPayload.id}
-    //                         onClick={() => setExpanded(false)}
-    //                         className="link-no-underlne"
-    //                     >
-    //                         <QueueMusic
-    //                             color="primary"
-    //                             fontSize="large"
-    //                         />
-    //                     </Link>
-    //                 </div>
-    //                 <div className="title">{props.payload.trackWithArtistPayload?.trackPayload.name}</div>
-    //                 <div className="album">
-    //                     <Link
-    //                         to={"/music/album/" + props.payload.trackWithArtistPayload?.albumPayload.id}
-    //                         onClick={() => setExpanded(false)}
-    //                         className="link-no-underlne"
-    //                     >
-    //                         {props.payload.trackWithArtistPayload?.albumPayload.name}
-    //                     </Link>
-    //                 </div>
-
-    //                 <div className="artist">
-    //                     <Link
-    //                         to={"/music/artist/" + props.payload.trackWithArtistPayload?.artistPayload.id}
-    //                         onClick={() => setExpanded(false)}
-    //                         className="link-no-underlne"
-    //                     >
-    //                         {props.payload.trackWithArtistPayload?.artistPayload.name}
-    //                     </Link>
-    //                 </div>
-
-    //             </div>
-    //         )
-    //     } else {
-    //         return (
-    //             <div>
-    //                 <h1 className="title">Empty playlist</h1>
-    //                 <p><Link to={"/music/albums"} onClick={() => setExpanded(false)}>Play</Link> some music to brighten up your day.</p>
-    //                 <p>If you have just installed Mashup Media congratulation!. Please add your music <Link to={"/configuration/libraries"} onClick={() => setExpanded(false)}>libraries</Link> to listen to your music.</p>
-    //             </div>
-    //         )
-    //     }
-    // }
 
     const isEmptyPlaylist = (): boolean => {
-        return props.payload.trackWithArtistPayload?.trackPayload.name ? false : true
+        return props.payload.musicPlaylistTrackPayload?.trackPayload.name ? false : true
     }
 
     const disablePrevious = (): boolean => {
-        if (props.payload.trackWithArtistPayload?.first) {
+        if (props.payload.musicPlaylistTrackPayload?.first) {
             return true
         }
 
@@ -150,7 +104,7 @@ const AudioPlayer = () => {
     }
 
     const disableNext = (): boolean => {
-        if (props.payload.trackWithArtistPayload?.last) {
+        if (props.payload.musicPlaylistTrackPayload?.last) {
             return true
         }
 
@@ -168,7 +122,7 @@ const AudioPlayer = () => {
                     payload: {
                         ...props.payload,
                         isReadyToPlay: response.ok,
-                        trackWithArtistPayload: securePayload?.payload,
+                        musicPlaylistTrackPayload: securePayload?.payload,
                         loadStreamTrigger: undefined
                     }
                 })
@@ -198,8 +152,9 @@ const AudioPlayer = () => {
                     payload: {
                         ...props.payload,
                         isReadyToPlay: true,
-                        trackWithArtistPayload: securePayload?.payload,
-                        loadStreamTrigger: navigatePlaylistPayload.loadStream ? timestamp() : undefined
+                        musicPlaylistTrackPayload: securePayload?.payload,
+                        loadStreamTrigger: navigatePlaylistPayload.loadStream ? timestamp() : undefined,
+                        votedUp: securePayload?.payload.trackPayload.votedUp || false
                     }
                 })
 
@@ -215,7 +170,7 @@ const AudioPlayer = () => {
                     payload: {
                         ...props.payload,
                         isReadyToPlay: false,
-                        trackWithArtistPayload: undefined
+                        musicPlaylistTrackPayload: undefined
                     }
                 })
             }
@@ -231,7 +186,7 @@ const AudioPlayer = () => {
             return
         }
 
-        if (!props.payload.trackWithArtistPayload?.trackPayload) {
+        if (!props.payload.musicPlaylistTrackPayload?.trackPayload) {
             return
         }
 
@@ -239,18 +194,16 @@ const AudioPlayer = () => {
         const audioWasPlaying = audioPlayer.current.readyState > 1 ? playing : false
 
         if (mobileDisplay) {
-            const playlistId = props.payload.trackWithArtistPayload?.playlistPayload.id || 0
+            const playlistId = props.payload.musicPlaylistTrackPayload?.playlistPayload.id || 0
             if (playlistId) {
                 audioUrl = playlistStreamUrl(playlistId, props.mediaToken)
             }
         } else {
-            const trackId = props.payload.trackWithArtistPayload?.trackPayload.id || 0
+            const trackId = props.payload.musicPlaylistTrackPayload?.trackPayload.id || 0
             if (trackId) {
                 audioUrl = mediaStreamUrl(trackId, props.mediaToken)
             }
         }
-
-        console.log("audioUrl", audioUrl)
 
         if (!audioUrl) {
             return
@@ -279,7 +232,7 @@ const AudioPlayer = () => {
     }, [playing])
 
     const handleNextTrack = (): void => {
-        if (props.payload.trackWithArtistPayload?.last) {
+        if (props.payload.musicPlaylistTrackPayload?.last) {
             return
         }
         handleNavigate({
@@ -301,11 +254,11 @@ const AudioPlayer = () => {
             return
         }
 
-        const trackSeconds = props?.payload.trackWithArtistPayload?.trackPayload.totalSeconds || 0
+        const trackSeconds = props?.payload.musicPlaylistTrackPayload?.trackPayload.totalSeconds || 0
 
         console.log("trackSeconds = " + trackSeconds + ", progress = " + progress)
         if ((progress - playlistOffset) > trackSeconds) {
-            const playlistId = props?.payload.trackWithArtistPayload?.playlistPayload.id
+            const playlistId = props?.payload.musicPlaylistTrackPayload?.playlistPayload.id
             if (playlistId) {
                 setPlaylistOffset(playlistOffset + trackSeconds)
                 displayNextTrack(playlistId)
@@ -318,7 +271,7 @@ const AudioPlayer = () => {
 
         const paused = audioPlayer.current.paused
         const seconds = Array.isArray(value) ? value[0] : value
-        const trackId = props.payload.trackWithArtistPayload?.trackPayload.id
+        const trackId = props.payload.musicPlaylistTrackPayload?.trackPayload.id
         if (trackId) {
             audioPlayer.current.pause()
             audioPlayer.current.src = mediaStreamUrl(trackId, props.mediaToken, seconds)
@@ -340,36 +293,42 @@ const AudioPlayer = () => {
         )
     }
 
-    // const handleExpand = (): void => {
-    //     setExpanded(!expanded)
-    // }
-
     const handleAudioError = (): void => {
         dispatch(
             addNotification({
-                message: 'Unable to play track, please check it is correctly encoded for the web.',
+                message: t("audioPlayer.errorStreaming"),
                 notificationType: NotificationType.ERROR
             })
         )
 
     }
 
-    // const encodeMessage = (encoderStatusType?: EncoderStatusType) => {
-    //     if (!encoderStatusType || encoderStatusType == EncoderStatusType.OK) {
-    //         return ""
-    //     }
+    function isVotingDisabled(): boolean {
+        return props.payload.musicPlaylistTrackPayload?.trackPayload.disableVotes || false
+    }
 
-    //     let message = ""
-    //     if (encoderStatusType == EncoderStatusType.ENODER_NOT_INSTALLED) {
-    //         message = "Encoder is not yet configured and this track has an incompatible format for the web. Either configure the encoder through the menu under Settings -> Encode or replace this track with an mp3 file."
-    //     } else if (encoderStatusType == EncoderStatusType.SENT_FOR_ENCODING) {
-    //         message = "The track has been sent for encoding, it should be available soon."
-    //     }
+    function likeTrack(mediaItemId: number): void {
 
-    //     return (
-    //         <small>{message}</small>
-    //     )
-    // }
+        if (!mediaItemId) {
+            return
+        }
+
+
+        voteMediaItem({
+            mediaItemId
+        }, userToken).then(response => {
+            if (response.ok) {
+                setProps(p => ({
+                    ...p,
+                    payload: {
+                        ...p.payload,
+                        votedUp: !props.payload.votedUp
+                    }
+                }))
+            }
+        })
+
+    }
 
     return (
         <div id="audio-player">
@@ -389,7 +348,7 @@ const AudioPlayer = () => {
                     <Slider
                         aria-label="Volume"
                         min={0}
-                        max={props.payload.trackWithArtistPayload?.trackPayload.totalSeconds}
+                        max={props.payload.musicPlaylistTrackPayload?.trackPayload.totalSeconds}
                         value={progress}
                         disabled={isEmptyPlaylist()}
                         onChangeCommitted={(event, value) => handleSlide(value)}
@@ -399,33 +358,48 @@ const AudioPlayer = () => {
                                 height: "15px",
                                 width: "15px"
                             },
-                          }}
+                        }}
                     />
 
                     <div className="track-time">
                         <div className="beginning duration-time">{displayDuration(progress)}</div>
-                        <div className="end duration-time">{trackLength(props.payload.trackWithArtistPayload?.trackPayload.minutes, props.payload.trackWithArtistPayload?.trackPayload.seconds)} </div>
+                        <div className="end duration-time">{trackLength(props.payload.musicPlaylistTrackPayload?.trackPayload.minutes, props.payload.musicPlaylistTrackPayload?.trackPayload.seconds)} </div>
                     </div>
 
                 </div>
             }
 
-
             {!isEmptyPlaylist() &&
                 <div className="playing">
                     <div className="meta">
-                        <div className="track">{props.payload.trackWithArtistPayload?.trackPayload.name}</div>
-                        <div className="artist">{props.payload.trackWithArtistPayload?.artistPayload.name}</div>
+                        <div className="track">{props.payload.musicPlaylistTrackPayload?.trackPayload.name}</div>
+                        <div className="artist">{props.payload.musicPlaylistTrackPayload?.artistPayload.name}</div>
                     </div>
 
-                    <div className="like">
-                        <IconButton>
-                            <FavoriteBorder
-                                color="secondary"
-                                sx={{
-                                    color: "#ff0066"
-                                }}
-                            />
+                    <div className={"like" + (isVotingDisabled() ? " disabled" : "")}>
+                        <IconButton
+                            disabled={isVotingDisabled()}
+                            onClick={() => likeTrack(props.payload.musicPlaylistTrackPayload?.trackPayload.id || 0)}
+                        >
+                            {props.payload.votedUp &&
+                                <Favorite
+                                    color="secondary"
+                                    sx={{
+                                        color: "#ff0066"
+                                    }}
+                                />
+                            }
+
+                            {!props.payload.votedUp &&
+                                <FavoriteBorder
+                                    color="secondary"
+                                    sx={{
+                                        color: "#ff0066"
+                                    }}
+                                />
+                            }
+
+
                         </IconButton>
                     </div>
 
@@ -437,18 +411,16 @@ const AudioPlayer = () => {
                     <Link
                         to={"/playlists/music/playing"}
                     >
-                        <Tooltip title="bum">
-                            <MusicNote
-                                color="secondary"
-                            />
-                        </Tooltip>
+                        <MusicNote
+                            color="secondary"
+                        />
                     </Link>
 
                     <div className="button-container">
                         <IconButton
                             onClick={() => handleNavigate({
                                 navigatePlaylistType: NavigatePlaylistType.PREVIOUS,
-                                playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id,
+                                playlistId: props.payload.musicPlaylistTrackPayload?.playlistPayload.id,
                                 loadStream: true
                             })}
                             disabled={disablePrevious()}
@@ -472,7 +444,7 @@ const AudioPlayer = () => {
                         <IconButton
                             onClick={() => handleNavigate({
                                 navigatePlaylistType: NavigatePlaylistType.NEXT,
-                                playlistId: props.payload.trackWithArtistPayload?.playlistPayload.id,
+                                playlistId: props.payload.musicPlaylistTrackPayload?.playlistPayload.id,
                                 loadStream: true
                             })}
                             disabled={disableNext()}>
@@ -482,81 +454,16 @@ const AudioPlayer = () => {
                         </IconButton>
                     </div>
 
-
-
                     <Link
-                        to={"/playlists/music/" + props.payload.trackWithArtistPayload?.playlistPayload.id}
+                        to={"/playlists/music/" + props.payload.musicPlaylistTrackPayload?.playlistPayload.id}
                     >
                         <QueueMusic
                             color="secondary"
                             fontSize="large"
                         />
                     </Link>
-
-
-                    {/* <div className="expand-more">
-                    <IconButton
-                        onClick={handleExpand}>
-                        {!expanded &&
-                            <ExpandMore
-                                fontSize="large"
-                                color="primary" />
-                        }
-                        {expanded &&
-                            <ExpandLess
-                                fontSize="large"
-                                color="primary" />
-                        }
-                    </IconButton>
-
-                </div> */}
                 </div>
             }
-
-            {/* {expanded &&
-
-                <div className="expand">
-
-                    <div
-                        className="container album-art"
-                        style={{ backgroundImage: `url(${albumArtImageUrl(props.payload.trackWithArtistPayload?.albumPayload.id || 0, ImageType.ORIGINAL, props.mediaToken)})` }}
-                    >
-
-                        {!mobileDisplay &&
-                            <div className="duration centre blur-background">
-                                <div className="beginning duration-time">{displayDuration(progress)}</div>
-                                <Slider
-                                    aria-label="Volume"
-                                    min={0}
-                                    max={props.payload.trackWithArtistPayload?.trackPayload.totalSeconds}
-                                    value={progress}
-                                    disabled={isEmptyPlaylist()}
-                                    onChangeCommitted={(event, value) => handleSlide(value)} />
-                                <div className="end duration-time">{trackLength(props.payload.trackWithArtistPayload?.trackPayload.minutes, props.payload.trackWithArtistPayload?.trackPayload.seconds)} </div>
-                            </div>
-                        }
-
-                        <div className="track-information blur-background">
-                            <div className="track">
-                                {renderPlayingInformation()}
-                            </div>
-                            {encodeMessage(props.payload.trackWithArtistPayload?.encoderStatusType)}
-                        </div>
-
-                        <div className="bottom blur-background">
-                            <IconButton
-                                color="primary"
-                                onClick={handleExpand}>
-                                <ExpandLess fontSize="large" />
-                            </IconButton>
-                        </div>
-                    </div>
-
-                </div>
-            } */}
-
-
-
         </div>
     )
 

@@ -66,7 +66,8 @@ public class Artist{
 	@JoinTable(name = "artists_external_links", joinColumns = @JoinColumn(name = "external_link_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
 	private Set<ExternalLink> externalLinks;
 	@ManyToOne(cascade = { CascadeType.ALL })
-	private SocialConfiguration socialConfiguration;
+	@Builder.Default
+	private SocialConfiguration socialConfiguration = new SocialConfiguration();
 
 	@Override
 	public int hashCode() {

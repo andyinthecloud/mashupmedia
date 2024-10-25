@@ -19,6 +19,7 @@ package org.mashupmedia.service.transcode.local;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +28,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.ehcache.shadow.org.terracotta.utilities.io.Files;
 import org.mashupmedia.encode.ProcessHelper;
 import org.mashupmedia.encode.ProcessQueueItem;
 import org.mashupmedia.encode.command.EncodeCommands;
@@ -40,6 +40,7 @@ import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaResource;
 import org.mashupmedia.model.media.music.Track;
+import org.mashupmedia.repository.media.MediaResourceRepository;
 import org.mashupmedia.service.MediaManager;
 import org.mashupmedia.service.storage.StorageManager;
 import org.mashupmedia.service.transcode.TranscodeAudioManager;
@@ -59,6 +60,7 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 	private final EncodeCommands encodeCommands = new FfMpegCommands();
 	private final MediaManager mediaManager;
 	private final StorageManager storageManager;
+	private final MediaResourceRepository mediaResourceRepository;
 
 	@Value("${mashupmedia.transcode.audio.total-threads}")
 	private int totalThreads;
@@ -105,7 +107,7 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 			if (track.isTranscoded(audioTranscodeContentType)) {
 				return;
 			}
-
+			AdminHelper.setLoggedInUser(user);
 			Path inputPath = Path.of(resourceId);
 			Path outputPath = user.createTempResourcePath();
 			try {
@@ -207,15 +209,26 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 			MediaItem mediaItem = mediaManager.getMediaItem(processQueueItem.getMediaItemId());
 			MediaContentType mediaContentType = processQueueItem.getMediaContentType();
 
-			log.info("Media file decoded to " + mediaContentType.name());
-			MediaResource mediaResource = new MediaResource();
-			mediaResource.setMediaContentType(mediaContentType);
-			mediaResource.setOriginal(false);
-			mediaItem.getMediaResources().add(mediaResource);
+			log.info("Media file transcoded to " + mediaContentType.name());
+			Path transcodedPath = processQueueItem.getOutputPath();
+			if (!Files.exists(transcodedPath)) {
+				log.error("Error transcoding file");
+				return;
+			}
 
-			mediaManager.saveMediaItem(mediaItem);
-			storageManager.store(processQueueItem.getOutputPath());
-			Files.delete(processQueueItem.getOutputPath());
+			String storedPath = storageManager.store(transcodedPath);
+			MediaResource mediaResource = MediaResource.builder()
+					.mediaContentType(mediaContentType)
+					.mediaItem(mediaItem)
+					.original(false)
+					.path(storedPath)
+					.sizeInBytes(Files.size(transcodedPath))
+					.fileLastModifiedOn(Files.getLastModifiedTime(transcodedPath).toMillis())
+					.build();
+					
+			mediaResourceRepository.save(mediaResource);
+
+			Files.delete(transcodedPath);
 
 		} catch (IOException e) {
 			log.error("Error processing processQueueItem, remove from queues", e);

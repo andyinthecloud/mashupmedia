@@ -24,6 +24,7 @@ import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.Track;
+import org.mashupmedia.model.media.social.SocialConfiguration;
 import org.mashupmedia.repository.media.music.AlbumRepository;
 import org.mashupmedia.repository.media.music.ArtistRepository;
 import org.mashupmedia.service.storage.StorageManager;

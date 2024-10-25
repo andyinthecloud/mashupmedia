@@ -18,4 +18,6 @@ public class TrackPayload {
     private long totalSeconds;
     private int year;
     private boolean transcodedForWeb;
+    private boolean disableVotes;
+    private boolean votedUp;
 }

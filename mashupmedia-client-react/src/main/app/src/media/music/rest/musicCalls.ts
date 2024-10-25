@@ -49,6 +49,8 @@ export type TrackPayload = {
     seconds?: number
     year: number
     transcodedForWeb: boolean
+    disableVotes: boolean
+    votedUp: boolean
 }
 
 export type AlbumWithTracksAndArtistPayload = {

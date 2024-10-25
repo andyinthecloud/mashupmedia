@@ -62,7 +62,8 @@ public class Album {
 	private Date createdOn;
 	private Date updatedOn;
 	@ManyToOne(cascade = { CascadeType.ALL })
-	private SocialConfiguration socialConfiguration;
+	@Builder.Default
+	private SocialConfiguration socialConfiguration = new SocialConfiguration();
 
 	@Override
 	public int hashCode() {

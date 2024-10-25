@@ -41,7 +41,8 @@ public class Vote {
     @ManyToOne
 	private User user;
     @ManyToOne
-	private SocialConfiguration socialConfiguration;
+    @Builder.Default
+	private SocialConfiguration socialConfiguration = new SocialConfiguration();
     @Enumerated(EnumType.STRING)
     private VoteType voteType;
 }

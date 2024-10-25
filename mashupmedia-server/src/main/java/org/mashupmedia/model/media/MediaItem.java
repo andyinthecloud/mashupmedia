@@ -99,7 +99,7 @@ public abstract class MediaItem {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "mediaItem")
 	private Set<PlaylistMediaItem> playlistMediaItems;
 	@ManyToOne(cascade = { CascadeType.ALL })
-	private SocialConfiguration socialConfiguration;
+	private SocialConfiguration socialConfiguration = new SocialConfiguration();
 
 	// public String getPath() {
 

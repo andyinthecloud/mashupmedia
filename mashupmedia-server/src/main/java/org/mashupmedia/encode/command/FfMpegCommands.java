@@ -108,15 +108,13 @@ public class FfMpegCommands implements EncodeCommands {
 		commands.add("-y");
 		commands.add("-i");
 		commands.add(inputPath);
-		commands.add("-codec:a");
-		commands.add("libfdk_aac");
+		commands.add("-c:a");
+		commands.add("aac");
 		commands.add("-b:a");
 		commands.add("128k");
 		commands.add("-f");
-		commands.add("aac");
+		commands.add("adts");
 		commands.add(outputPath);
-
-		// ffmpeg -i input.wav -c:a libfdk_aac -b:a 128k output.m4a
 
 		return commands;
 	}

@@ -13,7 +13,9 @@ public enum ErrorCode {
     EMAIL_INVALID("error.email.invalid"),
     TOKEN_INVALID("error.token.invalid"), 
     CONTAINS_MEDIA("error.containsMedia"),
-    OUT_OF_STORAGE("error.outOfStorage");
+    OUT_OF_STORAGE("error.outOfStorage"),
+    VOTING_DISABLED("error.votingDisabled");
+
 
 
     private String errorCode;

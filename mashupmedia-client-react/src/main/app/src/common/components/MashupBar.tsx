@@ -40,7 +40,7 @@ const MashupBar = () => {
 
     const dispatch = useDispatch()
 
-    const handleClickToggleOpenMenu = () => {
+    const handleClickToggleOpenMenu = (): void => {
         console.log("handleClickToggleOpenMenu")
 
         dispatch(

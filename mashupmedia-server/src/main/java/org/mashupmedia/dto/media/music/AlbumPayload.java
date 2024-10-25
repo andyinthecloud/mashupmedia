@@ -21,5 +21,5 @@ public class AlbumPayload {
     private String name;
     private String summary;
     private List<ExternalLinkPayload> externalLinkPayloads;
-    private List<MetaEntityPayload> metaImagePayloads;    
+    private List<MetaEntityPayload> metaImagePayloads;
 }
