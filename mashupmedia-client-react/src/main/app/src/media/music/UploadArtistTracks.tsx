@@ -4,8 +4,10 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import UploadTrackFiles, { FileType, UploadTrackFilesPayload } from "../../common/components/media/UploadTrackFiles"
+import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
 import { RootState } from "../../common/redux/store"
 import { getDecades } from "../../common/utils/decadeUtils"
+import { FieldValidation, FormValidationPayload, hasFieldError } from "../../common/utils/formValidationUtils"
 import { GENRE_AUTOMATIC, prepareUploadGenrePayloads } from "../../common/utils/genreUtils"
 import { getLibraries, LibraryNameValuePayload } from "../../configuration/backend/libraryCalls"
 import { GenrePayload, getGenres } from "../../configuration/backend/metaCalls"
@@ -13,16 +15,17 @@ import { SecureMediaPayload } from "../rest/secureMediaPayload"
 import { artistImageUrl, ArtistWithAlbumsPayload, getArtist, ImageType } from "./rest/musicCalls"
 import { uploadArtistTracks, UploadArtistTracksPayload } from "./rest/musicUploadCalls"
 import "./UploadArtistTracks.css"
-import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
 
 
 type UploadArtistTracksPagePayload = {
     genrePayloads?: GenrePayload[]
     decades?: number[]
-    uploadArtistTracksPayload?: UploadArtistTracksPayload
+    // uploadArtistTracksPayload?: UploadArtistTracksPayload
     artistWithAlbumsPayload?: SecureMediaPayload<ArtistWithAlbumsPayload>
     libraryNameValuePayloads?: LibraryNameValuePayload[]
     uploadTrackFilesPayload: UploadTrackFilesPayload
+    uploadingTracks?: boolean
+    formValidationPayload: FormValidationPayload<UploadArtistTracksPayload>
 
 }
 
@@ -33,27 +36,41 @@ const UploadArtistTracks = () => {
     const dispatch = useDispatch()
 
     const [props, setProps] = useState<UploadArtistTracksPagePayload>({
-        uploadArtistTracksPayload: {
-            artistId: 0,
-            albumId: 0,
-            libraryId: 0,
-            genreIdName: GENRE_AUTOMATIC,
-            decade: 0
-        },
+        // uploadArtistTracksPayload: {
+        //     albumId: 0,
+        //     libraryId: 0,
+        //     genreIdName: GENRE_AUTOMATIC,
+        //     decade: 0
+        // },
         uploadTrackFilesPayload: {
             selectFiles,
             fileType: FileType.AUDIO
+        },
+        formValidationPayload: {
+            formValidation: {
+                fieldValidations: []
+            },
+            payload: {
+                albumId: 0,
+                libraryId: 0,
+                genreIdName: GENRE_AUTOMATIC,
+                decade: 0
+            }
         }
     })
 
     function selectFiles(files: File[]): void {
         setProps(p => ({
             ...p,
-            uploadArtistTracksPayload: {
-                ...p.uploadArtistTracksPayload,
-                artistId: p.uploadArtistTracksPayload?.artistId || 0,
-                libraryId: p.uploadArtistTracksPayload?.libraryId || 0,
-                files
+            formValidationPayload: {
+                ...p.formValidationPayload,
+                payload: {
+                    ...p.formValidationPayload.payload,
+                    albumId: p.formValidationPayload.payload?.albumId || 0,
+                    libraryId: p.formValidationPayload.payload?.libraryId || 0,
+                    files
+
+                }
             }
         }))
     }
@@ -70,11 +87,13 @@ const UploadArtistTracks = () => {
             setProps(p => ({
                 ...p,
                 artistWithAlbumsPayload: response.parsedBody,
-                uploadArtistTracksPayload: {
-                    ...p.uploadArtistTracksPayload,
-                    artistId,
-                    albumId,
-                    libraryId: p.uploadArtistTracksPayload?.libraryId || 0,
+                formValidationPayload: {
+                    ...p.formValidationPayload,
+                    payload: {
+                        ...p.formValidationPayload.payload,
+                        albumId,
+                        libraryId: p.formValidationPayload.payload?.libraryId || 0,
+                    }
                 }
             }))
         })
@@ -89,11 +108,14 @@ const UploadArtistTracks = () => {
                     ...p,
                     genrePayloads,
                     decades,
-                    uploadArtistTracksPayload: {
-                        ...p.uploadArtistTracksPayload,
-                        artistId: p.uploadArtistTracksPayload?.artistId || 0,
-                        libraryId: p.uploadArtistTracksPayload?.libraryId || 0,
-                        genreIdName: genrePayloads.length ? genrePayloads[0].idName : ""
+                    formValidationPayload: {
+                        ...p.formValidationPayload,
+                        payload: {
+                            ...p.formValidationPayload.payload,
+                            albumId: p.formValidationPayload.payload?.albumId || 0,
+                            libraryId: p.formValidationPayload.payload?.libraryId || 0,
+                            genreIdName: genrePayloads.length ? genrePayloads[0].idName : ""
+                        }
                     }
                 }))
             })
@@ -105,10 +127,13 @@ const UploadArtistTracks = () => {
                 setProps(p => ({
                     ...p,
                     libraryNameValuePayloads,
-                    uploadArtistTracksPayload: {
-                        ...p.uploadArtistTracksPayload,
-                        artistId: p.uploadArtistTracksPayload?.artistId || 0,
-                        libraryId: libraryNameValuePayloads?.length ? libraryNameValuePayloads[0].value : 0,
+                    formValidationPayload: {
+                        ...p.formValidationPayload,
+                        payload: {
+                            ...p.formValidationPayload.payload,
+                            albumId: p.formValidationPayload.payload?.albumId || 0,
+                            libraryId: libraryNameValuePayloads?.length ? libraryNameValuePayloads[0].value : 0,
+                        }
                     }
                 }))
             })
@@ -116,30 +141,100 @@ const UploadArtistTracks = () => {
     }, [userToken])
 
     function handleCancel(): void {
-        const artistId = props.uploadArtistTracksPayload?.artistId
+        const artistId = props.artistWithAlbumsPayload?.payload.artistPayload.id
         navigate('/music/artist/' + artistId)
     }
 
     function handleChangeForm(name: string, value: string | number): void {
         setProps(p => ({
             ...p,
-            uploadArtistTracksPayload: {
-                ...p.uploadArtistTracksPayload,
-                albumId: p.uploadArtistTracksPayload?.albumId || 0,
-                artistId: p.uploadArtistTracksPayload?.artistId || 0,
-                libraryId: p.uploadArtistTracksPayload?.libraryId || 0,
-                [name]: value
+            formValidationPayload: {
+                ...p.formValidationPayload,
+                payload: {
+                    ...p.formValidationPayload.payload,
+                    albumId: p.formValidationPayload.payload?.albumId || 0,
+                    libraryId: p.formValidationPayload.payload?.libraryId || 0,
+                    [name]: value
+
+                }
+            }
+        }))
+    }
+
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
+        e.preventDefault()
+        console.log("validate")
+        validateForm()
+        if (props.formValidationPayload.formValidation.fieldValidations.length) {
+            return;
+        }
+
+        handleUpload()
+    }
+
+    function validateForm(): void {
+        clearFieldValidationState()
+        const payload = props.formValidationPayload.payload
+        if (isNaN(payload.albumId)) {
+            addInvalidField({
+                name: "albumId",
+                messageCode: t("uploadArtistTracks.error.album")
+            })
+        }
+
+        if (!payload.files?.length) {
+            addInvalidField({
+                name: "files",
+                messageCode: t("uploadArtistTracks.error.files")
+            })
+
+        }
+
+    }
+
+    function clearFieldValidationState(): void {
+        const fieldValidations = props.formValidationPayload.formValidation.fieldValidations
+        fieldValidations.splice(0, fieldValidations.length)
+        setProps(p => ({
+            ...p,
+            formValidation: {
+                fieldValidations
+            }
+        }))
+    }
+
+    function addInvalidField(fieldValidation: FieldValidation): void {
+        const fieldValidations = props.formValidationPayload.formValidation.fieldValidations
+        fieldValidations.push(fieldValidation)
+
+        setProps(p => ({
+            ...p,
+            formValidation: {
+                fieldValidations
             }
         }))
     }
 
     function handleUpload(): void {
-        if (!props.uploadArtistTracksPayload) {
+        const uploadTrackFilesPayload = props.formValidationPayload.payload
+        if (!uploadTrackFilesPayload) {
             return
         }
 
-        uploadArtistTracks(props.uploadArtistTracksPayload, userToken)
+
+        setProps(p => ({
+            ...p,
+            uploadingTracks: true
+        }))
+
+
+        uploadArtistTracks(uploadTrackFilesPayload, userToken)
             .then(response => {
+                setProps(p => ({
+                    ...p,
+                    uploadingTracks: false
+                }))
+
                 if (response.ok) {
                     dispatch(
                         addNotification({
@@ -148,10 +243,10 @@ const UploadArtistTracks = () => {
                         })
                     )
                     navigate('/music/artist/' + props.artistWithAlbumsPayload?.payload.artistPayload.id)
-                } else {                    
+                } else {
                     dispatch(
                         addNotification({
-                            message: t(response.parsedBody?.errorPayload.errorCode || "error.general"),
+                            message: t(response.parsedBody?.errorPayload?.errorCode || "error.general"),
                             notificationType: NotificationType.ERROR
                         })
                     )
@@ -161,7 +256,7 @@ const UploadArtistTracks = () => {
     }
 
     return (
-        <form id="upload-artist-tracks">
+        <form id="upload-artist-tracks" onSubmit={handleSubmit} noValidate>
             <h1>{t("uploadArtistTracks.title")}</h1>
 
             <div className="artist">
@@ -192,7 +287,7 @@ const UploadArtistTracks = () => {
                         name="libraryId"
                         onChange={e => handleChangeForm(e.target.name, e.target.value)}
                         label={t("uploadArtistTracks.library")}
-                        value={props?.uploadArtistTracksPayload?.libraryId || ""}
+                        value={props?.formValidationPayload.payload?.libraryId || ""}
                     >
                         {props?.libraryNameValuePayloads?.map((libraryPayload) => (
                             <MenuItem
@@ -213,6 +308,7 @@ const UploadArtistTracks = () => {
                     sx={{
                         marginTop: "1em",
                     }}
+                    required
                 >
                     <InputLabel id="select-album-label">{t("uploadArtistTracks.album")}</InputLabel>
                     <Select
@@ -220,7 +316,8 @@ const UploadArtistTracks = () => {
                         name="albumId"
                         onChange={e => handleChangeForm(e.target.name, e.target.value)}
                         label={t("uploadArtistTracks.album")}
-                        value={props.uploadArtistTracksPayload?.albumId || ""}
+                        value={props.formValidationPayload.payload?.albumId || ""}
+                        error={hasFieldError("albumId", props.formValidationPayload.formValidation)}
                     >
                         {props?.artistWithAlbumsPayload?.payload.albumPayloads?.map((albumPayload) => (
                             <MenuItem
@@ -247,7 +344,7 @@ const UploadArtistTracks = () => {
                         label={t("uploadArtistTracks.genre")}
                         name="genreIdName"
                         onChange={e => handleChangeForm(e.target.name, e.target.value)}
-                        value={props?.uploadArtistTracksPayload?.genreIdName || ""}
+                        value={props?.formValidationPayload.payload?.genreIdName || ""}
                     >
                         {props?.genrePayloads?.map((genrePayload) => (
                             <MenuItem
@@ -272,7 +369,7 @@ const UploadArtistTracks = () => {
                         onChange={e => handleChangeForm(e.target.name, e.target.value)}
                         value="0"
                         label={t("uploadArtistTracks.decade")}>
-                        <MenuItem value="0"  >{t("uploadArtistTracks.metaTag")}</MenuItem>
+                        <MenuItem value="0">{t("uploadArtistTracks.metaTag")}</MenuItem>
                         {props?.decades?.map(decade => (
                             <MenuItem
                                 value={decade}
@@ -285,15 +382,40 @@ const UploadArtistTracks = () => {
             </div>
 
             <UploadTrackFiles {...props.uploadTrackFilesPayload} />
+            {hasFieldError("files", props.formValidationPayload.formValidation) &&
+                <div className="error">
+                    {t("uploadArtistTracks.error.files")}
+                </div>
+            }
 
             <div className="new-line right">
-                <Button variant="contained" color="secondary" type="button" onClick={handleCancel}>
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    type="button"
+                    onClick={handleCancel}>
                     {t('label.cancel')}
                 </Button>
 
-                <Button variant="contained" color="primary" type="button" onClick={handleUpload}>
-                    {t('label.ok')}
-                </Button>
+                {!props.uploadingTracks &&
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        type="submit">
+                        {t('uploadArtistTracks.button.upload')}
+                    </Button>
+                }
+
+                {props.uploadingTracks &&
+                    <Button
+                        disabled={true}
+                        variant="contained"
+                        color="primary"
+                        type="button"
+                    >
+                        {t('uploadArtistTracks.button.uploading')}
+                    </Button>
+                }
             </div>
 
         </form>

@@ -92,6 +92,10 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 	@Override
 	public void processTrack(Track track, String resourceId) {
 
+		if (track.isTranscoded(audioTranscodeContentType)) {
+			return;
+		}
+
 		if (!isFFMpegInstalled) {
 			log.info("Unable to transcode track, ffMpeg not installed");
 			return;
@@ -103,16 +107,13 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 
 		User user = AdminHelper.getLoggedInUser();
 
+
 		threadPoolExecutor.submit(() -> {
-			if (track.isTranscoded(audioTranscodeContentType)) {
-				return;
-			}
 			AdminHelper.setLoggedInUser(user);
 			Path inputPath = Path.of(resourceId);
 			Path outputPath = user.createTempResourcePath();
 			try {
 				processMediaItemForEncoding(track, inputPath, outputPath);
-
 			} catch (MediaItemTranscodeException e) {
 				log.error("Error transcoding track", e);
 			}

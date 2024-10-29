@@ -51,7 +51,6 @@ public class VoteManagerImpl implements VoteManager {
         VoteType voteType = isVotedUp ? VoteType.DOWN_VOTE : VoteType.UP_VOTE;
         socialConfiguration.vote(user, voteType);
         socialConfigurationRepository.save(socialConfiguration);
-
     }
 
 }

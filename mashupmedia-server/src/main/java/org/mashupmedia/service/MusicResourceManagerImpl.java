@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.exception.UserStorageException;
@@ -14,6 +15,7 @@ import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
+import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.MetaTrack;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.service.media.audio.AudioMetaManager;
@@ -22,6 +24,7 @@ import org.mashupmedia.service.transcode.TranscodeAudioManager;
 import org.mashupmedia.service.transcode.TranscodeImageManager;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.FileHelper;
+import org.mashupmedia.util.GenreHelper;
 import org.mashupmedia.util.MediaContentHelper;
 import org.mashupmedia.util.MetaEntityHelper;
 import org.springframework.stereotype.Service;
@@ -87,7 +90,7 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
             // InputStream inputStream = multipartFile.getInputStream();
             Path tempImagePath = user.createTempResourcePath();
             Files.write(tempImagePath, multipartFile.getBytes());
-            
+
             Path tempProcessedImagePath = transcodeManager.processImage(tempImagePath, MediaContentType.IMAGE_JPG);
             String imagePath = storageManager.store(tempProcessedImagePath);
             metaImage.setUrl(imagePath);
@@ -95,7 +98,7 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
 
             Path tempThumbnailPath = transcodeManager.processThumbnail(tempImagePath, MediaContentType.IMAGE_JPG);
             String thumbnailPath = storageManager.store(tempThumbnailPath);
-            metaImage.setThumbnailUrl(thumbnailPath);            
+            metaImage.setThumbnailUrl(thumbnailPath);
             Files.delete(tempThumbnailPath);
 
             Files.delete(tempImagePath);
@@ -127,20 +130,22 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
 
         // String trackPath = storageManager.store(transcodedPath);
 
+        Genre genre = StringUtils.isBlank(genreIdName)
+                ? metaTrack.getGenre()
+                : GenreHelper.getGenre(genreIdName);
+
         Track track = Track.builder()
                 .album(album)
                 .title(metaTrack.getTitle())
                 .trackLength(metaTrack.getLength())
                 .trackNumber(metaTrack.getNumber())
-                .genre(metaTrack.getGenre())
+                .genre(genre)
                 .trackYear(year != null ? year : metaTrack.getYear())
                 // .path(trackPath)
                 .build();
 
         musicManager.saveTrack(track);
         transcodeAudioManager.processTrack(track, uploadPath.toAbsolutePath().toString());
-
-
 
         try {
             Files.delete(uploadPath);

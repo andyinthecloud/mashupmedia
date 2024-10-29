@@ -233,6 +233,7 @@ const AudioPlayer = () => {
 
     const handleNextTrack = (): void => {
         if (props.payload.musicPlaylistTrackPayload?.last) {
+            setPlaying(false);
             return
         }
         handleNavigate({

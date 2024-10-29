@@ -84,12 +84,6 @@ public class SecureStreamController {
             }
 
             MediaItem mediaItem = playlistMediaItem.getMediaItem();
-            // if
-            // (!mediaItem.isTranscoded(transcodeConfigurationComponent.getTranscodeAudioMediaContentType()))
-            // {
-            // continue;
-            // }
-
             playlist.getPlaylistMediaItems().forEach(pmi -> pmi.setPlaying(pmi.equals(playlistMediaItem)));
             playlistManager.savePlaylist(playlist);
 
@@ -130,7 +124,7 @@ public class SecureStreamController {
         MediaItem mediaItem = mediaManager.getMediaItem(mediaItemId);
         mediaResource = mediaItem.getMediaResource(transcodeAudioMediaContentType);
         if (mediaResource == null) {
-            log.error("No transcoded media resource found");
+            log.error("Error transcoding media to: " + transcodeAudioMediaContentType.getMimeType());
             return;
         }
 

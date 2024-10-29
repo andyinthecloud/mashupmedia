@@ -6,24 +6,22 @@ import { HttpMethod, HttpResponse, backEndUrl, multiPartHeaders } from "../../..
 export type MetaImagePayload = & MetaPayload 
 
 export type UploadArtistTracksPayload = {
-    artistId: number
-    albumId?: number
+    albumId: number
     libraryId: number,
     genreIdName?: string
     decade?: number
     files?: File[]
-
 }
 
 
 const musicUri = "/upload/music"
 
 
-const postFiles =  async <MetaImagePayload>(uri: string, formData: FormData, userToken?: string): Promise<HttpResponse<ServerResponsePayload<MetaImagePayload[]>>> => {
+const postFiles =  async <T> (uri: string, formData: FormData, userToken?: string): Promise<HttpResponse<ServerResponsePayload<T>>> => {
 
     const url = backEndUrl(uri)    
 
-    const response: HttpResponse<ServerResponsePayload<MetaImagePayload[]>> = await fetch(url, {
+    const response: HttpResponse<ServerResponsePayload<T>> = await fetch(url, {
         method: HttpMethod.POST,
         mode: 'cors',
         credentials: 'omit',
@@ -39,30 +37,6 @@ const postFiles =  async <MetaImagePayload>(uri: string, formData: FormData, use
 
     return response
 }  
-
-
-
-const postFilesAsynchronous =  async (uri: string, formData: FormData, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {
-
-    const url = backEndUrl(uri)    
-
-    const response: HttpResponse<ServerResponsePayload<boolean>> = await fetch(url, {
-        method: HttpMethod.POST,
-        mode: 'cors',
-        credentials: 'omit',
-        headers: multiPartHeaders(securityToken(userToken)),
-        body: formData
-    })
-
-    try {
-        response.parsedBody = await response.json()
-    } catch (exception) {
-        console.log('Error parsing json', response)
-    }
-
-    return response
-}  
-
 
 const addFiles = (formData: FormData, files: File[]): void => {
     for (let i = 0; i < files.length; i++) {
@@ -80,15 +54,15 @@ export const uploadArtistImages = (artistId: number,  fileList: FileList, userTo
 }
 
 export const uploadArtistTracks = (uploadArtistTracksPayload: UploadArtistTracksPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {    
-    const files = uploadArtistTracksPayload.files
-    if (!files) {
-        return Promise.reject()
-    }
-    
+    const files = uploadArtistTracksPayload.files || []  
     const formData = new FormData()
-    formData.append("artistId", "" + uploadArtistTracksPayload.artistId)
+    formData.append("libraryId", "" + uploadArtistTracksPayload.libraryId)
+    formData.append("albumId", "" + uploadArtistTracksPayload.albumId)
     addFiles(formData, files)
-    return postFilesAsynchronous(artistUri + "/tracks", formData, userToken)
+    formData.append("decade", "" + uploadArtistTracksPayload.decade)
+    formData.append("genreIdName", "" + uploadArtistTracksPayload.genreIdName)
+
+    return postFiles(artistUri + "/tracks", formData, userToken)
 }
 
 const albumUri = musicUri + "/album"

@@ -2,6 +2,7 @@ package org.mashupmedia.controller.upload;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.mashupmedia.dto.media.MetaEntityPayload;
@@ -25,12 +26,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/upload/music")
 @RequiredArgsConstructor
-public class UploadMusicImageController {
+public class UploadMusicController {
 
 	private final MusicResourceManager musicResourceManager;
 	private final MusicManager musicManager;
@@ -60,9 +62,9 @@ public class UploadMusicImageController {
 	public ResponseEntity<ServerResponsePayload<Boolean>> postArtistTracks(
 			@RequestParam("libraryId") long libraryId,
 			@RequestParam("albumId") long albumId,
-			@RequestParam("decade") Integer decade,
-			@RequestParam("genreIdName") String genreIdName,
-			@RequestParam("files") MultipartFile[] files) {
+			@RequestParam("files") MultipartFile[] files,
+			@RequestParam("decade") Optional<Integer> decade,
+			@RequestParam("genreIdName") Optional<String> genreIdName) {
 
 		Album album = musicManager.getAlbum(albumId);
 		Artist artist = album.getArtist();
@@ -70,7 +72,7 @@ public class UploadMusicImageController {
 
 		for (MultipartFile file: files) {
 			try {
-				musicResourceManager.storeTrack(libraryId, albumId, decade, genreIdName, file);
+				musicResourceManager.storeTrack(libraryId, albumId, decade.orElse(null), genreIdName.orElse(null), file);
 			} catch (UserStorageException e) {
 				return getOutOfSpaceErrorPayload();
 			}

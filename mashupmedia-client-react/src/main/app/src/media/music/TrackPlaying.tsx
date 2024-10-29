@@ -82,7 +82,7 @@ const TrackPlaying = () => {
                 <span className="separator">-</span>
                 <Link
                     className="link-no-underlne album"
-                    to={"/music/artist/" + props?.secureMusicPlaylistTrackPayload?.payload.albumPayload.id}>
+                    to={"/music/album/" + props?.secureMusicPlaylistTrackPayload?.payload.albumPayload.id}>
                     {props?.secureMusicPlaylistTrackPayload?.payload.albumPayload.name}
                 </Link>
             </div>
