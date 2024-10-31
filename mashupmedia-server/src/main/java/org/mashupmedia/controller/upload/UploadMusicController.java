@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -65,10 +64,6 @@ public class UploadMusicController {
 			@RequestParam("files") MultipartFile[] files,
 			@RequestParam("decade") Optional<Integer> decade,
 			@RequestParam("genreIdName") Optional<String> genreIdName) {
-
-		Album album = musicManager.getAlbum(albumId);
-		Artist artist = album.getArtist();
-		AdminHelper.checkAccess(artist.getUser());
 
 		for (MultipartFile file: files) {
 			try {

@@ -2,31 +2,31 @@ import { Audiotrack, CloudUpload, RemoveCircleOutline } from "@mui/icons-materia
 import { Button, IconButton } from "@mui/material";
 import { t } from "i18next";
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
-import "./UploadTrackFiles.css";
+import "./UploadFiles.css";
 
 
 export enum FileType {
     AUDIO
 }
 
-export type UploadTrackFilesPayload = {
+export type UploadFilesPayload = {
     selectFiles(files: File[]): void
     fileType: FileType
 }
 
-type InternalUploadTrackFilesPayload = {
-    uploadTrackFilesPayload: UploadTrackFilesPayload
+type InternalUploadFilesPayload = {
+    uploadFilesPayload: UploadFilesPayload
     files: File[]
     dragging: boolean
 }
 
-const UploadTrackFiles = (payload: UploadTrackFilesPayload) => {
+const UploadFiles = (payload: UploadFilesPayload) => {
     const uploadFileRef = useRef<HTMLInputElement>(null);
     const filesRef = useRef<File[]>([])
 
-    const [props, setProps] = useState<InternalUploadTrackFilesPayload>({
+    const [props, setProps] = useState<InternalUploadFilesPayload>({
         files: [],
-        uploadTrackFilesPayload: payload,
+        uploadFilesPayload: payload,
         dragging: false
     })
 
@@ -44,7 +44,7 @@ const UploadTrackFiles = (payload: UploadTrackFilesPayload) => {
         }))
         filesRef.current = files
 
-        props.uploadTrackFilesPayload.selectFiles(filesRef.current)
+        props.uploadFilesPayload.selectFiles(filesRef.current)
     }
 
     function handleClickSelectTracks(): void {
@@ -67,12 +67,12 @@ const UploadTrackFiles = (payload: UploadTrackFilesPayload) => {
         }))
         filesRef.current = files
 
-        props.uploadTrackFilesPayload.selectFiles(filesRef.current)
+        props.uploadFilesPayload.selectFiles(filesRef.current)
 
     }
 
     function getFileTypeInLowerCase(): string {
-        return FileType[props.uploadTrackFilesPayload.fileType].toLowerCase()
+        return FileType[props.uploadFilesPayload.fileType].toLowerCase()
     }
 
 
@@ -95,7 +95,7 @@ const UploadTrackFiles = (payload: UploadTrackFilesPayload) => {
             files: filesRef.current
         }))
 
-        props.uploadTrackFilesPayload.selectFiles(filesRef.current)
+        props.uploadFilesPayload.selectFiles(filesRef.current)
     }
 
 
@@ -116,9 +116,9 @@ const UploadTrackFiles = (payload: UploadTrackFilesPayload) => {
                 />
             </div>
 
-            <div>{t("uploadTrackFiles.drag", { fileType: getFileTypeInLowerCase() })}</div>
+            <div>{t("uploadFiles.drag", { fileType: getFileTypeInLowerCase() })}</div>
 
-            <div>{t("uploadTrackFiles.or")} </div>
+            <div>{t("uploadFiles.or")} </div>
 
 
             <input
@@ -137,7 +137,7 @@ const UploadTrackFiles = (payload: UploadTrackFilesPayload) => {
                 color="primary"
                 onClick={handleClickSelectTracks}
             >
-                {t('uploadTrackFiles.browse')}
+                {t('uploadFiles.browse')}
             </Button>
 
 
@@ -163,4 +163,4 @@ const UploadTrackFiles = (payload: UploadTrackFilesPayload) => {
     )
 }
 
-export default UploadTrackFiles
+export default UploadFiles

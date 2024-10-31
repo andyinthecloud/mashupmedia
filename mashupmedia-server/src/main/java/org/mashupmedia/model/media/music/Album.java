@@ -1,10 +1,13 @@
 package org.mashupmedia.model.media.music;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.mashupmedia.model.media.ExternalLink;
 import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.social.SocialConfiguration;
@@ -56,9 +59,11 @@ public class Album {
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "albums_external_links", joinColumns = @JoinColumn(name = "external_link_id"), inverseJoinColumns = @JoinColumn(name = "album_id"))
 	private Set<ExternalLink> externalLinks;
-	@OneToMany(mappedBy = "album")
+	@OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("trackNumber")
-	private List<Track> tracks;
+	@Builder.Default
+	@Fetch(FetchMode.JOIN)
+	private List<Track> tracks = new ArrayList<>();
 	private Date createdOn;
 	private Date updatedOn;
 	@ManyToOne(cascade = { CascadeType.ALL })

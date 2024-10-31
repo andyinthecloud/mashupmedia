@@ -3,7 +3,7 @@ import { t } from "i18next"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
-import UploadTrackFiles, { FileType, UploadTrackFilesPayload } from "../../common/components/media/UploadTrackFiles"
+import UploadFiles, { FileType, UploadFilesPayload } from "../../common/components/media/UploadFiles"
 import { addNotification, NotificationType } from "../../common/notification/notificationSlice"
 import { RootState } from "../../common/redux/store"
 import { getDecades } from "../../common/utils/decadeUtils"
@@ -23,7 +23,7 @@ type UploadArtistTracksPagePayload = {
     // uploadArtistTracksPayload?: UploadArtistTracksPayload
     artistWithAlbumsPayload?: SecureMediaPayload<ArtistWithAlbumsPayload>
     libraryNameValuePayloads?: LibraryNameValuePayload[]
-    uploadTrackFilesPayload: UploadTrackFilesPayload
+    uploadFilesPayload: UploadFilesPayload
     uploadingTracks?: boolean
     formValidationPayload: FormValidationPayload<UploadArtistTracksPayload>
 
@@ -36,13 +36,7 @@ const UploadArtistTracks = () => {
     const dispatch = useDispatch()
 
     const [props, setProps] = useState<UploadArtistTracksPagePayload>({
-        // uploadArtistTracksPayload: {
-        //     albumId: 0,
-        //     libraryId: 0,
-        //     genreIdName: GENRE_AUTOMATIC,
-        //     decade: 0
-        // },
-        uploadTrackFilesPayload: {
+        uploadFilesPayload: {
             selectFiles,
             fileType: FileType.AUDIO
         },
@@ -381,7 +375,7 @@ const UploadArtistTracks = () => {
                 </FormControl>
             </div>
 
-            <UploadTrackFiles {...props.uploadTrackFilesPayload} />
+            <UploadFiles {...props.uploadFilesPayload} />
             {hasFieldError("files", props.formValidationPayload.formValidation) &&
                 <div className="error">
                     {t("uploadArtistTracks.error.files")}

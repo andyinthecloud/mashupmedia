@@ -126,9 +126,6 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
         }
 
         MetaTrack metaTrack = audioMetaManager.getMetaTrack(uploadPath);
-        // Path transcodedPath = transcodeAudioManager.processAudio(uploadPath);
-
-        // String trackPath = storageManager.store(transcodedPath);
 
         Genre genre = StringUtils.isBlank(genreIdName)
                 ? metaTrack.getGenre()
@@ -141,10 +138,13 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
                 .trackNumber(metaTrack.getNumber())
                 .genre(genre)
                 .trackYear(year != null ? year : metaTrack.getYear())
-                // .path(trackPath)
                 .build();
 
-        musicManager.saveTrack(track);
+        album.getTracks().add(track);
+        musicManager.saveAlbum(album);
+        
+                // musicManager.saveTrack(track);
+
         transcodeAudioManager.processTrack(track, uploadPath.toAbsolutePath().toString());
 
         try {

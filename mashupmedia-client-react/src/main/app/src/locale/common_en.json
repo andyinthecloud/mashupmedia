@@ -54,7 +54,7 @@
             "files": "Please select at least one track to upload"
         }
     },
-    "uploadTrackFiles": {
+    "uploadFiles": {
         "drag": "Drag and drop to upload {{fileType}} files",
         "or": "or",
         "browse": "Browse tracks"
