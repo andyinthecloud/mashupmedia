@@ -18,7 +18,7 @@ import org.mashupmedia.model.library.VideoLibrary;
 import org.mashupmedia.model.library.VideoLibrary.VideoDeriveTitleType;
 import org.mashupmedia.model.media.MediaResource;
 import org.mashupmedia.model.media.video.Video;
-import org.mashupmedia.repository.media.music.LIbraryRepository;
+import org.mashupmedia.repository.media.music.LibraryRepository;
 import org.mashupmedia.service.storage.StorageManager;
 import org.mashupmedia.service.transcode.TranscodeAudioManager;
 import org.mashupmedia.service.transcode.TranscodeVideoManager;
@@ -43,7 +43,7 @@ public class VideoLibraryUpdateManagerImpl implements VideoLibraryUpdateManager 
 	private final int VIDEOS_SAVE_AMOUNT_MAX_SIZE = 20;
 
 	private final VideoDao videoDao;
-	private final LIbraryRepository libraryRepository;
+	private final LibraryRepository libraryRepository;
 	private final TranscodeVideoManager transcodeVideoManager;
 	private final StorageManager storageManager;
 

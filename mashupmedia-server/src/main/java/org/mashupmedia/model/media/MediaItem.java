@@ -89,12 +89,22 @@ public abstract class MediaItem {
 	}
 
 	public boolean isTranscoded(MediaContentType mediaContentType) {
+		Set<MediaResource> mediaResources = getMediaResources();
+		if (mediaResources == null || mediaResources.isEmpty()) {
+			return false;
+		}
+
 		return getMediaResources().stream()
 				.anyMatch(mediaResource -> mediaResource.getMediaContentType() == mediaContentType);
 
 	}
 
 	public MediaResource getOriginalMediaResource() {
+		Set<MediaResource> mediaResources = getMediaResources();
+		if (mediaResources == null || mediaResources.isEmpty()) {
+			return null;
+		}
+
 		return getMediaResources().stream()
 				.filter(mediaResource -> mediaResource.isOriginal() == true)
 				.findAny().orElse(null);

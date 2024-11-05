@@ -8,6 +8,7 @@ import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -36,9 +37,11 @@ public class Track extends MediaItem {
 	private int trackNumber;
 	@Column(length = 1000)
 	private String title;
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToOne
+	@JoinColumn(nullable=false)
 	private Album album;
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToOne
+	@JoinColumn(nullable = false)
 	private Genre genre;
 	private int trackYear;
 	private long trackLength;

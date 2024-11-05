@@ -34,8 +34,8 @@ import org.mashupmedia.encode.command.EncodeCommands;
 import org.mashupmedia.encode.command.FfMpegCommands;
 import org.mashupmedia.eums.MashupMediaType;
 import org.mashupmedia.eums.MediaContentType;
+import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.exception.MediaItemTranscodeException;
-import org.mashupmedia.exception.MediaItemTranscodeException.EncodeExceptionType;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
 import org.mashupmedia.model.media.MediaResource;
@@ -107,7 +107,6 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 
 		User user = AdminHelper.getLoggedInUser();
 
-
 		threadPoolExecutor.submit(() -> {
 			AdminHelper.setLoggedInUser(user);
 			Path inputPath = Path.of(resourceId);
@@ -116,6 +115,15 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 				processMediaItemForEncoding(track, inputPath, outputPath);
 			} catch (MediaItemTranscodeException e) {
 				log.error("Error transcoding track", e);
+			} finally {
+				String libraryPath = track.getLibrary().getPath();
+				if (StringUtils.isBlank(libraryPath)) {
+					try {
+						Files.delete(inputPath);
+					} catch (IOException e) {
+						throw new MashupMediaRuntimeException("Unable to delete input file", e);
+					}
+				}
 			}
 		});
 	}
@@ -179,15 +187,16 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 		transcode(processQueueItem);
 
 		// Check the input is uploaded through library
-		String libraryPath = mediaItem.getLibrary().getPath();
-		if (StringUtils.isBlank(libraryPath)) {
-			try {
-				Files.delete(inputPath);
-			} catch (IOException e) {
-				throw new MediaItemTranscodeException(EncodeExceptionType.UNABLE_TO_DELETE_TEMPORARY_FILE,
-						"Unable to delete input file", e);
-			}
-		}
+		// String libraryPath = mediaItem.getLibrary().getPath();
+		// if (StringUtils.isBlank(libraryPath)) {
+		// try {
+		// Files.delete(inputPath);
+		// } catch (IOException e) {
+		// throw new
+		// MediaItemTranscodeException(EncodeExceptionType.UNABLE_TO_DELETE_TEMPORARY_FILE,
+		// "Unable to delete input file", e);
+		// }
+		// }
 
 	}
 
@@ -226,7 +235,7 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 					.sizeInBytes(Files.size(transcodedPath))
 					.fileLastModifiedOn(Files.getLastModifiedTime(transcodedPath).toMillis())
 					.build();
-					
+
 			mediaResourceRepository.save(mediaResource);
 
 			Files.delete(transcodedPath);

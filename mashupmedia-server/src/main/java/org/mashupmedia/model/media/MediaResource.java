@@ -34,6 +34,7 @@ public class MediaResource implements Serializable {
 	private long sizeInBytes;
 	private long fileLastModifiedOn;
 	@ManyToOne
+	@JoinColumn(nullable = false)
 	private MediaItem mediaItem;
 
 	// public long getId() {

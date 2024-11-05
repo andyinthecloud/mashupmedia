@@ -11,6 +11,7 @@ import org.mashupmedia.component.TranscodeConfigurationComponent;
 import org.mashupmedia.dto.media.playlist.TranscodeStatusType;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.MediaItem;
+import org.mashupmedia.model.media.MediaResource;
 import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.playlist.Playlist;
 import org.mashupmedia.model.playlist.PlaylistMediaItem;
@@ -86,23 +87,19 @@ public class PlaylistActionManagerImpl implements PlaylistActionManager {
 			return TranscodeStatusType.TRANSCODED;
 		}
 
-		// if (!transcodeAudioManager.isTranscoderInstalled()) {
-		// return EncoderStatusType.TRANSCODER_NOT_INSTALLED;
-		// }
-
 		for (MediaItem mediaItem : mediaItemsForEncoding) {
-			// try {
-
 			if (mediaItem instanceof Track track) {
+				Set<MediaResource> mediaResources = track.getMediaResources();
+				if (mediaResources == null || mediaResources.isEmpty()) {
+					continue;
+				}
+				MediaResource originalMediaResource = track.getOriginalMediaResource();
+				if (originalMediaResource == null) {
+					continue;
+				}
 
-				transcodeAudioManager.processTrack(track, track.getOriginalMediaResource().getPath());
+				transcodeAudioManager.processTrack(track, originalMediaResource.getPath());
 			}
-
-			// encodeMediaItemManager.processMediaItemForEncoding(mediaItem,
-			// MediaContentHelper.getDefaultMediaContentType(mediaItem));
-			// } catch (MediaItemTranscodeException e) {
-			// log.error("Error encoding media", e);
-			// }
 		}
 
 		return TranscodeStatusType.TRANSCODING;

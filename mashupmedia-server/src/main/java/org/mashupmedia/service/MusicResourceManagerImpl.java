@@ -1,23 +1,24 @@
 package org.mashupmedia.service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mashupmedia.eums.MediaContentType;
 import org.mashupmedia.exception.MashupMediaRuntimeException;
 import org.mashupmedia.exception.UserStorageException;
 import org.mashupmedia.model.account.User;
+import org.mashupmedia.model.library.Library;
 import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
 import org.mashupmedia.model.media.music.Genre;
 import org.mashupmedia.model.media.music.MetaTrack;
 import org.mashupmedia.model.media.music.Track;
+import org.mashupmedia.model.media.social.SocialConfiguration;
+import org.mashupmedia.repository.media.music.LibraryRepository;
 import org.mashupmedia.service.media.audio.AudioMetaManager;
 import org.mashupmedia.service.storage.StorageManager;
 import org.mashupmedia.service.transcode.TranscodeAudioManager;
@@ -28,6 +29,7 @@ import org.mashupmedia.util.GenreHelper;
 import org.mashupmedia.util.MediaContentHelper;
 import org.mashupmedia.util.MetaEntityHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,7 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
     private final StorageManager storageManager;
     private final TranscodeAudioManager transcodeAudioManager;
     private final AudioMetaManager audioMetaManager;
+    private final LibraryRepository libraryRepository;
 
     @Override
     public MetaImage storeArtistImage(long artistId, MultipartFile multipartFile) throws UserStorageException {
@@ -112,7 +115,13 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
     @Override
     public void storeTrack(long libraryId, long albumId, Integer year, String genreIdName, MultipartFile multipartFile)
             throws UserStorageException {
+
+        Library library = libraryRepository.getReferenceById(libraryId);
+        Assert.notNull(library, "Expecting an library");
+
         Album album = musicManager.getAlbum(albumId);
+        Assert.notNull(album, "Expecting an album");
+
         Artist artist = album.getArtist();
         AdminHelper.checkAccess(artist.getUser());
         storageManager.checkUserStorage(multipartFile.getSize());
@@ -138,12 +147,11 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
                 .trackNumber(metaTrack.getNumber())
                 .genre(genre)
                 .trackYear(year != null ? year : metaTrack.getYear())
+                .socialConfiguration(SocialConfiguration.builder().build())
+                .library(library)
                 .build();
 
-        album.getTracks().add(track);
-        musicManager.saveAlbum(album);
-        
-                // musicManager.saveTrack(track);
+        musicManager.saveTrack(track);
 
         transcodeAudioManager.processTrack(track, uploadPath.toAbsolutePath().toString());
 

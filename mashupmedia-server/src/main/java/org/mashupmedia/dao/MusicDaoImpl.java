@@ -190,21 +190,21 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		albumQuery.setParameter("id", albumId);
 		Album album = getUniqueResult(albumQuery);
 
-		StringBuilder tracksQueryBuilder = new StringBuilder(
-				"select distinct t from Track t");
-		tracksQueryBuilder.append(" join t.library l");
-		tracksQueryBuilder.append(" left join l.shareUsers u");
-		tracksQueryBuilder.append(" where t.album.id = :id");
-		tracksQueryBuilder.append(" and t.enabled = true");
-		tracksQueryBuilder.append(" and t.library.enabled = true");
+		// StringBuilder tracksQueryBuilder = new StringBuilder(
+		// 		"select distinct t from Track t");
+		// tracksQueryBuilder.append(" join t.library l");
+		// tracksQueryBuilder.append(" left join l.shareUsers u");
+		// tracksQueryBuilder.append(" where t.album.id = :id");
+		// tracksQueryBuilder.append(" and t.enabled = true");
+		// tracksQueryBuilder.append(" and t.library.enabled = true");
 
-		DaoHelper.appendUserIdFilter(tracksQueryBuilder, userId);
-		tracksQueryBuilder.append(" order by t.trackNumber");
-		TypedQuery<Track> tracksQuery = entityManager.createQuery(tracksQueryBuilder.toString(),
-				Track.class);
-		tracksQuery.setParameter("id", albumId);
-		List<Track> tracks = (List<Track>) tracksQuery.getResultList();
-		album.setTracks(tracks);
+		// DaoHelper.appendUserIdFilter(tracksQueryBuilder, userId);
+		// tracksQueryBuilder.append(" order by t.trackNumber");
+		// TypedQuery<Track> tracksQuery = entityManager.createQuery(tracksQueryBuilder.toString(),
+		// 		Track.class);
+		// tracksQuery.setParameter("id", albumId);
+		// List<Track> tracks = (List<Track>) tracksQuery.getResultList();
+		// album.setTracks(tracks);
 
 		return album;
 	}
@@ -305,7 +305,7 @@ public class MusicDaoImpl extends BaseDaoImpl implements MusicDao {
 		flushSession(isSessionFlush);
 
 		log.debug("Saved track: " + track.getArtist().getName() + " - " + track.getAlbum().getName() + " - "
-				+ track.getOriginalMediaResource().getPath());
+				+ track.getFileName());
 	}
 
 	@Override
