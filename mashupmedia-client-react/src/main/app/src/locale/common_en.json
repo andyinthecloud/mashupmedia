@@ -74,5 +74,11 @@
     },
     "audioPlayer": {
         "errorStreaming": "Unable to play track."
+    },
+    "album": {
+        "deleteTrack": {
+            "ok": "Deleted track",
+            "error": "Error deleting track"
+        }
     }
 }

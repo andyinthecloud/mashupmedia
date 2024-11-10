@@ -1,4 +1,4 @@
-import { Add, PlayArrow } from "@mui/icons-material"
+import { Add, Delete, PlayArrow } from "@mui/icons-material"
 import { Button, Card, CardContent, CardMedia, IconButton, List, ListItem, ListItemText } from "@mui/material"
 import { t } from "i18next"
 import { useEffect, useRef, useState } from "react"
@@ -13,7 +13,7 @@ import { isContentEditor } from "../../common/utils/adminUtils"
 import { SecureMediaPayload } from "../rest/secureMediaPayload"
 import './Album.css'
 import { loadTrack } from "./features/playMusicSlice"
-import { AlbumWithTracksAndArtistPayload, ImageType, albumArtImageUrl, getAlbum } from "./rest/musicCalls"
+import { AlbumWithTracksAndArtistPayload, ImageType, albumArtImageUrl, deleteTrack, getAlbum } from "./rest/musicCalls"
 import { playAlbum, playTrack } from "./rest/playlistActionCalls"
 
 
@@ -171,16 +171,39 @@ const Album = () => {
                 dispatch(
                     loadTrack({})
                 )
-                addNotification({
-                    message: "Replaced playlist",
-                    notificationType: NotificationType.SUCCESS
-                })
+                dispatch(
+                    addNotification({
+                        message: "Replaced playlist",
+                        notificationType: NotificationType.SUCCESS
+                    })
+                )
             }
         })
     }
 
     const handleAddTrack = (trackId: number): void => {
         navigate("/playlists/music/select?trackId=" + trackId)
+    }
+
+    function handleDeleteTrack(trackId: number): void {
+        deleteTrack(trackId, userToken).then(response => {
+            if (response.ok) {
+                dispatch(
+                    addNotification({
+                        message: t("album.deleteTrack.ok"),
+                        notificationType: NotificationType.SUCCESS
+                    })
+                )
+            } else {
+                dispatch(
+                    addNotification({
+                        message: t("album.deleteTrack.error"),
+                        notificationType: NotificationType.ERROR
+                    })
+                )
+            }
+        })
+
     }
 
     function isEditor(): boolean {
@@ -307,6 +330,15 @@ const Album = () => {
                                             onClick={() => handleAddTrack(trackPayload.id)}>
                                             <Add />
                                         </IconButton>
+
+                                        {isEditor() &&
+                                            <IconButton
+                                                edge="end"
+                                                color="primary"
+                                                onClick={() => handleDeleteTrack(trackPayload.id)}>
+                                                <Delete />
+                                            </IconButton>
+                                        }
                                     </div>
                                 }
 

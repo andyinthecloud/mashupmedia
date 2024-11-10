@@ -2,6 +2,7 @@ package org.mashupmedia.controller.rest.authenticated.media.playlist;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.mashupmedia.component.TranscodeConfigurationComponent;
 import org.mashupmedia.dto.media.playlist.PlaylistMediaItemTranscodePayload;
@@ -41,7 +42,7 @@ public class TranscodeStatusController {
         List<PlaylistMediaItemTranscodePayload> transcodeItems = playlistMediaItems.stream()
                 .filter(pmi -> pmi.getMediaItem().getUpdatedOn().after(fromDate))
                 .map(pmi -> PlaylistMediaItemTranscodePayload.builder()
-                        .playlistMediaItemId(pmi.getId())ó
+                        .playlistMediaItemId(pmi.getId())
                         .transcodeStatusType(getTranscodeStatusType(pmi))
                         .build())
                 .collect(Collectors.toList());

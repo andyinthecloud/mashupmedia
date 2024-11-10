@@ -19,6 +19,7 @@ import org.mashupmedia.exception.NameNotUniqueException;
 import org.mashupmedia.model.account.User;
 import org.mashupmedia.model.media.ExternalLink;
 import org.mashupmedia.model.media.MediaItemSearchCriteria;
+import org.mashupmedia.model.media.MediaResource;
 import org.mashupmedia.model.media.MetaImage;
 import org.mashupmedia.model.media.music.Album;
 import org.mashupmedia.model.media.music.Artist;
@@ -27,6 +28,7 @@ import org.mashupmedia.model.media.music.Track;
 import org.mashupmedia.model.media.social.SocialConfiguration;
 import org.mashupmedia.repository.media.music.AlbumRepository;
 import org.mashupmedia.repository.media.music.ArtistRepository;
+import org.mashupmedia.repository.media.music.TrackRepository;
 import org.mashupmedia.service.storage.StorageManager;
 import org.mashupmedia.util.AdminHelper;
 import org.mashupmedia.util.MetaEntityHelper;
@@ -49,6 +51,7 @@ public class MusicManagerImpl implements MusicManager {
 	private final ArtistRepository artistRepository;
 	private final StorageManager storageManager;
 	private final AlbumRepository albumRepository;
+	private final TrackRepository trackRepository;
 
 	protected enum ListAlbumsType {
 		RANDOM, LATEST, ALL
@@ -440,6 +443,20 @@ public class MusicManagerImpl implements MusicManager {
 		savedTrack.setTrackNumber(track.getTrackNumber());
 		savedTrack.setSummary(track.getSummary());
 		savedTrack.setTitle(track.getTitle());
+	}
+
+	@Override
+	public void deleteTrack(long trackId) {
+		Track track = musicDao.getTrack(trackId);
+		Assert.notNull(track, "Expecting a track");
+		Artist artist = track.getArtist();
+		AdminHelper.checkAccess(artist.getUser());
+
+		for (MediaResource mediaResource : track.getMediaResources()) {
+			storageManager.delete(mediaResource.getPath());
+		}
+
+		trackRepository.delete(track);		
 	}
 
 

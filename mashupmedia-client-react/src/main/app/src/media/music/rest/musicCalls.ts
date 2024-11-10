@@ -71,6 +71,8 @@ export enum ImageType {
 const musicUri = "/api/private/music"
 const artistUri = musicUri + "/artists"
 const albumUrl = musicUri + "/albums"
+const trackUrl = musicUri + "/tracks"
+
 
 export const albumArtImageUrl = (albumId: number, imageType: ImageType, mediaToken: string, id?: number): string => {
     return `${backEndUrl('/stream/secure/music/album-art')}/${albumId}?mediaToken=${mediaToken}&imageType=${imageType}&id=${id || ''}`
@@ -132,4 +134,8 @@ export const deleteAlbum = (albumId: number, userToken?: string): Promise<HttpRe
 
 export const saveAlbum = (saveAlbumPayload: SaveAlbumPayload, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {
     return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.PUT, albumUrl, userToken, JSON.stringify(saveAlbumPayload))
+}
+
+export const deleteTrack = (trackId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {
+    return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.DELETE, trackUrl + "/" + trackId, userToken)
 }
