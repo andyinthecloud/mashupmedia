@@ -236,7 +236,7 @@ const UploadArtistTracks = () => {
                             notificationType: NotificationType.SUCCESS
                         })
                     )
-                    navigate('/music/artist/' + props.artistWithAlbumsPayload?.payload.artistPayload.id)
+                    navigate('/music/album/' + uploadTrackFilesPayload.albumId)
                 } else {
                     dispatch(
                         addNotification({

@@ -10,6 +10,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -49,6 +50,11 @@ public class Track extends MediaItem {
 
 	public Artist getArtist() {
 		return getAlbum().getArtist();
+	}
+
+	@PreRemove
+	private void removeTrack() {				
+		album.getTracks().remove(this);
 	}
 
 	@Override

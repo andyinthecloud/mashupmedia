@@ -456,7 +456,7 @@ public class MusicManagerImpl implements MusicManager {
 			storageManager.delete(mediaResource.getPath());
 		}
 
-		trackRepository.delete(track);		
+		trackRepository.delete(track);
 	}
 
 

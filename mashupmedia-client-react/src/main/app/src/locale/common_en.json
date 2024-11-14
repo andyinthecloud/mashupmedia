@@ -76,9 +76,10 @@
         "errorStreaming": "Unable to play track."
     },
     "album": {
-        "deleteTrack": {
-            "ok": "Deleted track",
-            "error": "Error deleting track"
+        "deleteTracks": {
+            "ok": "Deleted tracks",
+            "error": "Error deleting tracks",
+            "button": "Delete selected tracks"
         }
     }
 }

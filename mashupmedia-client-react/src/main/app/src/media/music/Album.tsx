@@ -1,5 +1,5 @@
-import { Add, Delete, PlayArrow } from "@mui/icons-material"
-import { Button, Card, CardContent, CardMedia, IconButton, List, ListItem, ListItemText } from "@mui/material"
+import { Add, PlayArrow } from "@mui/icons-material"
+import { Button, Card, CardContent, CardMedia, Checkbox, IconButton, List, ListItem, ListItemText } from "@mui/material"
 import { t } from "i18next"
 import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -22,6 +22,7 @@ type AlbumPagePageload = {
     imagePopover: ImagePopoverPayload
     createAlbumDialogPayload: CreateAlbumNameDialogPageload
     musicMetaMenuPagePayload: MusicMetaMenuPagePayload
+    selectedTrackIds: number[]
 }
 
 const Album = () => {
@@ -62,7 +63,8 @@ const Album = () => {
             editLabel: t("editAlbum.menuLink"),
             uploadTracks: handleUploadTracks,
             addAlbum: handleAddAlbum
-        }
+        },
+        selectedTrackIds: []
     })
 
     function handleUploadTracks(): void {
@@ -118,7 +120,7 @@ const Album = () => {
         }
 
 
-    }, [albumId, userToken])
+    }, [albumId, userToken, props.selectedTrackIds])
 
     const albumIdAsNumber = (): number => (
         props.secureMediaItemPayload?.payload.albumPayload.id || 0
@@ -185,24 +187,111 @@ const Album = () => {
         navigate("/playlists/music/select?trackId=" + trackId)
     }
 
-    function handleDeleteTrack(trackId: number): void {
-        deleteTrack(trackId, userToken).then(response => {
+    function handleCheckTracks(event: React.ChangeEvent<HTMLInputElement>): void {
+        const selectedTrackIds: number[] = []
+        if (event.target.checked) {
+            props.secureMediaItemPayload?.payload.trackPayloads.forEach(track => {
+                selectedTrackIds.push(track.id)
+            })
+        }
+        setProps(p => ({
+            ...p,
+            selectedTrackIds
+        }))
+
+
+    }
+
+    function handleCheckTrack(event: React.ChangeEvent<HTMLInputElement>): void {
+
+        const selectedTrackIds = props.selectedTrackIds
+        const trackId = +event.target.name
+
+        if (event.target.checked) {
+            selectedTrackIds.push(trackId)
+
+        } else {
+            const index = selectedTrackIds.findIndex(n => n == trackId)
+            if (index < 0) {
+                return
+            }
+
+            selectedTrackIds.splice(index, 1)
+        }
+
+        setProps(p => ({
+            ...p,
+            selectedTrackIds
+        }))
+
+
+
+    }
+
+    function handleDeleteTracks(): void {
+
+        const selectedTrackIds = props.selectedTrackIds
+        if (!selectedTrackIds?.length) {
+            return
+        }
+
+        deleteTrack(selectedTrackIds, userToken).then(response => {
+
+            
+
+
             if (response.ok) {
+                deleteTrackPayloads(selectedTrackIds)
                 dispatch(
                     addNotification({
-                        message: t("album.deleteTrack.ok"),
+                        message: t("album.deleteTracks.ok"),
                         notificationType: NotificationType.SUCCESS
                     })
                 )
             } else {
                 dispatch(
                     addNotification({
-                        message: t("album.deleteTrack.error"),
+                        message: t("album.deleteTracks.error"),
                         notificationType: NotificationType.ERROR
                     })
                 )
             }
         })
+    }
+
+    function deleteTrackPayloads(trackPayloadIds: number[]) {
+        if (!trackPayloadIds?.length) {
+            return
+        }
+
+        const trackPayloads = props.secureMediaItemPayload?.payload.trackPayloads || []
+        for (const trackPayloadId of trackPayloadIds) {
+            const index = trackPayloads.findIndex(trackPayload => trackPayload.id == trackPayloadId)
+            trackPayloads.splice(index, 1)
+        }
+
+        setProps(p => ({
+            ...p,
+            secureMediaItemPayload: {
+                ...p.secureMediaItemPayload,
+                mediaToken: p.secureMediaItemPayload?.mediaToken || '',
+                payload: {
+                    ...p.secureMediaItemPayload?.payload,
+                    albumPayload: {
+                        ...p.secureMediaItemPayload?.payload.albumPayload,
+                        id: p.secureMediaItemPayload?.payload.albumPayload.id || 0,
+                        name: p.secureMediaItemPayload?.payload.albumPayload.name || ''                            
+                    },
+                    artistPayload: {
+                        ...p.secureMediaItemPayload?.payload.artistPayload,
+                        id: p.secureMediaItemPayload?.payload.artistPayload.id || 0,
+                        name: p.secureMediaItemPayload?.payload.artistPayload.name || ''
+
+                    },
+                    trackPayloads
+                }
+            }        
+        }))
 
     }
 
@@ -312,7 +401,18 @@ const Album = () => {
                     })}
                 </div>
 
+
                 <List>
+                    <ListItem
+                        style={{ borderStyle: "none" }}
+                        secondaryAction={
+                            isEditor() &&
+                            <Checkbox
+                                onChange={handleCheckTracks}
+                            />
+                        }
+                    />
+
                     {props.secureMediaItemPayload?.payload.trackPayloads.map(function (trackPayload, index) {
                         return (
                             <ListItem
@@ -332,12 +432,11 @@ const Album = () => {
                                         </IconButton>
 
                                         {isEditor() &&
-                                            <IconButton
-                                                edge="end"
-                                                color="primary"
-                                                onClick={() => handleDeleteTrack(trackPayload.id)}>
-                                                <Delete />
-                                            </IconButton>
+                                            <Checkbox
+                                                name={"" + trackPayload.id}
+                                                checked={props.selectedTrackIds.findIndex(n => n == trackPayload.id) >= 0}
+                                                onChange={handleCheckTrack}
+                                            />
                                         }
                                     </div>
                                 }
@@ -352,6 +451,15 @@ const Album = () => {
                         )
                     })}
                 </List>
+
+                <div className="right">
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleDeleteTracks}>
+                        {t("album.deleteTracks.button")}
+                    </Button>
+                </div>
 
                 <CreateAlbumNameDialog {...props.createAlbumDialogPayload} />
 

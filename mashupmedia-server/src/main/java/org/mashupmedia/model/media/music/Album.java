@@ -70,6 +70,9 @@ public class Album {
 	@Builder.Default
 	private SocialConfiguration socialConfiguration = new SocialConfiguration();
 
+
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

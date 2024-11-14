@@ -136,6 +136,6 @@ export const saveAlbum = (saveAlbumPayload: SaveAlbumPayload, userToken?: string
     return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.PUT, albumUrl, userToken, JSON.stringify(saveAlbumPayload))
 }
 
-export const deleteTrack = (trackId: number, userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {
-    return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.DELETE, trackUrl + "/" + trackId, userToken)
+export const deleteTrack = (trackIds: number[], userToken?: string): Promise<HttpResponse<ServerResponsePayload<boolean>>> => {
+    return callMashupMediaApi<ServerResponsePayload<boolean>>(HttpMethod.DELETE, trackUrl + "/" + trackIds, userToken)
 }
