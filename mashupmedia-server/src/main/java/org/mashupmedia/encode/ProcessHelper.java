@@ -41,7 +41,6 @@ public class ProcessHelper {
 		BufferedReader bufferedReader = null;
 
 		try {
-
 			log.info("Starting process...");
 
 			ProcessBuilder processBuilder = new ProcessBuilder(commands);

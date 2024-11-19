@@ -156,26 +156,16 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 	private void processMediaItemForEncoding(MediaItem mediaItem, Path inputPath, Path outputPath)
 			throws MediaItemTranscodeException {
 
-		if (mediaItem.isTranscoded(audioTranscodeContentType)) {
+		MediaContentType mediaContentType = getMediaContentType(mediaItem.getMashupMediaType());
+
+		if (mediaItem.isTranscoded(mediaContentType)) {
 			return;
 		}
 
 		long mediaItemId = mediaItem.getId();
-		// MediaItem mostRecentMediaItem = mediaManager.getMediaItem(mediaItemId);
-		// if (mostRecentMediaItem.isEncodedForWeb()) {
-		// return;
-		// }
-
-		// String encoderPath =
-		// configurationManager.getConfigurationValue(encodeCommands.getEncoderPathKey());
-
-		// MediaContentType mediaContentType = mediaItem.getTranscodeMediaContentType();
-		MediaContentType mediaContentType = getMediaContentType(mediaItem.getMashupMediaType());
 		List<String> processCommands = encodeCommands.getEncodingProcessCommands(ffMpegPath,
 				mediaContentType, inputPath, outputPath);
 
-		// ProcessQueueItem processQueueItem = generateProcessQueueItem(mediaItemId,
-		// mediaContentType, processCommands);
 		ProcessQueueItem processQueueItem = ProcessQueueItem.builder()
 				.mediaItemId(mediaItemId)
 				.mediaContentType(mediaContentType)
@@ -185,19 +175,6 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 				.build();
 
 		transcode(processQueueItem);
-
-		// Check the input is uploaded through library
-		// String libraryPath = mediaItem.getLibrary().getPath();
-		// if (StringUtils.isBlank(libraryPath)) {
-		// try {
-		// Files.delete(inputPath);
-		// } catch (IOException e) {
-		// throw new
-		// MediaItemTranscodeException(EncodeExceptionType.UNABLE_TO_DELETE_TEMPORARY_FILE,
-		// "Unable to delete input file", e);
-		// }
-		// }
-
 	}
 
 	private MediaContentType getMediaContentType(MashupMediaType mashupMediaType) {
@@ -211,18 +188,19 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 
 	private void transcode(ProcessQueueItem processQueueItem) {
 
+		MediaItem mediaItem = null;
 		try {
 			log.info("Starting to encode media file");
 			processQueueItem.setProcessStartedOn(new Date());
 			ProcessHelper.callProcess(processQueueItem.getCommands());
 
-			MediaItem mediaItem = mediaManager.getMediaItem(processQueueItem.getMediaItemId());
+			mediaItem = mediaManager.getMediaItem(processQueueItem.getMediaItemId());
 			MediaContentType mediaContentType = processQueueItem.getMediaContentType();
 
-			log.info("Media file transcoded to " + mediaContentType.name());
+			log.info("Media file transcoding to " + mediaContentType.name());
 			Path transcodedPath = processQueueItem.getOutputPath();
 			if (!Files.exists(transcodedPath)) {
-				log.error("Error transcoding file");
+				log.error("Cannot find transcoded file.");
 				return;
 			}
 
@@ -242,6 +220,20 @@ public class LocalTranscodeAudioManagerImpl implements TranscodeAudioManager {
 
 		} catch (IOException e) {
 			log.error("Error processing processQueueItem, remove from queues", e);
+		} finally {
+			if (mediaItem == null) {
+				return;
+			}
+
+			// String libraryPath = mediaItem.getLibrary().getPath();
+			// if (StringUtils.isBlank(libraryPath)) {
+			// 	try {
+			// 		Path inputPath = processQueueItem.getInputPath();
+			// 		Files.delete(inputPath);
+			// 	} catch (IOException e) {
+			// 		throw new MashupMediaRuntimeException("Unable to delete input file", e);
+			// 	}
+			// }
 		}
 	}
 

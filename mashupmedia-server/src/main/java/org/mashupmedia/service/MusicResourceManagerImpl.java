@@ -90,7 +90,6 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
         metaImage.setMimeType(mediaContentType.getMimeType());
 
         try {
-            // InputStream inputStream = multipartFile.getInputStream();
             Path tempImagePath = user.createTempResourcePath();
             Files.write(tempImagePath, multipartFile.getBytes());
 
@@ -155,11 +154,11 @@ public class MusicResourceManagerImpl implements MusicResourceManager {
 
         transcodeAudioManager.processTrack(track, uploadPath.toAbsolutePath().toString());
 
-        try {
-            Files.delete(uploadPath);
-        } catch (IOException e) {
-            throw new UserStorageException("Error deleting uploaded file", e);
-        }
+        // try {
+        //     Files.delete(uploadPath);
+        // } catch (IOException e) {
+        //     throw new UserStorageException("Error deleting uploaded file", e);
+        // }
 
     }
 
